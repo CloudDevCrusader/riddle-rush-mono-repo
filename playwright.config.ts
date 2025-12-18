@@ -8,24 +8,24 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
-  
+
   reporter: [
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
     ['list'],
     ['json', { outputFile: 'test-results/results.json' }],
     ...(isCI ? [['junit', { outputFile: 'test-results/junit.xml' }] as const] : []),
   ],
-  
+
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
-    
+
     // 📸 Screenshots - always on failure, full page
     screenshot: {
       mode: 'only-on-failure',
       fullPage: true,
     },
-    
+
     // 🎬 Video on retry (helps debug flaky tests)
     video: 'on-first-retry',
   },
