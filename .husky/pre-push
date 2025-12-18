@@ -1,8 +1,12 @@
 #!/bin/sh
-
 cd guess-game-nuxt-pwa || exit 0
 
 echo "Running pre-push checks..."
+
+# Check for secrets (double-check before push)
+echo "Scanning for secrets..."
+chmod +x scripts/check-secrets.sh
+./scripts/check-secrets.sh || exit 1
 
 # Run type check
 echo "Type checking..."

@@ -1,2 +1,10 @@
 #!/bin/sh
-cd guess-game-nuxt-pwa && npx lint-staged
+cd guess-game-nuxt-pwa || exit 0
+
+# Check for secrets
+echo "Scanning for secrets..."
+chmod +x scripts/check-secrets.sh
+./scripts/check-secrets.sh || exit 1
+
+# Run lint-staged
+npx lint-staged

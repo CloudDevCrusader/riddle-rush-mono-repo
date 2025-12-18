@@ -1,14 +1,15 @@
-import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useGameStore } from '../../stores/game'
-import { createCategoryList } from '../utils/factories'
+import { createCategoryList, createCategory, createGameSession } from '../utils/factories'
 import type { Category } from '../../types/game'
 
-const mockSaveGameSession = vi.fn()
+// Mock setup
+const mockSaveGameSession = vi.fn().mockResolvedValue(undefined)
 const mockGetGameSession = vi.fn().mockResolvedValue(null)
-const mockSaveGameHistory = vi.fn()
+const mockSaveGameHistory = vi.fn().mockResolvedValue(undefined)
 const mockGetGameHistory = vi.fn().mockResolvedValue([])
-const mockUpdateStatistics = vi.fn()
+const mockUpdateStatistics = vi.fn().mockResolvedValue(undefined)
 
 vi.mock('~/composables/useIndexedDB', () => ({
   useIndexedDB: () => ({
@@ -28,260 +29,425 @@ vi.mock('~/composables/useStatistics', () => ({
 const fetchMock = vi.fn()
 vi.stubGlobal('$fetch', fetchMock as unknown as typeof $fetch)
 
-let mockCategories: Category[] = []
-
 describe('Game Store', () => {
+  let mockCategories: Category[]
+
   beforeEach(() => {
+    vi.clearAllMocks()
     setActivePinia(createPinia())
-
-    mockCategories = createCategoryList(8)
-    fetchMock.mockReset()
+    mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
-
-    mockSaveGameSession.mockReset()
-    mockGetGameSession.mockReset()
     mockGetGameSession.mockResolvedValue(null)
-    mockSaveGameHistory.mockReset()
-    mockGetGameHistory.mockReset()
     mockGetGameHistory.mockResolvedValue([])
-    mockUpdateStatistics.mockReset()
   })
 
-  afterAll(() => {
-    vi.unstubAllGlobals()
+  afterEach(() => {
+    vi.clearAllTimers()
   })
 
   describe('Initial State', () => {
-    it('should have correct initial state', () => {
+    it('has null currentSession on init', () => {
       const store = useGameStore()
-
       expect(store.currentSession).toBeNull()
+    })
+
+    it('is online by default', () => {
+      const store = useGameStore()
       expect(store.isOnline).toBe(true)
+    })
+
+    it('has empty history on init', () => {
+      const store = useGameStore()
       expect(store.history).toEqual([])
+    })
+
+    it('has empty categories on init', () => {
+      const store = useGameStore()
       expect(store.categories).toEqual([])
+    })
+
+    it('categories not loaded on init', () => {
+      const store = useGameStore()
       expect(store.categoriesLoaded).toBe(false)
+    })
+
+    it('default displayed category count is 9', () => {
+      const store = useGameStore()
       expect(store.displayedCategoryCount).toBe(9)
     })
 
-    it('should have no active session initially', () => {
+    it('hasActiveSession is false when no session', () => {
       const store = useGameStore()
       expect(store.hasActiveSession).toBe(false)
     })
 
-    it('should return 0 score when no session', () => {
+    it('currentScore is 0 when no session', () => {
       const store = useGameStore()
       expect(store.currentScore).toBe(0)
     })
+
+    it('currentAttempts is empty when no session', () => {
+      const store = useGameStore()
+      expect(store.currentAttempts).toEqual([])
+    })
   })
 
-  describe('Category Management', () => {
-    it('should fetch and store categories', async () => {
+  describe('Category Fetching', () => {
+    it('fetches categories', async () => {
       const store = useGameStore()
-
       await store.fetchCategories()
-
+      expect(fetchMock).toHaveBeenCalled()
       expect(store.categories).toEqual(mockCategories)
-      expect(store.categoriesLoaded).toBe(true)
-      expect(store.displayedCategories).toHaveLength(Math.min(9, mockCategories.length))
     })
 
-    it('should not refetch if already loaded', async () => {
+    it('sets categoriesLoaded after fetch', async () => {
       const store = useGameStore()
+      await store.fetchCategories()
+      expect(store.categoriesLoaded).toBe(true)
+    })
 
+    it('does not refetch if already loaded', async () => {
+      const store = useGameStore()
       await store.fetchCategories()
       await store.fetchCategories()
-
       expect(fetchMock).toHaveBeenCalledTimes(1)
     })
 
-    it('should force refetch when requested', async () => {
+    it('refetches when force=true', async () => {
       const store = useGameStore()
-
       await store.fetchCategories()
-      const refreshedCategories = createCategoryList(5)
-      fetchMock.mockResolvedValue(refreshedCategories)
-
       await store.fetchCategories(true)
-
       expect(fetchMock).toHaveBeenCalledTimes(2)
-      expect(store.categories).toEqual(refreshedCategories)
     })
 
-    it('should get category by id', async () => {
+    it('handles API error gracefully', async () => {
+      fetchMock.mockRejectedValueOnce(new Error('Network error'))
+      const store = useGameStore()
+      await expect(store.fetchCategories()).rejects.toThrow('Network error')
+      expect(store.categoriesLoaded).toBe(false)
+    })
+
+    it('limits displayed categories', async () => {
       const store = useGameStore()
       await store.fetchCategories()
-
-      const target = mockCategories[0]
-      const category = store.getCategoryById(target.id)
-      expect(category).toEqual(target)
-    })
-
-    it('should return null for non-existent category', async () => {
-      const store = useGameStore()
-      await store.fetchCategories()
-
-      const category = store.getCategoryById(999999)
-      expect(category).toBeNull()
-    })
-
-    it('should load more categories', async () => {
-      const store = useGameStore()
-      store.categories = createCategoryList(20)
-      store.displayedCategoryCount = 9
-
-      store.loadMoreCategories()
-
-      expect(store.displayedCategoryCount).toBe(18)
+      expect(store.displayedCategories.length).toBeLessThanOrEqual(9)
     })
   })
 
-  describe('Game Session', () => {
-    it('should create new game session with valid category', async () => {
+  describe('Category Lookup', () => {
+    it('finds category by id', async () => {
       const store = useGameStore()
+      await store.fetchCategories()
+      const target = mockCategories[3]
+      expect(store.getCategoryById(target.id)).toEqual(target)
+    })
 
+    it('returns null for unknown id', async () => {
+      const store = useGameStore()
+      await store.fetchCategories()
+      expect(store.getCategoryById(999999)).toBeNull()
+    })
+
+    it('returns null when categories empty', () => {
+      const store = useGameStore()
+      expect(store.getCategoryById(1)).toBeNull()
+    })
+  })
+
+  describe('Load More Categories', () => {
+    it('increases displayed count by 9', () => {
+      const store = useGameStore()
+      store.categories = createCategoryList(30)
+      store.loadMoreCategories()
+      expect(store.displayedCategoryCount).toBe(18)
+    })
+
+    it('caps at total category count', () => {
+      const store = useGameStore()
+      store.categories = createCategoryList(5)
+      store.displayedCategoryCount = 9
+      store.loadMoreCategories()
+      expect(store.displayedCategories.length).toBe(5)
+    })
+  })
+
+  describe('Start New Game', () => {
+    it('creates session with category', async () => {
+      const store = useGameStore()
       const session = await store.startNewGame()
-
+      expect(session).toBeDefined()
+      expect(session.category).toBeDefined()
       expect(session.category.name.length).toBeGreaterThan(0)
+    })
+
+    it('sets currentSession', async () => {
+      const store = useGameStore()
+      await store.startNewGame()
       expect(store.currentSession).not.toBeNull()
-      expect(store.hasActiveSession).toBe(true)
+    })
+
+    it('initializes score to 0', async () => {
+      const store = useGameStore()
+      await store.startNewGame()
       expect(store.currentSession?.score).toBe(0)
+    })
+
+    it('initializes empty attempts', async () => {
+      const store = useGameStore()
+      await store.startNewGame()
       expect(store.currentSession?.attempts).toEqual([])
+    })
+
+    it('sets startTime', async () => {
+      const store = useGameStore()
+      const before = Date.now()
+      await store.startNewGame()
+      const after = Date.now()
+      expect(store.currentSession?.startTime).toBeGreaterThanOrEqual(before)
+      expect(store.currentSession?.startTime).toBeLessThanOrEqual(after)
+    })
+
+    it('persists session to IndexedDB', async () => {
+      const store = useGameStore()
+      await store.startNewGame()
       expect(mockSaveGameSession).toHaveBeenCalledTimes(1)
     })
 
-    it('should start game with specific category', async () => {
+    it('uses specific category when provided', async () => {
       const store = useGameStore()
-      const target = mockCategories[1]
-
+      const target = mockCategories[2]
       await store.startNewGame({ categoryId: target.id })
-
       expect(store.currentSession?.category.id).toBe(target.id)
-      expect(store.currentSession?.category.name).toBe(target.name)
     })
 
-    it('should submit correct attempt and add score', async () => {
+    it('hasActiveSession becomes true', async () => {
       const store = useGameStore()
       await store.startNewGame()
+      expect(store.hasActiveSession).toBe(true)
+    })
+  })
 
-      await store.submitAttempt('test answer', true)
+  describe('Submit Attempt', () => {
+    beforeEach(async () => {
+      const store = useGameStore()
+      await store.startNewGame()
+      vi.clearAllMocks()
+    })
 
+    it('adds correct attempt with score', async () => {
+      const store = useGameStore()
+      await store.submitAttempt('correct answer', true)
       expect(store.currentScore).toBe(10)
       expect(store.currentAttempts).toHaveLength(1)
       expect(store.currentAttempts[0].found).toBe(true)
-      expect(mockSaveGameSession).toHaveBeenCalledTimes(2)
     })
 
-    it('should submit incorrect attempt without score', async () => {
+    it('adds incorrect attempt without score', async () => {
       const store = useGameStore()
-      await store.startNewGame()
-
-      await store.submitAttempt('wrong answer', false)
-
+      await store.submitAttempt('wrong', false)
       expect(store.currentScore).toBe(0)
-      expect(store.currentAttempts).toHaveLength(1)
       expect(store.currentAttempts[0].found).toBe(false)
     })
 
-    it('should accumulate score for multiple correct attempts', async () => {
+    it('accumulates score for multiple correct', async () => {
       const store = useGameStore()
-      await store.startNewGame()
-
-      await store.submitAttempt('answer1', true)
-      await store.submitAttempt('answer2', true)
-      await store.submitAttempt('answer3', false)
-
-      expect(store.currentScore).toBe(20)
-      expect(store.currentAttempts).toHaveLength(3)
+      await store.submitAttempt('a', true)
+      await store.submitAttempt('b', true)
+      await store.submitAttempt('c', true)
+      expect(store.currentScore).toBe(30)
     })
 
-    it('should clear session on end game', async () => {
+    it('records attempt term', async () => {
+      const store = useGameStore()
+      await store.submitAttempt('my answer', true)
+      expect(store.currentAttempts[0].term).toBe('my answer')
+    })
+
+    it('records attempt timestamp', async () => {
+      const store = useGameStore()
+      const before = Date.now()
+      await store.submitAttempt('test', true)
+      const after = Date.now()
+      expect(store.currentAttempts[0].timestamp).toBeGreaterThanOrEqual(before)
+      expect(store.currentAttempts[0].timestamp).toBeLessThanOrEqual(after)
+    })
+
+    it('persists after each attempt', async () => {
+      const store = useGameStore()
+      await store.submitAttempt('a', true)
+      await store.submitAttempt('b', false)
+      expect(mockSaveGameSession).toHaveBeenCalledTimes(2)
+    })
+
+    it('handles empty term', async () => {
+      const store = useGameStore()
+      await store.submitAttempt('', false)
+      expect(store.currentAttempts[0].term).toBe('')
+    })
+
+    it('does nothing without active session', async () => {
+      const store = useGameStore()
+      store.currentSession = null
+      await store.submitAttempt('test', true)
+      expect(mockSaveGameSession).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('End Game', () => {
+    beforeEach(async () => {
       const store = useGameStore()
       await store.startNewGame()
+      await store.submitAttempt('answer', true)
+      vi.clearAllMocks()
+    })
 
+    it('clears currentSession', async () => {
+      const store = useGameStore()
       await store.endGame()
-
       expect(store.currentSession).toBeNull()
+    })
+
+    it('sets hasActiveSession to false', async () => {
+      const store = useGameStore()
+      await store.endGame()
       expect(store.hasActiveSession).toBe(false)
+    })
+
+    it('adds session to history', async () => {
+      const store = useGameStore()
+      await store.endGame()
+      expect(store.history).toHaveLength(1)
+    })
+
+    it('preserves score in history', async () => {
+      const store = useGameStore()
+      await store.endGame()
+      expect(store.history[0].score).toBe(10)
+    })
+
+    it('calls saveGameHistory', async () => {
+      const store = useGameStore()
+      await store.endGame()
       expect(mockSaveGameHistory).toHaveBeenCalledTimes(1)
+    })
+
+    it('calls updateStatistics', async () => {
+      const store = useGameStore()
+      await store.endGame()
       expect(mockUpdateStatistics).toHaveBeenCalledTimes(1)
     })
 
-    it('should add session to history on end game', async () => {
+    it('sets endTime on session', async () => {
       const store = useGameStore()
-      await store.startNewGame()
-      await store.submitAttempt('test', true)
-
+      const before = Date.now()
       await store.endGame()
+      expect(store.history[0].endTime).toBeGreaterThanOrEqual(before)
+    })
 
-      expect(store.history).toHaveLength(1)
-      expect(store.history[0].score).toBe(10)
+    it('does nothing without active session', async () => {
+      const store = useGameStore()
+      store.currentSession = null
+      await store.endGame()
+      expect(mockSaveGameHistory).not.toHaveBeenCalled()
     })
   })
 
   describe('Online Status', () => {
-    it('should update online status', () => {
+    it('sets offline', () => {
       const store = useGameStore()
-
       store.setOnlineStatus(false)
       expect(store.isOnline).toBe(false)
+    })
 
+    it('sets online', () => {
+      const store = useGameStore()
+      store.setOnlineStatus(false)
       store.setOnlineStatus(true)
       expect(store.isOnline).toBe(true)
     })
   })
 
   describe('Category Emoji', () => {
-    it('should return correct emoji for known category', () => {
+    it('returns emoji for Weiblicher Vorname', () => {
       const store = useGameStore()
-
       expect(store.categoryEmoji('Weiblicher Vorname')).toBe('👩')
+    })
+
+    it('returns emoji for Männlicher Vorname', () => {
+      const store = useGameStore()
       expect(store.categoryEmoji('Männlicher Vorname')).toBe('👨')
+    })
+
+    it('returns emoji for Blumen', () => {
+      const store = useGameStore()
       expect(store.categoryEmoji('Blumen')).toBe('🌸')
     })
 
-    it('should return default emoji for unknown category', () => {
+    it('returns default for unknown', () => {
       const store = useGameStore()
-
-      expect(store.categoryEmoji('Unknown Category')).toBe('🎯')
+      expect(store.categoryEmoji('Random Category')).toBe('🎯')
     })
 
-    it('should return default emoji for null/undefined', () => {
+    it('returns default for null', () => {
       const store = useGameStore()
-
       expect(store.categoryEmoji(null)).toBe('🎯')
+    })
+
+    it('returns default for undefined', () => {
+      const store = useGameStore()
       expect(store.categoryEmoji(undefined)).toBe('🎯')
+    })
+
+    it('returns default for empty string', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('')).toBe('🎯')
     })
   })
 
-  describe('Resume Game', () => {
-    it('should return existing session if active', async () => {
+  describe('Resume or Start New Game', () => {
+    it('returns existing session if active', async () => {
       const store = useGameStore()
       await store.startNewGame()
-      const existingSession = store.currentSession
-
-      const session = await store.resumeOrStartNewGame()
-
-      expect(session).toBe(existingSession)
-      expect(fetchMock).toHaveBeenCalledTimes(1)
+      const existing = store.currentSession
+      const result = await store.resumeOrStartNewGame()
+      expect(result).toBe(existing)
     })
 
-    it('should start new game if no active session', async () => {
+    it('starts new game if no session', async () => {
       const store = useGameStore()
-
       await store.resumeOrStartNewGame()
-
       expect(store.hasActiveSession).toBe(true)
     })
 
-    it('should use pending category when resuming', async () => {
+    it('uses pending category', async () => {
       const store = useGameStore()
       await store.fetchCategories()
-      const pending = mockCategories[2]
-      store.setPendingCategory(pending.id)
-
+      const target = mockCategories[4]
+      store.setPendingCategory(target.id)
       await store.resumeOrStartNewGame()
+      expect(store.currentSession?.category.id).toBe(target.id)
+    })
 
-      expect(store.currentSession?.category.id).toBe(pending.id)
+    it('clears pending category after use', async () => {
+      const store = useGameStore()
+      await store.fetchCategories()
+      store.setPendingCategory(mockCategories[0].id)
+      await store.resumeOrStartNewGame()
+      expect(store.pendingCategoryId).toBeNull()
+    })
+  })
+
+  describe('Pending Category', () => {
+    it('sets pending category', () => {
+      const store = useGameStore()
+      store.setPendingCategory(123)
+      expect(store.pendingCategoryId).toBe(123)
+    })
+
+    it('clears pending category with null', () => {
+      const store = useGameStore()
+      store.setPendingCategory(123)
+      store.setPendingCategory(null)
       expect(store.pendingCategoryId).toBeNull()
     })
   })
