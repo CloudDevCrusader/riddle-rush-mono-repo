@@ -1,11 +1,10 @@
 image: node:20
 
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
+  key: ${CI_COMMIT_REF_SLUG}-deps
   paths:
     - node_modules/
-    - .nuxt/
-    - .output/
+    - .npm/
 
 stages:
   - lint
@@ -17,6 +16,7 @@ stages:
 variables:
   NODE_OPTIONS: "--max_old_space_size=4096"
   CI: "true"
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
 
 .node-setup: &node-setup
   before_script:
@@ -69,10 +69,15 @@ build:
   <<: *node-setup
   script:
     - npm run generate
+    - echo "Build completed at $(date)" > .output/build-info.txt
+    - echo "Commit: $CI_COMMIT_SHA" >> .output/build-info.txt
+    - echo "Branch: $CI_COMMIT_REF_NAME" >> .output/build-info.txt
   artifacts:
+    name: "build-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
     paths:
-      - .output/public
-    expire_in: 1 hour
+      - .output/
+      - .nuxt/
+    expire_in: 7 days
   needs:
     - job: test:unit
       optional: true
@@ -87,9 +92,12 @@ pages:
     - cp -r .output/public public
     - mkdir -p public/test-reports
     - cp -r coverage public/test-reports/ 2>/dev/null || true
+    - cp .output/build-info.txt public/ 2>/dev/null || true
   artifacts:
+    name: "pages-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
     paths:
       - public
+    expire_in: 30 days
   needs:
     - job: build
       artifacts: true
@@ -107,10 +115,16 @@ pages:
 # MAINTENANCE JOBS (Manual/Scheduled Triggers)
 # ============================================
 
+.maintenance-setup: &maintenance-setup
+  before_script:
+    - echo "📦 Installing dependencies..."
+    - npm ci --prefer-offline
+    - echo "✅ Dependencies installed"
+
 # Dev Stats - prints project health metrics
 dev-stats:
   stage: maintenance
-  <<: *node-setup
+  <<: *maintenance-setup
   script:
     - echo "📊 PROJECT HEALTH REPORT"
     - echo "========================"
@@ -142,7 +156,7 @@ dev-stats:
 # Security Audit - detailed vulnerability report
 security-audit:
   stage: maintenance
-  <<: *node-setup
+  <<: *maintenance-setup
   script:
     - echo "🔐 SECURITY AUDIT REPORT"
     - echo "========================"
@@ -225,7 +239,7 @@ audit-fix:
 # Update all dependencies (creates report)
 deps-update-check:
   stage: maintenance
-  <<: *node-setup
+  <<: *maintenance-setup
   script:
     - echo "📦 DEPENDENCY UPDATE CHECK"
     - echo "=========================="
@@ -243,7 +257,7 @@ deps-update-check:
 # License check
 license-check:
   stage: maintenance
-  <<: *node-setup
+  <<: *maintenance-setup
   script:
     - echo "📜 LICENSE CHECK"
     - echo "================"
@@ -253,4 +267,45 @@ license-check:
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"
       when: manual
+  allow_failure: true
+
+# Bundle size analysis (uses build artifact)
+bundle-analysis:
+  stage: maintenance
+  <<: *maintenance-setup
+  needs:
+    - job: build
+      artifacts: true
+      optional: true
+  script:
+    - echo "📊 BUNDLE SIZE ANALYSIS"
+    - echo "======================="
+    - |
+      if [ -d ".output" ]; then
+        echo "📁 Build Output:"
+        du -sh .output/ 2>/dev/null || echo "  No .output directory"
+        echo ""
+        echo "📁 Public Assets:"
+        du -sh .output/public/* 2>/dev/null | sort -h | tail -10 || echo "  No public assets"
+        echo ""
+        echo "📁 Server Chunks:"
+        du -sh .output/server/chunks/* 2>/dev/null | sort -h | tail -10 || echo "  No server chunks"
+        echo ""
+        echo "📄 Build Info:"
+        cat .output/build-info.txt 2>/dev/null || echo "  No build info available"
+      else
+        echo "⚠️  No build artifacts found. Run build job first."
+      fi
+    - echo ""
+    - echo "📦 Node Modules Size:"
+    - du -sh node_modules 2>/dev/null || echo "  Not available"
+  artifacts:
+    paths:
+      - bundle-report.txt
+    expire_in: 7 days
+    when: always
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "schedule"
   allow_failure: true
