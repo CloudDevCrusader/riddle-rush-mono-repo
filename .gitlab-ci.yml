@@ -1,0 +1,103 @@
+image: node:20
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - .nuxt/
+    - .output/
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+variables:
+  NODE_OPTIONS: "--max_old_space_size=4096"
+  CI: "true"
+
+.node-setup: &node-setup
+  before_script:
+    - npm ci --prefer-offline --no-audit
+
+lint:
+  stage: lint
+  <<: *node-setup
+  script:
+    - npm run lint
+    - npm run format:check
+  allow_failure: true
+  only:
+    - main
+    - master
+    - merge_requests
+
+typecheck:
+  stage: lint
+  <<: *node-setup
+  script:
+    - npm run typecheck
+  only:
+    - main
+    - master
+    - merge_requests
+
+test:unit:
+  stage: test
+  <<: *node-setup
+  script:
+    - npm run test:unit:coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    when: always
+    paths:
+      - coverage/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    expire_in: 30 days
+  only:
+    - main
+    - master
+    - merge_requests
+
+build:
+  stage: build
+  <<: *node-setup
+  script:
+    - npm run generate
+  artifacts:
+    paths:
+      - .output/public
+    expire_in: 1 hour
+  needs:
+    - job: test:unit
+      optional: true
+  only:
+    - main
+    - master
+
+pages:
+  stage: deploy
+  script:
+    - rm -rf public
+    - cp -r .output/public public
+    - mkdir -p public/test-reports
+    - cp -r coverage public/test-reports/ 2>/dev/null || true
+  artifacts:
+    paths:
+      - public
+  needs:
+    - job: build
+      artifacts: true
+    - job: test:unit
+      artifacts: true
+      optional: true
+  only:
+    - main
+    - master
+  environment:
+    name: production
+    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME

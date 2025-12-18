@@ -1,0 +1,2 @@
+#!/bin/sh
+cd guess-game-nuxt-pwa && npx lint-staged

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+cd guess-game-nuxt-pwa || exit 0
+
+echo "Running pre-push checks..."
+
+# Run type check
+echo "Type checking..."
+npm run typecheck || exit 1
+
+# Run unit tests
+echo "Running unit tests..."
+npm run test:unit || exit 1
+
+echo "Pre-push checks passed!"

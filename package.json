@@ -1,0 +1,51 @@
+{
+  "name": "guess-game-nuxt-pwa",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "test:unit:coverage": "vitest run --coverage",
+    "typecheck": "nuxt typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "[ \"$CI\" = 'true' ] && echo 'Skipping husky in CI' || (cd .. && husky guess-game-nuxt-pwa/.husky || true)",
+    "ci:build": "npm run typecheck && npm run generate",
+    "ci:test": "npm run test:unit:coverage"
+  },
+  "dependencies": {
+    "@nuxtjs/i18n": "^10.2.1",
+    "@pinia/nuxt": "^0.11.3",
+    "@vite-pwa/nuxt": "^1.1.0",
+    "idb": "^8.0.3",
+    "nuxt": "^4.2.2"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.0.0",
+    "@nuxt/eslint": "^1.0.0",
+    "@nuxt/test-utils": "^3.21.0",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^3.2.0",
+    "eslint": "^9.0.0",
+    "happy-dom": "^15.11.7",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css,scss}": [
+      "prettier --write"
+    ]
+  }
+}
