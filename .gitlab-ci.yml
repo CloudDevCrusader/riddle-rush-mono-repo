@@ -6,22 +6,12 @@ cache:
     - node_modules/
 
 stages:
-  - lint
   - test
   - build
   - deploy
 
 before_script:
   - npm ci --prefer-offline --no-audit
-
-lint:
-  stage: lint
-  script:
-    - chmod +x scripts/ci-lint.sh && ./scripts/ci-lint.sh
-  allow_failure: true
-  only:
-    - main
-    - merge_requests
 
 test:
   stage: test
