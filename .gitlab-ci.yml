@@ -96,10 +96,9 @@ build:
   <<: *node-setup
   script:
     - npm run generate
-    - echo "Build completed at $(date)" > .output/build-info.txt
-    - echo "Commit: $CI_COMMIT_SHA" >> .output/build-info.txt
-    - echo "Branch: $CI_COMMIT_REF_NAME" >> .output/build-info.txt
-    - echo "Environment: $CI_ENVIRONMENT_NAME" >> .output/build-info.txt
+    - date > .output/build-info.txt
+    - echo "Commit - $CI_COMMIT_SHA" >> .output/build-info.txt
+    - echo "Branch - $CI_COMMIT_REF_NAME" >> .output/build-info.txt
   artifacts:
     name: "build-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
     paths:
@@ -306,8 +305,7 @@ audit-fix:
     - if: $CI_PIPELINE_SOURCE == "web"
       when: manual
     - if: $CI_PIPELINE_SOURCE == "trigger"
-      variables:
-        - $AUDIT_FIX == "true"
+      when: manual
   allow_failure: true
 
 # Update all dependencies (creates report)
@@ -315,13 +313,8 @@ deps-update-check:
   stage: maintenance
   <<: *maintenance-setup
   script:
-    - echo "📦 DEPENDENCY UPDATE CHECK"
-    - echo "=========================="
-    - npm outdated --long || true
-    - echo ""
-    - echo "🔄 Update Commands:"
-    - echo "  Minor updates: npm update"
-    - echo "  Major updates: npx npm-check-updates -u"
+    - echo "DEPENDENCY UPDATE CHECK"
+    - npm outdated || true
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"
       when: manual
