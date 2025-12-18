@@ -18,7 +18,10 @@
     "format:check": "prettier --check .",
     "prepare": "[ \"$CI\" = 'true' ] && echo 'Skipping husky in CI' || (cd .. && husky guess-game-nuxt-pwa/.husky || true)",
     "ci:build": "npm run typecheck && npm run generate",
-    "ci:test": "npm run test:unit:coverage"
+    "ci:test": "npm run test:unit:coverage",
+    "deploy:dev": "./scripts/deploy-dev.sh",
+    "deploy:staging": "./scripts/deploy-staging.sh",
+    "deploy:prod": "./scripts/deploy-prod.sh"
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.2.1",
