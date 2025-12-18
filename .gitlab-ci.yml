@@ -46,6 +46,9 @@ build:
     paths:
       - .output/
     expire_in: 7 days
+  needs:
+    - job: test
+      artifacts: false
   only:
     - main
 
