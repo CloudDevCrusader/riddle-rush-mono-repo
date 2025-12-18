@@ -141,6 +141,8 @@
 <script setup lang="ts">
 import type { GameStatistics } from '~/types/game'
 import { useGameStore } from '~/stores/game'
+import { useSettingsStore } from '~/stores/settings'
+import { useIndexedDB } from '~/composables/useIndexedDB'
 
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()

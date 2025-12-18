@@ -12,6 +12,7 @@ stages:
   - test
   - build
   - deploy
+  - maintenance
 
 variables:
   NODE_OPTIONS: "--max_old_space_size=4096"
@@ -101,3 +102,155 @@ pages:
   environment:
     name: production
     url: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME
+
+# ============================================
+# MAINTENANCE JOBS (Manual/Scheduled Triggers)
+# ============================================
+
+# Dev Stats - prints project health metrics
+dev-stats:
+  stage: maintenance
+  <<: *node-setup
+  script:
+    - echo "📊 PROJECT HEALTH REPORT"
+    - echo "========================"
+    - echo ""
+    - echo "📦 Package Info:"
+    - node -e "const p=require('./package.json'); console.log('  Name:', p.name); console.log('  Dependencies:', Object.keys(p.dependencies||{}).length); console.log('  DevDependencies:', Object.keys(p.devDependencies||{}).length)"
+    - echo ""
+    - echo "🔍 Security Audit:"
+    - npm audit --json 2>/dev/null | node -e "const d=require('fs').readFileSync(0,'utf8'); try{const a=JSON.parse(d); console.log('  Vulnerabilities:', JSON.stringify(a.metadata?.vulnerabilities||'N/A'))}catch{console.log('  No issues found')}" || true
+    - echo ""
+    - echo "📏 Code Stats:"
+    - echo "  TypeScript files:" $(find . -name "*.ts" -not -path "./node_modules/*" -not -path "./.nuxt/*" | wc -l)
+    - echo "  Vue components:" $(find . -name "*.vue" -not -path "./node_modules/*" -not -path "./.nuxt/*" | wc -l)
+    - echo "  Test files:" $(find ./tests -name "*.spec.ts" -o -name "*.test.ts" 2>/dev/null | wc -l)
+    - echo "  Total lines:" $(find . \( -name "*.ts" -o -name "*.vue" \) -not -path "./node_modules/*" -not -path "./.nuxt/*" -exec cat {} \; | wc -l)
+    - echo ""
+    - echo "📁 Bundle Analysis (estimate):"
+    - du -sh node_modules 2>/dev/null || echo "  node_modules not cached"
+    - echo ""
+    - echo "🔧 Outdated Packages:"
+    - npm outdated --json 2>/dev/null | node -e "const d=require('fs').readFileSync(0,'utf8'); try{const o=JSON.parse(d); const k=Object.keys(o); console.log('  Outdated:', k.length); k.slice(0,5).forEach(p=>console.log('   -',p,o[p].current,'->',o[p].latest))}catch{console.log('  All up to date!')}" || echo "  All up to date!"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+  allow_failure: true
+
+# Security Audit - detailed vulnerability report
+security-audit:
+  stage: maintenance
+  <<: *node-setup
+  script:
+    - echo "🔐 SECURITY AUDIT REPORT"
+    - echo "========================"
+    - npm audit || true
+    - echo ""
+    - echo "📋 Audit Summary:"
+    - npm audit --json 2>/dev/null | node -e "
+        const d=require('fs').readFileSync(0,'utf8');
+        try {
+          const a=JSON.parse(d);
+          const v=a.metadata?.vulnerabilities||{};
+          console.log('  Critical:', v.critical||0);
+          console.log('  High:', v.high||0);
+          console.log('  Moderate:', v.moderate||0);
+          console.log('  Low:', v.low||0);
+          console.log('  Info:', v.info||0);
+          console.log('  Total:', v.total||0);
+        } catch { console.log('  No vulnerabilities found'); }
+      " || true
+  artifacts:
+    paths:
+      - npm-audit.json
+    expire_in: 7 days
+    when: always
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+  allow_failure: true
+
+# Auto-fix npm audit vulnerabilities (creates MR)
+audit-fix:
+  stage: maintenance
+  image: node:20
+  before_script:
+    - apt-get update && apt-get install -y git
+    - git config --global user.email "ci-bot@gitlab.com"
+    - git config --global user.name "CI Bot"
+    - npm ci --prefer-offline
+  script:
+    - echo "🔧 ATTEMPTING AUTO-FIX"
+    - echo "======================"
+    - |
+      # Check if there are fixable vulnerabilities
+      AUDIT_RESULT=$(npm audit --json 2>/dev/null || true)
+      FIXABLE=$(echo "$AUDIT_RESULT" | node -e "const d=require('fs').readFileSync(0,'utf8'); try{const a=JSON.parse(d); console.log(a.metadata?.vulnerabilities?.total||0)}catch{console.log(0)}")
+      
+      if [ "$FIXABLE" -gt 0 ]; then
+        echo "Found $FIXABLE vulnerabilities, attempting fix..."
+        npm audit fix --force || true
+        
+        # Check if package.json or package-lock.json changed
+        if git diff --quiet package.json package-lock.json; then
+          echo "No changes made by audit fix"
+        else
+          echo "Changes detected, creating branch..."
+          BRANCH="ci/audit-fix-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH"
+          git add package.json package-lock.json
+          git commit -m "fix(deps): auto-fix npm audit vulnerabilities
+
+          Automated fix by GitLab CI maintenance pipeline.
+          Run: npm audit fix --force"
+          
+          echo "Branch created: $BRANCH"
+          echo "To push and create MR, configure CI_PUSH_TOKEN variable"
+        fi
+      else
+        echo "No vulnerabilities to fix!"
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      variables:
+        - $AUDIT_FIX == "true"
+  allow_failure: true
+
+# Update all dependencies (creates report)
+deps-update-check:
+  stage: maintenance
+  <<: *node-setup
+  script:
+    - echo "📦 DEPENDENCY UPDATE CHECK"
+    - echo "=========================="
+    - npm outdated --long || true
+    - echo ""
+    - echo "🔄 Update Commands:"
+    - echo "  Minor updates: npm update"
+    - echo "  Major updates: npx npm-check-updates -u"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  allow_failure: true
+
+# License check
+license-check:
+  stage: maintenance
+  <<: *node-setup
+  script:
+    - echo "📜 LICENSE CHECK"
+    - echo "================"
+    - npx license-checker --summary || echo "Install license-checker for detailed report"
+    - echo ""
+    - echo "⚠️  Review licenses for compliance with your project requirements"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+  allow_failure: true
