@@ -1,0 +1,60 @@
+{
+  "app": {
+    "title": "Guess Game",
+    "subtitle": "Erraten Sie Begriffe aus Wikipedia-Kategorien",
+    "description": "Ein unterhaltsames Wortratespiel mit Wikipedia-Kategorien"
+  },
+  "home": {
+    "offline_badge": "Offline verfügbar",
+    "quick_start": "Schnellstart",
+    "category_title": "Kategorien wählen",
+    "load_more": "Mehr laden",
+    "about_link": "Über"
+  },
+  "features": {
+    "offline": {
+      "title": "Offline spielbar",
+      "description": "Spielen Sie jederzeit, auch ohne Internetverbindung"
+    },
+    "multiplayer": {
+      "title": "Mehrspieler",
+      "description": "Spielen Sie mit Freunden und Familie"
+    },
+    "installable": {
+      "title": "Installierbar",
+      "description": "Installieren Sie die App auf Ihrem Gerät"
+    }
+  },
+  "common": {
+    "share": "Teilen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen"
+  },
+  "share": {
+    "game_title": "Guess Game - Wortratespiel",
+    "game_text": "Probieren Sie dieses unterhaltsame Wortratespiel!"
+  },
+  "feedback": {
+    "button": "Feedback geben",
+    "title": "Ihr Feedback",
+    "placeholder": "Teilen Sie uns Ihre Meinung mit...",
+    "submit": "Absenden",
+    "thanks": "Vielen Dank für Ihr Feedback!"
+  },
+  "game": {
+    "score": "Punktzahl",
+    "attempts": "Versuche",
+    "submit": "Absenden",
+    "end_game": "Spiel beenden",
+    "new_game": "Neues Spiel",
+    "category": "Kategorie",
+    "letter": "Buchstabe",
+    "enter_term": "Begriff eingeben",
+    "found": "Gefunden",
+    "not_found": "Nicht gefunden",
+    "game_over": "Spiel beendet",
+    "your_score": "Ihre Punktzahl"
+  }
+}

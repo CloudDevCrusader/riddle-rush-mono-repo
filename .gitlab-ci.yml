@@ -11,7 +11,7 @@ stages:
   - deploy
 
 before_script:
-  - npm ci --prefer-offline --no-audit
+  - npm ci --prefer-offline --no-audit  
 
 # Unit tests - gates build
 test:

@@ -1,11 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-
   modules: [
     '@nuxt/test-utils/module',
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
-    '@nuxtjs/i18n',
+    // '@nuxtjs/i18n',
   ],
   ssr: false,
   devtools: { enabled: true },
@@ -41,13 +40,13 @@ export default defineNuxtConfig({
 
   typescript: { strict: true },
 
-  i18n: {
-    locales: [{ code: 'de', language: 'de-DE', file: 'de.json', name: 'Deutsch' }],
-    defaultLocale: 'de',
-    langDir: 'locales',
-    strategy: 'no_prefix',
-    detectBrowserLanguage: false,
-  },
+  // i18n: {
+  //   locales: [{ code: 'de', language: 'de-DE', file: 'de.json', name: 'Deutsch' }],
+  //   defaultLocale: 'de',
+  //   langDir: 'locales',
+  //   strategy: 'no_prefix',
+  //   detectBrowserLanguage: false,
+  // },
 
   pwa: {
     registerType: 'autoUpdate',
