@@ -13,14 +13,18 @@ stages:
 before_script:
   - npm ci --prefer-offline --no-audit
 
+# Unit tests - gates build
 test:
   stage: test
   script:
     - chmod +x scripts/ci-test.sh && ./scripts/ci-test.sh
   only:
     - main
+    - staging
+    - development
     - merge_requests
 
+# E2E tests - manual, async
 test:e2e:
   stage: test
   image: mcr.microsoft.com/playwright:v1.52.0-noble
@@ -37,7 +41,9 @@ test:e2e:
   allow_failure: true
   only:
     - main
+    - staging
 
+# Build for all deployment branches
 build:
   stage: build
   script:
@@ -51,15 +57,60 @@ build:
       artifacts: false
   only:
     - main
+    - staging
+    - development
 
+# Production - main branch
 pages:
   stage: deploy
   script:
-    - chmod +x scripts/ci-deploy.sh && ./scripts/ci-deploy.sh
+    - rm -rf public
+    - cp -r .output/public public
   artifacts:
     paths:
       - public
+  environment:
+    name: production
+    url: https://djdiox.gitlab.io/guess-game-nuxt-pwa
   needs:
     - build
   only:
     - main
+
+# Staging deployment
+deploy:staging:
+  stage: deploy
+  script:
+    - rm -rf public
+    - mkdir -p public/staging
+    - cp -r .output/public/* public/staging/
+    - echo "Staging deployment"
+  artifacts:
+    paths:
+      - public
+  environment:
+    name: staging
+    url: https://djdiox.gitlab.io/guess-game-nuxt-pwa/staging
+  needs:
+    - build
+  only:
+    - staging
+
+# Development deployment
+deploy:dev:
+  stage: deploy
+  script:
+    - rm -rf public
+    - mkdir -p public/dev
+    - cp -r .output/public/* public/dev/
+    - echo "Dev deployment"
+  artifacts:
+    paths:
+      - public
+  environment:
+    name: development
+    url: https://djdiox.gitlab.io/guess-game-nuxt-pwa/dev
+  needs:
+    - build
+  only:
+    - development

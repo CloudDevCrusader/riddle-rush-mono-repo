@@ -28,3 +28,6 @@ test-results
 .env
 .env.*
 !.env.example
+
+# YoYo AI version control directory
+.yoyo/
