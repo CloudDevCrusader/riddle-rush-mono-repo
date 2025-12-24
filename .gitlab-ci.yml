@@ -12,6 +12,7 @@ stages:
   - verify
 
 before_script:
+  - npm install -g npm@latest
   - npm ci --prefer-offline --no-audit  
 
 # Unit tests - gates build
