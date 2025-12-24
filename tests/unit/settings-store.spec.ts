@@ -8,7 +8,7 @@ const localStorageMock = (() => {
   return {
     getItem: vi.fn((key: string) => store[key] || null),
     setItem: vi.fn((key: string, value: string) => { store[key] = value }),
-    removeItem: vi.fn((key: string) => { delete store[key] }),
+    removeItem: vi.fn((key: string) => { Reflect.deleteProperty(store, key) }),
     clear: vi.fn(() => { store = {} }),
   }
 })()
@@ -76,10 +76,10 @@ describe('Settings Store', () => {
     it('shouldShowLeaderboard requires both flags', () => {
       const store = useSettingsStore()
       expect(store.shouldShowLeaderboard).toBe(true)
-      
+
       store.leaderboardEnabled = false
       expect(store.shouldShowLeaderboard).toBe(false)
-      
+
       store.leaderboardEnabled = true
       store.showLeaderboardAfterRound = false
       expect(store.shouldShowLeaderboard).toBe(false)
@@ -92,10 +92,10 @@ describe('Settings Store', () => {
         debugMode: true,
         soundEnabled: false,
       }))
-      
+
       const store = useSettingsStore()
       store.loadSettings()
-      
+
       expect(store.debugMode).toBe(true)
       expect(store.soundEnabled).toBe(false)
     })
@@ -104,17 +104,17 @@ describe('Settings Store', () => {
       localStorageMock.getItem.mockReturnValueOnce(JSON.stringify({
         debugMode: true,
       }))
-      
+
       const store = useSettingsStore()
       store.loadSettings()
-      
+
       expect(store.debugMode).toBe(true)
       expect(store.maxPlayersPerGame).toBe(4)
     })
 
     it('handles invalid JSON gracefully', () => {
       localStorageMock.getItem.mockReturnValueOnce('invalid json')
-      
+
       const store = useSettingsStore()
       expect(() => store.loadSettings()).not.toThrow()
       expect(store.debugMode).toBe(false)
@@ -122,7 +122,7 @@ describe('Settings Store', () => {
 
     it('handles missing localStorage gracefully', () => {
       localStorageMock.getItem.mockReturnValueOnce(null)
-      
+
       const store = useSettingsStore()
       expect(() => store.loadSettings()).not.toThrow()
     })
@@ -133,10 +133,10 @@ describe('Settings Store', () => {
       const store = useSettingsStore()
       store.debugMode = true
       store.saveSettings()
-      
+
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'game-settings',
-        expect.stringContaining('"debugMode":true')
+        expect.stringContaining('"debugMode":true'),
       )
     })
   })
@@ -194,9 +194,9 @@ describe('Settings Store', () => {
       store.debugMode = true
       store.soundEnabled = false
       store.maxPlayersPerGame = 10
-      
+
       store.resetToDefaults()
-      
+
       expect(store.debugMode).toBe(false)
       expect(store.soundEnabled).toBe(true)
       expect(store.maxPlayersPerGame).toBe(4)
@@ -206,9 +206,9 @@ describe('Settings Store', () => {
       const store = useSettingsStore()
       store.debugMode = true
       vi.clearAllMocks()
-      
+
       store.resetToDefaults()
-      
+
       expect(localStorageMock.setItem).toHaveBeenCalled()
     })
   })

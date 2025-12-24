@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import { useGameStore } from '~/stores/game'
 import { useSettingsStore } from '~/stores/settings'
+import type { BeforeInstallPromptEvent } from '~/types/game'
 
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
@@ -30,7 +31,7 @@ onMounted(() => {
   // PWA install prompt
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault()
-    gameStore.setInstallPrompt(e)
+    gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
   })
 
   // Debug mode shortcut: Ctrl+Shift+D

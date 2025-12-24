@@ -9,10 +9,11 @@ export const useAnalytics = () => {
    * @param eventName - Name of the event (e.g., 'game_start', 'answer_correct')
    * @param params - Additional parameters for the event
    */
-  const trackEvent = (eventName: string, params?: Record<string, any>) => {
+  const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
     if (import.meta.client) {
       // Log to console in development
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
         console.log('[Analytics]', eventName, params)
       }
 
@@ -30,6 +31,7 @@ export const useAnalytics = () => {
   const trackPageView = (pagePath: string, pageTitle?: string) => {
     if (import.meta.client) {
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
         console.log('[Analytics] Page View:', pagePath, pageTitle)
       }
 

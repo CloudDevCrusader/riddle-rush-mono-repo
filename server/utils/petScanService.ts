@@ -34,6 +34,7 @@ export async function searchPetScan(category: string): Promise<string[]> {
     })
 
     const url = `https://petscan.wmflabs.org/?${params.toString()}`
+    // eslint-disable-next-line no-console
     console.log('Requesting PETScan', { category })
 
     const res = await fetch(url)

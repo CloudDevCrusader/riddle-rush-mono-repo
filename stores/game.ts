@@ -1,6 +1,6 @@
 import { useIndexedDB } from '../composables/useIndexedDB'
 import { useStatistics } from '../composables/useStatistics'
-import type { GameSession, GameAttempt, GameState, Category } from '../types/game'
+import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent } from '../types/game'
 
 const CATEGORY_EMOJI_MAP: Record<string, string> = {
   'Weiblicher Vorname': '👩',
@@ -206,15 +206,15 @@ export const useGameStore = defineStore('game', {
       this.isOnline = status
     },
 
-    setInstallPrompt(event: any) {
+    setInstallPrompt(event: BeforeInstallPromptEvent | null) {
       this.installPromptEvent = event
     },
 
     async showInstallPrompt() {
       if (!this.installPromptEvent) return false
 
-      const result = await this.installPromptEvent.prompt()
-      const { outcome } = await result.userChoice
+      await this.installPromptEvent.prompt()
+      const { outcome } = await this.installPromptEvent.userChoice
 
       if (outcome === 'accepted') {
         this.installPromptEvent = null

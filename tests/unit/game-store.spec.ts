@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useGameStore } from '../../stores/game'
-import { createCategoryList, createCategory, createGameSession } from '../utils/factories'
+import { createCategoryList } from '../utils/factories'
 import type { Category } from '../../types/game'
 
 // Mock setup
@@ -138,7 +138,7 @@ describe('Game Store', () => {
     it('finds category by id', async () => {
       const store = useGameStore()
       await store.fetchCategories()
-      const target = mockCategories[3]
+      const target = mockCategories[3]!
       expect(store.getCategoryById(target.id)).toEqual(target)
     })
 
@@ -215,7 +215,7 @@ describe('Game Store', () => {
 
     it('uses specific category when provided', async () => {
       const store = useGameStore()
-      const target = mockCategories[2]
+      const target = mockCategories[2]!
       await store.startNewGame({ categoryId: target.id })
       expect(store.currentSession?.category.id).toBe(target.id)
     })
@@ -239,14 +239,14 @@ describe('Game Store', () => {
       await store.submitAttempt('correct answer', true)
       expect(store.currentScore).toBe(10)
       expect(store.currentAttempts).toHaveLength(1)
-      expect(store.currentAttempts[0].found).toBe(true)
+      expect(store.currentAttempts[0]!.found).toBe(true)
     })
 
     it('adds incorrect attempt without score', async () => {
       const store = useGameStore()
       await store.submitAttempt('wrong', false)
       expect(store.currentScore).toBe(0)
-      expect(store.currentAttempts[0].found).toBe(false)
+      expect(store.currentAttempts[0]!.found).toBe(false)
     })
 
     it('accumulates score for multiple correct', async () => {
@@ -260,7 +260,7 @@ describe('Game Store', () => {
     it('records attempt term', async () => {
       const store = useGameStore()
       await store.submitAttempt('my answer', true)
-      expect(store.currentAttempts[0].term).toBe('my answer')
+      expect(store.currentAttempts[0]!.term).toBe('my answer')
     })
 
     it('records attempt timestamp', async () => {
@@ -268,8 +268,8 @@ describe('Game Store', () => {
       const before = Date.now()
       await store.submitAttempt('test', true)
       const after = Date.now()
-      expect(store.currentAttempts[0].timestamp).toBeGreaterThanOrEqual(before)
-      expect(store.currentAttempts[0].timestamp).toBeLessThanOrEqual(after)
+      expect(store.currentAttempts[0]!.timestamp).toBeGreaterThanOrEqual(before)
+      expect(store.currentAttempts[0]!.timestamp).toBeLessThanOrEqual(after)
     })
 
     it('persists after each attempt', async () => {
@@ -282,7 +282,7 @@ describe('Game Store', () => {
     it('handles empty term', async () => {
       const store = useGameStore()
       await store.submitAttempt('', false)
-      expect(store.currentAttempts[0].term).toBe('')
+      expect(store.currentAttempts[0]!.term).toBe('')
     })
 
     it('does nothing without active session', async () => {
@@ -322,7 +322,7 @@ describe('Game Store', () => {
     it('preserves score in history', async () => {
       const store = useGameStore()
       await store.endGame()
-      expect(store.history[0].score).toBe(10)
+      expect(store.history[0]!.score).toBe(10)
     })
 
     it('calls saveGameHistory', async () => {
@@ -341,7 +341,7 @@ describe('Game Store', () => {
       const store = useGameStore()
       const before = Date.now()
       await store.endGame()
-      expect(store.history[0].endTime).toBeGreaterThanOrEqual(before)
+      expect(store.history[0]!.endTime).toBeGreaterThanOrEqual(before)
     })
 
     it('does nothing without active session', async () => {
@@ -422,7 +422,7 @@ describe('Game Store', () => {
     it('uses pending category', async () => {
       const store = useGameStore()
       await store.fetchCategories()
-      const target = mockCategories[4]
+      const target = mockCategories[4]!
       store.setPendingCategory(target.id)
       await store.resumeOrStartNewGame()
       expect(store.currentSession?.category.id).toBe(target.id)
@@ -431,7 +431,7 @@ describe('Game Store', () => {
     it('clears pending category after use', async () => {
       const store = useGameStore()
       await store.fetchCategories()
-      store.setPendingCategory(mockCategories[0].id)
+      store.setPendingCategory(mockCategories[0]!.id)
       await store.resumeOrStartNewGame()
       expect(store.pendingCategoryId).toBeNull()
     })

@@ -1,3 +1,8 @@
+export interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
 export interface Category {
   id: number
   name: string
@@ -39,7 +44,7 @@ export interface CheckAnswerResponse {
 export interface GameState {
   currentSession: GameSession | null
   isOnline: boolean
-  installPromptEvent: any
+  installPromptEvent: BeforeInstallPromptEvent | null
   history: GameSession[]
   categories: Category[]
   categoriesLoaded: boolean

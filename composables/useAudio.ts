@@ -5,7 +5,8 @@ export function useAudio() {
 
   const initAudioContext = () => {
     if (!audioContext && typeof window !== 'undefined') {
-      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      audioContext = new AudioContextClass()
     }
     return audioContext
   }
@@ -67,15 +68,15 @@ export function useAudio() {
 
     const _now = ctx.currentTime
 
-    oscillator.frequency.setValueAtTime(400, now)
-    oscillator.frequency.exponentialRampToValueAtTime(200, now + 0.2)
+    oscillator.frequency.setValueAtTime(400, _now)
+    oscillator.frequency.exponentialRampToValueAtTime(200, _now + 0.2)
     oscillator.type = 'sawtooth'
 
-    gainNode.gain.setValueAtTime(0.2, now)
-    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2)
+    gainNode.gain.setValueAtTime(0.2, _now)
+    gainNode.gain.exponentialRampToValueAtTime(0.01, _now + 0.2)
 
-    oscillator.start(now)
-    oscillator.stop(now + 0.2)
+    oscillator.start(_now)
+    oscillator.stop(_now + 0.2)
   }
 
   const playClick = () => {

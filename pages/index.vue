@@ -177,7 +177,7 @@ const shareGame = async () => {
         url: window.location.href,
       })
     } catch (error) {
-      console.log('Error sharing:', error)
+      console.error('Error sharing:', error)
     }
   }
 }
