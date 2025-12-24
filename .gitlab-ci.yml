@@ -1,7 +1,7 @@
 image: node:20
 
 cache:
-  key: deps
+  key: deps-v2
   paths:
     - node_modules/
 
