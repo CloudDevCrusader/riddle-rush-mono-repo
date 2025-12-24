@@ -1,12 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/i18n',
-  '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@nuxt/scripts', '@vueuse/nuxt', '@nuxthub/core'],
+  '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@nuxt/scripts', '@vueuse/nuxt'],
   ssr: false,
   devtools: { enabled: true },
 
   app: {
-    baseURL: process.env.BASE_URL || '/',
+    baseURL: process.env.BASE_URL || process.env.CI ? '/guess-game-nuxt-pwa/' : '/',
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
@@ -18,7 +18,7 @@ export default defineNuxtConfig({
     apiSecret: process.env.API_SECRET || '',
     // Public (exposed to client)
     public: {
-      baseUrl: process.env.BASE_URL || '/',
+      baseUrl: process.env.BASE_URL || process.env.CI ? '/guess-game-nuxt-pwa/' : '/',
       googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID || '',
       appVersion: process.env.APP_VERSION || '1.0.0',
       environment: process.env.NODE_ENV || 'development',

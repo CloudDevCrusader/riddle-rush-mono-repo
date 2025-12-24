@@ -31,3 +31,5 @@ test-results
 
 # YoYo AI version control directory
 .yoyo/
+
+.playwright-mcp/
