@@ -9,6 +9,7 @@ stages:
   - test
   - build
   - deploy
+  - verify
 
 before_script:
   - npm ci --prefer-offline --no-audit  
@@ -24,8 +25,8 @@ test:
     - development
     - merge_requests
 
-# E2E tests - manual, async
-test:e2e:
+# E2E tests - local build (manual)
+test:e2e:local:
   stage: test
   image: mcr.microsoft.com/playwright:v1.52.0-noble
   script:
@@ -42,6 +43,7 @@ test:e2e:
   only:
     - main
     - staging
+    - development
 
 # Build for all deployment branches
 build:
@@ -114,3 +116,73 @@ deploy:dev:
     - build
   only:
     - development
+
+# ====================================
+# Verify Stage - E2E Tests on Deployed Sites
+# ====================================
+
+# E2E tests - Production (automatic after deployment)
+verify:e2e:production:
+  stage: verify
+  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  script:
+    - npm ci --prefer-offline --no-audit
+    - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa
+    - echo "Waiting 30 seconds for deployment to propagate..."
+    - sleep 30
+    - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 7 days
+  needs:
+    - pages
+  only:
+    - main
+  allow_failure: true
+
+# E2E tests - Staging (automatic after deployment)
+verify:e2e:staging:
+  stage: verify
+  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  script:
+    - npm ci --prefer-offline --no-audit
+    - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/staging
+    - echo "Waiting 30 seconds for deployment to propagate..."
+    - sleep 30
+    - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 7 days
+  needs:
+    - deploy:staging
+  only:
+    - staging
+  allow_failure: true
+
+# E2E tests - Development (automatic after deployment)
+verify:e2e:dev:
+  stage: verify
+  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  script:
+    - npm ci --prefer-offline --no-audit
+    - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/dev
+    - echo "Waiting 30 seconds for deployment to propagate..."
+    - sleep 30
+    - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 7 days
+  needs:
+    - deploy:dev
+  only:
+    - development
+  allow_failure: true

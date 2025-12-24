@@ -1,4 +1,13 @@
 #!/bin/bash
+# CI script for running E2E tests
 set -e
-npm run generate
-npx playwright test || true
+
+# If BASE_URL is set (testing deployed site), use it
+if [ -n "$BASE_URL" ]; then
+  echo "Running E2E tests against deployed site: $BASE_URL"
+  npx playwright test
+else
+  echo "Running E2E tests against local build"
+  npm run generate
+  npx playwright test || true
+fi

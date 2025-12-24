@@ -1,0 +1,52 @@
+# Example GitHub Actions workflow for testing deployed GitLab Pages
+# This is for reference - the actual CI/CD is in .gitlab-ci.yml
+
+name: Test Deployed Site
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+          - dev
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Run E2E tests
+        run: |
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa
+          elif [ "${{ github.event.inputs.environment }}" == "staging" ]; then
+            export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/staging
+          else
+            export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/dev
+          fi
+          npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

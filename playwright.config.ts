@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test'
 
 const isCI = !!process.env.CI
+// Allow testing against deployed sites via BASE_URL env var
+const baseURL = process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000'
+const isDeployedTest = baseURL.startsWith('http://') && !baseURL.includes('localhost')
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -17,7 +20,7 @@ export default defineConfig({
   ],
 
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL,
     trace: 'on-first-retry',
 
     // 📸 Screenshots - always on failure, full page
@@ -28,15 +31,23 @@ export default defineConfig({
 
     // 🎬 Video on retry (helps debug flaky tests)
     video: 'on-first-retry',
+
+    // Longer timeout for deployed sites (network latency)
+    ...(isDeployedTest && {
+      navigationTimeout: 30000,
+      actionTimeout: 15000,
+    }),
   },
 
-  // Web server - start Nuxt preview before tests
-  webServer: {
-    command: 'npm run preview',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  // Web server - only start for local tests
+  ...(!isDeployedTest && {
+    webServer: {
+      command: 'npm run preview',
+      url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+    },
+  }),
 
   projects: [
     {
