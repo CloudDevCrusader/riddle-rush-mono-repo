@@ -29,7 +29,7 @@ test:
 # E2E tests - local build (manual)
 test:e2e:local:
   stage: test
-  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
     - npm ci --prefer-offline --no-audit
     - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
@@ -125,7 +125,7 @@ deploy:dev:
 # E2E tests - Production (automatic after deployment)
 verify:e2e:production:
   stage: verify
-  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
     - npm ci --prefer-offline --no-audit
     - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa
@@ -147,7 +147,7 @@ verify:e2e:production:
 # E2E tests - Staging (automatic after deployment)
 verify:e2e:staging:
   stage: verify
-  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
     - npm ci --prefer-offline --no-audit
     - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/staging
@@ -169,7 +169,7 @@ verify:e2e:staging:
 # E2E tests - Development (automatic after deployment)
 verify:e2e:dev:
   stage: verify
-  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
     - npm ci --prefer-offline --no-audit
     - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/dev
