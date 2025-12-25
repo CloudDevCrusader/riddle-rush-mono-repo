@@ -21,16 +21,16 @@ A fully-featured Progressive Web App (PWA) built with Nuxt 4, featuring offline 
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Copy environment file
 cp .env.example .env
 
 # Run development server
-npm run dev
+pnpm run dev
 
 # Build for production
-npm run generate
+pnpm run generate
 ```
 
 ## Environment Variables
@@ -52,19 +52,19 @@ console.log(config.public.appVersion)
 ```
 
 ## Scripts
-
-| Command | Description |
+|| Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production (SSR) |
-| `npm run generate` | Generate static site |
-| `npm run preview` | Preview production build |
-| `npm run test:unit` | Run unit tests |
-| `npm run test:unit:coverage` | Run unit tests with coverage |
-| `npm run test:e2e` | Run E2E tests |
-| `npm run lint` | Check for linting errors |
-| `npm run lint:fix` | Fix linting errors |
-| `npm run format` | Format code with Prettier |
+| `pnpm run dev` | Start development server |
+| `pnpm run build` | Build for production (SSR) |
+| `pnpm run generate` | Generate static site |
+| `pnpm run preview` | Preview production build |
+| `pnpm run test:unit` | Run unit tests |
+| `pnpm run test:unit:coverage` | Run unit tests with coverage |
+| `pnpm run test:e2e` | Run E2E tests |
+| `pnpm run lint` | Check for linting errors |
+| `pnpm run lint:fix` | Fix linting errors |
+| `pnpm run format` | Format code with Prettier |
+| `pnpm run typecheck` | Run TypeScript type checking |
 | `npm run typecheck` | Run TypeScript type checking |
 
 ## Git Hooks

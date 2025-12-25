@@ -61,7 +61,7 @@ export async function searchOffline(
   letter: string,
 ): Promise<string[]> {
   try {
-    const offlineAnswers = await $fetch<OfflineAnswers>('/data/offlineAnswers.json')
+    const offlineAnswers = await $fetch<OfflineAnswers>('~/assets/data/offlineAnswers.json')
     const categoryAnswers = offlineAnswers[category]
 
     if (!categoryAnswers) {

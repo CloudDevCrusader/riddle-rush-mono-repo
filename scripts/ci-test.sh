@@ -1,3 +1,3 @@
 #!/bin/bash
 set -e
-npm run test:unit
+pnpm run test:unit

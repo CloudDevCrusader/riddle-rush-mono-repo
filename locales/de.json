@@ -1,60 +1,115 @@
 {
   "app": {
-    "title": "Guess Game",
-    "subtitle": "Erraten Sie Begriffe aus Wikipedia-Kategorien",
-    "description": "Ein unterhaltsames Wortratespiel mit Wikipedia-Kategorien"
+    "title": "Ratefix",
+    "subtitle": "Das ultimative Ratespiel für Freunde & Familie",
+    "description": "Ein spannendes Wortratespiel für Freunde und Familie. Offline spielbar, perfekt für Spieleabende!"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "share": "Teilen",
+    "back": "Zurück"
   },
   "home": {
-    "offline_badge": "Offline verfügbar",
+    "offline_badge": "Offline spielbar",
     "quick_start": "Schnellstart",
-    "category_title": "Kategorien wählen",
-    "load_more": "Mehr laden",
-    "about_link": "Über"
+    "category_title": "Wähle eine Kategorie",
+    "load_more": "Mehr Kategorien",
+    "about_link": "Über das Spiel",
+    "loading_categories": "Kategorien werden geladen...",
+    "starting_game": "Spiel wird gestartet..."
   },
   "features": {
     "offline": {
-      "title": "Offline spielbar",
-      "description": "Spielen Sie jederzeit, auch ohne Internetverbindung"
+      "title": "Offline Spielen",
+      "description": "Keine Internetverbindung nötig"
     },
     "multiplayer": {
-      "title": "Mehrspieler",
-      "description": "Spielen Sie mit Freunden und Familie"
+      "title": "Multiplayer",
+      "description": "Perfekt für Spieleabende"
     },
     "installable": {
       "title": "Installierbar",
-      "description": "Installieren Sie die App auf Ihrem Gerät"
+      "description": "Als App installieren"
     }
   },
-  "common": {
-    "share": "Teilen",
-    "back": "Zurück",
-    "next": "Weiter",
-    "cancel": "Abbrechen",
-    "confirm": "Bestätigen"
+  "game": {
+    "title": "Spielen",
+    "score": "Punkte",
+    "attempts": "Versuche",
+    "starts_with": "Beginnt mit",
+    "your_answer": "Deine Antwort...",
+    "submit": "Senden",
+    "skip": "Überspringen",
+    "new_round": "Neue Runde",
+    "checking": "Prüfe...",
+    "correct": "Richtig! +10 Punkte",
+    "incorrect": "Leider falsch",
+    "error_checking": "Fehler beim Überprüfen",
+    "other_answers": "Weitere Lösungen:",
+    "your_attempts": "Deine Versuche",
+    "category_loading": "Lade...",
+    "loading": "Wird geladen..."
+  },
+  "menu": {
+    "title": "Menü",
+    "end_game": "Spiel Beenden",
+    "home": "Zur Startseite",
+    "share_score": "Score Teilen",
+    "close": "Schließen"
   },
   "share": {
-    "game_title": "Guess Game - Wortratespiel",
-    "game_text": "Probieren Sie dieses unterhaltsame Wortratespiel!"
+    "game_title": "Ratefix - Das ultimative Ratespiel",
+    "game_text": "Spiel mit mir Ratefix! Ein spannendes Wortratespiel.",
+    "score_title": "Mein Ratefix Score",
+    "score_text": "Ich habe {score} Punkte bei Ratefix erzielt! 🎯"
+  },
+  "categories": {
+    "female_name": "Weiblicher Vorname",
+    "male_name": "Männlicher Vorname",
+    "water_vehicle": "Wasser Fahrzeug",
+    "flowers": "Blumen",
+    "plants": "Pflanzen",
+    "profession": "Beruf oder Gewerbe",
+    "insect": "Insekt",
+    "animal": "Tier",
+    "city": "Stadt",
+    "country": "Land",
+    "food": "Essen",
+    "drink": "Getränk",
+    "sport": "Sport",
+    "music": "Musik",
+    "movie": "Film"
+  },
+  "offline": {
+    "warning": "Sie sind offline. Einige Funktionen funktionieren möglicherweise nicht."
   },
   "feedback": {
     "button": "Feedback geben",
-    "title": "Ihr Feedback",
-    "placeholder": "Teilen Sie uns Ihre Meinung mit...",
+    "title": "Wie gefällt dir das Spiel?",
+    "placeholder": "Dein Feedback (optional)...",
     "submit": "Absenden",
-    "thanks": "Vielen Dank für Ihr Feedback!"
+    "thanks": "Vielen Dank für dein Feedback!"
   },
-  "game": {
-    "score": "Punktzahl",
-    "attempts": "Versuche",
-    "submit": "Absenden",
-    "end_game": "Spiel beenden",
-    "new_game": "Neues Spiel",
+  "leaderboard": {
+    "title": "Bestenliste",
+    "empty": "Noch keine Einträge. Spiel ein paar Runden!",
+    "clear": "Löschen",
+    "score": "Punkte",
     "category": "Kategorie",
-    "letter": "Buchstabe",
-    "enter_term": "Begriff eingeben",
-    "found": "Gefunden",
-    "not_found": "Nicht gefunden",
-    "game_over": "Spiel beendet",
-    "your_score": "Ihre Punktzahl"
+    "time": "Zeit"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "sound": "Sound",
+    "leaderboard": "Bestenliste anzeigen",
+    "debug": "Debug-Modus",
+    "maxPlayers": "Max. Spieler"
   }
 }

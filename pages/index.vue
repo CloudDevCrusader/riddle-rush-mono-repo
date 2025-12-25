@@ -1,5 +1,21 @@
 <template>
   <div class="homepage">
+    <!-- Loading Spinner for Categories -->
+    <Spinner
+      v-if="categoriesLoading"
+      overlay
+      size="lg"
+      :label="$t('home.loading_categories')"
+    />
+
+    <!-- Loading Spinner for Game Starting -->
+    <Spinner
+      v-if="gameStarting"
+      overlay
+      size="lg"
+      :label="$t('home.starting_game')"
+    />
+
     <!-- Background Pattern -->
     <div class="bg-pattern" />
 
@@ -133,13 +149,19 @@ const gameStore = useGameStore()
 const displayedCategories = computed(() => gameStore.displayedCategories)
 const hasMoreCategories = computed(() => gameStore.hasMoreCategories)
 
+const categoriesLoading = ref(false)
+const gameStarting = ref(false)
+
 onMounted(async () => {
   if (!gameStore.categoriesLoaded) {
+    categoriesLoading.value = true
     try {
       await gameStore.fetchCategories()
       gameStore.resetDisplayedCategories()
     } catch (error) {
       console.error('Error loading categories:', error)
+    } finally {
+      categoriesLoading.value = false
     }
   }
 })
@@ -149,20 +171,24 @@ const loadMoreCategories = () => {
 }
 
 const startQuickGame = async () => {
+  gameStarting.value = true
   try {
     await gameStore.startNewGame()
     await router.push('/game')
   } catch (error) {
     console.error('Error starting quick game:', error)
+    gameStarting.value = false
   }
 }
 
 const selectCategory = async (category: Category) => {
+  gameStarting.value = true
   try {
     await gameStore.startNewGame({ categoryId: category.id })
     await router.push('/game')
   } catch (error) {
     console.error('Error starting selected category game:', error)
+    gameStarting.value = false
   }
 }
 

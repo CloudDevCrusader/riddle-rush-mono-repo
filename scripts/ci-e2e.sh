@@ -8,6 +8,6 @@ if [ -n "$BASE_URL" ]; then
   npx playwright test
 else
   echo "Running E2E tests against local build"
-  npm run generate
-  npx playwright test || true
+  pnpm run generate
+  pnpm exec playwright test || true
 fi

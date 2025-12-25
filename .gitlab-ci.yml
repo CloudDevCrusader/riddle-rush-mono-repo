@@ -12,8 +12,9 @@ stages:
   - verify
 
 before_script:
-  - npm install -g npm@latest
-  - npm ci --prefer-offline --no-audit  
+  - corepack enable
+  - corepack prepare pnpm@latest --activate
+  - pnpm install --frozen-lockfile
 
 # Unit tests - gates build
 test:
@@ -31,7 +32,8 @@ test:e2e:local:
   stage: test
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
-    - npm ci --prefer-offline --no-audit
+    - corepack enable && corepack prepare pnpm@latest --activate
+    - pnpm install --frozen-lockfile
     - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
   artifacts:
     when: always
@@ -127,7 +129,8 @@ verify:e2e:production:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
-    - npm ci --prefer-offline --no-audit
+    - corepack enable && corepack prepare pnpm@latest --activate
+    - pnpm install --frozen-lockfile
     - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa
     - echo "Waiting 30 seconds for deployment to propagate..."
     - sleep 30
@@ -149,7 +152,8 @@ verify:e2e:staging:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
-    - npm ci --prefer-offline --no-audit
+    - corepack enable && corepack prepare pnpm@latest --activate
+    - pnpm install --frozen-lockfile
     - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/staging
     - echo "Waiting 30 seconds for deployment to propagate..."
     - sleep 30
@@ -171,7 +175,8 @@ verify:e2e:dev:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
-    - npm ci --prefer-offline --no-audit
+    - corepack enable && corepack prepare pnpm@latest --activate
+    - pnpm install --frozen-lockfile
     - export BASE_URL=https://djdiox.gitlab.io/guess-game-nuxt-pwa/dev
     - echo "Waiting 30 seconds for deployment to propagate..."
     - sleep 30

@@ -9,11 +9,11 @@ echo ""
 
 # Generate static build
 echo "Building application..."
-npm run generate
+pnpm run generate
 
 echo ""
 echo "Running Playwright tests..."
-npx playwright test
+pnpm exec playwright test
 
 echo ""
 echo "E2E tests completed!"

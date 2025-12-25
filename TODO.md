@@ -2,11 +2,15 @@
 
 ## Priority: High 🔴
 
+- [ ] **Graphics from docs/gfx/** - Use the generated graphics from ali theese are contained in the folder `./docs/gfx/`
+  - Check out if all features are already implemented
+  - use png as graphics everywhere needed - If you can adopt the design as CSS even better
+
 - [ ] **E2E Tests** - Add back Playwright e2e tests using `@nuxt/test-utils`
   - Game flow (start, play, win/lose, reset)
   - Offline functionality
   - PWA install flow
-  
+
 - [ ] **PWA Icons** - Generate actual PWA icons from template
   - `pwa-192x192.png`
   - `pwa-512x512.png`

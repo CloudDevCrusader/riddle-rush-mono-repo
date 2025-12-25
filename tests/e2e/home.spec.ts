@@ -18,6 +18,12 @@ test.describe('Home Page', () => {
     // Wait for categories to load
     await page.waitForLoadState('networkidle')
 
+    // Wait for loading spinner to disappear if present
+    const spinner = page.locator('.spinner--overlay, [data-testid="loading-spinner"]')
+    if (await spinner.count() > 0) {
+      await spinner.waitFor({ state: 'hidden', timeout: 10000 })
+    }
+
     // Check if category cards are visible
     const categoryCards = page.locator('[data-testid="category-card"], .category-card')
     await expect(categoryCards.first()).toBeVisible({ timeout: 10000 })

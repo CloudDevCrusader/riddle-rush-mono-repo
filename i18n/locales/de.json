@@ -21,7 +21,9 @@
     "quick_start": "Schnellstart",
     "category_title": "Wähle eine Kategorie",
     "load_more": "Mehr Kategorien",
-    "about_link": "Über das Spiel"
+    "about_link": "Über das Spiel",
+    "loading_categories": "Kategorien werden geladen...",
+    "starting_game": "Spiel wird gestartet..."
   },
   "features": {
     "offline": {
@@ -51,7 +53,8 @@
     "error_checking": "Fehler beim Überprüfen",
     "other_answers": "Weitere Lösungen:",
     "your_attempts": "Deine Versuche",
-    "category_loading": "Lade..."
+    "category_loading": "Lade...",
+    "loading": "Wird geladen..."
   },
   "menu": {
     "title": "Menü",

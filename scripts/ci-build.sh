@@ -1,3 +1,3 @@
 #!/bin/bash
 set -e
-npm run generate
+pnpm run generate

@@ -383,6 +383,51 @@ describe('Game Store', () => {
       expect(store.categoryEmoji('Blumen')).toBe('🌸')
     })
 
+    it('returns emoji for Mountains oder Hills', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Mountains oder Hills')).toBe('🏔️')
+    })
+
+    it('returns emoji for Gewässer oder See', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Gewässer oder See')).toBe('💧')
+    })
+
+    it('returns emoji for Maschine', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Maschine')).toBe('⚙️')
+    })
+
+    it('returns emoji for Begriff aus der Technik', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Begriff aus der Technik')).toBe('🔧')
+    })
+
+    it('returns emoji for Begriff aus der Raumfahrt', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Begriff aus der Raumfahrt')).toBe('🚀')
+    })
+
+    it('returns emoji for Wort mit Endung -heit', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Wort mit Endung -heit')).toBe('📝')
+    })
+
+    it('returns emoji for Farbe', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Farbe')).toBe('🎨')
+    })
+
+    it('returns emoji for Erfinder Entdecker oder Gelehrter', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Erfinder Entdecker oder Gelehrter')).toBe('💡')
+    })
+
+    it('returns emoji for Komponist oder Sänger', () => {
+      const store = useGameStore()
+      expect(store.categoryEmoji('Komponist oder Sänger')).toBe('🎼')
+    })
+
     it('returns default for unknown', () => {
       const store = useGameStore()
       expect(store.categoryEmoji('Random Category')).toBe('🎯')

@@ -1,5 +1,13 @@
 <template>
   <div class="game-page">
+    <!-- Loading Spinner -->
+    <Spinner
+      v-if="loading"
+      overlay
+      size="lg"
+      :label="$t('game.loading')"
+    />
+
     <!-- Background -->
     <div class="game-bg" />
 

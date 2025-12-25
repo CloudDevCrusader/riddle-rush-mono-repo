@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/i18n',
     '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@nuxt/scripts', '@vueuse/nuxt'],
   ssr: false,
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   app: {
     baseURL: process.env.BASE_URL || process.env.CI ? '/guess-game-nuxt-pwa/' : '/',

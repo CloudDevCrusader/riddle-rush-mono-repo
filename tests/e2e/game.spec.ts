@@ -7,6 +7,12 @@ test.describe('Game Flow', () => {
     // Wait for page to be fully loaded
     await page.waitForLoadState('networkidle')
 
+    // Wait for category loading spinner to disappear
+    const spinner = page.locator('.spinner--overlay, [data-testid="loading-spinner"]')
+    if (await spinner.count() > 0) {
+      await spinner.waitFor({ state: 'hidden', timeout: 10000 })
+    }
+
     // Look for a category card or start button
     const categoryCard = page.locator('[data-testid="category-card"], .category-card, button:has-text("Start")').first()
 
@@ -30,6 +36,12 @@ test.describe('Game Flow', () => {
 
     // Wait for game to load
     await page.waitForLoadState('networkidle')
+
+    // Wait for game loading spinner to disappear
+    const spinner = page.locator('.spinner--overlay, [data-testid="loading-spinner"]')
+    if (await spinner.count() > 0) {
+      await spinner.waitFor({ state: 'hidden', timeout: 10000 })
+    }
 
     // Check for game elements (category, input, score, etc.)
     // These selectors are generic - adjust based on your actual implementation
