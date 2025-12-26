@@ -1,0 +1,159 @@
+[
+    {
+        "id": 1,
+        "name": "Weiblicher Vorname",
+        "searchWord": "Weiblicher_Vorname",
+        "key": "Weiblicher_Vorname",
+        "searchProvider": "offline"
+    },
+    {
+        "id": 2,
+        "name": "Männlicher Vorname",
+        "searchWord": "Männlicher_Vorname",
+        "key": "Männlicher_Vorname",
+        "searchProvider": "offline"
+    },
+    {
+        "id": 3,
+        "name": "Wasser Fahrzeug",
+        "key": "Wasserfahrzeug",
+        "searchWord": "Wasserfahrzeug",
+        "searchProvider": "offline",
+        "additionalData": [
+            "Boot"
+        ]
+    },
+    {
+        "id": 4,
+        "searchWord": "Blumen",
+        "name": "Blumen",
+        "key": "Blumen",
+        "searchProvider": "offline"
+    },
+    {
+        "id": 5,
+        "name": "Pflanzen",
+        "searchWord": "Pflanzen",
+        "key": "Pflanzen",
+        "searchProvider": "offline"
+    },
+    {
+        "id": 6,
+        "name": "Beruf oder Gewerbe",
+        "searchWord": "Beruf",
+        "key": "Beruf",
+        "searchProvider": "offline"
+    },
+    {
+        "id": 7,
+        "name": "Insekt",
+        "searchWord": "Insekten",
+        "key": "Insekten",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 8,
+        "name": "Tiere",
+        "searchWord": "Tier",
+        "key": "Tier",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 9,
+        "name": "Mountains oder Hills",
+        "searchWord": "Berg",
+        "key": "Berg",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 10,
+        "name": "Gewässer oder See",
+        "searchWord": "Gewässer",
+        "key": "Gewässer",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 11,
+        "name": "Stadt im Inland",
+        "key": "deutsche Städte",
+        "searchWord": "deutsche_Städte",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 12,
+        "name": "Stadt im Ausland",
+        "key": "Stadt im Ausland",
+        "searchWord": "Ausländische_Stadt",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 13,
+        "name": "Maschine",
+        "key": "Maschinen",
+        "searchWord": "Maschinen",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 14,
+        "name": "Begriff aus der Technik",
+        "searchWord": "Technik",
+        "key": "Technik",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 15,
+        "name": "Begriff aus der Raumfahrt",
+        "searchWord": "Raumfahrt",
+        "key": "Raumfahrt",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 16,
+        "name": "Wort mit Endung -heit",
+        "searchWord": "*heit",
+        "key": "heit",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 17,
+        "name": "Wort mit Endung -ung",
+        "searchWord": "*ung",
+        "key": "ung",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 18,
+        "name": "Wort mit Endung -keit",
+        "searchWord": "Beruf",
+        "key": "keit",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 19,
+        "name": "Farbe",
+        "searchWord": "Farben",
+        "key": "Farben",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 20,
+        "name": "Erfinder Entdecker oder Gelehrter",
+        "searchWord": "Erfinder",
+        "key": "Erfinder",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 21,
+        "name": "Maler oder Bildhauer",
+        "searchWord": "Maler",
+        "key": "Maler",
+        "searchProvider": "petscan"
+    },
+    {
+        "id": 22,
+        "name": "Komponist oder Sänger",
+        "searchWord": "Komponist",
+        "key": "Komponist",
+        "searchProvider": "petscan"
+    }
+]

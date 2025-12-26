@@ -37,12 +37,24 @@ test.describe('Offline Functionality', () => {
 
     await page.waitForTimeout(1000)
 
-    // Check for offline indicator (adjust selector based on your implementation)
-    const offlineIndicator = page.locator('[data-testid="offline-indicator"], .offline, text=/offline/i')
+    // Check for offline indicator (try multiple selectors)
+    const offlineIndicatorByTestId = page.locator('[data-testid="offline-indicator"]')
+    const offlineIndicatorByClass = page.locator('.offline')
+    const offlineIndicatorByText = page.getByText(/offline/i)
 
-    // If offline indicator exists in your app, it should be visible
-    if (await offlineIndicator.count() > 0) {
-      await expect(offlineIndicator.first()).toBeVisible({ timeout: 2000 })
+    // If any offline indicator exists, check it's visible
+    const count = await offlineIndicatorByTestId.count() +
+                  await offlineIndicatorByClass.count() +
+                  await offlineIndicatorByText.count()
+
+    if (count > 0) {
+      const firstVisible = await offlineIndicatorByTestId.count() > 0
+        ? offlineIndicatorByTestId.first()
+        : await offlineIndicatorByClass.count() > 0
+        ? offlineIndicatorByClass.first()
+        : offlineIndicatorByText.first()
+
+      await expect(firstVisible).toBeVisible({ timeout: 2000 })
     }
   })
 

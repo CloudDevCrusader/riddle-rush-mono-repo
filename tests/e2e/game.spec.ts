@@ -82,10 +82,23 @@ test.describe('Game Flow', () => {
 
     await page.waitForLoadState('networkidle')
 
-    // Look for score display
-    const scoreDisplay = page.locator('[data-testid="score"], .score, text=/Punktzahl|Score/i').first()
+    // Look for score display - try multiple selectors
+    const scoreByTestId = page.locator('[data-testid="score"]')
+    const scoreByClass = page.locator('.score')
+    const scoreByText = page.getByText(/Punktzahl|Score/i)
 
-    if (await scoreDisplay.count() > 0) {
+    // Check if any score display exists
+    const hasScore = await scoreByTestId.count() > 0 ||
+                     await scoreByClass.count() > 0 ||
+                     await scoreByText.count() > 0
+
+    if (hasScore) {
+      const scoreDisplay = await scoreByTestId.count() > 0
+        ? scoreByTestId.first()
+        : await scoreByClass.count() > 0
+        ? scoreByClass.first()
+        : scoreByText.first()
+
       await expect(scoreDisplay).toBeVisible({ timeout: 5000 })
     }
   })

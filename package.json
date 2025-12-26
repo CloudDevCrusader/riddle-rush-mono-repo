@@ -32,19 +32,14 @@
     "deploy:prod": "./scripts/deploy-prod.sh"
   },
   "dependencies": {
-    "@nuxt/scripts": "^0.13.2",
-    "@nuxthub/core": "^0.10.3",
     "@nuxtjs/i18n": "^10.2.1",
     "@pinia/nuxt": "^0.11.3",
-    "@unhead/vue": "^2.0.19",
     "@vite-pwa/nuxt": "^1.1.0",
     "@vueuse/nuxt": "^14.1.0",
     "idb": "^8.0.3",
-    "nitro": "^3.0.1-alpha.1",
     "nuxt": "^4.2.2",
     "nuxt-viewport": "^2.3.1",
-    "vue": "^3.5.26",
-    "workflow": "^4.0.1-beta.35"
+    "vue": "^3.5.26"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
@@ -53,8 +48,6 @@
     "@playwright/test": "^1.52.0",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^3.2.0",
-    "@xterm/addon-fit": "^0.11.0",
-    "@xterm/xterm": "^6.0.0",
     "eslint": "^9.39.2",
     "happy-dom": "^20.0.11",
     "husky": "^9.0.0",

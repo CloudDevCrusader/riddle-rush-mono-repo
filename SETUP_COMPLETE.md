@@ -8,7 +8,7 @@ A **complete 100% Progressive Web App** with all requested features:
 - Fresh Nuxt 3 setup with TypeScript
 - Modern Vue 3 Composition API
 - Auto-imports for components and composables
-- Server-side API routes
+- Frontend-only architecture (no backend needed)
 
 ### 2. ✅ Full PWA Support (@vite-pwa/nuxt)
 - ✅ Service Worker with automatic caching
@@ -31,13 +31,11 @@ A **complete 100% Progressive Web App** with all requested features:
 - ✅ Install prompt handling
 - ✅ Score and attempts tracking
 
-### 5. ✅ REST API Integration
-- ✅ Migrated from ../guess-game-rest-api
-- ✅ Server API routes in Nuxt:
-  - `GET /api/category` - Random category with letter
-  - `POST /api/check-answer` - Validate answer
-  - `POST /api/session` - Create session
-- ✅ PetScan service integration
+### 5. ✅ Client-Side Game Logic
+- ✅ All game logic runs in the browser
+- ✅ Direct PetScan API integration from client
+- ✅ Category selection and validation handled client-side
+- ✅ Offline mode support with local data
 - ✅ Categories data included
 
 ### 6. ✅ Complete E2E Testing (Playwright)
@@ -148,12 +146,9 @@ guess-game-nuxt-pwa/
 │   └── about.vue               # About page
 ├── layouts/default.vue         # Layout with navigation
 ├── stores/game.ts              # Pinia game store
-├── composables/useIndexedDB.ts # IndexedDB wrapper
-├── server/api/                 # API endpoints
-│   ├── category.get.ts
-│   ├── check-answer.post.ts
-│   └── session.post.ts
-├── server/utils/petScanService.ts
+├── composables/
+│   ├── useIndexedDB.ts         # IndexedDB wrapper
+│   └── useAnswerCheck.ts       # Answer validation logic
 ├── types/game.ts               # TypeScript types
 └── tests/e2e/                  # Playwright tests
     ├── navigation.spec.ts
@@ -190,7 +185,7 @@ Tests cover:
 
 ## 💡 Technical Highlights
 
-- **Server API Routes**: No need for separate backend server
+- **Frontend-Only**: Pure client-side application, no backend required
 - **Auto-imports**: No need to import Vue, components, or composables
 - **Type Safety**: Full TypeScript throughout
 - **Offline First**: Works without internet after first visit
@@ -203,7 +198,7 @@ Tests cover:
 |---------|----------|---------|
 | Framework | Vue CLI | Nuxt 3 |
 | State Mgmt | Empty Vuex | Pinia (fully implemented) |
-| API | Separate serverless | Integrated server routes |
+| API | Separate serverless | Client-side composables |
 | Storage | None | IndexedDB |
 | PWA | Basic service worker | Full PWA with offline |
 | Testing | Unit tests only | E2E tests with Playwright |

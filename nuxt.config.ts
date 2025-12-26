@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/i18n',
-    '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@nuxt/scripts', '@vueuse/nuxt'],
+    '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@vueuse/nuxt'],
   ssr: false,
   devtools: { enabled: false },
 
@@ -14,9 +14,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    // Server-side only
-    apiSecret: process.env.API_SECRET || '',
-    // Public (exposed to client)
     public: {
       baseUrl: process.env.BASE_URL || process.env.CI ? '/guess-game-nuxt-pwa/' : '/',
       googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID || '',

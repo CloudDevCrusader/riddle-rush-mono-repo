@@ -242,7 +242,6 @@
 </template>
 
 <script setup lang="ts">
-import type { CheckAnswerResponse } from '~/types/game'
 import { useGameStore } from '~/stores/game'
 
 const gameStore = useGameStore()
@@ -250,6 +249,7 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const audio = useAudio()
+const { checkAnswer } = useAnswerCheck()
 
 const result = ref('')
 const output = ref('')
@@ -343,14 +343,7 @@ const validateWord = async () => {
   try {
     loading.value = true
 
-    const response = await $fetch<CheckAnswerResponse>('/api/check-answer', {
-      method: 'POST',
-      body: {
-        letter,
-        term,
-        searchWord: category.searchWord,
-      },
-    })
+    const response = await checkAnswer(category.searchWord, letter, term)
 
     valid.value = response.found
     otherAnswers.value = response.other || []

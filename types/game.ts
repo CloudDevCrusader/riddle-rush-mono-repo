@@ -30,12 +30,6 @@ export interface GameAttempt {
   timestamp: number
 }
 
-export interface CheckAnswerRequest {
-  searchWord: string
-  letter: string
-  term: string
-}
-
 export interface CheckAnswerResponse {
   found: boolean
   other: string[]
