@@ -1,0 +1,131 @@
+{
+  "app": {
+    "title": "Riddle Rush",
+    "subtitle": "The ultimate guessing game for friends & family",
+    "description": "An exciting word guessing game for friends and family. Play offline, perfect for game nights!"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "share": "Share",
+    "back": "Back",
+    "ok": "OK"
+  },
+  "home": {
+    "offline_badge": "Play Offline",
+    "quick_start": "Quick Start",
+    "category_title": "Choose a Category",
+    "load_more": "Load More Categories",
+    "about_link": "About the Game",
+    "loading_categories": "Loading categories...",
+    "starting_game": "Starting game..."
+  },
+  "features": {
+    "offline": {
+      "title": "Play Offline",
+      "description": "No internet connection required"
+    },
+    "multiplayer": {
+      "title": "Multiplayer",
+      "description": "Perfect for game nights"
+    },
+    "installable": {
+      "title": "Installable",
+      "description": "Install as an app"
+    }
+  },
+  "game": {
+    "title": "Play",
+    "score": "Score",
+    "attempts": "Attempts",
+    "starts_with": "Starts with",
+    "your_answer": "Your answer...",
+    "submit": "Submit",
+    "skip": "Skip",
+    "new_round": "New Round",
+    "checking": "Checking...",
+    "correct": "Correct! +10 points",
+    "incorrect": "Wrong answer",
+    "error_checking": "Error checking answer",
+    "other_answers": "Other solutions:",
+    "your_attempts": "Your attempts",
+    "category_loading": "Loading...",
+    "loading": "Loading..."
+  },
+  "menu": {
+    "title": "Menu",
+    "end_game": "End Game",
+    "home": "Home",
+    "share_score": "Share Score",
+    "close": "Close"
+  },
+  "share": {
+    "game_title": "Riddle Rush - The Ultimate Guessing Game",
+    "game_text": "Play Riddle Rush with me! An exciting word guessing game.",
+    "score_title": "My Riddle Rush Score",
+    "score_text": "I scored {score} points in Riddle Rush! 🎯"
+  },
+  "categories": {
+    "female_name": "Female Name",
+    "male_name": "Male Name",
+    "water_vehicle": "Water Vehicle",
+    "flowers": "Flowers",
+    "plants": "Plants",
+    "profession": "Profession",
+    "insect": "Insect",
+    "animal": "Animal",
+    "city": "City",
+    "country": "Country",
+    "food": "Food",
+    "drink": "Drink",
+    "sport": "Sport",
+    "music": "Music",
+    "movie": "Movie"
+  },
+  "offline": {
+    "warning": "You are offline. Some features may not work."
+  },
+  "feedback": {
+    "button": "Give Feedback",
+    "title": "How do you like the game?",
+    "placeholder": "Your feedback (optional)...",
+    "submit": "Submit",
+    "thanks": "Thank you for your feedback!"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No entries yet. Play some rounds!",
+    "clear": "Clear",
+    "score": "Score",
+    "category": "Category",
+    "time": "Time"
+  },
+  "settings": {
+    "title": "Settings",
+    "sound": "Sound",
+    "leaderboard": "Show Leaderboard",
+    "debug": "Debug Mode",
+    "maxPlayers": "Max Players"
+  },
+  "credits": {
+    "title": "CREDITS",
+    "game_design": "Game Design",
+    "programming": "Programming",
+    "art": "Art"
+  },
+  "language": {
+    "title": "LANGUAGE"
+  },
+  "results": {
+    "your_score": "Your Score",
+    "next": "Next",
+    "restart": "Restart",
+    "home": "Home"
+  }
+}

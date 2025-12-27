@@ -34,7 +34,10 @@ export default defineNuxtConfig({
   typescript: { strict: true },
 
   i18n: {
-    locales: [{ code: 'de', language: 'de-DE', file: 'de.json', name: 'Deutsch' }],
+    locales: [
+      { code: 'de', language: 'de-DE', file: 'de.json', name: 'Deutsch' },
+      { code: 'en', language: 'en-US', file: 'en.json', name: 'English' },
+    ],
     defaultLocale: 'de',
     langDir: 'locales',
     strategy: 'no_prefix',

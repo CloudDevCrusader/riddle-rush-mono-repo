@@ -3,11 +3,15 @@
     id="app"
     class="app-container"
   >
-    <NuxtLayout>
+    <SplashScreen
+      v-if="showSplash"
+      @complete="onSplashComplete"
+    />
+    <NuxtLayout v-show="!showSplash">
       <NuxtPage />
     </NuxtLayout>
-    <FeedbackWidget />
-    <DebugPanel />
+    <FeedbackWidget v-show="!showSplash" />
+    <DebugPanel v-show="!showSplash" />
   </div>
 </template>
 
@@ -18,6 +22,12 @@ import type { BeforeInstallPromptEvent } from '~/types/game'
 
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
+
+const showSplash = ref(true)
+
+const onSplashComplete = () => {
+  showSplash.value = false
+}
 
 onMounted(() => {
   // Load persisted state

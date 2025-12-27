@@ -1,4 +1,5 @@
 import de from './locales/de.json'
+import en from './locales/en.json'
 
 export default defineI18nConfig(() => ({
   legacy: false,
@@ -6,5 +7,6 @@ export default defineI18nConfig(() => ({
   fallbackLocale: 'de',
   messages: {
     de,
+    en,
   },
 }))
