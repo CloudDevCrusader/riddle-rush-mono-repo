@@ -106,6 +106,11 @@ export default defineNuxtConfig({
         },
       ],
     },
-    devOptions: { enabled: true, type: 'module' },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+      /* Suppress warnings about missing files in dev mode */
+      suppressWarnings: true,
+    },
   },
 })
