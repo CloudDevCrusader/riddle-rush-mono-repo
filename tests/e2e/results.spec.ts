@@ -1,231 +1,213 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('Results Page', () => {
-  test('should load results page successfully', async ({ page }) => {
+test.describe('Results/Scoring Page', () => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/results')
-
-    // Check page title
-    await expect(page).toHaveTitle(/Riddle Rush - Results/i)
-
-    // Check that page loaded
-    const body = page.locator('body')
-    await expect(body).toBeVisible()
   })
 
-  test('should display win state correctly', async ({ page }) => {
-    await page.goto('/results?win=true&score=100')
+  test('should display results page with all elements', async ({ page }) => {
+    // Check for background
+    const background = page.locator('.page-bg')
+    await expect(background).toBeVisible()
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    // Check for title
+    const title = page.locator('.title-image')
+    await expect(title).toBeVisible()
 
-    // Check for win text
-    const winText = page.getByText(/YOU WIN/i)
-    await expect(winText).toBeVisible({ timeout: 5000 })
+    // Check for scores list
+    const scoresList = page.locator('.scores-list')
+    await expect(scoresList).toBeVisible()
 
-    // Check for stars (should be filled)
-    const stars = page.locator('.star.filled')
-    expect(await stars.count()).toBeGreaterThan(0)
+    // Check for back button
+    const backBtn = page.locator('.back-btn')
+    await expect(backBtn).toBeVisible()
 
-    // Check score display
-    const scoreValue = page.locator('.score-value')
-    await expect(scoreValue).toBeVisible()
-    await expect(scoreValue).toHaveText('100')
+    // Check for action buttons
+    const backLargeBtn = page.locator('.back-large-btn')
+    const addScoreBtn = page.locator('.add-score-btn')
+    const nextBtn = page.locator('.next-btn')
+
+    await expect(backLargeBtn).toBeVisible()
+    await expect(addScoreBtn).toBeVisible()
+    await expect(nextBtn).toBeVisible()
   })
 
-  test('should display lose state correctly', async ({ page }) => {
-    await page.goto('/results?win=false&score=0')
+  test('should display player score items', async ({ page }) => {
+    const scoreItems = page.locator('.score-item')
+    const count = await scoreItems.count()
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
-
-    // Check for lose text
-    const loseText = page.getByText(/YOU LOSE/i)
-    await expect(loseText).toBeVisible({ timeout: 5000 })
-
-    // Check for stars (should be empty)
-    const emptyStars = page.locator('.star.empty')
-    expect(await emptyStars.count()).toBeGreaterThan(0)
-
-    // Check score display
-    const scoreValue = page.locator('.score-value')
-    await expect(scoreValue).toBeVisible()
+    expect(count).toBeGreaterThan(0)
   })
 
-  test('should display score correctly', async ({ page }) => {
-    const testScore = 250
-    await page.goto(`/results?win=true&score=${testScore}`)
+  test('should display player info in each score item', async ({ page }) => {
+    const firstItem = page.locator('.score-item').first()
+    const playerAvatar = firstItem.locator('.player-avatar')
+    const playerName = firstItem.locator('.player-name')
+    const playerScore = firstItem.locator('.player-score')
 
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
-
-    // Check score value
-    const scoreValue = page.locator('.score-value')
-    await expect(scoreValue).toBeVisible()
-    await expect(scoreValue).toHaveText(testScore.toString())
-
-    // Check score label
-    const scoreLabel = page.locator('.score-label')
-    await expect(scoreLabel).toBeVisible()
+    await expect(playerAvatar).toBeVisible()
+    await expect(playerName).toBeVisible()
+    await expect(playerScore).toBeVisible()
+    await expect(playerScore).toHaveText(/\d+/)
   })
 
-  test('should show Next button on win', async ({ page }) => {
-    await page.goto('/results?win=true&score=100')
+  test('should display add and minus buttons for each player', async ({ page }) => {
+    const firstItem = page.locator('.score-item').first()
+    const scoreActions = firstItem.locator('.score-actions')
+    const actionButtons = scoreActions.locator('.score-action-btn')
 
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await expect(actionButtons).toHaveCount(2)
+  })
 
-    // Look for Next button
-    const nextButton = page.locator('button:has-text("Next"), .btn-next')
+  test('should increase score when clicking add button', async ({ page }) => {
+    const firstItem = page.locator('.score-item').first()
+    const playerScore = firstItem.locator('.player-score')
+    const addBtn = firstItem.locator('.score-action-btn').first()
 
-    if (await nextButton.count() > 0) {
-      await expect(nextButton.first()).toBeVisible()
+    const initialScore = parseInt(await playerScore.textContent() || '0')
+    await addBtn.click()
+    await page.waitForTimeout(200)
+
+    const newScore = parseInt(await playerScore.textContent() || '0')
+    expect(newScore).toBeGreaterThan(initialScore)
+  })
+
+  test('should decrease score when clicking minus button', async ({ page }) => {
+    const firstItem = page.locator('.score-item').first()
+    const playerScore = firstItem.locator('.player-score')
+    const minusBtn = firstItem.locator('.score-action-btn').nth(1)
+
+    const initialScore = parseInt(await playerScore.textContent() || '0')
+
+    if (initialScore > 0) {
+      await minusBtn.click()
+      await page.waitForTimeout(200)
+
+      const newScore = parseInt(await playerScore.textContent() || '0')
+      expect(newScore).toBeLessThan(initialScore)
     }
   })
 
-  test('should show Restart button on lose', async ({ page }) => {
-    await page.goto('/results?win=false&score=0')
+  test('should add a player when clicking add score button', async ({ page }) => {
+    const addScoreBtn = page.locator('.add-score-btn')
+    const initialCount = await page.locator('.score-item').count()
 
-    await page.waitForLoadState('networkidle')
+    // Mock the prompt to return a player name
+    page.on('dialog', async (dialog) => {
+      expect(dialog.type()).toBe('prompt')
+      await dialog.accept('Test Player')
+    })
+
+    await addScoreBtn.click()
+    await page.waitForTimeout(300)
+
+    const newCount = await page.locator('.score-item').count()
+    expect(newCount).toBeGreaterThan(initialCount)
+  })
+
+  test('should navigate to leaderboard when clicking next', async ({ page }) => {
+    const nextBtn = page.locator('.next-btn')
+    await nextBtn.click()
+
+    await expect(page).toHaveURL(/\/leaderboard/)
     await page.waitForTimeout(500)
-
-    // Look for Restart button
-    const restartButton = page.locator('button:has-text("Restart"), .btn-restart')
-
-    if (await restartButton.count() > 0) {
-      await expect(restartButton.first()).toBeVisible()
-    }
   })
 
-  test('should have working Home button', async ({ page }) => {
-    await page.goto('/results?win=true&score=100')
+  test('should navigate to game when clicking back large button', async ({ page }) => {
+    const backLargeBtn = page.locator('.back-large-btn')
+    await backLargeBtn.click()
 
-    await page.waitForLoadState('networkidle')
+    await expect(page).toHaveURL(/\/game/)
     await page.waitForTimeout(500)
-
-    // Look for Home button
-    const homeButton = page.locator('button:has-text("Home"), .btn-home')
-
-    if (await homeButton.count() > 0) {
-      await expect(homeButton.first()).toBeVisible()
-
-      // Click home button
-      await homeButton.first().click()
-
-      // Should navigate to home
-      await page.waitForURL(/\/$|\/index/, { timeout: 5000 })
-    }
   })
 
-  test('should navigate to game on Next button click', async ({ page }) => {
-    await page.goto('/results?win=true&score=100')
+  test('should navigate back when clicking back button', async ({ page }) => {
+    const backBtn = page.locator('.back-btn')
+    await backBtn.click()
 
-    await page.waitForLoadState('networkidle')
     await page.waitForTimeout(500)
-
-    // Look for Next button
-    const nextButton = page.locator('button:has-text("Next"), .btn-next').first()
-
-    if (await nextButton.count() > 0) {
-      await nextButton.click()
-
-      // Should navigate to game page
-      await page.waitForURL(/\/game/, { timeout: 5000 })
-    }
   })
 
-  test('should navigate to game on Restart button click', async ({ page }) => {
-    await page.goto('/results?win=false&score=0')
-
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
-
-    // Look for Restart button
-    const restartButton = page.locator('button:has-text("Restart"), .btn-restart').first()
-
-    if (await restartButton.count() > 0) {
-      await restartButton.click()
-
-      // Should navigate to game page
-      await page.waitForURL(/\/game/, { timeout: 5000 })
-    }
+  test('should display scroll bar decoration', async ({ page }) => {
+    const scrollBar = page.locator('.scroll-bar')
+    await expect(scrollBar).toBeVisible()
   })
 
-  test('should display stars animation', async ({ page }) => {
-    await page.goto('/results?win=true&score=100')
+  test('should have scrollable scores list', async ({ page }) => {
+    const scoresList = page.locator('.scores-list')
 
-    await page.waitForLoadState('networkidle')
-
-    // Check that stars are present
-    const stars = page.locator('.star')
-    expect(await stars.count()).toBe(3)
-
-    // All stars should be visible
-    for (let i = 0; i < await stars.count(); i++) {
-      await expect(stars.nth(i)).toBeVisible()
-    }
+    // Check if the list is scrollable (overflow-y: auto)
+    const overflowY = await scoresList.evaluate(el =>
+      window.getComputedStyle(el).overflowY
+    )
+    expect(overflowY).toBe('auto')
   })
 
-  test('should show confetti on win', async ({ page }) => {
-    await page.goto('/results?win=true&score=100')
+  test('should be responsive on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 })
 
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    const title = page.locator('.title-image')
+    const scoresList = page.locator('.scores-list')
+    const nextBtn = page.locator('.next-btn')
 
-    // Check for confetti container (only on win)
-    const confettiContainer = page.locator('.confetti-container')
-
-    if (await confettiContainer.count() > 0) {
-      // Confetti should be present on win
-      const confetti = page.locator('.confetti')
-      expect(await confetti.count()).toBeGreaterThan(0)
-    }
+    await expect(title).toBeVisible()
+    await expect(scoresList).toBeVisible()
+    await expect(nextBtn).toBeVisible()
   })
 
-  test('should not show confetti on lose', async ({ page }) => {
-    await page.goto('/results?win=false&score=0')
+  test('should have hover effects on action buttons', async ({ page }) => {
+    const nextBtn = page.locator('.next-btn')
 
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await nextBtn.hover()
+    await page.waitForTimeout(200)
 
-    // Confetti should not be visible on lose
-    const confetti = page.locator('.confetti')
-    expect(await confetti.count()).toBe(0)
+    const transform = await nextBtn.evaluate(el =>
+      window.getComputedStyle(el).transform
+    )
+
+    // Should have transform applied
+    expect(transform).not.toBe('none')
   })
 
-  test('should handle default score when not provided', async ({ page }) => {
-    await page.goto('/results')
+  test('should have hover effects on score action buttons', async ({ page }) => {
+    const firstItem = page.locator('.score-item').first()
+    const addBtn = firstItem.locator('.score-action-btn').first()
 
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await addBtn.hover()
+    await page.waitForTimeout(200)
 
-    // Should still display score (default to 0)
-    const scoreValue = page.locator('.score-value')
-    await expect(scoreValue).toBeVisible()
+    const transform = await addBtn.evaluate(el =>
+      window.getComputedStyle(el).transform
+    )
+
+    // Should have transform applied
+    expect(transform).not.toBe('none')
   })
 
-  test('should have proper page styling', async ({ page }) => {
-    await page.goto('/results?win=true&score=100')
+  test('should have fade-in animation on title', async ({ page }) => {
+    const titleContainer = page.locator('.title-container')
 
-    await page.waitForLoadState('networkidle')
+    const animationName = await titleContainer.evaluate(el =>
+      window.getComputedStyle(el).animationName
+    )
+    expect(animationName).toContain('fadeIn')
+  })
 
-    // Check for results card
-    const resultsCard = page.locator('.results-card')
-    if (await resultsCard.count() > 0) {
-      await expect(resultsCard).toBeVisible()
-    }
+  test('should have scale-in animation on scores list', async ({ page }) => {
+    const scoresContainer = page.locator('.scores-list-container')
 
-    // Check for background pattern
-    const bgPattern = page.locator('.bg-pattern')
-    if (await bgPattern.count() > 0) {
-      expect(await bgPattern.count()).toBeGreaterThan(0)
-    }
+    const animationName = await scoresContainer.evaluate(el =>
+      window.getComputedStyle(el).animationName
+    )
+    expect(animationName).toContain('scaleIn')
+  })
 
-    // Check action buttons container
+  test('should have slide-up animation on action buttons', async ({ page }) => {
     const actionButtons = page.locator('.action-buttons')
-    if (await actionButtons.count() > 0) {
-      await expect(actionButtons).toBeVisible()
-    }
+
+    const animationName = await actionButtons.evaluate(el =>
+      window.getComputedStyle(el).animationName
+    )
+    expect(animationName).toContain('slideUp')
   })
 })

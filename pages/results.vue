@@ -1,81 +1,128 @@
 <template>
   <div class="results-page">
-    <!-- Background Pattern -->
-    <div class="bg-pattern" />
-
-    <!-- Confetti (only for win) -->
-    <div
-      v-if="isWin"
-      class="confetti-container"
+    <!-- Background Image -->
+    <img
+      :src="`${baseUrl}assets/scoring/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
     >
-      <div
-        v-for="i in 50"
-        :key="i"
-        class="confetti"
-        :style="confettiStyle(i)"
-      />
-    </div>
+
+    <!-- Back Button -->
+    <button
+      class="back-btn tap-highlight no-select"
+      @click="goBack"
+    >
+      <img
+        :src="`${baseUrl}assets/scoring/back.png`"
+        alt="Back"
+      >
+    </button>
 
     <!-- Main Container -->
     <div class="container">
-      <!-- Results Card -->
-      <div class="results-card animate-scale-in">
-        <!-- Stars -->
-        <div class="stars-container">
+      <!-- Title -->
+      <div class="title-container animate-fade-in">
+        <img
+          :src="`${baseUrl}assets/scoring/scoring.png`"
+          alt="Scoring"
+          class="title-image"
+        >
+      </div>
+
+      <!-- Scores List Container -->
+      <div class="scores-list-container animate-scale-in">
+        <div class="scores-list">
           <div
-            v-for="i in 3"
-            :key="i"
-            class="star"
-            :class="{ filled: isWin, empty: !isWin }"
-            :style="{ animationDelay: `${i * 100}ms` }"
+            v-for="(player, index) in playerScores"
+            :key="index"
+            class="score-item"
           >
-            {{ isWin ? '⭐' : '★' }}
+            <img
+              :src="`${baseUrl}assets/scoring/Shape 2.png`"
+              alt="Score slot"
+              class="score-slot-bg"
+            >
+            <div class="player-info">
+              <img
+                :src="`${baseUrl}assets/scoring/xyz.png`"
+                alt="Player avatar"
+                class="player-avatar"
+              >
+              <span class="player-name">{{ player.name }}</span>
+            </div>
+            <span class="player-score">{{ player.score }}</span>
+            <div class="score-actions">
+              <button
+                class="score-action-btn tap-highlight no-select"
+                @click="increaseScore(index)"
+              >
+                <img
+                  :src="`${baseUrl}assets/scoring/add.png`"
+                  alt="Add"
+                >
+              </button>
+              <button
+                class="score-action-btn tap-highlight no-select"
+                @click="decreaseScore(index)"
+              >
+                <img
+                  :src="`${baseUrl}assets/scoring/minus.png`"
+                  alt="Minus"
+                >
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Result Text -->
-        <h1
-          class="result-text"
-          :class="{ win: isWin, lose: !isWin }"
+        <!-- Scroll Bar -->
+        <div class="scroll-bar">
+          <img
+            :src="`${baseUrl}assets/scoring/scroll bar.png`"
+            alt="Scroll bar"
+            class="scroll-bg"
+          >
+          <img
+            :src="`${baseUrl}assets/scoring/screoll.png`"
+            alt="Scroll handle"
+            class="scroll-handle"
+          >
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons animate-slide-up">
+        <!-- Back Button -->
+        <button
+          class="action-btn back-large-btn tap-highlight no-select"
+          @click="goToPrevious"
         >
-          {{ resultText }}
-        </h1>
-
-        <!-- Score Display -->
-        <div class="score-container">
-          <span class="score-label">{{ $t('results.your_score', 'Your Score') }} :</span>
-          <span class="score-value">{{ finalScore }}</span>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <!-- Next/Restart Button -->
-          <button
-            v-if="isWin"
-            class="btn btn-large btn-next tap-highlight no-select"
-            @click="playNext"
+          <img
+            :src="`${baseUrl}assets/scoring/back-1.png`"
+            alt="Back"
           >
-            <span class="btn-icon">▶</span>
-            <span>{{ $t('results.next', 'Next') }}</span>
-          </button>
-          <button
-            v-else
-            class="btn btn-large btn-restart tap-highlight no-select"
-            @click="restart"
-          >
-            <span class="btn-icon">↻</span>
-            <span>{{ $t('results.restart', 'Restart') }}</span>
-          </button>
+        </button>
 
-          <!-- Home Button -->
-          <button
-            class="btn btn-large btn-home tap-highlight no-select"
-            @click="goHome"
+        <!-- Add Score Button -->
+        <button
+          class="action-btn add-score-btn tap-highlight no-select"
+          @click="addScore"
+        >
+          <img
+            :src="`${baseUrl}assets/scoring/add back.png`"
+            alt="Add score"
           >
-            <span class="btn-icon">🏠</span>
-            <span>{{ $t('results.home', 'Home') }}</span>
-          </button>
-        </div>
+        </button>
+
+        <!-- Next Button -->
+        <button
+          class="action-btn next-btn tap-highlight no-select"
+          @click="goToLeaderboard"
+        >
+          <img
+            :src="`${baseUrl}assets/scoring/next.png`"
+            alt="Next"
+          >
+        </button>
       </div>
     </div>
   </div>
@@ -83,58 +130,51 @@
 
 <script setup lang="ts">
 const router = useRouter()
-const route = useRoute()
+const config = useRuntimeConfig()
+const baseUrl = config.public.baseUrl
 
-// Get result data from query params or use defaults
-const finalScore = computed(() => {
-  const score = route.query.score
-  return typeof score === 'string' ? Number.parseInt(score) : 0
-})
+// Mock player scores - replace with actual game data
+const playerScores = ref([
+  { name: 'Player 1', score: 850 },
+  { name: 'Player 2', score: 720 },
+  { name: 'Player 3', score: 650 },
+])
 
-const isWin = computed(() => {
-  const win = route.query.win
-  return win === 'true' || finalScore.value > 0
-})
+const increaseScore = (index: number) => {
+  playerScores.value[index].score += 10
+}
 
-const resultText = computed(() => {
-  return isWin.value
-    ? 'YOU WIN'
-    : 'YOU LOSE'
-})
-
-const confettiStyle = (_index: number) => {
-  const colors = ['#FF6B35', '#F7931E', '#4ECDC4', '#9B59B6', '#3498DB', '#2ECC71', '#F1C40F', '#E74C3C']
-  const randomColor = colors[Math.floor(Math.random() * colors.length)]
-  const randomLeft = Math.random() * 100
-  const randomDelay = Math.random() * 3
-  const randomDuration = 3 + Math.random() * 2
-
-  return {
-    left: `${randomLeft}%`,
-    backgroundColor: randomColor,
-    animationDelay: `${randomDelay}s`,
-    animationDuration: `${randomDuration}s`,
+const decreaseScore = (index: number) => {
+  if (playerScores.value[index].score > 0) {
+    playerScores.value[index].score -= 10
   }
 }
 
-const playNext = () => {
+const addScore = () => {
+  const playerName = prompt('Enter player name:')
+  if (playerName && playerName.trim()) {
+    playerScores.value.push({ name: playerName.trim(), score: 0 })
+  }
+}
+
+const goToPrevious = () => {
   router.push('/game')
 }
 
-const restart = () => {
-  router.push('/game')
+const goToLeaderboard = () => {
+  router.push('/leaderboard')
 }
 
-const goHome = () => {
-  router.push('/')
+const goBack = () => {
+  router.back()
 }
 
 useHead({
-  title: 'Riddle Rush - Results',
+  title: 'Scoring',
   meta: [
     {
       name: 'description',
-      content: 'Game results',
+      content: 'Game scoring',
     },
   ],
 })
@@ -145,284 +185,324 @@ useHead({
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  background: var(--bg-gradient-main);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #1a1a2e;
 }
 
-.bg-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-/* Confetti Animation */
-.confetti-container {
+/* Background Image */
+.page-bg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  overflow: hidden;
+  object-fit: cover;
+  z-index: 1;
 }
 
-.confetti {
+/* Back Button */
+.back-btn {
   position: absolute;
-  width: 10px;
-  height: 10px;
-  top: -10px;
-  animation: confetti-fall linear infinite;
+  top: var(--spacing-xl);
+  left: var(--spacing-xl);
+  z-index: 3;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-base);
 }
 
-@keyframes confetti-fall {
-  to {
-    transform: translateY(100vh) rotate(360deg);
-  }
+.back-btn img {
+  width: clamp(40px, 5vw, 60px);
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.back-btn:hover {
+  transform: scale(1.05);
+}
+
+.back-btn:active {
+  transform: scale(0.95);
 }
 
 /* Container */
 .container {
   position: relative;
-  max-width: 700px;
-  width: 100%;
-  padding: var(--spacing-xl) var(--spacing-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Results Card */
-.results-card {
-  width: 100%;
-  background: linear-gradient(180deg, #E0F7FF 0%, #95D7EE 100%);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-3xl) var(--spacing-2xl);
-  box-shadow:
-    var(--shadow-xl),
-    inset 0 2px 0 rgba(255, 255, 255, 0.5);
-  border: 4px solid rgba(255, 255, 255, 0.5);
+  z-index: 2;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl) var(--spacing-md);
   gap: var(--spacing-2xl);
 }
 
-/* Stars */
-.stars-container {
+/* Title */
+.title-container {
+  display: flex;
+  justify-content: center;
+}
+
+.title-image {
+  width: clamp(200px, 30vw, 300px);
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* Scores List Container */
+.scores-list-container {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
   display: flex;
   gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-md);
 }
 
-.star {
-  font-size: 80px;
-  animation: star-bounce 0.6s ease-out backwards;
+.scores-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-height: 450px;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  scrollbar-width: none;
 }
 
-.star.filled {
-  filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.5));
+.scores-list::-webkit-scrollbar {
+  display: none;
 }
 
-.star.empty {
-  color: #999;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-
-@keyframes star-bounce {
-  0% {
-    transform: scale(0) rotate(-180deg);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.2) rotate(20deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-/* Result Text */
-.result-text {
-  font-family: var(--font-display);
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-black);
-  margin: 0;
-  text-align: center;
-  letter-spacing: 0.05em;
-  animation: result-appear 0.5s ease-out 0.3s backwards;
-}
-
-.result-text.win {
-  color: #FFD700;
-  text-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    -2px -2px 0 #FF8C00,
-    2px 2px 0 #FF8C00;
-}
-
-.result-text.lose {
-  color: #E74C3C;
-  text-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    -2px -2px 0 #C0392B,
-    2px 2px 0 #C0392B;
-}
-
-@keyframes result-appear {
-  from {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Score Container */
-.score-container {
+/* Score Item */
+.score-item {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-lg);
-  background: #2C5F8D;
-  padding: var(--spacing-lg) var(--spacing-2xl);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  min-height: 80px;
+}
+
+.score-slot-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 400px;
-  animation: score-slide 0.5s ease-out 0.5s backwards;
+  height: 100%;
+  object-fit: fill;
+  z-index: 1;
 }
 
-.score-label {
-  font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.player-info {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
 }
 
-.score-value {
+.player-avatar {
+  width: clamp(40px, 5vw, 50px);
+  height: auto;
+}
+
+.player-name {
   font-family: var(--font-display);
-  font-size: var(--font-size-3xl);
+  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
+  font-weight: var(--font-weight-bold);
+  color: #2a1810;
+}
+
+.player-score {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-3xl));
   font-weight: var(--font-weight-black);
-  color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #2a1810;
+  min-width: 80px;
+  text-align: center;
 }
 
-@keyframes score-slide {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.score-actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.score-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-base);
+}
+
+.score-action-btn img {
+  width: clamp(30px, 4vw, 40px);
+  height: auto;
+}
+
+.score-action-btn:hover {
+  transform: scale(1.1);
+}
+
+.score-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Scroll Bar */
+.scroll-bar {
+  position: relative;
+  width: 30px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+}
+
+.scroll-bg {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: auto;
+}
+
+.scroll-handle {
+  position: relative;
+  z-index: 2;
+  width: 20px;
+  height: auto;
+  margin-top: var(--spacing-lg);
 }
 
 /* Action Buttons */
 .action-buttons {
   display: flex;
-  flex-direction: column;
   gap: var(--spacing-lg);
-  width: 100%;
-  max-width: 400px;
-  animation: buttons-appear 0.5s ease-out 0.7s backwards;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-@keyframes buttons-appear {
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-base);
+}
+
+.action-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.action-btn:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.back-large-btn img,
+.next-btn img {
+  width: clamp(140px, 22vw, 200px);
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+}
+
+.add-score-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(70px, 10vw, 100px);
+  height: clamp(70px, 10vw, 100px);
+}
+
+.add-score-btn img {
+  width: 100%;
+  height: auto;
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
   from {
-    transform: translateY(30px);
     opacity: 0;
+    transform: translateY(-20px);
   }
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.btn-next {
-  background: linear-gradient(180deg, #7ED321 0%, #5FB31F 100%);
-  color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    var(--shadow-lg),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out 0.2s backwards;
 }
 
-.btn-restart {
-  background: linear-gradient(180deg, #4ECDC4 0%, #3AAFA9 100%);
-  color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    var(--shadow-lg),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.btn-home {
-  background: linear-gradient(180deg, #FF8C61 0%, #FF6B35 100%);
-  color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    var(--shadow-lg),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out 0.4s backwards;
 }
 
-.btn-next:hover,
-.btn-restart:hover,
-.btn-home:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 20px 52px rgba(0, 0, 0, 0.25),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
-}
-
-.btn-next:active,
-.btn-restart:active,
-.btn-home:active {
-  transform: translateY(0);
-}
-
-.btn-icon {
-  font-size: 1.2em;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .results-card {
-    padding: var(--spacing-2xl) var(--spacing-xl);
+  .back-btn img {
+    width: 40px;
   }
 
-  .star {
-    font-size: 60px;
+  .title-image {
+    width: 200px;
   }
 
-  .result-text {
-    font-size: var(--font-size-3xl);
+  .scores-list {
+    max-height: 350px;
   }
 
-  .score-label {
-    font-size: var(--font-size-lg);
+  .score-item {
+    min-height: 70px;
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 
-  .score-value {
-    font-size: var(--font-size-2xl);
+  .back-large-btn img,
+  .next-btn img {
+    width: 140px;
+  }
+
+  .add-score-btn {
+    width: 70px;
+    height: 70px;
   }
 }
 </style>

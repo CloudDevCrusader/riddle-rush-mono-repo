@@ -1,14 +1,33 @@
 <template>
   <div class="language-page">
-    <!-- Background Pattern -->
-    <div class="bg-pattern" />
+    <!-- Background Image -->
+    <img
+      :src="`${baseUrl}assets/language/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
+    >
+
+    <!-- Back Button -->
+    <button
+      class="back-btn tap-highlight no-select"
+      @click="goBack"
+    >
+      <img
+        :src="`${baseUrl}assets/language/back.png`"
+        alt="Back"
+      >
+    </button>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Title -->
-      <h1 class="title animate-fade-in">
-        {{ $t('language.title', 'LANGUAGE') }}
-      </h1>
+      <div class="title-container animate-fade-in">
+        <img
+          :src="`${baseUrl}assets/language/LANGUAGE.png`"
+          alt="Language"
+          class="title-image"
+        >
+      </div>
 
       <!-- Language Card -->
       <div class="language-card animate-scale-in">
@@ -20,14 +39,26 @@
             @click="selectLanguage('en')"
           >
             <div class="flag-container">
-              <span class="flag">🇬🇧</span>
+              <img
+                :src="`${baseUrl}assets/language/Eng%20Flag.png`"
+                alt="English"
+                class="flag-image"
+              >
             </div>
+            <img
+              :src="`${baseUrl}assets/language/Language%20button.png`"
+              alt="Language button"
+              class="button-bg"
+            >
             <span class="language-name">ENGLISH</span>
-            <div class="check-container">
-              <span
-                v-if="currentLocale === 'en'"
-                class="checkmark"
-              >✓</span>
+            <div
+              v-if="currentLocale === 'en'"
+              class="check-mark"
+            >
+              <img
+                :src="`${baseUrl}assets/language/mark.png`"
+                alt="Selected"
+              >
             </div>
           </button>
 
@@ -38,14 +69,26 @@
             @click="selectLanguage('de')"
           >
             <div class="flag-container">
-              <span class="flag">🇩🇪</span>
+              <img
+                :src="`${baseUrl}assets/language/German%20Flag.png`"
+                alt="German"
+                class="flag-image"
+              >
             </div>
+            <img
+              :src="`${baseUrl}assets/language/Language%20button.png`"
+              alt="Language button"
+              class="button-bg"
+            >
             <span class="language-name">GERMAN</span>
-            <div class="check-container">
-              <span
-                v-if="currentLocale === 'de'"
-                class="checkmark"
-              >✓</span>
+            <div
+              v-if="currentLocale === 'de'"
+              class="check-mark"
+            >
+              <img
+                :src="`${baseUrl}assets/language/mark.png`"
+                alt="Selected"
+              >
             </div>
           </button>
         </div>
@@ -53,10 +96,13 @@
 
       <!-- OK Button -->
       <button
-        class="btn btn-large btn-ok tap-highlight no-select animate-slide-up"
+        class="ok-btn tap-highlight no-select animate-slide-up"
         @click="confirmSelection"
       >
-        <span>{{ $t('common.ok', 'OK') }}</span>
+        <img
+          :src="`${baseUrl}assets/language/OK.png`"
+          alt="OK"
+        >
       </button>
     </div>
   </div>
@@ -65,6 +111,8 @@
 <script setup lang="ts">
 const router = useRouter()
 const { locale, setLocale } = useI18n()
+const config = useRuntimeConfig()
+const baseUrl = config.public.baseUrl
 
 const currentLocale = ref(locale.value)
 
@@ -76,11 +124,15 @@ const selectLanguage = (lang: LocaleCode) => {
 
 const confirmSelection = async () => {
   await setLocale(currentLocale.value as LocaleCode)
+  router.push('/')
+}
+
+const goBack = () => {
   router.back()
 }
 
 useHead({
-  title: 'Riddle Rush - Language Selection',
+  title: 'Language Selection',
   meta: [
     {
       name: 'description',
@@ -95,28 +147,55 @@ useHead({
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  background: var(--bg-gradient-main);
   overflow-x: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #1a1a2e;
 }
 
-.bg-pattern {
+/* Background Image */
+.page-bg {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Back Button */
+.back-btn {
+  position: absolute;
+  top: var(--spacing-xl);
+  left: var(--spacing-xl);
+  z-index: 3;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-base);
+}
+
+.back-btn img {
+  width: clamp(40px, 5vw, 60px);
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.back-btn:hover {
+  transform: scale(1.05);
+}
+
+.back-btn:active {
+  transform: scale(0.95);
 }
 
 /* Container */
 .container {
   position: relative;
+  z-index: 2;
   max-width: 800px;
   width: 100%;
   padding: var(--spacing-xl) var(--spacing-md);
@@ -127,30 +206,22 @@ useHead({
 }
 
 /* Title */
-.title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-black);
-  color: var(--color-white);
-  text-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.2);
-  margin: 0;
-  text-align: center;
-  letter-spacing: 0.05em;
+.title-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-2xl);
+}
+
+.title-image {
+  width: clamp(200px, 30vw, 300px);
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
 }
 
 /* Language Card */
 .language-card {
   width: 100%;
   max-width: 600px;
-  background: linear-gradient(180deg, #E0F7FF 0%, #B3E5FC 100%);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-3xl) var(--spacing-2xl);
-  box-shadow:
-    var(--shadow-xl),
-    inset 0 2px 0 rgba(255, 255, 255, 0.5);
-  border: 4px solid rgba(255, 255, 255, 0.5);
 }
 
 .language-options {
@@ -160,141 +231,173 @@ useHead({
 }
 
 .language-option {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: var(--spacing-xl);
-  background: linear-gradient(180deg, #FFF8DC 0%, #F5E6C8 100%);
-  padding: var(--spacing-xl) var(--spacing-2xl);
-  border-radius: var(--radius-xl);
-  border: 4px solid rgba(139, 90, 43, 0.3);
-  box-shadow: var(--shadow-md);
+  justify-content: center;
+  gap: var(--spacing-lg);
+  background: none;
+  border: none;
   cursor: pointer;
   transition: all var(--transition-base);
-  min-height: 80px;
+  min-height: 100px;
+  padding: 0;
 }
 
 .language-option:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .language-option:active {
-  transform: translateY(0);
+  transform: translateY(-2px) scale(0.98);
 }
 
-.language-option.selected {
-  background: linear-gradient(180deg, #FFE4B5 0%, #FFD68A 100%);
-  border-color: rgba(139, 90, 43, 0.5);
-  box-shadow: var(--shadow-lg);
+.button-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.language-option.selected .button-bg {
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3)) brightness(1.1);
 }
 
 .flag-container {
+  position: relative;
+  z-index: 2;
   flex-shrink: 0;
-  width: 60px;
-  height: 60px;
+  width: clamp(60px, 8vw, 80px);
+  height: clamp(60px, 8vw, 80px);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-white);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
-.flag {
-  font-size: 40px;
+.flag-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .language-name {
+  position: relative;
+  z-index: 2;
   flex: 1;
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: #8B5A2B;
+  font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-3xl));
+  font-weight: var(--font-weight-black);
+  color: #3a2817;
   text-align: center;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.check-container {
+.check-mark {
+  position: relative;
+  z-index: 2;
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(139, 90, 43, 0.2);
-  border-radius: var(--radius-md);
+  animation: scaleIn 0.3s ease-out;
 }
 
-.checkmark {
-  font-size: 32px;
-  color: var(--color-accent-green);
-  font-weight: var(--font-weight-black);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  animation: scaleIn var(--transition-base) ease-out;
+.check-mark img {
+  width: clamp(24px, 3vw, 32px);
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 /* OK Button */
-.btn-ok {
-  width: 100%;
-  max-width: 600px;
-  background: linear-gradient(180deg, #7ED321 0%, #5FB31F 100%);
-  color: var(--color-white);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-black);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    var(--shadow-xl),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+.ok-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-base);
 }
 
-.btn-ok:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 20px 52px rgba(0, 0, 0, 0.25),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+.ok-btn img {
+  width: clamp(200px, 40vw, 300px);
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
-.btn-ok:active {
-  transform: translateY(0);
+.ok-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.ok-btn:active {
+  transform: translateY(-2px) scale(0.95);
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out 0.2s backwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out 0.4s backwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .title {
-    font-size: var(--font-size-3xl);
+  .back-btn img {
+    width: 40px;
   }
 
-  .language-card {
-    padding: var(--spacing-2xl) var(--spacing-xl);
+  .title-image {
+    width: 200px;
   }
 
   .language-option {
-    padding: var(--spacing-lg) var(--spacing-xl);
-    gap: var(--spacing-lg);
-    min-height: 70px;
+    min-height: 80px;
   }
 
-  .flag-container {
-    width: 50px;
-    height: 50px;
-  }
-
-  .flag {
-    font-size: 32px;
-  }
-
-  .language-name {
-    font-size: var(--font-size-xl);
-  }
-
-  .check-container {
-    width: 40px;
-    height: 40px;
-  }
-
-  .checkmark {
-    font-size: 28px;
+  .ok-btn img {
+    width: 200px;
   }
 }
 </style>
