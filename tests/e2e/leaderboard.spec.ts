@@ -141,7 +141,11 @@ test.describe('Leaderboard Page', () => {
 
     // Check if scores are in descending order
     for (let i = 0; i < scores.length - 1; i++) {
-      expect(scores[i]).toBeGreaterThanOrEqual(scores[i + 1])
+      const currentScore = scores[i]
+      const nextScore = scores[i + 1]
+      if (currentScore !== undefined && nextScore !== undefined) {
+        expect(currentScore).toBeGreaterThanOrEqual(nextScore)
+      }
     }
   })
 })

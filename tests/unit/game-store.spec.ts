@@ -38,7 +38,8 @@ describe('Game Store', () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     // Force reset all stores
-    pinia._s.forEach(store => store.$reset())
+    // @ts-expect-error: Accessing internal Pinia API for test cleanup
+    pinia._s.forEach((store: any) => store.$reset())
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
     fetchMock.mockClear()

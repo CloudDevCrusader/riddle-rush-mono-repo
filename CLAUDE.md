@@ -45,11 +45,30 @@ pnpm run format:check # Check formatting
 ```
 
 ### Deployment
+
+#### GitLab Pages (Default)
 ```bash
 ./scripts/deploy-prod.sh     # Deploy to production (main branch)
 ./scripts/deploy-staging.sh  # Deploy to staging
 ./scripts/deploy-dev.sh      # Deploy to development
 ```
+
+#### AWS (S3 + CloudFront)
+```bash
+# Quick deployment (S3 only)
+export AWS_S3_BUCKET=your-unique-bucket-name
+./aws-deploy.sh production
+
+# With CloudFront CDN
+export AWS_S3_BUCKET=your-bucket-name
+export AWS_CLOUDFRONT_ID=E1234567890ABC
+./aws-deploy.sh production
+
+# Test against AWS deployment
+BASE_URL=https://your-domain.com pnpm run test:e2e
+```
+
+See [AWS Deployment Guide](docs/AWS-DEPLOYMENT.md) for detailed setup instructions.
 
 ## Architecture Overview
 

@@ -141,12 +141,16 @@ const playerScores = ref([
 ])
 
 const increaseScore = (index: number) => {
-  playerScores.value[index].score += 10
+  const player = playerScores.value[index]
+  if (player) {
+    player.score += 10
+  }
 }
 
 const decreaseScore = (index: number) => {
-  if (playerScores.value[index].score > 0) {
-    playerScores.value[index].score -= 10
+  const player = playerScores.value[index]
+  if (player && player.score > 0) {
+    player.score -= 10
   }
 }
 

@@ -29,7 +29,8 @@
     "ci:test": "npm run test:unit:coverage",
     "deploy:dev": "./scripts/deploy-dev.sh",
     "deploy:staging": "./scripts/deploy-staging.sh",
-    "deploy:prod": "./scripts/deploy-prod.sh"
+    "deploy:prod": "./scripts/deploy-prod.sh",
+    "deploy:aws": "./aws-deploy.sh production"
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.2.1",
