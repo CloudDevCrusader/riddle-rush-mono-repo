@@ -7,6 +7,14 @@ export function useStatistics() {
   const updateStatistics = async (session: GameSession) => {
     if (!session.endTime) return
 
+    // Multi-player mode: skip legacy statistics (we could implement new multi-player stats later)
+    if (session.players && session.players.length > 0) {
+      return
+    }
+
+    // Legacy single-player mode
+    if (!session.attempts || session.score === undefined) return
+
     let stats = await getStatistics()
     if (!stats) {
       stats = await initializeStatistics()

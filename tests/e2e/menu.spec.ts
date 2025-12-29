@@ -3,6 +3,16 @@ import { test, expect } from '@playwright/test'
 test.describe('Main Menu Page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/menu')
+    await page.waitForLoadState('networkidle')
+
+    // Wait for splash screen animation to complete
+    await page.waitForTimeout(2000) // Splash screen fade-out duration
+
+    // Alternative: Wait for splash screen to be hidden
+    const splashScreen = page.locator('.splash-screen')
+    await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
+      // Splash screen might already be gone, ignore error
+    })
   })
 
   test('should display main menu with all elements', async ({ page }) => {
@@ -10,8 +20,8 @@ test.describe('Main Menu Page', () => {
     const background = page.locator('.page-bg')
     await expect(background).toBeVisible()
 
-    // Check for logo
-    const logo = page.locator('.logo-image')
+    // Check for logo (use first() to handle splash + menu logos)
+    const logo = page.locator('.logo-image').first()
     await expect(logo).toBeVisible()
 
     // Check for coin bar
@@ -88,7 +98,7 @@ test.describe('Main Menu Page', () => {
   test('should be responsive on mobile viewport', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 })
 
-    const logo = page.locator('.logo-image')
+    const logo = page.locator('.logo-image').first()
     const playBtn = page.locator('.play-btn')
 
     await expect(logo).toBeVisible()

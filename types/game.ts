@@ -13,15 +13,44 @@ export interface Category {
   letter?: string
 }
 
+export interface Player {
+  id: string
+  name: string
+  totalScore: number
+  currentRoundScore: number
+  currentRoundAnswer?: string
+  hasSubmitted: boolean
+}
+
+export interface RoundResult {
+  roundNumber: number
+  category: string
+  letter: string
+  timestamp: number
+  playerResults: PlayerRoundResult[]
+}
+
+export interface PlayerRoundResult {
+  playerId: string
+  playerName: string
+  answer: string
+  score: number
+}
+
 export interface GameSession {
   id: string
-  userId: string
+  gameName?: string
+  players: Player[]
+  currentRound: number
   category: Category
   letter: string
   startTime: number
   endTime?: number
-  score: number
-  attempts: GameAttempt[]
+  roundHistory: RoundResult[]
+  // Legacy fields for backward compatibility
+  userId?: string
+  score?: number
+  attempts?: GameAttempt[]
 }
 
 export interface GameAttempt {

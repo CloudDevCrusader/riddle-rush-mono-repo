@@ -188,8 +188,8 @@ describe('Game Store', () => {
       const store = useGameStore()
       const session = await store.startNewGame()
       expect(session).toBeDefined()
-      expect(session.category).toBeDefined()
-      expect(session.category.name.length).toBeGreaterThan(0)
+      expect(session?.category).toBeDefined()
+      expect(session?.category.name.length).toBeGreaterThan(0)
     })
 
     it('sets currentSession', async () => {
@@ -484,6 +484,417 @@ describe('Game Store', () => {
       await store.resumeOrStartNewGame()
       expect(store.currentSession?.category).toBeDefined()
       expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
+    })
+  })
+
+  describe('Multi-Player Mode', () => {
+    describe('Setup Players', () => {
+      it('creates game session with players', async () => {
+        const store = useGameStore()
+        const playerNames = ['Alice', 'Bob', 'Charlie']
+        const session = await store.setupPlayers(playerNames)
+
+        expect(session).toBeDefined()
+        expect(session?.players).toHaveLength(3)
+        expect(session?.players[0]?.name).toBe('Alice')
+        expect(session?.players[1]?.name).toBe('Bob')
+        expect(session?.players[2]?.name).toBe('Charlie')
+      })
+
+      it('initializes players with zero scores', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Player 1', 'Player 2'])
+
+        const players = store.players
+        expect(players[0]?.totalScore).toBe(0)
+        expect(players[0]?.currentRoundScore).toBe(0)
+        expect(players[0]?.hasSubmitted).toBe(false)
+        expect(players[1]?.totalScore).toBe(0)
+        expect(players[1]?.currentRoundScore).toBe(0)
+        expect(players[1]?.hasSubmitted).toBe(false)
+      })
+
+      it('uses default names when empty strings provided', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['', '', 'Charlie'])
+
+        expect(store.players[0]?.name).toBe('Player 1')
+        expect(store.players[1]?.name).toBe('Player 2')
+        expect(store.players[2]?.name).toBe('Charlie')
+      })
+
+      it('sets currentRound to 1', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Player 1', 'Player 2'])
+
+        expect(store.currentRound).toBe(1)
+      })
+
+      it('sets optional game name', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Player 1'], 'Test Game')
+
+        expect(store.currentSession?.gameName).toBe('Test Game')
+      })
+
+      it('generates category and letter', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Player 1'])
+
+        expect(store.currentCategory).toBeDefined()
+        expect(store.currentLetter).toBeDefined()
+        expect(store.currentLetter?.length).toBe(1)
+      })
+    })
+
+    describe('Multi-Player Getters', () => {
+      beforeEach(async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
+      })
+
+      it('isMultiPlayerMode returns true when players exist', () => {
+        const store = useGameStore()
+        expect(store.isMultiPlayerMode).toBe(true)
+      })
+
+      it('players getter returns all players', () => {
+        const store = useGameStore()
+        expect(store.players).toHaveLength(3)
+        expect(store.players.map((p) => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
+      })
+
+      it('currentPlayerTurn returns first unsubmitted player', () => {
+        const store = useGameStore()
+        const currentPlayer = store.currentPlayerTurn
+
+        expect(currentPlayer).toBeDefined()
+        expect(currentPlayer?.name).toBe('Alice')
+        expect(currentPlayer?.hasSubmitted).toBe(false)
+      })
+
+      it('allPlayersSubmitted returns false initially', () => {
+        const store = useGameStore()
+        expect(store.allPlayersSubmitted).toBe(false)
+      })
+
+      it('allPlayersSubmitted returns true when all submitted', async () => {
+        const store = useGameStore()
+
+        for (const player of store.players) {
+          await store.submitPlayerAnswer(player.id, 'Answer')
+        }
+
+        expect(store.allPlayersSubmitted).toBe(true)
+      })
+
+      it('leaderboard returns players sorted by totalScore', async () => {
+        const store = useGameStore()
+        const [alice, bob, charlie] = store.players
+
+        if (alice && bob && charlie) {
+          await store.assignPlayerScore(alice.id, 100)
+          await store.assignPlayerScore(bob.id, 200)
+          await store.assignPlayerScore(charlie.id, 150)
+
+          const leaderboard = store.leaderboard
+
+          expect(leaderboard[0]?.name).toBe('Bob')
+          expect(leaderboard[0]?.totalScore).toBe(200)
+          expect(leaderboard[1]?.name).toBe('Charlie')
+          expect(leaderboard[1]?.totalScore).toBe(150)
+          expect(leaderboard[2]?.name).toBe('Alice')
+          expect(leaderboard[2]?.totalScore).toBe(100)
+        }
+      })
+    })
+
+    describe('Submit Player Answer', () => {
+      beforeEach(async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+      })
+
+      it('saves player answer', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.submitPlayerAnswer(alice.id, 'Test Answer')
+
+          expect(alice.currentRoundAnswer).toBe('Test Answer')
+          expect(alice.hasSubmitted).toBe(true)
+        }
+      })
+
+      it('persists to database', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.submitPlayerAnswer(alice.id, 'Test Answer')
+
+          expect(mockSaveGameSession).toHaveBeenCalled()
+        }
+      })
+
+      it('updates currentPlayerTurn to next player', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.submitPlayerAnswer(alice.id, 'Alice Answer')
+
+          expect(store.currentPlayerTurn?.name).toBe('Bob')
+        }
+      })
+
+      it('handles invalid player ID gracefully', async () => {
+        const store = useGameStore()
+        await store.submitPlayerAnswer('invalid-id', 'Answer')
+
+        // Should not throw error
+        expect(store.players.every((p) => !p.hasSubmitted)).toBe(true)
+      })
+    })
+
+    describe('Assign Player Score', () => {
+      beforeEach(async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+      })
+
+      it('updates current round score', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.assignPlayerScore(alice.id, 50)
+
+          expect(alice.currentRoundScore).toBe(50)
+        }
+      })
+
+      it('adds to total score', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.assignPlayerScore(alice.id, 50)
+          expect(alice.totalScore).toBe(50)
+
+          await store.assignPlayerScore(alice.id, 30)
+          expect(alice.totalScore).toBe(80)
+          expect(alice.currentRoundScore).toBe(30)
+        }
+      })
+
+      it('persists to database', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.assignPlayerScore(alice.id, 50)
+
+          expect(mockSaveGameSession).toHaveBeenCalled()
+        }
+      })
+    })
+
+    describe('Complete Round', () => {
+      beforeEach(async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          await store.submitPlayerAnswer(alice.id, 'Alice Answer')
+          await store.submitPlayerAnswer(bob.id, 'Bob Answer')
+          await store.assignPlayerScore(alice.id, 100)
+          await store.assignPlayerScore(bob.id, 50)
+        }
+      })
+
+      it('adds round to history', async () => {
+        const store = useGameStore()
+        await store.completeRound()
+
+        expect(store.currentSession?.roundHistory).toHaveLength(1)
+      })
+
+      it('saves round results with player answers and scores', async () => {
+        const store = useGameStore()
+        await store.completeRound()
+
+        const round = store.currentSession?.roundHistory[0]
+        expect(round?.playerResults).toHaveLength(2)
+        expect(round?.playerResults[0]?.answer).toBe('Alice Answer')
+        expect(round?.playerResults[0]?.score).toBe(100)
+        expect(round?.playerResults[1]?.answer).toBe('Bob Answer')
+        expect(round?.playerResults[1]?.score).toBe(50)
+      })
+
+      it('includes round metadata', async () => {
+        const store = useGameStore()
+        const category = store.currentCategory
+        const letter = store.currentLetter
+
+        await store.completeRound()
+
+        const round = store.currentSession?.roundHistory[0]
+        expect(round?.roundNumber).toBe(1)
+        expect(round?.category).toBe(category?.name)
+        expect(round?.letter).toBe(letter)
+        expect(round?.timestamp).toBeDefined()
+      })
+    })
+
+    describe('Start Next Round', () => {
+      beforeEach(async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await store.submitPlayerAnswer(bob.id, 'Answer 2')
+          await store.assignPlayerScore(alice.id, 100)
+          await store.assignPlayerScore(bob.id, 50)
+        }
+      })
+
+      it('increments round number', async () => {
+        const store = useGameStore()
+        await store.startNextRound()
+
+        expect(store.currentRound).toBe(2)
+      })
+
+      it('generates new category and letter', async () => {
+        const store = useGameStore()
+        const oldCategory = store.currentCategory?.id
+        const oldLetter = store.currentLetter
+
+        await store.startNextRound()
+
+        const newCategory = store.currentCategory?.id
+        const newLetter = store.currentLetter
+
+        // Either different category or different letter
+        expect(newCategory !== oldCategory || newLetter !== oldLetter).toBe(true)
+      })
+
+      it('resets player round state', async () => {
+        const store = useGameStore()
+        await store.startNextRound()
+
+        for (const player of store.players) {
+          expect(player.currentRoundScore).toBe(0)
+          expect(player.currentRoundAnswer).toBeUndefined()
+          expect(player.hasSubmitted).toBe(false)
+        }
+      })
+
+      it('preserves total scores', async () => {
+        const store = useGameStore()
+        const [alice, bob] = store.players
+
+        await store.startNextRound()
+
+        expect(alice?.totalScore).toBe(100)
+        expect(bob?.totalScore).toBe(50)
+      })
+
+      it('keeps same players', async () => {
+        const store = useGameStore()
+        await store.startNextRound()
+
+        expect(store.players).toHaveLength(2)
+        expect(store.players.map((p) => p.name)).toEqual(['Alice', 'Bob'])
+      })
+    })
+
+    describe('Reset Player Submissions', () => {
+      beforeEach(async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        for (const player of store.players) {
+          await store.submitPlayerAnswer(player.id, 'Answer')
+        }
+      })
+
+      it('clears all hasSubmitted flags', async () => {
+        const store = useGameStore()
+        await store.resetPlayerSubmissions()
+
+        for (const player of store.players) {
+          expect(player.hasSubmitted).toBe(false)
+        }
+      })
+
+      it('persists to database', async () => {
+        const store = useGameStore()
+        mockSaveGameSession.mockClear()
+
+        await store.resetPlayerSubmissions()
+
+        expect(mockSaveGameSession).toHaveBeenCalled()
+      })
+    })
+
+    describe('Get Player By ID', () => {
+      beforeEach(async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+      })
+
+      it('returns player when ID matches', () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          const found = store.getPlayerById(alice.id)
+          expect(found).toBe(alice)
+          expect(found?.name).toBe('Alice')
+        }
+      })
+
+      it('returns null when ID not found', () => {
+        const store = useGameStore()
+        const found = store.getPlayerById('invalid-id')
+
+        expect(found).toBeNull()
+      })
+
+      it('returns null when no session', () => {
+        const store = useGameStore()
+        store.clearSession()
+
+        const found = store.getPlayerById('any-id')
+
+        expect(found).toBeNull()
+      })
+    })
+
+    describe('Multi-Player with startNewGame', () => {
+      it('starts new round when players exist', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const oldRound = store.currentRound
+        await store.startNewGame()
+
+        expect(store.currentRound).toBe(oldRound + 1)
+      })
+
+      it('starts legacy single-player when no players', async () => {
+        const store = useGameStore()
+        await store.startNewGame()
+
+        expect(store.isMultiPlayerMode).toBe(false)
+        expect(store.players).toHaveLength(0)
+      })
     })
   })
 })

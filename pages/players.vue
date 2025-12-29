@@ -127,9 +127,12 @@
 </template>
 
 <script setup lang="ts">
+import { useGameStore } from '~/stores/game'
+
 const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
+const gameStore = useGameStore()
 
 const maxPlayers = 6
 const players = ref([
@@ -138,9 +141,13 @@ const players = ref([
 
 const addPlayer = () => {
   if (players.value.length < maxPlayers) {
-    const playerName = prompt('Enter player name:')
+    const defaultName = `Player ${players.value.length + 1}`
+    const playerName = prompt('Enter player name:', defaultName)
     if (playerName && playerName.trim()) {
       players.value.push({ name: playerName.trim() })
+    } else if (playerName === '') {
+      // User cleared the prompt, use default name
+      players.value.push({ name: defaultName })
     }
   }
 }
@@ -149,10 +156,12 @@ const removePlayer = (index: number) => {
   players.value.splice(index, 1)
 }
 
-const startGame = () => {
+const startGame = async () => {
   if (players.value.length > 0) {
-    // Navigate to alphabet selection or category selection
-    router.push('/alphabet')
+    const playerNames = players.value.map(p => p.name)
+    await gameStore.setupPlayers(playerNames)
+    // Navigate directly to game
+    router.push('/game')
   }
 }
 

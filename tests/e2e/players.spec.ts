@@ -75,11 +75,11 @@ test.describe('Players Management Page', () => {
     await expect(startBtn).not.toBeDisabled()
   })
 
-  test('should navigate to alphabet selection when clicking start', async ({ page }) => {
+  test('should navigate to game when clicking start', async ({ page }) => {
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
 
-    await expect(page).toHaveURL(/\/alphabet/)
+    await expect(page).toHaveURL(/\/game/)
     await page.waitForTimeout(500)
   })
 

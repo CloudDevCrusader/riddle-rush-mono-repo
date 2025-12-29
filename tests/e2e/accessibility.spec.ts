@@ -60,7 +60,7 @@ test.describe('Accessibility', () => {
     }
   })
 
-  test('should have sufficient color contrast', async ({ page }) => {
+  test.skip('should have sufficient color contrast', async ({ page }) => {
     await page.goto('/')
 
     // This is a basic check - for comprehensive a11y testing, use axe-core

@@ -48,7 +48,10 @@
                 alt="Player avatar"
                 class="player-avatar"
               >
-              <span class="player-name">{{ player.name }}</span>
+              <div class="player-details">
+                <span class="player-name">{{ player.name }}</span>
+                <span class="player-answer">"{{ player.answer }}"</span>
+              </div>
             </div>
             <span class="player-score">{{ player.score }}</span>
             <div class="score-actions">
@@ -102,17 +105,6 @@
           >
         </button>
 
-        <!-- Add Score Button -->
-        <button
-          class="action-btn add-score-btn tap-highlight no-select"
-          @click="addScore"
-        >
-          <img
-            :src="`${baseUrl}assets/scoring/add back.png`"
-            alt="Add score"
-          >
-        </button>
-
         <!-- Next Button -->
         <button
           class="action-btn next-btn tap-highlight no-select"
@@ -129,16 +121,27 @@
 </template>
 
 <script setup lang="ts">
+import { useGameStore } from '~/stores/game'
+
 const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
+const gameStore = useGameStore()
 
-// Mock player scores - replace with actual game data
-const playerScores = ref([
-  { name: 'Player 1', score: 850 },
-  { name: 'Player 2', score: 720 },
-  { name: 'Player 3', score: 650 },
-])
+// Get players from store
+const players = computed(() => gameStore.players)
+const currentCategory = computed(() => gameStore.currentCategory)
+const currentLetter = computed(() => gameStore.currentLetter)
+
+// Local state for scores (will be saved on navigation)
+const playerScores = ref(
+  players.value.map(p => ({
+    id: p.id,
+    name: p.name,
+    answer: p.currentRoundAnswer || '',
+    score: p.currentRoundScore,
+  }))
+)
 
 const increaseScore = (index: number) => {
   const player = playerScores.value[index]
@@ -154,18 +157,20 @@ const decreaseScore = (index: number) => {
   }
 }
 
-const addScore = () => {
-  const playerName = prompt('Enter player name:')
-  if (playerName && playerName.trim()) {
-    playerScores.value.push({ name: playerName.trim(), score: 0 })
-  }
-}
-
 const goToPrevious = () => {
   router.push('/game')
 }
 
-const goToLeaderboard = () => {
+const goToLeaderboard = async () => {
+  // Save all scores to the store
+  for (const playerScore of playerScores.value) {
+    await gameStore.assignPlayerScore(playerScore.id, playerScore.score)
+  }
+
+  // Complete the round
+  await gameStore.completeRound()
+
+  // Navigate to leaderboard
   router.push('/leaderboard')
 }
 
@@ -313,13 +318,31 @@ useHead({
 .player-avatar {
   width: clamp(40px, 5vw, 50px);
   height: auto;
+  flex-shrink: 0;
+}
+
+.player-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
 }
 
 .player-name {
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
+  font-size: clamp(var(--font-size-base), 2vw, var(--font-size-lg));
   font-weight: var(--font-weight-bold);
   color: #2a1810;
+}
+
+.player-answer {
+  font-size: clamp(var(--font-size-sm), 1.5vw, var(--font-size-base));
+  color: #5a3a25;
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .player-score {

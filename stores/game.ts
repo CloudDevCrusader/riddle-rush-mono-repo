@@ -1,6 +1,6 @@
 import { useIndexedDB } from '../composables/useIndexedDB'
 import { useStatistics } from '../composables/useStatistics'
-import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent } from '../types/game'
+import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent, Player } from '../types/game'
 
 const CATEGORY_EMOJI_MAP: Record<string, string> = {
   'Weiblicher Vorname': '👩',
@@ -72,8 +72,8 @@ export const useGameStore = defineStore('game', {
 
   getters: {
     hasActiveSession: (state) => state.currentSession !== null,
-    currentScore: (state) => state.currentSession?.score ?? 0,
-    currentAttempts: (state) => state.currentSession?.attempts ?? [],
+    currentScore: (state) => state.currentSession?.score ?? 0, // Legacy support
+    currentAttempts: (state) => state.currentSession?.attempts ?? [], // Legacy support
     canInstall: (state) => state.installPromptEvent !== null,
     currentCategory: (state) => state.currentSession?.category ?? null,
     currentLetter: (state) => state.currentSession?.letter ?? '',
@@ -82,6 +82,27 @@ export const useGameStore = defineStore('game', {
     hasMoreCategories: (state) =>
       state.displayedCategoryCount < state.categories.length,
     categoryEmoji: () => (name?: string | null) => resolveCategoryEmoji(name),
+
+    // Multi-player getters
+    players: (state) => state.currentSession?.players ?? [],
+    currentRound: (state) => state.currentSession?.currentRound ?? 0,
+    allPlayersSubmitted: (state) => {
+      const players = state.currentSession?.players ?? []
+      if (players.length === 0) return false
+      return players.every((p) => p.hasSubmitted)
+    },
+    currentPlayerTurn: (state) => {
+      const players = state.currentSession?.players ?? []
+      return players.find((p) => !p.hasSubmitted) ?? null
+    },
+    isMultiPlayerMode: (state) => {
+      const players = state.currentSession?.players ?? []
+      return players.length > 0
+    },
+    leaderboard: (state) => {
+      const players = state.currentSession?.players ?? []
+      return [...players].sort((a, b) => b.totalScore - a.totalScore)
+    },
   },
 
   actions: {
@@ -154,21 +175,31 @@ export const useGameStore = defineStore('game', {
 
       const letter = this.generateLetter()
 
-      const session: GameSession = {
-        id: crypto.randomUUID(),
-        userId: 'default-user',
-        category: { ...category, letter },
-        letter,
-        startTime: Date.now(),
-        score: 0,
-        attempts: [],
+      // Check if we have players (multi-player mode) or use legacy single-player
+      const hasPlayers = this.currentSession?.players && this.currentSession.players.length > 0
+
+      if (hasPlayers) {
+        // Multi-player: start new round
+        return this.startNextRound()
+      } else {
+        // Legacy single-player mode
+        const session: GameSession = {
+          id: crypto.randomUUID(),
+          userId: 'default-user',
+          category: { ...category, letter },
+          letter,
+          startTime: Date.now(),
+          score: 0,
+          attempts: [],
+          players: [],
+          currentRound: 0,
+          roundHistory: [],
+        }
+
+        this.currentSession = session
+        await this.saveSessionToDB()
+        return session
       }
-
-      this.currentSession = session
-
-      await this.saveSessionToDB()
-
-      return session
     },
 
     async submitAttempt(term: string, found: boolean) {
@@ -178,6 +209,14 @@ export const useGameStore = defineStore('game', {
         term,
         found,
         timestamp: Date.now(),
+      }
+
+      // Legacy single-player support
+      if (!this.currentSession.attempts) {
+        this.currentSession.attempts = []
+      }
+      if (this.currentSession.score === undefined) {
+        this.currentSession.score = 0
       }
 
       this.currentSession.attempts.push(attempt)
@@ -251,6 +290,128 @@ export const useGameStore = defineStore('game', {
 
     clearSession() {
       this.currentSession = null
+    },
+
+    // Multi-player actions
+    async setupPlayers(playerNames: string[], gameName?: string) {
+      await this.fetchCategories()
+
+      const category = this.getRandomCategory()
+      if (!category) {
+        throw new Error('Unable to start game without categories')
+      }
+
+      const letter = this.generateLetter()
+
+      const players: Player[] = playerNames.map((name, index) => ({
+        id: crypto.randomUUID(),
+        name: name || `Player ${index + 1}`,
+        totalScore: 0,
+        currentRoundScore: 0,
+        currentRoundAnswer: undefined,
+        hasSubmitted: false,
+      }))
+
+      const session: GameSession = {
+        id: crypto.randomUUID(),
+        gameName,
+        players,
+        currentRound: 1,
+        category: { ...category, letter },
+        letter,
+        startTime: Date.now(),
+        roundHistory: [],
+      }
+
+      this.currentSession = session
+      await this.saveSessionToDB()
+
+      return session
+    },
+
+    async submitPlayerAnswer(playerId: string, answer: string) {
+      if (!this.currentSession) return
+
+      const player = this.currentSession.players.find((p) => p.id === playerId)
+      if (!player) return
+
+      player.currentRoundAnswer = answer
+      player.hasSubmitted = true
+
+      await this.saveSessionToDB()
+    },
+
+    async assignPlayerScore(playerId: string, points: number) {
+      if (!this.currentSession) return
+
+      const player = this.currentSession.players.find((p) => p.id === playerId)
+      if (!player) return
+
+      player.currentRoundScore = points
+      player.totalScore += points
+
+      await this.saveSessionToDB()
+    },
+
+    async completeRound() {
+      if (!this.currentSession) return
+
+      const roundResult = {
+        roundNumber: this.currentSession.currentRound,
+        category: this.currentSession.category.name,
+        letter: this.currentSession.letter,
+        timestamp: Date.now(),
+        playerResults: this.currentSession.players.map((p) => ({
+          playerId: p.id,
+          playerName: p.name,
+          answer: p.currentRoundAnswer || '',
+          score: p.currentRoundScore,
+        })),
+      }
+
+      this.currentSession.roundHistory.push(roundResult)
+      await this.saveSessionToDB()
+    },
+
+    async startNextRound() {
+      if (!this.currentSession) return
+
+      const category = this.getRandomCategory()
+      if (!category) {
+        throw new Error('Unable to start round without categories')
+      }
+
+      const letter = this.generateLetter()
+
+      // Reset player round state
+      this.currentSession.players.forEach((player) => {
+        player.currentRoundScore = 0
+        player.currentRoundAnswer = undefined
+        player.hasSubmitted = false
+      })
+
+      this.currentSession.currentRound += 1
+      this.currentSession.category = { ...category, letter }
+      this.currentSession.letter = letter
+
+      await this.saveSessionToDB()
+
+      return this.currentSession
+    },
+
+    async resetPlayerSubmissions() {
+      if (!this.currentSession) return
+
+      this.currentSession.players.forEach((player) => {
+        player.hasSubmitted = false
+      })
+
+      await this.saveSessionToDB()
+    },
+
+    getPlayerById(playerId: string): Player | null {
+      if (!this.currentSession) return null
+      return this.currentSession.players.find((p) => p.id === playerId) ?? null
     },
   },
 })

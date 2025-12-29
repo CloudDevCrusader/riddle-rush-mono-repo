@@ -25,15 +25,35 @@
         class="score-display"
         data-testid="score-display"
       >
+        <div
+          v-if="isMultiPlayerMode"
+          class="score-item"
+        >
+          <span class="score-label">{{ $t('game.round', 'Round') }}</span>
+          <span
+            class="score-value"
+            data-testid="round-value"
+          >{{ currentRound }}</span>
+        </div>
+        <div
+          v-if="isMultiPlayerMode"
+          class="score-divider"
+        />
         <div class="score-item">
-          <span class="score-label">{{ $t('game.score') }}</span>
+          <span class="score-label">{{ isMultiPlayerMode ? $t('game.players', 'Players') : $t('game.score') }}</span>
           <span
             class="score-value"
             data-testid="score-value"
-          >{{ gameStore.currentScore }}</span>
+          >{{ isMultiPlayerMode ? players.length : gameStore.currentScore }}</span>
         </div>
-        <div class="score-divider" />
-        <div class="score-item">
+        <div
+          v-if="!isMultiPlayerMode"
+          class="score-divider"
+        />
+        <div
+          v-if="!isMultiPlayerMode"
+          class="score-item"
+        >
           <span class="score-label">{{ $t('game.attempts') }}</span>
           <span
             class="score-value"
@@ -71,6 +91,31 @@
             data-testid="letter-value"
           >{{ currentLetter ? currentLetter.toUpperCase() : '' }}</span>
         </div>
+      </div>
+
+      <!-- Player Turn Indicator (Multi-player mode) -->
+      <div
+        v-if="isMultiPlayerMode && currentPlayerTurn"
+        class="player-turn-card animate-slide-up"
+      >
+        <span class="player-turn-label">{{ $t('game.current_turn', "Current Turn") }}:</span>
+        <span class="player-turn-name">{{ currentPlayerTurn.name }}</span>
+      </div>
+
+      <!-- All Players Submitted (Multi-player mode) -->
+      <div
+        v-if="isMultiPlayerMode && allPlayersSubmitted"
+        class="all-submitted-card animate-scale-in"
+      >
+        <p class="all-submitted-text">
+          {{ $t('game.all_submitted', 'All players have submitted!') }}
+        </p>
+        <button
+          class="btn btn-primary tap-highlight no-select"
+          @click="router.push('/results')"
+        >
+          {{ $t('game.go_to_scoring', 'Go to Scoring') }}
+        </button>
       </div>
 
       <!-- Input Card -->
@@ -262,6 +307,13 @@ const currentCategory = computed(() => gameStore.currentCategory)
 const currentLetter = computed(() => gameStore.currentLetter)
 const categoryEmoji = computed(() => gameStore.categoryEmoji(currentCategory.value?.name))
 
+// Multi-player support
+const isMultiPlayerMode = computed(() => gameStore.isMultiPlayerMode)
+const currentPlayerTurn = computed(() => gameStore.currentPlayerTurn)
+const allPlayersSubmitted = computed(() => gameStore.allPlayersSubmitted)
+const players = computed(() => gameStore.players)
+const currentRound = computed(() => gameStore.currentRound)
+
 const feedbackClass = computed(() => (valid.value ? 'correct' : 'incorrect'))
 const feedbackIcon = computed(() => (valid.value ? '🎉' : '😕'))
 
@@ -330,26 +382,51 @@ const validateWord = async () => {
   try {
     loading.value = true
 
-    const response = await checkAnswer(category.searchWord, letter, term)
+    if (isMultiPlayerMode.value) {
+      // Multi-player mode: just save the answer without validation
+      const player = currentPlayerTurn.value
+      if (!player) return
 
-    valid.value = response.found
-    otherAnswers.value = response.other || []
+      await gameStore.submitPlayerAnswer(player.id, term)
 
-    await gameStore.submitAttempt(term, response.found)
-
-    if (response.found) {
-      output.value = t('game.correct')
+      output.value = t('game.answer_submitted', `Answer submitted for ${player.name}`)
       audio.playSuccess()
+
+      result.value = ''
+
+      setTimeout(() => {
+        output.value = ''
+
+        // If all players submitted, navigate to results
+        if (allPlayersSubmitted.value) {
+          setTimeout(() => {
+            router.push('/results')
+          }, 1000)
+        }
+      }, 1500)
     } else {
-      output.value = t('game.incorrect')
-      audio.playError()
+      // Legacy single-player mode: validate immediately
+      const response = await checkAnswer(category.searchWord, letter, term)
+
+      valid.value = response.found
+      otherAnswers.value = response.other || []
+
+      await gameStore.submitAttempt(term, response.found)
+
+      if (response.found) {
+        output.value = t('game.correct')
+        audio.playSuccess()
+      } else {
+        output.value = t('game.incorrect')
+        audio.playError()
+      }
+
+      result.value = ''
+
+      setTimeout(() => {
+        output.value = ''
+      }, 3000)
     }
-
-    result.value = ''
-
-    setTimeout(() => {
-      output.value = ''
-    }, 3000)
   } catch (error) {
     console.error('Error validating word:', error)
     output.value = t('game.error_checking')
@@ -562,6 +639,53 @@ useHead({
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-md);
+}
+
+/* Player Turn Card */
+.player-turn-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.player-turn-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.player-turn-name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+/* All Submitted Card */
+.all-submitted-card {
+  background: var(--bg-gradient-success);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.all-submitted-text {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  margin: 0;
 }
 
 /* Input Card */

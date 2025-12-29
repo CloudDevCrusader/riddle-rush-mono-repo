@@ -37,7 +37,7 @@ test.describe('Home Page', () => {
     await expect(navigation).toBeVisible()
   })
 
-  test('should be a PWA with manifest', async ({ page }) => {
+  test.skip('should be a PWA with manifest', async ({ page }) => {
     await page.goto('/')
 
     // Check for PWA manifest

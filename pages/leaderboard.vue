@@ -84,7 +84,7 @@
                 alt="Score icon"
                 class="score-icon"
               >
-              <span class="score-value">{{ entry.score }}</span>
+              <span class="score-value">{{ entry.totalScore }}</span>
             </div>
 
             <!-- Group decoration -->
@@ -119,42 +119,57 @@
         >
       </div>
 
-      <!-- OK Button -->
-      <button
-        class="ok-btn tap-highlight no-select animate-slide-up"
-        @click="goToMenu"
-      >
-        <img
-          :src="`${baseUrl}assets/leaderboard/ok.png`"
-          alt="OK"
+      <!-- Round Info -->
+      <div class="round-info animate-fade-in">
+        <span class="round-label">Round {{ currentRound }} Complete!</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons-container animate-slide-up">
+        <button
+          class="action-btn next-round-btn tap-highlight no-select"
+          @click="startNextRound"
         >
-      </button>
+          <span>Next Round</span>
+        </button>
+        <button
+          class="action-btn end-game-btn tap-highlight no-select"
+          @click="endGame"
+        >
+          <span>End Game</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useGameStore } from '~/stores/game'
+
 const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
+const gameStore = useGameStore()
 
-// Mock leaderboard data - replace with actual game data
-const leaderboardEntries = ref([
-  { name: 'Player One', score: 1250 },
-  { name: 'Player Two', score: 1100 },
-  { name: 'Player Three', score: 950 },
-  { name: 'Player Four', score: 850 },
-  { name: 'Player Five', score: 720 },
-  { name: 'Player Six', score: 650 },
-  { name: 'Player Seven', score: 580 },
-  { name: 'Player Eight', score: 500 },
-])
+// Get leaderboard from store (sorted by totalScore)
+const leaderboardEntries = computed(() => gameStore.leaderboard)
+const currentRound = computed(() => gameStore.currentRound)
 
 const goBack = () => {
   router.back()
 }
 
 const goToMenu = () => {
+  router.push('/menu')
+}
+
+const startNextRound = async () => {
+  await gameStore.startNextRound()
+  router.push('/game')
+}
+
+const endGame = async () => {
+  await gameStore.endGame()
   router.push('/menu')
 }
 
@@ -446,28 +461,69 @@ useHead({
   height: auto;
 }
 
-/* OK Button */
-.ok-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
+/* Round Info */
+.round-info {
+  text-align: center;
   z-index: 3;
 }
 
-.ok-btn:hover {
-  transform: translateY(-4px) scale(1.05);
+.round-label {
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-3xl));
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-.ok-btn:active {
+/* Action Buttons Container */
+.action-buttons-container {
+  display: flex;
+  gap: var(--spacing-lg);
+  justify-content: center;
+  flex-wrap: wrap;
+  z-index: 3;
+}
+
+.action-btn {
+  background: var(--color-white);
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-xl));
+  font-weight: var(--font-weight-bold);
+  min-width: 180px;
+}
+
+.next-round-btn {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: var(--color-white);
+}
+
+.next-round-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(46, 204, 113, 0.4);
+}
+
+.next-round-btn:active {
   transform: translateY(-2px) scale(0.98);
 }
 
-.ok-btn img {
-  width: clamp(180px, 30vw, 250px);
-  height: auto;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+.end-game-btn {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: var(--color-white);
+}
+
+.end-game-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(231, 76, 60, 0.4);
+}
+
+.end-game-btn:active {
+  transform: translateY(-2px) scale(0.98);
 }
 
 /* Animations */
