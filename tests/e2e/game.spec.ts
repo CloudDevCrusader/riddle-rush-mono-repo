@@ -88,16 +88,16 @@ test.describe('Game Flow', () => {
     const scoreByText = page.getByText(/Punktzahl|Score/i)
 
     // Check if any score display exists
-    const hasScore = await scoreByTestId.count() > 0 ||
-                     await scoreByClass.count() > 0 ||
-                     await scoreByText.count() > 0
+    const hasScore = await scoreByTestId.count() > 0
+      || await scoreByClass.count() > 0
+      || await scoreByText.count() > 0
 
     if (hasScore) {
       const scoreDisplay = await scoreByTestId.count() > 0
         ? scoreByTestId.first()
         : await scoreByClass.count() > 0
-        ? scoreByClass.first()
-        : scoreByText.first()
+          ? scoreByClass.first()
+          : scoreByText.first()
 
       await expect(scoreDisplay).toBeVisible({ timeout: 5000 })
     }

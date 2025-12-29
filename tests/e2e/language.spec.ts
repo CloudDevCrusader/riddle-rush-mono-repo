@@ -4,12 +4,12 @@ test.describe('Language Selection Page', () => {
   test('should load language page successfully', async ({ page }) => {
     await page.goto('/language')
 
-    // Check page title
-    await expect(page).toHaveTitle(/Riddle Rush - Language Selection/i)
+    // Check page title (supports both German and English)
+    await expect(page).toHaveTitle(/Language Selection|Sprachauswahl|Riddle Rush|Ratefix/i)
 
-    // Check for main title
-    const title = page.getByText(/LANGUAGE/i).first()
-    await expect(title).toBeVisible({ timeout: 5000 })
+    // Check for main title image (title is an image, not text)
+    const titleImage = page.locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]').first()
+    await expect(titleImage).toBeVisible({ timeout: 5000 })
   })
 
   test('should display language options', async ({ page }) => {
@@ -26,8 +26,8 @@ test.describe('Language Selection Page', () => {
     const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
     await expect(germanOption).toBeVisible()
 
-    // Check for flags
-    const flags = page.locator('.flag')
+    // Check for flag containers (not .flag class, but .flag-container or .flag-image)
+    const flags = page.locator('.flag-container, .flag-image')
     expect(await flags.count()).toBeGreaterThanOrEqual(2)
   })
 
@@ -113,8 +113,8 @@ test.describe('Language Selection Page', () => {
     await englishOption.click()
     await page.waitForTimeout(200)
 
-    // Look for OK button
-    const okButton = page.locator('button:has-text("OK"), .btn-ok')
+    // Look for OK button (OK button contains an image, not text)
+    const okButton = page.locator('.ok-btn, button.ok-btn')
 
     if (await okButton.count() > 0) {
       await expect(okButton.first()).toBeVisible()
@@ -142,8 +142,9 @@ test.describe('Language Selection Page', () => {
     // Verify English is selected
     await expect(englishOption).toHaveClass(/selected/)
 
-    // Click OK to confirm
-    const okButton = page.locator('button:has-text("OK"), .btn-ok').first()
+    // Click OK to confirm (OK button contains an image, not text)
+    const okButton = page.locator('.ok-btn, button.ok-btn').first()
+    await expect(okButton).toBeVisible({ timeout: 5000 })
     await okButton.click()
 
     // Wait for navigation - should navigate away from language page

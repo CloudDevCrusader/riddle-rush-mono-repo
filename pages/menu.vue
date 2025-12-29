@@ -130,12 +130,9 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
-
 const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
-const gameStore = useGameStore()
 
 // Mock coin amount - replace with actual game store data
 const coins = ref(100)
@@ -166,7 +163,7 @@ const handleExit = () => {
 
 const toggleMenu = () => {
   // Toggle menu options
-  console.log('Menu toggled')
+  // TODO: Implement menu toggle functionality
 }
 
 useHead({

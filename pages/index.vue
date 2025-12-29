@@ -59,6 +59,9 @@
         <h2 class="section-title">
           {{ $t('home.category_title') }}
         </h2>
+        <p class="section-description">
+          {{ $t('home.category_description') }}
+        </p>
 
         <div
           class="categories-grid"
@@ -68,9 +71,8 @@
             v-for="category in displayedCategories"
             :key="category.id"
             :data-testid="`category-card-${category.id}`"
-            class="category-card tap-highlight no-select"
+            class="category-card"
             :style="{ animationDelay: `${category.id * 50}ms` }"
-            @click="selectCategory(category)"
           >
             <div class="category-icon">
               {{ getCategoryEmoji(category.name) }}
@@ -78,9 +80,6 @@
             <h3 class="category-name">
               {{ category.name }}
             </h3>
-            <div class="category-arrow">
-              →
-            </div>
           </div>
         </div>
 
@@ -129,6 +128,21 @@
           class="footer-link"
         >{{ $t('home.about_link') }}</NuxtLink>
         <span class="footer-divider">•</span>
+        <NuxtLink
+          to="/leaderboard"
+          class="footer-link"
+        >{{ $t('leaderboard.title') }}</NuxtLink>
+        <span class="footer-divider">•</span>
+        <NuxtLink
+          to="/language"
+          class="footer-link"
+        >{{ $t('language.title', 'Language') }}</NuxtLink>
+        <span class="footer-divider">•</span>
+        <NuxtLink
+          to="/credits"
+          class="footer-link"
+        >{{ $t('credits.title', 'Credits') }}</NuxtLink>
+        <span class="footer-divider">•</span>
         <a
           href="#"
           class="footer-link"
@@ -140,7 +154,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Category } from '~/types/game'
 import { useGameStore } from '~/stores/game'
 
 const router = useRouter()
@@ -177,17 +190,6 @@ const startQuickGame = async () => {
     await router.push('/game')
   } catch (error) {
     console.error('Error starting quick game:', error)
-    gameStarting.value = false
-  }
-}
-
-const selectCategory = async (category: Category) => {
-  gameStarting.value = true
-  try {
-    await gameStore.startNewGame({ categoryId: category.id })
-    await router.push('/game')
-  } catch (error) {
-    console.error('Error starting selected category game:', error)
     gameStarting.value = false
   }
 }
@@ -374,20 +376,10 @@ useHead({
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
-  cursor: pointer;
   transition: all var(--transition-base);
   box-shadow: var(--shadow-md);
   animation: fadeIn var(--transition-slow) ease-out backwards;
   min-height: 100px;
-}
-
-.category-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: var(--shadow-xl);
-}
-
-.category-card:active {
-  transform: translateY(-2px) scale(0.98);
 }
 
 .category-icon {
@@ -412,15 +404,12 @@ useHead({
   margin: 0;
 }
 
-.category-arrow {
-  flex-shrink: 0;
-  font-size: var(--font-size-2xl);
-  color: var(--color-primary);
-  transition: transform var(--transition-base);
-}
-
-.category-card:hover .category-arrow {
-  transform: translateX(4px);
+.section-description {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--font-size-base);
+  margin: calc(var(--spacing-md) * -1) auto var(--spacing-xl);
+  max-width: 600px;
 }
 
 .load-more {

@@ -43,7 +43,6 @@ export interface GameState {
   categories: Category[]
   categoriesLoaded: boolean
   displayedCategoryCount: number
-  pendingCategoryId: number | null
   categoryLoadError: string | null
 }
 

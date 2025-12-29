@@ -104,9 +104,11 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const selectedLetter = ref<string | null>(null)
 const selectedCategory = ref<string>('')
 
-onMounted(() => {
-  // Get category from game store or use default
-  selectedCategory.value = gameStore.currentSession?.category?.name || 'Animals'
+onMounted(async () => {
+  // Fetch categories and pick a random one to display
+  await gameStore.fetchCategories()
+  const randomCategory = gameStore.getRandomCategory()
+  selectedCategory.value = randomCategory?.name || 'Animals'
 })
 
 const selectLetter = (letter: string) => {

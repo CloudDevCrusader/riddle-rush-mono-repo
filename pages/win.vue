@@ -96,12 +96,9 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
-
 const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
-const gameStore = useGameStore()
 
 // Mock data - replace with actual game data
 const score = ref(850)

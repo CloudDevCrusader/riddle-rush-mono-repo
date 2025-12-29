@@ -184,13 +184,13 @@ test.describe('Complete Game Flow', () => {
     const addBtn = firstItem.locator('.score-action-btn').first()
 
     // Get initial score
-    const initialScore = parseInt(await playerScore.textContent() || '0')
+    const initialScore = Number.parseInt(await playerScore.textContent() || '0')
 
     // Increase score
     await addBtn.click()
     await page.waitForTimeout(200)
 
-    const newScore = parseInt(await playerScore.textContent() || '0')
+    const newScore = Number.parseInt(await playerScore.textContent() || '0')
     expect(newScore).toBeGreaterThan(initialScore)
 
     // Navigate to leaderboard

@@ -33,9 +33,15 @@ test.describe('Results/Scoring Page', () => {
   })
 
   test('should display player score items', async ({ page }) => {
-    const scoreItems = page.locator('.score-item')
-    const count = await scoreItems.count()
+    // Wait for page to fully load
+    await page.waitForLoadState('networkidle')
 
+    const scoreItems = page.locator('.score-item')
+
+    // Wait for at least one score item to appear
+    await expect(scoreItems.first()).toBeVisible({ timeout: 5000 })
+
+    const count = await scoreItems.count()
     expect(count).toBeGreaterThan(0)
   })
 
@@ -64,11 +70,11 @@ test.describe('Results/Scoring Page', () => {
     const playerScore = firstItem.locator('.player-score')
     const addBtn = firstItem.locator('.score-action-btn').first()
 
-    const initialScore = parseInt(await playerScore.textContent() || '0')
+    const initialScore = Number.parseInt(await playerScore.textContent() || '0')
     await addBtn.click()
     await page.waitForTimeout(200)
 
-    const newScore = parseInt(await playerScore.textContent() || '0')
+    const newScore = Number.parseInt(await playerScore.textContent() || '0')
     expect(newScore).toBeGreaterThan(initialScore)
   })
 
@@ -77,13 +83,13 @@ test.describe('Results/Scoring Page', () => {
     const playerScore = firstItem.locator('.player-score')
     const minusBtn = firstItem.locator('.score-action-btn').nth(1)
 
-    const initialScore = parseInt(await playerScore.textContent() || '0')
+    const initialScore = Number.parseInt(await playerScore.textContent() || '0')
 
     if (initialScore > 0) {
       await minusBtn.click()
       await page.waitForTimeout(200)
 
-      const newScore = parseInt(await playerScore.textContent() || '0')
+      const newScore = Number.parseInt(await playerScore.textContent() || '0')
       expect(newScore).toBeLessThan(initialScore)
     }
   })
@@ -137,8 +143,8 @@ test.describe('Results/Scoring Page', () => {
     const scoresList = page.locator('.scores-list')
 
     // Check if the list is scrollable (overflow-y: auto)
-    const overflowY = await scoresList.evaluate(el =>
-      window.getComputedStyle(el).overflowY
+    const overflowY = await scoresList.evaluate((el) =>
+      window.getComputedStyle(el).overflowY,
     )
     expect(overflowY).toBe('auto')
   })
@@ -161,8 +167,8 @@ test.describe('Results/Scoring Page', () => {
     await nextBtn.hover()
     await page.waitForTimeout(200)
 
-    const transform = await nextBtn.evaluate(el =>
-      window.getComputedStyle(el).transform
+    const transform = await nextBtn.evaluate((el) =>
+      window.getComputedStyle(el).transform,
     )
 
     // Should have transform applied
@@ -176,8 +182,8 @@ test.describe('Results/Scoring Page', () => {
     await addBtn.hover()
     await page.waitForTimeout(200)
 
-    const transform = await addBtn.evaluate(el =>
-      window.getComputedStyle(el).transform
+    const transform = await addBtn.evaluate((el) =>
+      window.getComputedStyle(el).transform,
     )
 
     // Should have transform applied
@@ -187,8 +193,8 @@ test.describe('Results/Scoring Page', () => {
   test('should have fade-in animation on title', async ({ page }) => {
     const titleContainer = page.locator('.title-container')
 
-    const animationName = await titleContainer.evaluate(el =>
-      window.getComputedStyle(el).animationName
+    const animationName = await titleContainer.evaluate((el) =>
+      window.getComputedStyle(el).animationName,
     )
     expect(animationName).toContain('fadeIn')
   })
@@ -196,8 +202,8 @@ test.describe('Results/Scoring Page', () => {
   test('should have scale-in animation on scores list', async ({ page }) => {
     const scoresContainer = page.locator('.scores-list-container')
 
-    const animationName = await scoresContainer.evaluate(el =>
-      window.getComputedStyle(el).animationName
+    const animationName = await scoresContainer.evaluate((el) =>
+      window.getComputedStyle(el).animationName,
     )
     expect(animationName).toContain('scaleIn')
   })
@@ -205,8 +211,8 @@ test.describe('Results/Scoring Page', () => {
   test('should have slide-up animation on action buttons', async ({ page }) => {
     const actionButtons = page.locator('.action-buttons')
 
-    const animationName = await actionButtons.evaluate(el =>
-      window.getComputedStyle(el).animationName
+    const animationName = await actionButtons.evaluate((el) =>
+      window.getComputedStyle(el).animationName,
     )
     expect(animationName).toContain('slideUp')
   })

@@ -20,7 +20,8 @@
   "home": {
     "offline_badge": "Play Offline",
     "quick_start": "Quick Start",
-    "category_title": "Choose a Category",
+    "category_title": "Available Categories",
+    "category_description": "Categories are chosen randomly each round",
     "load_more": "Load More Categories",
     "about_link": "About the Game",
     "loading_categories": "Loading categories...",

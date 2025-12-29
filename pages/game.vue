@@ -246,7 +246,6 @@ import { useGameStore } from '~/stores/game'
 
 const gameStore = useGameStore()
 const router = useRouter()
-const route = useRoute()
 const { t } = useI18n()
 const audio = useAudio()
 const { checkAnswer } = useAnswerCheck()
@@ -279,12 +278,12 @@ const focusInput = () => {
   })
 }
 
-const initializeGame = async (categoryId?: number) => {
+const initializeGame = async () => {
   resetRoundState()
   loading.value = true
 
   try {
-    await gameStore.startNewGame({ categoryId })
+    await gameStore.startNewGame()
     audio.playNewRound()
     focusInput()
   } catch (error) {
@@ -296,29 +295,17 @@ const initializeGame = async (categoryId?: number) => {
 }
 
 const resumeGameOnMount = async () => {
-  const rawCategoryParam = Array.isArray(route.query.categoryId)
-    ? route.query.categoryId[0]
-    : route.query.categoryId
-
-  const parsedCategoryId = rawCategoryParam !== undefined ? Number(rawCategoryParam) : undefined
-  const categoryId = typeof parsedCategoryId === 'number' && !Number.isNaN(parsedCategoryId)
-    ? parsedCategoryId
-    : undefined
   const hadSession = gameStore.hasActiveSession
 
   try {
-    await gameStore.resumeOrStartNewGame({ categoryId })
+    await gameStore.resumeOrStartNewGame()
     resetRoundState()
 
-    if (!hadSession || typeof categoryId === 'number') {
+    if (!hadSession) {
       audio.playNewRound()
     }
 
     focusInput()
-
-    if (typeof categoryId === 'number') {
-      await router.replace({ path: '/game' })
-    }
   } catch (error) {
     console.error('Error resuming game:', error)
     output.value = t('game.error_checking')

@@ -19,7 +19,8 @@
   "home": {
     "offline_badge": "Offline spielbar",
     "quick_start": "Schnellstart",
-    "category_title": "Wähle eine Kategorie",
+    "category_title": "Verfügbare Kategorien",
+    "category_description": "Kategorien werden zufällig pro Runde ausgewählt",
     "load_more": "Mehr Kategorien",
     "about_link": "Über das Spiel",
     "loading_categories": "Kategorien werden geladen...",
@@ -111,5 +112,14 @@
     "leaderboard": "Bestenliste anzeigen",
     "debug": "Debug-Modus",
     "maxPlayers": "Max. Spieler"
+  },
+  "credits": {
+    "title": "CREDITS",
+    "game_design": "Spieldesign",
+    "programming": "Programmierung",
+    "art": "Art"
+  },
+  "language": {
+    "title": "SPRACHE"
   }
 }

@@ -225,11 +225,11 @@ describe('Game Store', () => {
       expect(mockSaveGameSession).toHaveBeenCalledTimes(1)
     })
 
-    it('uses specific category when provided', async () => {
+    it('selects a random category', async () => {
       const store = useGameStore()
-      const target = mockCategories[2]!
-      await store.startNewGame({ categoryId: target.id })
-      expect(store.currentSession?.category.id).toBe(target.id)
+      await store.startNewGame()
+      expect(store.currentSession?.category).toBeDefined()
+      expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
     })
 
     it('hasActiveSession becomes true', async () => {
@@ -478,37 +478,12 @@ describe('Game Store', () => {
       expect(store.hasActiveSession).toBe(true)
     })
 
-    it('uses pending category', async () => {
+    it('uses random category', async () => {
       const store = useGameStore()
       await store.fetchCategories()
-      const target = mockCategories[4]!
-      store.setPendingCategory(target.id)
       await store.resumeOrStartNewGame()
-      expect(store.currentSession?.category.id).toBe(target.id)
-    })
-
-    it.skip('clears pending category after use', async () => {
-      // TODO: Fix pending category state in CI
-      const store = useGameStore()
-      await store.fetchCategories()
-      store.setPendingCategory(mockCategories[0]!.id)
-      await store.resumeOrStartNewGame()
-      expect(store.pendingCategoryId).toBeNull()
-    })
-  })
-
-  describe('Pending Category', () => {
-    it('sets pending category', () => {
-      const store = useGameStore()
-      store.setPendingCategory(123)
-      expect(store.pendingCategoryId).toBe(123)
-    })
-
-    it('clears pending category with null', () => {
-      const store = useGameStore()
-      store.setPendingCategory(123)
-      store.setPendingCategory(null)
-      expect(store.pendingCategoryId).toBeNull()
+      expect(store.currentSession?.category).toBeDefined()
+      expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
     })
   })
 })

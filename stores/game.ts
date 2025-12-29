@@ -67,7 +67,6 @@ export const useGameStore = defineStore('game', {
     categories: [],
     categoriesLoaded: false,
     displayedCategoryCount: 9,
-    pendingCategoryId: null,
     categoryLoadError: null,
   }),
 
@@ -121,10 +120,6 @@ export const useGameStore = defineStore('game', {
       )
     },
 
-    setPendingCategory(categoryId: number | null) {
-      this.pendingCategoryId = categoryId
-    },
-
     getCategoryById(categoryId: number): Category | null {
       return this.categories.find((category: Category) => category.id === categoryId) ?? null
     },
@@ -140,30 +135,18 @@ export const useGameStore = defineStore('game', {
       return randomLetter()
     },
 
-    async resumeOrStartNewGame(options: { categoryId?: number } = {}) {
+    async resumeOrStartNewGame() {
       if (this.currentSession) {
         return this.currentSession
       }
 
-      if (this.pendingCategoryId && typeof options.categoryId !== 'number') {
-        options.categoryId = this.pendingCategoryId
-      }
-
-      return this.startNewGame(options)
+      return this.startNewGame()
     },
 
-    async startNewGame(options: { categoryId?: number } = {}) {
+    async startNewGame() {
       await this.fetchCategories()
 
-      let category: Category | null = null
-
-      if (typeof options.categoryId === 'number') {
-        category = this.getCategoryById(options.categoryId)
-      }
-
-      if (!category) {
-        category = this.getRandomCategory()
-      }
+      const category = this.getRandomCategory()
 
       if (!category) {
         throw new Error('Unable to start game without categories')
@@ -182,7 +165,6 @@ export const useGameStore = defineStore('game', {
       }
 
       this.currentSession = session
-      this.pendingCategoryId = null
 
       await this.saveSessionToDB()
 

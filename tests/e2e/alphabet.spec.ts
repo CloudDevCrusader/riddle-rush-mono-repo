@@ -125,15 +125,15 @@ test.describe('Alphabet Selection Page', () => {
   test('should have hover effect on letters', async ({ page }) => {
     const letterA = page.locator('.letter-btn').first()
 
-    const initialTransform = await letterA.evaluate(el =>
-      window.getComputedStyle(el).transform
+    const initialTransform = await letterA.evaluate((el) =>
+      window.getComputedStyle(el).transform,
     )
 
     await letterA.hover()
     await page.waitForTimeout(200)
 
-    const hoverTransform = await letterA.evaluate(el =>
-      window.getComputedStyle(el).transform
+    const hoverTransform = await letterA.evaluate((el) =>
+      window.getComputedStyle(el).transform,
     )
 
     // Transform should be different on hover

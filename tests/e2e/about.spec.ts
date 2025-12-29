@@ -77,7 +77,8 @@ test.describe('About Page', () => {
     const pinia = page.getByText(/Pinia/i)
     await expect(pinia).toBeVisible()
 
-    const indexedDB = page.getByText(/IndexedDB/i)
+    // Use first() to avoid strict mode violation (IndexedDB appears in both PWA description and tech list)
+    const indexedDB = page.getByText(/IndexedDB/i).first()
     await expect(indexedDB).toBeVisible()
 
     const typescript = page.getByText(/TypeScript/i)

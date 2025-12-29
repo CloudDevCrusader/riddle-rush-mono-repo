@@ -4,8 +4,8 @@ test.describe('Home Page', () => {
   test('should load home page successfully', async ({ page }) => {
     await page.goto('/')
 
-    // Check page title
-    await expect(page).toHaveTitle(/Guess Game/i)
+    // Check page title (supports both German "Ratefix" and English "Riddle Rush")
+    await expect(page).toHaveTitle(/Ratefix|Riddle Rush|Guess Game/i)
 
     // Check for main heading or app title
     const heading = page.locator('h1, h2').first()
@@ -32,8 +32,8 @@ test.describe('Home Page', () => {
   test('should have working navigation', async ({ page }) => {
     await page.goto('/')
 
-    // Check if navigation elements exist
-    const navigation = page.locator('nav, header')
+    // Check if navigation elements exist (use first() to avoid strict mode violation)
+    const navigation = page.locator('nav, header').first()
     await expect(navigation).toBeVisible()
   })
 

@@ -28,9 +28,15 @@ test.describe('Leaderboard Page', () => {
   })
 
   test('should display leaderboard entries', async ({ page }) => {
-    const entries = page.locator('.leaderboard-item')
-    const count = await entries.count()
+    // Wait for page to fully load
+    await page.waitForLoadState('networkidle')
 
+    const entries = page.locator('.leaderboard-item')
+
+    // Wait for at least one entry to appear
+    await expect(entries.first()).toBeVisible({ timeout: 5000 })
+
+    const count = await entries.count()
     expect(count).toBeGreaterThan(0)
   })
 
@@ -103,15 +109,15 @@ test.describe('Leaderboard Page', () => {
   test('should have hover effect on entries', async ({ page }) => {
     const firstEntry = page.locator('.leaderboard-item').first()
 
-    const initialTransform = await firstEntry.evaluate(el =>
-      window.getComputedStyle(el).transform
+    const initialTransform = await firstEntry.evaluate((el) =>
+      window.getComputedStyle(el).transform,
     )
 
     await firstEntry.hover()
     await page.waitForTimeout(200)
 
-    const hoverTransform = await firstEntry.evaluate(el =>
-      window.getComputedStyle(el).transform
+    const hoverTransform = await firstEntry.evaluate((el) =>
+      window.getComputedStyle(el).transform,
     )
 
     // Transform should be different on hover (translateX)
@@ -137,7 +143,7 @@ test.describe('Leaderboard Page', () => {
 
   test('should have entries sorted by score descending', async ({ page }) => {
     const scoreValues = await page.locator('.score-value').allTextContents()
-    const scores = scoreValues.map(s => parseInt(s))
+    const scores = scoreValues.map((s) => Number.parseInt(s))
 
     // Check if scores are in descending order
     for (let i = 0; i < scores.length - 1; i++) {

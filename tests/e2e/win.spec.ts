@@ -24,7 +24,13 @@ test.describe('Win Screen Page', () => {
   })
 
   test('should display stars based on score', async ({ page }) => {
+    // Wait for page to fully load
+    await page.waitForLoadState('networkidle')
+
     const stars = page.locator('.star:not(.empty)')
+
+    // Wait for at least one star to be visible
+    await expect(stars.first()).toBeVisible({ timeout: 5000 })
 
     // Should have stars (count depends on score)
     const starCount = await stars.count()
@@ -43,8 +49,8 @@ test.describe('Win Screen Page', () => {
     const firstStar = stars.first()
 
     // Check if star has animation
-    const animationName = await firstStar.evaluate(el =>
-      window.getComputedStyle(el).animationName
+    const animationName = await firstStar.evaluate((el) =>
+      window.getComputedStyle(el).animationName,
     )
     expect(animationName).toBeTruthy()
   })
@@ -83,8 +89,8 @@ test.describe('Win Screen Page', () => {
   test('should have bouncing title animation', async ({ page }) => {
     const titleContainer = page.locator('.title-container')
 
-    const animationName = await titleContainer.evaluate(el =>
-      window.getComputedStyle(el).animationName
+    const animationName = await titleContainer.evaluate((el) =>
+      window.getComputedStyle(el).animationName,
     )
     expect(animationName).toContain('bounce')
   })
@@ -112,8 +118,8 @@ test.describe('Win Screen Page', () => {
     await homeBtn.hover()
     await page.waitForTimeout(200)
 
-    const transform = await homeBtn.evaluate(el =>
-      window.getComputedStyle(el).transform
+    const transform = await homeBtn.evaluate((el) =>
+      window.getComputedStyle(el).transform,
     )
 
     // Should have transform applied

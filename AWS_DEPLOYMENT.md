@@ -37,16 +37,18 @@ The fastest way to deploy is using our deployment script:
 
 ```bash
 # Set your bucket name (must be globally unique)
-export AWS_S3_BUCKET="my-guess-game-pwa"
+export AWS_S3_BUCKET="riddlerush"
 
 # Optional: Set CloudFront distribution ID for cache invalidation
-export AWS_CLOUDFRONT_ID="E1234567890ABC"
+export AWS_CLOUDFRONT_ID="ERCX6EFGWWFUV"
 
+export AWS_REGION="eu-central-1"
 # Run deployment
 ./aws-deploy.sh
 ```
 
 This script will:
+
 1. ✅ Build the application
 2. ✅ Create S3 bucket (if it doesn't exist)
 3. ✅ Upload all files to S3
@@ -69,6 +71,7 @@ aws cloudformation create-stack \
 ### Option 2: With Custom Domain
 
 **Prerequisites:**
+
 - Domain registered (can be outside AWS)
 - SSL certificate in AWS Certificate Manager (ACM) in `us-east-1` region
 
@@ -94,6 +97,7 @@ aws cloudformation describe-stacks \
 ```
 
 This will show:
+
 - **S3 Bucket Name** - for deployments
 - **CloudFront Distribution ID** - for cache invalidation
 - **CloudFront Domain** - your app URL
@@ -284,6 +288,7 @@ jobs:
 ```
 
 Set these secrets in your GitHub repository:
+
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_S3_BUCKET`
@@ -334,6 +339,7 @@ deploy:
 ```
 
 Set these CI/CD variables in GitLab:
+
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_S3_BUCKET`
@@ -355,22 +361,17 @@ aws s3 ls s3://your-bucket-name
 ```
 
 Required IAM permissions:
+
 ```json
 {
   "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Action": [
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:DeleteObject",
-      "s3:ListBucket"
-    ],
-    "Resource": [
-      "arn:aws:s3:::your-bucket-name",
-      "arn:aws:s3:::your-bucket-name/*"
-    ]
-  }]
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject", "s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::your-bucket-name", "arn:aws:s3:::your-bucket-name/*"]
+    }
+  ]
 }
 ```
 
@@ -400,6 +401,7 @@ This is already configured in the CloudFormation template. If setting up manuall
 ### Issue: HTTPS not working
 
 **Solution:** Ensure:
+
 1. Certificate is in `us-east-1` region (CloudFront requirement)
 2. Certificate is validated and issued
 3. Domain name matches certificate
@@ -408,6 +410,7 @@ This is already configured in the CloudFormation template. If setting up manuall
 ### Issue: Old content still showing
 
 **Solutions:**
+
 1. Clear CloudFront cache (see above)
 2. Hard refresh browser (Ctrl+Shift+R or Cmd+Shift+R)
 3. Clear service worker cache:
@@ -418,17 +421,21 @@ This is already configured in the CloudFormation template. If setting up manuall
 ## Cost Estimation
 
 ### Free Tier (First 12 months)
+
 - S3: 5GB storage, 20,000 GET requests, 2,000 PUT requests
 - CloudFront: 1TB data transfer out, 10,000,000 HTTP/HTTPS requests
 
 ### After Free Tier (approximate)
+
 For a small PWA with ~1,000 daily users:
+
 - S3 Storage: $0.01 - $0.10/month
 - S3 Requests: $0.01 - $0.05/month
 - CloudFront: $1 - $5/month
 - **Total: ~$2 - $6/month**
 
 ### Production Optimization
+
 - Enable CloudFront compression (already configured in template)
 - Use S3 lifecycle policies for old versions
 - Monitor CloudWatch metrics
