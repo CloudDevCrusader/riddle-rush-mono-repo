@@ -159,10 +159,6 @@ const goBack = () => {
   router.back()
 }
 
-const goToMenu = () => {
-  router.push('/menu')
-}
-
 const startNextRound = async () => {
   await gameStore.startNextRound()
   router.push('/game')

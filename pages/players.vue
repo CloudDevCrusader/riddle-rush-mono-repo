@@ -158,7 +158,7 @@ const removePlayer = (index: number) => {
 
 const startGame = async () => {
   if (players.value.length > 0) {
-    const playerNames = players.value.map(p => p.name)
+    const playerNames = players.value.map((p) => p.name)
     await gameStore.setupPlayers(playerNames)
     // Navigate directly to game
     router.push('/game')

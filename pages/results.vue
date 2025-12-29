@@ -130,17 +130,15 @@ const gameStore = useGameStore()
 
 // Get players from store
 const players = computed(() => gameStore.players)
-const currentCategory = computed(() => gameStore.currentCategory)
-const currentLetter = computed(() => gameStore.currentLetter)
 
 // Local state for scores (will be saved on navigation)
 const playerScores = ref(
-  players.value.map(p => ({
+  players.value.map((p) => ({
     id: p.id,
     name: p.name,
     answer: p.currentRoundAnswer || '',
     score: p.currentRoundScore,
-  }))
+  })),
 )
 
 const increaseScore = (index: number) => {
