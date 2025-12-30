@@ -132,9 +132,6 @@ const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
 
-// Mock coin amount - replace with actual game store data
-const coins = ref(100)
-
 const handlePlay = () => {
   router.push('/players')
 }
@@ -145,23 +142,6 @@ const goToSettings = () => {
 
 const goToCredits = () => {
   router.push('/credits')
-}
-
-const goToProfile = () => {
-  router.push('/profile')
-}
-
-const handleExit = () => {
-  // Show quit confirmation dialog
-  // For now, just go back
-  if (confirm('Are you sure you want to exit?')) {
-    window.close()
-  }
-}
-
-const toggleMenu = () => {
-  // Toggle menu options
-  // TODO: Implement menu toggle functionality
 }
 
 useHead({
