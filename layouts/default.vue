@@ -74,4 +74,11 @@ nav a.router-link-exact-active {
 .online-status.offline {
   color: #e74c3c;
 }
+
+/* Hide navbar on mobile to maximize game space */
+@media (max-width: 640px) {
+  nav {
+    display: none;
+  }
+}
 </style>

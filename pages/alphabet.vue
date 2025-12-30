@@ -18,7 +18,7 @@
       >
     </button>
 
-    <!-- Top Bar -->
+    <!-- Top Bar - Coin bar hidden for MVP -->
     <div class="top-bar">
       <!-- Round Indicator -->
       <div class="round-indicator">
@@ -28,13 +28,13 @@
         >
       </div>
 
-      <!-- Coin Bar -->
-      <div class="coin-bar">
+      <!-- Coin Bar - Hidden for MVP -->
+      <!-- <div class="coin-bar">
         <img
           :src="`${baseUrl}assets/alphabets/COIN BAR.png`"
           alt="Coin bar"
         >
-      </div>
+      </div> -->
     </div>
 
     <!-- Main Container -->
@@ -551,64 +551,65 @@ useHead({
 @media (max-width: 640px) {
   /* Reduce container padding to fit content on screen without scrolling */
   .container {
-    padding: var(--spacing-lg) var(--spacing-md);
-    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-md);
+    gap: var(--spacing-xs);
   }
 
   .back-btn img {
     width: 40px;
   }
 
-  /* Smaller title for mobile */
-  .title-image {
-    width: 180px;
+  /* Hide title on mobile to save space and reduce clutter */
+  .title-container {
+    display: none;
   }
 
   /* Reduce category display spacing */
   .category-display {
     gap: 0;
+    margin-bottom: var(--spacing-xs);
   }
 
   .category-label {
-    width: 100px;
+    width: 90px;
   }
 
   .category-name {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
   }
 
-  /* Smaller wheel container to fit viewport */
+  /* Optimize wheel container for mobile */
   .wheel-container {
-    max-width: 320px;
-    margin: var(--spacing-sm) auto;
+    max-width: 340px;
+    margin: 0 auto;
   }
 
-  /* Slightly larger touch targets for better mobile UX */
+  /* Better touch targets for mobile */
   .letter-btn {
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
   }
 
   .letter-text {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
 
   .wheel-center {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
   }
 
   .center-glow {
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
   }
 
   .pointer-arrow {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   .next-btn {
-    margin-top: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
   }
 
   .next-btn img {

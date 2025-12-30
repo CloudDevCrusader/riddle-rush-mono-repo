@@ -7,9 +7,8 @@
       class="page-bg"
     >
 
-    <!-- Top Bar -->
-    <div class="top-bar">
-      <!-- Coin Bar -->
+    <!-- Top Bar - Hidden for MVP -->
+    <!-- <div class="top-bar">
       <div class="coin-bar">
         <img
           :src="`${baseUrl}assets/main-menu/COIN BAR.png`"
@@ -24,7 +23,6 @@
         <span class="coin-amount">{{ coins }}</span>
       </div>
 
-      <!-- Profile Icon -->
       <button
         class="profile-btn tap-highlight no-select"
         @click="goToProfile"
@@ -35,7 +33,7 @@
           class="profile-icon"
         >
       </button>
-    </div>
+    </div> -->
 
     <!-- Main Container -->
     <div class="container">
@@ -101,8 +99,8 @@
           >
         </button>
 
-        <!-- Exit Button -->
-        <button
+        <!-- Exit Button - Hidden for MVP -->
+        <!-- <button
           class="menu-btn exit-btn tap-highlight no-select"
           @click="handleExit"
         >
@@ -111,12 +109,12 @@
             alt="Exit"
             class="btn-image"
           >
-        </button>
+        </button> -->
       </div>
     </div>
 
-    <!-- Menu Icon (bottom right) -->
-    <button
+    <!-- Menu Icon (bottom right) - Hidden for MVP -->
+    <!-- <button
       class="menu-icon-btn tap-highlight no-select"
       @click="toggleMenu"
     >
@@ -125,7 +123,7 @@
         alt="Menu"
         class="menu-icon"
       >
-    </button>
+    </button> -->
   </div>
 </template>
 
