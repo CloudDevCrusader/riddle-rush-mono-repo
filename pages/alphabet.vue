@@ -143,7 +143,9 @@ onMounted(async () => {
 
 const getLetterPosition = (index: number) => {
   const angle = index * angleStep
-  const radius = 180 // Distance from center in pixels
+  // Responsive radius based on viewport width
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+  const radius = isMobile ? 140 : 180 // Smaller radius for mobile
 
   return {
     transform: `rotate(${angle}deg) translateY(-${radius}px) rotate(-${angle}deg)`,
@@ -547,21 +549,44 @@ useHead({
 
 /* Responsive */
 @media (max-width: 640px) {
+  /* Reduce container padding to fit content on screen without scrolling */
+  .container {
+    padding: var(--spacing-lg) var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
   .back-btn img {
     width: 40px;
   }
 
+  /* Smaller title for mobile */
   .title-image {
-    width: 250px;
+    width: 180px;
   }
 
+  /* Reduce category display spacing */
+  .category-display {
+    gap: 0;
+  }
+
+  .category-label {
+    width: 100px;
+  }
+
+  .category-name {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Smaller wheel container to fit viewport */
   .wheel-container {
-    max-width: 350px;
+    max-width: 320px;
+    margin: var(--spacing-sm) auto;
   }
 
+  /* Slightly larger touch targets for better mobile UX */
   .letter-btn {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
   }
 
   .letter-text {
@@ -582,8 +607,12 @@ useHead({
     font-size: 2rem;
   }
 
+  .next-btn {
+    margin-top: var(--spacing-sm);
+  }
+
   .next-btn img {
-    width: 200px;
+    width: 180px;
   }
 }
 
