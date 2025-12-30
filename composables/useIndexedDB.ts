@@ -49,7 +49,9 @@ export function useIndexedDB() {
   const saveGameSession = async (session: GameSession) => {
     try {
       const db = await getDB()
-      await db.put(GAME_SESSION_STORE, session, 'current')
+      // Serialize the session to ensure it's compatible with IndexedDB
+      const serialized = JSON.parse(JSON.stringify(session))
+      await db.put(GAME_SESSION_STORE, serialized, 'current')
     } catch (error) {
       console.error('Error saving game session:', error)
     }

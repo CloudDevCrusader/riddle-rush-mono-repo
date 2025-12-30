@@ -1,330 +1,474 @@
 # Design TODO List
 
-This document tracks design assets and pages that need to be created, updated, or implemented by the designer.
+This document tracks design assets and pages that need to be created, updated, or implemented.
 
-## ✅ Completed Designs (Assets Available in `docs/gfx/`)
-
-The following pages have complete design assets:
-
-- **Splash Screen** (`docs/gfx/splash/`)
-- **Main Menu** (`docs/gfx/Main Menu/`)
-- **Language Selection** (`docs/gfx/language/`)
-- **Alphabet Selection** (`docs/gfx/alphabets/`)
-- **Players Management** (`docs/gfx/players/`)
-- **Scoring/Results** (`docs/gfx/scoring/`)
-- **Leaderboard** (`docs/gfx/Leaderboard/`)
-- **Win Screen** (`docs/gfx/you win/`)
-- **Settings Modal** (`docs/gfx/settings/`)
-- **Profile Page** (`docs/gfx/profile/`)
-- **Paused Modal** (`docs/gfx/paused/`)
-- **Quit Game Modal** (`docs/gfx/quit game/`)
+**Last Updated**: 2025-12-30
+**Status**: Fortune wheel implemented, MVP flow verified
 
 ---
 
-## 🚧 Pages Needing Implementation (Design Exists, Page Doesn't)
+## ✅ Completed Designs & Implementation
 
-### 1. Settings Page
-- **Design Location**: `docs/gfx/settings/`
-- **Status**: Design complete, page not implemented
+The following pages have complete design assets AND are fully implemented:
+
+- **Splash Screen** (`pages/index.vue` splash overlay, `public/assets/splash/`)
+- **Main Menu** (`pages/index.vue`, `public/assets/main-menu/`)
+- **Language Selection** (`pages/language.vue`, `public/assets/language/`)
+- **Alphabet Selection (Fortune Wheel)** (`pages/alphabet.vue`, `public/assets/alphabets/`)
+- **Players Management** (`pages/players.vue`, `public/assets/players/`)
+- **Scoring/Results** (`pages/results.vue`, `public/assets/scoring/`)
+- **Leaderboard** (`pages/leaderboard.vue`, `public/assets/leaderboard/`)
+- **Win Screen** (`pages/win.vue`, `public/assets/win/`)
+
+---
+
+## 🚧 Pages/Modals Needing Implementation (Design Complete, Code Missing)
+
+### 1. Settings Page ⚠️ HIGH PRIORITY
+- **Design Location**: `docs/gfx/settings/`, `public/assets/settings/`
+- **Status**: ❌ Page does not exist (`pages/settings.vue` not found)
 - **Assets Available**:
-  - Background
-  - Settings title
-  - Music toggle button with musical note icon
-  - Sound toggle button with volume icon
-  - Volume slider bars
-  - OK button
-  - Back button
-  - Coin bar
+  - ✅ Background (`BACKGROUND.png`)
+  - ✅ Settings title (`settings.png`)
+  - ✅ Music toggle button (`Music.png`, `musical-note.png`)
+  - ✅ Sound toggle button (`Sound.png`, `volume.png`)
+  - ✅ Volume slider bars (`sound low bar.png`)
+  - ✅ OK button (`ok buttton.png`, `OK.png`)
+  - ✅ Back button (`back.png`)
+  - ✅ Coin bar (`COIN BAR.png`, `100.png`)
+  - ✅ Options button (`options.png`)
 - **Implementation Needed**:
   - Create `/pages/settings.vue`
-  - Integrate with settings store
-  - Add music on/off functionality
-  - Add sound effects on/off functionality
+  - Integrate with settings store (`stores/settings.ts`)
+  - Add music on/off toggle
+  - Add sound effects on/off toggle
   - Add volume slider control
+  - Connect "Options" button in main menu to `/settings` route
 
-### 2. Profile Page
-- **Design Location**: `docs/gfx/profile/`
-- **Status**: Design complete, page not implemented
+### 2. Profile Page ⚠️ MEDIUM PRIORITY
+- **Design Location**: `docs/gfx/profile/`, `public/assets/profile/`
+- **Status**: ❌ Page does not exist (`pages/profile.vue` not found)
 - **Assets Available**:
-  - Background
-  - Profile title
-  - Camera icon for profile picture
-  - Input fields: First Name, Last Name, Nickname, Date of Birth
-  - Profile box/container
-  - OK button
-  - Back button
-  - Coin bar (100 coins)
+  - ✅ Background (`BACKGROUND.png`)
+  - ✅ Profile title (`profile.png`, `profile-1.png`)
+  - ✅ Camera icon (`camera.png`)
+  - ✅ Input field labels (`First Name_.png`, `Last Name_.png`, `Nickname_.png`, `Date of Birth_.png`)
+  - ✅ Profile box/container (`box.png`)
+  - ✅ OK button (`ok.png`)
+  - ✅ Back buttons (`back.png`, `back-1.png`)
+  - ✅ Coin bar (`COIN BAR.png`, `100.png`)
+  - ✅ Mockup reference (`profile mockup.png`)
 - **Implementation Needed**:
   - Create `/pages/profile.vue`
   - Add user profile form
-  - Add profile picture upload functionality
-  - Integrate with user settings/profile store
+  - Add profile picture upload/selection functionality
+  - Create profile store for user data
+  - Connect "Profile" button in main menu to `/profile` route
 
-### 3. Paused Modal/Screen
-- **Design Location**: `docs/gfx/paused/`
-- **Status**: Design complete, not implemented
+### 3. Paused Modal/Overlay ⚠️ HIGH PRIORITY
+- **Design Location**: `docs/gfx/paused/`, `public/assets/paused/`
+- **Status**: ❌ Pause functionality not implemented
 - **Assets Available**:
-  - Background
-  - "Game Paused" title
-  - "Game is paused, press resume to continue" message
-  - Resume button
-  - Restart button
-  - Home button
-  - Back button
+  - ✅ Background (`BACKGROUND.png`)
+  - ✅ "Game Paused" title (`paused.png`)
+  - ✅ Pause message (`game is paused press resume to continue.png`)
+  - ✅ Resume button (`resume.png`)
+  - ✅ Restart button (`restart.png`)
+  - ✅ Home button (`home.png`)
+  - ✅ Back button (`back.png`)
 - **Implementation Needed**:
-  - Create pause functionality in game page
-  - Create modal/overlay component
-  - Implement pause/resume game logic
-  - Add pause button to game header
+  - Create pause modal component (`components/PauseModal.vue`)
+  - Add pause button to game page header (⋮ menu button already exists)
+  - Implement pause/resume game logic in game store
+  - Add keyboard shortcut for pause (ESC key)
+  - Pause timer if timed mode exists
 
-### 4. Quit Game Modal
-- **Design Location**: `docs/gfx/quit game/`
-- **Status**: Design complete, not implemented
+### 4. Quit Game Modal ⚠️ MEDIUM PRIORITY
+- **Design Location**: `docs/gfx/quit game/`, `public/assets/quit/`
+- **Status**: ❌ Quit confirmation not implemented
 - **Assets Available**:
-  - "QUIT GAME" title
-  - "Are you sure you want to quit game?" message
-  - Yes button
-  - No button
-  - Back button
+  - ✅ "QUIT GAME" title (`quit game.png`)
+  - ✅ Confirmation message (`are you sure you want to quit.png`)
+  - ✅ Yes button (`yes.png`)
+  - ✅ No button (`no.png`)
+  - ✅ Back button (`back.png`)
 - **Implementation Needed**:
-  - Create quit confirmation modal component
-  - Add quit button to game/menu
-  - Implement quit game logic (clear session, return to menu)
+  - Create quit confirmation modal component (`components/QuitModal.vue`)
+  - Trigger from game page back button or menu
+  - Implement quit game logic (save progress, clear session, return to menu)
+  - Add confirmation before navigating away from active game
 
 ---
 
-## ❌ Missing Design Assets (Page Exists, No Design)
+## ❌ Missing Design Assets (Page Exists, Design Incomplete)
 
-### 1. Main Gameplay Screen
-- **Current File**: `/pages/game.vue`
-- **Status**: Implemented with custom CSS, no design mockup available
+### 1. Main Gameplay Screen ⚠️ CRITICAL PRIORITY
+- **Current File**: `pages/game.vue`
+- **Status**: ⚠️ Implemented with basic CSS, missing design assets
 - **Current Features**:
-  - Category and letter display
-  - Text input for answers
-  - Submit button
-  - Attempts counter
-  - Back button
-  - Score display (single-player)
-  - Round/Players display (multi-player)
-- **Design Needed**:
-  - Background image/pattern
-  - Category display card design
-  - Letter badge/display design
-  - Answer input field design (styled text box)
-  - Submit button design
-  - Attempts/score display design
-  - Visual feedback for correct/wrong answers
-  - Multi-player turn indicator design
-  - "All players submitted" card design
+  - Header with back button (←), round/player info, menu button (⋮)
+  - Category emoji and name display
+  - Letter badge showing "Beginnt mit X"
+  - Text input for answers ("Deine Antwort...")
+  - Submit button (✓)
+  - Skip button ("Überspringen →")
+  - New Round button ("Neue Runde ↻")
+  - Current turn player display
+- **Design Assets MISSING** (need designer to create):
+  - ❌ Background image/pattern for game page
+  - ❌ Category card/container design (currently using simple card)
+  - ❌ Letter badge custom design (currently using basic div)
+  - ❌ Styled answer input field (currently plain textbox)
+  - ❌ Submit button icon/design (currently plain ✓)
+  - ❌ Skip/New Round button designs (currently plain buttons with arrows)
+  - ❌ Visual feedback animation for correct answer (green flash, confetti, etc.)
+  - ❌ Visual feedback animation for wrong answer (red flash, shake, etc.)
+  - ❌ Multi-player turn indicator highlight design
+  - ❌ "All players submitted" celebration card
+  - ❌ Score popup animation design (+10 points, etc.)
+  - ❌ Timer UI if timed mode is added
+
+**Suggested Design Elements**:
+- Background matching other pages' theme
+- Category card with decorative frame similar to other screens
+- Large letter badge with glow effect (similar to alphabet selection)
+- Input field with themed border and focus state
+- Animated submit button (pulse when enabled, disabled state)
+- Celebratory animations for correct answers
+- Player turn indicator with avatar frame/highlight
 
 ### 2. Credits Page
-- **Current File**: `/pages/credits.vue`
-- **Status**: Implemented with custom CSS, no design mockup
-- **Design Needed**:
-  - Background
+- **Current File**: `pages/credits.vue`
+- **Status**: ⚠️ Implemented with basic styling, no design mockup
+- **Current Features**:
+  - Back button
   - Credits title
-  - Team member cards design
-  - Developer/designer attribution styling
-  - Back button (styled)
+  - Team sections (Game Design, Programming, Art)
+  - Team member names
+- **Design Assets MISSING**:
+  - ❌ Background image
+  - ❌ Credits title design/logo
+  - ❌ Team member card designs
+  - ❌ Section headers design (Game Design, Programming, Art)
+  - ❌ Back button styling (currently using win page assets)
+  - ❌ Layout grid/positioning guide
 
 ### 3. About Page
-- **Current File**: `/pages/about.vue`
-- **Status**: Basic implementation, needs design
-- **Design Needed**:
-  - Background
-  - About/info layout design
-  - Text content styling
+- **Current File**: `pages/about.vue`
+- **Status**: ⚠️ Basic implementation, needs design
+- **Current Features**:
+  - Game description
+  - Features list
   - Back button
-
-### 4. Home/Index Page
-- **Current File**: `/pages/index.vue`
-- **Status**: Implemented but may need design review
-- **Design Needed**:
-  - Verify if current design matches intent
-  - Category cards design review
-  - Navigation elements review
+- **Design Assets MISSING**:
+  - ❌ Background image
+  - ❌ About title design
+  - ❌ Feature icons/badges
+  - ❌ Text content layout design
+  - ❌ Back button styling
 
 ---
 
-## 🎮 Multi-Player Specific Design Elements Needed
+## 🎮 Multi-Player Design Elements Status
 
-The following elements were added for multi-player support and need design assets:
+### ✅ Already Designed & Implemented
+- Player slots with add/remove buttons (`pages/players.vue`)
+- Round indicator in game header
+- Player count display in game header
+- Scoring page with multiple players (`pages/results.vue`)
+- Leaderboard with rank badges 1-5 (`public/assets/leaderboard/`)
 
-### 1. Player Turn Indicator
-- **Location**: Game page during multi-player mode
-- **Current**: Simple card with player name
-- **Needed**: Styled card showing whose turn it is
-  - Player avatar/icon
-  - Player name with highlight
-  - Turn number indicator
-  - Animation/glow effect to draw attention
+### ❌ Missing Multi-Player Designs
 
-### 2. All Players Submitted Card
-- **Location**: Game page when all players complete round
-- **Current**: Basic card with "Go to Scoring" button
-- **Needed**: Celebration/completion card design
-  - Success/checkmark icon
-  - "All players submitted!" message
-  - Styled "Go to Scoring" button
-  - Confetti or celebration animation (optional)
-
-### 3. Multi-Player Score Adjustments (Results Page)
-- **Location**: Results/scoring page
-- **Current**: Using generic add/minus buttons
-- **Review Needed**: Verify if current design works for multiple players
-  - Player score card layout for 2-6 players
-  - +/- buttons design (currently using `add.png` and `minus.png`)
-  - Player answer display
-
-### 4. Multi-Player Leaderboard Elements
+#### 1. Rank Badge for 6th Place
 - **Location**: Leaderboard page
-- **Current**: Using existing rank badges (1.png, 2.png, 3.png, 4.png, 5.png)
-- **Additions Needed**:
-  - Rank badge for 6th place (only has 1-5)
-  - Round completion indicator design
-  - "Next Round" button design (currently plain)
-  - "End Game" button design (currently plain)
-  - Round number display (e.g., "Round 2 Complete!")
+- **Current**: Only has rank badges 1-5 (`1.png`, `2.png`, `3.png`, `4.png`, `5.png`)
+- **Needed**: `6.png` rank badge to support 6-player games
+
+#### 2. Player Turn Indicator Highlight
+- **Location**: Game page during multi-player
+- **Current**: Simple text "Current Turn: Player 1"
+- **Needed Design**:
+  - Highlighted card showing active player
+  - Player avatar/icon frame
+  - Glow or border effect
+  - Turn number indicator
+
+#### 3. All Players Submitted Card
+- **Location**: Game page when round completes
+- **Current**: Basic card with button
+- **Needed Design**:
+  - Celebration/completion themed card
+  - Success icon or checkmark
+  - "All players submitted!" message design
+  - Styled "Go to Scoring" button
+  - Optional: Confetti animation
 
 ---
 
-## 🔄 Design Review/Improvements Needed
+## 🔄 Design Review Needed
 
-### 1. Responsive Design
-- **All Pages**: Verify mobile responsiveness
-- **Priority Pages**: Game, Players, Results, Leaderboard
-- **Elements to Check**:
-  - Touch target sizes for mobile
-  - Layout stacking on small screens
-  - Font sizes and readability
+### 1. Button States & Interactions
+**Review all buttons across pages for:**
+- ✅ Normal state (exists for most buttons)
+- ⚠️ Hover state (some buttons have `-1.png` variants, inconsistent)
+- ❌ Active/pressed state (missing for most buttons)
+- ⚠️ Disabled state (needed for submit, start, next buttons)
+- ❌ Loading state (for async actions)
 
-### 2. Accessibility
-- **Color Contrast**: Review text readability on backgrounds
-- **Focus States**: Design for keyboard navigation focus indicators
-- **Button States**: Hover, active, disabled states for all buttons
+**Pages to review**: All pages, especially game, players, results
 
-### 3. Loading States
-- **Current**: Generic spinner component
-- **Needed**: Branded loading animations for:
-  - Game data loading
-  - Category fetching
-  - Page transitions
+### 2. Input Field States
+**Text input fields need:**
+- ⚠️ Default state (basic styling exists)
+- ❌ Focus state (highlight border, glow)
+- ❌ Error state (red border for invalid input)
+- ❌ Disabled state (grayed out)
 
-### 4. Error States
+**Found in**: game.vue (answer input)
+
+### 3. Responsive Design Verification
+**All pages need mobile/tablet testing:**
+- ⚠️ Touch target sizes (buttons may be too small on mobile)
+- ⚠️ Text readability (font sizes, contrast)
+- ⚠️ Layout stacking (elements overlapping on small screens)
+- ⚠️ Fortune wheel sizing (currently responsive but needs testing)
+
+**Priority pages**: game, players, results, alphabet (fortune wheel)
+
+### 4. Accessibility
+**Design considerations needed:**
+- Color contrast ratios (WCAG AA compliance)
+- Focus indicators for keyboard navigation
+- Screen reader friendly element labeling
+- High contrast mode support
+
+---
+
+## 🎨 Missing UI Components
+
+### Loading States
+- **Current**: Generic `components/Spinner.vue`
+- **Needed**:
+  - Branded loading spinner matching game theme
+  - Page transition loading indicators
+  - Button loading states (for async actions)
+  - Skeleton screens for content loading
+
+### Error States
 - **Current**: No error state designs
 - **Needed**:
-  - Network error display
-  - Category load failure
-  - No results found
+  - Network error display (offline mode, API failure)
+  - Category load failure screen
+  - No results found state
+  - Generic error modal/toast design
 
-### 5. Empty States
+### Empty States
+- **Current**: Basic "No entries" text
 - **Needed**:
+  - Empty leaderboard illustration
   - No players added yet (players page)
-  - No score history (profile/stats)
-  - No leaderboard entries
+  - No game history (profile/stats)
+  - Empty state icons/illustrations matching theme
+
+### Notifications/Toasts
+- **Needed**:
+  - Success notification design
+  - Error notification design
+  - Info/warning notification design
+  - Toast position and animation
 
 ---
 
-## 📋 Animation & Interaction Design
+## 📋 Animation & Sound Design
 
-### Transitions Needed
-1. **Page Transitions**: Smooth fade/slide between pages
-2. **Button Hover/Press**: Scale, glow, or shadow effects
-3. **Modal Animations**: Slide-up, fade-in for modals
-4. **Success/Error Feedback**: Animations for correct/wrong answers
-5. **Score Animations**: Count-up animation for score changes
-6. **Leaderboard Animations**: Entry appearance, ranking changes
+### Page Transitions (CSS/Animation Needed)
+- Fade/slide between page navigation
+- Modal slide-up/fade-in animations
+- Button hover effects (scale, glow, shadow)
+- Drawer/menu slide animations
 
-### Sound Design Integration
-- Button click sounds
-- Correct answer chime
-- Wrong answer buzz
-- Round complete fanfare
-- Level up/achievement sounds
+### Game-Specific Animations (Need Design Specs)
+- ✅ Fortune wheel spin (implemented in `alphabet.vue`)
+- ❌ Correct answer celebration (confetti, score popup)
+- ❌ Wrong answer feedback (shake, red flash)
+- ❌ Score count-up animation
+- ❌ Leaderboard entry reveal animation
+- ❌ Round complete transition
+- ❌ Level up/achievement popup
+
+### Sound Design Integration (Audio Files Needed)
+- ❌ Button click sound
+- ❌ Correct answer chime
+- ❌ Wrong answer buzz
+- ❌ Round complete fanfare
+- ❌ Background music track (optional, toggleable)
+- ❌ Achievement unlock sound
+- ❌ Menu navigation sound
+
+**Note**: Settings page has music/sound toggle UI ready, waiting for audio files
 
 ---
 
-## 🎨 Asset Organization
+## 🚀 Implementation Priority
+
+### 🔴 Critical (Blocking MVP Completeness)
+1. **Settings Page** - Users expect settings from main menu "Options" button
+2. **Pause Modal** - Essential for game interruption handling
+3. **Main Gameplay Screen Design** - Current implementation needs visual polish
+4. **Game Visual Feedback** - Correct/wrong answer animations
+
+### 🟡 High (Core Features)
+5. **Quit Game Modal** - Prevent accidental game exits
+6. **Profile Page** - Main menu "Profile" button currently broken
+7. **Rank Badge #6** - Support full 6-player mode
+8. **Error/Loading States** - Improve UX for edge cases
+
+### 🟢 Medium (Polish & Enhancement)
+9. **Credits Page Design** - Make credits visually appealing
+10. **About Page Design** - Professional game info page
+11. **Button States** - Hover/active/disabled consistency
+12. **Multi-player UI Polish** - Turn indicators, submission cards
+
+### 🔵 Low (Nice to Have)
+13. **Animations** - Advanced effects and transitions
+14. **Sound Effects** - Audio feedback library
+15. **Empty States** - Illustrations for empty data
+16. **Accessibility Improvements** - WCAG compliance
+
+---
+
+## 📂 Asset Organization & Naming
 
 ### Current Structure
 ```
-docs/gfx/           # Original design files (Photoshop/Figma exports)
-public/assets/      # Production-ready assets (used in app)
+docs/gfx/           # Original design files (Photoshop/AI exports)
+  ├── Main Menu/
+  ├── alphabets/
+  ├── language/
+  ├── Leaderboard/
+  ├── paused/
+  ├── players/
+  ├── profile/
+  ├── quit game/
+  ├── scoring/
+  ├── settings/
+  ├── splash/
+  └── you win/
+
+public/assets/      # Production-ready assets
+  ├── main-menu/
+  ├── alphabets/
+  ├── language/
+  ├── leaderboard/
+  ├── paused/
+  ├── players/
+  ├── profile/
+  ├── quit/
+  ├── scoring/
+  ├── settings/
+  ├── splash/
+  └── win/
 ```
 
-### Naming Conventions
-- Use kebab-case for folder names: `main-menu`, `quit-game`, `you-win`
-- Use descriptive names for assets: `BACKGROUND.png`, `add-button.png`
-- Consistent capitalization (currently mixed - consider standardizing)
+### Naming Convention Issues
+- ⚠️ Inconsistent folder naming (`Main Menu` vs `main-menu`, `quit game` vs `quit`)
+- ⚠️ Mixed capitalization in filenames (`BACKGROUND.png`, `back.png`, `ok buttton.png`)
+- ⚠️ Typos in asset names (`ok buttton.png` should be `ok button.png`)
+- ⚠️ Unclear naming (`profile-1.png`, `back-1.png` - what's the variant?)
 
-### Missing Asset Variants
-Some assets may need additional states:
-- Buttons: normal, hover, active, disabled
-- Toggle switches: on/off states
-- Input fields: default, focus, error, disabled
-
----
-
-## 🚀 Priority Recommendations
-
-### High Priority (Core Multi-Player Experience)
-1. ✅ Multi-player leaderboard rank badges (6th place)
-2. ✅ Player turn indicator card design
-3. ✅ "All submitted" completion card
-4. ✅ Main gameplay screen design (answer input, category display)
-5. ✅ Pause modal implementation
-
-### Medium Priority (Polish & Features)
-6. Settings page implementation
-7. Profile page implementation
-8. Quit game modal implementation
-9. Credits page design
-10. Loading and error states
-
-### Low Priority (Nice to Have)
-11. Advanced animations
-12. Sound effect design
-13. Empty state illustrations
-14. Achievement/badge designs
+### Recommended Naming Standards
+1. **Folders**: Use kebab-case consistently (`main-menu`, `quit-game`, `you-win`)
+2. **Files**: Use descriptive lowercase with hyphens (`background.png`, `ok-button.png`)
+3. **Variants**: Use suffixes for states (`button-normal.png`, `button-hover.png`, `button-disabled.png`)
+4. **Avoid**: Generic names (`1.png`, `2.png`), typos, mixed cases
 
 ---
 
 ## 📝 Notes for Designer
 
 ### Technical Specifications
-- **Resolution**: Design for 1920x1080 base, scale down for mobile
+- **Base Resolution**: 1920x1080 for desktop, scale down for mobile
 - **Format**: PNG with transparency for UI elements
-- **File Size**: Optimize for web (compress PNGs, use appropriate resolution)
+- **Compression**: Optimize for web (use tools like TinyPNG, ImageOptim)
 - **Naming**: Clear, descriptive names matching functionality
 - **Organization**: Group related assets in folders by page/feature
+- **Sprite Sheets**: Consider for small icons to reduce HTTP requests
 
-### Current Design System
-- **Color Palette**: Extract from existing designs (appears to use blues, purples, yellows)
-- **Typography**: Current fonts appear to be Poppins and Inter (verify)
-- **Button Style**: Rounded, 3D effect with shadows and hover states
-- **Spacing**: Consistent padding and margins (review existing pages)
+### Current Design System (Extracted from Existing Assets)
+- **Color Palette**:
+  - Primary: Purple/blue gradients (#667eea, #764ba2)
+  - Accent: Gold/yellow (#FFD700)
+  - Background: Dark navy (#1a1a2e)
+  - Text: White/light gray
+- **Typography**:
+  - Display: Poppins (game titles, headings)
+  - Body: Inter (UI text, descriptions)
+  - Sizes: Responsive with clamp() (mobile-first)
+- **Button Style**:
+  - Rounded corners
+  - 3D effect with drop shadows
+  - Hover states with scale/glow
+  - Image-based (not CSS-only)
+- **Spacing**:
+  - Consistent padding using CSS variables
+  - `var(--spacing-sm)`, `--spacing-md`, `--spacing-lg`, etc.
 
-### Multi-Player Specific Considerations
-- Design should accommodate 2-6 players
-- Elements should scale/stack gracefully
-- Consider visual distinction for "active player" vs "waiting players"
-- Score displays should be clear and easy to read quickly
+### Multi-Player Design Considerations
+- **Player Count**: Support 2-6 players simultaneously
+- **Scalability**: UI elements should stack/grid gracefully
+- **Visual Distinction**: "Active player" must stand out clearly
+- **Readability**: Scores, names must be legible at a glance
+- **Touch Targets**: Minimum 44x44px for mobile buttons
 
 ---
 
-## ✨ Future Design Considerations
+## ✨ Future Design Scope (Not Currently Needed)
 
-### Potential Features (Not Yet Implemented)
+These features are not yet implemented and don't need designs immediately:
+
 - Achievements/badges system
-- Player statistics/history dashboard
-- Difficulty levels (easy/medium/hard)
-- Timed mode
-- Multiplayer online (vs local)
-- Daily challenges
-- Seasonal themes
+- Player statistics dashboard
+- Difficulty level selection UI
+- Timed mode countdown timer
+- Online multiplayer lobby
+- Daily challenge cards
+- Seasonal theme variants
+- Dark/light mode toggle
+- Custom avatar upload/selection
+- Team mode (2v2, 3v3)
+
+**Design these only if/when development roadmap includes them.**
 
 ---
 
-**Last Updated**: 2025-12-29
-**Updated By**: Claude Sonnet 4.5
-**Status**: Multi-player support implemented, design assets review in progress
+## 🎯 Quick Action Checklist for Designer
+
+### Immediate Actions (This Week)
+- [ ] Create Settings page mockup and export assets
+- [ ] Create Profile page mockup and export assets
+- [ ] Create Pause modal overlay design
+- [ ] Create Quit confirmation modal design
+- [ ] Design main gameplay screen (game.vue) with all UI elements
+- [ ] Create correct/wrong answer animation specs
+- [ ] Design rank badge #6 for leaderboard
+
+### Next Sprint
+- [ ] Create Credits page design
+- [ ] Create About page design
+- [ ] Design button states (hover, active, disabled) for all buttons
+- [ ] Create loading spinner with game branding
+- [ ] Design error/empty state illustrations
+- [ ] Create notification/toast component designs
+
+### Polish Phase
+- [ ] Define animation timing and easing curves
+- [ ] Create sound effect specifications
+- [ ] Design advanced transitions and microinteractions
+- [ ] Review accessibility (contrast, focus states)
+- [ ] Create design system documentation
+
+---
+
+**Document Maintained By**: Claude Sonnet 4.5
+**Next Review Date**: After settings/profile/pause/quit implementation

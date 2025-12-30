@@ -200,7 +200,7 @@ test.describe('Multi-Player Game Flow', () => {
     const endGameBtn = page.locator('.end-game-btn')
     await expect(endGameBtn).toBeVisible()
     await endGameBtn.click()
-    await expect(page).toHaveURL(/\/menu/)
+    await expect(page).toHaveURL(/\/$/)
   })
 
   test('should handle single player game flow correctly', async ({ page }) => {

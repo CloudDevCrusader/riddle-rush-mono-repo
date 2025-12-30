@@ -2,32 +2,43 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Game Flow', () => {
   test('should start a new game', async ({ page }) => {
+    // Navigate to menu
     await page.goto('/')
-
-    // Wait for page to be fully loaded
     await page.waitForLoadState('networkidle')
 
-    // Wait for category loading spinner to disappear
-    const spinner = page.locator('.spinner--overlay, [data-testid="loading-spinner"]')
-    if (await spinner.count() > 0) {
-      await spinner.waitFor({ state: 'hidden', timeout: 10000 })
-    }
+    // Wait for splash screen to finish
+    await page.waitForTimeout(2000)
+    const splashScreen = page.locator('.splash-screen')
+    await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {})
 
-    // Look for a category card or start button
-    const categoryCard = page.locator('[data-testid="category-card"], .category-card, button:has-text("Start")').first()
+    // Click play button
+    const playBtn = page.locator('.play-btn')
+    await expect(playBtn).toBeVisible()
+    await playBtn.click()
 
-    // Wait for categories to load
-    await expect(categoryCard).toBeVisible({ timeout: 10000 })
+    // Should navigate to players page
+    await expect(page).toHaveURL(/\/players/)
 
-    // Click to start game
-    await categoryCard.click()
+    // Click start button to go to alphabet selection
+    const startBtn = page.locator('.start-btn')
+    await expect(startBtn).toBeVisible()
+    await startBtn.click()
 
-    // Should navigate to game page or show game interface
-    await page.waitForURL(/game|play/i, { timeout: 10000 })
-      .catch(() => {
-        // If URL doesn't change, check if game interface appears
-        return page.waitForSelector('[data-testid="game-interface"], .game-container, input[type="text"]', { timeout: 5000 })
-      })
+    // Should navigate to alphabet (fortune wheel) page
+    await expect(page).toHaveURL(/\/alphabet/)
+
+    // Select a letter from the fortune wheel
+    const letterBtn = page.locator('.letter-btn').first()
+    await expect(letterBtn).toBeVisible()
+    await letterBtn.click()
+
+    // Click next button to start game
+    const nextBtn = page.locator('.next-btn')
+    await expect(nextBtn).toBeEnabled()
+    await nextBtn.click()
+
+    // Should navigate to game page
+    await expect(page).toHaveURL(/\/game/)
   })
 
   test('should display game elements', async ({ page }) => {

@@ -43,6 +43,9 @@
   },
   "game": {
     "title": "Play",
+    "round": "Round",
+    "players": "Players",
+    "current_turn": "Current Turn",
     "score": "Score",
     "attempts": "Attempts",
     "starts_with": "Starts with",

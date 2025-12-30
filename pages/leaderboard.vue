@@ -166,7 +166,7 @@ const startNextRound = async () => {
 
 const endGame = async () => {
   await gameStore.endGame()
-  router.push('/menu')
+  router.push('/')
 }
 
 useHead({

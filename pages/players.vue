@@ -137,6 +137,7 @@ const gameStore = useGameStore()
 const maxPlayers = 6
 const players = ref([
   { name: 'Player 1' },
+  { name: 'Player 2' },
 ])
 
 const addPlayer = () => {
@@ -160,8 +161,8 @@ const startGame = async () => {
   if (players.value.length > 0) {
     const playerNames = players.value.map((p) => p.name)
     await gameStore.setupPlayers(playerNames)
-    // Navigate directly to game
-    router.push('/game')
+    // Navigate to alphabet selection (fortune wheel)
+    router.push('/alphabet')
   }
 }
 

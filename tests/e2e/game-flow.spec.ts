@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Complete Game Flow', () => {
   test('should complete full game flow from menu to leaderboard', async ({ page }) => {
     // 1. Start at menu
-    await page.goto('/menu')
+    await page.goto('/')
     await page.waitForLoadState('networkidle')
 
     // Wait for splash screen to finish
@@ -85,7 +85,7 @@ test.describe('Complete Game Flow', () => {
     const endGameBtn = page.locator('.end-game-btn')
     await expect(endGameBtn).toBeVisible()
     await endGameBtn.click()
-    await expect(page).toHaveURL(/\/menu/)
+    await expect(page).toHaveURL(/\/$/)
     await page.waitForTimeout(500)
 
     // Verify we're back at menu
@@ -95,7 +95,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should allow adding multiple players and continuing flow', async ({ page }) => {
     // Start at menu
-    await page.goto('/menu')
+    await page.goto('/')
     await page.waitForLoadState('networkidle')
 
     // Wait for splash screen to finish
@@ -207,7 +207,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should handle back button navigation consistently', async ({ page }) => {
     // Build up navigation history: menu -> players -> game
-    await page.goto('/menu')
+    await page.goto('/')
     await page.waitForLoadState('networkidle')
 
     // Wait for splash screen to finish
@@ -232,6 +232,6 @@ test.describe('Complete Game Flow', () => {
 
     await page.goBack()
     await page.waitForTimeout(300)
-    await expect(page).toHaveURL(/\/menu/)
+    await expect(page).toHaveURL(/\/$/)
   })
 })

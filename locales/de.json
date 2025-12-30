@@ -42,6 +42,9 @@
   },
   "game": {
     "title": "Spielen",
+    "round": "Runde",
+    "players": "Spieler",
+    "current_turn": "Aktueller Zug",
     "score": "Punkte",
     "attempts": "Versuche",
     "starts_with": "Beginnt mit",

@@ -116,7 +116,7 @@ onMounted(() => {
 })
 
 const goHome = () => {
-  router.push('/menu')
+  router.push('/')
 }
 
 const nextRound = () => {

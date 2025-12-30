@@ -58,22 +58,44 @@
         <span class="category-name">{{ selectedCategory || 'Animals' }}</span>
       </div>
 
-      <!-- Alphabet Grid -->
-      <div class="alphabet-grid animate-slide-up">
-        <button
-          v-for="letter in alphabet"
-          :key="letter"
-          class="letter-btn tap-highlight no-select"
-          :class="{ selected: selectedLetter === letter }"
-          @click="selectLetter(letter)"
+      <!-- Fortune Wheel -->
+      <div class="wheel-container animate-slide-up">
+        <!-- Wheel Pointer/Arrow -->
+        <div class="wheel-pointer">
+          <div class="pointer-arrow">
+            ▼
+          </div>
+        </div>
+
+        <!-- Rotating Wheel -->
+        <div
+          class="fortune-wheel"
+          :style="{ transform: `rotate(${wheelRotation}deg)` }"
         >
-          <img
-            :src="`${baseUrl}assets/alphabets/a.png`"
-            alt="Letter button"
-            class="letter-bg"
+          <button
+            v-for="(letter, index) in alphabet"
+            :key="letter"
+            class="letter-btn tap-highlight no-select"
+            :class="{ selected: selectedLetter === letter }"
+            :style="getLetterPosition(index)"
+            @click="selectLetter(letter, index)"
           >
-          <span class="letter-text">{{ letter }}</span>
-        </button>
+            <img
+              :src="`${baseUrl}assets/alphabets/a.png`"
+              alt="Letter button"
+              class="letter-bg"
+            >
+            <span
+              class="letter-text"
+              :style="{ transform: `rotate(-${wheelRotation + (index * angleStep)}deg)` }"
+            >{{ letter }}</span>
+          </button>
+        </div>
+
+        <!-- Center Circle Decoration -->
+        <div class="wheel-center">
+          <div class="center-glow" />
+        </div>
       </div>
 
       <!-- Next Button -->
@@ -103,16 +125,53 @@ const gameStore = useGameStore()
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const selectedLetter = ref<string | null>(null)
 const selectedCategory = ref<string>('')
+const wheelRotation = ref(0)
+const angleStep = 360 / 26 // 26 letters in alphabet
+const isSpinning = ref(false)
 
 onMounted(async () => {
   // Fetch categories and pick a random one to display
   await gameStore.fetchCategories()
   const randomCategory = gameStore.getRandomCategory()
   selectedCategory.value = randomCategory?.name || 'Animals'
+
+  // Initial spin animation
+  setTimeout(() => {
+    spinWheel(Math.random() * 360)
+  }, 500)
 })
 
-const selectLetter = (letter: string) => {
+const getLetterPosition = (index: number) => {
+  const angle = index * angleStep
+  const radius = 180 // Distance from center in pixels
+
+  return {
+    transform: `rotate(${angle}deg) translateY(-${radius}px) rotate(-${angle}deg)`,
+  }
+}
+
+const spinWheel = (targetRotation: number) => {
+  isSpinning.value = true
+  wheelRotation.value = targetRotation
+  setTimeout(() => {
+    isSpinning.value = false
+  }, 1000)
+}
+
+const selectLetter = (letter: string, index: number) => {
+  if (isSpinning.value) return
+
   selectedLetter.value = letter
+
+  // Calculate rotation to bring selected letter to top
+  // We want the letter to be at the top (12 o'clock position)
+  const targetAngle = -(index * angleStep) + 90 // 90 degrees offset to align to top
+
+  // Add multiple full rotations for dramatic effect
+  const fullRotations = 2
+  const finalRotation = targetAngle - (360 * fullRotations)
+
+  spinWheel(finalRotation)
 }
 
 const startGame = () => {
@@ -250,61 +309,154 @@ useHead({
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-/* Alphabet Grid */
-.alphabet-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-  gap: var(--spacing-md);
+/* Fortune Wheel Container */
+.wheel-container {
+  position: relative;
   width: 100%;
-  max-width: 800px;
-  padding: var(--spacing-lg);
+  max-width: 500px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--spacing-lg) auto;
 }
 
-.letter-btn {
+/* Wheel Pointer */
+.wheel-pointer {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.pointer-arrow {
+  font-size: 3rem;
+  color: #FFD700;
+  filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.8))
+          drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+  animation: pointerPulse 2s ease-in-out infinite;
+}
+
+@keyframes pointerPulse {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-5px) scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+/* Fortune Wheel */
+.fortune-wheel {
   position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+/* Wheel Center */
+.wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow:
+    0 0 20px rgba(102, 126, 234, 0.6),
+    0 0 40px rgba(118, 75, 162, 0.4),
+    inset 0 0 20px rgba(255, 255, 255, 0.3);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.center-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+  animation: centerPulse 3s ease-in-out infinite;
+}
+
+@keyframes centerPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Letter Buttons on Wheel */
+.letter-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  aspect-ratio: 1;
-  transition: transform var(--transition-base);
+  transform-origin: center;
+  transition: all 0.3s ease;
+  z-index: 2;
 }
 
 .letter-btn:hover {
-  transform: translateY(-4px) scale(1.1);
+  z-index: 3;
 }
 
-.letter-btn:active {
-  transform: translateY(-2px) scale(0.98);
-}
-
-.letter-btn.selected {
+.letter-btn:hover .letter-bg {
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
   transform: scale(1.15);
+}
+
+.letter-btn.selected .letter-bg {
+  filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.8))
+          drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+  transform: scale(1.3);
 }
 
 .letter-bg {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-  transition: filter var(--transition-base);
-}
-
-.letter-btn.selected .letter-bg {
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)) brightness(1.2);
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
 
 .letter-text {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: var(--font-weight-black);
   color: #2a1810;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  transition: transform 0.3s ease;
+  will-change: transform;
 }
 
 /* Next Button */
@@ -392,15 +544,46 @@ useHead({
     width: 250px;
   }
 
-  .alphabet-grid {
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md);
-    max-width: 100%;
+  .wheel-container {
+    max-width: 350px;
+  }
+
+  .letter-btn {
+    width: 45px;
+    height: 45px;
+  }
+
+  .letter-text {
+    font-size: 1.2rem;
+  }
+
+  .wheel-center {
+    width: 60px;
+    height: 60px;
+  }
+
+  .center-glow {
+    width: 45px;
+    height: 45px;
+  }
+
+  .pointer-arrow {
+    font-size: 2rem;
   }
 
   .next-btn img {
     width: 200px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .wheel-container {
+    max-width: 450px;
+  }
+
+  .letter-btn {
+    width: 55px;
+    height: 55px;
   }
 }
 </style>

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Main Menu Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/menu')
+    await page.goto('/')
     await page.waitForLoadState('networkidle')
 
     // Wait for splash screen animation to complete
