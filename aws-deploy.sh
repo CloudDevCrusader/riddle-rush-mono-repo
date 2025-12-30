@@ -46,33 +46,40 @@ echo -e "${GREEN}✓ AWS CLI configured${NC}"
 echo -e "  Account: ${AWS_ACCOUNT}"
 echo -e "  User: ${AWS_USER}"
 
-# Pre-deployment checks
-echo -e "\n🔍 Running pre-deployment checks..."
+# Pre-deployment checks (skip in CI if already done)
+if [ -z "$CI" ]; then
+  echo -e "\n🔍 Running pre-deployment checks..."
 
-echo -e "\n📦 Installing dependencies..."
-pnpm install --frozen-lockfile
+  echo -e "\n📦 Installing dependencies..."
+  pnpm install --frozen-lockfile
 
-echo -e "\n✅ Running linter..."
-pnpm run lint || { echo -e "${RED}❌ Lint failed${NC}"; exit 1; }
+  echo -e "\n✅ Running linter..."
+  pnpm run lint || { echo -e "${RED}❌ Lint failed${NC}"; exit 1; }
 
-echo -e "\n🔷 Running type check..."
-pnpm run typecheck || { echo -e "${RED}❌ Type check failed${NC}"; exit 1; }
+  echo -e "\n🔷 Running type check..."
+  pnpm run typecheck || { echo -e "${RED}❌ Type check failed${NC}"; exit 1; }
 
-echo -e "\n🧪 Running unit tests..."
-pnpm run test:unit || { echo -e "${RED}❌ Tests failed${NC}"; exit 1; }
+  echo -e "\n🧪 Running unit tests..."
+  pnpm run test:unit || { echo -e "${RED}❌ Tests failed${NC}"; exit 1; }
 
-echo -e "${GREEN}✓ All pre-deployment checks passed${NC}"
+  echo -e "${GREEN}✓ All pre-deployment checks passed${NC}"
 
-# Build the application
-echo -e "\n🏗️  Building application..."
-BASE_URL=/ pnpm run generate
+  # Build the application
+  echo -e "\n🏗️  Building application..."
+  BASE_URL=/ pnpm run generate
+else
+  echo -e "\n⏭️  Skipping pre-deployment checks (already done in CI pipeline)"
+  echo -e "\n⏭️  Using existing build from CI pipeline"
+fi
 
 if [ ! -d "$BUILD_DIR" ]; then
     echo -e "${RED}❌ Build directory not found: $BUILD_DIR${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}✓ Build completed${NC}"
+if [ -z "$CI" ]; then
+  echo -e "${GREEN}✓ Build completed${NC}"
+fi
 
 # Verify build output
 FILE_COUNT=$(find "$BUILD_DIR" -type f | wc -l)
