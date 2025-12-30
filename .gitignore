@@ -33,4 +33,4 @@ test-results
 # YoYo AI version control directory
 .yoyo/
 
-.playwright-mcp/
+.playwright-mcp/aws-credentials.txt
