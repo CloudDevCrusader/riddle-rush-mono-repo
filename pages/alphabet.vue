@@ -174,9 +174,20 @@ const selectLetter = (letter: string, index: number) => {
   spinWheel(finalRotation)
 }
 
-const startGame = () => {
+const startGame = async () => {
   if (selectedLetter.value) {
-    // Start game with selected letter
+    // Setup game with selected letter and pending players
+    const playerNames = gameStore.pendingPlayerNames.length > 0
+      ? gameStore.pendingPlayerNames
+      : ['Player 1'] // Fallback if navigated directly
+
+    await gameStore.setupPlayers(playerNames, undefined, selectedLetter.value)
+
+    // Clear pending state
+    gameStore.pendingPlayerNames = []
+    gameStore.selectedLetter = null
+
+    // Navigate to game
     router.push('/game')
   }
 }

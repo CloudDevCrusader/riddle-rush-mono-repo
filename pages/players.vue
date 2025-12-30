@@ -160,7 +160,8 @@ const removePlayer = (index: number) => {
 const startGame = async () => {
   if (players.value.length > 0) {
     const playerNames = players.value.map((p) => p.name)
-    await gameStore.setupPlayers(playerNames)
+    // Store player names temporarily, will setup game after letter selection
+    gameStore.pendingPlayerNames = playerNames
     // Navigate to alphabet selection (fortune wheel)
     router.push('/alphabet')
   }

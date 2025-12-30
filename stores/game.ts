@@ -68,6 +68,8 @@ export const useGameStore = defineStore('game', {
     categoriesLoaded: false,
     displayedCategoryCount: 9,
     categoryLoadError: null,
+    selectedLetter: null,
+    pendingPlayerNames: [],
   }),
 
   getters: {
@@ -293,7 +295,7 @@ export const useGameStore = defineStore('game', {
     },
 
     // Multi-player actions
-    async setupPlayers(playerNames: string[], gameName?: string) {
+    async setupPlayers(playerNames: string[], gameName?: string, customLetter?: string) {
       await this.fetchCategories()
 
       const category = this.getRandomCategory()
@@ -301,7 +303,7 @@ export const useGameStore = defineStore('game', {
         throw new Error('Unable to start game without categories')
       }
 
-      const letter = this.generateLetter()
+      const letter = customLetter || this.generateLetter()
 
       const players: Player[] = playerNames.map((name, index) => ({
         id: crypto.randomUUID(),

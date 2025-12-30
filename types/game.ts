@@ -73,6 +73,8 @@ export interface GameState {
   categoriesLoaded: boolean
   displayedCategoryCount: number
   categoryLoadError: string | null
+  selectedLetter: string | null
+  pendingPlayerNames: string[]
 }
 
 export interface GameStatistics {
