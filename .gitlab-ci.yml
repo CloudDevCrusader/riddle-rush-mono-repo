@@ -5,6 +5,18 @@ cache:
   paths:
     - node_modules/
 
+# Workflow rules to control when pipelines run (save runner credits)
+workflow:
+  rules:
+    # Run on merge requests
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Run manually via web UI or API
+    - if: $CI_PIPELINE_SOURCE == "web"
+    # Run on version tags (for AWS deployment)
+    - if: $CI_COMMIT_TAG
+    # All other cases (push to branches) - prevent auto-run
+    - when: never
+
 stages:
   - test
   - build
