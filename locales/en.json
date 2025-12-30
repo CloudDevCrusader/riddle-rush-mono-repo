@@ -60,10 +60,30 @@
     "other_answers": "Other solutions:",
     "your_attempts": "Your attempts",
     "category_loading": "Loading...",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "all_submitted": "All players have submitted!",
+    "go_to_scoring": "Go to Scoring",
+    "new_round_started": "New round started!",
+    "error_starting": "Failed to start game. Please try again.",
+    "welcome": "Welcome! Guess a word from the category.",
+    "resumed": "Game resumed!",
+    "error_resuming": "Failed to load game. Starting fresh.",
+    "game_ended": "Game ended! Check your statistics.",
+    "error_ending": "Failed to save game results",
+    "multiplayer_setup": "Game started with {0} players!",
+    "error_multiplayer": "Failed to setup multiplayer game",
+    "next_round": "Next round started!",
+    "error_next_round": "Failed to start next round",
+    "enter_answer": "Please enter an answer",
+    "no_player": "No active player found",
+    "answer_submitted": "Answer submitted for {0}",
+    "correct_answer": "Correct!",
+    "incorrect_answer": "Wrong answer",
+    "no_active_session": "Please start a game first"
   },
   "menu": {
     "title": "Menu",
+    "settings": "Settings",
     "end_game": "End Game",
     "home": "Home",
     "share_score": "Share Score",
@@ -73,7 +93,10 @@
     "game_title": "Riddle Rush - The Ultimate Guessing Game",
     "game_text": "Play Riddle Rush with me! An exciting word guessing game.",
     "score_title": "My Riddle Rush Score",
-    "score_text": "I scored {score} points in Riddle Rush! 🎯"
+    "score_text": "I scored {score} points in Riddle Rush! 🎯",
+    "not_supported": "Sharing is not supported on this device",
+    "success": "Score shared successfully!",
+    "error": "Failed to share score"
   },
   "categories": {
     "female_name": "Female Name",
@@ -115,7 +138,14 @@
     "sound": "Sound",
     "leaderboard": "Show Leaderboard",
     "debug": "Debug Mode",
-    "maxPlayers": "Max Players"
+    "maxPlayers": "Max Players",
+    "reset": "Reset",
+    "sound_enabled": "Sound enabled",
+    "sound_disabled": "Sound disabled",
+    "leaderboard_enabled": "Leaderboard enabled",
+    "leaderboard_disabled": "Leaderboard disabled",
+    "language_changed": "Language changed",
+    "reset_success": "Settings reset to defaults"
   },
   "credits": {
     "title": "CREDITS",
@@ -130,6 +160,8 @@
     "your_score": "Your Score",
     "next": "Next",
     "restart": "Restart",
-    "home": "Home"
+    "home": "Home",
+    "scores_saved": "Scores saved successfully!",
+    "error_saving": "Failed to save scores. Please try again."
   }
 }

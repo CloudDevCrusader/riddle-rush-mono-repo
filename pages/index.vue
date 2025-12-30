@@ -129,8 +129,20 @@
 
 <script setup lang="ts">
 const router = useRouter()
+const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
+const toast = useToast()
+const { t } = useI18n()
+
+// Check if redirected from protected page without active game
+onMounted(() => {
+  if (route.query.needsGame === 'true') {
+    toast.warning(t('game.no_active_session', 'Please start a game first'))
+    // Clean up query param
+    router.replace({ query: {} })
+  }
+})
 
 const handlePlay = () => {
   router.push('/players')

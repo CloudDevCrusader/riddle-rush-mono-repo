@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Ratefix",
+    "title": "Riddle Rush",
     "subtitle": "Das ultimative Ratespiel für Freunde & Familie",
     "description": "Ein spannendes Wortratespiel für Freunde und Familie. Offline spielbar, perfekt für Spieleabende!"
   },
@@ -14,7 +14,8 @@
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "share": "Teilen",
-    "back": "Zurück"
+    "back": "Zurück",
+    "ok": "OK"
   },
   "home": {
     "offline_badge": "Offline spielbar",
@@ -59,20 +60,43 @@
     "other_answers": "Weitere Lösungen:",
     "your_attempts": "Deine Versuche",
     "category_loading": "Lade...",
-    "loading": "Wird geladen..."
+    "loading": "Wird geladen...",
+    "all_submitted": "Alle Spieler haben geantwortet!",
+    "go_to_scoring": "Zur Auswertung",
+    "new_round_started": "Neue Runde gestartet!",
+    "error_starting": "Fehler beim Starten des Spiels. Bitte versuche es erneut.",
+    "welcome": "Willkommen! Rate ein Wort aus der Kategorie.",
+    "resumed": "Spiel fortgesetzt!",
+    "error_resuming": "Fehler beim Laden des Spiels. Starte neu.",
+    "game_ended": "Spiel beendet! Sieh dir deine Statistiken an.",
+    "error_ending": "Fehler beim Speichern der Spielergebnisse",
+    "multiplayer_setup": "Spiel mit {0} Spielern gestartet!",
+    "error_multiplayer": "Fehler beim Einrichten des Mehrspieler-Spiels",
+    "next_round": "Nächste Runde gestartet!",
+    "error_next_round": "Fehler beim Starten der nächsten Runde",
+    "enter_answer": "Bitte gib eine Antwort ein",
+    "no_player": "Kein aktiver Spieler gefunden",
+    "answer_submitted": "Antwort eingereicht für {0}",
+    "correct_answer": "Richtig!",
+    "incorrect_answer": "Falsch",
+    "no_active_session": "Bitte starte zuerst ein Spiel"
   },
   "menu": {
     "title": "Menü",
+    "settings": "Einstellungen",
     "end_game": "Spiel Beenden",
     "home": "Zur Startseite",
     "share_score": "Score Teilen",
     "close": "Schließen"
   },
   "share": {
-    "game_title": "Ratefix - Das ultimative Ratespiel",
-    "game_text": "Spiel mit mir Ratefix! Ein spannendes Wortratespiel.",
-    "score_title": "Mein Ratefix Score",
-    "score_text": "Ich habe {score} Punkte bei Ratefix erzielt! 🎯"
+    "game_title": "Riddle Rush - Das ultimative Ratespiel",
+    "game_text": "Spiel mit mir Riddle Rush! Ein spannendes Wortratespiel.",
+    "score_title": "Mein Riddle Rush Score",
+    "score_text": "Ich habe {score} Punkte bei Riddle Rush erzielt! 🎯",
+    "not_supported": "Teilen wird auf diesem Gerät nicht unterstützt",
+    "success": "Punktestand erfolgreich geteilt!",
+    "error": "Fehler beim Teilen des Punktestands"
   },
   "categories": {
     "female_name": "Weiblicher Vorname",
@@ -114,7 +138,14 @@
     "sound": "Sound",
     "leaderboard": "Bestenliste anzeigen",
     "debug": "Debug-Modus",
-    "maxPlayers": "Max. Spieler"
+    "maxPlayers": "Max. Spieler",
+    "reset": "Zurücksetzen",
+    "sound_enabled": "Sound aktiviert",
+    "sound_disabled": "Sound deaktiviert",
+    "leaderboard_enabled": "Bestenliste aktiviert",
+    "leaderboard_disabled": "Bestenliste deaktiviert",
+    "language_changed": "Sprache geändert",
+    "reset_success": "Einstellungen auf Standard zurückgesetzt"
   },
   "credits": {
     "title": "CREDITS",
@@ -124,5 +155,13 @@
   },
   "language": {
     "title": "SPRACHE"
+  },
+  "results": {
+    "your_score": "Dein Score",
+    "next": "Weiter",
+    "restart": "Neu starten",
+    "home": "Startseite",
+    "scores_saved": "Punktestände erfolgreich gespeichert!",
+    "error_saving": "Fehler beim Speichern der Punktestände. Bitte versuche es erneut."
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="alphabet-page">
+  <div class="categories-page">
     <!-- Background Image -->
     <img
       :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
@@ -33,32 +33,20 @@
     <div class="container">
       <!-- Title -->
       <div class="title-container animate-fade-in">
-        <img
-          :src="`${baseUrl}assets/alphabets/alphabet.png`"
-          alt="Alphabet"
-          class="title-image"
-        >
-      </div>
-
-      <!-- Category Display -->
-      <div class="category-display animate-scale-in">
-        <img
-          :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
-          alt="Category"
-          class="category-label"
-        >
-        <span class="category-name">{{ selectedCategory || 'Animals' }}</span>
+        <h1 class="main-title">
+          {{ $t('home.category_title', 'Select Category') }}
+        </h1>
       </div>
 
       <!-- Fortune Wheel -->
       <div class="animate-slide-up">
         <FortuneWheel
           ref="wheelRef"
-          v-model="selectedLetter"
-          :items="alphabet"
-          :get-item-key="(letter, idx) => letter"
-          :get-item-label="(letter) => letter"
-          :get-item-icon="() => ''"
+          v-model="selectedCategory"
+          :items="displayCategories"
+          :get-item-key="(cat, idx) => cat?.searchWord || idx"
+          :get-item-label="(cat) => $t(`categories.${cat.searchWord}`, cat.name)"
+          :get-item-icon="getCategoryIcon"
           center-icon="🎯"
           @spin-complete="onSpinComplete"
         />
@@ -66,7 +54,7 @@
 
       <!-- Spin/Next Button -->
       <button
-        v-if="!selectedLetter"
+        v-if="!selectedCategory"
         class="spin-btn tap-highlight no-select"
         :disabled="isSpinning"
         @click="spinWheel"
@@ -80,7 +68,7 @@
       <button
         v-else
         class="next-btn tap-highlight no-select"
-        @click="startGame"
+        @click="goToAlphabet"
       >
         <img
           :src="`${baseUrl}assets/alphabets/next.png`"
@@ -94,49 +82,63 @@
 
 <script setup lang="ts">
 import { useGameStore } from '~/stores/game'
+import type { Category } from '~/types/game'
 
 const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
 const gameStore = useGameStore()
 
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-const selectedLetter = ref<string | null>(null)
-const selectedCategory = ref<string>('')
+const selectedCategory = ref<Category | null>(null)
+const displayCategories = ref<Category[]>([])
 const wheelRef = ref()
 
 const isSpinning = computed(() => wheelRef.value?.isSpinning ?? false)
 
+const categoryIconMap: Record<string, string> = {
+  female_name: '👩',
+  male_name: '👨',
+  water_vehicle: '⛵',
+  flowers: '🌸',
+  plants: '🌿',
+  profession: '👔',
+  insect: '🐛',
+  animal: '🦁',
+  city: '🏙️',
+  country: '🌍',
+  food: '🍕',
+  drink: '🧃',
+  sport: '⚽',
+  music: '🎵',
+  movie: '🎬',
+}
+
 onMounted(async () => {
-  // Fetch categories and pick a random one to display
+  // Fetch all categories
   await gameStore.fetchCategories()
-  const randomCategory = gameStore.getRandomCategory()
-  selectedCategory.value = randomCategory?.name || 'Animals'
+  const allCategories = gameStore.categories
+
+  // Select up to 12 categories for the wheel
+  displayCategories.value = allCategories.slice(0, 12)
 })
+
+const getCategoryIcon = (category: Category): string => {
+  return categoryIconMap[category.searchWord] || '📦'
+}
 
 const spinWheel = () => {
   wheelRef.value?.spinRandom()
 }
 
-const onSpinComplete = (letter: string) => {
-  selectedLetter.value = letter
+const onSpinComplete = (category: Category) => {
+  selectedCategory.value = category
 }
 
-const startGame = async () => {
-  if (selectedLetter.value) {
-    // Setup game with selected letter and pending players
-    const playerNames = gameStore.pendingPlayerNames.length > 0
-      ? gameStore.pendingPlayerNames
-      : ['Player 1'] // Fallback if navigated directly
-
-    await gameStore.setupPlayers(playerNames, undefined, selectedLetter.value)
-
-    // Clear pending state
-    gameStore.pendingPlayerNames = []
-    gameStore.selectedLetter = null
-
-    // Navigate to game
-    router.push('/game')
+const goToAlphabet = () => {
+  if (selectedCategory.value) {
+    // Navigate to alphabet page
+    // TODO: Pass selected category to alphabet page
+    router.push('/alphabet')
   }
 }
 
@@ -145,18 +147,18 @@ const goBack = () => {
 }
 
 useHead({
-  title: 'Select Letter',
+  title: 'Select Category',
   meta: [
     {
       name: 'description',
-      content: 'Choose a starting letter',
+      content: 'Choose a category for your game',
     },
   ],
 })
 </script>
 
 <style scoped>
-.alphabet-page {
+.categories-page {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
@@ -239,31 +241,15 @@ useHead({
   text-align: center;
 }
 
-.title-image {
-  width: clamp(200px, 35vw, 400px);
-  height: auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
-}
-
-/* Category Display */
-.category-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.category-label {
-  width: clamp(100px, 16vw, 160px);
-  height: auto;
-}
-
-.category-name {
+.main-title {
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
+  font-size: clamp(var(--font-size-3xl), 6vw, var(--font-size-4xl));
   font-weight: var(--font-weight-black);
   color: var(--color-white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5),
+               0 0 30px rgba(255, 215, 0, 0.6);
+  margin: 0;
+  letter-spacing: 2px;
 }
 
 /* Spin and Next Buttons */
@@ -333,23 +319,8 @@ useHead({
   }
 }
 
-.animate-scale-in {
-  animation: scaleIn 0.6s ease-out 0.2s backwards;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 .animate-slide-up {
-  animation: slideUp 0.8s ease-out 0.4s backwards;
+  animation: slideUp 0.8s ease-out 0.2s backwards;
 }
 
 @keyframes slideUp {
@@ -365,21 +336,8 @@ useHead({
 
 /* Responsive */
 @media (max-width: 640px) {
-  .container {
-    padding: clamp(var(--spacing-md), 6vh, var(--spacing-xl)) var(--spacing-md);
-    gap: clamp(var(--spacing-sm), 2vh, var(--spacing-md));
-  }
-
-  .title-container {
-    display: none;
-  }
-
-  .category-label {
-    width: clamp(80px, 14vw, 120px);
-  }
-
-  .category-name {
-    font-size: clamp(14px, 3vw, 18px);
+  .main-title {
+    font-size: clamp(24px, 7vw, 36px);
   }
 
   .round-indicator img {
@@ -397,14 +355,14 @@ useHead({
 }
 
 @media (max-width: 480px) {
-  .category-name {
-    font-size: clamp(12px, 3vw, 16px);
+  .main-title {
+    font-size: clamp(20px, 6vw, 28px);
   }
 }
 
 @media (min-height: 800px) and (max-width: 640px) {
   .container {
-    gap: clamp(var(--spacing-md), 4vh, var(--spacing-lg));
+    gap: clamp(var(--spacing-xl), 5vh, var(--spacing-2xl));
   }
 }
 </style>

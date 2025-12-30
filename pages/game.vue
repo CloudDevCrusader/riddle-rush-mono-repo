@@ -255,6 +255,13 @@
           </h3>
           <button
             class="menu-item tap-highlight"
+            @click="openSettings"
+          >
+            <span class="menu-icon">⚙️</span>
+            <span>{{ $t('menu.settings') }}</span>
+          </button>
+          <button
+            class="menu-item tap-highlight"
             @click="endGame"
           >
             <span class="menu-icon">🏁</span>
@@ -283,6 +290,9 @@
         </div>
       </div>
     </transition>
+
+    <!-- Settings Modal -->
+    <SettingsModal v-model="showSettings" />
   </div>
 </template>
 
@@ -303,6 +313,7 @@ const otherAnswers = ref<string[]>([])
 const loading = ref(false)
 const valid = ref(false)
 const showMenu = ref(false)
+const showSettings = ref(false)
 const answerInput = ref<HTMLInputElement | null>(null)
 
 const currentCategory = computed(() => gameStore.currentCategory)
@@ -439,6 +450,11 @@ const goHome = () => {
 
 const shareScore = async () => {
   await gameActions.shareScore()
+}
+
+const openSettings = () => {
+  showMenu.value = false
+  showSettings.value = true
 }
 
 onMounted(async () => {
