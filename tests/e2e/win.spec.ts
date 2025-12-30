@@ -67,7 +67,7 @@ test.describe('Win Screen Page', () => {
     const homeBtn = page.locator('.home-btn')
     await homeBtn.click()
 
-    await expect(page).toHaveURL(/\/menu/)
+    await expect(page).toHaveURL(/\/$/)
     await page.waitForTimeout(500)
   })
 

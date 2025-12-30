@@ -10,6 +10,7 @@
     <NuxtLayout v-show="!showSplash">
       <NuxtPage />
     </NuxtLayout>
+    <Toast />
     <FeedbackWidget v-show="!showSplash" />
     <DebugPanel v-show="!showSplash" />
   </div>

@@ -28,9 +28,9 @@ test.describe('Complete Game Flow', () => {
     await expect(startBtn).toBeVisible()
     await expect(startBtn).not.toBeDisabled()
 
-    // 4. Navigate directly to game (multi-player mode skips alphabet selection)
+    // 4. Navigate to alphabet selection (MVP flow requires alphabet selection)
     await startBtn.click()
-    await expect(page).toHaveURL(/\/game/)
+    await expect(page).toHaveURL(/\/alphabet/)
     await page.waitForTimeout(500)
 
     // At this point, we would play the game, but since the game page
@@ -124,10 +124,10 @@ test.describe('Complete Game Flow', () => {
       expect(await playerItems.count()).toBeGreaterThanOrEqual(2)
     }
 
-    // Continue directly to game
+    // Continue to alphabet selection
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
-    await expect(page).toHaveURL(/\/game/)
+    await expect(page).toHaveURL(/\/alphabet/)
     await page.waitForTimeout(500)
   })
 
@@ -206,7 +206,7 @@ test.describe('Complete Game Flow', () => {
   })
 
   test('should handle back button navigation consistently', async ({ page }) => {
-    // Build up navigation history: menu -> players -> game
+    // Build up navigation history: menu -> players -> alphabet
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
@@ -222,7 +222,7 @@ test.describe('Complete Game Flow', () => {
 
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
-    await expect(page).toHaveURL(/\/game/)
+    await expect(page).toHaveURL(/\/alphabet/)
     await page.waitForTimeout(500)
 
     // Use browser back button

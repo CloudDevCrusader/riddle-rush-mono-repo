@@ -93,7 +93,8 @@ test.describe('Leaderboard Page', () => {
     await expect(playerAvatar).toBeVisible()
   })
 
-  test('should display coin bar', async ({ page }) => {
+  test.skip('should display coin bar', async ({ page }) => {
+    // Coin bar intentionally hidden for MVP mobile optimization
     const coinBar = page.locator('.coin-bar')
     await expect(coinBar).toBeVisible()
   })
@@ -102,7 +103,7 @@ test.describe('Leaderboard Page', () => {
     const endGameBtn = page.locator('.end-game-btn')
     await endGameBtn.click()
 
-    await expect(page).toHaveURL(/\/menu/)
+    await expect(page).toHaveURL(/\/$/)
     await page.waitForTimeout(500)
   })
 

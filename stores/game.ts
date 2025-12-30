@@ -116,14 +116,27 @@ export const useGameStore = defineStore('game', {
       try {
         const categories = await $fetch<Category[]>('/data/categories.json')
 
+        if (!categories || categories.length === 0) {
+          throw new Error('No categories found in data file')
+        }
+
         this.categories = categories
         this.categoriesLoaded = true
         this.categoryLoadError = null
 
         return categories
       } catch (error) {
-        this.categoryLoadError = 'Failed to load categories'
-        throw error
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load categories'
+        this.categoryLoadError = errorMessage
+        console.error('Error fetching categories:', error)
+
+        // Don't throw if we have cached categories
+        if (this.categories.length > 0) {
+          console.warn('Using cached categories due to fetch error')
+          return this.categories
+        }
+
+        throw new Error(errorMessage)
       }
     },
 
@@ -266,28 +279,44 @@ export const useGameStore = defineStore('game', {
     },
 
     async loadFromDB() {
-      const { getGameSession, getGameHistory } = useIndexedDB()
+      try {
+        const { getGameSession, getGameHistory } = useIndexedDB()
 
-      const session = await getGameSession()
-      if (session) {
-        this.currentSession = session
-      }
+        const session = await getGameSession()
+        if (session) {
+          this.currentSession = session
+        }
 
-      const history = await getGameHistory()
-      if (history) {
-        this.history = history
+        const history = await getGameHistory()
+        if (history) {
+          this.history = history
+        }
+      } catch (error) {
+        console.error('Error loading from IndexedDB:', error)
+        // Continue without persisted data
       }
     },
 
     async saveSessionToDB() {
       if (!this.currentSession) return
-      const { saveGameSession } = useIndexedDB()
-      await saveGameSession(this.currentSession)
+
+      try {
+        const { saveGameSession } = useIndexedDB()
+        await saveGameSession(this.currentSession)
+      } catch (error) {
+        console.error('Error saving session to IndexedDB:', error)
+        // Don't throw - allow game to continue even if save fails
+      }
     },
 
     async saveHistoryToDB() {
-      const { saveGameHistory } = useIndexedDB()
-      await saveGameHistory(this.history)
+      try {
+        const { saveGameHistory } = useIndexedDB()
+        await saveGameHistory(this.history)
+      } catch (error) {
+        console.error('Error saving history to IndexedDB:', error)
+        // Don't throw - allow game to continue even if save fails
+      }
     },
 
     clearSession() {

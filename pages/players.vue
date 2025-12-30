@@ -133,6 +133,8 @@ const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
 const gameStore = useGameStore()
+const toast = useToast()
+const { t } = useI18n()
 
 const maxPlayers = 6
 const players = ref([
@@ -141,29 +143,48 @@ const players = ref([
 ])
 
 const addPlayer = () => {
-  if (players.value.length < maxPlayers) {
-    const defaultName = `Player ${players.value.length + 1}`
-    const playerName = prompt('Enter player name:', defaultName)
-    if (playerName && playerName.trim()) {
-      players.value.push({ name: playerName.trim() })
-    } else if (playerName === '') {
-      // User cleared the prompt, use default name
-      players.value.push({ name: defaultName })
-    }
+  if (players.value.length >= maxPlayers) {
+    toast.warning(t('players.max_players', `Maximum ${maxPlayers} players allowed`))
+    return
+  }
+
+  const defaultName = `Player ${players.value.length + 1}`
+  const playerName = prompt('Enter player name:', defaultName)
+
+  if (playerName && playerName.trim()) {
+    players.value.push({ name: playerName.trim() })
+    toast.success(t('players.added', `${playerName.trim()} added!`))
+  } else if (playerName === '') {
+    // User cleared the prompt, use default name
+    players.value.push({ name: defaultName })
+    toast.success(t('players.added', `${defaultName} added!`))
   }
 }
 
 const removePlayer = (index: number) => {
+  const playerName = players.value[index]?.name
   players.value.splice(index, 1)
+  if (playerName) {
+    toast.info(t('players.removed', `${playerName} removed`))
+  }
 }
 
 const startGame = async () => {
-  if (players.value.length > 0) {
+  if (players.value.length === 0) {
+    toast.warning(t('players.need_players', 'Add at least one player to start'))
+    return
+  }
+
+  try {
     const playerNames = players.value.map((p) => p.name)
     // Store player names temporarily, will setup game after letter selection
     gameStore.pendingPlayerNames = playerNames
+    toast.success(t('players.ready', `${players.value.length} players ready!`))
     // Navigate to alphabet selection (fortune wheel)
     router.push('/alphabet')
+  } catch (error) {
+    console.error('Error starting game:', error)
+    toast.error(t('players.error_start', 'Failed to start game. Please try again.'))
   }
 }
 

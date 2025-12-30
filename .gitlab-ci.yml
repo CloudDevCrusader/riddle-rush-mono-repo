@@ -26,8 +26,9 @@ test:
     - staging
     - development
     - merge_requests
+    - tags
 
-# E2E tests - local build (manual)
+# E2E tests - local build (manual, optional)
 test:e2e:local:
   stage: test
   image: mcr.microsoft.com/playwright:v1.57.0-noble
@@ -47,8 +48,9 @@ test:e2e:local:
     - main
     - staging
     - development
+    - tags
 
-# Build for all deployment branches
+# Build for all deployment branches and tags
 build:
   stage: build
   script:
@@ -64,6 +66,11 @@ build:
     - main
     - staging
     - development
+    - tags
+
+# ====================================
+# GitLab Pages Deployments
+# ====================================
 
 # Production - main branch
 pages:
@@ -121,10 +128,45 @@ deploy:dev:
     - development
 
 # ====================================
-# Verify Stage - E2E Tests on Deployed Sites
+# AWS Deployment (Tags Only)
 # ====================================
 
-# E2E tests - Production (automatic after deployment)
+deploy:aws:
+  stage: deploy
+  image: node:20
+  before_script:
+    - apt-get update && apt-get install -y awscli
+    - corepack enable
+    - corepack prepare pnpm@10.26.2 --activate
+    - pnpm install --frozen-lockfile
+  script:
+    - echo "Deploying to AWS S3 + CloudFront..."
+    - chmod +x aws-deploy.sh
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - export AWS_S3_BUCKET=$AWS_S3_BUCKET
+    - export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID
+    - export AWS_REGION=${AWS_REGION:-us-east-1}
+    - ./aws-deploy.sh production
+  artifacts:
+    paths:
+      - deployment-info.json
+    expire_in: 30 days
+  environment:
+    name: aws-production
+    url: https://$AWS_CLOUDFRONT_DOMAIN
+  needs:
+    - build
+  only:
+    - tags
+  except:
+    - branches
+
+# ====================================
+# Verify Stage - E2E Tests on Deployed Sites (Optional)
+# ====================================
+
+# E2E tests - Production (manual, optional)
 verify:e2e:production:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
@@ -145,9 +187,10 @@ verify:e2e:production:
     - pages
   only:
     - main
+  when: manual
   allow_failure: true
 
-# E2E tests - Staging (automatic after deployment)
+# E2E tests - Staging (manual, optional)
 verify:e2e:staging:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
@@ -168,9 +211,10 @@ verify:e2e:staging:
     - deploy:staging
   only:
     - staging
+  when: manual
   allow_failure: true
 
-# E2E tests - Development (automatic after deployment)
+# E2E tests - Development (manual, optional)
 verify:e2e:dev:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
@@ -191,4 +235,36 @@ verify:e2e:dev:
     - deploy:dev
   only:
     - development
+  when: manual
+  allow_failure: true
+
+# E2E tests - AWS CloudFront (manual, optional)
+verify:e2e:aws:
+  stage: verify
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
+  script:
+    - corepack enable && corepack prepare pnpm@10.26.2 --activate
+    - pnpm install --frozen-lockfile
+    - |
+      if [ -n "$AWS_CLOUDFRONT_DOMAIN" ]; then
+        export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
+      else
+        # Fallback to S3 website URL if CloudFront not configured
+        export BASE_URL=http://$AWS_S3_BUCKET.s3-website-${AWS_REGION:-us-east-1}.amazonaws.com
+      fi
+    - echo "Testing AWS deployment at: $BASE_URL"
+    - echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
+    - sleep 60
+    - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 30 days
+  needs:
+    - deploy:aws
+  only:
+    - tags
+  when: manual
   allow_failure: true

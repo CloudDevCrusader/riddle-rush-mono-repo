@@ -232,9 +232,9 @@ test.describe('Multi-Player Game Flow', () => {
     await addBtn.click()
     await page.waitForTimeout(300)
 
-    // Start game
+    // Start game - navigates to alphabet selection first
     await page.locator('.start-btn').click()
-    await expect(page).toHaveURL(/\/game/)
+    await expect(page).toHaveURL(/\/alphabet/)
 
     const answerInput = page.locator('[data-testid="answer-input"]')
     const submitBtn = page.locator('[data-testid="submit-answer-button"]')
@@ -332,7 +332,7 @@ test.describe('Multi-Player Game Flow', () => {
     await page.waitForTimeout(300)
 
     await page.locator('.start-btn').click()
-    await expect(page).toHaveURL(/\/game/)
+    await expect(page).toHaveURL(/\/alphabet/)
 
     const answerInput = page.locator('[data-testid="answer-input"]')
     const submitBtn = page.locator('[data-testid="submit-answer-button"]')

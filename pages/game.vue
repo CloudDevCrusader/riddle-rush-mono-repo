@@ -294,6 +294,8 @@ const router = useRouter()
 const { t } = useI18n()
 const audio = useAudio()
 const { checkAnswer } = useAnswerCheck()
+const toast = useToast()
+const gameActions = useGameActions()
 
 const result = ref('')
 const output = ref('')
@@ -334,33 +336,19 @@ const initializeGame = async () => {
   resetRoundState()
   loading.value = true
 
-  try {
-    await gameStore.startNewGame()
-    audio.playNewRound()
+  const success = await gameActions.startNewGame()
+  if (success) {
     focusInput()
-  } catch (error) {
-    console.error('Error starting game:', error)
-    output.value = t('game.error_checking')
-  } finally {
-    loading.value = false
   }
+
+  loading.value = false
 }
 
 const resumeGameOnMount = async () => {
-  const hadSession = gameStore.hasActiveSession
-
-  try {
-    await gameStore.resumeOrStartNewGame()
+  const success = await gameActions.resumeOrStartGame()
+  if (success) {
     resetRoundState()
-
-    if (!hadSession) {
-      audio.playNewRound()
-    }
-
     focusInput()
-  } catch (error) {
-    console.error('Error resuming game:', error)
-    output.value = t('game.error_checking')
   }
 }
 
@@ -377,7 +365,10 @@ const validateWord = async () => {
   const letter = currentLetter.value
   const term = result.value.trim()
 
-  if (!category || !letter || !term) return
+  if (!category || !letter || !term) {
+    toast.warning(t('game.enter_answer', 'Please enter an answer'))
+    return
+  }
 
   try {
     loading.value = true
@@ -385,25 +376,24 @@ const validateWord = async () => {
     if (isMultiPlayerMode.value) {
       // Multi-player mode: just save the answer without validation
       const player = currentPlayerTurn.value
-      if (!player) return
+      if (!player) {
+        toast.error(t('game.no_player', 'No active player found'))
+        return
+      }
 
       await gameStore.submitPlayerAnswer(player.id, term)
 
-      output.value = t('game.answer_submitted', `Answer submitted for ${player.name}`)
+      toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
       audio.playSuccess()
 
       result.value = ''
 
-      setTimeout(() => {
-        output.value = ''
-
-        // If all players submitted, navigate to results
-        if (allPlayersSubmitted.value) {
-          setTimeout(() => {
-            router.push('/results')
-          }, 1000)
-        }
-      }, 1500)
+      // If all players submitted, navigate to results
+      if (allPlayersSubmitted.value) {
+        setTimeout(() => {
+          router.push('/results')
+        }, 1000)
+      }
     } else {
       // Legacy single-player mode: validate immediately
       const response = await checkAnswer(category.searchWord, letter, term)
@@ -415,29 +405,32 @@ const validateWord = async () => {
 
       if (response.found) {
         output.value = t('game.correct')
+        toast.success(t('game.correct_answer', `Correct! "${term}" is in the category!`), 2500)
         audio.playSuccess()
       } else {
         output.value = t('game.incorrect')
+        toast.error(t('game.incorrect_answer', `"${term}" is not in the category`), 3000)
         audio.playError()
       }
 
       result.value = ''
 
+      // Keep inline feedback for continuity, but also show toast
       setTimeout(() => {
         output.value = ''
-      }, 3000)
+      }, 2500)
     }
   } catch (error) {
     console.error('Error validating word:', error)
-    output.value = t('game.error_checking')
+    toast.error(t('game.error_checking', 'Error checking answer. Please try again.'))
+    output.value = ''
   } finally {
     loading.value = false
   }
 }
 
 const endGame = async () => {
-  await gameStore.endGame()
-  router.push('/')
+  await gameActions.endGame()
 }
 
 const goHome = () => {
@@ -445,17 +438,7 @@ const goHome = () => {
 }
 
 const shareScore = async () => {
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: t('share.score_title'),
-        text: t('share.score_text', { score: gameStore.currentScore }),
-        url: window.location.origin,
-      })
-    } catch (error) {
-      console.error('Error sharing:', error)
-    }
-  }
+  await gameActions.shareScore()
 }
 
 onMounted(async () => {

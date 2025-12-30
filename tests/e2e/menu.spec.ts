@@ -24,28 +24,16 @@ test.describe('Main Menu Page', () => {
     const logo = page.locator('.logo-image').first()
     await expect(logo).toBeVisible()
 
-    // Check for coin bar
-    const coinBar = page.locator('.coin-bar')
-    await expect(coinBar).toBeVisible()
-
-    // Check for profile button
-    const profileBtn = page.locator('.profile-btn')
-    await expect(profileBtn).toBeVisible()
+    // Coin bar, profile button, exit button, and menu icon intentionally hidden for MVP mobile optimization
 
     // Check for menu buttons
     const playBtn = page.locator('.play-btn')
     const optionsBtn = page.locator('.options-btn')
     const creditsBtn = page.locator('.credits-btn')
-    const exitBtn = page.locator('.exit-btn')
 
     await expect(playBtn).toBeVisible()
     await expect(optionsBtn).toBeVisible()
     await expect(creditsBtn).toBeVisible()
-    await expect(exitBtn).toBeVisible()
-
-    // Check for menu icon
-    const menuIcon = page.locator('.menu-icon-btn')
-    await expect(menuIcon).toBeVisible()
   })
 
   test('should navigate to players page when clicking PLAY', async ({ page }) => {
@@ -70,14 +58,16 @@ test.describe('Main Menu Page', () => {
     await expect(page).toHaveURL(/\/credits/)
   })
 
-  test('should navigate to profile when clicking profile icon', async ({ page }) => {
+  test.skip('should navigate to profile when clicking profile icon', async ({ page }) => {
+    // Profile button intentionally hidden for MVP mobile optimization
     const profileBtn = page.locator('.profile-btn')
     await profileBtn.click()
 
     await expect(page).toHaveURL(/\/profile/)
   })
 
-  test('should show coin amount', async ({ page }) => {
+  test.skip('should show coin amount', async ({ page }) => {
+    // Coin amount intentionally hidden for MVP mobile optimization
     const coinAmount = page.locator('.coin-amount')
     await expect(coinAmount).toBeVisible()
     await expect(coinAmount).toHaveText(/\d+/)

@@ -127,6 +127,8 @@ const router = useRouter()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
 const gameStore = useGameStore()
+const toast = useToast()
+const { t } = useI18n()
 
 // Get players from store
 const players = computed(() => gameStore.players)
@@ -160,16 +162,25 @@ const goToPrevious = () => {
 }
 
 const goToLeaderboard = async () => {
-  // Save all scores to the store
-  for (const playerScore of playerScores.value) {
-    await gameStore.assignPlayerScore(playerScore.id, playerScore.score)
+  try {
+    // Save all scores to the store
+    for (const playerScore of playerScores.value) {
+      await gameStore.assignPlayerScore(playerScore.id, playerScore.score)
+    }
+
+    // Complete the round
+    await gameStore.completeRound()
+
+    toast.success(t('results.scores_saved', 'Scores saved successfully!'))
+
+    // Navigate to leaderboard
+    setTimeout(() => {
+      router.push('/leaderboard')
+    }, 500)
+  } catch (error) {
+    console.error('Error saving scores:', error)
+    toast.error(t('results.error_saving', 'Failed to save scores. Please try again.'))
   }
-
-  // Complete the round
-  await gameStore.completeRound()
-
-  // Navigate to leaderboard
-  router.push('/leaderboard')
 }
 
 const goBack = () => {
