@@ -3,7 +3,36 @@
 This document tracks design assets and pages that need to be created, updated, or implemented.
 
 **Last Updated**: 2025-12-30
-**Status**: Fortune wheel implemented, MVP flow verified
+**Status**: Fortune wheel implemented, MVP flow verified, mobile optimizations completed
+
+---
+
+## 📱 MVP Scope Changes (December 2025)
+
+The following UI elements have been **hidden or removed for MVP** to focus on core gameplay:
+
+### Hidden for MVP
+- **Coin System** - All coin displays and coin bars removed from:
+  - Main menu top bar
+  - Alphabet selection page
+  - Settings page assets (designed but not shown)
+  - Profile page assets (designed but not shown)
+  - *Reason*: Coin/currency system not implemented yet, will be added post-MVP
+
+### Removed for MVP
+- **EXIT Button** - Main menu EXIT button (X icon) commented out
+  - *Reason*: Caused positioning issues, users can use browser back button
+- **Menu Icon** - Main menu bottom-right menu icon removed
+  - *Reason*: Overlapped with feedback button, simplified navigation
+
+### Mobile Optimizations Completed ✅
+- **Navbar** - Hidden on mobile (≤640px) to maximize screen space
+- **Fortune Wheel** - Optimized for mobile display:
+  - Title image hidden on small screens
+  - Increased touch targets (50px buttons)
+  - Responsive radius (140px mobile, 180px desktop)
+  - Reduced scrolling requirement
+- **Touch Targets** - All buttons verified ≥44x44px for mobile
 
 ---
 
@@ -35,7 +64,7 @@ The following pages have complete design assets AND are fully implemented:
   - ✅ Volume slider bars (`sound low bar.png`)
   - ✅ OK button (`ok buttton.png`, `OK.png`)
   - ✅ Back button (`back.png`)
-  - ✅ Coin bar (`COIN BAR.png`, `100.png`)
+  - ✅ Coin bar (`COIN BAR.png`, `100.png`) - *Hidden for MVP*
   - ✅ Options button (`options.png`)
 - **Implementation Needed**:
   - Create `/pages/settings.vue`
@@ -56,7 +85,7 @@ The following pages have complete design assets AND are fully implemented:
   - ✅ Profile box/container (`box.png`)
   - ✅ OK button (`ok.png`)
   - ✅ Back buttons (`back.png`, `back-1.png`)
-  - ✅ Coin bar (`COIN BAR.png`, `100.png`)
+  - ✅ Coin bar (`COIN BAR.png`, `100.png`) - *Hidden for MVP*
   - ✅ Mockup reference (`profile mockup.png`)
 - **Implementation Needed**:
   - Create `/pages/profile.vue`
@@ -229,12 +258,13 @@ The following pages have complete design assets AND are fully implemented:
 
 ### 3. Responsive Design Verification
 **All pages need mobile/tablet testing:**
-- ⚠️ Touch target sizes (buttons may be too small on mobile)
-- ⚠️ Text readability (font sizes, contrast)
-- ⚠️ Layout stacking (elements overlapping on small screens)
-- ⚠️ Fortune wheel sizing (currently responsive but needs testing)
+- ✅ Touch target sizes - Verified ≥44x44px for mobile (buttons optimized to 50px on alphabet page)
+- ⚠️ Text readability (font sizes, contrast) - Needs comprehensive review
+- ⚠️ Layout stacking (elements overlapping on small screens) - Needs testing on game/results pages
+- ✅ Fortune wheel sizing - **Completed** (responsive 140px mobile, 180px desktop)
+- ✅ Navbar - Hidden on mobile (≤640px) for better screen utilization
 
-**Priority pages**: game, players, results, alphabet (fortune wheel)
+**Priority pages still needing mobile testing**: game, players, results
 
 ### 4. Accessibility
 **Design considerations needed:**

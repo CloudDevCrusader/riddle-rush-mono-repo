@@ -3,7 +3,7 @@
 This document tracks critical tasks needed to complete the MVP before launch.
 
 **Last Updated**: 2025-12-30
-**Status**: Fortune wheel integrated, core flow working
+**Status**: Fortune wheel integrated, mobile optimizations completed, MVP flow working
 
 ---
 
@@ -376,7 +376,8 @@ test('should show quit confirmation when leaving active game', async ({ page }) 
 - [ ] Add loading states for all async operations
 - [ ] Test all edge cases (0 players, empty inputs, etc.)
 - [ ] Add E2E tests for error scenarios
-- [ ] Verify mobile responsiveness on real devices
+- [x] Verify mobile responsiveness on Playwright (375x667 viewport) ✅
+- [ ] Verify on real mobile devices (iOS Safari, Android Chrome)
 - [ ] Test 6-player game flow
 
 ### Medium Priority (Nice to Have)
@@ -403,8 +404,8 @@ test('should show quit confirmation when leaving active game', async ({ page }) 
 ### Current Bugs
 1. **i18n warnings on game page** - Translation keys still showing warnings (may need server restart)
 2. **Selected letter not used from alphabet page** - Letter is generated randomly instead of using selected one
-3. **Fortune wheel position** - Sometimes letters are not perfectly aligned on mobile
-4. **Coin display** - Shows hardcoded "100", not connected to actual coin system
+3. ~~**Fortune wheel position**~~ - ✅ **FIXED** - Mobile optimization completed (responsive radius, increased touch targets)
+4. ~~**Coin display**~~ - ✅ **Hidden for MVP** - All coin bars and displays removed for MVP scope
 5. **Menu button (⋮)** - Exists in game header but doesn't open menu/pause
 
 ### Technical Debt
