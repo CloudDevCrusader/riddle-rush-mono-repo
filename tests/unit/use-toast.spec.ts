@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { useToast } from '~/composables/useToast'
 
 describe('useToast', () => {
@@ -19,9 +19,9 @@ describe('useToast', () => {
       toast.show('Test message', 'info', 3000)
 
       expect(toast.toasts.value).toHaveLength(1)
-      expect(toast.toasts.value[0].message).toBe('Test message')
-      expect(toast.toasts.value[0].type).toBe('info')
-      expect(toast.toasts.value[0].duration).toBe(3000)
+      expect(toast.toasts.value[0]!.message).toBe('Test message')
+      expect(toast.toasts.value[0]!.type).toBe('info')
+      expect(toast.toasts.value[0]!.duration).toBe(3000)
     })
 
     it('should generate unique IDs for each toast', () => {
@@ -29,7 +29,7 @@ describe('useToast', () => {
       toast.show('Message 2', 'success', 3000)
 
       expect(toast.toasts.value).toHaveLength(2)
-      expect(toast.toasts.value[0].id).not.toBe(toast.toasts.value[1].id)
+      expect(toast.toasts.value[0]!.id).not.toBe(toast.toasts.value[1]!.id)
     })
 
     it('should auto-remove toast after duration', () => {
@@ -57,7 +57,7 @@ describe('useToast', () => {
 
       expect(id).toBeDefined()
       expect(typeof id).toBe('string')
-      expect(toast.toasts.value[0].id).toBe(id)
+      expect(toast.toasts.value[0]!.id).toBe(id)
     })
   })
 
@@ -66,20 +66,20 @@ describe('useToast', () => {
       toast.success('Success message')
 
       expect(toast.toasts.value).toHaveLength(1)
-      expect(toast.toasts.value[0].type).toBe('success')
-      expect(toast.toasts.value[0].message).toBe('Success message')
+      expect(toast.toasts.value[0]!.type).toBe('success')
+      expect(toast.toasts.value[0]!.message).toBe('Success message')
     })
 
     it('should use default duration of 3000ms', () => {
       toast.success('Success message')
 
-      expect(toast.toasts.value[0].duration).toBe(3000)
+      expect(toast.toasts.value[0]!.duration).toBe(3000)
     })
 
     it('should accept custom duration', () => {
       toast.success('Success message', 5000)
 
-      expect(toast.toasts.value[0].duration).toBe(5000)
+      expect(toast.toasts.value[0]!.duration).toBe(5000)
     })
   })
 
@@ -88,20 +88,20 @@ describe('useToast', () => {
       toast.error('Error message')
 
       expect(toast.toasts.value).toHaveLength(1)
-      expect(toast.toasts.value[0].type).toBe('error')
-      expect(toast.toasts.value[0].message).toBe('Error message')
+      expect(toast.toasts.value[0]!.type).toBe('error')
+      expect(toast.toasts.value[0]!.message).toBe('Error message')
     })
 
     it('should use default duration of 4000ms', () => {
       toast.error('Error message')
 
-      expect(toast.toasts.value[0].duration).toBe(4000)
+      expect(toast.toasts.value[0]!.duration).toBe(4000)
     })
 
     it('should accept custom duration', () => {
       toast.error('Error message', 6000)
 
-      expect(toast.toasts.value[0].duration).toBe(6000)
+      expect(toast.toasts.value[0]!.duration).toBe(6000)
     })
   })
 
@@ -110,14 +110,14 @@ describe('useToast', () => {
       toast.info('Info message')
 
       expect(toast.toasts.value).toHaveLength(1)
-      expect(toast.toasts.value[0].type).toBe('info')
-      expect(toast.toasts.value[0].message).toBe('Info message')
+      expect(toast.toasts.value[0]!.type).toBe('info')
+      expect(toast.toasts.value[0]!.message).toBe('Info message')
     })
 
     it('should use default duration of 3000ms', () => {
       toast.info('Info message')
 
-      expect(toast.toasts.value[0].duration).toBe(3000)
+      expect(toast.toasts.value[0]!.duration).toBe(3000)
     })
   })
 
@@ -126,14 +126,14 @@ describe('useToast', () => {
       toast.warning('Warning message')
 
       expect(toast.toasts.value).toHaveLength(1)
-      expect(toast.toasts.value[0].type).toBe('warning')
-      expect(toast.toasts.value[0].message).toBe('Warning message')
+      expect(toast.toasts.value[0]!.type).toBe('warning')
+      expect(toast.toasts.value[0]!.message).toBe('Warning message')
     })
 
     it('should use default duration of 3500ms', () => {
       toast.warning('Warning message')
 
-      expect(toast.toasts.value[0].duration).toBe(3500)
+      expect(toast.toasts.value[0]!.duration).toBe(3500)
     })
   })
 
@@ -147,7 +147,7 @@ describe('useToast', () => {
       toast.remove(id1)
 
       expect(toast.toasts.value).toHaveLength(1)
-      expect(toast.toasts.value[0].id).toBe(id2)
+      expect(toast.toasts.value[0]!.id).toBe(id2)
     })
 
     it('should do nothing if toast ID does not exist', () => {
@@ -202,7 +202,7 @@ describe('useToast', () => {
       vi.advanceTimersByTime(1000)
 
       expect(toast.toasts.value).toHaveLength(1)
-      expect(toast.toasts.value[0].message).toBe('Slow')
+      expect(toast.toasts.value[0]!.message).toBe('Slow')
 
       vi.advanceTimersByTime(2000)
 
@@ -215,7 +215,7 @@ describe('useToast', () => {
       const now = Date.now()
       toast.show('Test', 'info', 3000)
 
-      expect(toast.toasts.value[0].createdAt).toBeGreaterThanOrEqual(now)
+      expect(toast.toasts.value[0]!.createdAt).toBeGreaterThanOrEqual(now)
     })
 
     it('should contain all required properties', () => {
