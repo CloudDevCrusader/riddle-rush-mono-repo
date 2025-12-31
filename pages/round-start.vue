@@ -21,9 +21,14 @@
     <div class="container">
       <!-- Dual Wheels Phase -->
       <transition name="wheel-fade">
-        <div v-if="!wheelsComplete" class="wheels-container">
+        <div
+          v-if="!wheelsComplete"
+          class="wheels-container"
+        >
           <div class="wheel-wrapper">
-            <div class="wheel-label">{{ $t('common.category', 'Category') }}</div>
+            <div class="wheel-label">
+              {{ $t('common.category', 'Category') }}
+            </div>
             <FortuneWheel
               ref="categoryWheelRef"
               v-model="selectedCategory"
@@ -37,7 +42,9 @@
           </div>
 
           <div class="wheel-wrapper">
-            <div class="wheel-label">{{ $t('common.letter', 'Letter') }}</div>
+            <div class="wheel-label">
+              {{ $t('common.letter', 'Letter') }}
+            </div>
             <FortuneWheel
               ref="letterWheelRef"
               v-model="selectedLetter"
@@ -54,19 +61,31 @@
 
       <!-- Selected Values Display Phase -->
       <transition name="results-fade">
-        <div v-if="wheelsComplete && !startingGame" class="results-display">
+        <div
+          v-if="wheelsComplete && !startingGame"
+          class="results-display"
+        >
           <div class="result-item animate-scale-in">
-            <div class="result-label">{{ $t('common.category', 'Category') }}</div>
+            <div class="result-label">
+              {{ $t('common.category', 'Category') }}
+            </div>
             <div class="result-value">
               <span class="result-icon">{{ selectedCategoryIcon }}</span>
               <span class="result-text">{{ selectedCategoryName }}</span>
             </div>
           </div>
 
-          <div class="divider">×</div>
+          <div class="divider">
+            ×
+          </div>
 
-          <div class="result-item animate-scale-in" style="animation-delay: 0.2s">
-            <div class="result-label">{{ $t('common.letter', 'Letter') }}</div>
+          <div
+            class="result-item animate-scale-in"
+            style="animation-delay: 0.2s"
+          >
+            <div class="result-label">
+              {{ $t('common.letter', 'Letter') }}
+            </div>
             <div class="result-value">
               <span class="result-text result-letter">{{ selectedLetter }}</span>
             </div>
@@ -75,9 +94,14 @@
       </transition>
 
       <!-- Loading indicator -->
-      <div v-if="startingGame" class="loading-container">
+      <div
+        v-if="startingGame"
+        class="loading-container"
+      >
         <Spinner />
-        <p class="loading-text">{{ $t('home.starting_game', 'Starting game...') }}</p>
+        <p class="loading-text">
+          {{ $t('home.starting_game', 'Starting game...') }}
+        </p>
       </div>
     </div>
   </div>
@@ -202,8 +226,7 @@ const startGame = async () => {
     if (isNextRound) {
       // This is a next round - update the existing session
       await gameStore.startNextRound(selectedCategory.value, selectedLetter.value)
-    }
-    else {
+    } else {
       // This is initial setup - create new session with players
       const playerNames = gameStore.pendingPlayerNames.length > 0
         ? gameStore.pendingPlayerNames
@@ -218,8 +241,7 @@ const startGame = async () => {
 
     // Navigate to game
     await router.push('/game')
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to start game:', error)
     startingGame.value = false
   }

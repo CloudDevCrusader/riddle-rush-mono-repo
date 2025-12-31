@@ -51,6 +51,17 @@ export default defineNuxtConfig({
     },
   },
 
+  experimental: {
+    typedPages: true,
+  },
+  compatibilityDate: '2025-07-15',
+
+  nitro: {
+    compressPublicAssets: true,
+  },
+
+  typescript: { strict: true },
+
   gtag: {
     // Only enable when GA ID is provided
     enabled: !!process.env.GOOGLE_ANALYTICS_ID,
@@ -64,17 +75,6 @@ export default defineNuxtConfig({
         }
       : {}),
   },
-
-  experimental: {
-    typedPages: true,
-  },
-  compatibilityDate: '2025-07-15',
-
-  nitro: {
-    compressPublicAssets: true,
-  },
-
-  typescript: { strict: true },
 
   i18n: {
     locales: [
