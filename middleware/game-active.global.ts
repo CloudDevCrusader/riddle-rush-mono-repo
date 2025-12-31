@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineNuxtRouteMiddleware((to, from) => {
   // Only run on client side
   if (import.meta.server) return
@@ -5,10 +6,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const gameStore = useGameStore()
 
   // Pages that require an active game session
-  const protectedPages = ['/game', '/alphabet', '/categories']
+  // Note: /alphabet is NOT protected - players select letter BEFORE creating session
+  const protectedPages = ['/game', '/categories']
 
   // Check if current route requires active game
-  const requiresActiveGame = protectedPages.some(page => to.path.startsWith(page))
+  const requiresActiveGame = protectedPages.some((page) => to.path.startsWith(page))
 
   if (requiresActiveGame && !gameStore.hasActiveSession) {
     // Redirect to home page with query param to show message

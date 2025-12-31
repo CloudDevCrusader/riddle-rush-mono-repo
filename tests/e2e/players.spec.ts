@@ -83,8 +83,8 @@ test.describe('Players Management Page', () => {
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
 
-    // After MVP changes, clicking start navigates to alphabet selection first
-    await expect(page).toHaveURL(/\/alphabet/)
+    // After flow update, clicking start navigates to round-start (dual wheel spin)
+    await expect(page).toHaveURL(/\/round-start/)
     await page.waitForTimeout(500)
   })
 

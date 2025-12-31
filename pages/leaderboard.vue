@@ -160,8 +160,8 @@ const goBack = () => {
 }
 
 const startNextRound = async () => {
-  await gameStore.startNextRound()
-  router.push('/game')
+  // Navigate to round-start to spin wheels for next round
+  router.push('/round-start')
 }
 
 const endGame = async () => {

@@ -1,8 +1,8 @@
-# 🎯 Ratefix Design Implementation Summary
+# 🎯 Riddle Rush Design Implementation Summary
 
 ## Overview
 
-The Guess Game has been completely redesigned with a modern, touch-friendly UX inspired by Ratefix but with a contemporary, vibrant aesthetic perfect for offline table-game style play on phones and desktop touchscreens.
+The Guess Game has been completely redesigned with a modern, touch-friendly UX inspired by Riddle Rush but with a contemporary, vibrant aesthetic perfect for offline table-game style play on phones and desktop touchscreens.
 
 ## ✨ What Was Created
 
@@ -58,7 +58,7 @@ Complete Photoshop-friendly guide including:
 
 ## 🎨 Design Philosophy
 
-### Inspired by Ratefix
+### Inspired by Riddle Rush
 - **Table Game Feel**: Designed for group play and offline use
 - **Clear Categories**: Easy category selection with visual icons
 - **Simple Scoring**: Prominent score display
@@ -230,5 +230,5 @@ Perfect for playing offline at game nights, parties, or family gatherings!
 
 **Design Version**: 1.0
 **Date**: December 2025
-**Inspired by**: Ravensburger Ratefix
+**Inspired by**: Ravensburger Riddle Rush
 **Built with**: Vue 3, Nuxt 4, Modern CSS

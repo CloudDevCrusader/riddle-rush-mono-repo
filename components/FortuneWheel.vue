@@ -43,10 +43,16 @@
     <div class="wheel-center">
       <div class="center-glow" />
       <div class="center-circle">
-        <span v-if="selectedItem && getItemIcon(selectedItem as T)" class="selected-icon">
+        <span
+          v-if="selectedItem && getItemIcon(selectedItem as T)"
+          class="selected-icon"
+        >
           {{ getItemIcon(selectedItem as T) }}
         </span>
-        <span v-else class="center-icon">{{ centerIcon }}</span>
+        <span
+          v-else
+          class="center-icon"
+        >{{ centerIcon }}</span>
       </div>
     </div>
   </div>

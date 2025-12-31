@@ -1,6 +1,6 @@
 # Game Workflow Documentation
 
-This document maps the game workflow from the design document (Ratefix App.pdf) to the application screens and components.
+This document maps the game workflow from the design document (Riddle Rush App.pdf) to the application screens and components.
 
 > **Note:** This document describes the complete design vision. For **MVP scope changes** (coins hidden, navbar removed on mobile, etc.), see [DESIGN-TODO.md](./DESIGN-TODO.md) and [MVP-TASKS.md](./MVP-TASKS.md).
 

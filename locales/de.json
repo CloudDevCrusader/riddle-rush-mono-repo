@@ -15,7 +15,10 @@
     "edit": "Bearbeiten",
     "share": "Teilen",
     "back": "Zurück",
-    "ok": "OK"
+    "ok": "OK",
+    "next": "WEITER",
+    "category": "Kategorie",
+    "letter": "Buchstabe"
   },
   "home": {
     "offline_badge": "Offline spielbar",
@@ -80,6 +83,15 @@
     "correct_answer": "Richtig!",
     "incorrect_answer": "Falsch",
     "no_active_session": "Bitte starte zuerst ein Spiel"
+  },
+  "players": {
+    "title": "Spieler",
+    "max_players": "Maximal {0} Spieler erlaubt",
+    "added": "{0} hinzugefügt!",
+    "removed": "{0} entfernt",
+    "need_players": "Füge mindestens einen Spieler hinzu, um zu starten",
+    "ready": "{0} Spieler bereit!",
+    "error_start": "Fehler beim Starten des Spiels. Bitte versuche es erneut."
   },
   "menu": {
     "title": "Menü",

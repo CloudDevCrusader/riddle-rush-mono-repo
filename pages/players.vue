@@ -177,11 +177,11 @@ const startGame = async () => {
 
   try {
     const playerNames = players.value.map((p) => p.name)
-    // Store player names temporarily, will setup game after letter selection
+    // Store player names temporarily, will setup game after both wheels spin
     gameStore.pendingPlayerNames = playerNames
     toast.success(t('players.ready', `${players.value.length} players ready!`))
-    // Navigate to alphabet selection (fortune wheel)
-    router.push('/alphabet')
+    // Navigate to round start (dual wheel spin)
+    router.push('/round-start')
   } catch (error) {
     console.error('Error starting game:', error)
     toast.error(t('players.error_start', 'Failed to start game. Please try again.'))

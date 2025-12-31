@@ -133,6 +133,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '~/stores/settings'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
   modelValue: boolean
 }>()

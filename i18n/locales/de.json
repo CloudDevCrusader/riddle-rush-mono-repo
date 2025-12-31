@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Ratefix",
+    "title": "Riddle Rush",
     "subtitle": "Das ultimative Ratespiel für Freunde & Familie",
     "description": "Ein spannendes Wortratespiel für Freunde und Familie. Offline spielbar, perfekt für Spieleabende!"
   },
@@ -14,7 +14,10 @@
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "share": "Teilen",
-    "back": "Zurück"
+    "back": "Zurück",
+    "next": "WEITER",
+    "category": "Kategorie",
+    "letter": "Buchstabe"
   },
   "home": {
     "offline_badge": "Offline spielbar",
@@ -64,10 +67,10 @@
     "close": "Schließen"
   },
   "share": {
-    "game_title": "Ratefix - Das ultimative Ratespiel",
-    "game_text": "Spiel mit mir Ratefix! Ein spannendes Wortratespiel.",
-    "score_title": "Mein Ratefix Score",
-    "score_text": "Ich habe {score} Punkte bei Ratefix erzielt! 🎯"
+    "game_title": "Riddle Rush - Das ultimative Ratespiel",
+    "game_text": "Spiel mit mir Riddle Rush! Ein spannendes Wortratespiel.",
+    "score_title": "Mein Riddle Rush Score",
+    "score_text": "Ich habe {score} Punkte bei Riddle Rush erzielt! 🎯"
   },
   "categories": {
     "female_name": "Weiblicher Vorname",

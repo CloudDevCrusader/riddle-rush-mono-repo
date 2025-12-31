@@ -34,4 +34,4 @@ test-results
 .yoyo/
 
 aws-credentials.txt
-.playwright-mcp/
+.playwright-mcp/.env.aws

@@ -74,7 +74,7 @@ All text is now in `locales/de.json`:
 ```json
 {
   "app": {
-    "title": "Ratefix",
+    "title": "Riddle Rush",
     "subtitle": "Das ultimative Ratespiel..."
   },
   "game": {

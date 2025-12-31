@@ -1,9 +1,10 @@
 /**
  * Analytics composable for tracking events
- * Currently a no-op implementation that can be extended with any analytics solution
- * (Google Analytics, Plausible, Umami, etc.)
+ * Uses Google Analytics 4 via nuxt-gtag module
  */
 export const useAnalytics = () => {
+  const { gtag } = useGtag()
+
   /**
    * Track a custom event
    * @param eventName - Name of the event (e.g., 'game_start', 'answer_correct')
@@ -17,9 +18,8 @@ export const useAnalytics = () => {
         console.log('[Analytics]', eventName, params)
       }
 
-      // Add your analytics implementation here
-      // Example: gtag('event', eventName, params)
-      // Example: plausible(eventName, { props: params })
+      // Track with Google Analytics
+      gtag('event', eventName, params)
     }
   }
 
@@ -35,7 +35,11 @@ export const useAnalytics = () => {
         console.log('[Analytics] Page View:', pagePath, pageTitle)
       }
 
-      // Add your analytics implementation here
+      // Track with Google Analytics
+      gtag('event', 'page_view', {
+        page_path: pagePath,
+        page_title: pageTitle,
+      })
     }
   }
 

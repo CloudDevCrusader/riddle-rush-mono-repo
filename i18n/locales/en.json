@@ -15,7 +15,10 @@
     "edit": "Edit",
     "share": "Share",
     "back": "Back",
-    "ok": "OK"
+    "ok": "OK",
+    "next": "NEXT",
+    "category": "Category",
+    "letter": "Letter"
   },
   "home": {
     "offline_badge": "Play Offline",

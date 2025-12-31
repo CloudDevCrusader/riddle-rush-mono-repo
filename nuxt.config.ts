@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/i18n',
-    '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@vueuse/nuxt'],
+    '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@vueuse/nuxt', 'nuxt-gtag'],
   ssr: false,
   devtools: { enabled: false },
 
@@ -49,6 +49,20 @@ export default defineNuxtConfig({
       appVersion: process.env.APP_VERSION || '1.0.0',
       environment: process.env.NODE_ENV || 'development',
     },
+  },
+
+  gtag: {
+    // Only enable when GA ID is provided
+    enabled: !!process.env.GOOGLE_ANALYTICS_ID,
+    ...(process.env.GOOGLE_ANALYTICS_ID
+      ? {
+          id: process.env.GOOGLE_ANALYTICS_ID,
+          config: {
+            anonymize_ip: true,
+            cookie_flags: 'SameSite=None;Secure',
+          },
+        }
+      : {}),
   },
 
   experimental: {

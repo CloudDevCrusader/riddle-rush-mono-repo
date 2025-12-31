@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully implemented the complete game workflow from the design document (docs/Ratefix App.pdf) with all design assets from docs/gfx integrated into the Nuxt PWA application.
+Successfully implemented the complete game workflow from the design document (docs/Riddle Rush App.pdf) with all design assets from docs/gfx integrated into the Nuxt PWA application.
 
 > **MVP Update (December 2025)**: This document describes the original implementation. **Recent MVP changes**:
 > - Main Menu is now at `pages/index.vue` (not `pages/menu.vue`)

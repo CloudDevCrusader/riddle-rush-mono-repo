@@ -13,7 +13,7 @@ set -e
 ENVIRONMENT="${1:-production}"
 S3_BUCKET="${AWS_S3_BUCKET:-guess-game-pwa}"
 CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
-AWS_REGION="${AWS_REGION:-us-east-1}"
+AWS_REGION="${AWS_REGION:-eu-central-1}"
 BUILD_DIR=".output/public"
 
 # Colors for output

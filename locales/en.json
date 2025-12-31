@@ -15,7 +15,10 @@
     "edit": "Edit",
     "share": "Share",
     "back": "Back",
-    "ok": "OK"
+    "ok": "OK",
+    "next": "NEXT",
+    "category": "Category",
+    "letter": "Letter"
   },
   "home": {
     "offline_badge": "Play Offline",
@@ -80,6 +83,15 @@
     "correct_answer": "Correct!",
     "incorrect_answer": "Wrong answer",
     "no_active_session": "Please start a game first"
+  },
+  "players": {
+    "title": "Players",
+    "max_players": "Maximum {0} players allowed",
+    "added": "{0} added!",
+    "removed": "{0} removed",
+    "need_players": "Add at least one player to start",
+    "ready": "{0} players ready!",
+    "error_start": "Failed to start game. Please try again."
   },
   "menu": {
     "title": "Menu",

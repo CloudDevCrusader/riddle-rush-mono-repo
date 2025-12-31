@@ -324,10 +324,10 @@ export const useGameStore = defineStore('game', {
     },
 
     // Multi-player actions
-    async setupPlayers(playerNames: string[], gameName?: string, customLetter?: string) {
+    async setupPlayers(playerNames: string[], gameName?: string, customLetter?: string, customCategory?: Category) {
       await this.fetchCategories()
 
-      const category = this.getRandomCategory()
+      const category = customCategory || this.getRandomCategory()
       if (!category) {
         throw new Error('Unable to start game without categories')
       }
@@ -404,15 +404,16 @@ export const useGameStore = defineStore('game', {
       await this.saveSessionToDB()
     },
 
-    async startNextRound() {
+    async startNextRound(category?: Category, letter?: string) {
       if (!this.currentSession) return
 
-      const category = this.getRandomCategory()
-      if (!category) {
+      // Use provided category and letter, or pick random ones
+      const selectedCategory = category || this.getRandomCategory()
+      if (!selectedCategory) {
         throw new Error('Unable to start round without categories')
       }
 
-      const letter = this.generateLetter()
+      const selectedLetter = letter || this.generateLetter()
 
       // Reset player round state
       this.currentSession.players.forEach((player) => {
@@ -422,8 +423,8 @@ export const useGameStore = defineStore('game', {
       })
 
       this.currentSession.currentRound += 1
-      this.currentSession.category = { ...category, letter }
-      this.currentSession.letter = letter
+      this.currentSession.category = { ...selectedCategory, letter: selectedLetter }
+      this.currentSession.letter = selectedLetter
 
       await this.saveSessionToDB()
 

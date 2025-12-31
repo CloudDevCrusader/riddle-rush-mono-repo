@@ -5,7 +5,7 @@ test.describe('Language Selection Page', () => {
     await page.goto('/language')
 
     // Check page title (supports both German and English)
-    await expect(page).toHaveTitle(/Language Selection|Sprachauswahl|Riddle Rush|Ratefix/i)
+    await expect(page).toHaveTitle(/Language Selection|Sprachauswahl|Riddle Rush/i)
 
     // Check for main title image (title is an image, not text)
     const titleImage = page.locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]').first()

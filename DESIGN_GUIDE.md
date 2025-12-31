@@ -1,4 +1,4 @@
-# Ratefix Design Guide
+# Riddle Rush Design Guide
 ## Photoshop-Friendly Design System
 
 This guide provides all the design specifications for editing and creating assets in Photoshop.
@@ -527,4 +527,4 @@ This design system is built for flexibility while maintaining consistency. Feel 
 
 **Version**: 1.0
 **Last Updated**: December 2025
-**Design System**: Ratefix PWA
+**Design System**: Riddle Rush PWA
