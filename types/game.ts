@@ -22,6 +22,11 @@ export interface Player {
   hasSubmitted: boolean
 }
 
+export interface PlayerWithRank extends Player {
+  rank: number
+  isWinner: boolean
+}
+
 export interface RoundResult {
   roundNumber: number
   category: string
@@ -37,6 +42,8 @@ export interface PlayerRoundResult {
   score: number
 }
 
+export type GameStatus = 'active' | 'completed' | 'abandoned'
+
 export interface GameSession {
   id: string
   gameName?: string
@@ -46,6 +53,7 @@ export interface GameSession {
   letter: string
   startTime: number
   endTime?: number
+  status?: GameStatus
   roundHistory: RoundResult[]
   // Legacy fields for backward compatibility
   userId?: string

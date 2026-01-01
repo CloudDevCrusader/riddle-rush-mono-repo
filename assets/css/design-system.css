@@ -190,7 +190,6 @@ body {
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -231,7 +230,6 @@ body {
 }
 
 .card:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-xl);
 }
 

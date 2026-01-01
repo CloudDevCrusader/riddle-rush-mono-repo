@@ -25,40 +25,20 @@
         class="score-display"
         data-testid="score-display"
       >
-        <div
-          v-if="isMultiPlayerMode"
-          class="score-item"
-        >
+        <div class="score-item">
           <span class="score-label">{{ $t('game.round', 'Round') }}</span>
           <span
             class="score-value"
             data-testid="round-value"
           >{{ currentRound }}</span>
         </div>
-        <div
-          v-if="isMultiPlayerMode"
-          class="score-divider"
-        />
+        <div class="score-divider" />
         <div class="score-item">
-          <span class="score-label">{{ isMultiPlayerMode ? $t('game.players', 'Players') : $t('game.score') }}</span>
+          <span class="score-label">{{ $t('game.players', 'Players') }}</span>
           <span
             class="score-value"
             data-testid="score-value"
-          >{{ isMultiPlayerMode ? players.length : gameStore.currentScore }}</span>
-        </div>
-        <div
-          v-if="!isMultiPlayerMode"
-          class="score-divider"
-        />
-        <div
-          v-if="!isMultiPlayerMode"
-          class="score-item"
-        >
-          <span class="score-label">{{ $t('game.attempts') }}</span>
-          <span
-            class="score-value"
-            data-testid="attempts-value"
-          >{{ gameStore.currentAttempts.length }}</span>
+          >{{ players.length }}</span>
         </div>
       </div>
 
@@ -93,18 +73,18 @@
         </div>
       </div>
 
-      <!-- Player Turn Indicator (Multi-player mode) -->
+      <!-- Player Turn Indicator -->
       <div
-        v-if="isMultiPlayerMode && currentPlayerTurn"
+        v-if="currentPlayerTurn"
         class="player-turn-card animate-slide-up"
       >
         <span class="player-turn-label">{{ $t('game.current_turn', "Current Turn") }}:</span>
         <span class="player-turn-name">{{ currentPlayerTurn.name }}</span>
       </div>
 
-      <!-- All Players Submitted (Multi-player mode) -->
+      <!-- All Players Submitted -->
       <div
-        v-if="isMultiPlayerMode && allPlayersSubmitted"
+        v-if="allPlayersSubmitted"
         class="all-submitted-card animate-scale-in"
       >
         <p class="all-submitted-text">
@@ -255,6 +235,20 @@
           </h3>
           <button
             class="menu-item tap-highlight"
+            @click="showLeaderboard = true; showMenu = false"
+          >
+            <span class="menu-icon">📊</span>
+            <span>{{ $t('menu.standings', 'Standings') }}</span>
+          </button>
+          <button
+            class="menu-item tap-highlight"
+            @click="showHistory = true; showMenu = false"
+          >
+            <span class="menu-icon">📜</span>
+            <span>{{ $t('menu.history', 'History') }}</span>
+          </button>
+          <button
+            class="menu-item tap-highlight"
             @click="openSettings"
           >
             <span class="menu-icon">⚙️</span>
@@ -262,10 +256,10 @@
           </button>
           <button
             class="menu-item tap-highlight"
-            @click="endGame"
+            @click="finishGame"
           >
             <span class="menu-icon">🏁</span>
-            <span>{{ $t('menu.end_game') }}</span>
+            <span>{{ $t('menu.finish_game', 'Finish Game') }}</span>
           </button>
           <button
             class="menu-item tap-highlight"
@@ -293,6 +287,24 @@
 
     <!-- Settings Modal -->
     <SettingsModal v-model="showSettings" />
+
+    <!-- Player Leaderboard -->
+    <PlayerLeaderboard
+      :visible="showLeaderboard"
+      :players="leaderboard"
+      :is-game-completed="isGameCompleted"
+      :current-round="currentRound"
+      @close="showLeaderboard = false"
+      @continue="continueGame"
+      @finish="finishGame"
+    />
+
+    <!-- Game History -->
+    <GameHistory
+      :visible="showHistory"
+      :games="gameHistory"
+      @close="showHistory = false"
+    />
   </div>
 </template>
 
@@ -314,18 +326,22 @@ const loading = ref(false)
 const valid = ref(false)
 const showMenu = ref(false)
 const showSettings = ref(false)
+const showLeaderboard = ref(false)
+const showHistory = ref(false)
 const answerInput = ref<HTMLInputElement | null>(null)
 
 const currentCategory = computed(() => gameStore.currentCategory)
 const currentLetter = computed(() => gameStore.currentLetter)
 const categoryEmoji = computed(() => gameStore.categoryEmoji(currentCategory.value?.name))
+const gameHistory = computed(() => gameStore.history)
 
-// Multi-player support
-const isMultiPlayerMode = computed(() => gameStore.isMultiPlayerMode)
+// Player support
 const currentPlayerTurn = computed(() => gameStore.currentPlayerTurn)
 const allPlayersSubmitted = computed(() => gameStore.allPlayersSubmitted)
 const players = computed(() => gameStore.players)
 const currentRound = computed(() => gameStore.currentRound)
+const leaderboard = computed(() => gameStore.leaderboard)
+const isGameCompleted = computed(() => gameStore.isGameCompleted)
 
 const feedbackClass = computed(() => (valid.value ? 'correct' : 'incorrect'))
 const feedbackIcon = computed(() => (valid.value ? '🎉' : '😕'))
@@ -384,8 +400,9 @@ const validateWord = async () => {
   try {
     loading.value = true
 
-    if (isMultiPlayerMode.value) {
-      // Multi-player mode: just save the answer without validation
+    // Check if we have players (multiplayer flow)
+    if (players.value.length > 0) {
+      // Players exist: save answer for current player without validation
       const player = currentPlayerTurn.value
       if (!player) {
         toast.error(t('game.no_player', 'No active player found'))
@@ -406,7 +423,7 @@ const validateWord = async () => {
         }, 1000)
       }
     } else {
-      // Legacy single-player mode: validate immediately
+      // No players: validate immediately (legacy single-player)
       const response = await checkAnswer(category.searchWord, letter, term)
 
       valid.value = response.found
@@ -440,10 +457,6 @@ const validateWord = async () => {
   }
 }
 
-const endGame = async () => {
-  await gameActions.endGame()
-}
-
 const goHome = () => {
   router.push('/')
 }
@@ -455,6 +468,18 @@ const shareScore = async () => {
 const openSettings = () => {
   showMenu.value = false
   showSettings.value = true
+}
+
+const finishGame = async () => {
+  showMenu.value = false
+  await gameStore.completeGame()
+  showLeaderboard.value = true
+  toast.success(t('game.game_completed', 'Game completed! Check the final standings.'))
+}
+
+const continueGame = () => {
+  showLeaderboard.value = false
+  // Game continues in current state
 }
 
 onMounted(async () => {

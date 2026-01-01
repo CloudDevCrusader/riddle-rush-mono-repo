@@ -1,6 +1,6 @@
 import { useIndexedDB } from '../composables/useIndexedDB'
 import { useStatistics } from '../composables/useStatistics'
-import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent, Player } from '../types/game'
+import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent, Player, PlayerWithRank } from '../types/game'
 
 const CATEGORY_EMOJI_MAP: Record<string, string> = {
   'Weiblicher Vorname': '👩',
@@ -97,14 +97,21 @@ export const useGameStore = defineStore('game', {
       const players = state.currentSession?.players ?? []
       return players.find((p) => !p.hasSubmitted) ?? null
     },
-    isMultiPlayerMode: (state) => {
+    leaderboard: (state): PlayerWithRank[] => {
       const players = state.currentSession?.players ?? []
-      return players.length > 0
+      const sorted = [...players].sort((a, b) => b.totalScore - a.totalScore)
+
+      const isGameCompleted = state.currentSession?.status === 'completed'
+      const topScore = sorted[0]?.totalScore ?? 0
+
+      return sorted.map((player, index) => ({
+        ...player,
+        rank: index + 1,
+        isWinner: isGameCompleted && index === 0 && topScore > 0,
+      }))
     },
-    leaderboard: (state) => {
-      const players = state.currentSession?.players ?? []
-      return [...players].sort((a, b) => b.totalScore - a.totalScore)
-    },
+    isGameCompleted: (state) => state.currentSession?.status === 'completed',
+    gameStatus: (state) => state.currentSession?.status ?? 'active',
   },
 
   actions: {
@@ -257,6 +264,34 @@ export const useGameStore = defineStore('game', {
       this.currentSession = null
     },
 
+    async completeGame() {
+      if (!this.currentSession) return
+
+      this.currentSession.status = 'completed'
+      this.currentSession.endTime = Date.now()
+
+      await this.saveSessionToDB()
+      await this.saveHistoryToDB()
+
+      const { updateStatistics } = useStatistics()
+      await updateStatistics(this.currentSession)
+
+      // Don't clear session - keep it so leaderboard can display winner
+      return this.currentSession
+    },
+
+    async abandonGame() {
+      if (!this.currentSession) return
+
+      this.currentSession.status = 'abandoned'
+      this.currentSession.endTime = Date.now()
+
+      await this.saveSessionToDB()
+      await this.saveHistoryToDB()
+
+      this.currentSession = null
+    },
+
     setOnlineStatus(status: boolean) {
       this.isOnline = status
     },
@@ -351,6 +386,7 @@ export const useGameStore = defineStore('game', {
         category: { ...category, letter },
         letter,
         startTime: Date.now(),
+        status: 'active',
         roundHistory: [],
       }
 

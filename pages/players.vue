@@ -1,5 +1,8 @@
 <template>
-  <div class="players-page">
+  <div
+    ref="pageElement"
+    class="players-page"
+  >
     <!-- Background Image -->
     <img
       :src="`${baseUrl}assets/players/BACKGROUND.png`"
@@ -89,13 +92,44 @@
         </div>
       </div>
 
+      <!-- Add Player Input (Mobile-Friendly) -->
+      <div
+        v-if="showPlayerInput"
+        class="player-input-container animate-scale-in"
+      >
+        <input
+          ref="playerNameInput"
+          v-model="newPlayerName"
+          type="text"
+          :placeholder="$t('players.enter_name', 'Enter player name')"
+          class="player-name-input tap-highlight"
+          maxlength="20"
+          @keyup.enter="confirmAddPlayer"
+          @keyup.esc="cancelAddPlayer"
+        >
+        <div class="input-buttons">
+          <button
+            class="input-btn confirm-btn tap-highlight no-select"
+            @click="confirmAddPlayer"
+          >
+            ✓
+          </button>
+          <button
+            class="input-btn cancel-btn tap-highlight no-select"
+            @click="cancelAddPlayer"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
       <!-- Action Buttons -->
       <div class="action-buttons animate-slide-up">
         <!-- Add Player Button -->
         <button
-          v-if="players.length < maxPlayers"
+          v-if="players.length < maxPlayers && !showPlayerInput"
           class="action-btn add-btn tap-highlight no-select"
-          @click="addPlayer"
+          @click="showAddPlayerInput"
         >
           <img
             :src="`${baseUrl}assets/players/add back.png`"
@@ -141,24 +175,45 @@ const players = ref([
   { name: 'Player 1' },
   { name: 'Player 2' },
 ])
+const showPlayerInput = ref(false)
+const newPlayerName = ref('')
+const playerNameInput = ref<HTMLInputElement | null>(null)
 
-const addPlayer = () => {
+const showAddPlayerInput = () => {
   if (players.value.length >= maxPlayers) {
     toast.warning(t('players.max_players', `Maximum ${maxPlayers} players allowed`))
     return
   }
 
-  const defaultName = `Player ${players.value.length + 1}`
-  const playerName = prompt('Enter player name:', defaultName)
+  newPlayerName.value = `Player ${players.value.length + 1}`
+  showPlayerInput.value = true
 
-  if (playerName && playerName.trim()) {
-    players.value.push({ name: playerName.trim() })
-    toast.success(t('players.added', `${playerName.trim()} added!`))
-  } else if (playerName === '') {
-    // User cleared the prompt, use default name
-    players.value.push({ name: defaultName })
-    toast.success(t('players.added', `${defaultName} added!`))
+  // Focus input after Vue updates DOM
+  nextTick(() => {
+    playerNameInput.value?.focus()
+    playerNameInput.value?.select()
+  })
+}
+
+const confirmAddPlayer = () => {
+  const trimmedName = newPlayerName.value.trim()
+
+  if (!trimmedName) {
+    toast.warning(t('players.name_required', 'Please enter a player name'))
+    return
   }
+
+  players.value.push({ name: trimmedName })
+  toast.success(t('players.added', `${trimmedName} added!`))
+
+  // Reset
+  newPlayerName.value = ''
+  showPlayerInput.value = false
+}
+
+const cancelAddPlayer = () => {
+  newPlayerName.value = ''
+  showPlayerInput.value = false
 }
 
 const removePlayer = (index: number) => {
@@ -171,7 +226,7 @@ const removePlayer = (index: number) => {
 
 const startGame = async () => {
   if (players.value.length === 0) {
-    toast.warning(t('players.need_players', 'Add at least one player to start'))
+    toast.warning(t('players.need_players', 'Add players to start'))
     return
   }
 
@@ -191,6 +246,14 @@ const startGame = async () => {
 const goBack = () => {
   router.back()
 }
+
+// Mobile swipe gesture: swipe right to go back
+const { pageElement } = usePageSwipe({
+  onSwipeRight: () => {
+    goBack()
+  },
+  threshold: 80, // Require 80px swipe to trigger
+})
 
 useHead({
   title: 'Players',
@@ -242,12 +305,8 @@ useHead({
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-.back-btn:hover {
-  transform: scale(1.05);
-}
-
 .back-btn:active {
-  transform: scale(0.95);
+  opacity: 0.7;
 }
 
 /* Container */
@@ -359,12 +418,8 @@ useHead({
   height: auto;
 }
 
-.remove-player-btn:hover {
-  transform: scale(1.1);
-}
-
 .remove-player-btn:active {
-  transform: scale(0.95);
+  opacity: 0.7;
 }
 
 /* Scroll Bar */
@@ -395,6 +450,72 @@ useHead({
   margin-top: var(--spacing-lg);
 }
 
+/* Player Input (Mobile-Friendly) */
+.player-input-container {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.player-name-input {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: #2a1810;
+  background: var(--color-white);
+  border: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all var(--transition-base);
+}
+
+.player-name-input:focus {
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+}
+
+.input-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.input-btn {
+  flex: 1;
+  max-width: 80px;
+  min-height: 56px;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-btn {
+  background: var(--color-accent-green);
+  color: var(--color-white);
+}
+
+.cancel-btn {
+  background: var(--color-accent-red);
+  color: var(--color-white);
+}
+
+.input-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 /* Action Buttons */
 .action-buttons {
   display: flex;
@@ -413,12 +534,8 @@ useHead({
   transition: transform var(--transition-base);
 }
 
-.action-btn:hover:not(.disabled) {
-  transform: translateY(-4px) scale(1.05);
-}
-
 .action-btn:active:not(.disabled) {
-  transform: translateY(-2px) scale(0.98);
+  opacity: 0.8;
 }
 
 .action-btn.disabled {
@@ -458,49 +575,63 @@ useHead({
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
-/* Animations */
+/* Animations - Optimized for mobile gaming */
 .animate-fade-in {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translate3d(0, -15px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.6s ease-out 0.2s backwards;
+  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s backwards;
+  will-change: transform, opacity;
 }
 
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale3d(0.95, 0.95, 1);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
   }
 }
 
 .animate-slide-up {
-  animation: slideUp 0.6s ease-out 0.4s backwards;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+  will-change: transform, opacity;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translate3d(0, 25px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-scale-in,
+  .animate-slide-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 

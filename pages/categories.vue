@@ -1,5 +1,8 @@
 <template>
-  <div class="categories-page">
+  <div
+    ref="pageElement"
+    class="categories-page"
+  >
     <!-- Background Image -->
     <img
       :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
@@ -146,6 +149,14 @@ const goBack = () => {
   router.back()
 }
 
+// Mobile swipe gesture: swipe right to go back
+const { pageElement } = usePageSwipe({
+  onSwipeRight: () => {
+    goBack()
+  },
+  threshold: 80,
+})
+
 useHead({
   title: 'Select Category',
   meta: [
@@ -196,12 +207,8 @@ useHead({
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-.back-btn:hover {
-  transform: scale(1.05);
-}
-
 .back-btn:active {
-  transform: scale(0.95);
+  opacity: 0.7;
 }
 
 /* Top Bar */
@@ -285,16 +292,9 @@ useHead({
   letter-spacing: 1px;
 }
 
-.spin-btn:hover:not(:disabled),
-.next-btn:hover {
-  transform: translateY(-4px) scale(1.05);
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4))
-          drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
-}
-
 .spin-btn:active:not(:disabled),
 .next-btn:active {
-  transform: translateY(-2px) scale(1.02);
+  opacity: 0.8;
 }
 
 .spin-btn:disabled {

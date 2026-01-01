@@ -261,18 +261,10 @@ watch(() => props.modelValue, (newValue) => {
 
 .wheel-segment:hover {
   filter: brightness(1.15);
-  transform: scale(1.02);
-  box-shadow:
-    inset 0 2px 6px rgba(255, 255, 255, 0.5),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.25),
-    0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .wheel-segment:active {
-  transform: scale(0.98);
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.3),
-    0 1px 3px rgba(0, 0, 0, 0.2);
+  filter: brightness(0.95);
 }
 
 .wheel-segment.selected {

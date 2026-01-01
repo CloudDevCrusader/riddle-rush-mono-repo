@@ -553,9 +553,9 @@ describe('Game Store', () => {
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
       })
 
-      it('isMultiPlayerMode returns true when players exist', () => {
+      it('players exist after setup', () => {
         const store = useGameStore()
-        expect(store.isMultiPlayerMode).toBe(true)
+        expect(store.players.length).toBeGreaterThan(0)
       })
 
       it('players getter returns all players', () => {
@@ -892,8 +892,8 @@ describe('Game Store', () => {
         const store = useGameStore()
         await store.startNewGame()
 
-        expect(store.isMultiPlayerMode).toBe(false)
         expect(store.players).toHaveLength(0)
+        expect(store.currentSession).toBeDefined()
       })
     })
   })

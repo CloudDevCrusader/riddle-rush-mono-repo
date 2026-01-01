@@ -153,7 +153,7 @@ const goToSettings = () => {
 }
 
 const goToCredits = () => {
-  router.push('/credits')
+  router.push('/about')
 }
 
 useHead({
@@ -250,12 +250,8 @@ useHead({
   transition: transform var(--transition-base);
 }
 
-.profile-btn:hover {
-  transform: scale(1.1);
-}
-
 .profile-btn:active {
-  transform: scale(0.95);
+  opacity: 0.7;
 }
 
 .profile-icon {
@@ -311,12 +307,8 @@ useHead({
   transition: transform var(--transition-base);
 }
 
-.menu-btn:hover {
-  transform: translateY(-4px) scale(1.05);
-}
-
 .menu-btn:active {
-  transform: translateY(-2px) scale(0.98);
+  opacity: 0.8;
 }
 
 .btn-image {
@@ -358,12 +350,8 @@ useHead({
   transition: transform var(--transition-base);
 }
 
-.menu-icon-btn:hover {
-  transform: scale(1.1);
-}
-
 .menu-icon-btn:active {
-  transform: scale(0.95);
+  opacity: 0.7;
 }
 
 .menu-icon {
@@ -372,34 +360,46 @@ useHead({
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-/* Animations */
+/* Animations - Optimized for mobile gaming */
 .animate-fade-in {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translate3d(0, -20px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 .animate-slide-up {
-  animation: slideUp 0.8s ease-out 0.3s backwards;
+  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+  will-change: transform, opacity;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translate3d(0, 30px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 
