@@ -9,7 +9,7 @@
       <button
         data-testid="back-button"
         class="back-btn tap-highlight no-select"
-        @click="goHome"
+        @click="handleBack"
       >
         <img
           src="/assets/alphabets/back.png"
@@ -25,8 +25,36 @@
         </span>
       </div>
 
-      <!-- Empty space (no coin count) -->
-      <div class="header-spacer" />
+      <!-- Pause Button -->
+      <button
+        class="pause-btn tap-highlight no-select"
+        @click="showPauseModal = true"
+        aria-label="Pause game"
+      >
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect
+            x="6"
+            y="4"
+            width="4"
+            height="16"
+          />
+          <rect
+            x="14"
+            y="4"
+            width="4"
+            height="16"
+          />
+        </svg>
+      </button>
     </header>
 
     <!-- Main Game Area -->
@@ -73,6 +101,8 @@
             :placeholder="$t('game.your_answer', 'Your answer...')"
             autocomplete="off"
             autocapitalize="words"
+            maxlength="50"
+            @input="sanitizeInput"
           >
           <button
             type="submit"
@@ -92,6 +122,21 @@
         <p>{{ $t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
+
+    <!-- Pause Modal -->
+    <PauseModal
+      :visible="showPauseModal"
+      @resume="showPauseModal = false"
+      @restart="handleRestart"
+      @home="showPauseModal = false"
+    />
+
+    <!-- Quit Modal -->
+    <QuitModal
+      :visible="showQuitModal"
+      @confirm="showQuitModal = false"
+      @cancel="showQuitModal = false"
+    />
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
@@ -127,6 +172,8 @@ const {
 const gameActions = useGameActions()
 
 const playerAnswer = ref('')
+const showPauseModal = ref(false)
+const showQuitModal = ref(false)
 
 const formattedRound = computed(() => {
   const round = currentRound.value || 1
@@ -135,6 +182,24 @@ const formattedRound = computed(() => {
 
 const goHome = () => {
   navigateToHome()
+}
+
+const handleBack = () => {
+  if (gameStore.hasActiveSession) {
+    showQuitModal.value = true
+  } else {
+    goHome()
+  }
+}
+
+// Sanitize input to prevent XSS and limit special characters
+const sanitizeInput = () => {
+  // Remove potentially dangerous characters
+  playerAnswer.value = playerAnswer.value.replace(/[<>]/g, '')
+  // Limit length
+  if (playerAnswer.value.length > 50) {
+    playerAnswer.value = playerAnswer.value.slice(0, 50)
+  }
 }
 
 const submitAnswer = async () => {
@@ -168,9 +233,30 @@ const handleNext = async () => {
   goToResults()
 }
 
+const handleRestart = () => {
+  showPauseModal.value = false
+  // Navigate to players page to start new game
+  const { goToPlayers } = useNavigation()
+  goToPlayers()
+}
+
+// Handle ESC key to pause
 onMounted(async () => {
   // Ensure game is initialized
   await gameActions.resumeOrStartGame()
+
+  // Add ESC key listener for pause
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && !showPauseModal.value) {
+      showPauseModal.value = true
+    }
+  }
+
+  window.addEventListener('keydown', handleKeyDown)
+
+  onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeyDown)
+  })
 })
 
 useHead({
@@ -280,9 +366,42 @@ useHead({
   letter-spacing: 2px;
 }
 
-.header-spacer {
+.pause-btn {
   width: 64px;
   height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #44c8ff 0%, #0a6bc2 100%);
+  border: 4px solid #ffaa00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), var(--shadow-lg);
+  color: var(--color-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.pause-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.pause-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2), var(--shadow-md);
+}
+
+.pause-btn svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  z-index: 1;
 }
 
 /* Game Container */
@@ -575,7 +694,7 @@ useHead({
   }
 
   .back-btn,
-  .header-spacer {
+  .pause-btn {
     width: 56px;
     height: 56px;
   }

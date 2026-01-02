@@ -134,7 +134,10 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md);
+  padding: max(var(--spacing-md), env(safe-area-inset-top, 0px)) 
+           max(var(--spacing-md), env(safe-area-inset-right, 0px))
+           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+           max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .player-leaderboard-panel {
@@ -395,10 +398,20 @@ defineEmits<{
   transform: scale(0.9) translateY(30px);
 }
 
-/* Responsive */
+/* Responsive - Optimized for Pixel 7 Pro */
 @media (max-width: 640px) {
+  .player-leaderboard-overlay {
+    padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
+             max(var(--spacing-md), env(safe-area-inset-right, 0px))
+             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+  }
+
   .player-leaderboard-panel {
-    max-width: 95vw;
+    max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .player-row {
@@ -406,24 +419,45 @@ defineEmits<{
   }
 
   .rank {
-    width: 40px;
-    font-size: 24px;
+    width: clamp(36px, 8vw, 44px);
+    min-width: 36px;
+    font-size: clamp(20px, 5vw, 28px);
   }
 
   .crown {
-    font-size: 36px;
+    font-size: clamp(32px, 7vw, 40px);
   }
 
   .player-name {
-    font-size: var(--font-size-base);
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem);
   }
 
   .player-score {
-    font-size: var(--font-size-2xl);
+    font-size: clamp(1.5rem, 4vw, 2rem);
   }
 
   .leaderboard-footer {
     flex-direction: column;
+    padding: var(--spacing-lg);
+  }
+
+  .close-btn {
+    width: clamp(40px, 9vw, 48px);
+    height: clamp(40px, 9vw, 48px);
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* Pixel 7 Pro specific (412px width, tall screen) */
+@media (max-width: 450px) and (min-height: 800px) {
+  .player-leaderboard-panel {
+    max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+  }
+
+  .player-row {
+    padding: var(--spacing-lg);
   }
 }
 </style>

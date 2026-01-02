@@ -110,7 +110,10 @@ const clearLeaderboard = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md);
+  padding: max(var(--spacing-md), env(safe-area-inset-top, 0px)) 
+           max(var(--spacing-md), env(safe-area-inset-right, 0px))
+           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+           max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .leaderboard-panel {
@@ -266,5 +269,55 @@ const clearLeaderboard = () => {
 .leaderboard-enter-from .leaderboard-panel,
 .leaderboard-leave-to .leaderboard-panel {
   transform: scale(0.9) translateY(20px);
+}
+
+/* Responsive - Optimized for Pixel 7 Pro */
+@media (max-width: 640px) {
+  .leaderboard-overlay {
+    padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
+             max(var(--spacing-md), env(safe-area-inset-right, 0px))
+             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+  }
+
+  .leaderboard-panel {
+    max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .close-btn {
+    width: clamp(36px, 8vw, 44px);
+    height: clamp(36px, 8vw, 44px);
+    min-width: 36px;
+    min-height: 36px;
+    font-size: clamp(16px, 4vw, 20px);
+  }
+
+  .leaderboard-header {
+    padding: var(--spacing-lg);
+  }
+
+  .leaderboard-content {
+    padding: var(--spacing-md);
+  }
+
+  .leaderboard-footer {
+    padding: var(--spacing-lg);
+    flex-direction: column;
+  }
+
+  .leaderboard-footer .btn {
+    width: 100%;
+  }
+}
+
+/* Pixel 7 Pro specific (412px width, tall screen) */
+@media (max-width: 450px) and (min-height: 800px) {
+  .leaderboard-panel {
+    max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+  }
 }
 </style>

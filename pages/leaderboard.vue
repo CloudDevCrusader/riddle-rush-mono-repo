@@ -65,11 +65,21 @@
 
             <!-- Player Info -->
             <div class="player-info">
-              <img
-                :src="`${baseUrl}assets/leaderboard/tobi.png`"
-                alt="Player"
-                class="player-avatar"
-              >
+              <div class="avatar-container">
+                <img
+                  :src="getAvatarUrl(entry)"
+                  alt="Player"
+                  class="player-avatar"
+                  @click="changeAvatar(entry)"
+                >
+                <button
+                  class="avatar-change-btn"
+                  :aria-label="`Change avatar for ${entry.name}`"
+                  @click="changeAvatar(entry)"
+                >
+                  <span class="avatar-change-icon">📷</span>
+                </button>
+              </div>
               <span class="player-name">{{ entry.name }}</span>
             </div>
 
@@ -132,7 +142,7 @@
 </template>
 
 <script setup lang="ts">
-const { baseUrl } = usePageSetup()
+const { baseUrl, toast, t } = usePageSetup()
 const { goHome, goToRoundStart } = useNavigation()
 const { gameStore, leaderboard: leaderboardEntries, isGameCompleted } = useGameState()
 
@@ -149,6 +159,60 @@ const handleOk = async () => {
     // Continue to next round
     goToRoundStart()
   }
+}
+
+// Get avatar URL - use custom avatar if available, otherwise default
+const getAvatarUrl = (entry: { avatar?: string }) => {
+  return entry.avatar || `${baseUrl}assets/leaderboard/tobi.png`
+}
+
+// Change avatar for a player
+const changeAvatar = (entry: { id: string; name: string }) => {
+  // Create a hidden file input
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.style.display = 'none'
+
+  input.onchange = async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error(t('leaderboard.invalid_image', 'Please select a valid image file'))
+      return
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error(t('leaderboard.image_too_large', 'Image must be smaller than 2MB'))
+      return
+    }
+
+    try {
+      // Convert to data URL
+      const reader = new FileReader()
+      reader.onload = async (event) => {
+        const dataUrl = event.target?.result as string
+        if (dataUrl) {
+          // Update player avatar in store
+          await gameStore.updatePlayerAvatar(entry.id, dataUrl)
+          toast.success(t('leaderboard.avatar_updated', 'Avatar updated successfully!'))
+        }
+      }
+      reader.readAsDataURL(file)
+    } catch (error) {
+      const logger = useLogger()
+      logger.error('Error updating avatar:', error)
+      toast.error(t('leaderboard.avatar_error', 'Failed to update avatar. Please try again.'))
+    }
+  }
+
+  // Trigger file picker
+  document.body.appendChild(input)
+  input.click()
+  document.body.removeChild(input)
 }
 
 useHead({
@@ -299,10 +363,52 @@ useHead({
   gap: var(--spacing-md);
 }
 
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
 .player-avatar {
   width: clamp(35px, 5vw, 50px);
-  height: auto;
+  height: clamp(35px, 5vw, 50px);
   border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border: 2px solid transparent;
+}
+
+.player-avatar:hover {
+  border-color: rgba(255, 170, 0, 0.6);
+  transform: scale(1.05);
+}
+
+.avatar-change-btn {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(68, 200, 255, 0.9);
+  border: 2px solid #ffaa00;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-change-btn:hover {
+  background: rgba(68, 200, 255, 1);
+  transform: scale(1.1);
+}
+
+.avatar-change-icon {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .player-name {

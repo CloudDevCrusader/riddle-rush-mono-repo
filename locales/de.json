@@ -82,7 +82,9 @@
     "answer_submitted": "Antwort eingereicht für {0}",
     "correct_answer": "Richtig!",
     "incorrect_answer": "Falsch",
-    "no_active_session": "Bitte starte zuerst ein Spiel"
+    "no_active_session": "Bitte starte zuerst ein Spiel",
+    "error_submitting": "Fehler beim Einreichen der Antwort",
+    "wait_for_players": "Bitte warte, bis alle Spieler geantwortet haben"
   },
   "players": {
     "title": "Spieler",
@@ -91,7 +93,13 @@
     "removed": "{0} entfernt",
     "need_players": "Füge mindestens einen Spieler hinzu, um zu starten",
     "ready": "{0} Spieler bereit!",
-    "error_start": "Fehler beim Starten des Spiels. Bitte versuche es erneut."
+    "error_start": "Fehler beim Starten des Spiels. Bitte versuche es erneut.",
+    "name_required": "Bitte gib einen Spielernamen ein",
+    "name_too_short": "Spielername muss mindestens 1 Zeichen lang sein",
+    "name_too_long": "Spielername darf maximal 20 Zeichen lang sein",
+    "duplicate_name": "Ein Spieler mit diesem Namen existiert bereits",
+    "invalid_names": "Bitte korrigiere ungültige Spielernamen vor dem Start",
+    "enter_name": "Spielernamen eingeben"
   },
   "menu": {
     "title": "Menü",
@@ -99,7 +107,17 @@
     "end_game": "Spiel Beenden",
     "home": "Zur Startseite",
     "share_score": "Score Teilen",
-    "close": "Schließen"
+    "close": "Schließen",
+    "play": "Spielen",
+    "language": "Sprache",
+    "credits": "Credits"
+  },
+  "pause": {
+    "title": "Spiel pausiert",
+    "message": "Spiel ist pausiert, drücke Fortsetzen zum Weiterspielen",
+    "resume": "Fortsetzen",
+    "restart": "Neustart",
+    "home": "Startseite"
   },
   "share": {
     "game_title": "Riddle Rush - Das ultimative Ratespiel",
@@ -143,7 +161,15 @@
     "clear": "Löschen",
     "score": "Punkte",
     "category": "Kategorie",
-    "time": "Zeit"
+    "time": "Zeit",
+    "game_complete": "Spiel beendet!",
+    "current_standings": "Aktuelle Platzierung",
+    "winner_title": "Endstand",
+    "no_players": "Noch keine Spieler",
+    "invalid_image": "Bitte wähle eine gültige Bilddatei",
+    "image_too_large": "Bild muss kleiner als 2MB sein",
+    "avatar_updated": "Avatar erfolgreich aktualisiert!",
+    "avatar_error": "Fehler beim Aktualisieren des Avatars. Bitte versuche es erneut."
   },
   "settings": {
     "title": "Einstellungen",

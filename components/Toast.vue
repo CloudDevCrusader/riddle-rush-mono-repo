@@ -199,29 +199,63 @@ const removeToast = (id: string) => {
   }
 }
 
-/* Mobile Responsive */
+/* Mobile Responsive - Optimized for Pixel 7 Pro (412px width) */
 @media (max-width: 640px) {
   .toast-container {
-    top: var(--spacing-md);
-    right: var(--spacing-sm);
-    left: var(--spacing-sm);
+    top: max(var(--spacing-md), env(safe-area-inset-top, 0px));
+    right: max(var(--spacing-sm), env(safe-area-inset-right, 0px));
+    left: max(var(--spacing-sm), env(safe-area-inset-left, 0px));
     width: auto;
-    max-width: none;
+    max-width: calc(100% - max(var(--spacing-sm), env(safe-area-inset-right, 0px)) * 2);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .toast {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
     min-height: 56px;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .toast-icon {
     font-size: 20px;
     width: 28px;
     height: 28px;
+    flex-shrink: 0;
   }
 
   .toast-message {
-    font-size: var(--font-size-sm);
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .toast-close {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    flex-shrink: 0;
+  }
+}
+
+/* Pixel 7 Pro specific optimizations (412px width, 19.5:9 aspect) */
+@media (max-width: 450px) and (min-height: 800px) {
+  .toast-container {
+    top: max(var(--spacing-lg), env(safe-area-inset-top, 0px) + var(--spacing-sm));
+    right: max(var(--spacing-md), env(safe-area-inset-right, 0px));
+    left: max(var(--spacing-md), env(safe-area-inset-left, 0px));
+  }
+
+  .toast {
+    padding: var(--spacing-md) var(--spacing-lg);
+    min-height: 60px;
+    border-radius: var(--radius-md);
+  }
+
+  .toast-message {
+    font-size: clamp(0.9rem, 2.8vw, 1.05rem);
   }
 }
 </style>

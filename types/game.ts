@@ -20,6 +20,7 @@ export interface Player {
   currentRoundScore: number
   currentRoundAnswer?: string
   hasSubmitted: boolean
+  avatar?: string // URL or data URL for player avatar image
 }
 
 export interface PlayerWithRank extends Player {

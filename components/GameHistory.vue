@@ -169,7 +169,10 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md);
+  padding: max(var(--spacing-md), env(safe-area-inset-top, 0px)) 
+           max(var(--spacing-md), env(safe-area-inset-right, 0px))
+           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+           max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .game-history-panel {
@@ -406,16 +409,49 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   transform: scale(0.9) translateY(30px);
 }
 
-/* Responsive */
+/* Responsive - Optimized for Pixel 7 Pro */
 @media (max-width: 640px) {
+  .game-history-overlay {
+    padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
+             max(var(--spacing-md), env(safe-area-inset-right, 0px))
+             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+  }
+
   .game-history-panel {
-    max-width: 95vw;
+    max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .close-btn {
+    width: clamp(36px, 8vw, 44px);
+    height: clamp(36px, 8vw, 44px);
+    min-width: 36px;
+    min-height: 36px;
   }
 
   .game-header-row {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-sm);
+  }
+
+  .history-header {
+    padding: var(--spacing-lg);
+  }
+
+  .history-content {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Pixel 7 Pro specific (412px width, tall screen) */
+@media (max-width: 450px) and (min-height: 800px) {
+  .game-history-panel {
+    max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
   }
 }
 </style>

@@ -8,7 +8,12 @@
       @complete="onSplashComplete"
     />
     <NuxtLayout v-show="!showSplash">
-      <NuxtPage />
+      <Transition
+        name="page"
+        mode="out-in"
+      >
+        <NuxtPage :key="$route.path" />
+      </Transition>
     </NuxtLayout>
     <Toast />
     <DebugPanel v-show="!showSplash" />
@@ -69,6 +74,61 @@ useHead({
   min-height: 100vh;
   min-height: 100dvh;
   width: 100%;
+  max-width: 100vw;
   position: relative;
+  overflow-x: hidden;
+  /* Mobile-first: Optimize rendering */
+  -webkit-overflow-scrolling: touch;
+  /* Prevent layout shifts */
+  contain: layout style paint;
+}
+
+/* Page Transition Animations - Mobile Optimized */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-active,
+  .page-leave-active {
+    transition: opacity 0.15s ease;
+  }
+
+  .page-enter-from,
+  .page-leave-to {
+    transform: none;
+  }
+}
+
+/* Mobile-first: Ensure smooth transitions on touch devices */
+@media (max-width: 640px) {
+  .page-enter-active,
+  .page-leave-active {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .page-enter-from {
+    transform: translateX(15px);
+  }
+
+  .page-leave-to {
+    transform: translateX(-15px);
+  }
 }
 </style>

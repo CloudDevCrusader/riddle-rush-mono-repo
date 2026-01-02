@@ -82,7 +82,9 @@
     "answer_submitted": "Answer submitted for {0}",
     "correct_answer": "Correct!",
     "incorrect_answer": "Wrong answer",
-    "no_active_session": "Please start a game first"
+    "no_active_session": "Please start a game first",
+    "error_submitting": "Failed to submit answer",
+    "wait_for_players": "Please wait for all players to submit"
   },
   "players": {
     "title": "Players",
@@ -91,7 +93,13 @@
     "removed": "{0} removed",
     "need_players": "Add at least one player to start",
     "ready": "{0} players ready!",
-    "error_start": "Failed to start game. Please try again."
+    "error_start": "Failed to start game. Please try again.",
+    "name_required": "Please enter a player name",
+    "name_too_short": "Player name must be at least 1 character",
+    "name_too_long": "Player name must be 20 characters or less",
+    "duplicate_name": "A player with this name already exists",
+    "invalid_names": "Please fix invalid player names before starting",
+    "enter_name": "Enter player name"
   },
   "menu": {
     "title": "Menu",
@@ -99,7 +107,17 @@
     "end_game": "End Game",
     "home": "Home",
     "share_score": "Share Score",
-    "close": "Close"
+    "close": "Close",
+    "play": "Play",
+    "language": "Language",
+    "credits": "Credits"
+  },
+  "pause": {
+    "title": "Game Paused",
+    "message": "Game is paused, press resume to continue",
+    "resume": "Resume",
+    "restart": "Restart",
+    "home": "Home"
   },
   "share": {
     "game_title": "Riddle Rush - The Ultimate Guessing Game",
@@ -143,7 +161,15 @@
     "clear": "Clear",
     "score": "Score",
     "category": "Category",
-    "time": "Time"
+    "time": "Time",
+    "game_complete": "Game Complete!",
+    "current_standings": "Current Standings",
+    "winner_title": "Final Standings",
+    "no_players": "No players yet",
+    "invalid_image": "Please select a valid image file",
+    "image_too_large": "Image must be smaller than 2MB",
+    "avatar_updated": "Avatar updated successfully!",
+    "avatar_error": "Failed to update avatar. Please try again."
   },
   "settings": {
     "title": "Settings",

@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     baseURL: process.env.BASE_URL || (process.env.CI ? '/guess-game-nuxt-pwa/' : '/'),
     head: {
       charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes',
+      viewport: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover',
       title: 'Riddle Rush - The Ultimate Guessing Game',
       meta: [
         { name: 'description', content: 'An exciting word guessing game for friends and family. Play offline, perfect for game nights!' },
@@ -97,6 +97,8 @@ export default defineNuxtConfig({
       background_color: '#ffffff',
       display: 'standalone',
       orientation: 'portrait',
+      display_override: ['standalone', 'fullscreen'],
+      prefer_related_applications: false,
       categories: ['games', 'entertainment'],
       lang: 'en',
       dir: 'ltr',

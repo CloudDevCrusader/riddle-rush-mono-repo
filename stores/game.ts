@@ -383,6 +383,17 @@ export const useGameStore = defineStore('game', {
       await this.saveSessionToDB()
     },
 
+    async updatePlayerAvatar(playerId: string, avatarUrl: string) {
+      if (!this.currentSession) return
+
+      const player = this.currentSession.players.find((p) => p.id === playerId)
+      if (!player) return
+
+      player.avatar = avatarUrl
+
+      await this.saveSessionToDB()
+    },
+
     async completeRound() {
       if (!this.currentSession) return
 

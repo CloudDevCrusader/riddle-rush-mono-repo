@@ -186,7 +186,10 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: var(--spacing-lg);
+  padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px)) 
+           max(var(--spacing-lg), env(safe-area-inset-right, 0px))
+           max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+           max(var(--spacing-lg), env(safe-area-inset-left, 0px));
 }
 
 .settings-card {
@@ -402,29 +405,78 @@ onMounted(() => {
   opacity: 0;
 }
 
-/* Responsive */
+/* Responsive - Optimized for Pixel 7 Pro */
 @media (max-width: 640px) {
+  .settings-overlay {
+    padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
+             max(var(--spacing-md), env(safe-area-inset-right, 0px))
+             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+  }
+
   .settings-card {
-    max-height: 95vh;
+    max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .back-btn {
+    top: max(var(--spacing-md), env(safe-area-inset-top, 0px) + var(--spacing-xs));
+    left: max(var(--spacing-md), env(safe-area-inset-left, 0px) + var(--spacing-xs));
   }
 
   .title-image {
-    width: 200px;
+    width: clamp(180px, 50vw, 240px);
   }
 
   .control-icon-wrapper {
-    width: 60px;
-    height: 60px;
+    width: clamp(56px, 12vw, 70px);
+    height: clamp(56px, 12vw, 70px);
+    min-width: 56px;
+    min-height: 56px;
   }
 
   .control-icon {
-    width: 40px;
-    height: 40px;
+    width: clamp(36px, 8vw, 48px);
+    height: clamp(36px, 8vw, 48px);
+  }
+
+  .settings-panel {
+    padding: var(--spacing-lg);
+    margin: 0 var(--spacing-md) var(--spacing-md);
+  }
+
+  .back-btn img {
+    width: clamp(36px, 8vw, 48px);
+    min-width: 36px;
+  }
+}
+
+/* Pixel 7 Pro specific (412px width, tall screen) */
+@media (max-width: 450px) and (min-height: 800px) {
+  .settings-card {
+    max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
+    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+  }
+
+  .title-image {
+    width: clamp(200px, 55vw, 260px);
+  }
+
+  .control-icon-wrapper {
+    width: clamp(60px, 13vw, 75px);
+    height: clamp(60px, 13vw, 75px);
+  }
+
+  .control-icon {
+    width: clamp(38px, 9vw, 50px);
+    height: clamp(38px, 9vw, 50px);
   }
 
   .settings-panel {
     padding: var(--spacing-xl);
-    margin: 0 var(--spacing-md) var(--spacing-md);
+    margin: 0 var(--spacing-lg) var(--spacing-lg);
   }
 }
 </style>

@@ -106,6 +106,7 @@
           maxlength="20"
           @keyup.enter="confirmAddPlayer"
           @keyup.esc="cancelAddPlayer"
+          @input="sanitizePlayerName"
         >
         <div class="input-buttons">
           <button
@@ -192,11 +193,46 @@ const showAddPlayerInput = () => {
   })
 }
 
+// Validate player name
+const isValidPlayerName = (name: string): { valid: boolean; error?: string } => {
+  const trimmed = name.trim()
+
+  if (!trimmed) {
+    return { valid: false, error: t('players.name_required', 'Please enter a player name') }
+  }
+
+  if (trimmed.length < 1) {
+    return { valid: false, error: t('players.name_too_short', 'Player name must be at least 1 character') }
+  }
+
+  if (trimmed.length > 20) {
+    return { valid: false, error: t('players.name_too_long', 'Player name must be 20 characters or less') }
+  }
+
+  // Check for duplicate names
+  if (players.value.some(p => p.name.toLowerCase() === trimmed.toLowerCase())) {
+    return { valid: false, error: t('players.duplicate_name', 'A player with this name already exists') }
+  }
+
+  return { valid: true }
+}
+
+// Sanitize player name input
+const sanitizePlayerName = () => {
+  // Remove potentially dangerous characters
+  newPlayerName.value = newPlayerName.value.replace(/[<>]/g, '')
+  // Limit length
+  if (newPlayerName.value.length > 20) {
+    newPlayerName.value = newPlayerName.value.slice(0, 20)
+  }
+}
+
 const confirmAddPlayer = () => {
   const trimmedName = newPlayerName.value.trim()
 
-  if (!trimmedName) {
-    toast.warning(t('players.name_required', 'Please enter a player name'))
+  const validation = isValidPlayerName(trimmedName)
+  if (!validation.valid) {
+    toast.warning(validation.error || t('players.name_required', 'Please enter a player name'))
     return
   }
 
@@ -222,8 +258,20 @@ const removePlayer = (index: number) => {
 }
 
 const startGame = async () => {
+  // Validate at least one player
   if (players.value.length === 0) {
-    toast.warning(t('players.need_players', 'Add players to start'))
+    toast.warning(t('players.need_players', 'Add at least one player to start'))
+    return
+  }
+
+  // Validate all player names are valid
+  const invalidPlayers = players.value.filter(p => {
+    const validation = isValidPlayerName(p.name)
+    return !validation.valid
+  })
+  
+  if (invalidPlayers.length > 0) {
+    toast.warning(t('players.invalid_names', 'Please fix invalid player names before starting'))
     return
   }
 

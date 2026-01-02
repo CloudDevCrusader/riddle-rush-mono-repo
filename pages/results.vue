@@ -111,6 +111,8 @@
         <!-- Next Button -->
         <button
           class="action-btn next-btn tap-highlight no-select"
+          :class="{ disabled: isLoading }"
+          :disabled="isLoading"
           aria-label="Continue to leaderboard"
           @click="goToLeaderboard"
         >
@@ -131,6 +133,9 @@ const { baseUrl, toast, t, goBack } = usePageSetup()
 const { goToGame, goToLeaderboard: navigateToLeaderboard } = useNavigation()
 const { gameStore, players } = useGameState()
 
+// Loading state for save operation
+const isLoading = ref(false)
+
 // Local state for scores (will be saved on navigation)
 const playerScores = ref(
   players.value.map((p) => ({
@@ -141,10 +146,13 @@ const playerScores = ref(
   })),
 )
 
+const audio = useAudio()
+
 const increaseScore = (index: number) => {
   const player = playerScores.value[index]
   if (player) {
     player.score += SCORE_INCREMENT
+    audio.playScoreIncrease()
   }
 }
 
@@ -160,6 +168,9 @@ const goToPrevious = () => {
 }
 
 const goToLeaderboard = async () => {
+  if (isLoading.value) return
+
+  isLoading.value = true
   try {
     // Save all scores to the store
     for (const playerScore of playerScores.value) {
@@ -168,6 +179,10 @@ const goToLeaderboard = async () => {
 
     // Complete the round
     await gameStore.completeRound()
+    
+    // Play round complete sound
+    const audio = useAudio()
+    audio.playRoundComplete()
 
     toast.success(t('results.scores_saved', 'Scores saved successfully!'))
 
@@ -179,6 +194,7 @@ const goToLeaderboard = async () => {
     const logger = useLogger()
     logger.error('Error saving scores:', error)
     toast.error(t('results.error_saving', 'Failed to save scores. Please try again.'))
+    isLoading.value = false
   }
 }
 
@@ -437,8 +453,15 @@ useHead({
   transform: translateY(-4px) scale(1.05);
 }
 
-.action-btn:active {
+.action-btn:active:not(:disabled) {
   transform: translateY(-2px) scale(0.98);
+}
+
+.action-btn:disabled,
+.action-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .back-large-btn img,
