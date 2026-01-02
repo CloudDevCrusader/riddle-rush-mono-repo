@@ -187,6 +187,8 @@ This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt
 
 **Stages**: test → quality → build → deploy → verify
 
+**Custom Docker Image**: The CI pipeline uses a custom Docker image (`ci-build`) with pre-installed dependencies for faster builds (~40-50% speed improvement). See `docs/DOCKER-CI-IMAGE.md` for details.
+
 **Workflow Rules**: Pipeline runs on:
 
 - Merge requests

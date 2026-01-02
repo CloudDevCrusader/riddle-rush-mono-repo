@@ -1,0 +1,41 @@
+# Custom Docker image for GitLab CI/CD
+# This image includes all dependencies pre-installed for faster builds
+
+FROM node:20-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    bash \
+    curl \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/cache/apk/*
+
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@10.27.0 --activate
+
+# Set working directory
+WORKDIR /builds
+
+# Pre-install common dependencies to cache them in the image
+# This will be updated periodically when dependencies change
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/game/package.json ./apps/game/
+COPY apps/docs/package.json ./apps/docs/
+COPY packages/config/package.json ./packages/config/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/types/package.json ./packages/types/
+
+# Install dependencies and cache them in the image
+RUN pnpm install --frozen-lockfile --prefer-offline
+
+# Clean up
+RUN rm -rf /tmp/* /var/tmp/*
+
+# Set default shell to bash
+SHELL ["/bin/bash", "-c"]
+
+# Default command
+CMD ["/bin/bash"]

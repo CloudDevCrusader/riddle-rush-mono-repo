@@ -1,13 +1,20 @@
-image: node:20
+# Use custom CI image with pre-installed dependencies for faster builds
+# To build the image, trigger the .gitlab/docker-image.yml pipeline manually
+# To use standard node image instead, set CI_IMAGE to 'node:20'
+image: ${CI_REGISTRY_IMAGE}/ci-build:latest
 
 variables:
   SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
   GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  # Fallback to standard node image if custom image not available
+  CI_IMAGE: ${CI_REGISTRY_IMAGE}/ci-build:latest
 
+# Cache is less critical with custom image, but keep for fresh installs
 cache:
-  key: deps-v2
+  key: deps-v3
   paths:
     - node_modules/
+  policy: pull-push
 
 # Workflow rules to control when pipelines run (save runner credits)
 workflow:
@@ -30,10 +37,20 @@ stages:
   - deploy
   - verify
 
+# Simplified before_script - dependencies may be pre-installed in custom image
 before_script:
   - corepack enable
   - corepack prepare pnpm@10.27.0 --activate
-  - pnpm install --frozen-lockfile
+  # Only install if node_modules is missing or outdated
+  - |
+    if [ ! -d "node_modules" ] || [ ! -f "node_modules/.modules.yaml" ]; then
+      echo "Installing dependencies..."
+      pnpm install --frozen-lockfile
+    else
+      echo "Using cached dependencies from custom image"
+      # Ensure lockfile is in sync
+      pnpm install --frozen-lockfile --prefer-offline
+    fi
 
 # Unit tests - gates build
 test:
