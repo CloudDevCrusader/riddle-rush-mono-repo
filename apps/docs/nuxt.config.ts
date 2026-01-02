@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// defineNuxtConfig is auto-imported by Nuxt
+
+import { defineNuxtConfig } from 'nuxt/config'
+
 export default defineNuxtConfig({
   modules: ['@nuxt/content'],
 
