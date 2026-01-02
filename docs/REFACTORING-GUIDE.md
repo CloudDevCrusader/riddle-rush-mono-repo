@@ -593,7 +593,7 @@ async clearAll(): Promise<boolean>
 
 **Usage:**
 ```typescript
-const db = new IndexedDBService('guess-game-db', 1)
+const db = new IndexedDBService('riddle-rush-db', 1)
 
 if (IndexedDBService.isAvailable()) {
   const size = await db.getSize()

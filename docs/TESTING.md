@@ -77,7 +77,7 @@ npm run test:e2e:production
 # or
 ./scripts/e2e-deployed.sh production
 ```
-Tests: https://djdiox.gitlab.io/guess-game-nuxt-pwa
+Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa
 
 ### Test Staging Deployment
 ```bash
@@ -85,7 +85,7 @@ npm run test:e2e:staging
 # or
 ./scripts/e2e-deployed.sh staging
 ```
-Tests: https://djdiox.gitlab.io/guess-game-nuxt-pwa/staging
+Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/staging
 
 ### Test Development Deployment
 ```bash
@@ -93,7 +93,7 @@ npm run test:e2e:dev
 # or
 ./scripts/e2e-deployed.sh dev
 ```
-Tests: https://djdiox.gitlab.io/guess-game-nuxt-pwa/dev
+Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/dev
 
 ### Custom URL
 ```bash

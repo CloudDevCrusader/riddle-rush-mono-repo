@@ -12,7 +12,7 @@ This guide explains how to deploy the Guess Game PWA to AWS using S3 and CloudFr
 
 1. [Prerequisites](#prerequisites)
 2. [Quick Deployment](#quick-deployment)
-3. [Infrastructure Setup with CloudFormation](#infrastructure-setup-with-cloudformation)
+3. [Infrastructure Setup with Terraform](#infrastructure-setup-with-terraform)
 4. [Manual Deployment](#manual-deployment)
 5. [Custom Domain Setup](#custom-domain-setup)
 6. [Continuous Deployment](#continuous-deployment)
@@ -69,7 +69,7 @@ For a complete, production-ready setup, use our CloudFormation template:
 
 ```bash
 aws cloudformation create-stack \
-  --stack-name guess-game-pwa \
+  --stack-name riddle-rush-pwa \
   --template-body file://cloudformation-template.yaml \
   --region us-east-1
 ```
@@ -83,7 +83,7 @@ aws cloudformation create-stack \
 
 ```bash
 aws cloudformation create-stack \
-  --stack-name guess-game-pwa \
+  --stack-name riddle-rush-pwa \
   --template-body file://cloudformation-template.yaml \
   --parameters \
     ParameterKey=DomainName,ParameterValue=game.example.com \
@@ -97,7 +97,7 @@ After stack creation completes (5-10 minutes):
 
 ```bash
 aws cloudformation describe-stacks \
-  --stack-name guess-game-pwa \
+  --stack-name riddle-rush-pwa \
   --query 'Stacks[0].Outputs' \
   --output table
 ```
@@ -114,12 +114,12 @@ This will show:
 ```bash
 # Get values from stack outputs
 AWS_S3_BUCKET=$(aws cloudformation describe-stacks \
-  --stack-name guess-game-pwa \
+  --stack-name riddle-rush-pwa \
   --query 'Stacks[0].Outputs[?OutputKey==`BucketName`].OutputValue' \
   --output text)
 
 AWS_CLOUDFRONT_ID=$(aws cloudformation describe-stacks \
-  --stack-name guess-game-pwa \
+  --stack-name riddle-rush-pwa \
   --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
   --output text)
 
@@ -134,7 +134,7 @@ If you prefer manual setup:
 ### 1. Create S3 Bucket
 
 ```bash
-BUCKET_NAME="my-guess-game-pwa"
+BUCKET_NAME="my-riddle-rush-pwa"
 REGION="us-east-1"
 
 # Create bucket
@@ -214,7 +214,7 @@ Follow the instructions from ACM to add DNS records for validation.
 
 ### 3. Create CloudFront Distribution
 
-Use the CloudFormation template with custom domain parameters (see above).
+Use Terraform with custom domain variables (see `infrastructure/environments/prod/terraform.tfvars.example`).
 
 ### 4. Update DNS
 
@@ -228,10 +228,7 @@ For Route 53:
 
 ```bash
 # Get your CloudFront domain
-CF_DOMAIN=$(aws cloudformation describe-stacks \
-  --stack-name guess-game-pwa \
-  --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDomainName`].OutputValue' \
-  --output text)
+CF_DOMAIN=$(cd infrastructure/environments/prod && terraform output -raw cloudfront_domain_name)
 
 # Create/update Route 53 record
 # (Use AWS Console or create a change batch JSON)
@@ -395,7 +392,7 @@ aws cloudfront create-invalidation \
 
 **Solution:** Configure CloudFront error pages to return `index.html`:
 
-This is already configured in the CloudFormation template. If setting up manually:
+This is already configured in the Terraform infrastructure. If setting up manually:
 
 1. Go to CloudFront → Your Distribution → Error Pages
 2. Create Custom Error Response:
@@ -471,7 +468,8 @@ For a small PWA with ~1,000 daily users:
 ## Support
 
 - **AWS Documentation:** https://docs.aws.amazon.com/
-- **CloudFormation:** https://docs.aws.amazon.com/cloudformation/
+- **Terraform:** https://www.terraform.io/docs
+- **Terraform AWS Provider:** https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 - **S3 Static Website:** https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html
 - **CloudFront:** https://docs.aws.amazon.com/cloudfront/
 
@@ -701,8 +699,8 @@ aws sts get-caller-identity
 Choose a globally unique name (lowercase, no special chars except hyphens):
 
 ```bash
-export AWS_S3_BUCKET=guess-game-YOUR-NAME-HERE
-# Example: export AWS_S3_BUCKET=guess-game-john-2024
+export AWS_S3_BUCKET=riddle-rush-YOUR-NAME-HERE
+# Example: export AWS_S3_BUCKET=riddle-rush-john-2024
 ```
 
 **Optional: Set region** (default is eu-central-1):
@@ -762,7 +760,7 @@ aws configure
 ### Error: "Bucket name already exists"
 ```bash
 # Choose a different name
-export AWS_S3_BUCKET=guess-game-different-name-here
+export AWS_S3_BUCKET=riddle-rush-different-name-here
 ./aws-deploy.sh production
 ```
 
@@ -914,7 +912,7 @@ Your Guess Game PWA is ready for AWS deployment. All build processes have been t
 
 ```bash
 # 1. Set your bucket name (choose unique name)
-export AWS_S3_BUCKET=guess-game-YOUR-NAME
+export AWS_S3_BUCKET=riddle-rush-YOUR-NAME
 
 # 2. Deploy
 ./aws-deploy.sh production
@@ -926,7 +924,7 @@ export AWS_S3_BUCKET=guess-game-YOUR-NAME
 
 ```bash
 # 1. Deploy to S3
-export AWS_S3_BUCKET=guess-game-YOUR-NAME
+export AWS_S3_BUCKET=riddle-rush-YOUR-NAME
 ./aws-deploy.sh production
 
 # 2. Set up CloudFront in AWS Console
@@ -990,7 +988,7 @@ Before you start tomorrow:
 ✓ Build completed
   Files generated: 196
 
-🪣 Checking S3 bucket: guess-game-YOUR-NAME...
+🪣 Checking S3 bucket: riddle-rush-YOUR-NAME...
 ✓ Bucket created and configured
 
 ☁️  Uploading to S3...
@@ -1002,7 +1000,7 @@ Before you start tomorrow:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 S3 Website URL:
-  http://guess-game-YOUR-NAME.s3-website-us-east-1.amazonaws.com
+  http://riddle-rush-YOUR-NAME.s3-website-us-east-1.amazonaws.com
 
 ✅ Done!
 ```
@@ -1154,7 +1152,7 @@ export AWS_REGION="eu-central-1"
 
 ```bash
 # Set unique bucket name (must be globally unique)
-export AWS_S3_BUCKET="guess-game-pwa-$(date +%s)"
+export AWS_S3_BUCKET="riddle-rush-pwa-$(date +%s)"
 export AWS_REGION="eu-central-1"
 # Optional: Add CloudFront ID if you have one
 # export AWS_CLOUDFRONT_ID="your-distribution-id"

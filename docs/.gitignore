@@ -1,0 +1,5 @@
+# Documentation build artifacts
+.output/
+.nuxt/
+node_modules/
+*.log

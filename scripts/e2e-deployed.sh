@@ -15,13 +15,15 @@ ENVIRONMENT=${1:-production}
 # Set base URL based on environment
 case $ENVIRONMENT in
   production)
-    BASE_URL="https://djdiox.gitlab.io/guess-game-nuxt-pwa"
+    # Note: GitLab Pages now hosts documentation, not the app
+    # Use AWS deployment URL instead
+    BASE_URL="${AWS_CLOUDFRONT_DOMAIN:-https://your-cloudfront-domain.cloudfront.net}"
     ;;
   staging)
-    BASE_URL="https://djdiox.gitlab.io/guess-game-nuxt-pwa/staging"
+    BASE_URL="${AWS_CLOUDFRONT_DOMAIN_STAGING:-https://your-staging-domain.cloudfront.net}"
     ;;
   dev)
-    BASE_URL="https://djdiox.gitlab.io/guess-game-nuxt-pwa/dev"
+    BASE_URL="${AWS_CLOUDFRONT_DOMAIN_DEV:-https://your-dev-domain.cloudfront.net}"
     ;;
   *)
     echo -e "${RED}Invalid environment: $ENVIRONMENT${NC}"

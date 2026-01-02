@@ -1,0 +1,64 @@
+{
+  "agentCanUpdateSnapshot": true,
+  "install": "pnpm install",
+  "start": "pnpm dev",
+  "workspaceType": "monorepo",
+  "packageManager": "pnpm",
+  "rootPackage": "@riddle-rush/game",
+  "workspaces": [
+    {
+      "name": "game",
+      "path": "apps/game",
+      "type": "app",
+      "commands": {
+        "dev": "pnpm --filter game dev",
+        "build": "pnpm --filter game build",
+        "test": "pnpm --filter game test"
+      }
+    },
+    {
+      "name": "docs",
+      "path": "apps/docs",
+      "type": "app",
+      "commands": {
+        "dev": "pnpm --filter docs dev",
+        "build": "pnpm --filter docs build"
+      }
+    },
+    {
+      "name": "shared",
+      "path": "packages/shared",
+      "type": "package",
+      "commands": {
+        "typecheck": "pnpm --filter shared typecheck"
+      }
+    },
+    {
+      "name": "types",
+      "path": "packages/types",
+      "type": "package",
+      "commands": {
+        "typecheck": "pnpm --filter types typecheck"
+      }
+    },
+    {
+      "name": "config",
+      "path": "packages/config",
+      "type": "package"
+    }
+  ],
+  "terminals": [
+    {
+      "name": "Yakuake",
+      "command": "zsh"
+    }
+  ],
+  "vite": {
+    "inspect": true,
+    "visualizer": true
+  },
+  "typescript": {
+    "strict": true,
+    "workspaceReferences": true
+  }
+}

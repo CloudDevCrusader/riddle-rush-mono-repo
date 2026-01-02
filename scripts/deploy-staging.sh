@@ -31,19 +31,21 @@ echo "🔍 Running pre-deploy checks..."
 echo ""
 
 echo "📦 Installing dependencies..."
-npm ci --prefer-offline
+corepack enable
+corepack prepare pnpm@10.27.0 --activate
+pnpm install --frozen-lockfile
 
 echo "✅ Running linter..."
-npm run lint || { echo "❌ Lint failed"; exit 1; }
+pnpm run lint || { echo "❌ Lint failed"; exit 1; }
 
 echo "🔷 Running type check..."
-npm run typecheck || { echo "❌ Type check failed"; exit 1; }
+pnpm run typecheck || { echo "❌ Type check failed"; exit 1; }
 
 echo "🧪 Running unit tests..."
-npm run test:unit || { echo "❌ Tests failed"; exit 1; }
+pnpm run test:unit || { echo "❌ Tests failed"; exit 1; }
 
 echo "🏗️  Building application..."
-npm run build || { echo "❌ Build failed"; exit 1; }
+pnpm run build || { echo "❌ Build failed"; exit 1; }
 
 echo ""
 echo "✅ All checks passed!"
@@ -83,7 +85,7 @@ git push -u origin $BRANCH
 
 echo ""
 echo "✅ Successfully deployed to $BRANCH!"
-echo "🔗 Pipeline: https://gitlab.com/djdiox/guess-game-nuxt-pwa/-/pipelines"
+echo "🔗 Pipeline: https://gitlab.com/djdiox/riddle-rush-nuxt-pwa/-/pipelines"
 echo ""
 
 # Return to original branch

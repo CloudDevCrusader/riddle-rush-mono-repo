@@ -1,19 +1,28 @@
-#!/bin/sh
-cd guess-game-nuxt-pwa || exit 0
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-echo "Running pre-push checks..."
+echo "🚀 Running pre-push checks..."
 
 # Check for secrets (double-check before push)
-echo "Scanning for secrets..."
-chmod +x scripts/check-secrets.sh
-./scripts/check-secrets.sh || exit 1
+if [ -f "scripts/check-secrets.sh" ]; then
+  echo "🔐 Scanning for secrets..."
+  chmod +x scripts/check-secrets.sh
+  ./scripts/check-secrets.sh || exit 1
+fi
 
-# Run type check
-echo "Type checking..."
-npm run typecheck || exit 1
+# Run type check across all packages
+echo "📘 Type checking all packages..."
+pnpm typecheck || exit 1
 
 # Run unit tests
-echo "Running unit tests..."
-npm run test:unit || exit 1
+echo "🧪 Running unit tests..."
+pnpm test:unit || exit 1
 
-echo "Pre-push checks passed!"
+# Optional: Run syncpack check
+echo "📦 Checking dependency versions..."
+pnpm syncpack:check || {
+  echo "⚠️  Dependency version mismatches found. Run 'pnpm syncpack:fix' to fix."
+  exit 1
+}
+
+echo "✅ Pre-push checks passed!"

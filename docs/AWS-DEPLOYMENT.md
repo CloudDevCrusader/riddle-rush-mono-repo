@@ -58,7 +58,7 @@ You'll be prompted for:
 
 1. Go to [AWS IAM Console](https://console.aws.amazon.com/iam/)
 2. Click "Users" → "Create user"
-3. Create user with name like `guess-game-deployer`
+3. Create user with name like `riddle-rush-deployer`
 4. Attach policies:
    - `AmazonS3FullAccess` (required for S3 deployment)
    - `CloudFrontFullAccess` (optional, for CloudFront CDN)
@@ -71,7 +71,7 @@ The simplest deployment (S3 only, no CloudFront):
 
 ```bash
 # Set your bucket name (must be globally unique)
-export AWS_S3_BUCKET=my-guess-game-app
+export AWS_S3_BUCKET=my-riddle-rush-app
 
 # Optional: Set AWS region (default: us-east-1)
 export AWS_REGION=us-east-1
@@ -89,7 +89,7 @@ The script will:
 
 **Your app will be live at:**
 ```
-http://my-guess-game-app.s3-website-us-east-1.amazonaws.com
+http://my-riddle-rush-app.s3-website-us-east-1.amazonaws.com
 ```
 
 ## Detailed Setup
@@ -103,8 +103,8 @@ S3 bucket names must be:
 - No periods (for SSL compatibility)
 
 **Good examples:**
-- `guess-game-prod-2024`
-- `my-company-guess-game`
+- `riddle-rush-prod-2024`
+- `my-company-riddle-rush`
 - `guessgame-john-doe`
 
 **Bad examples:**
@@ -178,19 +178,19 @@ Deploy to different buckets for different environments:
 
 **Production:**
 ```bash
-export AWS_S3_BUCKET=guess-game-prod
+export AWS_S3_BUCKET=riddle-rush-prod
 ./aws-deploy.sh production
 ```
 
 **Staging:**
 ```bash
-export AWS_S3_BUCKET=guess-game-staging
+export AWS_S3_BUCKET=riddle-rush-staging
 ./aws-deploy.sh staging
 ```
 
 **Development:**
 ```bash
-export AWS_S3_BUCKET=guess-game-dev
+export AWS_S3_BUCKET=riddle-rush-dev
 ./aws-deploy.sh development
 ```
 
@@ -552,4 +552,4 @@ After successful deployment:
 
 - AWS Documentation: https://docs.aws.amazon.com/
 - AWS Support: https://console.aws.amazon.com/support/
-- Project Issues: https://github.com/yourusername/guess-game-nuxt-pwa/issues
+- Project Issues: https://github.com/yourusername/riddle-rush-nuxt-pwa/issues

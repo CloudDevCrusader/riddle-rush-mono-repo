@@ -44,19 +44,21 @@ echo "🔍 Running pre-deploy checks..."
 echo ""
 
 echo "📦 Installing dependencies..."
-npm ci --prefer-offline
+corepack enable
+corepack prepare pnpm@10.27.0 --activate
+pnpm install --frozen-lockfile
 
 echo "✅ Running linter..."
-npm run lint || { echo "❌ Lint failed"; exit 1; }
+pnpm run lint || { echo "❌ Lint failed"; exit 1; }
 
 echo "🔷 Running type check..."
-npm run typecheck || { echo "❌ Type check failed"; exit 1; }
+pnpm run typecheck || { echo "❌ Type check failed"; exit 1; }
 
 echo "🧪 Running unit tests..."
-npm run test:unit || { echo "❌ Tests failed"; exit 1; }
+pnpm run test:unit || { echo "❌ Tests failed"; exit 1; }
 
 echo "🏗️  Building application..."
-npm run build || { echo "❌ Build failed"; exit 1; }
+pnpm run build || { echo "❌ Build failed"; exit 1; }
 
 echo ""
 echo "✅ All checks passed!"
@@ -67,8 +69,8 @@ if [ -n "$VERSION" ]; then
     echo "🏷️  Creating version tag: v$VERSION"
     
     # Update package.json version
-    npm version $VERSION --no-git-tag-version
-    git add package.json package-lock.json
+    pnpm version $VERSION --no-git-tag-version
+    git add package.json pnpm-lock.yaml
     git commit -m "chore(release): v$VERSION"
     
     # Create annotated tag
@@ -90,8 +92,8 @@ fi
 
 echo ""
 echo "✅ Successfully deployed to PRODUCTION!"
-echo "🔗 Pipeline: https://gitlab.com/djdiox/guess-game-nuxt-pwa/-/pipelines"
-echo "🌐 Site: https://djdiox.gitlab.io/guess-game-nuxt-pwa"
+echo "🔗 Pipeline: https://gitlab.com/djdiox/riddle-rush-nuxt-pwa/-/pipelines"
+echo "🌐 Site: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa"
 echo ""
 
 echo "🎉 Done! Check GitLab for deployment status."

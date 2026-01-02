@@ -1,0 +1,112 @@
+# Cursor IDE Rules for Riddle Rush Monorepo
+
+## Project Context
+This is a Nuxt 4 monorepo using pnpm workspaces. The project consists of:
+- `apps/game` - Main game application (Nuxt PWA)
+- `apps/docs` - Documentation site (Nuxt Content)
+- `packages/shared` - Shared utilities and constants
+- `packages/types` - Shared TypeScript types
+- `packages/config` - Shared configuration (ESLint, Prettier, Vite)
+
+## Code Style & Conventions
+
+### TypeScript
+- Use strict mode (`strict: true`)
+- Prefer type inference where possible
+- Use interfaces for object shapes, types for unions/intersections
+- Export types from `packages/types` for shared types
+- Use workspace packages: `@riddle-rush/shared`, `@riddle-rush/types`, `@riddle-rush/config`
+
+### Vue/Nuxt
+- Use Composition API with `<script setup>`
+- Auto-imported composables (no explicit imports needed)
+- Use `usePageSetup()` composable in page components
+- Use Pinia stores for state management
+- Components are auto-imported from `components/` directory
+
+### File Organization
+- Place shared utilities in `packages/shared/src`
+- Place shared types in `packages/types/src`
+- Place shared config in `packages/config`
+- Use workspace aliases: `@riddle-rush/shared`, `@riddle-rush/types`, `@riddle-rush/config`
+- Follow Nuxt auto-import conventions
+
+### Testing
+- Unit tests: `tests/unit/**/*.spec.ts` (Vitest)
+- E2E tests: `tests/e2e/**/*.spec.ts` (Playwright)
+- Use `data-testid` attributes for testable elements
+- Test workspace packages independently
+
+### Monorepo Patterns
+- Use `pnpm --filter <package>` to run commands in specific packages
+- Add dependencies to specific packages, not root
+- Use `workspace:*` protocol for internal dependencies
+- Shared configs go in `packages/config`
+- Use shared Vite config from `@riddle-rush/config/vite`
+
+### Vite Configuration
+- Use shared Vite config from `@riddle-rush/config`
+- Plugins are conditionally loaded (dev vs production)
+- Bundle visualization available at `.vite/stats.html`
+- Inspect plugin available at `/__inspect/` during dev
+
+### Git & CI/CD
+- Use conventional commits
+- Pre-commit hooks run lint-staged
+- Pre-push hooks run typecheck and unit tests
+- CI/CD uses pnpm workspaces
+
+## Common Tasks
+
+### Adding a new workspace package
+1. Create directory in `packages/`
+2. Add `package.json` with `@riddle-rush/` scope
+3. Add to `pnpm-workspace.yaml`
+4. Update root `package.json` scripts if needed
+5. Add TypeScript path mappings
+
+### Adding a new Vite plugin
+1. Add to `packages/config/vite.config.ts`
+2. Install in the app that needs it
+3. Use conditional loading (dev vs production)
+
+### Debugging
+- Use Vite inspect plugin: `?inspect` in browser or `/__inspect/`
+- Check bundle stats: `.vite/stats.html`
+- Use Debug Panel: `Ctrl+Shift+D` in game app
+- Check IndexedDB: DevTools → Application → IndexedDB
+
+## IDE-Specific
+
+### Cursor Composer
+- Prefer workspace package imports over relative paths
+- Use auto-imports when possible
+- Follow monorepo structure for file organization
+- Reference `@riddle-rush/config` for shared Vite config
+
+### Cursor Chat
+- Reference workspace packages by their scoped names
+- Use `@riddle-rush/shared`, `@riddle-rush/types`, `@riddle-rush/config` in examples
+- Consider monorepo structure when suggesting file locations
+- Mention Vite plugins when discussing build/debugging
+
+### TypeScript
+- Use path mappings from root `tsconfig.json`
+- Extend base config in workspace packages
+- Enable strict mode everywhere
+- Workspace packages have proper type exports
+
+## Performance
+- Use Vite's optimizeDeps for heavy dependencies
+- Lazy load routes and components where appropriate
+- Use manual chunks for vendor code splitting
+- Monitor bundle size with visualizer plugin
+- Use shared build config for consistency
+
+## Best Practices
+- Keep packages focused and independent
+- Share code through workspace packages, not duplication
+- Use TypeScript for all new code
+- Write tests for shared utilities
+- Document workspace package APIs
+- Use shared Vite config for consistency across apps

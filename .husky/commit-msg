@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Optional: Add commitlint if you want strict commit message format
+# Uncomment below if using commitlint
+# npx --no -- commitlint --edit "$1"
+
+# Basic commit message validation
+commit_msg=$(cat "$1")
+
+# Check minimum length
+if [ ${#commit_msg} -lt 10 ]; then
+  echo "❌ Commit message is too short. Please provide a meaningful commit message."
+  exit 1
+fi
+
+# Check for common prefixes (optional, can be customized)
+if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?:"; then
+  echo "⚠️  Consider using conventional commit format: type(scope): description"
+  echo "   Examples: feat: add new feature, fix: resolve bug, docs: update readme"
+fi

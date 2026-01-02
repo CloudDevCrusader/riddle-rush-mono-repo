@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# CI deploy script for GitLab Pages (docs)
 rm -rf public
-cp -r .output/public public
-echo "Deployed!"
+cp -r apps/docs/.output/public public
+echo "✅ Docs deployed to public/"

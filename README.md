@@ -88,7 +88,7 @@ E2E tests use the official Playwright Docker image for headless browser testing.
 ## Project Structure
 
 ```
-guess-game-nuxt-pwa/
+riddle-rush-nuxt-pwa/
 ├── app/                    # Nuxt app directory
 │   ├── app.vue            # Root component
 │   ├── assets/            # CSS and static assets

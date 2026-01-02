@@ -1,0 +1,205 @@
+{
+  "app": {
+    "title": "Riddle Rush",
+    "subtitle": "The ultimate guessing game for friends & family",
+    "description": "An exciting word guessing game for friends and family. Play offline, perfect for game nights!"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "share": "Share",
+    "back": "Back",
+    "ok": "OK",
+    "next": "NEXT",
+    "category": "Category",
+    "letter": "Letter"
+  },
+  "home": {
+    "offline_badge": "Play Offline",
+    "quick_start": "Quick Start",
+    "category_title": "Available Categories",
+    "category_description": "Categories are chosen randomly each round",
+    "load_more": "Load More Categories",
+    "about_link": "About the Game",
+    "loading_categories": "Loading categories...",
+    "starting_game": "Starting game..."
+  },
+  "features": {
+    "offline": {
+      "title": "Play Offline",
+      "description": "No internet connection required"
+    },
+    "multiplayer": {
+      "title": "Multiplayer",
+      "description": "Perfect for game nights"
+    },
+    "installable": {
+      "title": "Installable",
+      "description": "Install as an app"
+    }
+  },
+  "game": {
+    "title": "Play",
+    "round": "Round",
+    "players": "Players",
+    "current_turn": "Current Turn",
+    "score": "Score",
+    "attempts": "Attempts",
+    "starts_with": "Starts with",
+    "your_answer": "Your answer...",
+    "submit": "Submit",
+    "skip": "Skip",
+    "new_round": "New Round",
+    "checking": "Checking...",
+    "correct": "Correct! +10 points",
+    "incorrect": "Wrong answer",
+    "error_checking": "Error checking answer",
+    "other_answers": "Other solutions:",
+    "your_attempts": "Your attempts",
+    "category_loading": "Loading...",
+    "loading": "Loading...",
+    "all_submitted": "All players have submitted!",
+    "go_to_scoring": "Go to Scoring",
+    "new_round_started": "New round started!",
+    "error_starting": "Failed to start game. Please try again.",
+    "welcome": "Welcome! Guess a word from the category.",
+    "resumed": "Game resumed!",
+    "error_resuming": "Failed to load game. Starting fresh.",
+    "game_ended": "Game ended! Check your statistics.",
+    "error_ending": "Failed to save game results",
+    "multiplayer_setup": "Game started with {0} players!",
+    "error_multiplayer": "Failed to setup multiplayer game",
+    "next_round": "Next round started!",
+    "error_next_round": "Failed to start next round",
+    "enter_answer": "Please enter an answer",
+    "no_player": "No active player found",
+    "answer_submitted": "Answer submitted for {0}",
+    "correct_answer": "Correct!",
+    "incorrect_answer": "Wrong answer",
+    "no_active_session": "Please start a game first",
+    "error_submitting": "Failed to submit answer",
+    "wait_for_players": "Please wait for all players to submit"
+  },
+  "players": {
+    "title": "Players",
+    "max_players": "Maximum {0} players allowed",
+    "added": "{0} added!",
+    "removed": "{0} removed",
+    "need_players": "Add at least one player to start",
+    "ready": "{0} players ready!",
+    "error_start": "Failed to start game. Please try again.",
+    "name_required": "Please enter a player name",
+    "name_too_short": "Player name must be at least 1 character",
+    "name_too_long": "Player name must be 20 characters or less",
+    "duplicate_name": "A player with this name already exists",
+    "invalid_names": "Please fix invalid player names before starting",
+    "enter_name": "Enter player name"
+  },
+  "menu": {
+    "title": "Menu",
+    "settings": "Settings",
+    "end_game": "End Game",
+    "home": "Home",
+    "share_score": "Share Score",
+    "close": "Close",
+    "play": "Play",
+    "language": "Language",
+    "credits": "Credits"
+  },
+  "pause": {
+    "title": "Game Paused",
+    "message": "Game is paused, press resume to continue",
+    "resume": "Resume",
+    "restart": "Restart",
+    "home": "Home"
+  },
+  "share": {
+    "game_title": "Riddle Rush - The Ultimate Guessing Game",
+    "game_text": "Play Riddle Rush with me! An exciting word guessing game.",
+    "score_title": "My Riddle Rush Score",
+    "score_text": "I scored {score} points in Riddle Rush! 🎯",
+    "not_supported": "Sharing is not supported on this device",
+    "success": "Score shared successfully!",
+    "error": "Failed to share score"
+  },
+  "categories": {
+    "female_name": "Female Name",
+    "male_name": "Male Name",
+    "water_vehicle": "Water Vehicle",
+    "flowers": "Flowers",
+    "plants": "Plants",
+    "profession": "Profession",
+    "insect": "Insect",
+    "animal": "Animal",
+    "city": "City",
+    "country": "Country",
+    "food": "Food",
+    "drink": "Drink",
+    "sport": "Sport",
+    "music": "Music",
+    "movie": "Movie"
+  },
+  "offline": {
+    "warning": "You are offline. Some features may not work."
+  },
+  "feedback": {
+    "button": "Give Feedback",
+    "title": "How do you like the game?",
+    "placeholder": "Your feedback (optional)...",
+    "submit": "Submit",
+    "thanks": "Thank you for your feedback!"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No entries yet. Play some rounds!",
+    "clear": "Clear",
+    "score": "Score",
+    "category": "Category",
+    "time": "Time",
+    "game_complete": "Game Complete!",
+    "current_standings": "Current Standings",
+    "winner_title": "Final Standings",
+    "no_players": "No players yet",
+    "invalid_image": "Please select a valid image file",
+    "image_too_large": "Image must be smaller than 2MB",
+    "avatar_updated": "Avatar updated successfully!",
+    "avatar_error": "Failed to update avatar. Please try again."
+  },
+  "settings": {
+    "title": "Settings",
+    "sound": "Sound",
+    "leaderboard": "Show Leaderboard",
+    "debug": "Debug Mode",
+    "maxPlayers": "Max Players",
+    "reset": "Reset",
+    "sound_enabled": "Sound enabled",
+    "sound_disabled": "Sound disabled",
+    "leaderboard_enabled": "Leaderboard enabled",
+    "leaderboard_disabled": "Leaderboard disabled",
+    "language_changed": "Language changed",
+    "reset_success": "Settings reset to defaults"
+  },
+  "credits": {
+    "title": "CREDITS",
+    "game_design": "Game Design",
+    "programming": "Programming",
+    "art": "Art"
+  },
+  "language": {
+    "title": "LANGUAGE"
+  },
+  "results": {
+    "your_score": "Your Score",
+    "next": "Next",
+    "restart": "Restart",
+    "home": "Home",
+    "scores_saved": "Scores saved successfully!",
+    "error_saving": "Failed to save scores. Please try again."
+  }
+}

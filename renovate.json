@@ -1,0 +1,47 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "schedule": ["before 10am on monday"]
+    },
+    {
+      "matchPackageNames": ["nuxt", "@nuxt/*"],
+      "groupName": "Nuxt ecosystem",
+      "schedule": ["before 10am on monday"]
+    },
+    {
+      "matchPackageNames": ["vue", "@vue/*"],
+      "groupName": "Vue ecosystem",
+      "schedule": ["before 10am on monday"]
+    },
+    {
+      "matchPackageNames": ["@playwright/*", "vitest", "@vitest/*"],
+      "groupName": "Testing dependencies",
+      "schedule": ["before 10am on monday"]
+    }
+  ],
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 2,
+  "timezone": "Europe/Berlin",
+  "automerge": false,
+  "automergeType": "pr",
+  "requiredStatusChecks": ["test", "typecheck"],
+  "labels": ["dependencies", "automated"],
+  "commitMessagePrefix": "chore:",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}} to {{newVersion}}",
+  "schedule": ["before 10am on monday"]
+}
+

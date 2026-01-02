@@ -9,7 +9,7 @@
     },
 
     // Nuxt & Vue Configuration
-    "nuxt.isNuxtApp": true,
+    "nuxt.isNuxtApp": false,
     "vue.server.hybridMode": true,
     "volar.tsconfig": ".nuxt/tsconfig.app.json",
     "volar.takeOverMode.enabled": false,
@@ -19,7 +19,9 @@
     "typescript.enablePromptUseWorkspaceTsdk": true,
     "typescript.suggest.autoImports": true,
     "typescript.updateImportsOnFileMove.enabled": "always",
-    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.importModuleSpecifier": "shortest",
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+    "typescript.suggest.paths": true,
 
     // JavaScript Configuration
     "javascript.suggest.autoImports": true,
@@ -84,7 +86,8 @@
     "files.associations": {
         "*.css": "css",
         "*.scss": "scss",
-        "*.vue": "vue"
+        "*.vue": "vue",
+        "turbo.json": "jsonc"
     },
 
     // SCSS/CSS Configuration
@@ -119,5 +122,30 @@
         "typescript:S1186": {
             "level": "off"
         }
+    },
+
+    // Cursor IDE Specific
+    "cursor.cpp.disabledLanguages": [],
+    "cursor.chat.model": "claude-3.5-sonnet",
+    // Turbo & Monorepo Support
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/.nuxt": true,
+        "**/.output": true,
+        "**/dist": true,
+        "**/.vite": true,
+        "**/.turbo": true,
+        "**/turbo-*.log": true
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/**": true,
+        "**/.nuxt/**": true,
+        "**/.output/**": true,
+        "**/dist/**": true,
+        "**/.vite/**": true,
+        "**/.turbo/**": true,
+        "**/turbo-*.log": true
     }
 }

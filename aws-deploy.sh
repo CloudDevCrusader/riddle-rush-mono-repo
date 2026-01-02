@@ -11,10 +11,10 @@ set -e
 
 # Configuration
 ENVIRONMENT="${1:-production}"
-S3_BUCKET="${AWS_S3_BUCKET:-guess-game-pwa}"
+S3_BUCKET="${AWS_S3_BUCKET:-riddle-rush-pwa}"
 CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
 AWS_REGION="${AWS_REGION:-eu-central-1}"
-BUILD_DIR=".output/public"
+BUILD_DIR="apps/game/.output/public"
 
 # Colors for output
 RED='\033[0;31m'
@@ -54,19 +54,21 @@ if [ -z "$CI" ]; then
   pnpm install --frozen-lockfile
 
   echo -e "\n✅ Running linter..."
-  pnpm run lint || { echo -e "${RED}❌ Lint failed${NC}"; exit 1; }
+  cd apps/game && pnpm run lint || { echo -e "${RED}❌ Lint failed${NC}"; exit 1; }
 
   echo -e "\n🔷 Running type check..."
-  pnpm run typecheck || { echo -e "${RED}❌ Type check failed${NC}"; exit 1; }
+  cd apps/game && pnpm run typecheck || { echo -e "${RED}❌ Type check failed${NC}"; exit 1; }
 
   echo -e "\n🧪 Running unit tests..."
-  pnpm run test:unit || { echo -e "${RED}❌ Tests failed${NC}"; exit 1; }
+  cd apps/game && pnpm run test:unit || { echo -e "${RED}❌ Tests failed${NC}"; exit 1; }
 
   echo -e "${GREEN}✓ All pre-deployment checks passed${NC}"
 
   # Build the application
   echo -e "\n🏗️  Building application..."
+  cd apps/game
   BASE_URL=/ pnpm run generate
+  cd ../..
 else
   echo -e "\n⏭️  Skipping pre-deployment checks (already done in CI pipeline)"
   echo -e "\n⏭️  Using existing build from CI pipeline"

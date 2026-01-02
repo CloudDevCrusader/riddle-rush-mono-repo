@@ -1,10 +1,17 @@
-#!/bin/sh
-cd guess-game-nuxt-pwa || exit 0
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
 
 # Check for secrets
-echo "Scanning for secrets..."
-chmod +x scripts/check-secrets.sh
-./scripts/check-secrets.sh || exit 1
+if [ -f "scripts/check-secrets.sh" ]; then
+  echo "🔐 Scanning for secrets..."
+  chmod +x scripts/check-secrets.sh
+  ./scripts/check-secrets.sh || exit 1
+fi
 
-# Run lint-staged
-npx lint-staged
+# Run lint-staged for monorepo
+echo "📝 Running lint-staged..."
+pnpm lint-staged || exit 1
+
+echo "✅ Pre-commit checks passed!"

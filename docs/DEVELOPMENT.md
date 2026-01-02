@@ -505,7 +505,7 @@ You need to set the following variables in your GitLab project settings (Setting
 
 2. **SONAR_PROJECT_KEY** (Not masked, Protected)
    - Format: `organization_project-name`
-   - Example: `myorg_guess-game-nuxt-pwa`
+   - Example: `myorg_riddle-rush-nuxt-pwa`
    - Found in SonarCloud project settings
 
 3. **SONAR_ORGANIZATION** (Not masked, Protected)
@@ -768,7 +768,7 @@ A **complete 100% Progressive Web App** with all requested features:
 ## 🚀 Getting Started
 
 ```bash
-cd /home/cloudcrusader/projects/guess-game-main-repository/guess-game-nuxt-pwa
+cd /home/cloudcrusader/projects/guess-game-main-repository/riddle-rush-nuxt-pwa
 
 # Install dependencies (if not already done)
 npm install
@@ -816,7 +816,7 @@ npm run test:e2e:ui
 1. Open http://localhost:3000/game
 2. Play a game
 3. Open DevTools → Application → IndexedDB
-4. See `guess-game-db` with your session data!
+4. See `riddle-rush-db` with your session data!
 
 ## 📁 Project Location
 
@@ -824,7 +824,7 @@ npm run test:e2e:ui
 /home/cloudcrusader/projects/guess-game-main-repository/
 ├── guess-game-reloaded/          # Original project
 ├── guess-game-rest-api/          # Original API (now integrated)
-└── guess-game-nuxt-pwa/          # ⭐ NEW PWA PROJECT
+└── riddle-rush-nuxt-pwa/          # ⭐ NEW PWA PROJECT
 ```
 
 ## 🎨 PWA Icons (To Do)
@@ -846,7 +846,7 @@ convert public/pwa-icon-template.svg -resize 512x512 public/pwa-512x512.png
 ## 🔧 Key Files
 
 ```
-guess-game-nuxt-pwa/
+riddle-rush-nuxt-pwa/
 ├── nuxt.config.ts              # PWA configuration
 ├── app.vue                     # Root component
 ├── pages/

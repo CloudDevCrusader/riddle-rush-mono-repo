@@ -1,0 +1,40 @@
+{
+  "source": [
+    "package.json",
+    "apps/*/package.json",
+    "packages/*/package.json"
+  ],
+  "dependencyTypes": [
+    "dev",
+    "peer",
+    "prod"
+  ],
+  "semverGroups": [
+    {
+      "label": "Use exact versions for workspace packages",
+      "packages": ["**"],
+      "dependencies": ["@riddle-rush/**"],
+      "isIgnored": false,
+      "range": ""
+    },
+    {
+      "label": "Use caret for other dependencies",
+      "packages": ["**"],
+      "dependencies": ["**"],
+      "isIgnored": false,
+      "range": "^"
+    }
+  ],
+  "versionGroups": [
+    {
+      "label": "Keep workspace packages in sync",
+      "packages": ["**"],
+      "dependencies": ["@riddle-rush/**"],
+      "isIgnored": false
+    }
+  ],
+  "lintRules": {
+    "forbidden": [],
+    "required": []
+  }
+}

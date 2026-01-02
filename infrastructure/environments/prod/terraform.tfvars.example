@@ -1,0 +1,17 @@
+# Production Environment Variables
+# Copy this to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to version control
+
+project_name = "riddle-rush-pwa"
+aws_region   = "eu-central-1"
+
+# If you have an existing bucket, specify it here for import
+# Leave empty for auto-generated name
+bucket_name = ""
+
+# Optional: Custom domain
+# domain_name = "riddlerush.com"
+# certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/..."
+
+cloudfront_price_class = "PriceClass_100"
+
