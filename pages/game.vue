@@ -1,310 +1,110 @@
 <template>
   <div class="game-page">
-    <!-- Loading Spinner -->
-    <Spinner
-      v-if="loading"
-      overlay
-      size="lg"
-      :label="$t('game.loading')"
-    />
-
     <!-- Background -->
     <div class="game-bg" />
 
-    <!-- Header -->
+    <!-- Top Bar -->
     <header class="game-header">
+      <!-- Back Button -->
       <button
         data-testid="back-button"
         class="back-btn tap-highlight no-select"
         @click="goHome"
       >
-        <span>←</span>
+        <img
+          src="/assets/alphabets/back.png"
+          alt="Back"
+          class="back-icon"
+        >
       </button>
 
-      <div
-        class="score-display"
-        data-testid="score-display"
-      >
-        <div class="score-item">
-          <span class="score-label">{{ $t('game.round', 'Round') }}</span>
-          <span
-            class="score-value"
-            data-testid="round-value"
-          >{{ currentRound }}</span>
-        </div>
-        <div class="score-divider" />
-        <div class="score-item">
-          <span class="score-label">{{ $t('game.players', 'Players') }}</span>
-          <span
-            class="score-value"
-            data-testid="score-value"
-          >{{ players.length }}</span>
-        </div>
+      <!-- Round Indicator -->
+      <div class="round-indicator">
+        <span class="round-text">ROUND {{ formattedRound }}</span>
       </div>
 
-      <button
-        data-testid="menu-button"
-        class="menu-btn tap-highlight no-select"
-        @click="showMenu = !showMenu"
-      >
-        <span>⋮</span>
-      </button>
+      <!-- Empty space (no coin count) -->
+      <div class="header-spacer" />
     </header>
 
     <!-- Main Game Area -->
     <div class="game-container">
-      <!-- Category Card -->
-      <div class="category-display animate-scale-in">
-        <div class="category-badge">
-          <span class="category-emoji">{{ categoryEmoji }}</span>
-        </div>
-        <h2
-          class="category-title"
-          data-testid="category-name"
+      <!-- Category Panel -->
+      <div class="category-panel">
+        <img
+          :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
+          alt="Category"
+          class="category-label-image"
         >
-          {{ currentCategory?.name || $t('game.category_loading') }}
-        </h2>
-        <div class="letter-display">
-          <span class="letter-label">{{ $t('game.starts_with') }}</span>
-          <span
-            class="letter-value"
-            data-testid="letter-value"
-          >{{ currentLetter ? currentLetter.toUpperCase() : '' }}</span>
+        <div class="category-label">
+          CATEGORY
+        </div>
+        <div class="category-name">
+          {{ currentCategory?.name?.toUpperCase() || 'LOADING...' }}
         </div>
       </div>
 
-      <!-- Player Turn Indicator -->
-      <div
-        v-if="currentPlayerTurn"
-        class="player-turn-card animate-slide-up"
-      >
-        <span class="player-turn-label">{{ $t('game.current_turn', "Current Turn") }}:</span>
-        <span class="player-turn-name">{{ currentPlayerTurn.name }}</span>
+      <!-- Large Letter Display -->
+      <div class="letter-display">
+        <span class="letter-value">{{ currentLetter ? currentLetter.toUpperCase() : 'A' }}</span>
       </div>
 
-      <!-- All Players Submitted -->
+      <!-- Player Answer Input (for multiplayer) -->
       <div
-        v-if="allPlayersSubmitted"
-        class="all-submitted-card animate-scale-in"
+        v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
+        class="answer-input-section"
       >
-        <p class="all-submitted-text">
-          {{ $t('game.all_submitted', 'All players have submitted!') }}
-        </p>
-        <button
-          class="btn btn-primary tap-highlight no-select"
-          @click="router.push('/results')"
-        >
-          {{ $t('game.go_to_scoring', 'Go to Scoring') }}
-        </button>
-      </div>
-
-      <!-- Input Card -->
-      <div class="input-card animate-slide-up">
+        <div class="player-turn-indicator">
+          <span class="turn-label">{{ $t('game.current_turn', 'Current Turn') }}:</span>
+          <span class="turn-name">{{ currentPlayerTurn.name }}</span>
+        </div>
         <form
           class="answer-form"
-          @submit.prevent="validateWord"
+          @submit.prevent="submitAnswer"
         >
-          <div class="input-wrapper">
-            <input
-              id="term"
-              ref="answerInput"
-              v-model="result"
-              type="text"
-              data-testid="answer-input"
-              class="answer-input tap-highlight"
-              :placeholder="$t('game.your_answer')"
-              :disabled="loading || !currentCategory"
-              autocomplete="off"
-              autocapitalize="words"
-            >
-            <button
-              type="submit"
-              data-testid="submit-answer-button"
-              class="submit-btn tap-highlight no-select"
-              :disabled="loading || !result.trim()"
-              :class="{ loading }"
-            >
-              <span
-                v-if="!loading"
-                class="submit-icon"
-              >✓</span>
-              <span
-                v-else
-                class="loading-spinner"
-              />
-            </button>
-          </div>
+          <input
+            v-model="playerAnswer"
+            type="text"
+            class="answer-input"
+            :placeholder="$t('game.your_answer', 'Your answer...')"
+            autocomplete="off"
+            autocapitalize="words"
+          >
+          <button
+            type="submit"
+            class="submit-answer-btn"
+            :disabled="!playerAnswer.trim()"
+          >
+            {{ $t('game.submit', 'Submit') }}
+          </button>
         </form>
       </div>
 
-      <!-- Feedback Display -->
-      <transition name="feedback">
-        <div
-          v-if="output"
-          class="feedback-card"
-          :class="feedbackClass"
-        >
-          <div class="feedback-icon">
-            {{ feedbackIcon }}
-          </div>
-          <p class="feedback-text">
-            {{ output }}
-          </p>
-        </div>
-      </transition>
-
-      <!-- Other Answers -->
-      <transition name="slide-up">
-        <div
-          v-if="otherAnswers.length > 0"
-          class="other-answers-card"
-        >
-          <h3 class="other-answers-title">
-            {{ $t('game.other_answers') }}
-          </h3>
-          <div class="answers-grid">
-            <div
-              v-for="(answer, index) in otherAnswers"
-              :key="answer"
-              class="answer-chip"
-              :style="{ animationDelay: `${index * 50}ms` }"
-            >
-              {{ answer }}
-            </div>
-          </div>
-        </div>
-      </transition>
-
-      <!-- Attempts List -->
+      <!-- All Players Submitted Message -->
       <div
-        v-if="gameStore.currentAttempts.length > 0"
-        class="attempts-section"
+        v-if="allPlayersSubmitted"
+        class="all-submitted-message"
       >
-        <h3 class="attempts-title">
-          {{ $t('game.your_attempts') }}
-        </h3>
-        <div class="attempts-list">
-          <div
-            v-for="(attempt, index) in gameStore.currentAttempts.slice().reverse()"
-            :key="index"
-            class="attempt-item"
-            :class="{ correct: attempt.found }"
-          >
-            <span class="attempt-text">{{ attempt.term }}</span>
-            <span class="attempt-icon">{{ attempt.found ? '✓' : '✗' }}</span>
-          </div>
-        </div>
+        <p>{{ $t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="action-buttons">
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
       <button
-        data-testid="skip-button"
-        class="btn btn-outline tap-highlight no-select"
-        :disabled="loading"
-        @click="skipQuestion"
+        v-if="allPlayersSubmitted || players.length === 0"
+        data-testid="next-button"
+        class="next-btn btn-primary tap-highlight no-select"
+        @click="handleNext"
       >
-        <span>{{ $t('game.skip') }}</span>
-        <span class="btn-icon">→</span>
-      </button>
-      <button
-        data-testid="new-round-button"
-        class="btn btn-secondary tap-highlight no-select"
-        :disabled="loading"
-        @click="startGame"
-      >
-        <span>{{ $t('game.new_round') }}</span>
-        <span class="btn-icon">↻</span>
+        <img
+          src="/assets/alphabets/next.png"
+          alt="Next"
+          class="next-icon"
+        >
+        <span class="next-text">NEXT</span>
       </button>
     </div>
-
-    <!-- Menu Overlay -->
-    <transition name="fade">
-      <div
-        v-if="showMenu"
-        class="menu-overlay"
-        @click="showMenu = false"
-      >
-        <div
-          class="menu-card"
-          @click.stop
-        >
-          <h3 class="menu-title">
-            {{ $t('menu.title') }}
-          </h3>
-          <button
-            class="menu-item tap-highlight"
-            @click="showLeaderboard = true; showMenu = false"
-          >
-            <span class="menu-icon">📊</span>
-            <span>{{ $t('menu.standings', 'Standings') }}</span>
-          </button>
-          <button
-            class="menu-item tap-highlight"
-            @click="showHistory = true; showMenu = false"
-          >
-            <span class="menu-icon">📜</span>
-            <span>{{ $t('menu.history', 'History') }}</span>
-          </button>
-          <button
-            class="menu-item tap-highlight"
-            @click="openSettings"
-          >
-            <span class="menu-icon">⚙️</span>
-            <span>{{ $t('menu.settings') }}</span>
-          </button>
-          <button
-            class="menu-item tap-highlight"
-            @click="finishGame"
-          >
-            <span class="menu-icon">🏁</span>
-            <span>{{ $t('menu.finish_game', 'Finish Game') }}</span>
-          </button>
-          <button
-            class="menu-item tap-highlight"
-            @click="goHome"
-          >
-            <span class="menu-icon">🏠</span>
-            <span>{{ $t('menu.home') }}</span>
-          </button>
-          <button
-            class="menu-item tap-highlight"
-            @click="shareScore"
-          >
-            <span class="menu-icon">📤</span>
-            <span>{{ $t('menu.share_score') }}</span>
-          </button>
-          <button
-            class="menu-item menu-close tap-highlight"
-            @click="showMenu = false"
-          >
-            <span>{{ $t('menu.close') }}</span>
-          </button>
-        </div>
-      </div>
-    </transition>
-
-    <!-- Settings Modal -->
-    <SettingsModal v-model="showSettings" />
-
-    <!-- Player Leaderboard -->
-    <PlayerLeaderboard
-      :visible="showLeaderboard"
-      :players="leaderboard"
-      :is-game-completed="isGameCompleted"
-      :current-round="currentRound"
-      @close="showLeaderboard = false"
-      @continue="continueGame"
-      @finish="finishGame"
-    />
-
-    <!-- Game History -->
-    <GameHistory
-      :visible="showHistory"
-      :games="gameHistory"
-      @close="showHistory = false"
-    />
   </div>
 </template>
 
@@ -314,180 +114,66 @@ import { useGameStore } from '~/stores/game'
 const gameStore = useGameStore()
 const router = useRouter()
 const { t } = useI18n()
-const audio = useAudio()
-const { checkAnswer } = useAnswerCheck()
-const toast = useToast()
 const gameActions = useGameActions()
-
-const result = ref('')
-const output = ref('')
-const otherAnswers = ref<string[]>([])
-const loading = ref(false)
-const valid = ref(false)
-const showMenu = ref(false)
-const showSettings = ref(false)
-const showLeaderboard = ref(false)
-const showHistory = ref(false)
-const answerInput = ref<HTMLInputElement | null>(null)
+const config = useRuntimeConfig()
+const baseUrl = config.public.baseUrl
+const toast = useToast()
 
 const currentCategory = computed(() => gameStore.currentCategory)
 const currentLetter = computed(() => gameStore.currentLetter)
-const categoryEmoji = computed(() => gameStore.categoryEmoji(currentCategory.value?.name))
-const gameHistory = computed(() => gameStore.history)
-
-// Player support
+const currentRound = computed(() => gameStore.currentRound)
+const players = computed(() => gameStore.players)
 const currentPlayerTurn = computed(() => gameStore.currentPlayerTurn)
 const allPlayersSubmitted = computed(() => gameStore.allPlayersSubmitted)
-const players = computed(() => gameStore.players)
-const currentRound = computed(() => gameStore.currentRound)
-const leaderboard = computed(() => gameStore.leaderboard)
-const isGameCompleted = computed(() => gameStore.isGameCompleted)
 
-const feedbackClass = computed(() => (valid.value ? 'correct' : 'incorrect'))
-const feedbackIcon = computed(() => (valid.value ? '🎉' : '😕'))
+const playerAnswer = ref('')
 
-const resetRoundState = () => {
-  output.value = ''
-  result.value = ''
-  otherAnswers.value = []
-  valid.value = false
-}
-
-const focusInput = () => {
-  nextTick(() => {
-    answerInput.value?.focus()
-  })
-}
-
-const initializeGame = async () => {
-  resetRoundState()
-  loading.value = true
-
-  const success = await gameActions.startNewGame()
-  if (success) {
-    focusInput()
-  }
-
-  loading.value = false
-}
-
-const resumeGameOnMount = async () => {
-  const success = await gameActions.resumeOrStartGame()
-  if (success) {
-    resetRoundState()
-    focusInput()
-  }
-}
-
-const startGame = async () => {
-  await initializeGame()
-}
-
-const skipQuestion = async () => {
-  await initializeGame()
-}
-
-const validateWord = async () => {
-  const category = currentCategory.value
-  const letter = currentLetter.value
-  const term = result.value.trim()
-
-  if (!category || !letter || !term) {
-    toast.warning(t('game.enter_answer', 'Please enter an answer'))
-    return
-  }
-
-  try {
-    loading.value = true
-
-    // Check if we have players (multiplayer flow)
-    if (players.value.length > 0) {
-      // Players exist: save answer for current player without validation
-      const player = currentPlayerTurn.value
-      if (!player) {
-        toast.error(t('game.no_player', 'No active player found'))
-        return
-      }
-
-      await gameStore.submitPlayerAnswer(player.id, term)
-
-      toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
-      audio.playSuccess()
-
-      result.value = ''
-
-      // If all players submitted, navigate to results
-      if (allPlayersSubmitted.value) {
-        setTimeout(() => {
-          router.push('/results')
-        }, 1000)
-      }
-    } else {
-      // No players: validate immediately (legacy single-player)
-      const response = await checkAnswer(category.searchWord, letter, term)
-
-      valid.value = response.found
-      otherAnswers.value = response.other || []
-
-      await gameStore.submitAttempt(term, response.found)
-
-      if (response.found) {
-        output.value = t('game.correct')
-        toast.success(t('game.correct_answer', `Correct! "${term}" is in the category!`), 2500)
-        audio.playSuccess()
-      } else {
-        output.value = t('game.incorrect')
-        toast.error(t('game.incorrect_answer', `"${term}" is not in the category`), 3000)
-        audio.playError()
-      }
-
-      result.value = ''
-
-      // Keep inline feedback for continuity, but also show toast
-      setTimeout(() => {
-        output.value = ''
-      }, 2500)
-    }
-  } catch (error) {
-    console.error('Error validating word:', error)
-    toast.error(t('game.error_checking', 'Error checking answer. Please try again.'))
-    output.value = ''
-  } finally {
-    loading.value = false
-  }
-}
+const formattedRound = computed(() => {
+  const round = currentRound.value || 1
+  return round.toString().padStart(2, '0')
+})
 
 const goHome = () => {
   router.push('/')
 }
 
-const shareScore = async () => {
-  await gameActions.shareScore()
+const submitAnswer = async () => {
+  const player = currentPlayerTurn.value
+  if (!player || !playerAnswer.value.trim()) {
+    return
+  }
+
+  try {
+    await gameStore.submitPlayerAnswer(player.id, playerAnswer.value.trim())
+    toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
+    playerAnswer.value = ''
+
+    // If all players submitted, show message
+    if (allPlayersSubmitted.value) {
+      toast.info(t('game.all_submitted', 'All players have submitted!'))
+    }
+  } catch (error) {
+    console.error('Error submitting answer:', error)
+    toast.error(t('game.error_submitting', 'Failed to submit answer'))
+  }
 }
 
-const openSettings = () => {
-  showMenu.value = false
-  showSettings.value = true
-}
-
-const finishGame = async () => {
-  showMenu.value = false
-  await gameStore.completeGame()
-  showLeaderboard.value = true
-  toast.success(t('game.game_completed', 'Game completed! Check the final standings.'))
-}
-
-const continueGame = () => {
-  showLeaderboard.value = false
-  // Game continues in current state
+const handleNext = async () => {
+  // In round-based flow, NEXT goes to results/scoring screen
+  if (players.value.length > 0 && !allPlayersSubmitted.value) {
+    toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
+    return
+  }
+  router.push('/results')
 }
 
 onMounted(async () => {
-  await resumeGameOnMount()
+  // Ensure game is initialized
+  await gameActions.resumeOrStartGame()
 })
 
 useHead({
-  title: () => `${t('app.title')} - ${t('game.title', 'Spielen')}`,
+  title: () => `${t('app.title')} - ${t('game.title', 'Game')}`,
   meta: [
     {
       name: 'description',
@@ -501,7 +187,7 @@ useHead({
 .game-page {
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--bg-gradient-cool);
+  background: var(--bg-gradient-main);
   position: relative;
   overflow-x: hidden;
   display: flex;
@@ -514,9 +200,11 @@ useHead({
   left: 0;
   right: 0;
   bottom: 0;
-  background-image:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-image: url('/assets/alphabets/BACKGROUND.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
   pointer-events: none;
 }
 
@@ -527,67 +215,72 @@ useHead({
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-lg) var(--spacing-md);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-sm);
+  z-index: var(--z-base);
 }
 
-.back-btn,
-.menu-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  background: var(--color-white);
-  border: none;
+.back-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
+  border: 4px solid #ffaa00;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
 }
 
-.back-btn:active,
-.menu-btn:active {
-  transform: scale(0.95);
+.back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-.score-display {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
-  background: var(--color-white);
-  padding: var(--spacing-md) var(--spacing-xl);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+.back-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2), var(--shadow-md);
 }
 
-.score-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.score-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-gray);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.score-value {
-  font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-}
-
-.score-divider {
-  width: 2px;
+.back-icon {
+  width: 32px;
   height: 32px;
-  background: var(--color-light);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.round-indicator {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.round-text {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: var(--font-weight-bold);
+  color: #ffd700;
+  text-shadow:
+    0 0 10px rgba(255, 215, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+.header-spacer {
+  width: 64px;
+  height: 64px;
 }
 
 /* Game Container */
@@ -595,450 +288,306 @@ useHead({
   flex: 1;
   position: relative;
   padding: var(--spacing-xl) var(--spacing-md);
-  max-width: 700px;
-  width: 100%;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-/* Category Display */
-.category-display {
-  background: var(--color-white);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  text-align: center;
-  box-shadow: var(--shadow-lg);
-}
-
-.category-badge {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto var(--spacing-lg);
-  background: var(--color-secondary-gradient);
-  border-radius: var(--radius-xl);
-  display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-md);
+  gap: var(--spacing-3xl);
+  z-index: var(--z-base);
 }
 
-.category-emoji {
-  font-size: 48px;
+/* Category Panel */
+.category-panel {
+  width: 100%;
+  max-width: 600px;
+  background: linear-gradient(180deg, rgba(255, 200, 100, 0.95) 0%, rgba(255, 220, 150, 0.95) 100%);
+  border: 6px solid #ff8800;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  box-shadow:
+    0 12px 0 rgba(0, 0, 0, 0.2),
+    inset 0 2px 10px rgba(255, 255, 255, 0.3),
+    var(--shadow-xl);
+  position: relative;
+  overflow: hidden;
 }
 
-.category-title {
+.category-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 150, 50, 0.9) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.category-label-image {
+  position: absolute;
+  top: var(--spacing-md);
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(120px, 15vw, 180px);
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  z-index: 1;
+}
+
+.category-label {
+  position: relative;
+  z-index: 2;
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
   font-weight: var(--font-weight-bold);
-  color: var(--color-dark);
-  margin: 0 0 var(--spacing-lg) 0;
+  color: var(--color-white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
+.category-name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: var(--font-weight-black);
+  color: #ffd700;
+  text-shadow:
+    0 0 10px rgba(255, 215, 0, 0.5),
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(255, 215, 0, 0.3);
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+/* Letter Display */
 .letter-display {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-md);
-}
-
-.letter-label {
-  font-size: var(--font-size-base);
-  color: var(--color-gray);
-  font-weight: var(--font-weight-medium);
+  width: 100%;
+  max-width: 500px;
 }
 
 .letter-value {
   font-family: var(--font-display);
-  font-size: var(--font-size-3xl);
+  font-size: clamp(8rem, 25vw, 18rem);
   font-weight: var(--font-weight-black);
-  color: var(--color-primary);
-  width: 64px;
-  height: 64px;
-  background: var(--color-primary-gradient);
-  color: var(--color-white);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-md);
+  color: #44c8ff;
+  text-shadow:
+    0 0 20px rgba(68, 200, 255, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(68, 200, 255, 0.4),
+    inset 0 -20px 30px rgba(10, 107, 194, 0.3);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  position: relative;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
 }
 
-/* Player Turn Card */
-.player-turn-card {
-  background: var(--color-white);
+.letter-value::before {
+  content: attr(data-letter);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: rgba(255, 255, 255, 0.2);
+  transform: translate(2px, 2px);
+  z-index: -1;
+}
+
+/* Answer Input Section */
+.answer-input-section {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 4px solid #ffaa00;
   border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.15),
+    var(--shadow-lg);
+}
+
+.player-turn-indicator {
   text-align: center;
-  box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
 }
 
-.player-turn-label {
-  font-size: var(--font-size-sm);
-  color: var(--color-gray);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.player-turn-name {
+.turn-label {
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-dark);
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.turn-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
+  display: block;
 }
 
-/* All Submitted Card */
-.all-submitted-card {
-  background: var(--bg-gradient-success);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  text-align: center;
-  box-shadow: var(--shadow-lg);
+.answer-form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.all-submitted-text {
-  font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-white);
-  margin: 0;
-}
-
-/* Input Card */
-.input-card {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-lg);
-}
-
-.input-wrapper {
-  display: flex;
   gap: var(--spacing-md);
 }
 
 .answer-input {
-  flex: 1;
+  width: 100%;
   padding: var(--spacing-lg);
-  font-family: var(--font-primary);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  border: 2px solid var(--color-light);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  font-weight: var(--font-weight-semibold);
+  border: 3px solid var(--color-primary);
   border-radius: var(--radius-md);
-  background: var(--color-light);
+  background: var(--color-white);
+  color: var(--color-dark);
+  text-align: center;
   transition: all var(--transition-base);
 }
 
 .answer-input:focus {
   outline: none;
-  border-color: var(--color-primary);
-  background: var(--color-white);
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+  border-color: #ffaa00;
+  box-shadow: 0 0 0 4px rgba(255, 170, 0, 0.2);
 }
 
-.answer-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.submit-btn {
-  width: 56px;
-  height: 56px;
+.submit-answer-btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--bg-gradient-success);
+  border: 3px solid #ffaa00;
   border-radius: var(--radius-md);
-  border: none;
-  background: var(--color-primary-gradient);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: var(--font-weight-bold);
   color: var(--color-white);
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 6px 0 rgba(58, 140, 20, 0.3);
 }
 
-.submit-btn:not(:disabled):active {
-  transform: scale(0.95);
+.submit-answer-btn:not(:disabled):active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 rgba(58, 140, 20, 0.3);
 }
 
-.submit-btn:disabled {
+.submit-answer-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.submit-icon {
-  display: block;
-}
-
-.loading-spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-top-color: var(--color-white);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Feedback Card */
-.feedback-card {
-  background: var(--color-white);
+.all-submitted-message {
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-gradient-success);
+  border: 4px solid #ffaa00;
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
+  text-align: center;
   box-shadow: var(--shadow-lg);
 }
 
-.feedback-card.correct {
-  background: var(--bg-gradient-success);
-  color: var(--color-white);
-}
-
-.feedback-card.incorrect {
-  background: var(--bg-gradient-error);
-  color: var(--color-white);
-}
-
-.feedback-icon {
-  font-size: 48px;
-}
-
-.feedback-text {
-  flex: 1;
+.all-submitted-message p {
   font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   margin: 0;
 }
 
-/* Transitions */
-.feedback-enter-active {
-  animation: scaleIn var(--transition-base) ease-out;
-}
-
-.feedback-leave-active {
-  animation: scaleIn var(--transition-base) ease-out reverse;
-}
-
-/* Other Answers */
-.other-answers-card {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-md);
-}
-
-.other-answers-title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-dark);
-  margin: 0 0 var(--spacing-md) 0;
-  text-align: center;
-}
-
-.answers-grid {
+/* Bottom Navigation */
+.bottom-nav {
+  position: relative;
+  padding: var(--spacing-xl) var(--spacing-md);
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
   justify-content: center;
+  z-index: var(--z-base);
 }
 
-.answer-chip {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--color-secondary-gradient);
-  color: var(--color-white);
-  border-radius: var(--radius-full);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
-  box-shadow: var(--shadow-sm);
-  animation: scaleIn var(--transition-base) ease-out backwards;
-}
-
-.slide-up-enter-active {
-  animation: slideInUp var(--transition-slow) ease-out;
-}
-
-.slide-up-leave-active {
-  animation: slideInUp var(--transition-slow) ease-out reverse;
-}
-
-/* Attempts */
-.attempts-section {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-md);
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.attempts-title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-dark);
-  margin: 0 0 var(--spacing-md) 0;
-  text-align: center;
-}
-
-.attempts-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.attempt-item {
+.next-btn {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-light);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-}
-
-.attempt-item.correct {
-  background: rgba(46, 204, 113, 0.1);
-  border-left: 4px solid var(--color-accent-green);
-}
-
-.attempt-text {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-dark);
-}
-
-.attempt-icon {
-  font-size: 20px;
-}
-
-/* Action Buttons */
-.action-buttons {
-  position: relative;
-  display: flex;
+  justify-content: center;
   gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  max-width: 700px;
-  width: 100%;
-  margin: 0 auto;
+  min-width: 200px;
+  padding: var(--spacing-lg) var(--spacing-3xl);
+  background: var(--bg-gradient-success);
+  border: 4px solid #ffaa00;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 12px 0 rgba(58, 140, 20, 0.4),
+    inset 0 2px 10px rgba(255, 255, 255, 0.3),
+    var(--shadow-xl);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
 }
 
-.action-buttons .btn {
-  flex: 1;
-}
-
-/* Menu Overlay */
-.menu-overlay {
-  position: fixed;
+.next-btn::before {
+  content: '';
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: var(--z-modal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-md);
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  pointer-events: none;
 }
 
-.menu-card {
-  background: var(--color-white);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  max-width: 400px;
-  width: 100%;
-  box-shadow: var(--shadow-xl);
-  animation: scaleIn var(--transition-base) ease-out;
+.next-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 6px 0 rgba(58, 140, 20, 0.4),
+    inset 0 2px 10px rgba(255, 255, 255, 0.2),
+    var(--shadow-lg);
 }
 
-.menu-title {
+.next-icon {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.next-text {
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
   font-weight: var(--font-weight-bold);
-  color: var(--color-dark);
-  margin: 0 0 var(--spacing-xl) 0;
-  text-align: center;
-}
-
-.menu-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: var(--color-light);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-dark);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  margin-bottom: var(--spacing-sm);
-}
-
-.menu-item:last-child {
-  margin-bottom: 0;
-}
-
-.menu-item:hover {
-  background: var(--color-gray-light);
-  transform: translateX(4px);
-}
-
-.menu-item:active {
-  transform: translateX(2px);
-}
-
-.menu-icon {
-  font-size: 24px;
-}
-
-.menu-close {
-  background: var(--color-primary);
   color: var(--color-white);
-  margin-top: var(--spacing-lg);
-  justify-content: center;
-}
-
-.menu-close:hover {
-  background: var(--color-primary-dark);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity var(--transition-base);
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .score-display {
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-md);
+  .game-header {
+    padding: var(--spacing-md);
   }
 
-  .score-value {
-    font-size: var(--font-size-xl);
+  .back-btn,
+  .header-spacer {
+    width: 56px;
+    height: 56px;
+  }
+
+  .back-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .category-panel {
+    padding: var(--spacing-lg) var(--spacing-xl);
+  }
+
+  .game-container {
+    gap: var(--spacing-2xl);
   }
 }
 </style>

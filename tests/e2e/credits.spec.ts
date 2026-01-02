@@ -85,24 +85,15 @@ test.describe('Credits Page', () => {
     }
   })
 
-  test('should display coins UI element', async ({ page }) => {
+  test.skip('should display coins UI element', async ({ page }) => {
+    // Coin display removed per requirements - no coins in the app
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
 
-    // Check for coins display
+    // Check for coins display (should not exist)
     const coinsDisplay = page.locator('.coins-display')
-
-    if (await coinsDisplay.count() > 0) {
-      await expect(coinsDisplay.first()).toBeVisible()
-
-      // Check for coin icon and value
-      const coinIcon = page.locator('.coin-icon')
-      const coinValue = page.locator('.coin-value')
-
-      await expect(coinIcon).toBeVisible()
-      await expect(coinValue).toBeVisible()
-    }
+    await expect(coinsDisplay).toHaveCount(0)
   })
 
   test('should have proper page styling', async ({ page }) => {

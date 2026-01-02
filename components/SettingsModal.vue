@@ -9,122 +9,118 @@
         class="settings-card"
         @click.stop
       >
-        <div class="settings-header">
-          <h2 class="settings-title">
-            {{ $t('settings.title') }}
-          </h2>
-          <button
-            class="close-btn tap-highlight no-select"
-            @click="closeModal"
+        <!-- Background Image -->
+        <img
+          :src="`${baseUrl}assets/settings/BACKGROUND.png`"
+          alt="Background"
+          class="settings-bg"
+        >
+
+        <!-- Back Button -->
+        <button
+          class="back-btn tap-highlight no-select"
+          @click="closeModal"
+        >
+          <img
+            :src="`${baseUrl}assets/settings/back.png`"
+            alt="Back"
           >
-            ✕
-          </button>
+        </button>
+
+        <!-- Title -->
+        <div class="title-container">
+          <img
+            :src="`${baseUrl}assets/settings/options.png`"
+            alt="OPTIONS"
+            class="title-image"
+          >
         </div>
 
-        <div class="settings-content">
-          <!-- Sound Toggle -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <span class="setting-icon">🔊</span>
-              <span class="setting-label">{{ $t('settings.sound') }}</span>
-            </div>
-            <button
-              class="toggle-btn tap-highlight no-select"
-              :class="{ active: settingsStore.soundEnabled }"
-              @click="toggleSound"
-            >
-              <span class="toggle-slider" />
-            </button>
-          </div>
-
-          <!-- Leaderboard Toggle -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <span class="setting-icon">🏆</span>
-              <span class="setting-label">{{ $t('settings.leaderboard') }}</span>
-            </div>
-            <button
-              class="toggle-btn tap-highlight no-select"
-              :class="{ active: settingsStore.leaderboardEnabled }"
-              @click="toggleLeaderboard"
-            >
-              <span class="toggle-slider" />
-            </button>
-          </div>
-
-          <!-- Debug Mode Toggle -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <span class="setting-icon">🐛</span>
-              <span class="setting-label">{{ $t('settings.debug') }}</span>
-            </div>
-            <button
-              class="toggle-btn tap-highlight no-select"
-              :class="{ active: settingsStore.debugMode }"
-              @click="toggleDebug"
-            >
-              <span class="toggle-slider" />
-            </button>
-          </div>
-
-          <!-- Max Players -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <span class="setting-icon">👥</span>
-              <span class="setting-label">{{ $t('settings.maxPlayers') }}</span>
-            </div>
-            <div class="number-control">
-              <button
-                class="number-btn tap-highlight no-select"
-                @click="decreaseMaxPlayers"
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+          <!-- Sound Control -->
+          <div class="control-item">
+            <div class="control-icon-wrapper">
+              <img
+                :src="`${baseUrl}assets/settings/Sound.png`"
+                alt="Sound"
+                class="control-icon"
               >
-                −
-              </button>
-              <span class="number-value">{{ settingsStore.maxPlayersPerGame }}</span>
-              <button
-                class="number-btn tap-highlight no-select"
-                @click="increaseMaxPlayers"
+            </div>
+            <div class="control-content">
+              <div class="control-label">
+                sound
+              </div>
+              <div class="slider-container">
+                <input
+                  v-model.number="soundVolume"
+                  type="range"
+                  min="0"
+                  max="100"
+                  class="volume-slider"
+                  @input="updateSoundVolume"
+                >
+                <div class="slider-track">
+                  <div
+                    class="slider-fill"
+                    :style="{ width: `${soundVolume}%` }"
+                  />
+                  <div
+                    class="slider-thumb"
+                    :style="{ left: `${soundVolume}%` }"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Music Control -->
+          <div class="control-item">
+            <div class="control-icon-wrapper">
+              <img
+                :src="`${baseUrl}assets/settings/Music.png`"
+                alt="Music"
+                class="control-icon"
               >
-                +
-              </button>
             </div>
-          </div>
-
-          <!-- Language Selection -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <span class="setting-icon">🌐</span>
-              <span class="setting-label">{{ $t('language.title') }}</span>
+            <div class="control-content">
+              <div class="control-label">
+                Music
+              </div>
+              <div class="slider-container">
+                <input
+                  v-model.number="musicVolume"
+                  type="range"
+                  min="0"
+                  max="100"
+                  class="volume-slider"
+                  @input="updateMusicVolume"
+                >
+                <div class="slider-track">
+                  <div
+                    class="slider-fill"
+                    :style="{ width: `${musicVolume}%` }"
+                  />
+                  <div
+                    class="slider-thumb"
+                    :style="{ left: `${musicVolume}%` }"
+                  />
+                </div>
+              </div>
             </div>
-            <select
-              v-model="currentLocale"
-              class="language-select tap-highlight"
-              @change="changeLanguage"
-            >
-              <option value="de">
-                Deutsch
-              </option>
-              <option value="en">
-                English
-              </option>
-            </select>
           </div>
         </div>
 
-        <div class="settings-footer">
-          <button
-            class="btn btn-outline tap-highlight no-select"
-            @click="resetSettings"
+        <!-- OK Button -->
+        <button
+          class="ok-btn tap-highlight no-select"
+          @click="closeModal"
+        >
+          <img
+            :src="`${baseUrl}assets/settings/OK.png`"
+            alt="OK"
           >
-            {{ $t('settings.reset') }}
-          </button>
-          <button
-            class="btn btn-primary tap-highlight no-select"
-            @click="closeModal"
-          >
-            {{ $t('common.close') }}
-          </button>
-        </div>
+        </button>
       </div>
     </div>
   </Transition>
@@ -133,8 +129,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '~/stores/settings'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps<{
+defineProps<{
   modelValue: boolean
 }>()
 
@@ -142,64 +137,39 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
+const config = useRuntimeConfig()
+const baseUrl = config.public.baseUrl
 const settingsStore = useSettingsStore()
-const { locale } = useI18n()
-const toast = useToast()
-const { t } = useI18n()
+const router = useRouter()
 
-const currentLocale = ref(locale.value)
+const soundVolume = ref(settingsStore.soundVolume)
+const musicVolume = ref(settingsStore.musicVolume)
 
 const closeModal = () => {
   emit('update:modelValue', false)
+  // If on settings page, navigate back
+  if (window.location.pathname === '/settings') {
+    setTimeout(() => {
+      router.push('/')
+    }, 300)
+  }
 }
 
-const toggleSound = () => {
-  settingsStore.toggleSound()
-  toast.info(
-    settingsStore.soundEnabled
-      ? t('settings.sound_enabled', 'Sound enabled')
-      : t('settings.sound_disabled', 'Sound disabled'),
-  )
+const updateSoundVolume = () => {
+  settingsStore.updateSetting('soundVolume', soundVolume.value)
+  settingsStore.updateSetting('soundEnabled', soundVolume.value > 0)
 }
 
-const toggleLeaderboard = () => {
-  settingsStore.toggleLeaderboard()
-  toast.info(
-    settingsStore.leaderboardEnabled
-      ? t('settings.leaderboard_enabled', 'Leaderboard enabled')
-      : t('settings.leaderboard_disabled', 'Leaderboard disabled'),
-  )
-}
-
-const toggleDebug = () => {
-  settingsStore.toggleDebugMode()
-}
-
-const increaseMaxPlayers = () => {
-  const newValue = Math.min(settingsStore.maxPlayersPerGame + 1, 10)
-  settingsStore.updateSetting('maxPlayersPerGame', newValue)
-}
-
-const decreaseMaxPlayers = () => {
-  const newValue = Math.max(settingsStore.maxPlayersPerGame - 1, 2)
-  settingsStore.updateSetting('maxPlayersPerGame', newValue)
-}
-
-const changeLanguage = () => {
-  locale.value = currentLocale.value
-  toast.success(t('settings.language_changed', 'Language changed'))
-}
-
-const resetSettings = () => {
-  settingsStore.resetToDefaults()
-  currentLocale.value = 'de'
-  locale.value = 'de'
-  toast.success(t('settings.reset_success', 'Settings reset to defaults'))
+const updateMusicVolume = () => {
+  settingsStore.updateSetting('musicVolume', musicVolume.value)
+  settingsStore.updateSetting('musicEnabled', musicVolume.value > 0)
 }
 
 // Load settings on mount
 onMounted(() => {
   settingsStore.loadSettings()
+  soundVolume.value = settingsStore.soundVolume
+  musicVolume.value = settingsStore.musicVolume
 })
 </script>
 
@@ -220,211 +190,205 @@ onMounted(() => {
 }
 
 .settings-card {
-  background: var(--color-white);
-  border-radius: var(--radius-xl);
-  max-width: 500px;
+  position: relative;
+  max-width: 600px;
   width: 100%;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease-out;
+  animation: scaleIn 0.3s ease-out;
 }
 
-@keyframes slideUp {
+@keyframes scaleIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
-.settings-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-xl);
-  border-bottom: 1px solid var(--color-gray-light);
+.settings-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
 }
 
-.settings-title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  margin: 0;
-}
-
-.close-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.back-btn {
+  position: absolute;
+  top: var(--spacing-xl);
+  left: var(--spacing-xl);
+  z-index: 3;
+  background: none;
   border: none;
-  background: var(--color-gray-light);
-  color: var(--color-text);
-  font-size: var(--font-size-xl);
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-base);
+  padding: 0;
+  transition: transform var(--transition-base);
 }
 
-.close-btn:hover {
-  background: var(--color-gray);
-  transform: scale(1.05);
+.back-btn img {
+  width: clamp(40px, 5vw, 60px);
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-.close-btn:active {
+.back-btn:active {
   transform: scale(0.95);
 }
 
-.settings-content {
-  padding: var(--spacing-xl);
+.title-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-3xl) var(--spacing-xl) var(--spacing-xl);
+}
+
+.title-image {
+  width: clamp(200px, 30vw, 300px);
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+.settings-panel {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(68, 200, 255, 0.95) 0%, rgba(10, 107, 194, 0.95) 100%);
+  border: 6px solid #ff8800;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  margin: 0 var(--spacing-xl) var(--spacing-xl);
+  box-shadow:
+    0 12px 0 rgba(0, 0, 0, 0.2),
+    inset 0 2px 10px rgba(255, 255, 255, 0.3),
+    var(--shadow-xl);
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.control-item:last-child {
+  margin-bottom: 0;
+}
+
+.control-icon-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(68, 200, 255, 0.9) 0%, rgba(10, 107, 194, 0.9) 100%);
+  border: 4px solid #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.control-icon {
+  width: 50px;
+  height: 50px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.control-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-.setting-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-md);
-  background: var(--color-background);
-  border-radius: var(--radius-lg);
-  transition: background var(--transition-base);
-}
-
-.setting-item:hover {
-  background: var(--color-gray-light);
-}
-
-.setting-info {
-  display: flex;
-  align-items: center;
   gap: var(--spacing-md);
-  flex: 1;
 }
 
-.setting-icon {
-  font-size: 24px;
+.control-label {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-transform: lowercase;
 }
 
-.setting-label {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-}
-
-/* Toggle Button */
-.toggle-btn {
+.slider-container {
   position: relative;
-  width: 60px;
-  height: 32px;
-  border-radius: 16px;
-  border: none;
-  background: var(--color-gray);
-  cursor: pointer;
-  transition: background var(--transition-base);
-  padding: 0;
+  width: 100%;
+  height: 40px;
 }
 
-.toggle-btn.active {
-  background: var(--color-primary);
-}
-
-.toggle-slider {
+.volume-slider {
   position: absolute;
-  top: 4px;
-  left: 4px;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.slider-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 20px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, #7ed321 0%, #5fc423 50%, #8b4513 100%);
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #7ed321 0%, #5fc423 100%);
+  border-radius: 10px;
+  transition: width 0.1s ease;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 50%;
   width: 24px;
   height: 24px;
+  background: #ff5b5b;
+  border: 3px solid #ff8800;
   border-radius: 50%;
-  background: var(--color-white);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: left 0.1s ease;
+  pointer-events: none;
+}
+
+.ok-btn {
+  position: relative;
+  z-index: 2;
+  display: block;
+  margin: 0 auto var(--spacing-xl);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
   transition: transform var(--transition-base);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.toggle-btn.active .toggle-slider {
-  transform: translateX(28px);
+.ok-btn img {
+  width: clamp(150px, 25vw, 200px);
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
-/* Number Control */
-.number-control {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.number-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-md);
-  border: 2px solid var(--color-primary);
-  background: var(--color-white);
-  color: var(--color-primary);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.number-btn:hover {
-  background: var(--color-primary);
-  color: var(--color-white);
-  transform: scale(1.05);
-}
-
-.number-btn:active {
+.ok-btn:active {
   transform: scale(0.95);
-}
-
-.number-value {
-  min-width: 40px;
-  text-align: center;
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-}
-
-/* Language Select */
-.language-select {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--radius-md);
-  background: var(--color-white);
-  color: var(--color-text);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.language-select:hover {
-  background: var(--color-gray-light);
-}
-
-.language-select:focus {
-  outline: none;
-  border-color: var(--color-secondary);
-}
-
-/* Footer */
-.settings-footer {
-  display: flex;
-  gap: var(--spacing-md);
-  padding: var(--spacing-xl);
-  border-top: 1px solid var(--color-gray-light);
-}
-
-.settings-footer .btn {
-  flex: 1;
 }
 
 /* Transitions */
@@ -444,18 +408,23 @@ onMounted(() => {
     max-height: 95vh;
   }
 
-  .settings-header,
-  .settings-content,
-  .settings-footer {
-    padding: var(--spacing-lg);
+  .title-image {
+    width: 200px;
   }
 
-  .settings-title {
-    font-size: var(--font-size-xl);
+  .control-icon-wrapper {
+    width: 60px;
+    height: 60px;
   }
 
-  .setting-label {
-    font-size: var(--font-size-base);
+  .control-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .settings-panel {
+    padding: var(--spacing-xl);
+    margin: 0 var(--spacing-md) var(--spacing-md);
   }
 }
 </style>

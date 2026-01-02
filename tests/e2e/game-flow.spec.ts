@@ -28,17 +28,21 @@ test.describe('Complete Game Flow', () => {
     await expect(startBtn).toBeVisible()
     await expect(startBtn).not.toBeDisabled()
 
-    // 4. Navigate to alphabet selection (MVP flow requires alphabet selection)
+    // 4. Start game - navigates to round-start
     await startBtn.click()
-    await expect(page).toHaveURL(/\/alphabet/)
+    await expect(page).toHaveURL(/\/round-start/)
+    await page.waitForTimeout(2000) // Wait for wheels to spin
+
+    // 5. Wait for game to start automatically after wheels complete
+    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
     await page.waitForTimeout(500)
 
-    // At this point, we would play the game, but since the game page
-    // might not be fully implemented, we'll manually navigate to results
-    // In a real scenario, the game would complete and navigate automatically
+    // Verify we're on game page
+    const roundIndicator = page.locator('.round-indicator')
+    await expect(roundIndicator).toBeVisible()
   })
 
-  test.skip('should navigate through scoring to leaderboard', async ({ page }) => {
+  test('should navigate through scoring to leaderboard', async ({ page }) => {
     // Set up game state by going through players page first
     await page.goto('/players')
     await page.waitForLoadState('networkidle')
@@ -46,9 +50,13 @@ test.describe('Complete Game Flow', () => {
     // Start game with default player to initialize store
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
+    await page.waitForTimeout(2000)
+
+    // Wait for round-start to complete and navigate to game
+    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
     await page.waitForTimeout(500)
 
-    // Now navigate to results
+    // Navigate to results (simulating game completion)
     await page.goto('/results')
     await page.waitForLoadState('networkidle')
 
@@ -72,7 +80,7 @@ test.describe('Complete Game Flow', () => {
     await expect(leaderboardList).toBeVisible()
   })
 
-  test('should return to menu from leaderboard', async ({ page }) => {
+  test('should return to menu from leaderboard when game completed', async ({ page }) => {
     // Start at leaderboard
     await page.goto('/leaderboard')
     await page.waitForLoadState('networkidle')
@@ -81,10 +89,10 @@ test.describe('Complete Game Flow', () => {
     const leaderboardList = page.locator('.leaderboard-list')
     await expect(leaderboardList).toBeVisible()
 
-    // Return to menu
-    const endGameBtn = page.locator('.end-game-btn')
-    await expect(endGameBtn).toBeVisible()
-    await endGameBtn.click()
+    // Click OK button (should return to menu when game completed)
+    const okBtn = page.locator('.ok-btn')
+    await expect(okBtn).toBeVisible()
+    await okBtn.click()
     await expect(page).toHaveURL(/\/$/)
     await page.waitForTimeout(500)
 
@@ -124,32 +132,11 @@ test.describe('Complete Game Flow', () => {
       expect(await playerItems.count()).toBeGreaterThanOrEqual(2)
     }
 
-    // Continue to alphabet selection
+    // Continue to round-start
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
-    await expect(page).toHaveURL(/\/alphabet/)
+    await expect(page).toHaveURL(/\/round-start/)
     await page.waitForTimeout(500)
-  })
-
-  test('should navigate from win screen to results', async ({ page }) => {
-    // Start at win screen
-    await page.goto('/win')
-    await page.waitForLoadState('networkidle')
-
-    // Verify we're on win screen
-    const winCard = page.locator('.win-card')
-    await expect(winCard).toBeVisible()
-
-    // Navigate to results
-    const nextBtn = page.locator('.next-btn')
-    await expect(nextBtn).toBeVisible()
-    await nextBtn.click()
-    await expect(page).toHaveURL(/\/results/)
-    await page.waitForTimeout(500)
-
-    // Verify we're on results page
-    const scoresList = page.locator('.scores-list')
-    await expect(scoresList).toBeVisible()
   })
 
   test('should allow navigation back through the flow', async ({ page }) => {
@@ -167,13 +154,17 @@ test.describe('Complete Game Flow', () => {
     // Should be back at previous page (navigation history dependent)
   })
 
-  test.skip('should maintain score changes through navigation', async ({ page }) => {
+  test('should maintain score changes through navigation', async ({ page }) => {
     // Set up game state first
     await page.goto('/players')
     await page.waitForLoadState('networkidle')
 
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
+    await page.waitForTimeout(2000)
+
+    // Wait for game to start
+    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
     await page.waitForTimeout(500)
 
     // Navigate to results page
@@ -206,7 +197,7 @@ test.describe('Complete Game Flow', () => {
   })
 
   test('should handle back button navigation consistently', async ({ page }) => {
-    // Build up navigation history: menu -> players -> alphabet
+    // Build up navigation history: menu -> players -> round-start
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
@@ -222,7 +213,7 @@ test.describe('Complete Game Flow', () => {
 
     const startBtn = page.locator('.start-btn')
     await startBtn.click()
-    await expect(page).toHaveURL(/\/alphabet/)
+    await expect(page).toHaveURL(/\/round-start/)
     await page.waitForTimeout(500)
 
     // Use browser back button

@@ -6,6 +6,9 @@ export interface GameSettings {
   leaderboardEnabled: boolean
   debugMode: boolean
   soundEnabled: boolean
+  soundVolume: number
+  musicEnabled: boolean
+  musicVolume: number
   offlineMode: boolean
 }
 
@@ -15,6 +18,9 @@ const DEFAULT_SETTINGS: GameSettings = {
   leaderboardEnabled: true,
   debugMode: false,
   soundEnabled: true,
+  soundVolume: 75,
+  musicEnabled: true,
+  musicVolume: 75,
   offlineMode: false,
 }
 

@@ -7,34 +7,6 @@
       class="page-bg"
     >
 
-    <!-- Top Bar - Hidden for MVP -->
-    <!-- <div class="top-bar">
-      <div class="coin-bar">
-        <img
-          :src="`${baseUrl}assets/main-menu/COIN BAR.png`"
-          alt="Coin bar"
-          class="coin-bar-bg"
-        >
-        <img
-          :src="`${baseUrl}assets/main-menu/100.png`"
-          alt="Coins"
-          class="coin-icon"
-        >
-        <span class="coin-amount">{{ coins }}</span>
-      </div>
-
-      <button
-        class="profile-btn tap-highlight no-select"
-        @click="goToProfile"
-      >
-        <img
-          :src="`${baseUrl}assets/main-menu/profile icon  (Double Click to edit smart object).png`"
-          alt="Profile"
-          class="profile-icon"
-        >
-      </button>
-    </div> -->
-
     <!-- Main Container -->
     <div class="container">
       <!-- Logo -->
@@ -47,7 +19,10 @@
       </div>
 
       <!-- Menu Buttons -->
-      <div class="menu-buttons animate-slide-up">
+      <div
+        v-show="!showMenu"
+        class="menu-buttons animate-slide-up"
+      >
         <!-- Play Button -->
         <button
           class="menu-btn play-btn tap-highlight no-select"
@@ -98,23 +73,48 @@
             class="btn-image-hover"
           >
         </button>
-
-        <!-- Exit Button - Hidden for MVP -->
-        <!-- <button
-          class="menu-btn exit-btn tap-highlight no-select"
-          @click="handleExit"
-        >
-          <img
-            :src="`${baseUrl}assets/main-menu/EXIT.png`"
-            alt="Exit"
-            class="btn-image"
-          >
-        </button> -->
       </div>
+
+      <!-- Menu Panel (when toggled) -->
+      <transition name="menu-fade">
+        <div
+          v-if="showMenu"
+          class="menu-panel animate-scale-in"
+        >
+          <button
+            class="menu-item tap-highlight no-select"
+            @click="handlePlay"
+          >
+            <span>🎮</span>
+            <span>{{ $t('menu.play', 'Play') }}</span>
+          </button>
+          <button
+            class="menu-item tap-highlight no-select"
+            @click="goToLanguage"
+          >
+            <span>🌐</span>
+            <span>{{ $t('menu.language', 'Language') }}</span>
+          </button>
+          <button
+            class="menu-item tap-highlight no-select"
+            @click="goToSettings"
+          >
+            <span>⚙️</span>
+            <span>{{ $t('menu.settings', 'Settings') }}</span>
+          </button>
+          <button
+            class="menu-item tap-highlight no-select"
+            @click="goToCredits"
+          >
+            <span>📖</span>
+            <span>{{ $t('menu.credits', 'Credits') }}</span>
+          </button>
+        </div>
+      </transition>
     </div>
 
-    <!-- Menu Icon (bottom right) - Hidden for MVP -->
-    <!-- <button
+    <!-- Menu Toggle Button (bottom right) -->
+    <button
       class="menu-icon-btn tap-highlight no-select"
       @click="toggleMenu"
     >
@@ -123,7 +123,7 @@
         alt="Menu"
         class="menu-icon"
       >
-    </button> -->
+    </button>
   </div>
 </template>
 
@@ -135,25 +135,37 @@ const baseUrl = config.public.baseUrl
 const toast = useToast()
 const { t } = useI18n()
 
-// Check if redirected from protected page without active game
+const showMenu = ref(false)
+
+const toggleMenu = () => {
+  showMenu.value = !showMenu.value
+}
+
 onMounted(() => {
   if (route.query.needsGame === 'true') {
     toast.warning(t('game.no_active_session', 'Please start a game first'))
-    // Clean up query param
     router.replace({ query: {} })
   }
 })
 
 const handlePlay = () => {
+  showMenu.value = false
   router.push('/players')
 }
 
 const goToSettings = () => {
+  showMenu.value = false
   router.push('/settings')
 }
 
 const goToCredits = () => {
-  router.push('/about')
+  showMenu.value = false
+  router.push('/credits')
+}
+
+const goToLanguage = () => {
+  showMenu.value = false
+  router.push('/language')
 }
 
 useHead({
@@ -176,7 +188,6 @@ useHead({
   background: #1a1a2e;
 }
 
-/* Background Image */
 .page-bg {
   position: absolute;
   top: 0;
@@ -187,80 +198,6 @@ useHead({
   z-index: 1;
 }
 
-/* Top Bar */
-.top-bar {
-  position: absolute;
-  top: var(--spacing-xl);
-  left: var(--spacing-xl);
-  right: var(--spacing-xl);
-  z-index: 3;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-lg);
-  pointer-events: none;
-}
-
-.top-bar > * {
-  pointer-events: auto;
-}
-
-/* Coin Bar */
-.coin-bar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  min-width: 150px;
-}
-
-.coin-bar-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-}
-
-.coin-icon {
-  position: relative;
-  z-index: 2;
-  width: clamp(20px, 3vw, 30px);
-  height: auto;
-}
-
-.coin-amount {
-  position: relative;
-  z-index: 2;
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 2vw, var(--font-size-xl));
-  font-weight: var(--font-weight-black);
-  color: #fff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Profile Button */
-.profile-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.profile-btn:active {
-  opacity: 0.7;
-}
-
-.profile-icon {
-  width: clamp(50px, 6vw, 70px);
-  height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-/* Container */
 .container {
   position: relative;
   z-index: 2;
@@ -274,7 +211,6 @@ useHead({
   gap: var(--spacing-3xl);
 }
 
-/* Logo */
 .logo-container {
   display: flex;
   justify-content: center;
@@ -287,7 +223,6 @@ useHead({
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
 }
 
-/* Menu Buttons */
 .menu-buttons {
   display: flex;
   flex-direction: column;
@@ -337,7 +272,6 @@ useHead({
   opacity: 1;
 }
 
-/* Menu Icon (bottom right) */
 .menu-icon-btn {
   position: absolute;
   bottom: var(--spacing-xl);
@@ -351,7 +285,7 @@ useHead({
 }
 
 .menu-icon-btn:active {
-  opacity: 0.7;
+  transform: scale(0.95);
 }
 
 .menu-icon {
@@ -360,10 +294,58 @@ useHead({
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-/* Animations - Optimized for mobile gaming */
+.menu-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border: 4px solid #ffaa00;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow:
+    0 12px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-xl);
+  min-width: 250px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--color-light);
+  border: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin-bottom: var(--spacing-md);
+  text-align: left;
+}
+
+.menu-item:last-child {
+  margin-bottom: 0;
+}
+
+.menu-item:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+  transform: translateX(4px);
+}
+
+.menu-item:active {
+  transform: translateX(2px);
+}
+
+.menu-item span:first-child {
+  font-size: 24px;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, opacity;
 }
 
 @keyframes fadeIn {
@@ -379,7 +361,6 @@ useHead({
 
 .animate-slide-up {
   animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
-  will-change: transform, opacity;
 }
 
 @keyframes slideUp {
@@ -393,33 +374,32 @@ useHead({
   }
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-in,
-  .animate-slide-up {
-    animation: none;
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
     opacity: 1;
-    transform: none;
+    transform: scale(1);
   }
 }
 
-/* Responsive */
+.menu-fade-enter-active,
+.menu-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.menu-fade-enter-from,
+.menu-fade-leave-to {
+  opacity: 0;
+}
+
 @media (max-width: 640px) {
-  .top-bar {
-    top: var(--spacing-md);
-    left: var(--spacing-md);
-    right: var(--spacing-md);
-  }
-
-  .coin-bar {
-    min-width: 120px;
-    padding: var(--spacing-xs) var(--spacing-md);
-  }
-
-  .profile-icon {
-    width: 50px;
-  }
-
   .logo-image {
     width: 250px;
   }
@@ -433,10 +413,9 @@ useHead({
     width: 50px;
   }
 
-  .menu-icon-btn,
-  .top-bar {
-    bottom: var(--spacing-md);
-    right: var(--spacing-md);
+  .menu-panel {
+    min-width: 200px;
+    padding: var(--spacing-xl);
   }
 }
 </style>

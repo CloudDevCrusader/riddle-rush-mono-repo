@@ -1,78 +1,78 @@
 <template>
   <div class="credits-page">
-    <!-- Background Pattern -->
-    <div class="bg-pattern" />
+    <!-- Background Image -->
+    <img
+      :src="`${baseUrl}assets/credits/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
+    >
 
-    <!-- Header -->
-    <header class="credits-header">
-      <button
-        class="back-btn tap-highlight no-select"
-        @click="goBack"
+    <!-- Back Button -->
+    <button
+      class="back-btn tap-highlight no-select"
+      @click="goBack"
+    >
+      <img
+        :src="`${baseUrl}assets/credits/back.png`"
+        alt="Back"
       >
-        <span>←</span>
-      </button>
-
-      <div class="spacer" />
-
-      <div class="coins-display">
-        <span class="coin-icon">🪙</span>
-        <span class="coin-value">100</span>
-        <button class="add-btn tap-highlight no-select">
-          <span>+</span>
-        </button>
-      </div>
-    </header>
+    </button>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Title -->
-      <h1 class="title animate-scale-in">
-        {{ $t('credits.title', 'CREDITS') }}
-      </h1>
+      <div class="title-container animate-fade-in">
+        <img
+          :src="`${baseUrl}assets/credits/CREDITS.png`"
+          alt="CREDITS"
+          class="title-image"
+        >
+      </div>
 
-      <!-- Credits Card -->
-      <div class="credits-card animate-slide-up">
-        <div class="credits-content">
-          <!-- Game Design -->
-          <div class="credit-section">
-            <h2 class="section-heading">
-              {{ $t('credits.game_design', 'Game Design') }}
-            </h2>
-            <div class="credit-box">
-              <span class="credit-name">Tobi</span>
-              <span class="credit-divider" />
-              <span class="credit-name">sophia</span>
-            </div>
+      <!-- Credits Panel -->
+      <div class="credits-panel animate-scale-in">
+        <!-- Game Design -->
+        <div class="credit-section">
+          <h2 class="section-heading">
+            Game Design
+          </h2>
+          <div class="credit-box">
+            <span class="credit-name">Tobi</span>
+            <span class="credit-divider" />
+            <span class="credit-name">Sophia</span>
           </div>
+        </div>
 
-          <!-- Programming -->
-          <div class="credit-section">
-            <h2 class="section-heading">
-              {{ $t('credits.programming', 'Programming') }}
-            </h2>
-            <div class="credit-box">
-              <span class="credit-name">Markus</span>
-            </div>
+        <!-- Programming -->
+        <div class="credit-section">
+          <h2 class="section-heading">
+            Programming
+          </h2>
+          <div class="credit-box">
+            <span class="credit-name">Markus</span>
           </div>
+        </div>
 
-          <!-- Art -->
-          <div class="credit-section">
-            <h2 class="section-heading">
-              {{ $t('credits.art', 'Art') }}
-            </h2>
-            <div class="credit-box">
-              <span class="credit-name">sarmad Ali</span>
-            </div>
+        <!-- Art -->
+        <div class="credit-section">
+          <h2 class="section-heading">
+            Art
+          </h2>
+          <div class="credit-box">
+            <span class="credit-name">Sarmad Ali</span>
           </div>
         </div>
       </div>
 
       <!-- OK Button -->
       <button
-        class="btn btn-large btn-ok tap-highlight no-select"
+        class="ok-btn tap-highlight no-select animate-slide-up"
         @click="goBack"
       >
-        <span>{{ $t('common.ok', 'OK') }}</span>
+        <img
+          :src="`${baseUrl}assets/credits/ok.png`"
+          alt="OK"
+        >
       </button>
     </div>
   </div>
@@ -80,6 +80,8 @@
 
 <script setup lang="ts">
 const router = useRouter()
+const config = useRuntimeConfig()
+const baseUrl = config.public.baseUrl
 
 const goBack = () => {
   router.back()
@@ -101,156 +103,107 @@ useHead({
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  background: var(--bg-gradient-main);
   overflow-x: hidden;
+  background: #1a1a2e;
 }
 
-.bg-pattern {
+/* Background Image */
+.page-bg {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
 }
 
-/* Header */
-.credits-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-lg) var(--spacing-md);
-}
-
+/* Back Button */
 .back-btn {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--color-accent-red);
+  position: absolute;
+  top: var(--spacing-xl);
+  left: var(--spacing-xl);
+  z-index: 3;
+  background: none;
   border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  color: var(--color-white);
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-lg);
+  padding: 0;
+  transition: transform var(--transition-base);
+}
+
+.back-btn img {
+  width: clamp(40px, 5vw, 60px);
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 .back-btn:active {
   transform: scale(0.95);
 }
 
-.spacer {
-  flex: 1;
-}
-
-.coins-display {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  background: rgba(255, 255, 255, 0.9);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-md);
-}
-
-.coin-icon {
-  font-size: 24px;
-}
-
-.coin-value {
-  font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-dark);
-}
-
-.add-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--color-accent-green);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: var(--color-white);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
-}
-
-.add-btn:active {
-  transform: scale(0.9);
-}
-
 /* Container */
 .container {
   position: relative;
-  max-width: 600px;
+  z-index: 2;
+  max-width: 700px;
+  width: 100%;
   margin: 0 auto;
-  padding: var(--spacing-xl) var(--spacing-md);
+  padding: var(--spacing-3xl) var(--spacing-md);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-2xl);
+  gap: var(--spacing-3xl);
 }
 
 /* Title */
-.title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-black);
-  color: #FFD700;
-  text-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    -2px -2px 0 #FF8C00,
-    2px 2px 0 #FF8C00;
-  margin: 0;
-  text-align: center;
-  letter-spacing: 0.05em;
+.title-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-2xl);
 }
 
-/* Credits Card */
-.credits-card {
+.title-image {
+  width: clamp(250px, 35vw, 400px);
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* Credits Panel */
+.credits-panel {
   width: 100%;
-  background: linear-gradient(180deg, #E0F7FF 0%, #B3E5FC 100%);
+  background: linear-gradient(180deg, rgba(68, 200, 255, 0.95) 0%, rgba(10, 107, 194, 0.95) 100%);
+  border: 6px solid #ff8800;
   border-radius: var(--radius-xl);
   padding: var(--spacing-2xl);
   box-shadow:
-    var(--shadow-xl),
-    inset 0 2px 0 rgba(255, 255, 255, 0.5);
-  border: 4px solid rgba(255, 255, 255, 0.5);
-}
-
-.credits-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xl);
+    0 12px 0 rgba(0, 0, 0, 0.2),
+    inset 0 2px 10px rgba(255, 255, 255, 0.3),
+    var(--shadow-xl);
 }
 
 .credit-section {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  background: rgba(10, 75, 199, 0.8);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  border: 2px solid rgba(68, 200, 255, 0.5);
+}
+
+.credit-section:last-child {
+  margin-bottom: 0;
 }
 
 .section-heading {
   font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: #4A90E2;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: var(--font-weight-bold);
+  color: #44c8ff;
   margin: 0;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .credit-box {
@@ -258,19 +211,16 @@ useHead({
   align-items: center;
   justify-content: center;
   gap: var(--spacing-lg);
-  background: #2C5F8D;
-  padding: var(--spacing-lg) var(--spacing-xl);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  min-height: 60px;
+  flex-wrap: wrap;
+  padding: var(--spacing-md);
 }
 
 .credit-name {
   font-family: var(--font-display);
-  font-size: var(--font-size-xl);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: var(--font-weight-semibold);
   color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .credit-divider {
@@ -280,47 +230,86 @@ useHead({
 }
 
 /* OK Button */
-.btn-ok {
-  width: 100%;
-  max-width: 400px;
-  background: linear-gradient(180deg, #7ED321 0%, #5FB31F 100%);
-  color: var(--color-white);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-black);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    var(--shadow-xl),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+.ok-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-base);
 }
 
-.btn-ok:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 20px 52px rgba(0, 0, 0, 0.25),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+.ok-btn img {
+  width: clamp(150px, 25vw, 200px);
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
-.btn-ok:active {
-  transform: translateY(0);
+.ok-btn:active {
+  transform: scale(0.95);
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out 0.2s backwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out 0.4s backwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .title {
-    font-size: var(--font-size-3xl);
+  .back-btn img {
+    width: 40px;
   }
 
-  .credits-card {
+  .title-image {
+    width: 250px;
+  }
+
+  .credits-panel {
     padding: var(--spacing-xl);
   }
 
-  .section-heading {
-    font-size: var(--font-size-lg);
-  }
-
-  .credit-name {
-    font-size: var(--font-size-lg);
+  .ok-btn img {
+    width: 150px;
   }
 }
 </style>

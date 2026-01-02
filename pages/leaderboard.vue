@@ -1,10 +1,15 @@
 <template>
   <div class="leaderboard-page">
-    <!-- Background (shared bg) -->
-    <div class="page-bg" />
+    <!-- Background Image -->
+    <img
+      :src="`${baseUrl}assets/leaderboard/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
+    >
 
-    <!-- Back Button -->
+    <!-- Back Button - Only show if game is not completed -->
     <button
+      v-if="!isGameCompleted"
       class="back-btn tap-highlight no-select"
       @click="goBack"
     >
@@ -13,14 +18,6 @@
         alt="Back"
       >
     </button>
-
-    <!-- Coin Bar -->
-    <div class="coin-bar">
-      <img
-        :src="`${baseUrl}assets/leaderboard/COIN BAR.png`"
-        alt="Coin bar"
-      >
-    </div>
 
     <!-- Main Container -->
     <div class="container">
@@ -38,21 +35,20 @@
         >
       </div>
 
-      <!-- Leaderboard List Container -->
+      <!-- Leaderboard List -->
       <div class="leaderboard-list-container animate-scale-in">
         <div class="leaderboard-list">
           <div
             v-for="(entry, index) in leaderboardEntries"
-            :key="index"
+            :key="entry.id"
             class="leaderboard-item"
-            :class="`rank-${index + 1}`"
           >
             <!-- Rank Badge -->
             <div class="rank-badge">
               <img
                 v-if="index < 5"
                 :src="`${baseUrl}assets/leaderboard/${index + 1}.png`"
-                alt="`Rank ${index + 1}`"
+                :alt="`Rank ${index + 1}`"
                 class="rank-image"
               >
               <img
@@ -81,13 +77,13 @@
             <div class="score-display">
               <img
                 :src="`${baseUrl}assets/leaderboard/500.png`"
-                alt="Score icon"
+                alt="Score"
                 class="score-icon"
               >
               <span class="score-value">{{ entry.totalScore }}</span>
             </div>
 
-            <!-- Group decoration -->
+            <!-- Decoration -->
             <img
               :src="`${baseUrl}assets/leaderboard/Group 8.png`"
               alt="Decoration"
@@ -111,34 +107,26 @@
         </div>
       </div>
 
-      <!-- Decorative Layer -->
-      <div class="decorative-layer">
+      <!-- Game Complete Message (if game is completed) -->
+      <div
+        v-if="isGameCompleted"
+        class="game-complete-message animate-fade-in"
+      >
+        <p class="complete-text">
+          {{ $t('leaderboard.game_complete', 'Game Complete!') }}
+        </p>
+      </div>
+
+      <!-- OK Button -->
+      <button
+        class="ok-btn tap-highlight no-select animate-slide-up"
+        @click="handleOk"
+      >
         <img
-          :src="`${baseUrl}assets/leaderboard/Layer 12 copy 3.png`"
-          alt="Decoration"
+          :src="`${baseUrl}assets/leaderboard/ok.png`"
+          alt="OK"
         >
-      </div>
-
-      <!-- Round Info -->
-      <div class="round-info animate-fade-in">
-        <span class="round-label">Round {{ currentRound }} Complete!</span>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="action-buttons-container animate-slide-up">
-        <button
-          class="action-btn next-round-btn tap-highlight no-select"
-          @click="startNextRound"
-        >
-          <span>Next Round</span>
-        </button>
-        <button
-          class="action-btn end-game-btn tap-highlight no-select"
-          @click="endGame"
-        >
-          <span>End Game</span>
-        </button>
-      </div>
+      </button>
     </div>
   </div>
 </template>
@@ -151,22 +139,22 @@ const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
 const gameStore = useGameStore()
 
-// Get leaderboard from store (sorted by totalScore)
 const leaderboardEntries = computed(() => gameStore.leaderboard)
-const currentRound = computed(() => gameStore.currentRound)
+const isGameCompleted = computed(() => gameStore.isGameCompleted)
 
 const goBack = () => {
-  router.back()
-}
-
-const startNextRound = async () => {
-  // Navigate to round-start to spin wheels for next round
-  router.push('/round-start')
-}
-
-const endGame = async () => {
-  await gameStore.endGame()
   router.push('/')
+}
+
+const handleOk = async () => {
+  if (isGameCompleted.value) {
+    // Leaderboard is the final screen - end game and return to home
+    await gameStore.endGame()
+    router.push('/')
+  } else {
+    // Continue to next round
+    router.push('/round-start')
+  }
 }
 
 useHead({
@@ -186,24 +174,19 @@ useHead({
   min-height: 100dvh;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, #2c5f8d 0%, #1a3a5c 100%);
+  background: #1a1a2e;
 }
 
-/* Page Background */
 .page-bg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
   z-index: 1;
-  background-image:
-    radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-  pointer-events: none;
 }
 
-/* Back Button */
 .back-btn {
   position: absolute;
   top: var(--spacing-xl);
@@ -222,29 +205,10 @@ useHead({
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-.back-btn:hover {
-  transform: scale(1.05);
-}
-
 .back-btn:active {
   transform: scale(0.95);
 }
 
-/* Coin Bar */
-.coin-bar {
-  position: absolute;
-  top: var(--spacing-xl);
-  right: var(--spacing-xl);
-  z-index: 3;
-}
-
-.coin-bar img {
-  height: clamp(35px, 5vw, 55px);
-  width: auto;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-/* Container */
 .container {
   position: relative;
   z-index: 2;
@@ -258,7 +222,6 @@ useHead({
   gap: var(--spacing-2xl);
 }
 
-/* Title */
 .title-container {
   display: flex;
   flex-direction: column;
@@ -277,17 +240,12 @@ useHead({
   height: auto;
 }
 
-/* Leaderboard List Container */
 .leaderboard-list-container {
   position: relative;
   width: 100%;
   max-width: 800px;
   display: flex;
   gap: var(--spacing-lg);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-lg);
-  backdrop-filter: blur(10px);
 }
 
 .leaderboard-list {
@@ -305,7 +263,6 @@ useHead({
   display: none;
 }
 
-/* Leaderboard Item */
 .leaderboard-item {
   position: relative;
   display: flex;
@@ -315,29 +272,8 @@ useHead({
   background: rgba(255, 255, 255, 0.9);
   border-radius: var(--radius-lg);
   min-height: 70px;
-  transition: transform var(--transition-base);
 }
 
-.leaderboard-item:hover {
-  transform: translateX(4px);
-}
-
-.leaderboard-item.rank-1 {
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-}
-
-.leaderboard-item.rank-2 {
-  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
-}
-
-.leaderboard-item.rank-3 {
-  background: linear-gradient(135deg, #cd7f32 0%, #e6a867 100%);
-  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.4);
-}
-
-/* Rank Badge */
 .rank-badge {
   position: relative;
   flex-shrink: 0;
@@ -362,7 +298,6 @@ useHead({
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Player Info */
 .player-info {
   flex: 1;
   display: flex;
@@ -383,7 +318,6 @@ useHead({
   color: #2a1810;
 }
 
-/* Score Display */
 .score-display {
   display: flex;
   align-items: center;
@@ -414,7 +348,6 @@ useHead({
   opacity: 0.3;
 }
 
-/* Scroll Bar */
 .scroll-bar {
   position: relative;
   width: 30px;
@@ -442,89 +375,54 @@ useHead({
   margin-top: var(--spacing-lg);
 }
 
-/* Decorative Layer */
-.decorative-layer {
-  position: absolute;
-  bottom: var(--spacing-2xl);
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-.decorative-layer img {
-  width: clamp(300px, 50vw, 600px);
-  height: auto;
-}
-
-/* Round Info */
-.round-info {
-  text-align: center;
-  z-index: 3;
-}
-
-.round-label {
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-3xl));
-  font-weight: var(--font-weight-bold);
-  color: var(--color-white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-/* Action Buttons Container */
-.action-buttons-container {
-  display: flex;
-  gap: var(--spacing-lg);
-  justify-content: center;
-  flex-wrap: wrap;
-  z-index: 3;
-}
-
-.action-btn {
-  background: var(--color-white);
+.ok-btn {
+  background: none;
   border: none;
   cursor: pointer;
-  padding: var(--spacing-lg) var(--spacing-2xl);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-lg);
+  padding: 0;
+  transition: transform var(--transition-base);
+}
+
+.ok-btn img {
+  width: clamp(150px, 25vw, 200px);
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+}
+
+.ok-btn:active {
+  transform: scale(0.95);
+}
+
+.game-complete-message {
+  text-align: center;
+  z-index: 3;
+  margin-bottom: var(--spacing-lg);
+}
+
+.complete-text {
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-xl));
-  font-weight: var(--font-weight-bold);
-  min-width: 180px;
+  font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-4xl));
+  font-weight: var(--font-weight-black);
+  color: var(--color-secondary);
+  text-shadow:
+    0 0 20px rgba(249, 196, 60, 0.6),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.next-round-btn {
-  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-  color: var(--color-white);
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
 }
 
-.next-round-btn:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 8px 16px rgba(46, 204, 113, 0.4);
-}
-
-.next-round-btn:active {
-  transform: translateY(-2px) scale(0.98);
-}
-
-.end-game-btn {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  color: var(--color-white);
-}
-
-.end-game-btn:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 8px 16px rgba(231, 76, 60, 0.4);
-}
-
-.end-game-btn:active {
-  transform: translateY(-2px) scale(0.98);
-}
-
-/* Animations */
 .animate-fade-in {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.6s ease-out;
 }
 
 @keyframes fadeIn {
@@ -568,7 +466,6 @@ useHead({
   }
 }
 
-/* Responsive */
 @media (max-width: 640px) {
   .back-btn img {
     width: 40px;
@@ -592,7 +489,7 @@ useHead({
   }
 
   .ok-btn img {
-    width: 180px;
+    width: 150px;
   }
 }
 </style>

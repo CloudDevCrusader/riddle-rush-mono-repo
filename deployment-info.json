@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-12-31T14:10:38Z",
+  "timestamp": "2026-01-02T04:54:59Z",
   "environment": "production",
   "bucket": "riddlerush",
-  "region": "eu-central-1",
+  "region": "us-east-1",
   "cloudfrontId": "ERCX6EFGWWFUV",
   "deployedBy": "arn:aws:iam::720377205549:root",
   "buildSize": "19M",
-  "fileCount": 327
+  "fileCount": 332
 }
