@@ -40,8 +40,6 @@ export function useAudio() {
     const ctx = initAudioContext()
     if (!ctx) return
 
-    const now = ctx.currentTime
-
     // Play a triumphant major chord with harmonics for a richer sound
     const frequencies = [
       { freq: 523.25, delay: 0, duration: 0.25, vol: 0.25 }, // C5
@@ -167,8 +165,6 @@ export function useAudio() {
     const ctx = initAudioContext()
     if (!ctx) return
 
-    // Triumphant fanfare for round completion
-    const now = ctx.currentTime
     const notes = [
       { freq: 392.00, delay: 0, duration: 0.15, vol: 0.2 }, // G4
       { freq: 493.88, delay: 80, duration: 0.15, vol: 0.2 }, // B4

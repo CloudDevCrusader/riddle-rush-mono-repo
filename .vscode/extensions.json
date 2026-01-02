@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "vue.volar",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "sonarsource.sonarlint-vscode",
+    "mrmlnc.vscode-scss",
+    "stylelint.vscode-stylelint",
+    "christian-kohler.path-intellisense",
+    "usernamehw.errorlens",
+    "formulahendry.auto-rename-tag",
+    "naumovs.color-highlight"
+  ],
+  "unwantedRecommendations": [
+    "octref.vetur",
+    "hookyqr.beautify",
+    "dbaeumer.jshint"
+  ]
+}

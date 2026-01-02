@@ -28,8 +28,8 @@
       <!-- Pause Button -->
       <button
         class="pause-btn tap-highlight no-select"
-        @click="showPauseModal = true"
         aria-label="Pause game"
+        @click="showPauseModal = true"
       >
         <svg
           width="32"
@@ -123,16 +123,18 @@
       </div>
     </div>
 
-    <!-- Pause Modal -->
-    <PauseModal
+    <!-- Pause Modal (Lazy Loaded) -->
+    <LazyPauseModal
+      v-if="showPauseModal"
       :visible="showPauseModal"
       @resume="showPauseModal = false"
       @restart="handleRestart"
       @home="showPauseModal = false"
     />
 
-    <!-- Quit Modal -->
-    <QuitModal
+    <!-- Quit Modal (Lazy Loaded) -->
+    <LazyQuitModal
+      v-if="showQuitModal"
       :visible="showQuitModal"
       @confirm="showQuitModal = false"
       @cancel="showQuitModal = false"

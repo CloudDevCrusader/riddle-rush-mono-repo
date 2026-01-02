@@ -167,7 +167,7 @@ const getAvatarUrl = (entry: { avatar?: string }) => {
 }
 
 // Change avatar for a player
-const changeAvatar = (entry: { id: string; name: string }) => {
+const changeAvatar = (entry: { id: string, name: string }) => {
   // Create a hidden file input
   const input = document.createElement('input')
   input.type = 'file'

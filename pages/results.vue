@@ -179,7 +179,7 @@ const goToLeaderboard = async () => {
 
     // Complete the round
     await gameStore.completeRound()
-    
+
     // Play round complete sound
     const audio = useAudio()
     audio.playRoundComplete()

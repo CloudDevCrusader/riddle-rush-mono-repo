@@ -1,0 +1,55 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.output
+.nuxt
+dist
+.cache
+
+# Development files
+.vscode
+.idea
+.cursor
+*.log
+*.swp
+*.swo
+*~
+
+# Testing
+coverage
+test-results
+playwright-report
+.playwright
+
+# Git
+.git
+.gitignore
+.gitlab-ci.yml
+.github
+
+# CI/CD
+scripts/
+docs/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Documentation
+README.md
+CLAUDE.md
+*.md
+!package.json

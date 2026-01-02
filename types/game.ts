@@ -80,6 +80,7 @@ export interface GameState {
   history: GameSession[]
   categories: Category[]
   categoriesLoaded: boolean
+  categoriesLoading: boolean
   displayedCategoryCount: number
   categoryLoadError: string | null
   selectedLetter: string | null

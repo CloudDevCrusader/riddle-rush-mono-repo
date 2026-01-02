@@ -10,6 +10,9 @@ import {
 import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent, Player, PlayerWithRank } from '../types/game'
 
 const randomLetter = () => {
+  if (!ALPHABET || ALPHABET.length === 0) {
+    throw new Error('ALPHABET constant is not defined or empty')
+  }
   const index = Math.floor(Math.random() * ALPHABET.length)
   return ALPHABET.charAt(index).toLowerCase()
 }
@@ -22,6 +25,7 @@ export const useGameStore = defineStore('game', {
     history: [],
     categories: [],
     categoriesLoaded: false,
+    categoriesLoading: false,
     displayedCategoryCount: DEFAULT_DISPLAYED_CATEGORIES,
     categoryLoadError: null,
     selectedLetter: null,
@@ -75,9 +79,25 @@ export const useGameStore = defineStore('game', {
 
   actions: {
     async fetchCategories(force = false) {
+      // Return cached categories if already loaded
       if (this.categoriesLoaded && !force) {
         return this.categories
       }
+
+      // Wait if already loading (race condition guard)
+      if (this.categoriesLoading) {
+        // Poll until loading is complete (max 10 seconds)
+        const maxAttempts = 100
+        for (let i = 0; i < maxAttempts; i++) {
+          await new Promise((resolve) => setTimeout(resolve, 100))
+          if (!this.categoriesLoading) {
+            return this.categories
+          }
+        }
+        throw new Error('Category loading timeout')
+      }
+
+      this.categoriesLoading = true
 
       try {
         const categories = await $fetch<Category[]>('/data/categories.json')
@@ -104,6 +124,8 @@ export const useGameStore = defineStore('game', {
         }
 
         throw new Error(errorMessage)
+      } finally {
+        this.categoriesLoading = false
       }
     },
 

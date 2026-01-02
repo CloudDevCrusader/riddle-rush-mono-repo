@@ -67,8 +67,8 @@ useHead({
 })
 </script>
 
-<style>
-@import '~/assets/css/design-system.css';
+<style lang="scss">
+@import '~/assets/scss/design-system.scss';
 
 .app-container {
   min-height: 100vh;

@@ -23,9 +23,11 @@
     "typecheck": "nuxt typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:style": "stylelint \"**/*.{css,scss,vue}\"",
+    "lint:style:fix": "stylelint \"**/*.{css,scss,vue}\" --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "[ \"$CI\" = 'true' ] && echo 'Skipping husky in CI' || (cd .. && husky guess-game-nuxt-pwa/.husky || true)",
+    "prepare": "[ \"$CI\" = 'true' ] && echo 'Skipping husky in CI' || husky",
     "ci:build": "npm run typecheck && npm run generate",
     "ci:test": "npm run test:unit:coverage",
     "deploy:dev": "./scripts/deploy-dev.sh",
@@ -46,6 +48,8 @@
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
     "@nuxt/eslint": "^1.0.0",
+    "@nuxt/fonts": "^0.12.1",
+    "@nuxt/image": "^2.0.0",
     "@nuxt/test-utils": "^3.21.0",
     "@playwright/test": "^1.52.0",
     "@types/node": "^22.0.0",
@@ -56,7 +60,13 @@
     "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
     "nuxt-gtag": "^4.1.0",
-    "prettier": "^3.0.0"
+    "postcss-html": "^1.8.0",
+    "prettier": "^3.0.0",
+    "sass": "^1.97.1",
+    "stylelint": "^16.26.1",
+    "stylelint-config-prettier-scss": "^1.0.0",
+    "stylelint-config-recommended-vue": "^1.6.1",
+    "stylelint-config-standard-scss": "^16.0.0"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [

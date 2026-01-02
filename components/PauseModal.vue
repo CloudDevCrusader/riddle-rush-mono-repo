@@ -129,7 +129,7 @@ const handleHome = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px)) 
+  padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px))
            max(var(--spacing-lg), env(safe-area-inset-right, 0px))
            max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
            max(var(--spacing-lg), env(safe-area-inset-left, 0px));

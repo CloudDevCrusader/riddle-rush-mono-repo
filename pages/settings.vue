@@ -18,8 +18,11 @@
       >
     </button>
 
-    <!-- Settings Modal -->
-    <SettingsModal v-model="showSettings" />
+    <!-- Settings Modal (Lazy Loaded) -->
+    <LazySettingsModal
+      v-if="showSettings"
+      v-model="showSettings"
+    />
   </div>
 </template>
 

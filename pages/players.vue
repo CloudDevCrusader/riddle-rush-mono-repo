@@ -194,7 +194,7 @@ const showAddPlayerInput = () => {
 }
 
 // Validate player name
-const isValidPlayerName = (name: string): { valid: boolean; error?: string } => {
+const isValidPlayerName = (name: string): { valid: boolean, error?: string } => {
   const trimmed = name.trim()
 
   if (!trimmed) {
@@ -210,7 +210,7 @@ const isValidPlayerName = (name: string): { valid: boolean; error?: string } => 
   }
 
   // Check for duplicate names
-  if (players.value.some(p => p.name.toLowerCase() === trimmed.toLowerCase())) {
+  if (players.value.some((p) => p.name.toLowerCase() === trimmed.toLowerCase())) {
     return { valid: false, error: t('players.duplicate_name', 'A player with this name already exists') }
   }
 
@@ -265,11 +265,11 @@ const startGame = async () => {
   }
 
   // Validate all player names are valid
-  const invalidPlayers = players.value.filter(p => {
+  const invalidPlayers = players.value.filter((p) => {
     const validation = isValidPlayerName(p.name)
     return !validation.valid
   })
-  
+
   if (invalidPlayers.length > 0) {
     toast.warning(t('players.invalid_names', 'Please fix invalid player names before starting'))
     return

@@ -1,8 +1,39 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/i18n',
-    '@nuxt/test-utils/module', '@pinia/nuxt', '@vite-pwa/nuxt', 'nuxt-viewport', '@vueuse/nuxt', 'nuxt-gtag'],
+  modules: [
+    '@nuxtjs/i18n',
+    '@nuxt/test-utils/module',
+    '@pinia/nuxt',
+    '@vite-pwa/nuxt',
+    'nuxt-viewport',
+    '@vueuse/nuxt',
+    'nuxt-gtag',
+    '@nuxt/fonts',
+    '@nuxt/image',
+  ],
   ssr: false,
+
+  // Auto-import configuration
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+    {
+      path: '~/components/Base',
+      prefix: 'Base',
+      pathPrefix: false,
+    },
+  ],
+
+  imports: {
+    dirs: [
+      'composables',
+      'composables/**',
+      'services',
+      'utils',
+    ],
+  },
   devtools: { enabled: false },
 
   app: {
@@ -58,6 +89,80 @@ export default defineNuxtConfig({
 
   nitro: {
     compressPublicAssets: true,
+    minify: true,
+  },
+
+  vite: {
+    build: {
+      // Enable tree shaking
+      modulePreload: { polyfill: true },
+      // Optimize chunk splitting
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            // Vendor chunk for node_modules
+            if (id.includes('node_modules')) {
+              // Separate large libraries
+              if (id.includes('pinia')) return 'vendor-pinia'
+              if (id.includes('@vueuse')) return 'vendor-vueuse'
+              if (id.includes('howler')) return 'vendor-howler'
+              return 'vendor'
+            }
+            // Separate layouts and pages
+            if (id.includes('/layouts/')) return 'layouts'
+            if (id.includes('/pages/')) {
+              const match = id.match(/pages\/([^/]+)/)
+              return match ? `page-${match[1]}` : 'pages'
+            }
+          },
+          // Optimize asset naming
+          chunkFileNames: '_nuxt/[name]-[hash].js',
+          entryFileNames: '_nuxt/[name]-[hash].js',
+          assetFileNames: '_nuxt/[name]-[hash][extname]',
+        },
+      },
+      // Minification options
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: process.env.NODE_ENV === 'production',
+          drop_debugger: process.env.NODE_ENV === 'production',
+          pure_funcs: process.env.NODE_ENV === 'production' ? ['console.log', 'console.info'] : [],
+        },
+        format: {
+          comments: false,
+        },
+      },
+      // Source maps only in development
+      sourcemap: process.env.NODE_ENV !== 'production',
+      // Chunk size warnings
+      chunkSizeWarningLimit: 500,
+    },
+    optimizeDeps: {
+      // Pre-bundle dependencies
+      include: [
+        'pinia',
+        '@vueuse/core',
+        'howler',
+      ],
+      exclude: [
+        '@nuxt/test-utils',
+      ],
+    },
+    css: {
+      devSourcemap: true,
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@use "sass:math";',
+        },
+      },
+    },
+    // Performance optimizations
+    server: {
+      fs: {
+        strict: true,
+      },
+    },
   },
 
   typescript: { strict: true },
