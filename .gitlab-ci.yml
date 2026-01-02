@@ -72,6 +72,7 @@ sonarcloud-check:
     - staging
 
 # E2E tests - local build (manual, optional)
+# Note: This job tests local build, not deployed sites
 test:e2e:local:
   stage: test
   image: mcr.microsoft.com/playwright:v1.57.0-noble
@@ -79,8 +80,6 @@ test:e2e:local:
     - corepack enable && corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
     - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
-  needs:
-    - deploy:aws
   artifacts:
     when: always
     paths:
