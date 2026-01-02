@@ -231,8 +231,6 @@ verify:e2e:aws:
       - playwright-report/
       - test-results/
     expire_in: 30 days
-  needs:
-    - deploy:aws
   only:
     - tags
   when: manual
