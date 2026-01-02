@@ -216,11 +216,10 @@ verify:e2e:aws:
       if [ -n "$AWS_CLOUDFRONT_DOMAIN" ]; then
         export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
       else
-        # Fallback to S3 website URL if CloudFront not configured
         export BASE_URL=http://$AWS_S3_BUCKET.s3-website-${AWS_REGION:-us-east-1}.amazonaws.com
       fi
-    - echo "Testing AWS deployment at: $BASE_URL"
-    - echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
+    - echo 'Testing AWS deployment at:' $BASE_URL
+    - echo 'Waiting 60 seconds for CloudFront invalidation to propagate...'
     - sleep 60
     - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
   needs:
