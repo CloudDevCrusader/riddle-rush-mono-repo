@@ -1,4 +1,5 @@
 import { openDB, type IDBPDatabase } from 'idb'
+import { useLogger } from './useLogger'
 import type { GameSession, GameStatistics, LeaderboardEntry, CategorySettings } from '../types/game'
 
 const DB_NAME = 'guess-game-db'
@@ -46,6 +47,8 @@ async function getDB() {
 }
 
 export function useIndexedDB() {
+  const logger = useLogger()
+
   const saveGameSession = async (session: GameSession) => {
     try {
       const db = await getDB()
@@ -53,7 +56,7 @@ export function useIndexedDB() {
       const serialized = JSON.parse(JSON.stringify(session))
       await db.put(GAME_SESSION_STORE, serialized, 'current')
     } catch (error) {
-      console.error('Error saving game session:', error)
+      logger.error('Error saving game session:', error)
     }
   }
 
@@ -63,7 +66,7 @@ export function useIndexedDB() {
       const session = await db.get(GAME_SESSION_STORE, 'current')
       return session || null
     } catch (error) {
-      console.error('Error getting game session:', error)
+      logger.error('Error getting game session:', error)
       return null
     }
   }
@@ -73,7 +76,7 @@ export function useIndexedDB() {
       const db = await getDB()
       await db.delete(GAME_SESSION_STORE, 'current')
     } catch (error) {
-      console.error('Error clearing game session:', error)
+      logger.error('Error clearing game session:', error)
     }
   }
 
@@ -88,7 +91,7 @@ export function useIndexedDB() {
 
       await tx.done
     } catch (error) {
-      console.error('Error saving game history:', error)
+      logger.error('Error saving game history:', error)
     }
   }
 
@@ -104,7 +107,7 @@ export function useIndexedDB() {
         .sort((a, b) => b.startTime - a.startTime)
         .slice(0, limit)
     } catch (error) {
-      console.error('Error getting game history:', error)
+      logger.error('Error getting game history:', error)
       return []
     }
   }
@@ -114,7 +117,7 @@ export function useIndexedDB() {
       const db = await getDB()
       await db.clear(GAME_HISTORY_STORE)
     } catch (error) {
-      console.error('Error clearing game history:', error)
+      logger.error('Error clearing game history:', error)
     }
   }
 
@@ -124,7 +127,7 @@ export function useIndexedDB() {
       const stats = await db.get(STATISTICS_STORE, 'current')
       return stats || null
     } catch (error) {
-      console.error('Error getting statistics:', error)
+      logger.error('Error getting statistics:', error)
       return null
     }
   }
@@ -134,7 +137,7 @@ export function useIndexedDB() {
       const db = await getDB()
       await db.put(STATISTICS_STORE, stats, 'current')
     } catch (error) {
-      console.error('Error saving statistics:', error)
+      logger.error('Error saving statistics:', error)
     }
   }
 
@@ -168,7 +171,7 @@ export function useIndexedDB() {
         .sort((a, b) => b.score - a.score)
         .slice(0, limit)
     } catch (error) {
-      console.error('Error getting leaderboard:', error)
+      logger.error('Error getting leaderboard:', error)
       return []
     }
   }
@@ -178,7 +181,7 @@ export function useIndexedDB() {
       const db = await getDB()
       await db.put(LEADERBOARD_STORE, entry)
     } catch (error) {
-      console.error('Error saving leaderboard entry:', error)
+      logger.error('Error saving leaderboard entry:', error)
     }
   }
 
@@ -188,7 +191,7 @@ export function useIndexedDB() {
       const settings = await db.get(SETTINGS_STORE, 'current')
       return settings || null
     } catch (error) {
-      console.error('Error getting settings:', error)
+      logger.error('Error getting settings:', error)
       return null
     }
   }
@@ -198,7 +201,7 @@ export function useIndexedDB() {
       const db = await getDB()
       await db.put(SETTINGS_STORE, settings, 'current')
     } catch (error) {
-      console.error('Error saving settings:', error)
+      logger.error('Error saving settings:', error)
     }
   }
 

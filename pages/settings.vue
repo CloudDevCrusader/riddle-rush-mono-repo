@@ -24,9 +24,7 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
+const { router, baseUrl } = usePageSetup()
 
 const showSettings = ref(true)
 

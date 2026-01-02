@@ -161,16 +161,13 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
+import { MAX_PLAYERS } from '~/utils/constants'
 
-const router = useRouter()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
-const gameStore = useGameStore()
-const toast = useToast()
-const { t } = useI18n()
+const { baseUrl, toast, t, goBack: navigateBack } = usePageSetup()
+const { goToRoundStart } = useNavigation()
+const { gameStore } = useGameState()
 
-const maxPlayers = 6
+const maxPlayers = MAX_PLAYERS
 const players = ref([
   { name: 'Player 1' },
   { name: 'Player 2' },
@@ -236,15 +233,16 @@ const startGame = async () => {
     gameStore.pendingPlayerNames = playerNames
     toast.success(t('players.ready', `${players.value.length} players ready!`))
     // Navigate to round start (dual wheel spin)
-    router.push('/round-start')
+    goToRoundStart()
   } catch (error) {
-    console.error('Error starting game:', error)
+    const logger = useLogger()
+    logger.error('Error starting game:', error)
     toast.error(t('players.error_start', 'Failed to start game. Please try again.'))
   }
 }
 
 const goBack = () => {
-  router.back()
+  navigateBack()
 }
 
 // Mobile swipe gesture: swipe right to go back

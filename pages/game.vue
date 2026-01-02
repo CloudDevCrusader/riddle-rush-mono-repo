@@ -20,7 +20,9 @@
 
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <span class="round-text">ROUND {{ formattedRound }}</span>
+        <span class="round-text">
+          ROUND {{ formattedRound }}
+        </span>
       </div>
 
       <!-- Empty space (no coin count) -->
@@ -46,7 +48,9 @@
 
       <!-- Large Letter Display -->
       <div class="letter-display">
-        <span class="letter-value">{{ currentLetter ? currentLetter.toUpperCase() : 'A' }}</span>
+        <span class="letter-value">
+          {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
+        </span>
       </div>
 
       <!-- Player Answer Input (for multiplayer) -->
@@ -109,22 +113,18 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
-
-const gameStore = useGameStore()
-const router = useRouter()
-const { t } = useI18n()
+const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
+const { goToResults } = useNavigation()
+const {
+  gameStore,
+  currentCategory,
+  currentLetter,
+  currentRound,
+  players,
+  currentPlayerTurn,
+  allPlayersSubmitted,
+} = useGameState()
 const gameActions = useGameActions()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
-const toast = useToast()
-
-const currentCategory = computed(() => gameStore.currentCategory)
-const currentLetter = computed(() => gameStore.currentLetter)
-const currentRound = computed(() => gameStore.currentRound)
-const players = computed(() => gameStore.players)
-const currentPlayerTurn = computed(() => gameStore.currentPlayerTurn)
-const allPlayersSubmitted = computed(() => gameStore.allPlayersSubmitted)
 
 const playerAnswer = ref('')
 
@@ -134,7 +134,7 @@ const formattedRound = computed(() => {
 })
 
 const goHome = () => {
-  router.push('/')
+  navigateToHome()
 }
 
 const submitAnswer = async () => {
@@ -153,7 +153,8 @@ const submitAnswer = async () => {
       toast.info(t('game.all_submitted', 'All players have submitted!'))
     }
   } catch (error) {
-    console.error('Error submitting answer:', error)
+    const logger = useLogger()
+    logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))
   }
 }
@@ -164,7 +165,7 @@ const handleNext = async () => {
     toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
     return
   }
-  router.push('/results')
+  goToResults()
 }
 
 onMounted(async () => {
@@ -204,8 +205,9 @@ useHead({
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.3;
+  opacity: 1;
   pointer-events: none;
+  z-index: 0;
 }
 
 /* Header */
@@ -294,6 +296,7 @@ useHead({
   justify-content: center;
   gap: var(--spacing-3xl);
   z-index: var(--z-base);
+  min-height: 0; /* Allow flex shrinking */
 }
 
 /* Category Panel */

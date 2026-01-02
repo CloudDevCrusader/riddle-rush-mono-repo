@@ -12,12 +12,6 @@ export const useAnalytics = () => {
    */
   const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
     if (import.meta.client) {
-      // Log to console in development
-      if (process.env.NODE_ENV === 'development') {
-        // eslint-disable-next-line no-console
-        console.log('[Analytics]', eventName, params)
-      }
-
       // Track with Google Analytics
       gtag('event', eventName, params)
     }
@@ -30,11 +24,6 @@ export const useAnalytics = () => {
    */
   const trackPageView = (pagePath: string, pageTitle?: string) => {
     if (import.meta.client) {
-      if (process.env.NODE_ENV === 'development') {
-        // eslint-disable-next-line no-console
-        console.log('[Analytics] Page View:', pagePath, pageTitle)
-      }
-
       // Track with Google Analytics
       gtag('event', 'page_view', {
         page_path: pagePath,

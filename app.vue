@@ -11,7 +11,6 @@
       <NuxtPage />
     </NuxtLayout>
     <Toast />
-    <FeedbackWidget v-show="!showSplash" />
     <DebugPanel v-show="!showSplash" />
   </div>
 </template>

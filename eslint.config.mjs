@@ -18,6 +18,7 @@ export default createConfigForNuxt({
     rules: {
       'vue/multi-word-component-names': 'off',
       'vue/no-multiple-template-root': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-console': ['warn', { allow: ['warn', 'error'] }],

@@ -1,57 +1,13 @@
 import { useIndexedDB } from '../composables/useIndexedDB'
 import { useStatistics } from '../composables/useStatistics'
+import { useLogger } from '../composables/useLogger'
+import { useCategoryEmoji } from '../composables/useCategoryEmoji'
+import {
+  ALPHABET,
+  SCORE_PER_CORRECT_ANSWER,
+  DEFAULT_DISPLAYED_CATEGORIES,
+} from '../utils/constants'
 import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent, Player, PlayerWithRank } from '../types/game'
-
-const CATEGORY_EMOJI_MAP: Record<string, string> = {
-  'Weiblicher Vorname': '👩',
-  'Männlicher Vorname': '👨',
-  'Wasser Fahrzeug': '⛵',
-  Blumen: '🌸',
-  Pflanzen: '🌿',
-  'Beruf oder Gewerbe': '💼',
-  Insekt: '🐛',
-  Tier: '🐾',
-  Stadt: '🏙️',
-  Land: '🌍',
-  Essen: '🍽️',
-  Getränk: '🥤',
-  Sport: '⚽',
-  Musik: '🎵',
-  Film: '🎬',
-  Berg: '⛰️',
-  Mountains: '🏔️',
-  Hills: '⛰️',
-  Gewässer: '💧',
-  See: '🌊',
-  Maschine: '⚙️',
-  Technik: '🔧',
-  Raumfahrt: '🚀',
-  '-heit': '📝',
-  '-ung': '📝',
-  '-keit': '📝',
-  Farbe: '🎨',
-  Erfinder: '💡',
-  Entdecker: '🔍',
-  Gelehrter: '👨‍🎓',
-  Maler: '🎨',
-  Bildhauer: '🗿',
-  Komponist: '🎼',
-  Sänger: '🎤',
-}
-
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-const resolveCategoryEmoji = (name?: string | null) => {
-  if (!name) return '🎯'
-
-  for (const [key, emoji] of Object.entries(CATEGORY_EMOJI_MAP)) {
-    if (name.toLowerCase().includes(key.toLowerCase())) {
-      return emoji
-    }
-  }
-
-  return '🎯'
-}
 
 const randomLetter = () => {
   const index = Math.floor(Math.random() * ALPHABET.length)
@@ -66,7 +22,7 @@ export const useGameStore = defineStore('game', {
     history: [],
     categories: [],
     categoriesLoaded: false,
-    displayedCategoryCount: 9,
+    displayedCategoryCount: DEFAULT_DISPLAYED_CATEGORIES,
     categoryLoadError: null,
     selectedLetter: null,
     pendingPlayerNames: [],
@@ -83,7 +39,10 @@ export const useGameStore = defineStore('game', {
       state.categories.slice(0, state.displayedCategoryCount),
     hasMoreCategories: (state) =>
       state.displayedCategoryCount < state.categories.length,
-    categoryEmoji: () => (name?: string | null) => resolveCategoryEmoji(name),
+    categoryEmoji: () => {
+      const { resolve } = useCategoryEmoji()
+      return (name?: string | null) => resolve(name)
+    },
 
     // Multi-player getters
     players: (state) => state.currentSession?.players ?? [],
@@ -133,13 +92,14 @@ export const useGameStore = defineStore('game', {
 
         return categories
       } catch (error) {
+        const logger = useLogger()
         const errorMessage = error instanceof Error ? error.message : 'Failed to load categories'
         this.categoryLoadError = errorMessage
-        console.error('Error fetching categories:', error)
+        logger.error('Error fetching categories:', error)
 
         // Don't throw if we have cached categories
         if (this.categories.length > 0) {
-          console.warn('Using cached categories due to fetch error')
+          logger.warn('Using cached categories due to fetch error')
           return this.categories
         }
 
@@ -243,7 +203,7 @@ export const useGameStore = defineStore('game', {
 
       this.currentSession.attempts.push(attempt)
       if (found) {
-        this.currentSession.score += 10
+        this.currentSession.score += SCORE_PER_CORRECT_ANSWER
       }
 
       await this.saveSessionToDB()
@@ -327,7 +287,8 @@ export const useGameStore = defineStore('game', {
           this.history = history
         }
       } catch (error) {
-        console.error('Error loading from IndexedDB:', error)
+        const logger = useLogger()
+        logger.error('Error loading from IndexedDB:', error)
         // Continue without persisted data
       }
     },
@@ -339,7 +300,8 @@ export const useGameStore = defineStore('game', {
         const { saveGameSession } = useIndexedDB()
         await saveGameSession(this.currentSession)
       } catch (error) {
-        console.error('Error saving session to IndexedDB:', error)
+        const logger = useLogger()
+        logger.error('Error saving session to IndexedDB:', error)
         // Don't throw - allow game to continue even if save fails
       }
     },
@@ -349,7 +311,8 @@ export const useGameStore = defineStore('game', {
         const { saveGameHistory } = useIndexedDB()
         await saveGameHistory(this.history)
       } catch (error) {
-        console.error('Error saving history to IndexedDB:', error)
+        const logger = useLogger()
+        logger.error('Error saving history to IndexedDB:', error)
         // Don't throw - allow game to continue even if save fails
       }
     },

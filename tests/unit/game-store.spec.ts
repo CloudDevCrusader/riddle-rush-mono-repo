@@ -80,7 +80,7 @@ describe('Game Store', () => {
 
     it('default displayed category count is 9', () => {
       const store = useGameStore()
-      expect(store.displayedCategoryCount).toBe(9)
+      expect(store.displayedCategoryCount).toBe(9) // DEFAULT_DISPLAYED_CATEGORIES
     })
 
     it('hasActiveSession is false when no session', () => {
@@ -177,7 +177,7 @@ describe('Game Store', () => {
     it('caps at total category count', () => {
       const store = useGameStore()
       store.categories = createCategoryList(5)
-      store.displayedCategoryCount = 9
+      store.displayedCategoryCount = 9 // DEFAULT_DISPLAYED_CATEGORIES
       store.loadMoreCategories()
       expect(store.displayedCategories.length).toBe(5)
     })

@@ -109,10 +109,8 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
+const { baseUrl, goHome, goBack } = usePageSetup()
 const { locale, setLocale } = useI18n()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
 
 const currentLocale = ref(locale.value)
 
@@ -124,11 +122,7 @@ const selectLanguage = (lang: LocaleCode) => {
 
 const confirmSelection = async () => {
   await setLocale(currentLocale.value as LocaleCode)
-  router.push('/')
-}
-
-const goBack = () => {
-  router.back()
+  goHome()
 }
 
 useHead({

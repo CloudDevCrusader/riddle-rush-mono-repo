@@ -1,4 +1,5 @@
 import { useGameStore } from '~/stores/game'
+import { useLogger } from './useLogger'
 
 /**
  * Composable for common game actions with error handling and user feedback
@@ -9,6 +10,7 @@ export function useGameActions() {
   const toast = useToast()
   const audio = useAudio()
   const { t } = useI18n()
+  const logger = useLogger()
 
   /**
    * Start a new game session
@@ -20,7 +22,7 @@ export function useGameActions() {
       toast.success(t('game.new_round_started', 'New round started!'))
       return true
     } catch (error) {
-      console.error('Error starting new game:', error)
+      logger.error('Error starting new game:', error)
       toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
       return false
     }
@@ -44,7 +46,7 @@ export function useGameActions() {
 
       return true
     } catch (error) {
-      console.error('Error resuming game:', error)
+      logger.error('Error resuming game:', error)
       toast.error(t('game.error_resuming', 'Failed to load game. Starting fresh.'))
       return false
     }
@@ -60,7 +62,7 @@ export function useGameActions() {
       router.push('/')
       return true
     } catch (error) {
-      console.error('Error ending game:', error)
+      logger.error('Error ending game:', error)
       toast.error(t('game.error_ending', 'Failed to save game results'))
       return false
     }
@@ -88,7 +90,7 @@ export function useGameActions() {
     } catch (error) {
       // Don't show error for user cancellation
       if ((error as Error).name !== 'AbortError') {
-        console.error('Error sharing:', error)
+        logger.error('Error sharing:', error)
         toast.error(t('share.error', 'Failed to share score'))
       }
       return false
@@ -104,7 +106,7 @@ export function useGameActions() {
       toast.success(t('game.multiplayer_setup', `Game started with ${playerNames.length} players!`))
       return true
     } catch (error) {
-      console.error('Error setting up multiplayer game:', error)
+      logger.error('Error setting up multiplayer game:', error)
       toast.error(t('game.error_multiplayer', 'Failed to setup multiplayer game'))
       return false
     }
@@ -120,7 +122,7 @@ export function useGameActions() {
       toast.success(t('game.next_round', 'Next round started!'))
       return true
     } catch (error) {
-      console.error('Error starting next round:', error)
+      logger.error('Error starting next round:', error)
       toast.error(t('game.error_next_round', 'Failed to start next round'))
       return false
     }

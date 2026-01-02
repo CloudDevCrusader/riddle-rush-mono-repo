@@ -57,6 +57,7 @@
             <div class="score-actions">
               <button
                 class="score-action-btn tap-highlight no-select"
+                :aria-label="`Increase score for ${player.name}`"
                 @click="increaseScore(index)"
               >
                 <img
@@ -66,6 +67,7 @@
               </button>
               <button
                 class="score-action-btn tap-highlight no-select"
+                :aria-label="`Decrease score for ${player.name}`"
                 @click="decreaseScore(index)"
               >
                 <img
@@ -97,6 +99,7 @@
         <!-- Back Button -->
         <button
           class="action-btn back-large-btn tap-highlight no-select"
+          aria-label="Go back to game"
           @click="goToPrevious"
         >
           <img
@@ -108,6 +111,7 @@
         <!-- Next Button -->
         <button
           class="action-btn next-btn tap-highlight no-select"
+          aria-label="Continue to leaderboard"
           @click="goToLeaderboard"
         >
           <img
@@ -121,17 +125,11 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
+import { SCORE_INCREMENT, NAVIGATION_DELAY_MS } from '~/utils/constants'
 
-const router = useRouter()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
-const gameStore = useGameStore()
-const toast = useToast()
-const { t } = useI18n()
-
-// Get players from store
-const players = computed(() => gameStore.players)
+const { baseUrl, toast, t, goBack } = usePageSetup()
+const { goToGame, goToLeaderboard: navigateToLeaderboard } = useNavigation()
+const { gameStore, players } = useGameState()
 
 // Local state for scores (will be saved on navigation)
 const playerScores = ref(
@@ -146,19 +144,19 @@ const playerScores = ref(
 const increaseScore = (index: number) => {
   const player = playerScores.value[index]
   if (player) {
-    player.score += 10
+    player.score += SCORE_INCREMENT
   }
 }
 
 const decreaseScore = (index: number) => {
   const player = playerScores.value[index]
   if (player && player.score > 0) {
-    player.score -= 10
+    player.score -= SCORE_INCREMENT
   }
 }
 
 const goToPrevious = () => {
-  router.push('/game')
+  goToGame()
 }
 
 const goToLeaderboard = async () => {
@@ -175,16 +173,13 @@ const goToLeaderboard = async () => {
 
     // Navigate to leaderboard
     setTimeout(() => {
-      router.push('/leaderboard')
-    }, 500)
+      navigateToLeaderboard()
+    }, NAVIGATION_DELAY_MS)
   } catch (error) {
-    console.error('Error saving scores:', error)
+    const logger = useLogger()
+    logger.error('Error saving scores:', error)
     toast.error(t('results.error_saving', 'Failed to save scores. Please try again.'))
   }
-}
-
-const goBack = () => {
-  router.back()
 }
 
 useHead({

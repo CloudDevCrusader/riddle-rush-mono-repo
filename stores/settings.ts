@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useLogger } from '../composables/useLogger'
 
 export interface GameSettings {
   maxPlayersPerGame: number
@@ -46,7 +47,8 @@ export const useSettingsStore = defineStore('settings', {
           Object.assign(this, { ...DEFAULT_SETTINGS, ...parsed })
         }
       } catch (e) {
-        console.warn('Failed to load settings:', e)
+        const logger = useLogger()
+        logger.warn('Failed to load settings:', e)
       }
     },
 
@@ -56,7 +58,8 @@ export const useSettingsStore = defineStore('settings', {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.$state))
       } catch (e) {
-        console.warn('Failed to save settings:', e)
+        const logger = useLogger()
+        logger.warn('Failed to save settings:', e)
       }
     },
 

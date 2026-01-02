@@ -108,14 +108,12 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
 import type { Category } from '~/types/game'
+import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '~/utils/constants'
 
-const router = useRouter()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
-const gameStore = useGameStore()
-const { t } = useI18n()
+const { baseUrl, t } = usePageSetup()
+const { goToGame } = useNavigation()
+const { gameStore } = useGameState()
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const selectedCategory = ref<Category | null>(null)
@@ -205,11 +203,11 @@ const checkBothComplete = () => {
     setTimeout(() => {
       wheelsComplete.value = true
 
-      // After showing results for 2 seconds, start the game
+      // After showing results, start the game
       setTimeout(() => {
         startGame()
-      }, 2000)
-    }, 800)
+      }, RESULTS_DISPLAY_DURATION_MS)
+    }, WHEEL_FADE_DELAY_MS)
   }
 }
 
@@ -240,9 +238,10 @@ const startGame = async () => {
     }
 
     // Navigate to game
-    await router.push('/game')
+    await goToGame()
   } catch (error) {
-    console.error('Failed to start game:', error)
+    const logger = useLogger()
+    logger.error('Failed to start game:', error)
     startingGame.value = false
   }
 }
@@ -480,15 +479,17 @@ useHead({
   }
 }
 
-/* Responsive - Stack wheels vertically on mobile */
+/* Responsive - Keep wheels horizontal on mobile with scroll */
 @media (max-width: 768px) {
   .wheels-container {
-    flex-direction: column;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-lg);
+    overflow-x: auto;
+    padding: 0 var(--spacing-md);
   }
 
   .wheel-wrapper {
-    max-width: 90vw;
+    min-width: 280px;
+    max-width: 320px;
   }
 
   .wheel-label {

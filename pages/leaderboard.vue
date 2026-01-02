@@ -132,28 +132,22 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
-
-const router = useRouter()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
-const gameStore = useGameStore()
-
-const leaderboardEntries = computed(() => gameStore.leaderboard)
-const isGameCompleted = computed(() => gameStore.isGameCompleted)
+const { baseUrl } = usePageSetup()
+const { goHome, goToRoundStart } = useNavigation()
+const { gameStore, leaderboard: leaderboardEntries, isGameCompleted } = useGameState()
 
 const goBack = () => {
-  router.push('/')
+  goHome()
 }
 
 const handleOk = async () => {
   if (isGameCompleted.value) {
     // Leaderboard is the final screen - end game and return to home
     await gameStore.endGame()
-    router.push('/')
+    goHome()
   } else {
     // Continue to next round
-    router.push('/round-start')
+    goToRoundStart()
   }
 }
 

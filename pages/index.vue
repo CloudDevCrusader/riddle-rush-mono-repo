@@ -43,7 +43,7 @@
         <!-- Options Button -->
         <button
           class="menu-btn options-btn tap-highlight no-select"
-          @click="goToSettings"
+          @click="wrappedGoToSettings"
         >
           <img
             :src="`${baseUrl}assets/main-menu/OPTIONS.png`"
@@ -60,7 +60,7 @@
         <!-- Credits Button -->
         <button
           class="menu-btn credits-btn tap-highlight no-select"
-          @click="goToCredits"
+          @click="wrappedGoToCredits"
         >
           <img
             :src="`${baseUrl}assets/main-menu/CREDITS.png`"
@@ -90,21 +90,21 @@
           </button>
           <button
             class="menu-item tap-highlight no-select"
-            @click="goToLanguage"
+            @click="wrappedGoToLanguage"
           >
             <span>🌐</span>
             <span>{{ $t('menu.language', 'Language') }}</span>
           </button>
           <button
             class="menu-item tap-highlight no-select"
-            @click="goToSettings"
+            @click="wrappedGoToSettings"
           >
             <span>⚙️</span>
             <span>{{ $t('menu.settings', 'Settings') }}</span>
           </button>
           <button
             class="menu-item tap-highlight no-select"
-            @click="goToCredits"
+            @click="wrappedGoToCredits"
           >
             <span>📖</span>
             <span>{{ $t('menu.credits', 'Credits') }}</span>
@@ -128,12 +128,9 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
+const { router, baseUrl, toast, t } = usePageSetup()
+const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
 const route = useRoute()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
-const toast = useToast()
-const { t } = useI18n()
 
 const showMenu = ref(false)
 
@@ -150,22 +147,22 @@ onMounted(() => {
 
 const handlePlay = () => {
   showMenu.value = false
-  router.push('/players')
+  goToPlayers()
 }
 
-const goToSettings = () => {
+const wrappedGoToSettings = () => {
   showMenu.value = false
-  router.push('/settings')
+  goToSettings()
 }
 
-const goToCredits = () => {
+const wrappedGoToCredits = () => {
   showMenu.value = false
-  router.push('/credits')
+  goToCredits()
 }
 
-const goToLanguage = () => {
+const wrappedGoToLanguage = () => {
   showMenu.value = false
-  router.push('/language')
+  goToLanguage()
 }
 
 useHead({

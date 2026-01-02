@@ -79,13 +79,7 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
-
-const goBack = () => {
-  router.back()
-}
+const { baseUrl, goBack } = usePageSetup()
 
 useHead({
   title: 'Riddle Rush - Credits',

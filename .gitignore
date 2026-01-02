@@ -35,3 +35,6 @@ test-results
 
 aws-credentials.txt
 .playwright-mcp/
+
+# SonarQube cache
+.sonar/
