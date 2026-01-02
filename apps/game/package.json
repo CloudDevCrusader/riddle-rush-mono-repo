@@ -64,6 +64,7 @@
     "prettier": "^3.4.2",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.5.3",
+    "unplugin-auto-import": "^20.3.0",
     "vite-plugin-browserslist-useragent": "^0.6.2",
     "vite-plugin-checker": "^0.8.0",
     "vite-plugin-dynamic-prefetch": "^0.1.5",

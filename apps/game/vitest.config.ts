@@ -1,26 +1,95 @@
-import { defineVitestConfig } from '@nuxt/test-utils/config'
+import { defineConfig } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
+import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
 
-export default defineVitestConfig({
+export default defineConfig({
+  plugins: [
+    vue(),
+    AutoImport({
+      imports: [
+        'vue',
+        'pinia',
+        {
+          '#app': [
+            'defineNuxtLink',
+            'defineNuxtComponent',
+            'defineNuxtPlugin',
+            'definePayloadPlugin',
+            'defineRouteMiddleware',
+            'definePageMeta',
+            'navigateTo',
+            'abortNavigation',
+            'setPageLayout',
+            'showError',
+            'clearError',
+            'isNuxtError',
+            'createError',
+            'useAsyncData',
+            'useLazyAsyncData',
+            'useFetch',
+            'useLazyFetch',
+            'useCookie',
+            'useRequestHeaders',
+            'useRequestEvent',
+            'useRequestFetch',
+            'useRequestURL',
+            'usePreviewMode',
+            'refreshCookie',
+            'refreshNuxtData',
+            'clearNuxtData',
+            'refreshNuxtData',
+            'prerenderRoutes',
+            'useRouter',
+            'useRoute',
+            'defineNuxtRouteMiddleware',
+            'onBeforeRouteLeave',
+            'onBeforeRouteUpdate',
+            'setResponseStatus',
+            'useAppConfig',
+            'useRuntimeConfig',
+            'useState',
+            'clearNuxtState',
+            'useHead',
+            'useSeoMeta',
+            'useServerSeoMeta',
+            'useNuxtApp',
+            'defineNuxtConfig',
+            'useHydration',
+            'callOnce',
+            'useError',
+            'useId',
+            'useLoadingIndicator',
+            'useRouteAnnouncer',
+          ],
+        },
+      ],
+      dts: false,
+    }),
+  ],
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./', import.meta.url)),
       '@': fileURLToPath(new URL('./', import.meta.url)),
+      '#app': fileURLToPath(new URL('./.nuxt', import.meta.url)),
     },
   },
   test: {
     globals: true,
-    environment: 'nuxt',
-    environmentOptions: {
-      nuxt: {
-        domEnvironment: 'happy-dom',
-        overrides: {
-          modules: ['@pinia/nuxt'],
-          i18n: { locales: [] },
-        },
-      },
-    },
+    environment: 'happy-dom',
     include: ['tests/unit/**/*.{test,spec}.ts'],
     exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'tests/',
+        '**/*.spec.ts',
+        '**/*.test.ts',
+        '.nuxt/',
+        '.output/',
+      ],
+    },
   },
 })
