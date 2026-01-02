@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"],
+    "paths": {
+      "@riddle-rush/shared": ["../../packages/shared/src"],
+      "@riddle-rush/shared/*": ["../../packages/shared/src/*"],
+      "@riddle-rush/types": ["../../packages/types/src"],
+      "@riddle-rush/types/*": ["../../packages/types/src/*"],
+      "@riddle-rush/config": ["../../packages/config"],
+      "@riddle-rush/config/*": ["../../packages/config/*"],
+      "~/*": ["./*"],
+      "~~/*": ["./*"],
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/*.vue", ".nuxt/**/*"],
+  "exclude": ["node_modules", ".nuxt", ".output", "dist"]
+}
