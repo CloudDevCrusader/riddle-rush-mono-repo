@@ -61,6 +61,9 @@ terraform.tfstate.backup
 # AWS
 .aws-sam
 samconfig.toml
+aws-credentials.txt
+*.credentials
+*-credentials.txt
 
 # Build artifacts
 *.tsbuildinfo
