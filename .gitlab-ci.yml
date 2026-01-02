@@ -52,17 +52,32 @@ before_script:
       pnpm install --frozen-lockfile --prefer-offline
     fi
 
-# Unit tests - gates build
+# Unit tests - gates build (only runs when game app changes)
 test:
   stage: test
   script:
     - chmod +x scripts/ci-test.sh && ./scripts/ci-test.sh
-  only:
-    - main
-    - staging
-    - development
-    - merge_requests
-    - tags
+  rules:
+    # Always run on tags (for AWS deployment)
+    - if: $CI_COMMIT_TAG
+    # Always run on manual triggers
+    - if: $CI_PIPELINE_SOURCE == "web"
+    # Run when game app or shared packages change
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - pnpm-lock.yaml
+        - package.json
+        - .gitlab-ci.yml
+        - scripts/ci-test.sh
+    # Run on main/staging/development branches when game changes
+    - if: $CI_COMMIT_BRANCH =~ /^(main|staging|development)$/
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - pnpm-lock.yaml
+        - package.json
 
 # ====================================
 # Code Quality - SonarCloud Analysis
@@ -88,7 +103,7 @@ sonarcloud-check:
     - staging
     - staging
 
-# E2E tests - local build (manual, optional)
+# E2E tests - local build (manual, optional) - only when game changes
 # Note: This job tests local build, not deployed sites
 test:e2e:local:
   stage: test
@@ -103,15 +118,22 @@ test:e2e:local:
       - playwright-report/
       - test-results/
     expire_in: 7 days
-  when: manual
-  allow_failure: true
-  only:
-    - main
-    - staging
-    - development
-    - tags
+  rules:
+    # Manual trigger, available when game changes
+    - if: $CI_COMMIT_BRANCH =~ /^(main|staging|development)$/
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - tests/e2e/**/*
+        - playwright.config.ts
+      when: manual
+      allow_failure: true
+    # Always available on tags
+    - if: $CI_COMMIT_TAG
+      when: manual
+      allow_failure: true
 
-# Build for all deployment branches and tags
+# Build game app (only when game changes)
 build:
   stage: build
   script:
@@ -123,17 +145,25 @@ build:
   needs:
     - job: test
       artifacts: false
-  only:
-    - main
-    - staging
-    - development
-    - tags
+  rules:
+    # Always run on tags (for AWS deployment)
+    - if: $CI_COMMIT_TAG
+    # Always run on manual triggers
+    - if: $CI_PIPELINE_SOURCE == "web"
+    # Run when game app changes
+    - if: $CI_COMMIT_BRANCH =~ /^(main|staging|development)$/
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - pnpm-lock.yaml
+        - package.json
+        - scripts/ci-build.sh
 
 # ====================================
 # GitLab Pages - Documentation Site
 # ====================================
 
-# Build documentation site (Nuxt Content)
+# Build documentation site (Nuxt Content) - only when docs change
 build:docs:
   stage: build
   image: node:20
@@ -161,10 +191,18 @@ build:docs:
     paths:
       - public
     expire_in: 1 hour
-  only:
-    - main
+  rules:
+    # Always run on main when docs change
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - apps/docs/**/*
+        - docs/**/*
+        - CLAUDE.md
+        - README.md
+    # Always run on manual triggers
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
 
-# Deploy documentation to GitLab Pages
+# Deploy documentation to GitLab Pages - only when docs change
 pages:
   stage: deploy
   dependencies:
@@ -177,8 +215,16 @@ pages:
   environment:
     name: production
     url: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa
-  only:
-    - main
+  rules:
+    # Deploy when docs are built
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - apps/docs/**/*
+        - docs/**/*
+        - CLAUDE.md
+        - README.md
+    # Always deploy on manual triggers
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
 
 # ====================================
 # AWS Deployment (Tags Only)
@@ -211,10 +257,9 @@ deploy:aws:
     url: https://$AWS_CLOUDFRONT_DOMAIN
   needs:
     - build
-  only:
-    - tags
-  except:
-    - branches
+  rules:
+    # Deploy on version tags only
+    - if: $CI_COMMIT_TAG
 
 # ====================================
 # Verify Stage - E2E Tests on Deployed Sites (Optional)
@@ -246,7 +291,8 @@ verify:e2e:aws:
       - playwright-report/
       - test-results/
     expire_in: 30 days
-  only:
-    - tags
-  when: manual
-  allow_failure: true
+  rules:
+    # Manual trigger on tags only
+    - if: $CI_COMMIT_TAG
+      when: manual
+      allow_failure: true

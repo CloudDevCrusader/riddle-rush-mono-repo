@@ -189,12 +189,14 @@ This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt
 
 **Custom Docker Image**: The CI pipeline uses a custom Docker image (`ci-build`) with pre-installed dependencies for faster builds (~40-50% speed improvement). See `docs/DOCKER-CI-IMAGE.md` for details.
 
+**Monorepo Optimization**: The pipeline uses change detection to only run jobs when relevant files change, saving 40-60% of CI time on focused commits. See `docs/MONOREPO-CI-OPTIMIZATION.md` for details.
+
 **Workflow Rules**: Pipeline runs on:
 
-- Merge requests
-- Manual triggers (web UI/API)
-- Version tags (for AWS deployment)
-- Main/staging/development branches (not auto-run on push)
+- Merge requests (only affected apps are tested/built)
+- Manual triggers (web UI/API - all jobs available)
+- Version tags (full pipeline for releases)
+- Main/staging/development branches (selective based on changes)
 
 **Branch Strategy**:
 
@@ -205,12 +207,15 @@ This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt
 
 **Key Jobs**:
 
-1. `test` - Unit tests (gates build)
+1. `test` - Unit tests for game app (runs when game/packages change)
 2. `sonarcloud-check` - Code quality analysis (merge requests, main branches)
-3. `build` - Generates static site via `nuxt generate`
-4. `pages`/`deploy:staging`/`deploy:dev` - Deploy to GitLab Pages
-5. `deploy:aws` - Deploy to AWS (tags only)
-6. `verify:e2e:*` - E2E tests against deployed sites (manual, `allow_failure: true`)
+3. `build` - Game app build (runs when game/packages change)
+4. `build:docs` - Documentation site build (runs when docs change)
+5. `pages` - Deploy docs to GitLab Pages (runs when docs change)
+6. `deploy:aws` - Deploy game to AWS (tags only)
+7. `verify:e2e:*` - E2E tests against deployed sites (manual, `allow_failure: true`)
+
+**Change Detection**: Jobs automatically skip when their related files haven't changed, significantly reducing pipeline duration for focused commits.
 
 **E2E in CI**: Uses `mcr.microsoft.com/playwright:v1.57.0-noble` Docker image. Waits 30s after deployment for propagation before testing.
 
@@ -435,15 +440,24 @@ See `infrastructure/README.md` and `docs/TERRAFORM-SETUP.md` for detailed setup 
 
 ## Additional Resources
 
+### Deployment & Infrastructure
 - **AWS Deployment**: See `docs/AWS-DEPLOYMENT.md` for comprehensive AWS setup
 - **Terraform Setup**: See `docs/TERRAFORM-SETUP.md` for Terraform infrastructure guide
-- **Useful Packages**: See `docs/USEFUL-PACKAGES.md` for recommended Nuxt packages and plugins
+- **Docker CI Image**: See `docs/DOCKER-CI-IMAGE.md` for custom Docker image documentation
+- **Monorepo CI Optimization**: See `docs/MONOREPO-CI-OPTIMIZATION.md` for change detection strategy
+
+### Optimization & Performance
 - **Asset Optimization**: See `docs/ASSET-OPTIMIZATION.md` for asset loading strategies and image optimization
 - **AWS Asset Optimization**: See `docs/AWS-ASSET-OPTIMIZATION.md` for CloudFront CDN integration and cost optimization
 - **Build Optimization**: See `docs/BUILD-OPTIMIZATION.md` for build performance optimizations
-- **Dependency Management**: See `docs/DEPENDENCY-MANAGEMENT.md` for dependency upgrade workflows
+
+### Development & Testing
 - **Testing Guide**: See `docs/TESTING.md` for detailed testing documentation
 - **Development Guide**: See `docs/DEVELOPMENT.md` for refactoring history and optimizations
+- **Dependency Management**: See `docs/DEPENDENCY-MANAGEMENT.md` for dependency upgrade workflows
+- **Useful Packages**: See `docs/USEFUL-PACKAGES.md` for recommended Nuxt packages and plugins
+
+### Project Information
 - **Project History**: See `docs/PROJECT-HISTORY.md` for consolidated history of completed work
 - **Game Workflow**: See `docs/WORKFLOW.md` for complete game flow documentation
 - **MVP Tasks**: See `docs/MVP-TASKS.md` for critical tasks and known issues
