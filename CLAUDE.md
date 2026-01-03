@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **Nuxt 4 Progressive Web App (PWA)** - "Riddle Rush" - a word guessing game where players guess terms from Wikipedia categories starting with a specific letter. The app works offline, stores data locally using IndexedDB, and is deployed to GitLab Pages with multiple environments.
+This is a **Nuxt 4 Progressive Web App (PWA)** - "Riddle Rush" - a word guessing game where players guess terms from Wikipedia categories starting with a specific letter. The app works offline, stores data locally using IndexedDB, and is deployed to AWS (S3 + CloudFront) for development and production, with documentation on GitLab Pages.
 
 **Key Features:**
 
@@ -144,7 +144,8 @@ Configured with `@nuxtjs/i18n` in `nuxt.config.ts`:
 
 **Base URL Handling**: The app uses different base URLs per environment:
 
-- Production: `/riddle-rush-nuxt-pwa/`
+- Production (AWS): `/` (root)
+- Development (AWS): `/` (root)
 - Local dev: `/`
 
 This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt.config.ts`.
@@ -200,10 +201,14 @@ This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt
 
 **Branch Strategy**:
 
-- `main` → production (`https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`)
-- `staging` → staging environment (`/staging` path)
-- `development` → dev environment (`/dev` path)
+- `main` → AWS production (S3 + CloudFront) + GitLab Pages (docs only)
+- `development` → AWS development (S3 + CloudFront)
 - `tags` → AWS deployment (S3 + CloudFront)
+
+**Deployment URLs**:
+- **Documentation**: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa (GitLab Pages)
+- **Development**: AWS S3 + CloudFront (set via `AWS_CLOUDFRONT_DOMAIN_DEV`)
+- **Production**: AWS S3 + CloudFront (set via `AWS_CLOUDFRONT_DOMAIN`)
 
 **Key Jobs**:
 
@@ -211,9 +216,10 @@ This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt
 2. `sonarcloud-check` - Code quality analysis (merge requests, main branches)
 3. `build` - Game app build (runs when game/packages change)
 4. `build:docs` - Documentation site build (runs when docs change)
-5. `pages` - Deploy docs to GitLab Pages (runs when docs change)
-6. `deploy:aws` - Deploy game to AWS (tags only)
-7. `verify:e2e:*` - E2E tests against deployed sites (manual, `allow_failure: true`)
+5. `pages` - Deploy docs to GitLab Pages (main branch, docs only)
+6. `deploy:aws:dev` - Deploy game to AWS development (development branch)
+7. `deploy:aws:prod` - Deploy game to AWS production (main branch, tags)
+8. `verify:e2e:*` - E2E tests against deployed sites (manual, `allow_failure: true`)
 
 **Change Detection**: Jobs automatically skip when their related files haven't changed, significantly reducing pipeline duration for focused commits.
 

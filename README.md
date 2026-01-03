@@ -74,48 +74,64 @@ Husky is configured for monorepo-style git hooks:
 - **pre-commit**: Runs `lint-staged` (ESLint + Prettier auto-fix)
 - **pre-push**: Runs `typecheck` and `test:unit`
 
-## GitLab CI/CD Pipeline
+## Deployment & URLs
 
-The pipeline runs on `main`, `master`, and merge requests:
+### Environments
 
-1. **Lint Stage**: ESLint + Prettier checks, TypeScript type checking
-2. **Test Stage**: Unit tests with coverage, E2E tests (headless Playwright)
+- **Documentation**: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa (GitLab Pages)
+- **Development**: AWS S3 + CloudFront (configured, requires credentials)
+- **Production**: AWS S3 + CloudFront (configured, requires credentials)
+
+### GitLab CI/CD Pipeline
+
+The pipeline runs on `main`, `development`, and merge requests:
+
+1. **Test Stage**: Unit tests (Vitest) + E2E tests (Playwright)
+2. **Quality Stage**: SonarCloud analysis (merge requests)
 3. **Build Stage**: Generate static site
-4. **Deploy Stage**: Deploy to GitLab Pages
+4. **Deploy Stage**: 
+   - `main` → GitLab Pages (docs only)
+   - `development` → AWS S3 + CloudFront
+   - `main` → AWS S3 + CloudFront
+   - Tags → AWS S3 + CloudFront
 
-E2E tests use the official Playwright Docker image for headless browser testing.
+**Pipeline**: https://gitlab.com/djdiox/riddle-rush-nuxt-pwa/-/pipelines
+
+### AWS Deployment
+
+Deployments to AWS require CI/CD variables:
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_S3_BUCKET` (or `AWS_S3_BUCKET_DEV`/`AWS_S3_BUCKET_PROD`)
+- `AWS_CLOUDFRONT_ID` (or `AWS_CLOUDFRONT_ID_DEV`/`AWS_CLOUDFRONT_ID_PROD`)
+- `AWS_REGION` (defaults to `eu-central-1`)
+
+See `docs/AWS-DEPLOYMENT.md` for detailed setup.
 
 ## Project Structure
 
+This is a **monorepo** using pnpm workspaces:
+
 ```
 riddle-rush-nuxt-pwa/
-├── app/                    # Nuxt app directory
-│   ├── app.vue            # Root component
-│   ├── assets/            # CSS and static assets
-│   └── locales/           # i18n translation files
-├── components/            # Vue components
-│   ├── DebugPanel.vue     # Debug overlay (Ctrl+Shift+D)
-│   ├── FeedbackWidget.vue # User feedback component
-│   ├── Leaderboard.vue    # Score leaderboard
-│   └── Spinner.vue        # Loading indicator
-├── composables/           # Vue composables
-├── layouts/               # Nuxt layouts
-├── pages/                 # Nuxt pages (file-based routing)
-├── server/                # Nitro server
-│   ├── api/              # API routes
-│   └── utils/            # Server utilities
-├── stores/                # Pinia stores
-│   ├── game.ts           # Game state management
-│   └── settings.ts       # User settings
-├── tests/
-│   ├── unit/             # Vitest unit tests
-│   ├── e2e/              # Playwright E2E tests
-│   └── utils/            # Test utilities
-├── types/                 # TypeScript types
-├── .husky/               # Git hooks
-├── nuxt.config.ts        # Nuxt configuration
-└── vitest.config.ts      # Vitest configuration
+├── apps/
+│   ├── game/              # Main game application (Nuxt 4 PWA)
+│   └── docs/              # Documentation site (Nuxt Content)
+├── packages/
+│   ├── shared/            # Shared utilities and constants
+│   ├── types/             # Shared TypeScript types
+│   └── config/            # Shared configuration (ESLint, Prettier, Vite)
+├── infrastructure/        # Terraform IaC for AWS
+├── scripts/              # Deployment and utility scripts
+└── docs/                 # Documentation files
 ```
+
+## Resources
+
+- **Repository**: https://gitlab.com/djdiox/riddle-rush-nuxt-pwa
+- **CI/CD Pipelines**: https://gitlab.com/djdiox/riddle-rush-nuxt-pwa/-/pipelines
+- **Documentation**: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa
+- **Issues**: See `docs/MVP-TASKS.md` for current tasks
 
 ## Debug Mode
 
