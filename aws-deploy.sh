@@ -6,6 +6,13 @@
 # This script builds, tests and deploys the Guess Game PWA to AWS
 # Usage: ./aws-deploy.sh [environment]
 # Example: ./aws-deploy.sh production
+#
+# Environment Variables:
+#   - AWS_S3_BUCKET: S3 bucket name (required)
+#   - AWS_CLOUDFRONT_ID: CloudFront distribution ID (optional, for cache invalidation)
+#   - AWS_REGION: AWS region (default: eu-central-1)
+#   - SKIP_E2E_TESTS: Set to "true" to skip E2E test verification (default: false for local deployments)
+#   - CI: Set automatically in CI/CD pipelines (skips pre-deployment checks and E2E tests)
 
 set -e
 
@@ -235,4 +242,60 @@ cat > deployment-info.json <<EOF
 }
 EOF
 
-echo -e "${GREEN}✅ Done!${NC}"
+# Run E2E tests against deployed site (only for local deployments, not CI)
+if [ -z "$CI" ] && [ -n "$CLOUDFRONT_ID" ] && [ "${SKIP_E2E_TESTS:-false}" != "true" ]; then
+    echo -e "\n🧪 Running E2E tests against deployed site..."
+    
+    # Get CloudFront domain
+    CF_DOMAIN=$(aws cloudfront get-distribution --id "$CLOUDFRONT_ID" --query 'Distribution.DomainName' --output text)
+    DEPLOYED_URL="https://$CF_DOMAIN"
+    
+    echo -e "  Testing URL: ${DEPLOYED_URL}"
+    
+    # First, verify the site is accessible
+    echo -e "  Checking if site is reachable..."
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYED_URL" || echo "000")
+    
+    if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "301" ] && [ "$HTTP_CODE" != "302" ]; then
+        echo -e "${RED}❌ Site returned HTTP $HTTP_CODE - deployment may have failed${NC}"
+        echo -e "${YELLOW}⚠️  Please check:${NC}"
+        echo -e "${YELLOW}  1. CloudFront distribution status${NC}"
+        echo -e "${YELLOW}  2. S3 bucket permissions${NC}"
+        echo -e "${YELLOW}  3. CloudFront Origin Access Control configuration${NC}"
+        echo -e "${YELLOW}  Skipping E2E tests due to deployment verification failure${NC}"
+        exit 1
+    fi
+    
+    echo -e "${GREEN}✓ Site is reachable (HTTP $HTTP_CODE)${NC}"
+    echo -e "  Waiting 15 seconds for CloudFront cache invalidation to propagate..."
+    sleep 15
+    
+    # Check if Playwright is available
+    if command -v npx &> /dev/null && [ -d "apps/game" ]; then
+        # Run E2E tests against the deployed site
+        cd apps/game
+        echo -e "  Running Playwright E2E tests..."
+        if BASE_URL="$DEPLOYED_URL" pnpm exec playwright test --reporter=list; then
+            echo -e "${GREEN}✓ E2E tests passed${NC}"
+            cd ../..
+        else
+            echo -e "${RED}❌ E2E tests failed${NC}"
+            echo -e "${YELLOW}⚠️  Deployment completed but E2E tests failed. Please investigate.${NC}"
+            echo -e "${YELLOW}  View test report: apps/game/playwright-report/index.html${NC}"
+            cd ../..
+            exit 1
+        fi
+    else
+        echo -e "${YELLOW}⚠️  Playwright not available. Skipping E2E tests.${NC}"
+        echo -e "${YELLOW}  Install with: pnpm install${NC}"
+    fi
+elif [ -z "$CI" ] && [ -z "$CLOUDFRONT_ID" ]; then
+    echo -e "\n${YELLOW}⚠️  No CloudFront ID provided. Skipping E2E tests.${NC}"
+    echo -e "${YELLOW}  Set AWS_CLOUDFRONT_ID to enable E2E test verification.${NC}"
+elif [ "${SKIP_E2E_TESTS:-false}" == "true" ]; then
+    echo -e "\n⏭️  Skipping E2E tests (SKIP_E2E_TESTS=true)${NC}"
+else
+    echo -e "\n⏭️  Skipping E2E tests (running in CI - use verify:e2e:aws:* jobs)${NC}"
+fi
+
+echo -e "\n${GREEN}✅ Done!${NC}"
