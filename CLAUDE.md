@@ -60,15 +60,13 @@ pnpm run format:check # Check formatting
 
 ### Deployment
 
-#### GitLab Pages (Default)
+#### GitLab Pages (Documentation Only)
 
-```bash
-./scripts/deploy-prod.sh     # Deploy to production (main branch)
-./scripts/deploy-staging.sh  # Deploy to staging
-./scripts/deploy-dev.sh      # Deploy to development
-```
+Documentation is automatically deployed to GitLab Pages on `main` branch when docs change.
 
-#### AWS (S3 + CloudFront)
+**URL**: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa
+
+#### AWS (S3 + CloudFront) - Game App
 
 ```bash
 # Quick deployment (S3 only)
