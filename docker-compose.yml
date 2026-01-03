@@ -8,12 +8,12 @@ services:
     image: riddle-rush:latest
     container_name: riddle-rush-app
     ports:
-      - "8080:80"
+      - '8080:80'
     environment:
       - NODE_ENV=production
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:8080/health']
       interval: 30s
       timeout: 3s
       retries: 3
@@ -29,7 +29,7 @@ services:
       - /app/node_modules
       - /app/.nuxt
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=development
     command: sh -c "corepack enable && corepack prepare pnpm@10.26.2 --activate && pnpm install && pnpm run dev --host"

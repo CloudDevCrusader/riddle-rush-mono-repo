@@ -52,6 +52,7 @@ pnpm run dev
 ## Building
 
 Documentation is included when running:
+
 ```bash
 pnpm run generate
 ```
