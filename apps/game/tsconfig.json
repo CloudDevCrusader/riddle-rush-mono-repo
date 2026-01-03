@@ -2,5 +2,6 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "types": ["node", "vitest/globals"]
-  }
+  },
+  "exclude": ["capacitor.config.ts"]
 }
