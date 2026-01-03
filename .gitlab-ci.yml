@@ -338,6 +338,12 @@ verify:e2e:aws:dev:
     - corepack enable && corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
     - |
+      # Get CloudFront domain from Terraform if not set
+      if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
+        cd infrastructure/environments/development
+        export AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+        cd ../../..
+      fi
       if [ -n "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
         export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN_DEV
       elif [ -n "${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}" ]; then
@@ -372,6 +378,12 @@ verify:e2e:aws:prod:
     - corepack enable && corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
     - |
+      # Get CloudFront domain from Terraform if not set
+      if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
+        cd infrastructure/environments/prod
+        export AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+        cd ../../..
+      fi
       if [ -n "$AWS_CLOUDFRONT_DOMAIN" ]; then
         export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
       else
