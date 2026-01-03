@@ -227,10 +227,11 @@ pages:
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
 
 # ====================================
-# AWS Deployment (Tags Only)
+# AWS Deployment
 # ====================================
 
-deploy:aws:
+# Deploy to AWS - Development environment
+deploy:aws:dev:
   stage: deploy
   image: node:20
   before_script:
@@ -239,13 +240,53 @@ deploy:aws:
     - corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
   script:
-    - echo "Deploying to AWS S3 + CloudFront..."
+    - echo "Deploying to AWS S3 + CloudFront (development)..."
     - chmod +x aws-deploy.sh
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - export AWS_S3_BUCKET=$AWS_S3_BUCKET
-    - export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID
-    - export AWS_REGION=${AWS_REGION:-us-east-1}
+    - export AWS_S3_BUCKET=${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}
+    - export AWS_CLOUDFRONT_ID=${AWS_CLOUDFRONT_ID_DEV:-$AWS_CLOUDFRONT_ID}
+    - export AWS_REGION=${AWS_REGION:-eu-central-1}
+    - ./aws-deploy.sh development
+  artifacts:
+    paths:
+      - deployment-info.json
+      - apps/game/.output/
+    expire_in: 30 days
+  environment:
+    name: aws-development
+    url: https://$AWS_CLOUDFRONT_DOMAIN_DEV
+  needs:
+    - build
+  rules:
+    # Deploy on development branch when game changes
+    - if: $CI_COMMIT_BRANCH == "development"
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - pnpm-lock.yaml
+        - package.json
+    # Always deploy on manual triggers for development
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "development"
+      when: manual
+
+# Deploy to AWS - Production environment
+deploy:aws:prod:
+  stage: deploy
+  image: node:20
+  before_script:
+    - apt-get update && apt-get install -y awscli
+    - corepack enable
+    - corepack prepare pnpm@10.27.0 --activate
+    - pnpm install --frozen-lockfile
+  script:
+    - echo "Deploying to AWS S3 + CloudFront (production)..."
+    - chmod +x aws-deploy.sh
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - export AWS_S3_BUCKET=${AWS_S3_BUCKET_PROD:-$AWS_S3_BUCKET}
+    - export AWS_CLOUDFRONT_ID=${AWS_CLOUDFRONT_ID_PROD:-$AWS_CLOUDFRONT_ID}
+    - export AWS_REGION=${AWS_REGION:-eu-central-1}
     - ./aws-deploy.sh production
   artifacts:
     paths:
@@ -258,16 +299,59 @@ deploy:aws:
   needs:
     - build
   rules:
-    # Deploy on version tags only
+    # Deploy on main branch when game changes
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - pnpm-lock.yaml
+        - package.json
+    # Deploy on version tags
     - if: $CI_COMMIT_TAG
+    # Always deploy on manual triggers for production
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
+      when: manual
 
 # ====================================
 # Verify Stage - E2E Tests on Deployed Sites (Optional)
 # ====================================
 
+# E2E tests - AWS Development (manual, optional)
+verify:e2e:aws:dev:
+  stage: verify
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
+  script:
+    - corepack enable && corepack prepare pnpm@10.27.0 --activate
+    - pnpm install --frozen-lockfile
+    - |
+      if [ -n "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
+        export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN_DEV
+      elif [ -n "${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}" ]; then
+        export BASE_URL=http://${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}.s3-website-${AWS_REGION:-eu-central-1}.amazonaws.com
+      else
+        echo "No AWS deployment URL configured for development"
+        exit 1
+      fi
+    - echo 'Testing AWS development deployment at:' $BASE_URL
+    - echo 'Waiting 60 seconds for CloudFront invalidation to propagate...'
+    - sleep 60
+    - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
+  needs:
+    - deploy:aws:dev
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 30 days
+  rules:
+    # Manual trigger on development branch
+    - if: $CI_COMMIT_BRANCH == "development"
+      when: manual
+      allow_failure: true
+
 # E2E tests - AWS Production (manual, optional)
-# Note: Tests AWS deployment, not GitLab Pages (which now hosts docs)
-verify:e2e:aws:
+verify:e2e:aws:prod:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
@@ -277,14 +361,14 @@ verify:e2e:aws:
       if [ -n "$AWS_CLOUDFRONT_DOMAIN" ]; then
         export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
       else
-        export BASE_URL=http://$AWS_S3_BUCKET.s3-website-${AWS_REGION:-us-east-1}.amazonaws.com
+        export BASE_URL=http://${AWS_S3_BUCKET_PROD:-$AWS_S3_BUCKET}.s3-website-${AWS_REGION:-eu-central-1}.amazonaws.com
       fi
-    - echo 'Testing AWS deployment at:' $BASE_URL
+    - echo 'Testing AWS production deployment at:' $BASE_URL
     - echo 'Waiting 60 seconds for CloudFront invalidation to propagate...'
     - sleep 60
     - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
   needs:
-    - deploy:aws
+    - deploy:aws:prod
   artifacts:
     when: always
     paths:
@@ -292,7 +376,7 @@ verify:e2e:aws:
       - test-results/
     expire_in: 30 days
   rules:
-    # Manual trigger on tags only
-    - if: $CI_COMMIT_TAG
+    # Manual trigger on main branch or tags
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
       when: manual
       allow_failure: true
