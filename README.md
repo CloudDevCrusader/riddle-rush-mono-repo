@@ -82,10 +82,7 @@ Husky is configured for monorepo-style git hooks:
 - **Development**: https://dvd66jaack4ue.cloudfront.net (AWS S3 + CloudFront)
 - **Production**: https://d1mgifvomw928y.cloudfront.net (AWS S3 + CloudFront)
 
-> **Note**: 
-> - CloudFront domains are managed via Terraform. See `infrastructure/environments/` for configuration.
-> - URLs will show "Access Denied" until the first deployment is completed via CI/CD pipeline.
-> - Deployments require AWS credentials to be set in GitLab CI/CD variables.
+> **Note**: CloudFront domains are managed via Terraform. See `infrastructure/environments/` for configuration.
 
 ### GitLab CI/CD Pipeline
 
