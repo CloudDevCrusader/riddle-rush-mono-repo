@@ -108,6 +108,13 @@ Deployments to AWS require CI/CD variables:
 - `AWS_CLOUDFRONT_ID` (or `AWS_CLOUDFRONT_ID_DEV`/`AWS_CLOUDFRONT_ID_PROD`)
 - `AWS_REGION` (defaults to `eu-central-1`)
 
+**Local Deployments**: The `aws-deploy.sh` script automatically runs E2E tests after deployment to verify the deployment was successful. This can be skipped with `SKIP_E2E_TESTS=true`.
+
+**Deployment Verification**:
+- Script checks HTTP status (200/301/302) before running tests
+- Runs Playwright E2E tests against deployed CloudFront URL
+- Exits with error if tests fail, preventing bad deployments
+
 See `docs/AWS-DEPLOYMENT.md` for detailed setup.
 
 ## Project Structure
