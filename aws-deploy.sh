@@ -16,19 +16,72 @@
 
 set -e
 
-# Configuration
-ENVIRONMENT="${1:-production}"
-S3_BUCKET="${AWS_S3_BUCKET:-riddle-rush-pwa}"
-CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
-AWS_REGION="${AWS_REGION:-eu-central-1}"
-BUILD_DIR="apps/game/.output/public"
-
-# Colors for output
+# Colors for output (must be defined before use)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+
+# Configuration
+ENVIRONMENT="${1:-production}"
+BUILD_DIR="apps/game/.output/public"
+
+# Get Terraform outputs if not provided via environment variables
+if [ -z "$AWS_S3_BUCKET" ] || [ -z "$AWS_CLOUDFRONT_ID" ]; then
+    echo -e "\n📋 Getting Terraform outputs for ${ENVIRONMENT}..."
+    
+    # Normalize environment name for Terraform directory
+    TERRAFORM_ENV=""
+    case "$ENVIRONMENT" in
+        development|dev)
+            TERRAFORM_ENV="development"
+            ;;
+        production|prod)
+            TERRAFORM_ENV="prod"
+            ;;
+        *)
+            TERRAFORM_ENV="$ENVIRONMENT"
+            ;;
+    esac
+    
+    TERRAFORM_DIR="infrastructure/environments/${TERRAFORM_ENV}"
+    
+    if [ -d "$TERRAFORM_DIR" ]; then
+        cd "$TERRAFORM_DIR" || exit 1
+        
+        if [ -z "$AWS_S3_BUCKET" ]; then
+            S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
+            if [ -n "$S3_BUCKET" ]; then
+                export AWS_S3_BUCKET="$S3_BUCKET"
+                echo -e "  ${GREEN}✓${NC} S3 Bucket from Terraform: $S3_BUCKET"
+            fi
+        fi
+        
+        if [ -z "$AWS_CLOUDFRONT_ID" ]; then
+            CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+            if [ -n "$CLOUDFRONT_ID" ]; then
+                export AWS_CLOUDFRONT_ID="$CLOUDFRONT_ID"
+                echo -e "  ${GREEN}✓${NC} CloudFront ID from Terraform: $CLOUDFRONT_ID"
+            fi
+        fi
+        
+        AWS_REGION_FROM_TF=$(terraform output -raw aws_region 2>/dev/null || echo "")
+        if [ -n "$AWS_REGION_FROM_TF" ] && [ -z "$AWS_REGION" ]; then
+            export AWS_REGION="$AWS_REGION_FROM_TF"
+        fi
+        
+        cd - > /dev/null || exit 1
+    else
+        echo -e "  ${YELLOW}⚠️  Terraform directory not found: $TERRAFORM_DIR${NC}"
+        echo -e "  ${YELLOW}   Using environment variables or defaults${NC}"
+    fi
+fi
+
+# Use environment variables or defaults
+S3_BUCKET="${AWS_S3_BUCKET:-riddle-rush-pwa}"
+CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
+AWS_REGION="${AWS_REGION:-eu-central-1}"
 
 echo -e "${BLUE}🚀 Starting AWS deployment for ${ENVIRONMENT}...${NC}"
 echo "======================================="

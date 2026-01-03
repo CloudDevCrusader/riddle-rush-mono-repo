@@ -79,10 +79,17 @@ Husky is configured for monorepo-style git hooks:
 ### Environments
 
 - **Documentation**: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa (GitLab Pages)
-- **Development**: https://dvd66jaack4ue.cloudfront.net (AWS S3 + CloudFront)
-- **Production**: https://d1mgifvomw928y.cloudfront.net (AWS S3 + CloudFront)
+- **Development**: Managed via Terraform (see `infrastructure/environments/development`)
+- **Production**: Managed via Terraform (see `infrastructure/environments/prod`)
 
-> **Note**: CloudFront domains are managed via Terraform. See `infrastructure/environments/` for configuration.
+> **Note**: CloudFront domains and S3 buckets are managed via Terraform. Get current URLs:
+> ```bash
+> # Development
+> cd infrastructure/environments/development && terraform output website_url
+> 
+> # Production
+> cd infrastructure/environments/prod && terraform output website_url
+> ```
 
 ### GitLab CI/CD Pipeline
 

@@ -241,12 +241,19 @@ deploy:aws:dev:
     - pnpm install --frozen-lockfile
   script:
     - echo "Deploying to AWS S3 + CloudFront (development)..."
+    - |
+      # Get Terraform outputs for development environment
+      cd infrastructure/environments/development
+      export AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}")
+      export AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "${AWS_CLOUDFRONT_ID_DEV:-$AWS_CLOUDFRONT_ID}")
+      export AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+      export AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "${AWS_REGION:-eu-central-1}")
+      cd ../../..
     - chmod +x aws-deploy.sh
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - export AWS_S3_BUCKET=${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}
-    - export AWS_CLOUDFRONT_ID=${AWS_CLOUDFRONT_ID_DEV:-$AWS_CLOUDFRONT_ID}
-    - export AWS_REGION=${AWS_REGION:-eu-central-1}
+    - echo "Using S3 Bucket: $AWS_S3_BUCKET"
+    - echo "Using CloudFront ID: $AWS_CLOUDFRONT_ID"
     - ./aws-deploy.sh development
   artifacts:
     paths:
@@ -275,18 +282,25 @@ deploy:aws:prod:
   stage: deploy
   image: node:20
   before_script:
-    - apt-get update && apt-get install -y awscli
+    - apt-get update && apt-get install -y awscli terraform
     - corepack enable
     - corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
   script:
     - echo "Deploying to AWS S3 + CloudFront (production)..."
+    - |
+      # Get Terraform outputs for production environment
+      cd infrastructure/environments/prod
+      export AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "${AWS_S3_BUCKET_PROD:-$AWS_S3_BUCKET}")
+      export AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "${AWS_CLOUDFRONT_ID_PROD:-$AWS_CLOUDFRONT_ID}")
+      export AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+      export AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "${AWS_REGION:-eu-central-1}")
+      cd ../../..
     - chmod +x aws-deploy.sh
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - export AWS_S3_BUCKET=${AWS_S3_BUCKET_PROD:-$AWS_S3_BUCKET}
-    - export AWS_CLOUDFRONT_ID=${AWS_CLOUDFRONT_ID_PROD:-$AWS_CLOUDFRONT_ID}
-    - export AWS_REGION=${AWS_REGION:-eu-central-1}
+    - echo "Using S3 Bucket: $AWS_S3_BUCKET"
+    - echo "Using CloudFront ID: $AWS_CLOUDFRONT_ID"
     - ./aws-deploy.sh production
   artifacts:
     paths:

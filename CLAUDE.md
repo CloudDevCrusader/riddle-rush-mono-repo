@@ -487,8 +487,9 @@ See `infrastructure/README.md` and `docs/TERRAFORM-SETUP.md` for detailed setup 
 **Deploy to production:**
 
 1. Merge to `main` branch
-2. CI automatically builds and deploys to GitLab Pages
-3. Manually trigger `verify:e2e:production` to test
+2. CI automatically builds and deploys to AWS (S3 + CloudFront)
+3. Documentation automatically deploys to GitLab Pages
+4. Manually trigger `verify:e2e:aws:prod` to test
 
 **Deploy to AWS:**
 
