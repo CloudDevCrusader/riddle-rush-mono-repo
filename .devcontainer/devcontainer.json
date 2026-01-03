@@ -1,0 +1,176 @@
+{
+  "name": "Riddle Rush Monorepo",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+
+  // Features to install
+  // Note: git is already included in the base image, so we only need github-cli
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // Configure tool-specific properties
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vue.volar",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "sonarsource.sonarlint-vscode",
+        "mrmlnc.vscode-scss",
+        "stylelint.vscode-stylelint",
+        "christian-kohler.path-intellisense",
+        "usernamehw.errorlens",
+        "formulahendry.auto-rename-tag",
+        "naumovs.color-highlight",
+        "ms-playwright.playwright"
+      ],
+      "settings": {
+        "files.exclude": {
+          "**/.git": true,
+          "**/.svn": true,
+          "**/.hg": true,
+          "**/.DS_Store": true,
+          "**/Thumbs.db": true,
+          ".yoyo": true
+        },
+        "nuxt.isNuxtApp": false,
+        "vue.server.hybridMode": true,
+        "volar.tsconfig": ".nuxt/tsconfig.app.json",
+        "volar.takeOverMode.enabled": false,
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "typescript.suggest.autoImports": true,
+        "typescript.updateImportsOnFileMove.enabled": "always",
+        "typescript.preferences.importModuleSpecifier": "shortest",
+        "typescript.preferences.includePackageJsonAutoImports": "on",
+        "typescript.suggest.paths": true,
+        "javascript.suggest.autoImports": true,
+        "javascript.updateImportsOnFileMove.enabled": "always",
+        "debug.javascript.autoAttachFilter": "smart",
+        "debug.javascript.unmapMissingSources": true,
+        "debug.javascript.debugByLinkOptions": "always",
+        "debug.internalConsoleOptions": "neverOpen",
+        "debug.openDebug": "openOnDebugBreak",
+        "debug.showBreakpointsInOverviewRuler": true,
+        "debug.toolBarLocation": "docked",
+        "debug.javascript.sourceMaps": true,
+        "debug.javascript.breakOnConditionalError": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "eslint.validate": [
+          "javascript",
+          "typescript",
+          "vue"
+        ],
+        "eslint.workingDirectories": [
+          {
+            "mode": "auto"
+          }
+        ],
+        "[vue]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "editor.formatOnSave": true,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": true,
+        "editor.inlineSuggest.enabled": true,
+        "editor.suggest.preview": true,
+        "editor.quickSuggestions": {
+          "strings": true
+        },
+        "files.associations": {
+          "*.css": "css",
+          "*.scss": "scss",
+          "*.vue": "vue",
+          "turbo.json": "jsonc"
+        },
+        "[scss]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[css]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "scss.lint.unknownAtRules": "ignore",
+        "path-intellisense.autoSlashAfterDirectory": true,
+        "path-intellisense.extensionOnImport": true,
+        "prettier.semi": false,
+        "prettier.singleQuote": true,
+        "prettier.tabWidth": 2,
+        "prettier.trailingComma": "es5",
+        "prettier.printWidth": 100,
+        "prettier.bracketSpacing": true,
+        "prettier.arrowParens": "always",
+        "prettier.endOfLine": "lf",
+        "prettier.vueIndentScriptAndStyle": false,
+        "sonarlint.rules": {
+          "typescript:S125": {
+            "level": "off"
+          },
+          "typescript:S1186": {
+            "level": "off"
+          }
+        },
+        "search.exclude": {
+          "**/node_modules": true,
+          "**/.nuxt": true,
+          "**/.output": true,
+          "**/dist": true,
+          "**/.vite": true,
+          "**/.turbo": true,
+          "**/turbo-*.log": true
+        },
+        "files.watcherExclude": {
+          "**/.git/objects/**": true,
+          "**/.git/subtree-cache/**": true,
+          "**/node_modules/**": true,
+          "**/.nuxt/**": true,
+          "**/.output/**": true,
+          "**/dist/**": true,
+          "**/.vite/**": true,
+          "**/.turbo/**": true,
+          "**/turbo-*.log": true
+        }
+      }
+    }
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally
+  "forwardPorts": [3000, 3001],
+
+  // Use 'portsAttributes' to set default properties for specific forwarded ports
+  "portsAttributes": {
+    "3000": {
+      "label": "Game App",
+      "onAutoForward": "notify"
+    },
+    "3001": {
+      "label": "Docs App",
+      "onAutoForward": "ignore"
+    }
+  },
+
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root
+  "remoteUser": "node",
+
+  // Workspace folder - removed to let devcontainers auto-detect
+  // This ensures Cursor/VS Code finds files regardless of mount location
+  // If you need to specify explicitly, uncomment one of the options below:
+  // "workspaceFolder": "/workspace",  // Standard devcontainer mount
+  // "workspaceFolder": "/workspaces/riddle-rush-nuxt-pwa",  // Codespaces mount
+
+  // Use 'postCreateCommand' to run commands after the container is created
+  "postCreateCommand": "bash .devcontainer/post-create.sh"
+}

@@ -30,6 +30,10 @@ export const useGameStore = defineStore('game', {
     categoryLoadError: null,
     selectedLetter: null,
     pendingPlayerNames: [],
+    // Session restoration tracking
+    sessionRestoredFromDB: false,
+    wasPaused: false,
+    resumeNotificationShown: false,
   }),
 
   getters: {
@@ -167,10 +171,43 @@ export const useGameStore = defineStore('game', {
         return this.currentSession
       }
 
+      // Reset restoration flags when starting new game
+      this.sessionRestoredFromDB = false
+      this.wasPaused = false
+      this.resumeNotificationShown = false
+
       return this.startNewGame()
     },
 
+    // Mark game as paused (called when pause modal opens)
+    setPaused() {
+      this.wasPaused = true
+      this.resumeNotificationShown = false // Allow notification after resume
+    },
+
+    // Check if resume notification should be shown
+    shouldShowResumeNotification(): boolean {
+      // Show notification only if:
+      // 1. Session was restored from DB (user came back after closing browser)
+      // 2. OR game was paused and resumed
+      // 3. AND notification hasn't been shown yet
+      return (this.sessionRestoredFromDB || this.wasPaused) && !this.resumeNotificationShown
+    },
+
+    // Mark that resume notification was shown
+    markResumeNotificationShown() {
+      this.resumeNotificationShown = true
+      // Reset flags after showing notification
+      this.sessionRestoredFromDB = false
+      this.wasPaused = false
+    },
+
     async startNewGame() {
+      // Reset restoration flags when starting new game
+      this.sessionRestoredFromDB = false
+      this.wasPaused = false
+      this.resumeNotificationShown = false
+
       await this.fetchCategories()
 
       const category = this.getRandomCategory()
@@ -200,6 +237,7 @@ export const useGameStore = defineStore('game', {
           attempts: [],
           players: [],
           currentRound: 0,
+          status: 'active',
           roundHistory: [],
         }
 
@@ -304,7 +342,17 @@ export const useGameStore = defineStore('game', {
 
         const session = await getGameSession()
         if (session) {
+          // Only mark as restored if session wasn't already in memory
+          // This indicates user came back after closing browser/tab
+          const wasSessionInMemory = this.currentSession !== null
           this.currentSession = session
+
+          if (!wasSessionInMemory) {
+            // Session was loaded from DB and wasn't in memory
+            // This means user came back after closing browser
+            this.sessionRestoredFromDB = true
+            this.resumeNotificationShown = false // Allow notification to show
+          }
         }
 
         const history = await getGameHistory()
@@ -347,10 +395,19 @@ export const useGameStore = defineStore('game', {
 
     clearSession() {
       this.currentSession = null
+      // Reset restoration flags when clearing session
+      this.sessionRestoredFromDB = false
+      this.wasPaused = false
+      this.resumeNotificationShown = false
     },
 
     // Multi-player actions
     async setupPlayers(playerNames: string[], gameName?: string, customLetter?: string, customCategory?: Category) {
+      // Reset restoration flags when setting up new game
+      this.sessionRestoredFromDB = false
+      this.wasPaused = false
+      this.resumeNotificationShown = false
+
       await this.fetchCategories()
 
       const category = customCategory || this.getRandomCategory()

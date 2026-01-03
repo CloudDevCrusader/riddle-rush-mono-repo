@@ -2,10 +2,11 @@ import { defineConfig } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
+import type { PluginOption } from 'vite'
 
 export default defineConfig({
   plugins: [
-    vue(),
+    vue() as PluginOption,
     AutoImport({
       imports: [
         'vue',
@@ -65,7 +66,7 @@ export default defineConfig({
         },
       ],
       dts: false,
-    }),
+    }) as PluginOption,
   ],
   resolve: {
     alias: {

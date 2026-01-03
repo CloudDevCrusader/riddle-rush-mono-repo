@@ -15,7 +15,7 @@ let dbInstance: IDBPDatabase | null = null
 async function getDB() {
   if (dbInstance) return dbInstance
 
-  dbInstance = await openDB(DB_NAME, DB_VERSION_LOCAL, {
+  dbInstance = await openDB(DB_NAME, DB_VERSION, {
     upgrade(db, _oldVersion) {
       // Create object stores if they don't exist
       if (!db.objectStoreNames.contains(GAME_SESSION_STORE)) {

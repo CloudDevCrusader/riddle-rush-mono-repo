@@ -165,21 +165,58 @@ const handleNo = () => {
   top: var(--spacing-xl);
   left: var(--spacing-xl);
   z-index: 3;
-  background: none;
-  border: none;
+  background: linear-gradient(180deg, #ff5b5b 0%, #c62828 100%);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
+  padding: var(--spacing-sm);
+  transition: all var(--transition-base);
+  box-shadow:
+    0 6px 0 rgba(198, 40, 40, 0.8),
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    inset 0 2px 6px rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .back-btn img {
-  width: clamp(40px, 5vw, 60px);
+  width: 32px;
   height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  position: relative;
+  z-index: 1;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 0 rgba(198, 40, 40, 0.8),
+    0 10px 20px rgba(0, 0, 0, 0.5),
+    inset 0 2px 6px rgba(255, 255, 255, 0.4);
 }
 
 .back-btn:active {
-  transform: scale(0.95);
+  transform: translateY(2px);
+  box-shadow:
+    0 2px 0 rgba(198, 40, 40, 0.8),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    inset 0 2px 6px rgba(255, 255, 255, 0.2);
 }
 
 .title-container {

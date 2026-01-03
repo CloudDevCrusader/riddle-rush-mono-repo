@@ -1,4 +1,4 @@
-import type { Plugin } from 'vite'
+import type { BuildOptions, Plugin } from 'vite'
 import { resolve } from 'node:path'
 import { createRequire } from 'node:module'
 
@@ -154,49 +154,49 @@ export function getOptimizeDeps() {
  * Shared build configuration
  */
 export function getBuildConfig() {
-  return {
-    build: {
-      // Enable tree shaking
-      modulePreload: { polyfill: true },
-      // Chunk size warnings
-      chunkSizeWarningLimit: 500,
-      // Source maps only in development
-      sourcemap: process.env.NODE_ENV !== 'production',
-      // Minification options
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: process.env.NODE_ENV === 'production',
-          drop_debugger: process.env.NODE_ENV === 'production',
-          pure_funcs: process.env.NODE_ENV === 'production' ? ['console.log', 'console.info'] : [],
-        },
-        format: {
-          comments: false,
-        },
+  const build: BuildOptions = {
+    // Enable tree shaking
+    modulePreload: { polyfill: true },
+    // Chunk size warnings
+    chunkSizeWarningLimit: 500,
+    // Source maps only in development
+    sourcemap: process.env.NODE_ENV !== 'production',
+    // Minification options
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: process.env.NODE_ENV === 'production',
+        drop_debugger: process.env.NODE_ENV === 'production',
+        pure_funcs: process.env.NODE_ENV === 'production' ? ['console.log', 'console.info'] : [],
       },
-      // Optimize chunk splitting
-      rollupOptions: {
-        output: {
-          manualChunks: (id: string) => {
-            // Vendor chunk for node_modules
-            if (id.includes('node_modules')) {
-              // Separate large libraries
-              if (id.includes('pinia')) return 'vendor-pinia'
-              if (id.includes('@vueuse')) return 'vendor-vueuse'
-              if (id.includes('howler')) return 'vendor-howler'
-              return 'vendor'
-            }
-            // Separate layouts
-            if (id.includes('/layouts/')) return 'layouts'
-            // Return null to use default chunking
-            return null
-          },
-          // Optimize asset naming
-          chunkFileNames: '_nuxt/[name]-[hash].js',
-          entryFileNames: '_nuxt/[name]-[hash].js',
-          assetFileNames: '_nuxt/[name]-[hash][extname]',
+      format: {
+        comments: false,
+      },
+    },
+    // Optimize chunk splitting
+    rollupOptions: {
+      output: {
+        manualChunks: (id: string) => {
+          // Vendor chunk for node_modules
+          if (id.includes('node_modules')) {
+            // Separate large libraries
+            if (id.includes('pinia')) return 'vendor-pinia'
+            if (id.includes('@vueuse')) return 'vendor-vueuse'
+            if (id.includes('howler')) return 'vendor-howler'
+            return 'vendor'
+          }
+          // Separate layouts
+          if (id.includes('/layouts/')) return 'layouts'
+          // Return null to use default chunking
+          return null
         },
+        // Optimize asset naming
+        chunkFileNames: '_nuxt/[name]-[hash].js',
+        entryFileNames: '_nuxt/[name]-[hash].js',
+        assetFileNames: '_nuxt/[name]-[hash][extname]',
       },
     },
   }
+
+  return { build }
 }

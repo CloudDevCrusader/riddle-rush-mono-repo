@@ -10,7 +10,7 @@ export interface Category {
   searchWord: string
   key: string
   searchProvider: 'petscan' | 'offline' | 'wikipedia'
-  additionalData?: Record<string, unknown>
+  additionalData?: string[]
   letter?: string
 }
 
@@ -78,6 +78,10 @@ export interface GameState {
   categoryLoadError: string | null
   selectedLetter: string | null
   pendingPlayerNames: string[]
+  // Session restoration tracking
+  sessionRestoredFromDB: boolean
+  wasPaused: boolean
+  resumeNotificationShown: boolean
 }
 
 // PWA install prompt

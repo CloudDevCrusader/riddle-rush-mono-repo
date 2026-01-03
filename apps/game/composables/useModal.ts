@@ -43,23 +43,24 @@ export function useModal(initialState = false) {
  * Composable for managing multiple modals
  */
 export function useModals<T extends string>(modalNames: T[]) {
-  const modals = reactive<Record<T, ReturnType<typeof useModal>>>({} as any)
+  const modals = reactive({} as Record<T, ReturnType<typeof useModal>>)
+  const modalMap = modals as Record<T, ReturnType<typeof useModal>>
 
   modalNames.forEach((name) => {
-    modals[name] = useModal()
+    modalMap[name] = useModal()
   })
 
   const openModal = (name: T, data?: any) => {
-    modals[name].open(data)
+    modalMap[name].open(data)
   }
 
   const closeModal = (name: T) => {
-    modals[name].close()
+    modalMap[name].close()
   }
 
   const closeAll = () => {
     modalNames.forEach((name) => {
-      modals[name].close()
+      modalMap[name].close()
     })
   }
 

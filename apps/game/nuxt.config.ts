@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { getDevPlugins, getBuildPlugins, getOptimizeDeps, getBuildConfig } from '@riddle-rush/config/vite'
 
+const baseBuild = getBuildConfig().build
+
 export default defineNuxtConfig({
   modules: [
     '@nuxtjs/i18n',
@@ -116,11 +118,12 @@ export default defineNuxtConfig({
     ],
     optimizeDeps: getOptimizeDeps(),
     build: {
-      ...getBuildConfig().build,
+      ...baseBuild,
       // Override with app-specific configs
       rollupOptions: {
+        ...baseBuild.rollupOptions,
         output: {
-          ...getBuildConfig().build.rollupOptions.output,
+          ...(baseBuild.rollupOptions?.output ?? {}),
           manualChunks: (id: string) => {
             // Vendor chunk for node_modules
             if (id.includes('node_modules')) {
@@ -156,19 +159,15 @@ export default defineNuxtConfig({
 
   typescript: { strict: true },
 
-  gtag: {
-    // Only enable when GA ID is provided
-    enabled: !!process.env.GOOGLE_ANALYTICS_ID,
-    ...(process.env.GOOGLE_ANALYTICS_ID
-      ? {
-          id: process.env.GOOGLE_ANALYTICS_ID,
-          config: {
-            anonymize_ip: true,
-            cookie_flags: 'SameSite=None;Secure',
-          },
-        }
-      : {}),
-  },
+  gtag: process.env.GOOGLE_ANALYTICS_ID
+    ? {
+        id: process.env.GOOGLE_ANALYTICS_ID,
+        config: {
+          anonymize_ip: true,
+          cookie_flags: 'SameSite=None;Secure',
+        },
+      }
+    : {},
 
   i18n: {
     locales: [

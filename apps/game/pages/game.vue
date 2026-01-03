@@ -29,7 +29,7 @@
       <button
         class="pause-btn tap-highlight no-select"
         aria-label="Pause game"
-        @click="showPauseModal = true"
+        @click="handlePause"
       >
         <svg
           width="32"
@@ -127,7 +127,7 @@
     <LazyPauseModal
       v-if="showPauseModal"
       :visible="showPauseModal"
-      @resume="showPauseModal = false"
+      @resume="handleResume"
       @restart="handleRestart"
       @home="showPauseModal = false"
     />
@@ -237,6 +237,21 @@ const handleNext = async () => {
   goToResults()
 }
 
+const handlePause = () => {
+  // Mark that game is being paused
+  gameStore.setPaused()
+  showPauseModal.value = true
+}
+
+const handleResume = () => {
+  showPauseModal.value = false
+  // Check if we should show resume notification (game was paused)
+  if (gameStore.shouldShowResumeNotification()) {
+    toast.info(t('game.resumed', 'Game resumed!'))
+    gameStore.markResumeNotificationShown()
+  }
+}
+
 const handleRestart = () => {
   showPauseModal.value = false
   // Navigate to players page to start new game
@@ -252,7 +267,7 @@ onMounted(async () => {
   // Add ESC key listener for pause
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape' && !showPauseModal.value) {
-      showPauseModal.value = true
+      handlePause()
     }
   }
 

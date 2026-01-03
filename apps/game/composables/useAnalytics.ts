@@ -3,7 +3,16 @@
  * Uses Google Analytics 4 via nuxt-gtag module
  */
 export const useAnalytics = () => {
-  const { gtag } = useGtag()
+  const resolveGtag = () => {
+    if (!import.meta.client) return null
+    const nuxtApp = useNuxtApp()
+    const appGtag = (nuxtApp as { $gtag?: (...args: unknown[]) => void }).$gtag
+
+    if (typeof appGtag === 'function') return appGtag
+
+    const globalGtag = (globalThis as { gtag?: (...args: unknown[]) => void }).gtag
+    return typeof globalGtag === 'function' ? globalGtag : null
+  }
 
   /**
    * Track a custom event
@@ -11,10 +20,10 @@ export const useAnalytics = () => {
    * @param params - Additional parameters for the event
    */
   const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
-    if (import.meta.client) {
-      // Track with Google Analytics
-      gtag('event', eventName, params)
-    }
+    const gtag = resolveGtag()
+    if (!gtag) return
+    // Track with Google Analytics
+    gtag('event', eventName, params)
   }
 
   /**
@@ -23,13 +32,13 @@ export const useAnalytics = () => {
    * @param pageTitle - Title of the page
    */
   const trackPageView = (pagePath: string, pageTitle?: string) => {
-    if (import.meta.client) {
-      // Track with Google Analytics
-      gtag('event', 'page_view', {
-        page_path: pagePath,
-        page_title: pageTitle,
-      })
-    }
+    const gtag = resolveGtag()
+    if (!gtag) return
+    // Track with Google Analytics
+    gtag('event', 'page_view', {
+      page_path: pagePath,
+      page_title: pageTitle,
+    })
   }
 
   /**

@@ -127,28 +127,12 @@ const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
 
-const categoryIconMap: Record<string, string> = {
-  female_name: '👩',
-  male_name: '👨',
-  water_vehicle: '⛵',
-  flowers: '🌸',
-  plants: '🌿',
-  profession: '👔',
-  insect: '🐛',
-  animal: '🦁',
-  city: '🏙️',
-  country: '🌍',
-  food: '🍕',
-  drink: '🧃',
-  sport: '⚽',
-  music: '🎵',
-  movie: '🎬',
-}
+const { resolve: resolveCategoryEmoji } = useCategoryEmoji()
 
 const selectedCategoryIcon = computed(() => {
   if (!selectedCategory.value)
-    return '📦'
-  return getCategoryIcon(selectedCategory.value)
+    return '🎯'
+  return resolveCategoryEmoji(selectedCategory.value.name)
 })
 
 const selectedCategoryName = computed(() => {
@@ -181,7 +165,7 @@ onMounted(async () => {
 })
 
 const getCategoryIcon = (category: Category): string => {
-  return categoryIconMap[category.searchWord] || '📦'
+  return resolveCategoryEmoji(category.name)
 }
 
 const onCategoryComplete = (category: Category) => {

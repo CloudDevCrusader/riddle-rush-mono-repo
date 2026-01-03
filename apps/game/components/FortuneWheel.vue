@@ -22,6 +22,7 @@
         @click="selectItem(item, index)"
       >
         <div class="segment-content">
+          <!-- Show icon only if icon exists (for categories) -->
           <span
             v-if="getItemIcon(item)"
             class="segment-icon"
@@ -29,7 +30,9 @@
           >
             {{ getItemIcon(item) }}
           </span>
+          <!-- Show text only if no icon (for letters) -->
           <span
+            v-else
             class="segment-text"
             :style="{ transform: `rotate(-${wheelRotation + (index * angleStep)}deg)` }"
           >
@@ -43,11 +46,18 @@
     <div class="wheel-center">
       <div class="center-glow"></div>
       <div class="center-circle">
+        <!-- Show selected item icon if available, otherwise show selected item label, otherwise show center icon -->
         <span
           v-if="selectedItem && getItemIcon(selectedItem as T)"
           class="selected-icon"
         >
           {{ getItemIcon(selectedItem as T) }}
+        </span>
+        <span
+          v-else-if="selectedItem"
+          class="selected-text"
+        >
+          {{ getItemLabel(selectedItem as T) }}
         </span>
         <span
           v-else
@@ -278,30 +288,31 @@ watch(() => props.modelValue, (newValue) => {
 
 .segment-content {
   position: absolute;
-  top: 15%;
+  top: 20%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-xs);
   pointer-events: none;
+  width: 100%;
 }
 
 .segment-icon {
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(32px, 5vw, 48px);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .segment-text {
   font-family: var(--font-display);
-  font-size: clamp(10px, 2vw, 14px);
-  font-weight: var(--font-weight-bold);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: var(--font-weight-black);
   color: var(--color-white);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   text-align: center;
-  max-width: 80px;
-  line-height: 1.2;
+  line-height: 1;
 }
 
 /* Wheel Center */
@@ -353,9 +364,17 @@ watch(() => props.modelValue, (newValue) => {
 }
 
 .selected-icon,
+.selected-text,
 .center-icon {
   font-size: clamp(32px, 7vw, 48px);
   animation: bounce 0.5s ease-out;
+}
+
+.selected-text {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-black);
+  color: var(--color-white);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes bounce {
@@ -378,11 +397,11 @@ watch(() => props.modelValue, (newValue) => {
   }
 
   .segment-icon {
-    font-size: clamp(20px, 5vw, 28px);
+    font-size: clamp(28px, 6vw, 40px);
   }
 
   .segment-text {
-    font-size: clamp(9px, 2.2vw, 12px);
+    font-size: clamp(20px, 5vw, 32px);
   }
 
   .center-circle {

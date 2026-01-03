@@ -202,29 +202,115 @@ build:docs:
     # Always run on manual triggers
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
 
-# Deploy documentation to GitLab Pages - only when docs change
+# Deploy to GitLab Pages
+# Handles both docs (main branch) and game app (development/staging branches)
 pages:
   stage: deploy
   dependencies:
     - build:docs
+    - build
   script:
-    - echo "Documentation deployed to GitLab Pages"
+    - mkdir -p public
+    - |
+      # Deploy docs on main branch
+      if [ "$CI_COMMIT_BRANCH" == "main" ]; then
+        echo "Deploying documentation to GitLab Pages..."
+        if [ -d "apps/docs/.output/public" ]; then
+          cp -r apps/docs/.output/public/* public/
+          echo "✅ Copied docs output to public/"
+        else
+          echo "❌ Error: apps/docs/.output/public not found"
+          exit 1
+        fi
+      fi
+    - |
+      # Deploy game app on development branch
+      if [ "$CI_COMMIT_BRANCH" == "development" ]; then
+        echo "Deploying game app to GitLab Pages (development)..."
+        # Ensure build job ran (install deps if needed)
+        corepack enable
+        corepack prepare pnpm@10.27.0 --activate
+        if [ ! -d "node_modules" ]; then
+          pnpm install --frozen-lockfile
+        fi
+        # Set BASE_URL for development environment
+        export BASE_URL=/dev
+        export NODE_ENV=development
+        # Build with development base URL
+        cd apps/game
+        pnpm run generate
+        cd ../..
+        # Create public/dev directory structure
+        mkdir -p public/dev
+        if [ -d "apps/game/.output/public" ]; then
+          cp -r apps/game/.output/public/* public/dev/
+          echo "✅ Copied game app to public/dev/"
+          ls -la public/dev/ | head -10
+        else
+          echo "❌ Error: apps/game/.output/public not found"
+          exit 1
+        fi
+      fi
+    - |
+      # Deploy game app on staging branch
+      if [ "$CI_COMMIT_BRANCH" == "staging" ]; then
+        echo "Deploying game app to GitLab Pages (staging)..."
+        # Ensure build job ran (install deps if needed)
+        corepack enable
+        corepack prepare pnpm@10.27.0 --activate
+        if [ ! -d "node_modules" ]; then
+          pnpm install --frozen-lockfile
+        fi
+        # Set BASE_URL for staging environment
+        export BASE_URL=/staging
+        export NODE_ENV=staging
+        # Build with staging base URL
+        cd apps/game
+        pnpm run generate
+        cd ../..
+        # Create public/staging directory structure
+        mkdir -p public/staging
+        if [ -d "apps/game/.output/public" ]; then
+          cp -r apps/game/.output/public/* public/staging/
+          echo "✅ Copied game app to public/staging/"
+          ls -la public/staging/ | head -10
+        else
+          echo "❌ Error: apps/game/.output/public not found"
+          exit 1
+        fi
+      fi
   artifacts:
     paths:
       - public
+    expire_in: 1 hour
   environment:
-    name: production
-    url: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa
+    name: $([ "$CI_COMMIT_BRANCH" == "main" ] && echo "production" || echo "$CI_COMMIT_BRANCH")
+    url: $([ "$CI_COMMIT_BRANCH" == "main" ] && echo "https://djdiox.gitlab.io/riddle-rush-nuxt-pwa" || echo "https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/$CI_COMMIT_BRANCH")
   rules:
-    # Deploy when docs are built
+    # Deploy docs on main when docs change
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - apps/docs/**/*
         - docs/**/*
         - CLAUDE.md
         - README.md
+    # Deploy game app on development when game changes
+    - if: $CI_COMMIT_BRANCH == "development"
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - pnpm-lock.yaml
+        - package.json
+    # Deploy game app on staging when game changes
+    - if: $CI_COMMIT_BRANCH == "staging"
+      changes:
+        - apps/game/**/*
+        - packages/**/*
+        - pnpm-lock.yaml
+        - package.json
     # Always deploy on manual triggers
-    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
 
 # ====================================
 # AWS Deployment (Tags Only)

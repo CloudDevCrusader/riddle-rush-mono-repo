@@ -34,17 +34,24 @@ export function useGameActions() {
    */
   const resumeOrStartGame = async () => {
     const hadSession = gameStore.hasActiveSession
+    const shouldShowResume = gameStore.shouldShowResumeNotification()
 
     try {
       await gameStore.resumeOrStartNewGame()
 
+      // Only show notifications if appropriate
       if (!hadSession) {
+        // New game - show welcome
         audio.playNewRound()
         toast.info(t('game.welcome', 'Welcome! Guess a word from the category.'))
       }
-      else {
+      else if (shouldShowResume) {
+        // Session was restored from DB or game was paused and resumed
         toast.info(t('game.resumed', 'Game resumed!'))
+        gameStore.markResumeNotificationShown()
       }
+      // If hadSession but shouldn't show resume notification, don't show anything
+      // (user is just continuing to play normally)
 
       return true
     }

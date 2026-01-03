@@ -94,6 +94,7 @@ export const createGameSession = (overrides: Partial<GameSession> = {}): GameSes
     // New multi-player fields
     players: overrides.players ?? [],
     currentRound: overrides.currentRound ?? 0,
+    status: overrides.status ?? 'active',
     roundHistory: overrides.roundHistory ?? [],
     gameName: overrides.gameName,
   }
