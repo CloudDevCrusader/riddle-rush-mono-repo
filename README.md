@@ -79,10 +79,10 @@ Husky is configured for monorepo-style git hooks:
 ### Environments
 
 - **Documentation**: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa (GitLab Pages)
-- **Development**: https://$AWS_CLOUDFRONT_DOMAIN_DEV (AWS S3 + CloudFront)
-- **Production**: https://$AWS_CLOUDFRONT_DOMAIN (AWS S3 + CloudFront)
+- **Development**: https://dvd66jaack4ue.cloudfront.net (AWS S3 + CloudFront)
+- **Production**: https://d1mgifvomw928y.cloudfront.net (AWS S3 + CloudFront)
 
-> **Note**: CloudFront URLs are set via GitLab CI/CD variables `AWS_CLOUDFRONT_DOMAIN_DEV` and `AWS_CLOUDFRONT_DOMAIN`. If not set, deployments use S3 website endpoints.
+> **Note**: CloudFront domains are managed via Terraform. See `infrastructure/environments/` for configuration.
 
 ### GitLab CI/CD Pipeline
 
