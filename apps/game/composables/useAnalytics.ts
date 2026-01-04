@@ -3,7 +3,10 @@
  * Uses Google Analytics 4 via nuxt-gtag module
  */
 export const useAnalytics = () => {
-  const { gtag } = useGtag()
+  // nuxt-gtag is disabled, so we'll use a no-op implementation
+  const gtag = (..._args: unknown[]) => {
+    // No-op when gtag is not available
+  }
 
   /**
    * Track a custom event

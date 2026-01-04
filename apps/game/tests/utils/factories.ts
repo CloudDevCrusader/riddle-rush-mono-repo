@@ -47,7 +47,8 @@ export const randomLetter = (): string => {
 }
 
 export const createCategory = (overrides: Partial<Category> = {}): Category => {
-  const template = overrides.name ?? `${CATEGORY_TEMPLATES[randomInt(0, CATEGORY_TEMPLATES.length - 1)]}`
+  const template =
+    overrides.name ?? `${CATEGORY_TEMPLATES[randomInt(0, CATEGORY_TEMPLATES.length - 1)]}`
   const id = overrides.id ?? randomInt(1, 10_000)
   const letter = overrides.letter ?? randomLetter()
 
@@ -64,7 +65,7 @@ export const createCategory = (overrides: Partial<Category> = {}): Category => {
 
 export const createCategoryList = (
   count: number,
-  overrides: Array<Partial<Category> | undefined> = [],
+  overrides: Array<Partial<Category> | undefined> = []
 ): Category[] =>
   Array.from({ length: count }, (_, index) => {
     const override = overrides[index] ?? {}
@@ -78,9 +79,10 @@ export const createGameAttempt = (overrides: Partial<GameAttempt> = {}): GameAtt
 })
 
 export const createGameSession = (overrides: Partial<GameSession> = {}): GameSession => {
-  const attempts = overrides.attempts ?? Array.from({ length: randomInt(1, 5) }, () => createGameAttempt())
+  const attempts =
+    overrides.attempts ?? Array.from({ length: randomInt(1, 5) }, () => createGameAttempt())
   const category = overrides.category ?? createCategory()
-  const score = overrides.score ?? attempts.filter(attempt => attempt.found).length * 10
+  const score = overrides.score ?? attempts.filter((attempt) => attempt.found).length * 10
 
   return {
     id: overrides.id ?? `session-${randomInt(1, 1_000_000)}`,
@@ -96,6 +98,7 @@ export const createGameSession = (overrides: Partial<GameSession> = {}): GameSes
     currentRound: overrides.currentRound ?? 0,
     roundHistory: overrides.roundHistory ?? [],
     gameName: overrides.gameName,
+    status: overrides.status ?? 'active',
   }
 }
 
@@ -113,7 +116,9 @@ export const createGameStatistics = (overrides: Partial<GameStatistics> = {}): G
     categoriesPlayed: overrides.categoriesPlayed ?? {},
     lastPlayed: overrides.lastPlayed ?? Date.now(),
     bestScore: overrides.bestScore ?? randomInt(0, 200),
-    averageScore: overrides.averageScore ?? (totalGames === 0 ? 0 : Math.round((correctAttempts * 10) / totalGames)),
+    averageScore:
+      overrides.averageScore ??
+      (totalGames === 0 ? 0 : Math.round((correctAttempts * 10) / totalGames)),
     streakCurrent: overrides.streakCurrent ?? randomInt(0, 5),
     streakBest: overrides.streakBest ?? randomInt(0, 10),
   }

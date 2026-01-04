@@ -1,34 +1,19 @@
 <template>
   <Transition name="game-history">
-    <div
-      v-if="visible"
-      class="game-history-overlay"
-      @click.self="$emit('close')"
-    >
+    <div v-if="visible" class="game-history-overlay" @click.self="$emit('close')">
       <div class="game-history-panel">
         <header class="history-header">
-          <h2>📜 {{ $t('history.title', 'Game History') }}</h2>
-          <button
-            class="close-btn tap-highlight"
-            @click="$emit('close')"
-          >
-            ✕
-          </button>
+          <h2>📜 {{ t('history.title', 'Game History') }}</h2>
+          <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
         </header>
 
         <div class="history-content">
-          <div
-            v-if="games.length === 0"
-            class="empty-state"
-          >
+          <div v-if="games.length === 0" class="empty-state">
             <span class="empty-icon">🎮</span>
-            <p>{{ $t('history.no_games', 'No games played yet') }}</p>
+            <p>{{ t('history.no_games', 'No games played yet') }}</p>
           </div>
 
-          <div
-            v-else
-            class="games-list"
-          >
+          <div v-else class="games-list">
             <div
               v-for="game in sortedGames"
               :key="game.id"
@@ -37,19 +22,10 @@
             >
               <div class="game-header-row">
                 <div class="game-title">
-                  <span
-                    v-if="game.status === 'completed'"
-                    class="status-icon"
-                  >🏆</span>
-                  <span
-                    v-else-if="game.status === 'abandoned'"
-                    class="status-icon"
-                  >⏸️</span>
-                  <span
-                    v-else
-                    class="status-icon"
-                  >✓</span>
-                  {{ game.gameName || $t('history.game', 'Game') }}
+                  <span v-if="game.status === 'completed'" class="status-icon">🏆</span>
+                  <span v-else-if="game.status === 'abandoned'" class="status-icon">⏸️</span>
+                  <span v-else class="status-icon">✓</span>
+                  {{ game.gameName || t('history.game', 'Game') }}
                 </div>
                 <div class="game-date">
                   {{ formatDate(game.startTime) }}
@@ -58,58 +34,50 @@
 
               <div class="game-info">
                 <div class="info-row">
-                  <span class="info-label">{{ $t('history.category', 'Category') }}:</span>
+                  <span class="info-label">{{ t('history.category', 'Category') }}:</span>
                   <span class="info-value">{{ game.category.name }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="info-label">{{ $t('history.letter', 'Letter') }}:</span>
+                  <span class="info-label">{{ t('history.letter', 'Letter') }}:</span>
                   <span class="info-value">{{ game.letter.toUpperCase() }}</span>
                 </div>
-                <div
-                  v-if="game.players && game.players.length > 0"
-                  class="info-row"
-                >
-                  <span class="info-label">{{ $t('history.rounds', 'Rounds') }}:</span>
+                <div v-if="game.players && game.players.length > 0" class="info-row">
+                  <span class="info-label">{{ t('history.rounds', 'Rounds') }}:</span>
                   <span class="info-value">{{ game.currentRound }}</span>
                 </div>
               </div>
 
               <!-- Multi-player scores -->
-              <div
-                v-if="game.players && game.players.length > 0"
-                class="players-scores"
-              >
+              <div v-if="game.players && game.players.length > 0" class="players-scores">
                 <div
                   v-for="(player, index) in getSortedPlayers(game)"
                   :key="player.id"
                   class="player-score-row"
                   :class="{ winner: index === 0 && game.status === 'completed' }"
                 >
-                  <span class="player-rank">{{ index === 0 && game.status === 'completed' ? '👑' : `#${index + 1}` }}</span>
+                  <span class="player-rank">{{
+                    index === 0 && game.status === 'completed' ? '👑' : `#${index + 1}`
+                  }}</span>
                   <span class="player-name">{{ player.name }}</span>
                   <span class="player-points">{{ player.totalScore }} pts</span>
                 </div>
               </div>
 
               <!-- Single-player score -->
-              <div
-                v-else-if="game.score !== undefined"
-                class="single-score"
-              >
-                <span class="score-label">{{ $t('history.score', 'Score') }}:</span>
+              <div v-else-if="game.score !== undefined" class="single-score">
+                <span class="score-label">{{ t('history.score', 'Score') }}:</span>
                 <span class="score-value">{{ game.score }} pts</span>
-                <span class="attempts-info">({{ game.attempts?.length || 0 }} {{ $t('history.attempts', 'attempts') }})</span>
+                <span class="attempts-info"
+                  >({{ game.attempts?.length || 0 }} {{ t('history.attempts', 'attempts') }})</span
+                >
               </div>
             </div>
           </div>
         </div>
 
         <footer class="history-footer">
-          <button
-            class="btn btn-primary"
-            @click="$emit('close')"
-          >
-            {{ $t('common.close', 'Close') }}
+          <button class="btn btn-primary" @click="$emit('close')">
+            {{ t('common.close', 'Close') }}
           </button>
         </footer>
       </div>
@@ -119,6 +87,8 @@
 
 <script setup lang="ts">
 import type { GameSession, Player } from '@riddle-rush/types/game'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
@@ -170,9 +140,9 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-           max(var(--spacing-md), env(safe-area-inset-right, 0px))
-           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-md), env(safe-area-inset-left, 0px));
+    max(var(--spacing-md), env(safe-area-inset-right, 0px))
+    max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .game-history-panel {
@@ -413,14 +383,17 @@ const getSortedPlayers = (game: GameSession): Player[] => {
 @media (max-width: 640px) {
   .game-history-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .game-history-panel {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -451,7 +424,10 @@ const getSortedPlayers = (game: GameSession): Player[] => {
 @media (max-width: 450px) and (min-height: 800px) {
   .game-history-panel {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 }
 </style>

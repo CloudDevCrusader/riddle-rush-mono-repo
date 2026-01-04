@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { useToast } from '~/composables/useToast'
+import { useToast } from '../../composables/useToast'
 
 describe('useToast', () => {
   let toast: ReturnType<typeof useToast>

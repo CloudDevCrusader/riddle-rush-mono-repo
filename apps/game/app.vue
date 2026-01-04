@@ -1,18 +1,9 @@
 <template>
-  <div
-    id="app"
-    class="app-container"
-  >
-    <SplashScreen
-      v-if="showSplash"
-      @complete="onSplashComplete"
-    />
+  <div id="app" class="app-container">
+    <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
     <NuxtLayout v-show="!showSplash">
-      <Transition
-        name="page"
-        mode="out-in"
-      >
-        <NuxtPage :key="$route.path" />
+      <Transition name="page" mode="out-in">
+        <NuxtPage :key="route.path" />
       </Transition>
     </NuxtLayout>
     <Toast />
@@ -21,10 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '~/stores/game'
-import { useSettingsStore } from '~/stores/settings'
 import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 
+const route = useRoute()
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
 
@@ -62,7 +52,10 @@ useHead({
   link: [
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap' },
+    {
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap',
+    },
   ],
 })
 </script>

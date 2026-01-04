@@ -14,11 +14,7 @@
         <div class="toast-message">
           {{ toast.message }}
         </div>
-        <button
-          class="toast-close"
-          aria-label="Close"
-          @click.stop="removeToast(toast.id)"
-        >
+        <button class="toast-close" aria-label="Close" @click.stop="removeToast(toast.id)">
           ✕
         </button>
       </div>
@@ -27,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ToastType } from '~/composables/useToast'
+import type { ToastType } from '../composables/useToast'
 
 const { toasts, remove } = useToast()
 

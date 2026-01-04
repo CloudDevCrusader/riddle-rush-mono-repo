@@ -43,28 +43,40 @@ export function useModal(initialState = false) {
  * Composable for managing multiple modals
  */
 export function useModals<T extends string>(modalNames: T[]) {
-  const modals = reactive<Record<T, ReturnType<typeof useModal>>>({} as any)
+  const modals = reactive<Record<T, ReturnType<typeof useModal>>>(
+    {} as Record<T, ReturnType<typeof useModal>>
+  )
 
   modalNames.forEach((name) => {
-    modals[name] = useModal()
+    // TypeScript can't guarantee T is a key, but we know it is from the function signature
+
+    ;(modals as any)[name] = useModal()
   })
 
   const openModal = (name: T, data?: any) => {
-    modals[name].open(data)
+    // TypeScript can't guarantee T is a key, but we know it is from initialization
+
+    ;(modals as any)[name].open(data)
   }
 
   const closeModal = (name: T) => {
-    modals[name].close()
+    // TypeScript can't guarantee T is a key, but we know it is from initialization
+
+    ;(modals as any)[name].close()
   }
 
   const closeAll = () => {
     modalNames.forEach((name) => {
-      modals[name].close()
+      // TypeScript can't guarantee T is a key, but we know it is from initialization
+
+      ;(modals as any)[name].close()
     })
   }
 
   return {
-    modals: readonly(modals),
+    // TypeScript can't represent the complex union type, so we use a type assertion
+
+    modals: readonly(modals) as any,
     openModal,
     closeModal,
     closeAll,

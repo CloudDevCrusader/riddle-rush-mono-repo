@@ -1,5 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { getDevPlugins, getBuildPlugins, getOptimizeDeps, getBuildConfig } from '@riddle-rush/config/vite'
+import type { BuildOptions } from 'vite'
+import {
+  getDevPlugins,
+  getBuildPlugins,
+  getOptimizeDeps,
+  getBuildConfig,
+} from '@riddle-rush/config/vite'
 
 export default defineNuxtConfig({
   modules: [
@@ -30,11 +36,7 @@ export default defineNuxtConfig({
   ],
 
   imports: {
-    dirs: [
-      'composables',
-      'composables/**',
-      'services',
-    ],
+    dirs: ['composables', 'composables/**', 'services'],
   },
   devtools: { enabled: false },
 
@@ -42,11 +44,19 @@ export default defineNuxtConfig({
     baseURL: process.env.BASE_URL || (process.env.CI ? '/riddle-rush-nuxt-pwa/' : '/'),
     head: {
       charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover',
+      viewport:
+        'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover',
       title: 'Riddle Rush - The Ultimate Guessing Game',
       meta: [
-        { name: 'description', content: 'An exciting word guessing game for friends and family. Play offline, perfect for game nights!' },
-        { name: 'keywords', content: 'riddle, guessing game, word game, family game, offline game, PWA' },
+        {
+          name: 'description',
+          content:
+            'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
+        },
+        {
+          name: 'keywords',
+          content: 'riddle, guessing game, word game, family game, offline game, PWA',
+        },
         { name: 'author', content: 'Riddle Rush' },
         { name: 'theme-color', content: '#667eea' },
         { name: 'mobile-web-app-capable', content: 'yes' },
@@ -57,13 +67,21 @@ export default defineNuxtConfig({
         // Open Graph
         { property: 'og:type', content: 'website' },
         { property: 'og:title', content: 'Riddle Rush - The Ultimate Guessing Game' },
-        { property: 'og:description', content: 'An exciting word guessing game for friends and family. Play offline, perfect for game nights!' },
+        {
+          property: 'og:description',
+          content:
+            'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
+        },
         { property: 'og:image', content: '/pwa-512x512.png' },
         { property: 'og:site_name', content: 'Riddle Rush' },
         // Twitter Card
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'Riddle Rush - The Ultimate Guessing Game' },
-        { name: 'twitter:description', content: 'An exciting word guessing game for friends and family. Play offline, perfect for game nights!' },
+        {
+          name: 'twitter:description',
+          content:
+            'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
+        },
         { name: 'twitter:image', content: '/pwa-512x512.png' },
       ],
       link: [
@@ -82,7 +100,8 @@ export default defineNuxtConfig({
       appVersion: process.env.APP_VERSION || '1.0.0',
       environment: process.env.NODE_ENV || 'development',
       // Terraform outputs (set by sync-terraform-outputs.sh or get-terraform-outputs.sh)
-      cloudfrontDomain: process.env.NUXT_PUBLIC_CLOUDFRONT_DOMAIN || process.env.CLOUDFRONT_DOMAIN || '',
+      cloudfrontDomain:
+        process.env.NUXT_PUBLIC_CLOUDFRONT_DOMAIN || process.env.CLOUDFRONT_DOMAIN || '',
       websiteUrl: process.env.NUXT_PUBLIC_WEBSITE_URL || process.env.WEBSITE_URL || '',
       awsRegion: process.env.AWS_REGION || 'eu-central-1',
     },
@@ -116,11 +135,11 @@ export default defineNuxtConfig({
     ],
     optimizeDeps: getOptimizeDeps(),
     build: {
-      ...getBuildConfig().build,
       // Override with app-specific configs
+      ...(getBuildConfig().build as Partial<BuildOptions>),
       rollupOptions: {
         output: {
-          ...getBuildConfig().build.rollupOptions.output,
+          ...getBuildConfig().build.rollupOptions?.output,
           manualChunks: (id: string) => {
             // Vendor chunk for node_modules
             if (id.includes('node_modules')) {
@@ -158,7 +177,8 @@ export default defineNuxtConfig({
 
   gtag: {
     // Only enable when GA ID is provided
-    enabled: !!process.env.GOOGLE_ANALYTICS_ID,
+    // Note: nuxt-gtag is disabled due to Nuxt 4 incompatibility
+    // This config is kept for when the module is updated
     ...(process.env.GOOGLE_ANALYTICS_ID
       ? {
           id: process.env.GOOGLE_ANALYTICS_ID,
@@ -168,7 +188,7 @@ export default defineNuxtConfig({
           },
         }
       : {}),
-  },
+  } as Record<string, unknown>,
 
   i18n: {
     locales: [
@@ -186,7 +206,8 @@ export default defineNuxtConfig({
     manifest: {
       name: 'Riddle Rush - The Ultimate Guessing Game',
       short_name: 'Riddle Rush',
-      description: 'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
+      description:
+        'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
       theme_color: '#667eea',
       background_color: '#ffffff',
       display: 'standalone',
@@ -207,7 +228,12 @@ export default defineNuxtConfig({
         { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
         { src: '/pwa-384x384.png', sizes: '384x384', type: 'image/png' },
         { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-        { src: '/pwa-512x512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        {
+          src: '/pwa-512x512-maskable.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
       ],
       screenshots: [
         {

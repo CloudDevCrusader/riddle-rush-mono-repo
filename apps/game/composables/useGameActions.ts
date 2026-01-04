@@ -1,4 +1,3 @@
-import { useGameStore } from '~/stores/game'
 import { useLogger } from './useLogger'
 
 /**
@@ -21,8 +20,7 @@ export function useGameActions() {
       audio.playNewRound()
       toast.success(t('game.new_round_started', 'New round started!'))
       return true
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error starting new game:', error)
       toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
       return false
@@ -41,14 +39,12 @@ export function useGameActions() {
       if (!hadSession) {
         audio.playNewRound()
         toast.info(t('game.welcome', 'Welcome! Guess a word from the category.'))
-      }
-      else {
+      } else {
         toast.info(t('game.resumed', 'Game resumed!'))
       }
 
       return true
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error resuming game:', error)
       toast.error(t('game.error_resuming', 'Failed to load game. Starting fresh.'))
       return false
@@ -64,8 +60,7 @@ export function useGameActions() {
       toast.success(t('game.game_ended', 'Game ended! Check your statistics.'))
       router.push('/')
       return true
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error ending game:', error)
       toast.error(t('game.error_ending', 'Failed to save game results'))
       return false
@@ -91,8 +86,7 @@ export function useGameActions() {
       })
       toast.success(t('share.success', 'Score shared successfully!'))
       return true
-    }
-    catch (error) {
+    } catch (error) {
       // Don't show error for user cancellation
       if ((error as Error).name !== 'AbortError') {
         logger.error('Error sharing:', error)
@@ -105,13 +99,16 @@ export function useGameActions() {
   /**
    * Setup multiplayer game with players
    */
-  const setupMultiplayerGame = async (playerNames: string[], gameName?: string, customLetter?: string) => {
+  const setupMultiplayerGame = async (
+    playerNames: string[],
+    gameName?: string,
+    customLetter?: string
+  ) => {
     try {
       await gameStore.setupPlayers(playerNames, gameName, customLetter)
       toast.success(t('game.multiplayer_setup', `Game started with ${playerNames.length} players!`))
       return true
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error setting up multiplayer game:', error)
       toast.error(t('game.error_multiplayer', 'Failed to setup multiplayer game'))
       return false
@@ -127,8 +124,7 @@ export function useGameActions() {
       audio.playNewRound()
       toast.success(t('game.next_round', 'Next round started!'))
       return true
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error starting next round:', error)
       toast.error(t('game.error_next_round', 'Failed to start next round'))
       return false

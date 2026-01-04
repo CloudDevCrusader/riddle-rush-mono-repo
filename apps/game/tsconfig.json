@@ -1,19 +1,8 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": ["./.nuxt/tsconfig.json", "../../tsconfig.json"],
   "compilerOptions": {
-    "types": ["node", "vitest/globals"],
-    "paths": {
-      "@riddle-rush/shared": ["../../packages/shared/src"],
-      "@riddle-rush/shared/*": ["../../packages/shared/src/*"],
-      "@riddle-rush/types": ["../../packages/types/src"],
-      "@riddle-rush/types/*": ["../../packages/types/src/*"],
-      "@riddle-rush/config": ["../../packages/config"],
-      "@riddle-rush/config/*": ["../../packages/config/*"],
-      "~/*": ["./*"],
-      "~~/*": ["./*"],
-      "@/*": ["./*"]
-    }
+    "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.vue", ".nuxt/**/*"],
-  "exclude": ["node_modules", ".nuxt", ".output", "dist", "capacitor.config.ts"]
+  "exclude": ["node_modules", ".output", "dist", "capacitor.config.ts"]
 }

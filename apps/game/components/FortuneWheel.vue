@@ -178,7 +178,7 @@ defineExpose({
 // Watch for external changes to modelValue
 watch(
   () => props.modelValue,
-  (newValue: number) => {
+  (newValue) => {
     selectedItem.value = newValue
   }
 )

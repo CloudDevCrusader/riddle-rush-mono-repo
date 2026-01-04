@@ -1,68 +1,46 @@
 <template>
   <Transition name="player-leaderboard">
-    <div
-      v-if="visible"
-      class="player-leaderboard-overlay"
-      @click.self="$emit('close')"
-    >
+    <div v-if="visible" class="player-leaderboard-overlay" @click.self="$emit('close')">
       <div class="player-leaderboard-panel">
         <header class="leaderboard-header">
           <h2>
-            <span v-if="isGameCompleted">🏆 {{ $t('leaderboard.winner_title', 'Final Standings') }}</span>
-            <span v-else>📊 {{ $t('leaderboard.current_standings', 'Current Standings') }}</span>
+            <span v-if="isGameCompleted"
+              >🏆 {{ t('leaderboard.winner_title', 'Final Standings') }}</span
+            >
+            <span v-else>📊 {{ t('leaderboard.current_standings', 'Current Standings') }}</span>
           </h2>
-          <button
-            class="close-btn tap-highlight"
-            @click="$emit('close')"
-          >
-            ✕
-          </button>
+          <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
         </header>
 
         <div class="leaderboard-content">
-          <div
-            v-if="players.length === 0"
-            class="empty-state"
-          >
+          <div v-if="players.length === 0" class="empty-state">
             <span class="empty-icon">🎮</span>
-            <p>{{ $t('leaderboard.no_players', 'No players yet') }}</p>
+            <p>{{ t('leaderboard.no_players', 'No players yet') }}</p>
           </div>
 
-          <div
-            v-else
-            class="players-list"
-          >
+          <div v-else class="players-list">
             <div
               v-for="(player, index) in players"
               :key="player.id"
               class="player-row"
               :class="{
-                'winner': player.isWinner,
+                winner: player.isWinner,
                 'top-three': index < 3,
                 [`rank-${index + 1}`]: index < 3,
               }"
             >
               <div class="rank">
-                <span
-                  v-if="player.isWinner"
-                  class="crown"
-                >👑</span>
+                <span v-if="player.isWinner" class="crown">👑</span>
                 <span v-else-if="index === 0">🥇</span>
                 <span v-else-if="index === 1">🥈</span>
                 <span v-else-if="index === 2">🥉</span>
-                <span
-                  v-else
-                  class="rank-number"
-                >{{ index + 1 }}</span>
+                <span v-else class="rank-number">{{ index + 1 }}</span>
               </div>
 
               <div class="player-info">
                 <div class="player-name">
                   {{ player.name }}
-                  <span
-                    v-if="player.isWinner"
-                    class="winner-badge"
-                  >Winner!</span>
+                  <span v-if="player.isWinner" class="winner-badge">Winner!</span>
                 </div>
                 <div class="player-meta">
                   Round {{ currentRound }}
@@ -81,25 +59,14 @@
         </div>
 
         <footer class="leaderboard-footer">
-          <button
-            v-if="!isGameCompleted"
-            class="btn btn-primary"
-            @click="$emit('continue')"
-          >
-            {{ $t('common.continue', 'Continue') }}
+          <button v-if="!isGameCompleted" class="btn btn-primary" @click="$emit('continue')">
+            {{ t('common.continue', 'Continue') }}
           </button>
-          <button
-            v-else
-            class="btn btn-primary"
-            @click="$emit('finish')"
-          >
-            {{ $t('common.finish', 'Finish Game') }}
+          <button v-else class="btn btn-primary" @click="$emit('finish')">
+            {{ t('common.finish', 'Finish Game') }}
           </button>
-          <button
-            class="btn btn-outline"
-            @click="$emit('close')"
-          >
-            {{ $t('common.close', 'Close') }}
+          <button class="btn btn-outline" @click="$emit('close')">
+            {{ t('common.close', 'Close') }}
           </button>
         </footer>
       </div>
@@ -109,6 +76,8 @@
 
 <script setup lang="ts">
 import type { PlayerWithRank } from '@riddle-rush/types/game'
+
+const { t } = useI18n()
 
 defineProps<{
   visible: boolean
@@ -135,9 +104,9 @@ defineEmits<{
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-           max(var(--spacing-md), env(safe-area-inset-right, 0px))
-           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-md), env(safe-area-inset-left, 0px));
+    max(var(--spacing-md), env(safe-area-inset-right, 0px))
+    max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .player-leaderboard-panel {
@@ -224,20 +193,27 @@ defineEmits<{
 }
 
 .player-row.winner {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  border-color: #FFD700;
-  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  border-color: #ffd700;
+  box-shadow:
+    0 8px 24px rgba(255, 215, 0, 0.4),
+    0 0 40px rgba(255, 215, 0, 0.3);
   transform: scale3d(1.02, 1.02, 1);
   animation: winnerPulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   will-change: box-shadow;
 }
 
 @keyframes winnerPulse {
-  0%, 100% {
-    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.3);
+  0%,
+  100% {
+    box-shadow:
+      0 8px 24px rgba(255, 215, 0, 0.4),
+      0 0 40px rgba(255, 215, 0, 0.3);
   }
   50% {
-    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.6), 0 0 50px rgba(255, 215, 0, 0.5);
+    box-shadow:
+      0 8px 32px rgba(255, 215, 0, 0.6),
+      0 0 50px rgba(255, 215, 0, 0.5);
   }
 }
 
@@ -270,7 +246,8 @@ defineEmits<{
 }
 
 @keyframes crownBounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate3d(0, 0, 0) rotate(-10deg);
   }
   50% {
@@ -402,14 +379,17 @@ defineEmits<{
 @media (max-width: 640px) {
   .player-leaderboard-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .player-leaderboard-panel {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -453,7 +433,10 @@ defineEmits<{
 @media (max-width: 450px) and (min-height: 800px) {
   .player-leaderboard-panel {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 
   .player-row {

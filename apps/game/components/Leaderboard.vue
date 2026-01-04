@@ -3,14 +3,14 @@
     <div v-if="visible" class="leaderboard-overlay" @click.self="$emit('close')">
       <div class="leaderboard-panel">
         <header class="leaderboard-header">
-          <h2>{{ $t('leaderboard.title') }}</h2>
+          <h2>{{ t('leaderboard.title') }}</h2>
           <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
         </header>
 
         <div class="leaderboard-content">
           <div v-if="entries.length === 0" class="empty-state">
             <span class="empty-icon">🏆</span>
-            <p>{{ $t('leaderboard.empty') }}</p>
+            <p>{{ t('leaderboard.empty') }}</p>
           </div>
 
           <div v-else class="entries-list">
@@ -43,10 +43,10 @@
 
         <footer class="leaderboard-footer">
           <button class="btn btn-outline" @click="$emit('close')">
-            {{ $t('common.close') }}
+            {{ t('common.close') }}
           </button>
           <button v-if="entries.length > 0" class="btn btn-secondary" @click="clearLeaderboard">
-            {{ $t('leaderboard.clear') }}
+            {{ t('leaderboard.clear') }}
           </button>
         </footer>
       </div>
@@ -56,6 +56,8 @@
 
 <script setup lang="ts">
 import type { LeaderboardEntry } from '@riddle-rush/types/game'
+
+const { t } = useI18n()
 
 defineProps<{
   visible: boolean
