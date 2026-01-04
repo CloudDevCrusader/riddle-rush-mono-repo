@@ -11,11 +11,16 @@ commands:
       - run:
           name: "Enable corepack and prepare pnpm"
           command: |
+            export COREPACK_HOME="$HOME/.corepack"
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$HOME/.local/bin:$PNPM_HOME:$PATH"
+            mkdir -p "$HOME/.local/bin" "$COREPACK_HOME" "$PNPM_HOME"
             corepack enable
             # Get pnpm version from package.json or use default
             # Read package.json as text and extract version (works with ES modules)
             PNPM_VERSION=$(grep -oE '"packageManager"\s*:\s*"pnpm@[^"]*"' package.json | grep -oE 'pnpm@[^"]*' | cut -d'@' -f2 || echo "10.27.0")
             echo "Using pnpm version: ${PNPM_VERSION}"
+            corepack enable --install-directory "$HOME/.local/bin"
             corepack prepare "pnpm@${PNPM_VERSION}" --activate
             pnpm --version
 
