@@ -2,7 +2,6 @@ import { defineConfig } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
-import type { PluginOption } from 'vite'
 
 export default defineConfig({
   plugins: [
@@ -66,7 +65,7 @@ export default defineConfig({
       ],
       dts: false,
     }),
-  ] as unknown as PluginOption[],
+  ] as any,
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./', import.meta.url)),
