@@ -55,7 +55,7 @@ export default defineConfig({
     webServer: {
       command: `node ${resolve(
         repoRoot,
-        'node_modules/.bin/serve'
+        'node_modules/serve/build/main.js'
       )} ${resolve(repoRoot, 'apps/game/.output/public')} -l 3000`,
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
