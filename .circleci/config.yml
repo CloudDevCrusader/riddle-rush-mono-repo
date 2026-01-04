@@ -242,21 +242,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: 'Fetch limited git history for SonarCloud'
+          name: 'Prepare git history for SonarCloud'
           command: |
-            # Note: Even with limited depth, SonarCloud may fail on git blame due to missing objects
-            # We'll disable SCM/blame if the repository is shallow to prevent errors
-            if git rev-parse --is-shallow-repository 2>/dev/null | grep -q true; then
-              echo "Repository is shallow - SonarCloud SCM/blame will be disabled"
-              echo "Fetching minimal history (depth=50) for analysis..."
-              timeout 300 git fetch --depth=50 origin || {
-                echo "Warning: Git fetch timed out or failed, continuing with shallow history"
-                # Try even shallower as fallback
-                timeout 120 git fetch --depth=20 origin || true
-              }
-            else
-              echo "Repository is not shallow, using existing history"
-            fi
+            # Ensure we have enough objects for SCM blame and avoid missing blob errors.
+            git fetch --prune --tags --force origin '+refs/heads/*:refs/remotes/origin/*' || true
+            git fetch --prune --tags --unshallow || true
+            git fetch --prune --tags --depth=100000 || true
       - restore_cache:
           keys:
             - sonar-cache-{{ checksum "sonar-project.properties" }}
@@ -278,17 +269,18 @@ jobs:
             fi
 
             # Check if we have sufficient git history for blame
-            # Disable SCM/blame if repository is shallow to prevent MissingObjectException errors
-            # Even with depth=50, shallow clones may not have all parent objects needed for blame
+            # Disable SCM/blame if repository is shallow or missing objects
             IS_SHALLOW=$(git rev-parse --is-shallow-repository 2>/dev/null || echo "false")
             GIT_DEPTH=$(git rev-list --count HEAD 2>/dev/null || echo "0")
             echo "Git repository info:"
             echo "  Is shallow: $IS_SHALLOW"
             echo "  History depth: $GIT_DEPTH commits"
 
-            # Always disable SCM/blame if repository is shallow
-            # Shallow clones cause MissingObjectException because parent commit objects aren't available
-            if [ "$IS_SHALLOW" = "true" ]; then
+            MISSING_OBJECTS="$(git fsck --no-reflogs --full 2>&1 | grep -E 'missing (blob|tree|commit)' || true)"
+            if [ -n "$MISSING_OBJECTS" ]; then
+              echo "⚠️  Warning: Missing git objects detected. Disabling SCM blame."
+              SCM_DISABLED="-Dsonar.scm.disabled=true"
+            elif [ "$IS_SHALLOW" = "true" ]; then
               echo "⚠️  Warning: Shallow repository detected. Disabling SCM blame to prevent missing object errors."
               echo "   SonarCloud will analyze code quality but won't show git blame information."
               SCM_DISABLED="-Dsonar.scm.disabled=true"
