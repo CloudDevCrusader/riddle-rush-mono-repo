@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   app: {
     baseURL: '/docs/',
   },
-  
+
   content: {
     sources: {
       docs: {
@@ -29,4 +29,3 @@ export default defineNuxtConfig({
     },
   },
 })
-

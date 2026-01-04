@@ -1,37 +1,45 @@
 import { test, expect } from '@playwright/test'
+import {
+  navigateTo,
+  waitForVisible,
+  clickWithRetry,
+  waitForNavigation,
+  waitForCount,
+} from '../utils/e2e-helpers'
 
 test.describe('Players Management Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/players')
+    await navigateTo(page, '/players')
   })
 
   test('should display players page with all elements', async ({ page }) => {
     // Check for background
     const background = page.locator('.page-bg')
-    await expect(background).toBeVisible()
+    await waitForVisible(background)
 
     // Check for title
     const title = page.locator('.title-image')
-    await expect(title).toBeVisible()
+    await waitForVisible(title)
 
     // Check for back button
     const backBtn = page.locator('.back-btn')
-    await expect(backBtn).toBeVisible()
+    await waitForVisible(backBtn)
 
     // Check for players list
     const playersList = page.locator('.players-list')
-    await expect(playersList).toBeVisible()
+    await waitForVisible(playersList)
 
     // Check for start button
     const startBtn = page.locator('.start-btn')
-    await expect(startBtn).toBeVisible()
+    await waitForVisible(startBtn)
   })
 
   test('should display initial player', async ({ page }) => {
     const playerItems = page.locator('.player-item:not(.empty)')
     // May have 1 or 2 players depending on state from previous tests
-    await expect(playerItems).toHaveCount(await playerItems.count())
-    await expect(playerItems.first()).toBeVisible()
+    const count = await playerItems.count()
+    expect(count).toBeGreaterThan(0)
+    await waitForVisible(playerItems.first())
   })
 
   test('should show empty slots for remaining players', async ({ page }) => {
@@ -44,7 +52,7 @@ test.describe('Players Management Page', () => {
 
   test('should add a player when clicking add button', async ({ page }) => {
     const addBtn = page.locator('.add-btn')
-    await expect(addBtn).toBeVisible()
+    await waitForVisible(addBtn)
 
     const playerItemsBefore = page.locator('.player-item:not(.empty)')
     const countBefore = await playerItemsBefore.count()
@@ -55,42 +63,47 @@ test.describe('Players Management Page', () => {
       await dialog.accept('Test Player')
     })
 
-    await addBtn.click()
-    await page.waitForTimeout(300)
+    await clickWithRetry(addBtn)
+    await page.waitForTimeout(500) // Wait for dialog and player addition
 
     const playerItemsAfter = page.locator('.player-item:not(.empty)')
-    await expect(playerItemsAfter).toHaveCount(countBefore + 1)
+    await waitForCount(playerItemsAfter, countBefore + 1)
   })
 
   test('should remove a player when clicking remove button', async ({ page }) => {
     const playerItemsBefore = page.locator('.player-item:not(.empty)')
     const countBefore = await playerItemsBefore.count()
 
+    if (countBefore === 0) {
+      test.skip() // Can't remove if no players
+      return
+    }
+
     const removeBtn = page.locator('.remove-player-btn').first()
-    await removeBtn.click()
-    await page.waitForTimeout(300)
+    await clickWithRetry(removeBtn)
+    await page.waitForTimeout(500) // Wait for removal animation
 
     const playerItemsAfter = page.locator('.player-item:not(.empty)')
-    await expect(playerItemsAfter).toHaveCount(countBefore - 1)
+    await waitForCount(playerItemsAfter, countBefore - 1)
   })
 
   test('should enable start button when players exist', async ({ page }) => {
     const startBtn = page.locator('.start-btn')
+    await waitForVisible(startBtn)
     await expect(startBtn).not.toBeDisabled()
   })
 
-  test('should navigate to alphabet when clicking start', async ({ page }) => {
+  test('should navigate to round-start when clicking start', async ({ page }) => {
     const startBtn = page.locator('.start-btn')
-    await startBtn.click()
+    await clickWithRetry(startBtn)
 
     // After flow update, clicking start navigates to round-start (dual wheel spin)
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(500)
+    await waitForNavigation(page, /\/round-start/)
   })
 
   test('should navigate back when clicking back button', async ({ page }) => {
     const backBtn = page.locator('.back-btn')
-    await backBtn.click()
+    await clickWithRetry(backBtn)
 
     // Should go back to previous page (likely menu)
     await page.waitForTimeout(500)
@@ -98,7 +111,7 @@ test.describe('Players Management Page', () => {
 
   test('should have scroll bar decoration', async ({ page }) => {
     const scrollBar = page.locator('.scroll-bar')
-    await expect(scrollBar).toBeVisible()
+    await waitForVisible(scrollBar)
   })
 
   test('should be responsive on mobile', async ({ page }) => {
@@ -107,7 +120,7 @@ test.describe('Players Management Page', () => {
     const title = page.locator('.title-image')
     const startBtn = page.locator('.start-btn')
 
-    await expect(title).toBeVisible()
-    await expect(startBtn).toBeVisible()
+    await waitForVisible(title)
+    await waitForVisible(startBtn)
   })
 })

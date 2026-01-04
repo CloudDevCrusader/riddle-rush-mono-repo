@@ -11,6 +11,7 @@ export interface GameSettings {
   musicEnabled: boolean
   musicVolume: number
   offlineMode: boolean
+  answerValidationEnabled: boolean
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -23,6 +24,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   musicEnabled: true,
   musicVolume: 75,
   offlineMode: false,
+  answerValidationEnabled: false,
 }
 
 const STORAGE_KEY = 'game-settings'
@@ -34,6 +36,7 @@ export const useSettingsStore = defineStore('settings', {
     isDebugMode: state => state.debugMode,
     isLeaderboardEnabled: state => state.leaderboardEnabled,
     shouldShowLeaderboard: state => state.leaderboardEnabled && state.showLeaderboardAfterRound,
+    isAnswerValidationEnabled: state => state.answerValidationEnabled,
   },
 
   actions: {
@@ -87,6 +90,11 @@ export const useSettingsStore = defineStore('settings', {
 
     setOfflineMode(enabled: boolean) {
       this.offlineMode = enabled
+      this.saveSettings()
+    },
+
+    toggleAnswerValidation() {
+      this.answerValidationEnabled = !this.answerValidationEnabled
       this.saveSettings()
     },
 

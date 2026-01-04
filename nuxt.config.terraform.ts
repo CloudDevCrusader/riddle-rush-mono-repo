@@ -1,18 +1,18 @@
 /**
  * Terraform Integration Configuration
- * 
+ *
  * This file can be used to read Terraform outputs and configure Nuxt
  * based on the infrastructure state.
- * 
+ *
  * Usage:
  * 1. Run: source ./scripts/get-terraform-outputs.sh prod
  * 2. This will export environment variables that can be used in nuxt.config.ts
- * 
+ *
  * Or use the terraform outputs directly in your deployment pipeline.
  */
 
-import { readFileSync } from 'fs'
-import { join } from 'path'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 interface TerraformOutputs {
   bucket_name?: string
@@ -30,7 +30,7 @@ export function getTerraformOutputs(environment: string = 'prod'): TerraformOutp
   try {
     const outputFile = join(process.cwd(), `infrastructure/environments/${environment}/terraform-outputs.json`)
     const outputs = JSON.parse(readFileSync(outputFile, 'utf-8'))
-    
+
     return {
       bucket_name: outputs.bucket_name?.value,
       cloudfront_distribution_id: outputs.cloudfront_distribution_id?.value,
@@ -64,19 +64,18 @@ export function getTerraformOutputsFromEnv(): TerraformOutputs {
  * Run this after terraform apply to update outputs
  */
 export function exportTerraformOutputs(environment: string = 'prod'): void {
-  const { execSync } = require('child_process')
-  const { writeFileSync } = require('fs')
-  const { join } = require('path')
-  
+  const { execSync } = require('node:child_process')
+  const { writeFileSync } = require('node:fs')
+  const { join } = require('node:path')
+
   try {
     const outputDir = join(process.cwd(), `infrastructure/environments/${environment}`)
     const outputs = execSync(`cd ${outputDir} && terraform output -json`, { encoding: 'utf-8' })
     const outputFile = join(outputDir, 'terraform-outputs.json')
-    
+
     writeFileSync(outputFile, outputs)
     console.log(`✅ Terraform outputs exported to ${outputFile}`)
   } catch (error) {
     console.error('❌ Failed to export Terraform outputs:', error)
   }
 }
-

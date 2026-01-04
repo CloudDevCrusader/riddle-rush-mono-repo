@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import type { LeaderboardEntry } from '@riddle-rush/types/game'
 
-const _props = defineProps<{
+defineProps<{
   visible: boolean
   entries: LeaderboardEntry[]
 }>()

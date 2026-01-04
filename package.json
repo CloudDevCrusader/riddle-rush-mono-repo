@@ -42,6 +42,8 @@
     "terraform:outputs": "./scripts/get-terraform-outputs.sh",
     "terraform:sync": "./scripts/sync-terraform-outputs.sh",
     "deploy:terraform": "./scripts/deploy-with-terraform.sh",
+    "deploy:dev": "./aws-deploy.sh development",
+    "deploy:prod": "./aws-deploy.sh production",
     "android:sync": "cd apps/game && pnpm android:sync",
     "android:open": "cd apps/game && pnpm android:open",
     "android:run": "cd apps/game && pnpm android:run"

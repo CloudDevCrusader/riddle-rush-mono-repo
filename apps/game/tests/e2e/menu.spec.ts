@@ -1,28 +1,26 @@
 import { test, expect } from '@playwright/test'
+import {
+  navigateTo,
+  waitForSplashScreen,
+  waitForVisible,
+  clickWithRetry,
+  waitForNavigation,
+} from '../utils/e2e-helpers'
 
 test.describe('Main Menu Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
-    await page.waitForLoadState('networkidle')
-
-    // Wait for splash screen animation to complete
-    await page.waitForTimeout(2000) // Splash screen fade-out duration
-
-    // Alternative: Wait for splash screen to be hidden
-    const splashScreen = page.locator('.splash-screen')
-    await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
-      // Splash screen might already be gone, ignore error
-    })
+    await navigateTo(page, '/')
+    await waitForSplashScreen(page)
   })
 
   test('should display main menu with all elements', async ({ page }) => {
     // Check for background
     const background = page.locator('.page-bg')
-    await expect(background).toBeVisible()
+    await waitForVisible(background)
 
     // Check for logo (use first() to handle splash + menu logos)
     const logo = page.locator('.logo-image').first()
-    await expect(logo).toBeVisible()
+    await waitForVisible(logo)
 
     // Coin bar, profile button, exit button, and menu icon intentionally hidden for MVP mobile optimization
 
@@ -31,31 +29,27 @@ test.describe('Main Menu Page', () => {
     const optionsBtn = page.locator('.options-btn')
     const creditsBtn = page.locator('.credits-btn')
 
-    await expect(playBtn).toBeVisible()
-    await expect(optionsBtn).toBeVisible()
-    await expect(creditsBtn).toBeVisible()
+    await waitForVisible(playBtn)
+    await waitForVisible(optionsBtn)
+    await waitForVisible(creditsBtn)
   })
 
   test('should navigate to players page when clicking PLAY', async ({ page }) => {
     const playBtn = page.locator('.play-btn')
-    await playBtn.click()
-
-    await expect(page).toHaveURL(/\/players/)
-    await page.waitForTimeout(500) // Wait for page transition
+    await clickWithRetry(playBtn)
+    await waitForNavigation(page, /\/players/)
   })
 
   test('should navigate to settings when clicking OPTIONS', async ({ page }) => {
     const optionsBtn = page.locator('.options-btn')
-    await optionsBtn.click()
-
-    await expect(page).toHaveURL(/\/settings/)
+    await clickWithRetry(optionsBtn)
+    await waitForNavigation(page, /\/settings/)
   })
 
   test('should navigate to credits when clicking CREDITS', async ({ page }) => {
     const creditsBtn = page.locator('.credits-btn')
-    await creditsBtn.click()
-
-    await expect(page).toHaveURL(/\/credits/)
+    await clickWithRetry(creditsBtn)
+    await waitForNavigation(page, /\/credits/)
   })
 
   test.skip('should navigate to profile when clicking profile icon', async ({ page }) => {
@@ -75,14 +69,15 @@ test.describe('Main Menu Page', () => {
 
   test('should have hover effects on buttons', async ({ page }) => {
     const playBtn = page.locator('.play-btn')
+    await waitForVisible(playBtn)
 
     // Hover over button
     await playBtn.hover()
-    await page.waitForTimeout(200)
+    await page.waitForTimeout(300) // Wait for hover animation
 
     // Button should have hover state (image-hover should be visible)
     const hoverImage = playBtn.locator('.btn-image-hover')
-    await expect(hoverImage).toBeVisible()
+    await waitForVisible(hoverImage)
   })
 
   test('should be responsive on mobile viewport', async ({ page }) => {
@@ -91,7 +86,7 @@ test.describe('Main Menu Page', () => {
     const logo = page.locator('.logo-image').first()
     const playBtn = page.locator('.play-btn')
 
-    await expect(logo).toBeVisible()
-    await expect(playBtn).toBeVisible()
+    await waitForVisible(logo)
+    await waitForVisible(playBtn)
   })
 })

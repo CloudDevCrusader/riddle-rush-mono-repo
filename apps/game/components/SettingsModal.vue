@@ -109,6 +109,34 @@
               </div>
             </div>
           </div>
+
+          <!-- Answer Validation Control -->
+          <div class="control-item">
+            <div class="control-icon-wrapper">
+              <img
+                :src="`${baseUrl}assets/settings/Sound.png`"
+                alt="Validation"
+                class="control-icon"
+              />
+            </div>
+            <div class="control-content">
+              <div class="control-label">
+                Answer Validation
+              </div>
+              <div class="toggle-container">
+                <button
+                  class="toggle-btn"
+                  :class="{ active: answerValidationEnabled }"
+                  @click="toggleAnswerValidation"
+                >
+                  <div class="toggle-slider"></div>
+                </button>
+                <span class="toggle-label">
+                  {{ answerValidationEnabled ? 'On' : 'Off' }}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- OK Button -->
@@ -144,6 +172,7 @@ const router = useRouter()
 
 const soundVolume = ref(settingsStore.soundVolume)
 const musicVolume = ref(settingsStore.musicVolume)
+const answerValidationEnabled = ref(settingsStore.answerValidationEnabled)
 
 const closeModal = () => {
   emit('update:modelValue', false)
@@ -165,11 +194,17 @@ const updateMusicVolume = () => {
   settingsStore.updateSetting('musicEnabled', musicVolume.value > 0)
 }
 
+const toggleAnswerValidation = () => {
+  settingsStore.toggleAnswerValidation()
+  answerValidationEnabled.value = settingsStore.answerValidationEnabled
+}
+
 // Load settings on mount
 onMounted(() => {
   settingsStore.loadSettings()
   soundVolume.value = settingsStore.soundVolume
   musicVolume.value = settingsStore.musicVolume
+  answerValidationEnabled.value = settingsStore.answerValidationEnabled
 })
 </script>
 
@@ -370,6 +405,53 @@ onMounted(() => {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: left 0.1s ease;
   pointer-events: none;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.toggle-btn {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: #ccc;
+  border-radius: 15px;
+  border: 2px solid #888;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  outline: none;
+}
+
+.toggle-btn.active {
+  background: #7ed321;
+  border-color: #5fc423;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-btn.active .toggle-slider {
+  transform: translateX(30px);
+}
+
+.toggle-label {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .ok-btn {

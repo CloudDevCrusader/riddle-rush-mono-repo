@@ -113,6 +113,7 @@ export function useForm<T extends Record<string, unknown>>(
       return true
     }
     catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Form submission error:', error)
       return false
     }

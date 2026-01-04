@@ -14,12 +14,14 @@ export const useLogger = () => {
 
   const warn = (message: string, ...args: unknown[]) => {
     if (isDev) {
+      // eslint-disable-next-line no-console
       console.warn(message, ...args)
     }
   }
 
   const error = (message: string, error?: unknown) => {
     if (isDev) {
+      // eslint-disable-next-line no-console
       console.error(message, error)
     }
     // In production, could send to error tracking service

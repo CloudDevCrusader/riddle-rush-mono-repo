@@ -235,7 +235,7 @@ deploy:aws:dev:
   stage: deploy
   image: node:20
   before_script:
-    - apt-get update && apt-get install -y awscli
+    - apt-get update && apt-get install -y awscli terraform
     - corepack enable
     - corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
@@ -244,16 +244,61 @@ deploy:aws:dev:
     - |
       # Get Terraform outputs for development environment
       cd infrastructure/environments/development
-      export AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}")
-      export AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "${AWS_CLOUDFRONT_ID_DEV:-$AWS_CLOUDFRONT_ID}")
-      export AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-      export AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "${AWS_REGION:-eu-central-1}")
+      
+      # Initialize Terraform if needed
+      if [ ! -d ".terraform" ]; then
+        echo "Initializing Terraform..."
+        terraform init -backend=false || terraform init
+      fi
+      
+      # Get and validate Terraform outputs
+      echo "Fetching Terraform outputs..."
+      AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
+      AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+      AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+      AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
+      
+      # Validate required outputs
+      if [ -z "$AWS_S3_BUCKET" ]; then
+        echo "ERROR: Failed to get S3 bucket name from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/development first"
+        exit 1
+      fi
+      
+      if [ -z "$AWS_CLOUDFRONT_ID" ]; then
+        echo "ERROR: Failed to get CloudFront distribution ID from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/development first"
+        exit 1
+      fi
+      
+      if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
+        echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/development first"
+        exit 1
+      fi
+      
+      if [ -z "$AWS_REGION" ]; then
+        echo "ERROR: Failed to get AWS region from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/development first"
+        exit 1
+      fi
+      
+      # Export validated outputs
+      export AWS_S3_BUCKET
+      export AWS_CLOUDFRONT_ID
+      export AWS_CLOUDFRONT_DOMAIN_DEV
+      export AWS_REGION
+      
+      echo "✅ Terraform outputs validated:"
+      echo "  S3 Bucket: $AWS_S3_BUCKET"
+      echo "  CloudFront ID: $AWS_CLOUDFRONT_ID"
+      echo "  CloudFront Domain: $AWS_CLOUDFRONT_DOMAIN_DEV"
+      echo "  AWS Region: $AWS_REGION"
+      
       cd ../../..
     - chmod +x aws-deploy.sh
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - echo "Using S3 Bucket: $AWS_S3_BUCKET"
-    - echo "Using CloudFront ID: $AWS_CLOUDFRONT_ID"
     - ./aws-deploy.sh development
   artifacts:
     paths:
@@ -291,16 +336,61 @@ deploy:aws:prod:
     - |
       # Get Terraform outputs for production environment
       cd infrastructure/environments/prod
-      export AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "${AWS_S3_BUCKET_PROD:-$AWS_S3_BUCKET}")
-      export AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "${AWS_CLOUDFRONT_ID_PROD:-$AWS_CLOUDFRONT_ID}")
-      export AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-      export AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "${AWS_REGION:-eu-central-1}")
+      
+      # Initialize Terraform if needed
+      if [ ! -d ".terraform" ]; then
+        echo "Initializing Terraform..."
+        terraform init -backend=false || terraform init
+      fi
+      
+      # Get and validate Terraform outputs
+      echo "Fetching Terraform outputs..."
+      AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
+      AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+      AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+      AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
+      
+      # Validate required outputs
+      if [ -z "$AWS_S3_BUCKET" ]; then
+        echo "ERROR: Failed to get S3 bucket name from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/prod first"
+        exit 1
+      fi
+      
+      if [ -z "$AWS_CLOUDFRONT_ID" ]; then
+        echo "ERROR: Failed to get CloudFront distribution ID from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/prod first"
+        exit 1
+      fi
+      
+      if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
+        echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/prod first"
+        exit 1
+      fi
+      
+      if [ -z "$AWS_REGION" ]; then
+        echo "ERROR: Failed to get AWS region from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/prod first"
+        exit 1
+      fi
+      
+      # Export validated outputs
+      export AWS_S3_BUCKET
+      export AWS_CLOUDFRONT_ID
+      export AWS_CLOUDFRONT_DOMAIN
+      export AWS_REGION
+      
+      echo "✅ Terraform outputs validated:"
+      echo "  S3 Bucket: $AWS_S3_BUCKET"
+      echo "  CloudFront ID: $AWS_CLOUDFRONT_ID"
+      echo "  CloudFront Domain: $AWS_CLOUDFRONT_DOMAIN"
+      echo "  AWS Region: $AWS_REGION"
+      
       cd ../../..
     - chmod +x aws-deploy.sh
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - echo "Using S3 Bucket: $AWS_S3_BUCKET"
-    - echo "Using CloudFront ID: $AWS_CLOUDFRONT_ID"
     - ./aws-deploy.sh production
   artifacts:
     paths:
@@ -330,28 +420,39 @@ deploy:aws:prod:
 # Verify Stage - E2E Tests on Deployed Sites (Optional)
 # ====================================
 
-# E2E tests - AWS Development (manual, optional)
+# E2E tests - AWS Development (manual, optional) - CRITICAL TESTS ONLY
 verify:e2e:aws:dev:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
+  before_script:
+    - apt-get update && apt-get install -y terraform
   script:
     - corepack enable && corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
     - |
-      # Get CloudFront domain from Terraform if not set
-      if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
-        cd infrastructure/environments/development
-        export AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-        cd ../../..
+      # Get CloudFront domain from Terraform outputs
+      cd infrastructure/environments/development
+      
+      # Initialize Terraform if needed
+      if [ ! -d ".terraform" ]; then
+        echo "Initializing Terraform..."
+        terraform init -backend=false || terraform init
       fi
-      if [ -n "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
-        export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN_DEV
-      elif [ -n "${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}" ]; then
-        export BASE_URL=http://${AWS_S3_BUCKET_DEV:-$AWS_S3_BUCKET}.s3-website-${AWS_REGION:-eu-central-1}.amazonaws.com
-      else
-        echo "No AWS deployment URL configured for development"
+      
+      AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+      
+      if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
+        echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/development first"
         exit 1
       fi
+      
+      export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN_DEV
+      export CRITICAL_TESTS_ONLY=true
+      echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN_DEV"
+      echo "⚠️  Running CRITICAL tests only (@critical tag)"
+      
+      cd ../../..
     - echo 'Testing AWS development deployment at:' $BASE_URL
     - echo 'Waiting 60 seconds for CloudFront invalidation to propagate...'
     - sleep 60
@@ -370,25 +471,39 @@ verify:e2e:aws:dev:
       when: manual
       allow_failure: true
 
-# E2E tests - AWS Production (manual, optional)
+# E2E tests - AWS Production (manual, optional) - CRITICAL TESTS ONLY
 verify:e2e:aws:prod:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
+  before_script:
+    - apt-get update && apt-get install -y terraform
   script:
     - corepack enable && corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
     - |
-      # Get CloudFront domain from Terraform if not set
+      # Get CloudFront domain from Terraform outputs
+      cd infrastructure/environments/prod
+      
+      # Initialize Terraform if needed
+      if [ ! -d ".terraform" ]; then
+        echo "Initializing Terraform..."
+        terraform init -backend=false || terraform init
+      fi
+      
+      AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+      
       if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
-        cd infrastructure/environments/prod
-        export AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-        cd ../../..
+        echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+        echo "Please run 'terraform apply' in infrastructure/environments/prod first"
+        exit 1
       fi
-      if [ -n "$AWS_CLOUDFRONT_DOMAIN" ]; then
-        export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
-      else
-        export BASE_URL=http://${AWS_S3_BUCKET_PROD:-$AWS_S3_BUCKET}.s3-website-${AWS_REGION:-eu-central-1}.amazonaws.com
-      fi
+      
+      export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
+      export CRITICAL_TESTS_ONLY=true
+      echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN"
+      echo "⚠️  Running CRITICAL tests only (@critical tag)"
+      
+      cd ../../..
     - echo 'Testing AWS production deployment at:' $BASE_URL
     - echo 'Waiting 60 seconds for CloudFront invalidation to propagate...'
     - sleep 60

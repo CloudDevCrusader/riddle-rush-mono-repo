@@ -99,11 +99,11 @@
   .docs-container {
     flex-direction: column;
   }
-  
+
   .docs-sidebar {
     width: 100%;
   }
-  
+
   .docs-nav {
     position: static;
     flex-direction: row;

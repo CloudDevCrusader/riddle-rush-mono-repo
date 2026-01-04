@@ -29,14 +29,12 @@ export default defineConfig({
       fullPage: true,
     },
 
-    // 🎬 Video on retry (helps debug flaky tests)
+    // 🎬 Video on retry (helps debug flaky tests
     video: 'on-first-retry',
 
-    // Longer timeout for deployed sites (network latency)
-    ...(isDeployedTest && {
-      navigationTimeout: 30000,
-      actionTimeout: 15000,
-    }),
+    // Timeout settings - more generous for better reliability
+    navigationTimeout: isDeployedTest ? 30000 : 20000,
+    actionTimeout: isDeployedTest ? 15000 : 10000,
   },
 
   // Web server - only start for local tests

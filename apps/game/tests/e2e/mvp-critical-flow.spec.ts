@@ -1,28 +1,39 @@
 import { test, expect } from '@playwright/test'
+import {
+  navigateTo,
+  waitForSplashScreen,
+  waitForVisible,
+  clickWithRetry,
+  waitForNavigation,
+  waitForCount,
+  getTextContent,
+  waitForLoadingComplete,
+  fillInput,
+  elementExists,
+  isVisible,
+  waitForPageReady,
+  TIMEOUTS,
+} from '../utils/e2e-helpers'
 
 /**
  * MVP Critical Flow Tests
  *
  * These tests verify the core MVP functionality works end-to-end
  * and identify any critical issues that would prevent demonstration.
+ *
+ * @critical - These tests are marked as critical and run in CI/CD verify stage
  */
-test.describe('MVP Critical Flow', () => {
+test.describe('MVP Critical Flow @critical', () => {
   test('should complete full game flow: menu → players → round-start → game → results → leaderboard → next round', async ({ page }) => {
     // Step 1: Start at menu
-    await page.goto('/')
-    await page.waitForLoadState('networkidle')
-
-    // Wait for splash screen
-    await page.waitForTimeout(2000)
-    const splashScreen = page.locator('.splash-screen')
-    await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {})
+    await navigateTo(page, '/')
+    await waitForSplashScreen(page)
 
     // Step 2: Navigate to players
     const playBtn = page.locator('.play-btn')
-    await expect(playBtn).toBeVisible({ timeout: 10000 })
-    await playBtn.click()
-    await expect(page).toHaveURL(/\/players/)
-    await page.waitForTimeout(500)
+    await waitForVisible(playBtn)
+    await clickWithRetry(playBtn)
+    await waitForNavigation(page, /\/players/)
 
     // Step 3: Verify default players exist and start game
     const playerItems = page.locator('.player-item:not(.empty)')
@@ -30,115 +41,111 @@ test.describe('MVP Critical Flow', () => {
     expect(playerCount).toBeGreaterThan(0)
 
     const startBtn = page.locator('.start-btn')
-    await expect(startBtn).toBeVisible()
+    await waitForVisible(startBtn)
     await expect(startBtn).not.toBeDisabled()
 
     // Step 4: Start game - should navigate to round-start
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/, { timeout: 5000 })
-    await page.waitForTimeout(2000) // Wait for wheels to start spinning
+    await clickWithRetry(startBtn)
+    await waitForNavigation(page, /\/round-start/)
+    await page.waitForTimeout(TIMEOUTS.ANIMATION) // Wait for wheels to start spinning
 
     // Step 5: Wait for game to start (wheels complete and navigate to game)
-    await expect(page).toHaveURL(/\/game/, { timeout: 15000 })
-    await page.waitForTimeout(1000)
+    await waitForNavigation(page, /\/game/, { timeout: TIMEOUTS.VERY_LONG })
+    await waitForLoadingComplete(page)
 
     // Step 6: Verify game page elements
     const roundIndicator = page.locator('.round-indicator')
-    await expect(roundIndicator).toBeVisible()
+    await waitForVisible(roundIndicator)
 
     const categoryName = page.locator('.category-name')
-    await expect(categoryName).toBeVisible()
-    const categoryText = await categoryName.textContent()
+    await waitForVisible(categoryName)
+    const categoryText = await getTextContent(categoryName)
     expect(categoryText).toBeTruthy()
-    expect(categoryText?.trim().length).toBeGreaterThan(0)
+    expect(categoryText.length).toBeGreaterThan(0)
 
     const letterValue = page.locator('.letter-value')
-    await expect(letterValue).toBeVisible()
-    const letterText = await letterValue.textContent()
+    await waitForVisible(letterValue)
+    const letterText = await getTextContent(letterValue)
     expect(letterText).toBeTruthy()
-    expect(letterText?.trim().length).toBe(1) // Single letter
+    expect(letterText.trim().length).toBe(1) // Single letter
 
     // Step 7: Submit answers for all players
     const answerInput = page.locator('.answer-input')
     const submitBtn = page.locator('.submit-answer-btn')
     const turnName = page.locator('.turn-name')
 
-    if (await answerInput.isVisible({ timeout: 2000 })) {
+    if (await isVisible(answerInput, TIMEOUTS.SHORT)) {
       // Submit for each player
       for (let i = 0; i < playerCount; i++) {
-        if (await answerInput.isVisible()) {
-          const currentPlayer = await turnName.textContent()
+        if (await isVisible(answerInput)) {
+          const currentPlayer = await getTextContent(turnName)
           expect(currentPlayer).toBeTruthy()
 
-          await answerInput.fill(`TestAnswer${i + 1}`)
-          await submitBtn.click()
-          await page.waitForTimeout(500)
+          await fillInput(answerInput, `TestAnswer${i + 1}`)
+          await clickWithRetry(submitBtn)
+          await page.waitForTimeout(500) // Wait for submission animation
         }
       }
     }
 
     // Step 8: Navigate to results
     const nextBtn = page.locator('[data-testid="next-button"]')
-    if (await nextBtn.isVisible({ timeout: 2000 })) {
-      await nextBtn.click()
+    if (await isVisible(nextBtn, TIMEOUTS.SHORT)) {
+      await clickWithRetry(nextBtn)
     }
     else {
       // Fallback: navigate directly
-      await page.goto('/results')
+      await navigateTo(page, '/results')
     }
-    await expect(page).toHaveURL(/\/results/)
-    await page.waitForTimeout(500)
+    await waitForNavigation(page, /\/results/)
 
     // Step 9: Verify results page
     const scoreItems = page.locator('.score-item')
-    await expect(scoreItems).toHaveCount(playerCount)
+    await waitForCount(scoreItems, playerCount)
 
     // Step 10: Assign scores (click add button for first player)
     const scoreButtons = page.locator('.score-action-btn')
-    if (await scoreButtons.nth(0).isVisible()) {
-      await scoreButtons.nth(0).click()
-      await page.waitForTimeout(200)
+    if (await isVisible(scoreButtons.nth(0))) {
+      await clickWithRetry(scoreButtons.nth(0))
+      await page.waitForTimeout(300)
     }
 
     // Step 11: Navigate to leaderboard
     const resultsNextBtn = page.locator('.next-btn')
-    await expect(resultsNextBtn).toBeVisible()
-    await resultsNextBtn.click()
-    await expect(page).toHaveURL(/\/leaderboard/)
-    await page.waitForTimeout(500)
+    await waitForVisible(resultsNextBtn)
+    await clickWithRetry(resultsNextBtn)
+    await waitForNavigation(page, /\/leaderboard/)
 
     // Step 12: Verify leaderboard
     const leaderboardItems = page.locator('.leaderboard-item')
-    await expect(leaderboardItems).toHaveCount(playerCount)
+    await waitForCount(leaderboardItems, playerCount)
 
     // Step 13: Start next round
     const okBtn = page.locator('.ok-btn')
-    await expect(okBtn).toBeVisible()
-    await okBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
+    await waitForVisible(okBtn)
+    await clickWithRetry(okBtn)
+    await waitForNavigation(page, /\/round-start/)
+    await page.waitForTimeout(TIMEOUTS.ANIMATION)
 
     // Step 14: Verify next round starts
-    await expect(page).toHaveURL(/\/game/, { timeout: 15000 })
-    await page.waitForTimeout(1000)
+    await waitForNavigation(page, /\/game/, { timeout: TIMEOUTS.VERY_LONG })
+    await waitForLoadingComplete(page)
 
     // Verify round number increased
-    const roundText = await roundIndicator.textContent()
+    const roundText = await getTextContent(roundIndicator)
     expect(roundText).toContain('ROUND')
   })
 
   test('should handle error cases gracefully', async ({ page }) => {
     // Test 1: Cannot start game with 0 players
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await navigateTo(page, '/players')
 
     // Remove all players
     const removeBtns = page.locator('.remove-player-btn')
     const removeCount = await removeBtns.count()
     for (let i = 0; i < removeCount; i++) {
-      await removeBtns.first().click()
-      await page.waitForTimeout(200)
+      await clickWithRetry(removeBtns.first())
+      await page.waitForTimeout(300) // Wait for removal animation
     }
 
     // Verify start button is disabled
@@ -147,24 +154,22 @@ test.describe('MVP Critical Flow', () => {
   })
 
   test('should validate player names', async ({ page }) => {
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await navigateTo(page, '/players')
 
     // Try to add player with empty name
     const addBtn = page.locator('.add-btn')
-    await expect(addBtn).toBeVisible()
+    await waitForVisible(addBtn)
 
     // Click add button - should show input
-    await addBtn.click()
-    await page.waitForTimeout(300)
+    await clickWithRetry(addBtn)
+    await page.waitForTimeout(500)
 
     const playerInput = page.locator('.player-name-input')
-    if (await playerInput.isVisible()) {
+    if (await isVisible(playerInput)) {
       // Try to submit empty name
       const confirmBtn = page.locator('.confirm-btn')
-      await confirmBtn.click()
-      await page.waitForTimeout(300)
+      await clickWithRetry(confirmBtn)
+      await page.waitForTimeout(500)
 
       // Should still be in input mode or show error
       // (validation should prevent empty names)
@@ -173,32 +178,30 @@ test.describe('MVP Critical Flow', () => {
 
   test('should restore session after page reload', async ({ page }) => {
     // Start a game
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await navigateTo(page, '/players')
 
     const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
+    await clickWithRetry(startBtn)
+    await waitForNavigation(page, /\/round-start/)
+    await page.waitForTimeout(TIMEOUTS.ANIMATION)
 
-    await expect(page).toHaveURL(/\/game/, { timeout: 15000 })
-    await page.waitForTimeout(1000)
+    await waitForNavigation(page, /\/game/, TIMEOUTS.VERY_LONG)
+    await waitForLoadingComplete(page)
 
     // Get session details
-    const categoryName = await page.locator('.category-name').textContent()
-    const letterValue = await page.locator('.letter-value').textContent()
+    const categoryName = await getTextContent(page.locator('.category-name'))
+    const letterValue = await getTextContent(page.locator('.letter-value'))
 
     // Reload page
     await page.reload()
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(2000)
+    await waitForPageReady(page)
+    await waitForLoadingComplete(page)
 
     // Verify session restored
-    await expect(page).toHaveURL(/\/game/, { timeout: 5000 })
+    await waitForNavigation(page, /\/game/, { timeout: TIMEOUTS.MEDIUM })
 
-    const restoredCategory = await page.locator('.category-name').textContent()
-    const restoredLetter = await page.locator('.letter-value').textContent()
+    const restoredCategory = await getTextContent(page.locator('.category-name'))
+    const restoredLetter = await getTextContent(page.locator('.letter-value'))
 
     expect(restoredCategory).toBe(categoryName)
     expect(restoredLetter).toBe(letterValue)
@@ -208,13 +211,12 @@ test.describe('MVP Critical Flow', () => {
     // Simulate offline mode
     await context.setOffline(true)
 
-    await page.goto('/')
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(2000)
+    await navigateTo(page, '/')
+    await waitForSplashScreen(page)
 
     // App should still load (cached assets)
     const playBtn = page.locator('.play-btn')
-    await expect(playBtn).toBeVisible({ timeout: 10000 })
+    await waitForVisible(playBtn, { timeout: TIMEOUTS.LONG })
 
     // Restore online
     await context.setOffline(false)
@@ -222,28 +224,26 @@ test.describe('MVP Critical Flow', () => {
 
   test('should prevent navigation away from active game without confirmation', async ({ page }) => {
     // Start a game
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await navigateTo(page, '/players')
 
     const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
+    await clickWithRetry(startBtn)
+    await waitForNavigation(page, /\/round-start/)
+    await page.waitForTimeout(TIMEOUTS.ANIMATION)
 
-    await expect(page).toHaveURL(/\/game/, { timeout: 15000 })
-    await page.waitForTimeout(1000)
+    await waitForNavigation(page, /\/game/, { timeout: TIMEOUTS.VERY_LONG })
+    await waitForLoadingComplete(page)
 
     // Try to navigate back
     const backBtn = page.locator('[data-testid="back-button"]')
-    if (await backBtn.isVisible()) {
-      await backBtn.click()
+    if (await isVisible(backBtn)) {
+      await clickWithRetry(backBtn)
       await page.waitForTimeout(500)
 
       // Should show quit modal or prevent navigation
       const quitModal = page.locator('.quit-modal, [data-testid="quit-modal"]')
-      if (await quitModal.count() > 0) {
-        await expect(quitModal).toBeVisible()
+      if (await elementExists(quitModal)) {
+        await waitForVisible(quitModal)
       }
     }
   })

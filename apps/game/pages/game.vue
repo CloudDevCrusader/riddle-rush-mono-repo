@@ -211,6 +211,28 @@ const submitAnswer = async () => {
     return
   }
 
+  const settingsStore = useSettingsStore()
+  if (settingsStore.isAnswerValidationEnabled) {
+    try {
+      const { checkAnswer } = useAnswerCheck()
+      const result = await checkAnswer(
+        currentCategory.value?.searchWord || '',
+        currentLetter.value,
+        playerAnswer.value.trim(),
+      )
+
+      if (!result.found) {
+        toast.error(t('game.invalid_answer', 'This answer is not valid for the current category and letter'))
+        return
+      }
+    }
+    catch (error) {
+      const logger = useLogger()
+      logger.error('Error validating answer:', error)
+      // Allow submission if validation fails due to error
+    }
+  }
+
   try {
     await gameStore.submitPlayerAnswer(player.id, playerAnswer.value.trim())
     toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))

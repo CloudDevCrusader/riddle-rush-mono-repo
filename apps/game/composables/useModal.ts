@@ -2,11 +2,11 @@
  * Composable for managing modal state
  * Provides reusable modal logic with Vue 3 Composition API
  */
-export function useModal(initialState = false) {
+export function useModal<T = unknown>(initialState = false) {
   const isOpen = ref(initialState)
-  const data = ref<any>(null)
+  const data = ref<T | null>(null)
 
-  const open = (modalData?: any) => {
+  const open = (modalData?: T) => {
     isOpen.value = true
     if (modalData !== undefined) {
       data.value = modalData
@@ -50,8 +50,8 @@ export function useModals<T extends string>(modalNames: T[]) {
     modalMap[name] = useModal()
   })
 
-  const openModal = (name: T, data?: any) => {
-    modalMap[name].open(data)
+  const openModal = <D = unknown>(name: T, modalData?: D) => {
+    modalMap[name].open(modalData)
   }
 
   const closeModal = (name: T) => {
