@@ -1,0 +1,47 @@
+{
+  "bucket_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:s3:::riddle-rush-pwa-dev-720377205549"
+  },
+  "bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "riddle-rush-pwa-dev-720377205549"
+  },
+  "certificate_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": ""
+  },
+  "cloudfront_distribution_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "E2ILVGUF522S4M"
+  },
+  "cloudfront_domain_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "dvd66jaack4ue.cloudfront.net"
+  },
+  "deploy_command": {
+    "sensitive": false,
+    "type": "string",
+    "value": "AWS_S3_BUCKET=riddle-rush-pwa-dev-720377205549 AWS_CLOUDFRONT_ID=E2ILVGUF522S4M AWS_REGION=eu-central-1 ./aws-deploy.sh development"
+  },
+  "dev_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://dvd66jaack4ue.cloudfront.net"
+  },
+  "hosted_zone_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": ""
+  },
+  "website_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://dvd66jaack4ue.cloudfront.net"
+  }
+}

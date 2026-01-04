@@ -2,22 +2,19 @@
   <div class="wheel-container">
     <!-- Wheel Pointer/Arrow -->
     <div class="wheel-pointer">
-      <div class="pointer-arrow">
-        ▼
-      </div>
+      <div class="pointer-arrow">▼</div>
     </div>
 
     <!-- Rotating Wheel -->
-    <div
-      class="fortune-wheel"
-      :style="{ transform: `rotate(${wheelRotation}deg)` }"
-    >
+    <div class="fortune-wheel" :style="{ transform: `rotate(${wheelRotation}deg)` }">
       <!-- Segments -->
       <button
         v-for="(item, index) in items"
         :key="getItemKey(item, index)"
         class="wheel-segment tap-highlight no-select"
-        :class="{ selected: selectedItem && getItemKey(selectedItem as T, -1) === getItemKey(item, index) }"
+        :class="{
+          selected: selectedItem && getItemKey(selectedItem as T, -1) === getItemKey(item, index),
+        }"
         :style="getSegmentStyle(index)"
         @click="selectItem(item, index)"
       >
@@ -25,13 +22,13 @@
           <span
             v-if="getItemIcon(item)"
             class="segment-icon"
-            :style="{ transform: `rotate(-${wheelRotation + (index * angleStep)}deg)` }"
+            :style="{ transform: `rotate(-${wheelRotation + index * angleStep}deg)` }"
           >
             {{ getItemIcon(item) }}
           </span>
           <span
             class="segment-text"
-            :style="{ transform: `rotate(-${wheelRotation + (index * angleStep)}deg)` }"
+            :style="{ transform: `rotate(-${wheelRotation + index * angleStep}deg)` }"
           >
             {{ getItemLabel(item) }}
           </span>
@@ -41,18 +38,12 @@
 
     <!-- Center Circle -->
     <div class="wheel-center">
-      <div class="center-glow"></div>
+      <div class="center-glow" />
       <div class="center-circle">
-        <span
-          v-if="selectedItem && getItemIcon(selectedItem as T)"
-          class="selected-icon"
-        >
+        <span v-if="selectedItem && getItemIcon(selectedItem as T)" class="selected-icon">
           {{ getItemIcon(selectedItem as T) }}
         </span>
-        <span
-          v-else
-          class="center-icon"
-        >{{ centerIcon }}</span>
+        <span v-else class="center-icon">{{ centerIcon }}</span>
       </div>
     </div>
   </div>
@@ -91,9 +82,18 @@ const angleStep = computed(() => 360 / props.items.length)
 
 // Default color palette - soft blues matching game aesthetic
 const defaultColors = [
-  '#6BA8D8', '#5B9DC9', '#4A92BA', '#6BB5D8',
-  '#5BAAC9', '#4A9FBA', '#6BC2D8', '#5BB7C9',
-  '#4AACBA', '#75BBE0', '#65B0D1', '#55A5C2',
+  '#6BA8D8',
+  '#5B9DC9',
+  '#4A92BA',
+  '#6BB5D8',
+  '#5BAAC9',
+  '#4A9FBA',
+  '#6BC2D8',
+  '#5BB7C9',
+  '#4AACBA',
+  '#75BBE0',
+  '#65B0D1',
+  '#55A5C2',
 ]
 
 const getSegmentStyle = (index: number) => {
@@ -103,9 +103,9 @@ const getSegmentStyle = (index: number) => {
     : defaultColors[index % defaultColors.length]
 
   return {
-    'transform': `rotate(${angle}deg)`,
-    'transformOrigin': '50% 50%',
-    'background': color,
+    transform: `rotate(${angle}deg)`,
+    transformOrigin: '50% 50%',
+    background: color,
     '--segment-color': color,
   }
 }
@@ -119,8 +119,7 @@ const spinWheel = (targetRotation: number) => {
 }
 
 const selectItem = (item: T, index: number) => {
-  if (isSpinning.value || !item)
-    return
+  if (isSpinning.value || !item) return
 
   selectedItem.value = item
   emit('update:modelValue', item)
@@ -130,35 +129,32 @@ const selectItem = (item: T, index: number) => {
 
   // Add full rotations for dramatic effect
   const fullRotations = 3
-  const finalRotation = targetAngle - (360 * fullRotations)
+  const finalRotation = targetAngle - 360 * fullRotations
 
   spinWheel(finalRotation)
 
   // Emit spin complete after animation
   setTimeout(() => {
-    if (item)
-      emit('spin-complete', item)
+    if (item) emit('spin-complete', item)
   }, 1500)
 }
 
 // Expose spin method for parent components
 const spinRandom = () => {
-  if (isSpinning.value || props.items.length === 0)
-    return null
+  if (isSpinning.value || props.items.length === 0) return null
 
   // Pick a random item
   const randomIndex = Math.floor(Math.random() * props.items.length)
   const randomItem = props.items[randomIndex]
 
-  if (!randomItem)
-    return null
+  if (!randomItem) return null
 
   // Calculate rotation to land on selected item
   const targetAngle = -(randomIndex * angleStep.value) + 90
 
   // Add 3-5 full rotations for dramatic effect
   const fullRotations = 3 + Math.floor(Math.random() * 3)
-  const finalRotation = targetAngle - (360 * fullRotations)
+  const finalRotation = targetAngle - 360 * fullRotations
 
   spinWheel(finalRotation)
 
@@ -180,9 +176,12 @@ defineExpose({
 })
 
 // Watch for external changes to modelValue
-watch(() => props.modelValue, (newValue) => {
-  selectedItem.value = newValue
-})
+watch(
+  () => props.modelValue,
+  (newValue: number) => {
+    selectedItem.value = newValue
+  }
+)
 </script>
 
 <style scoped>
@@ -208,14 +207,14 @@ watch(() => props.modelValue, (newValue) => {
 
 .pointer-arrow {
   font-size: clamp(40px, 8vw, 60px);
-  color: #FFD700;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5))
-          drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+  color: #ffd700;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1) translateY(0);
   }
   50% {
@@ -230,9 +229,10 @@ watch(() => props.modelValue, (newValue) => {
   height: 100%;
   border-radius: 50%;
   transition: transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.4),
-              0 8px 30px rgba(0, 0, 0, 0.4),
-              inset 0 0 60px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 40px rgba(255, 215, 0, 0.4),
+    0 8px 30px rgba(0, 0, 0, 0.4),
+    inset 0 0 60px rgba(255, 255, 255, 0.1);
   will-change: transform;
 }
 
@@ -246,7 +246,9 @@ watch(() => props.modelValue, (newValue) => {
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  transition: filter 0.3s ease, transform 0.2s ease;
+  transition:
+    filter 0.3s ease,
+    transform 0.2s ease;
   clip-path: polygon(
     50% 50%,
     50% 0%,
@@ -327,7 +329,8 @@ watch(() => props.modelValue, (newValue) => {
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
@@ -342,11 +345,12 @@ watch(() => props.modelValue, (newValue) => {
   width: clamp(80px, 18vw, 120px);
   height: clamp(80px, 18vw, 120px);
   border-radius: 50%;
-  background: linear-gradient(135deg, #FFD700, #FFA500);
+  background: linear-gradient(135deg, #ffd700, #ffa500);
   border: 4px solid var(--color-white);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
-              0 4px 15px rgba(0, 0, 0, 0.4),
-              inset 0 0 20px rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 0 20px rgba(255, 215, 0, 0.8),
+    0 4px 15px rgba(0, 0, 0, 0.4),
+    inset 0 0 20px rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;

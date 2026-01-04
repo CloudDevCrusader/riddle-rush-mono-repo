@@ -6,13 +6,13 @@ test.describe('Accessibility', () => {
 
     // Check for main landmark
     const main = page.locator('main, [role="main"]')
-    if (await main.count() > 0) {
+    if ((await main.count()) > 0) {
       await expect(main.first()).toBeVisible()
     }
 
     // Check for proper heading hierarchy
     const h1 = page.locator('h1')
-    if (await h1.count() > 0) {
+    if ((await h1.count()) > 0) {
       await expect(h1.first()).toBeVisible()
     }
   })
@@ -55,6 +55,7 @@ test.describe('Accessibility', () => {
 
       // It's okay if some inputs don't have labels, but we log it
       if (!hasAccessibleName) {
+        // eslint-disable-next-line no-console
         console.log('Input might benefit from accessible label')
       }
     }

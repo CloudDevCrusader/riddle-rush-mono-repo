@@ -15,5 +15,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.vue", ".nuxt/**/*"],
-  "exclude": ["node_modules", ".nuxt", ".output", "dist"]
+  "exclude": ["node_modules", ".nuxt", ".output", "dist", "capacitor.config.ts"]
 }

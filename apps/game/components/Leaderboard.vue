@@ -1,34 +1,19 @@
 <template>
   <Transition name="leaderboard">
-    <div
-      v-if="visible"
-      class="leaderboard-overlay"
-      @click.self="$emit('close')"
-    >
+    <div v-if="visible" class="leaderboard-overlay" @click.self="$emit('close')">
       <div class="leaderboard-panel">
         <header class="leaderboard-header">
           <h2>{{ $t('leaderboard.title') }}</h2>
-          <button
-            class="close-btn tap-highlight"
-            @click="$emit('close')"
-          >
-            ✕
-          </button>
+          <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
         </header>
 
         <div class="leaderboard-content">
-          <div
-            v-if="entries.length === 0"
-            class="empty-state"
-          >
+          <div v-if="entries.length === 0" class="empty-state">
             <span class="empty-icon">🏆</span>
             <p>{{ $t('leaderboard.empty') }}</p>
           </div>
 
-          <div
-            v-else
-            class="entries-list"
-          >
+          <div v-else class="entries-list">
             <div
               v-for="(entry, index) in entries"
               :key="entry.sessionId"
@@ -39,14 +24,15 @@
                 <span v-if="index === 0">🥇</span>
                 <span v-else-if="index === 1">🥈</span>
                 <span v-else-if="index === 2">🥉</span>
-                <span
-                  v-else
-                  class="rank-number"
-                >{{ index + 1 }}</span>
+                <span v-else class="rank-number">{{ index + 1 }}</span>
               </div>
               <div class="entry-info">
                 <span class="category">{{ entry.category }}</span>
-                <span class="meta">{{ formatDuration(entry.duration) }} · {{ entry.correctAttempts }}/{{ entry.attempts }}</span>
+                <span class="meta"
+                  >{{ formatDuration(entry.duration) }} · {{ entry.correctAttempts }}/{{
+                    entry.attempts
+                  }}</span
+                >
               </div>
               <div class="score">
                 {{ entry.score }}
@@ -56,17 +42,10 @@
         </div>
 
         <footer class="leaderboard-footer">
-          <button
-            class="btn btn-outline"
-            @click="$emit('close')"
-          >
+          <button class="btn btn-outline" @click="$emit('close')">
             {{ $t('common.close') }}
           </button>
-          <button
-            v-if="entries.length > 0"
-            class="btn btn-secondary"
-            @click="clearLeaderboard"
-          >
+          <button v-if="entries.length > 0" class="btn btn-secondary" @click="clearLeaderboard">
             {{ $t('leaderboard.clear') }}
           </button>
         </footer>
@@ -78,7 +57,7 @@
 <script setup lang="ts">
 import type { LeaderboardEntry } from '@riddle-rush/types/game'
 
-const _props = defineProps<{
+defineProps<{
   visible: boolean
   entries: LeaderboardEntry[]
 }>()
@@ -111,9 +90,9 @@ const clearLeaderboard = () => {
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-           max(var(--spacing-md), env(safe-area-inset-right, 0px))
-           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-md), env(safe-area-inset-left, 0px));
+    max(var(--spacing-md), env(safe-area-inset-right, 0px))
+    max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .leaderboard-panel {
@@ -275,14 +254,17 @@ const clearLeaderboard = () => {
 @media (max-width: 640px) {
   .leaderboard-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .leaderboard-panel {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -317,7 +299,10 @@ const clearLeaderboard = () => {
 @media (max-width: 450px) and (min-height: 800px) {
   .leaderboard-panel {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 }
 </style>
