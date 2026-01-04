@@ -456,6 +456,7 @@ workflows:
               only: /^development$/
       # Deployment (can be set to manual approval in CircleCI UI)
       - deploy-aws-dev:
+          context: deploy-aws-dev
           requires:
             - build
           filters:
