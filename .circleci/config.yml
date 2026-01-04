@@ -11,41 +11,28 @@ commands:
       - run:
           name: 'Enable corepack and prepare pnpm'
           command: |
-            # Setup user directories to avoid permission issues
+            # Setup user directories
             export COREPACK_HOME="$HOME/.corepack"
             export PNPM_HOME="$HOME/.local/share/pnpm"
-            export PATH="$HOME/.local/bin:$PNPM_HOME:$COREPACK_HOME/bin:$PATH"
-            mkdir -p "$HOME/.local/bin" "$COREPACK_HOME" "$PNPM_HOME"
+            export PATH="$PNPM_HOME:$COREPACK_HOME/bin:$PATH"
+            mkdir -p "$COREPACK_HOME" "$PNPM_HOME"
 
-            # Get pnpm version from package.json or use default
-            # Read package.json as text and extract version (works with ES modules)
+            # Get pnpm version from package.json
             PNPM_VERSION=$(grep -oE '"packageManager"\s*:\s*"pnpm@[^"]*"' package.json | grep -oE 'pnpm@[^"]*' | cut -d'@' -f2 || echo "10.27.0")
             echo "Using pnpm version: ${PNPM_VERSION}"
 
-            # Prepare pnpm (downloads without requiring system directory access)
+            # Enable corepack (Node.js 16.9+ includes corepack)
+            corepack enable
+
+            # Prepare pnpm (downloads to user cache)
             corepack prepare "pnpm@${PNPM_VERSION}" --activate
 
-            # Install corepack shims into a user-writable bin dir to avoid /usr/local/bin
-            if ! corepack enable --install-directory "$HOME/.local/bin" 2>&1; then
-              echo "Warning: corepack enable failed; using pnpm wrapper"
-            fi
-
-            # Always define a pnpm wrapper so commands still work if shims are unavailable
+            # Create pnpm wrapper function for all subsequent steps
             echo 'pnpm() { corepack pnpm "$@"; }' >> "$BASH_ENV"
-            export -f pnpm 2>/dev/null || true
+            echo 'export -f pnpm 2>/dev/null || true' >> "$BASH_ENV"
 
-            # Verify pnpm is accessible (try multiple methods)
-            if command -v pnpm >/dev/null 2>&1; then
-              pnpm --version
-            elif command -v corepack >/dev/null 2>&1; then
-              echo "Using corepack pnpm wrapper"
-              corepack pnpm --version
-              # Ensure pnpm function is available for subsequent steps
-              echo 'pnpm() { corepack pnpm "$@"; }' >> "$BASH_ENV"
-            else
-              echo "Error: pnpm not available"
-              exit 1
-            fi
+            # Verify pnpm works
+            corepack pnpm --version
 
   install-dependencies:
     description: 'Install dependencies with pnpm'
@@ -68,7 +55,7 @@ commands:
             - ~/.pnpm-store
 
   setup-aws:
-    description: 'Setup AWS CLI and Terraform'
+    description: 'Setup AWS CLI'
     steps:
       - run:
           name: 'Install AWS CLI'
@@ -77,6 +64,10 @@ commands:
             unzip awscliv2.zip
             sudo ./aws/install
             aws --version
+
+  setup-terraform:
+    description: 'Install Terraform'
+    steps:
       - run:
           name: 'Install Terraform'
           command: |
@@ -84,6 +75,69 @@ commands:
             echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
             sudo apt-get update && sudo apt-get install -y terraform
             terraform version
+
+  get-terraform-outputs:
+    description: 'Get Terraform outputs for environment'
+    parameters:
+      environment:
+        type: string
+        description: 'Environment name (development, prod)'
+    steps:
+      - run:
+          name: 'Get Terraform outputs for << parameters.environment >>'
+          command: |
+            # Map environment to directory name
+            ENV_DIR="<< parameters.environment >>"
+
+            cd infrastructure/environments/${ENV_DIR}
+
+            # Initialize Terraform if needed
+            if [ ! -d ".terraform" ]; then
+              echo "Initializing Terraform..."
+              terraform init -backend=false || terraform init
+            fi
+
+            # Get and validate Terraform outputs
+            echo "Fetching Terraform outputs..."
+            AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
+            AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+            AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
+
+            # Validate required outputs
+            if [ -z "$AWS_S3_BUCKET" ]; then
+              echo "ERROR: Failed to get S3 bucket name from Terraform outputs"
+              exit 1
+            fi
+
+            if [ -z "$AWS_CLOUDFRONT_ID" ]; then
+              echo "ERROR: Failed to get CloudFront distribution ID from Terraform outputs"
+              exit 1
+            fi
+
+            if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
+              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+              exit 1
+            fi
+
+            if [ -z "$AWS_REGION" ]; then
+              echo "ERROR: Failed to get AWS region from Terraform outputs"
+              exit 1
+            fi
+
+            # Export validated outputs
+            echo "export AWS_S3_BUCKET=$AWS_S3_BUCKET" >> $BASH_ENV
+            echo "export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID" >> $BASH_ENV
+            echo "export AWS_CLOUDFRONT_DOMAIN=$AWS_CLOUDFRONT_DOMAIN" >> $BASH_ENV
+            echo "export AWS_REGION=$AWS_REGION" >> $BASH_ENV
+
+            echo "✅ Terraform outputs validated:"
+            echo "  S3 Bucket: $AWS_S3_BUCKET"
+            echo "  CloudFront ID: $AWS_CLOUDFRONT_ID"
+            echo "  CloudFront Domain: $AWS_CLOUDFRONT_DOMAIN"
+            echo "  AWS Region: $AWS_REGION"
+
+            cd ../../..
 
 # Jobs
 jobs:
@@ -177,58 +231,9 @@ jobs:
       - setup-pnpm
       - install-dependencies
       - setup-aws
-      - run:
-          name: 'Get Terraform outputs for development'
-          command: |
-            cd infrastructure/environments/development
-
-            # Initialize Terraform if needed
-            if [ ! -d ".terraform" ]; then
-              echo "Initializing Terraform..."
-              terraform init -backend=false || terraform init
-            fi
-
-            # Get and validate Terraform outputs
-            echo "Fetching Terraform outputs..."
-            AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
-            AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
-            AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-            AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
-
-            # Validate required outputs
-            if [ -z "$AWS_S3_BUCKET" ]; then
-              echo "ERROR: Failed to get S3 bucket name from Terraform outputs"
-              exit 1
-            fi
-
-            if [ -z "$AWS_CLOUDFRONT_ID" ]; then
-              echo "ERROR: Failed to get CloudFront distribution ID from Terraform outputs"
-              exit 1
-            fi
-
-            if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
-              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
-              exit 1
-            fi
-
-            if [ -z "$AWS_REGION" ]; then
-              echo "ERROR: Failed to get AWS region from Terraform outputs"
-              exit 1
-            fi
-
-            # Export validated outputs
-            echo "export AWS_S3_BUCKET=$AWS_S3_BUCKET" >> $BASH_ENV
-            echo "export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID" >> $BASH_ENV
-            echo "export AWS_CLOUDFRONT_DOMAIN_DEV=$AWS_CLOUDFRONT_DOMAIN_DEV" >> $BASH_ENV
-            echo "export AWS_REGION=$AWS_REGION" >> $BASH_ENV
-
-            echo "✅ Terraform outputs validated:"
-            echo "  S3 Bucket: $AWS_S3_BUCKET"
-            echo "  CloudFront ID: $AWS_CLOUDFRONT_ID"
-            echo "  CloudFront Domain: $AWS_CLOUDFRONT_DOMAIN_DEV"
-            echo "  AWS Region: $AWS_REGION"
-
-            cd ../../..
+      - setup-terraform
+      - get-terraform-outputs:
+          environment: development
       - run:
           name: 'Deploy to AWS development'
           command: |
@@ -249,58 +254,9 @@ jobs:
       - setup-pnpm
       - install-dependencies
       - setup-aws
-      - run:
-          name: 'Get Terraform outputs for production'
-          command: |
-            cd infrastructure/environments/prod
-
-            # Initialize Terraform if needed
-            if [ ! -d ".terraform" ]; then
-              echo "Initializing Terraform..."
-              terraform init -backend=false || terraform init
-            fi
-
-            # Get and validate Terraform outputs
-            echo "Fetching Terraform outputs..."
-            AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
-            AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
-            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-            AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
-
-            # Validate required outputs
-            if [ -z "$AWS_S3_BUCKET" ]; then
-              echo "ERROR: Failed to get S3 bucket name from Terraform outputs"
-              exit 1
-            fi
-
-            if [ -z "$AWS_CLOUDFRONT_ID" ]; then
-              echo "ERROR: Failed to get CloudFront distribution ID from Terraform outputs"
-              exit 1
-            fi
-
-            if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
-              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
-              exit 1
-            fi
-
-            if [ -z "$AWS_REGION" ]; then
-              echo "ERROR: Failed to get AWS region from Terraform outputs"
-              exit 1
-            fi
-
-            # Export validated outputs
-            echo "export AWS_S3_BUCKET=$AWS_S3_BUCKET" >> $BASH_ENV
-            echo "export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID" >> $BASH_ENV
-            echo "export AWS_CLOUDFRONT_DOMAIN=$AWS_CLOUDFRONT_DOMAIN" >> $BASH_ENV
-            echo "export AWS_REGION=$AWS_REGION" >> $BASH_ENV
-
-            echo "✅ Terraform outputs validated:"
-            echo "  S3 Bucket: $AWS_S3_BUCKET"
-            echo "  CloudFront ID: $AWS_CLOUDFRONT_ID"
-            echo "  CloudFront Domain: $AWS_CLOUDFRONT_DOMAIN"
-            echo "  AWS Region: $AWS_REGION"
-
-            cd ../../..
+      - setup-terraform
+      - get-terraform-outputs:
+          environment: prod
       - run:
           name: 'Deploy to AWS production'
           command: |
@@ -335,79 +291,27 @@ jobs:
           path: test-results
           when: always
 
-  verify-e2e-aws-dev:
-    description: 'Verify AWS development deployment with E2E tests'
+  verify-e2e-aws:
+    description: 'Verify AWS deployment with E2E tests'
+    parameters:
+      environment:
+        type: string
+        description: 'Environment name (development, prod)'
+      wait_time:
+        type: integer
+        description: 'Wait time in seconds for CloudFront propagation'
+        default: 60
     docker:
       - image: mcr.microsoft.com/playwright:v1.57.0-noble
     steps:
       - checkout
       - setup-pnpm
       - install-dependencies
-      - run:
-          name: 'Install Terraform'
-          command: |
-            wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-            sudo apt-get update && sudo apt-get install -y terraform
+      - setup-terraform
       - run:
           name: 'Get CloudFront domain and run E2E tests'
           command: |
-            cd infrastructure/environments/development
-
-            # Initialize Terraform if needed
-            if [ ! -d ".terraform" ]; then
-              echo "Initializing Terraform..."
-              terraform init -backend=false || terraform init
-            fi
-
-            AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-
-            if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
-              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
-              exit 1
-            fi
-
-            export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN_DEV
-            export CRITICAL_TESTS_ONLY=true
-            echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN_DEV"
-            echo "⚠️  Running CRITICAL tests only (@critical tag)"
-
-            cd ../../..
-
-            echo "Testing AWS development deployment at: $BASE_URL"
-            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
-            sleep 60
-
-            chmod +x scripts/ci-e2e.sh
-            ./scripts/ci-e2e.sh
-      - store_test_results:
-          path: test-results
-          when: always
-      - store_artifacts:
-          path: playwright-report
-          when: always
-      - store_artifacts:
-          path: test-results
-          when: always
-
-  verify-e2e-aws-prod:
-    description: 'Verify AWS production deployment with E2E tests'
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.57.0-noble
-    steps:
-      - checkout
-      - setup-pnpm
-      - install-dependencies
-      - run:
-          name: 'Install Terraform'
-          command: |
-            wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-            sudo apt-get update && sudo apt-get install -y terraform
-      - run:
-          name: 'Get CloudFront domain and run E2E tests'
-          command: |
-            cd infrastructure/environments/prod
+            cd infrastructure/environments/<< parameters.environment >>
 
             # Initialize Terraform if needed
             if [ ! -d ".terraform" ]; then
@@ -429,9 +333,9 @@ jobs:
 
             cd ../../..
 
-            echo "Testing AWS production deployment at: $BASE_URL"
-            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
-            sleep 60
+            echo "Testing AWS << parameters.environment >> deployment at: $BASE_URL"
+            echo "Waiting << parameters.wait_time >> seconds for CloudFront invalidation to propagate..."
+            sleep << parameters.wait_time >>
 
             chmod +x scripts/ci-e2e.sh
             ./scripts/ci-e2e.sh
@@ -503,7 +407,9 @@ workflows:
             branches:
               only: /^development$/
       # Verification (can be set to manual approval in CircleCI UI)
-      - verify-e2e-aws-dev:
+      - verify-e2e-aws:
+          name: verify-e2e-aws-dev
+          environment: development
           requires:
             - deploy-aws-dev
           filters:
@@ -537,7 +443,9 @@ workflows:
             tags:
               only: /^v.*/
       # Production verification (should require manual approval in CircleCI UI)
-      - verify-e2e-aws-prod:
+      - verify-e2e-aws:
+          name: verify-e2e-aws-prod
+          environment: prod
           requires:
             - deploy-aws-prod
           filters:
