@@ -31,6 +31,17 @@ SKIP_E2E_TESTS="${SKIP_E2E_TESTS:-false}"
 # Get Terraform outputs (preferred) or use environment variables
 echo -e "\n📋 Getting deployment configuration for ${ENVIRONMENT}..."
 
+# In CI, environment variables should be set by get-terraform-outputs command
+if [ -n "$CI" ]; then
+    echo -e "  ${BLUE}🔧 CI mode detected - using environment variables from Terraform apply stage${NC}"
+    echo -e "  ${BLUE}📊 Current environment variables:${NC}"
+    echo -e "     AWS_S3_BUCKET: ${AWS_S3_BUCKET:-<not set>}"
+    echo -e "     AWS_CLOUDFRONT_ID: ${AWS_CLOUDFRONT_ID:-<not set>}"
+    echo -e "     AWS_CLOUDFRONT_DOMAIN: ${AWS_CLOUDFRONT_DOMAIN:-<not set>}"
+    echo -e "     AWS_CLOUDFRONT_DOMAIN_DEV: ${AWS_CLOUDFRONT_DOMAIN_DEV:-<not set>}"
+    echo -e "     AWS_REGION: ${AWS_REGION:-<not set>}"
+fi
+
 # Normalize environment name for Terraform directory
 TERRAFORM_ENV=""
 case "$ENVIRONMENT" in
@@ -123,7 +134,8 @@ if [ -f "$TERRAFORM_ENV_FILE" ]; then
 fi
 
 # Try to get Terraform outputs directly (as fallback or validation)
-# In CI, prefer values already loaded from .env/terraform step to avoid warnings overriding them.
+# In CI, skip Terraform queries - use environment variables set by get-terraform-outputs
+# This ensures we use the outputs from the apply stage, not stale cached values
 if [ -z "$CI" ] && [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null; then
     cd "$TERRAFORM_DIR"
     
@@ -196,14 +208,24 @@ if [ -z "$CI" ] && [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null;
     
     cd - > /dev/null
 else
-    if [ ! -d "$TERRAFORM_DIR" ]; then
-        echo -e "  ${YELLOW}⚠️  Terraform directory not found: $TERRAFORM_DIR${NC}"
-    fi
-    if ! command -v terraform &> /dev/null; then
-        echo -e "  ${YELLOW}⚠️  Terraform not installed, using environment variables${NC}"
-    fi
-    if [ -z "$AWS_S3_BUCKET" ]; then
-        echo -e "  ${YELLOW}   Using environment variables for deployment configuration${NC}"
+    # In CI mode, we should have environment variables from get-terraform-outputs
+    if [ -n "$CI" ]; then
+        echo -e "  ${BLUE}✓${NC} Using environment variables from CI (set by get-terraform-outputs)"
+        if [ -z "$AWS_S3_BUCKET" ]; then
+            echo -e "  ${RED}❌ AWS_S3_BUCKET not set in CI environment${NC}"
+            echo -e "  ${YELLOW}   Ensure get-terraform-outputs command runs before deployment${NC}"
+            exit 1
+        fi
+    else
+        if [ ! -d "$TERRAFORM_DIR" ]; then
+            echo -e "  ${YELLOW}⚠️  Terraform directory not found: $TERRAFORM_DIR${NC}"
+        fi
+        if ! command -v terraform &> /dev/null; then
+            echo -e "  ${YELLOW}⚠️  Terraform not installed, using environment variables${NC}"
+        fi
+        if [ -z "$AWS_S3_BUCKET" ]; then
+            echo -e "  ${YELLOW}   Using environment variables for deployment configuration${NC}"
+        fi
     fi
 fi
 

@@ -242,9 +242,20 @@ jobs:
     steps:
       - checkout
       - run:
-          name: 'Fetch full git history for Sonar blame'
+          name: 'Fetch limited git history for Sonar blame'
           command: |
-            git fetch --unshallow || git fetch --depth=200
+            # Limit git history to prevent timeouts (SonarCloud needs recent history for blame)
+            # Use a reasonable depth that balances blame accuracy with fetch speed
+            if git rev-parse --is-shallow-repository 2>/dev/null | grep -q true; then
+              echo "Fetching limited git history (depth=50) for SonarCloud blame..."
+              timeout 300 git fetch --depth=50 origin || {
+                echo "Warning: Git fetch timed out or failed, continuing with shallow history"
+                # Try even shallower as fallback
+                timeout 120 git fetch --depth=20 origin || true
+              }
+            else
+              echo "Repository is not shallow, using existing history"
+            fi
       - restore_cache:
           keys:
             - sonar-cache-{{ checksum "sonar-project.properties" }}
@@ -265,10 +276,35 @@ jobs:
               exit 1
             fi
 
-            sonar-scanner \
+            # Check if we have sufficient git history for blame
+            # If history is too shallow, disable blame to prevent timeouts
+            GIT_DEPTH=$(git rev-list --count HEAD 2>/dev/null || echo "0")
+            echo "Git history depth: $GIT_DEPTH commits"
+
+            # If history is very shallow (< 10 commits), disable blame to prevent issues
+            if [ "$GIT_DEPTH" -lt 10 ]; then
+              echo "Warning: Very shallow git history detected. Disabling SCM blame to prevent timeouts."
+              SCM_DISABLED="-Dsonar.scm.disabled=true"
+            else
+              SCM_DISABLED=""
+            fi
+
+            # Run SonarCloud scanner with timeout protection
+            # Note: This job is configured to not block other jobs in the workflow
+            # Failures here will be visible but won't stop the pipeline
+            timeout 1800 sonar-scanner \
               -Dsonar.token="$SONAR_TOKEN" \
               -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
-              -Dsonar.organization="$SONAR_ORGANIZATION"
+              -Dsonar.organization="$SONAR_ORGANIZATION" \
+              -Dsonar.scm.provider=git \
+              -Dsonar.scm.forceReloadAll=false \
+              $SCM_DISABLED || {
+              echo "⚠️  Warning: SonarCloud analysis timed out or failed"
+              echo "This may be due to git blame operations taking too long"
+              echo "Pipeline will continue - SonarCloud failure is non-blocking"
+              # Exit with failure code for visibility, but no other jobs depend on this
+              exit 1
+            }
       - save_cache:
           key: sonar-cache-{{ checksum "sonar-project.properties" }}
           paths:
@@ -367,18 +403,36 @@ jobs:
       - run:
           name: 'Deploy to AWS development and verify'
           command: |
+            export CI=true
             export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
             export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+
+            # Verify environment variables from get-terraform-outputs are set
+            echo "Verifying Terraform outputs are available..."
+            if [ -z "${AWS_S3_BUCKET:-}" ]; then
+              echo "ERROR: AWS_S3_BUCKET not set - get-terraform-outputs may have failed"
+              exit 1
+            fi
+            if [ -z "${AWS_CLOUDFRONT_ID:-}" ]; then
+              echo "WARNING: AWS_CLOUDFRONT_ID not set - cache invalidation will be skipped"
+            fi
+            echo "Using Terraform outputs from apply stage:"
+            echo "  S3 Bucket: ${AWS_S3_BUCKET}"
+            echo "  CloudFront ID: ${AWS_CLOUDFRONT_ID:-<not set>}"
+            echo "  CloudFront Domain: ${AWS_CLOUDFRONT_DOMAIN:-${AWS_CLOUDFRONT_DOMAIN_DEV:-<not set>}}"
 
             chmod +x aws-deploy.sh
             ./aws-deploy.sh development
 
-            if [ -z "${AWS_CLOUDFRONT_DOMAIN:-}" ]; then
-              echo "ERROR: Missing AWS_CLOUDFRONT_DOMAIN for verification"
+            # Use environment-specific CloudFront domain variable
+            CLOUDFRONT_DOMAIN="${AWS_CLOUDFRONT_DOMAIN_DEV:-${AWS_CLOUDFRONT_DOMAIN:-}}"
+            if [ -z "$CLOUDFRONT_DOMAIN" ]; then
+              echo "ERROR: Missing CloudFront domain for verification"
+              echo "  Expected: AWS_CLOUDFRONT_DOMAIN_DEV or AWS_CLOUDFRONT_DOMAIN"
               exit 1
             fi
 
-            export BASE_URL="https://${AWS_CLOUDFRONT_DOMAIN}"
+            export BASE_URL="https://${CLOUDFRONT_DOMAIN}"
             echo "Verifying development deployment at: $BASE_URL"
             echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
             sleep 60
@@ -440,8 +494,23 @@ jobs:
       - run:
           name: 'Deploy to AWS production and verify'
           command: |
+            export CI=true
             export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
             export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+
+            # Verify environment variables from get-terraform-outputs are set
+            echo "Verifying Terraform outputs are available..."
+            if [ -z "${AWS_S3_BUCKET:-}" ]; then
+              echo "ERROR: AWS_S3_BUCKET not set - get-terraform-outputs may have failed"
+              exit 1
+            fi
+            if [ -z "${AWS_CLOUDFRONT_ID:-}" ]; then
+              echo "WARNING: AWS_CLOUDFRONT_ID not set - cache invalidation will be skipped"
+            fi
+            echo "Using Terraform outputs from apply stage:"
+            echo "  S3 Bucket: ${AWS_S3_BUCKET}"
+            echo "  CloudFront ID: ${AWS_CLOUDFRONT_ID:-<not set>}"
+            echo "  CloudFront Domain: ${AWS_CLOUDFRONT_DOMAIN:-<not set>}"
 
             chmod +x aws-deploy.sh
             ./aws-deploy.sh production
@@ -505,13 +574,14 @@ workflows:
           filters:
             branches:
               only: /^development$/
-      - sonarcloud-check:
+      - build:
           requires:
             - test
           filters:
             branches:
               only: /^development$/
-      - build:
+      # SonarCloud check runs in parallel (non-blocking)
+      - sonarcloud-check:
           requires:
             - test
           filters:
@@ -541,7 +611,7 @@ workflows:
               only: /^main$/
             tags:
               only: /^v.*/
-      - sonarcloud-check:
+      - build:
           requires:
             - test
           filters:
@@ -549,7 +619,8 @@ workflows:
               only: /^main$/
             tags:
               only: /^v.*/
-      - build:
+      # SonarCloud check runs in parallel (non-blocking)
+      - sonarcloud-check:
           requires:
             - test
           filters:
