@@ -409,6 +409,9 @@ jobs:
             export CI=true
             export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
             export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+            VERIFY_ASYNC="${VERIFY_ASYNC:-false}"
+            VERIFY_DELAY="${VERIFY_DELAY:-60}"
+            VERIFY_TIMEOUT="${VERIFY_TIMEOUT:-600}"
 
             # Verify environment variables from get-terraform-outputs are set
             echo "Verifying Terraform outputs are available..."
@@ -427,30 +430,42 @@ jobs:
             chmod +x aws-deploy.sh
             ./aws-deploy.sh development
 
-            # Use environment-specific CloudFront domain variable
-            CLOUDFRONT_DOMAIN="${AWS_CLOUDFRONT_DOMAIN_DEV:-${AWS_CLOUDFRONT_DOMAIN:-}}"
-            if [ -z "$CLOUDFRONT_DOMAIN" ]; then
-              echo "ERROR: Missing CloudFront domain for verification"
-              echo "  Expected: AWS_CLOUDFRONT_DOMAIN_DEV or AWS_CLOUDFRONT_DOMAIN"
-              exit 1
-            fi
+            verify_cloudfront() {
+              # Use environment-specific CloudFront domain variable
+              CLOUDFRONT_DOMAIN="${AWS_CLOUDFRONT_DOMAIN_DEV:-${AWS_CLOUDFRONT_DOMAIN:-}}"
+              if [ -z "$CLOUDFRONT_DOMAIN" ]; then
+                echo "ERROR: Missing CloudFront domain for verification"
+                echo "  Expected: AWS_CLOUDFRONT_DOMAIN_DEV or AWS_CLOUDFRONT_DOMAIN"
+                return 1
+              fi
 
-            export BASE_URL="https://${CLOUDFRONT_DOMAIN}"
-            echo "Verifying development deployment at: $BASE_URL"
-            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
-            sleep 60
+              export BASE_URL="https://${CLOUDFRONT_DOMAIN}"
+              echo "Verifying development deployment at: $BASE_URL"
+              echo "Waiting ${VERIFY_DELAY} seconds for CloudFront invalidation to propagate..."
+              sleep "${VERIFY_DELAY}"
 
-            echo "Checking HTML response from CloudFront..."
-            http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
-            if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
-              echo "ERROR: CloudFront returned HTTP $http_code"
-              exit 1
+              echo "Checking HTML response from CloudFront..."
+              http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
+              if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
+                echo "ERROR: CloudFront returned HTTP $http_code"
+                return 1
+              fi
+              if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
+                echo "ERROR: CloudFront response did not include HTML"
+                return 1
+              fi
+              echo "✅ CloudFront returned HTML (HTTP $http_code)"
+            }
+
+            export -f verify_cloudfront
+
+            if [ "$VERIFY_ASYNC" = "true" ]; then
+              echo "Running verification asynchronously (timeout ${VERIFY_TIMEOUT}s)"
+              timeout "${VERIFY_TIMEOUT}" bash -c verify_cloudfront || echo "⚠️  Verification failed or timed out (non-blocking)"
+            else
+              echo "Running verification synchronously (timeout ${VERIFY_TIMEOUT}s)"
+              timeout "${VERIFY_TIMEOUT}" bash -c verify_cloudfront
             fi
-            if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
-              echo "ERROR: CloudFront response did not include HTML"
-              exit 1
-            fi
-            echo "✅ CloudFront returned HTML (HTTP $http_code)"
       - store_artifacts:
           path: deployment-info.json
           when: always
@@ -500,6 +515,9 @@ jobs:
             export CI=true
             export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
             export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+            VERIFY_ASYNC="${VERIFY_ASYNC:-false}"
+            VERIFY_DELAY="${VERIFY_DELAY:-60}"
+            VERIFY_TIMEOUT="${VERIFY_TIMEOUT:-600}"
 
             # Verify environment variables from get-terraform-outputs are set
             echo "Verifying Terraform outputs are available..."
@@ -518,27 +536,39 @@ jobs:
             chmod +x aws-deploy.sh
             ./aws-deploy.sh production
 
-            if [ -z "${AWS_CLOUDFRONT_DOMAIN:-}" ]; then
-              echo "ERROR: Missing AWS_CLOUDFRONT_DOMAIN for verification"
-              exit 1
-            fi
+            verify_cloudfront() {
+              if [ -z "${AWS_CLOUDFRONT_DOMAIN:-}" ]; then
+                echo "ERROR: Missing AWS_CLOUDFRONT_DOMAIN for verification"
+                return 1
+              fi
 
-            export BASE_URL="https://${AWS_CLOUDFRONT_DOMAIN}"
-            echo "Verifying production deployment at: $BASE_URL"
-            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
-            sleep 60
+              export BASE_URL="https://${AWS_CLOUDFRONT_DOMAIN}"
+              echo "Verifying production deployment at: $BASE_URL"
+              echo "Waiting ${VERIFY_DELAY} seconds for CloudFront invalidation to propagate..."
+              sleep "${VERIFY_DELAY}"
 
-            echo "Checking HTML response from CloudFront..."
-            http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
-            if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
-              echo "ERROR: CloudFront returned HTTP $http_code"
-              exit 1
+              echo "Checking HTML response from CloudFront..."
+              http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
+              if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
+                echo "ERROR: CloudFront returned HTTP $http_code"
+                return 1
+              fi
+              if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
+                echo "ERROR: CloudFront response did not include HTML"
+                return 1
+              fi
+              echo "✅ CloudFront returned HTML (HTTP $http_code)"
+            }
+
+            export -f verify_cloudfront
+
+            if [ "$VERIFY_ASYNC" = "true" ]; then
+              echo "Running verification asynchronously (timeout ${VERIFY_TIMEOUT}s)"
+              timeout "${VERIFY_TIMEOUT}" bash -c verify_cloudfront || echo "⚠️  Verification failed or timed out (non-blocking)"
+            else
+              echo "Running verification synchronously (timeout ${VERIFY_TIMEOUT}s)"
+              timeout "${VERIFY_TIMEOUT}" bash -c verify_cloudfront
             fi
-            if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
-              echo "ERROR: CloudFront response did not include HTML"
-              exit 1
-            fi
-            echo "✅ CloudFront returned HTML (HTTP $http_code)"
       - store_artifacts:
           path: deployment-info.json
           when: always
