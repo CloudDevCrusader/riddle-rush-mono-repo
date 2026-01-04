@@ -1,0 +1,511 @@
+version: 2.1
+
+# CircleCI configuration for Riddle Rush Nuxt PWA monorepo
+# Mirrors GitLab CI pipeline structure with CircleCI-specific optimizations
+
+# Reusable commands
+commands:
+  setup-pnpm:
+    description: "Setup pnpm via corepack"
+    steps:
+      - run:
+          name: "Enable corepack and prepare pnpm"
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.27.0 --activate
+            pnpm --version
+
+  install-dependencies:
+    description: "Install dependencies with pnpm"
+    steps:
+      - restore_cache:
+          keys:
+            - deps-v3-{{ checksum "pnpm-lock.yaml" }}
+            - deps-v3-
+      - run:
+          name: "Install dependencies"
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: deps-v3-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+
+  setup-aws:
+    description: "Setup AWS CLI and Terraform"
+    steps:
+      - run:
+          name: "Install AWS CLI"
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            aws --version
+      - run:
+          name: "Install Terraform"
+          command: |
+            wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+            sudo apt-get update && sudo apt-get install -y terraform
+            terraform version
+
+# Jobs
+jobs:
+  test:
+    description: "Run unit tests for game app"
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - run:
+          name: "Run unit tests"
+          command: |
+            chmod +x scripts/ci-test.sh
+            ./scripts/ci-test.sh
+      - store_test_results:
+          path: apps/game/coverage
+          when: always
+      - store_artifacts:
+          path: apps/game/coverage
+          when: always
+
+  sonarcloud-check:
+    description: "Run SonarCloud code quality analysis"
+    docker:
+      - image: sonarsource/sonar-scanner-cli:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - sonar-cache-{{ checksum "sonar-project.properties" }}
+            - sonar-cache-
+      - run:
+          name: "Run SonarCloud analysis"
+          command: sonar-scanner
+      - save_cache:
+          key: sonar-cache-{{ checksum "sonar-project.properties" }}
+          paths:
+            - .sonar/cache
+
+  build:
+    description: "Build game app for production"
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - run:
+          name: "Build game app"
+          command: |
+            chmod +x scripts/ci-build.sh
+            ./scripts/ci-build.sh
+      - store_artifacts:
+          path: apps/game/.output
+          when: always
+
+  build-docs:
+    description: "Build documentation site"
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - run:
+          name: "Build documentation site"
+          command: |
+            cd apps/docs
+            pnpm run generate
+            cd ../..
+            mkdir -p public
+            if [ -d "apps/docs/.output/public" ]; then
+              cp -r apps/docs/.output/public/* public/
+              echo "✅ Copied docs output to public/"
+            else
+              echo "❌ Error: apps/docs/.output/public not found"
+              exit 1
+            fi
+      - store_artifacts:
+          path: public
+          when: always
+
+  deploy-aws-dev:
+    description: "Deploy to AWS development environment"
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - setup-aws
+      - run:
+          name: "Get Terraform outputs for development"
+          command: |
+            cd infrastructure/environments/development
+            
+            # Initialize Terraform if needed
+            if [ ! -d ".terraform" ]; then
+              echo "Initializing Terraform..."
+              terraform init -backend=false || terraform init
+            fi
+            
+            # Get and validate Terraform outputs
+            echo "Fetching Terraform outputs..."
+            AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
+            AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+            AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+            AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
+            
+            # Validate required outputs
+            if [ -z "$AWS_S3_BUCKET" ]; then
+              echo "ERROR: Failed to get S3 bucket name from Terraform outputs"
+              exit 1
+            fi
+            
+            if [ -z "$AWS_CLOUDFRONT_ID" ]; then
+              echo "ERROR: Failed to get CloudFront distribution ID from Terraform outputs"
+              exit 1
+            fi
+            
+            if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
+              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+              exit 1
+            fi
+            
+            if [ -z "$AWS_REGION" ]; then
+              echo "ERROR: Failed to get AWS region from Terraform outputs"
+              exit 1
+            fi
+            
+            # Export validated outputs
+            echo "export AWS_S3_BUCKET=$AWS_S3_BUCKET" >> $BASH_ENV
+            echo "export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID" >> $BASH_ENV
+            echo "export AWS_CLOUDFRONT_DOMAIN_DEV=$AWS_CLOUDFRONT_DOMAIN_DEV" >> $BASH_ENV
+            echo "export AWS_REGION=$AWS_REGION" >> $BASH_ENV
+            
+            echo "✅ Terraform outputs validated:"
+            echo "  S3 Bucket: $AWS_S3_BUCKET"
+            echo "  CloudFront ID: $AWS_CLOUDFRONT_ID"
+            echo "  CloudFront Domain: $AWS_CLOUDFRONT_DOMAIN_DEV"
+            echo "  AWS Region: $AWS_REGION"
+            
+            cd ../../..
+      - run:
+          name: "Deploy to AWS development"
+          command: |
+            chmod +x aws-deploy.sh
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            ./aws-deploy.sh development
+      - store_artifacts:
+          path: deployment-info.json
+          when: always
+
+  deploy-aws-prod:
+    description: "Deploy to AWS production environment"
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - setup-aws
+      - run:
+          name: "Get Terraform outputs for production"
+          command: |
+            cd infrastructure/environments/prod
+            
+            # Initialize Terraform if needed
+            if [ ! -d ".terraform" ]; then
+              echo "Initializing Terraform..."
+              terraform init -backend=false || terraform init
+            fi
+            
+            # Get and validate Terraform outputs
+            echo "Fetching Terraform outputs..."
+            AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
+            AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+            AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
+            
+            # Validate required outputs
+            if [ -z "$AWS_S3_BUCKET" ]; then
+              echo "ERROR: Failed to get S3 bucket name from Terraform outputs"
+              exit 1
+            fi
+            
+            if [ -z "$AWS_CLOUDFRONT_ID" ]; then
+              echo "ERROR: Failed to get CloudFront distribution ID from Terraform outputs"
+              exit 1
+            fi
+            
+            if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
+              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+              exit 1
+            fi
+            
+            if [ -z "$AWS_REGION" ]; then
+              echo "ERROR: Failed to get AWS region from Terraform outputs"
+              exit 1
+            fi
+            
+            # Export validated outputs
+            echo "export AWS_S3_BUCKET=$AWS_S3_BUCKET" >> $BASH_ENV
+            echo "export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID" >> $BASH_ENV
+            echo "export AWS_CLOUDFRONT_DOMAIN=$AWS_CLOUDFRONT_DOMAIN" >> $BASH_ENV
+            echo "export AWS_REGION=$AWS_REGION" >> $BASH_ENV
+            
+            echo "✅ Terraform outputs validated:"
+            echo "  S3 Bucket: $AWS_S3_BUCKET"
+            echo "  CloudFront ID: $AWS_CLOUDFRONT_ID"
+            echo "  CloudFront Domain: $AWS_CLOUDFRONT_DOMAIN"
+            echo "  AWS Region: $AWS_REGION"
+            
+            cd ../../..
+      - run:
+          name: "Deploy to AWS production"
+          command: |
+            chmod +x aws-deploy.sh
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            ./aws-deploy.sh production
+      - store_artifacts:
+          path: deployment-info.json
+          when: always
+
+  test-e2e-local:
+    description: "Run E2E tests against local build"
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - run:
+          name: "Run E2E tests (local build)"
+          command: |
+            chmod +x scripts/ci-e2e.sh
+            ./scripts/ci-e2e.sh
+      - store_test_results:
+          path: test-results
+          when: always
+      - store_artifacts:
+          path: playwright-report
+          when: always
+      - store_artifacts:
+          path: test-results
+          when: always
+
+  verify-e2e-aws-dev:
+    description: "Verify AWS development deployment with E2E tests"
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - run:
+          name: "Install Terraform"
+          command: |
+            wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+            sudo apt-get update && sudo apt-get install -y terraform
+      - run:
+          name: "Get CloudFront domain and run E2E tests"
+          command: |
+            cd infrastructure/environments/development
+            
+            # Initialize Terraform if needed
+            if [ ! -d ".terraform" ]; then
+              echo "Initializing Terraform..."
+              terraform init -backend=false || terraform init
+            fi
+            
+            AWS_CLOUDFRONT_DOMAIN_DEV=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+            
+            if [ -z "$AWS_CLOUDFRONT_DOMAIN_DEV" ]; then
+              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+              exit 1
+            fi
+            
+            export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN_DEV
+            export CRITICAL_TESTS_ONLY=true
+            echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN_DEV"
+            echo "⚠️  Running CRITICAL tests only (@critical tag)"
+            
+            cd ../../..
+            
+            echo "Testing AWS development deployment at: $BASE_URL"
+            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
+            sleep 60
+            
+            chmod +x scripts/ci-e2e.sh
+            ./scripts/ci-e2e.sh
+      - store_test_results:
+          path: test-results
+          when: always
+      - store_artifacts:
+          path: playwright-report
+          when: always
+      - store_artifacts:
+          path: test-results
+          when: always
+
+  verify-e2e-aws-prod:
+    description: "Verify AWS production deployment with E2E tests"
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - run:
+          name: "Install Terraform"
+          command: |
+            wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+            sudo apt-get update && sudo apt-get install -y terraform
+      - run:
+          name: "Get CloudFront domain and run E2E tests"
+          command: |
+            cd infrastructure/environments/prod
+            
+            # Initialize Terraform if needed
+            if [ ! -d ".terraform" ]; then
+              echo "Initializing Terraform..."
+              terraform init -backend=false || terraform init
+            fi
+            
+            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+            
+            if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
+              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
+              exit 1
+            fi
+            
+            export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
+            export CRITICAL_TESTS_ONLY=true
+            echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN"
+            echo "⚠️  Running CRITICAL tests only (@critical tag)"
+            
+            cd ../../..
+            
+            echo "Testing AWS production deployment at: $BASE_URL"
+            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
+            sleep 60
+            
+            chmod +x scripts/ci-e2e.sh
+            ./scripts/ci-e2e.sh
+      - store_test_results:
+          path: test-results
+          when: always
+      - store_artifacts:
+          path: playwright-report
+          when: always
+      - store_artifacts:
+          path: test-results
+          when: always
+
+# Workflows
+workflows:
+  version: 2
+
+  # Main workflow - runs on all branches and PRs
+  test-and-build:
+    jobs:
+      # Run tests on all branches and tags
+      - test
+      # SonarCloud analysis on main branches
+      - sonarcloud-check:
+          filters:
+            branches:
+              only: /^(main|development|staging)$/
+      # Build after tests pass
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^(main|development|staging)$/
+            tags:
+              only: /^v.*/
+      # Build docs on main branch
+      - build-docs:
+          filters:
+            branches:
+              only: /^main$/
+      # E2E tests (can be triggered manually via CircleCI UI)
+      - test-e2e-local:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /^(main|development|staging)$/
+            # Note: Can be set to manual in CircleCI UI project settings
+
+  # Development deployment workflow
+  deploy-dev:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: /^development$/
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^development$/
+      # Deployment (can be set to manual approval in CircleCI UI)
+      - deploy-aws-dev:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /^development$/
+      # Verification (can be set to manual approval in CircleCI UI)
+      - verify-e2e-aws-dev:
+          requires:
+            - deploy-aws-dev
+          filters:
+            branches:
+              only: /^development$/
+
+  # Production deployment workflow
+  deploy-prod:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: /^main$/
+            tags:
+              only: /^v.*/
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^main$/
+            tags:
+              only: /^v.*/
+      # Production deployment (should require manual approval in CircleCI UI)
+      - deploy-aws-prod:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /^main$/
+            tags:
+              only: /^v.*/
+      # Production verification (should require manual approval in CircleCI UI)
+      - verify-e2e-aws-prod:
+          requires:
+            - deploy-aws-prod
+          filters:
+            branches:
+              only: /^main$/
+            tags:
+              only: /^v.*/

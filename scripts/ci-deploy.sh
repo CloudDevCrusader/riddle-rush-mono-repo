@@ -1,6 +1,9 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
 # CI deploy script for GitLab Pages (docs)
-rm -rf public
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+ensure_repo_root
+
+rm -rf -- public
 cp -r apps/docs/.output/public public
-echo "✅ Docs deployed to public/"
+log "✅ Docs deployed to public/"

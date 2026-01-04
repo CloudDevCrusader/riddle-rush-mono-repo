@@ -261,12 +261,9 @@ useHead({
   transition: opacity var(--transition-base);
 }
 
-.menu-btn:hover .btn-image {
-  opacity: 0;
-}
-
-.menu-btn:hover .btn-image-hover {
-  opacity: 1;
+.menu-btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 4px;
 }
 
 .menu-icon-btn {
@@ -283,6 +280,11 @@ useHead({
 
 .menu-icon-btn:active {
   transform: scale(0.95);
+}
+
+.menu-icon-btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 4px;
 }
 
 .menu-icon {
@@ -327,14 +329,13 @@ useHead({
   margin-bottom: 0;
 }
 
-.menu-item:hover {
-  background: var(--color-primary);
-  color: var(--color-white);
-  transform: translateX(4px);
-}
-
 .menu-item:active {
   transform: translateX(2px);
+}
+
+.menu-item:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
 }
 
 .menu-item span:first-child {

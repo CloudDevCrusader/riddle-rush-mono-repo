@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Scan staged files for potential secrets/credentials
 
-RED='\033[0;31m'
-NC='\033[0m'
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+ensure_repo_root
 
 PATTERNS=(
   # API Keys
@@ -78,30 +79,34 @@ main() {
   local exit_code=0
   
   # Get staged files or all tracked files
-  if git rev-parse --git-dir > /dev/null 2>&1; then
-    files=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
-    if [ -z "$files" ]; then
-      files=$(git diff --name-only HEAD 2>/dev/null)
-    fi
-  else
-    echo "Not a git repository"
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    log "Not a git repository"
     exit 0
   fi
-  
-  if [ -z "$files" ]; then
+
+  local files=()
+  if git diff --cached --name-only --diff-filter=ACM -z >/dev/null 2>&1; then
+    mapfile -d '' -t files < <(git diff --cached --name-only --diff-filter=ACM -z 2>/dev/null)
+  fi
+
+  if [ "${#files[@]}" -eq 0 ]; then
+    mapfile -d '' -t files < <(git diff --name-only -z HEAD 2>/dev/null || true)
+  fi
+
+  if [ "${#files[@]}" -eq 0 ]; then
     exit 0
   fi
-  
-  for file in $files; do
+
+  for file in "${files[@]}"; do
     if ! check_file "$file"; then
       exit_code=1
     fi
   done
   
   if [ $exit_code -ne 0 ]; then
-    echo ""
-    echo -e "${RED}Commit blocked!${NC} Remove secrets before committing."
-    echo "If this is a false positive, use: git commit --no-verify"
+    log ""
+    log "${RED}Commit blocked!${NC} Remove secrets before committing."
+    log "If this is a false positive, use: git commit --no-verify"
   fi
   
   exit $exit_code

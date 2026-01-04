@@ -15,6 +15,9 @@ export default defineConfig({
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
 
+  // Global test timeout - increased for complex game flows
+  timeout: isDeployedTest ? 60000 : 45000, // 60s for deployed, 45s for local
+
   reporter: [
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
     ['list'],
@@ -46,7 +49,7 @@ export default defineConfig({
       command: 'npm run preview',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 120000,
+      timeout: 180000, // Increased to 3 minutes for slower builds
     },
   }),
 

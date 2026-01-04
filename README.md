@@ -91,7 +91,11 @@ Husky is configured for monorepo-style git hooks:
 > cd infrastructure/environments/prod && terraform output website_url
 > ```
 
-### GitLab CI/CD Pipeline
+### CI/CD Pipelines
+
+The project supports both **GitLab CI/CD** and **CircleCI**:
+
+#### GitLab CI/CD Pipeline
 
 The pipeline runs on `main`, `development`, and merge requests:
 
@@ -105,6 +109,12 @@ The pipeline runs on `main`, `development`, and merge requests:
    - Tags → AWS S3 + CloudFront
 
 **Pipeline**: https://gitlab.com/djdiox/riddle-rush-nuxt-pwa/-/pipelines
+
+#### CircleCI Pipeline
+
+Alternative CI/CD configuration with similar functionality. See [CircleCI Setup Guide](docs/CIRCLECI-SETUP.md) for setup instructions.
+
+**Configuration**: `.circleci/config.yml`
 
 ### AWS Deployment
 

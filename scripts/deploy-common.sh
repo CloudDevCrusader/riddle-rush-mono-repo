@@ -1,98 +1,89 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ===========================================
 # Common Deployment Functions
 # ===========================================
 # Shared functions used by all deployment scripts
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+ensure_repo_root
 
 # Check if .env exists
 check_env() {
-    if [ ! -f ".env" ]; then
-        echo -e "${YELLOW}⚠️  Warning: .env file not found. Copy from .env.example${NC}"
-        echo "   cp .env.example .env"
-    fi
+  if [ ! -f ".env" ]; then
+    warn ".env file not found. Copy from .env.example"
+    log "   cp .env.example .env"
+  fi
 }
 
 # Run pre-deploy checks
 run_checks() {
-    echo -e "${BLUE}🔍 Running pre-deploy checks...${NC}"
-    echo ""
+  log "${BLUE}🔍 Running pre-deploy checks...${NC}"
+  log ""
 
-    echo "📦 Installing dependencies..."
-    corepack enable
-    corepack prepare pnpm@10.27.0 --activate
-    pnpm install --frozen-lockfile
+  log "📦 Installing dependencies..."
+  ensure_pnpm
+  pnpm install --frozen-lockfile
 
-    echo "✅ Running linter..."
-    pnpm run lint || { echo -e "${RED}❌ Lint failed${NC}"; exit 1; }
+  log "✅ Running linter..."
+  pnpm run lint || die "Lint failed"
 
-    echo "🔷 Running type check..."
-    pnpm run typecheck || { echo -e "${RED}❌ Type check failed${NC}"; exit 1; }
+  log "🔷 Running type check..."
+  pnpm run typecheck || die "Type check failed"
 
-    echo "🧪 Running unit tests..."
-    pnpm run test:unit || { echo -e "${RED}❌ Tests failed${NC}"; exit 1; }
+  log "🧪 Running unit tests..."
+  pnpm run test:unit || die "Tests failed"
 
-    echo "🏗️  Building application..."
-    pnpm run build || { echo -e "${RED}❌ Build failed${NC}"; exit 1; }
+  log "🏗️  Building application..."
+  pnpm run build || die "Build failed"
 
-    echo ""
-    echo -e "${GREEN}✅ All checks passed!${NC}"
-    echo ""
+  log ""
+  log "${GREEN}✅ All checks passed!${NC}"
+  log ""
 }
 
 # Git deploy to branch
 deploy_to_branch() {
-    local BRANCH=$1
-    local COMMIT_MSG=$2
-    local PIPELINE_URL="https://gitlab.com/djdiox/riddle-rush-nuxt-pwa/-/pipelines"
+  local branch="$1"
+  local commit_msg="$2"
+  local pipeline_url="https://gitlab.com/djdiox/riddle-rush-nuxt-pwa/-/pipelines"
+  local stashed=false
 
-    echo "📤 Pushing to $BRANCH..."
+  log "📤 Pushing to ${branch}..."
 
-    # Stash any uncommitted changes
-    STASHED=false
-    if [ -n "$(git status --porcelain)" ]; then
-        git stash push -m "deploy-$BRANCH-temp"
-        STASHED=true
+  if [ -n "$(git status --porcelain)" ]; then
+    git stash push -m "deploy-${branch}-temp"
+    stashed=true
+  fi
+
+  local current_branch
+  current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+  git fetch origin
+
+  if git show-ref --verify --quiet "refs/heads/${branch}"; then
+    git checkout "${branch}"
+    git pull origin "${branch}" || true
+  else
+    git checkout -b "${branch}"
+  fi
+
+  if [ "${current_branch}" != "${branch}" ]; then
+    git merge "${current_branch}" -m "${commit_msg}"
+  fi
+
+  git push -u origin "${branch}"
+
+  log ""
+  log "${GREEN}✅ Successfully deployed to ${branch}!${NC}"
+  log "${BLUE}🔗 Pipeline: ${pipeline_url}${NC}"
+  log ""
+
+  git checkout "${current_branch}"
+
+  if [ "${stashed}" = true ]; then
+    if ! git stash pop; then
+      warn "Stash pop failed; resolve conflicts manually."
     fi
-
-    # Get current branch
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-    # Fetch latest
-    git fetch origin
-
-    # Checkout/create branch
-    if git show-ref --verify --quiet refs/heads/$BRANCH; then
-        git checkout $BRANCH
-        git pull origin $BRANCH || true
-    else
-        git checkout -b $BRANCH
-    fi
-
-    # Merge current branch
-    if [ "$CURRENT_BRANCH" != "$BRANCH" ]; then
-        git merge $CURRENT_BRANCH -m "$COMMIT_MSG"
-    fi
-
-    # Push to remote
-    git push -u origin $BRANCH
-
-    echo ""
-    echo -e "${GREEN}✅ Successfully deployed to $BRANCH!${NC}"
-    echo -e "${BLUE}🔗 Pipeline: $PIPELINE_URL${NC}"
-    echo ""
-
-    # Return to original branch
-    git checkout $CURRENT_BRANCH
-
-    # Restore stashed changes
-    if [ "$STASHED" = true ]; then
-        git stash pop
-    fi
+  fi
 }

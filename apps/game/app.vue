@@ -1,8 +1,17 @@
 <template>
-  <div id="app" class="app-container">
-    <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
+  <div
+    id="app"
+    class="app-container"
+  >
+    <SplashScreen
+      v-if="showSplash"
+      @complete="onSplashComplete"
+    />
     <NuxtLayout v-show="!showSplash">
-      <Transition name="page" mode="out-in">
+      <Transition
+        name="page"
+        mode="out-in"
+      >
         <NuxtPage :key="$route.path" />
       </Transition>
     </NuxtLayout>
@@ -20,9 +29,24 @@ const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
 
 const showSplash = ref(true)
+const config = useRuntimeConfig()
+const gaId = config.public.googleAnalyticsId
 
 const onSplashComplete = () => {
   showSplash.value = false
+}
+
+const handleOnline = () => gameStore.setOnlineStatus(true)
+const handleOffline = () => gameStore.setOnlineStatus(false)
+const handleBeforeInstallPrompt = (e: Event) => {
+  e.preventDefault()
+  gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
+}
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+    e.preventDefault()
+    settingsStore.toggleDebugMode()
+  }
 }
 
 onMounted(() => {
@@ -31,30 +55,16 @@ onMounted(() => {
   settingsStore.loadSettings()
 
   // Monitor online status
-  const handleOnline = () => gameStore.setOnlineStatus(true)
-  const handleOffline = () => gameStore.setOnlineStatus(false)
   window.addEventListener('online', handleOnline)
   window.addEventListener('offline', handleOffline)
 
   // PWA install prompt
-  const handleBeforeInstallPrompt = (e: Event) => {
-    e.preventDefault()
-    gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
-  }
   window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
   // Debug mode shortcut: Ctrl+Shift+D
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-      e.preventDefault()
-      settingsStore.toggleDebugMode()
-    }
-  }
   window.addEventListener('keydown', handleKeydown)
 
   // Load Google Analytics if configured
-  const config = useRuntimeConfig()
-  const gaId = config.public.googleAnalyticsId
   if (gaId && typeof window !== 'undefined') {
     // Load GA4 script
     const script = document.createElement('script')
@@ -75,14 +85,13 @@ onMounted(() => {
       cookie_flags: 'SameSite=None;Secure',
     })
   }
+})
 
-  // Cleanup on unmount
-  onBeforeUnmount(() => {
-    window.removeEventListener('online', handleOnline)
-    window.removeEventListener('offline', handleOffline)
-    window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    window.removeEventListener('keydown', handleKeydown)
-  })
+onBeforeUnmount(() => {
+  window.removeEventListener('online', handleOnline)
+  window.removeEventListener('offline', handleOffline)
+  window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+  window.removeEventListener('keydown', handleKeydown)
 })
 
 // Fonts are handled by @nuxt/fonts module
@@ -93,7 +102,7 @@ useHead({
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
     // Google Analytics preconnect (if enabled)
-    ...(process.env.GOOGLE_ANALYTICS_ID
+    ...(gaId
       ? [
           { rel: 'preconnect', href: 'https://www.googletagmanager.com' },
           { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },

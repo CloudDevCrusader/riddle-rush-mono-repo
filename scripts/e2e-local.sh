@@ -1,22 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Run E2E tests locally
 
-set -e
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+ensure_repo_root
+ensure_pnpm
 
-echo "Running E2E tests locally..."
-echo "This will build and test the app on http://localhost:3000"
-echo ""
+log "Running E2E tests locally..."
+log "This will build and test the app on http://localhost:3000"
+log ""
 
 # Generate static build
-echo "Building application..."
-pnpm run generate
+log "Building application..."
+pnpm -C apps/game run generate
 
-echo ""
-echo "Running Playwright tests..."
-pnpm exec playwright test
+log ""
+log "Running Playwright tests..."
+pnpm -C apps/game exec playwright test
 
-echo ""
-echo "E2E tests completed!"
-echo ""
-echo "To view the HTML report, run:"
-echo "  npx playwright show-report"
+log ""
+log "E2E tests completed!"
+log ""
+log "To view the HTML report, run:"
+log "  pnpm -C apps/game exec playwright show-report"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ===========================================
 # AWS S3 + CloudFront Deployment Script
@@ -14,18 +14,19 @@
 #   - SKIP_E2E_TESTS: Set to "true" to skip E2E test verification (default: false for local deployments)
 #   - CI: Set automatically in CI/CD pipelines (skips pre-deployment checks and E2E tests)
 
-set -e
-
-# Colors for output (must be defined before use)
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/scripts/lib.sh"
+ensure_repo_root
 
 # Configuration
 ENVIRONMENT="${1:-production}"
 BUILD_DIR="apps/game/.output/public"
+CI="${CI:-}"
+FORCE_SYNC_TERRAFORM="${FORCE_SYNC_TERRAFORM:-false}"
+AWS_S3_BUCKET="${AWS_S3_BUCKET:-}"
+AWS_CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
+AWS_REGION="${AWS_REGION:-eu-central-1}"
+SKIP_E2E_TESTS="${SKIP_E2E_TESTS:-false}"
 
 # Get Terraform outputs (preferred) or use environment variables
 echo -e "\n📋 Getting deployment configuration for ${ENVIRONMENT}..."
@@ -58,7 +59,7 @@ if [ -z "$CI" ] && [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null;
     fi
     
     # Sync Terraform outputs to JSON and .env files
-    if [ "$SYNC_NEEDED" = true ] || [ "${FORCE_SYNC_TERRAFORM:-false}" = "true" ]; then
+    if [ "$SYNC_NEEDED" = true ] || [ "${FORCE_SYNC_TERRAFORM}" = "true" ]; then
         echo -e "  ${BLUE}🔄 Syncing Terraform outputs to JSON and .env files...${NC}"
         if [ -f "scripts/sync-terraform-outputs.sh" ]; then
             bash scripts/sync-terraform-outputs.sh "$TERRAFORM_ENV" || {
@@ -66,12 +67,12 @@ if [ -z "$CI" ] && [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null;
             }
         else
             # Fallback: manually sync outputs
-            cd "$TERRAFORM_DIR" || exit 1
+            cd "$TERRAFORM_DIR"
             
             # Initialize Terraform if needed
             if [ ! -d ".terraform" ]; then
                 terraform init -backend=false 2>/dev/null || terraform init 2>/dev/null || {
-                    cd - > /dev/null || exit 1
+                    cd - > /dev/null
                 }
             fi
             
@@ -102,7 +103,7 @@ NUXT_PUBLIC_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/
 NUXT_PUBLIC_WEBSITE_URL=$(terraform output -raw website_url 2>/dev/null || echo "")
 EOF
             
-            cd - > /dev/null || exit 1
+            cd - > /dev/null
             echo -e "  ${GREEN}✓${NC} Terraform outputs synced to ${TERRAFORM_ENV_FILE} and ${TERRAFORM_JSON_FILE}"
         fi
     fi
@@ -120,14 +121,14 @@ fi
 
 # Try to get Terraform outputs directly (as fallback or validation)
 if [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null; then
-    cd "$TERRAFORM_DIR" || exit 1
+    cd "$TERRAFORM_DIR"
     
     # Initialize Terraform if needed
     if [ ! -d ".terraform" ]; then
         echo -e "  ${YELLOW}⚠️  Terraform not initialized. Initializing...${NC}"
         terraform init -backend=false 2>/dev/null || terraform init 2>/dev/null || {
             echo -e "  ${YELLOW}⚠️  Could not initialize Terraform, using environment variables${NC}"
-            cd - > /dev/null || exit 1
+            cd - > /dev/null
         }
     fi
     
@@ -169,7 +170,7 @@ if [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null; then
         fi
     fi
     
-    cd - > /dev/null || exit 1
+    cd - > /dev/null
 else
     if [ ! -d "$TERRAFORM_DIR" ]; then
         echo -e "  ${YELLOW}⚠️  Terraform directory not found: $TERRAFORM_DIR${NC}"
@@ -197,12 +198,7 @@ AWS_REGION="${AWS_REGION:-eu-central-1}"
 echo -e "${BLUE}🚀 Starting AWS deployment for ${ENVIRONMENT}...${NC}"
 echo "======================================="
 
-# Check if AWS CLI is installed
-if ! command -v aws &> /dev/null; then
-    echo -e "${RED}❌ AWS CLI is not installed. Please install it first.${NC}"
-    echo "Visit: https://aws.amazon.com/cli/"
-    exit 1
-fi
+require_cmd aws
 
 # Check AWS credentials
 echo -e "\n🔑 Checking AWS credentials..."
@@ -222,6 +218,7 @@ if [ -z "$CI" ]; then
   echo -e "\n🔍 Running pre-deployment checks..."
 
   echo -e "\n📦 Installing dependencies..."
+  ensure_pnpm
   pnpm install --frozen-lockfile
 
   echo -e "\n✅ Running linter..."
@@ -237,9 +234,7 @@ if [ -z "$CI" ]; then
 
   # Build the application
   echo -e "\n🏗️  Building application..."
-  cd apps/game
-  BASE_URL=/ pnpm run generate
-  cd ../..
+  pnpm -C apps/game run generate
 else
   echo -e "\n⏭️  Skipping pre-deployment checks (already done in CI pipeline)"
   echo -e "\n⏭️  Using existing build from CI pipeline"
@@ -276,7 +271,8 @@ if ! aws s3 ls "s3://$S3_BUCKET" 2>&1 > /dev/null; then
         --error-document 404.html
 
     # Set bucket policy for public read access
-    cat > /tmp/bucket-policy.json <<EOF
+    BUCKET_POLICY_FILE="$(mktemp)"
+    cat > "${BUCKET_POLICY_FILE}" <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -291,8 +287,8 @@ if ! aws s3 ls "s3://$S3_BUCKET" 2>&1 > /dev/null; then
 }
 EOF
 
-    aws s3api put-bucket-policy --bucket "$S3_BUCKET" --policy file:///tmp/bucket-policy.json
-    rm /tmp/bucket-policy.json
+    aws s3api put-bucket-policy --bucket "$S3_BUCKET" --policy "file://${BUCKET_POLICY_FILE}"
+    rm -f "${BUCKET_POLICY_FILE}"
 
     # Disable block public access (required for static website hosting)
     aws s3api put-public-access-block \
@@ -407,7 +403,7 @@ cat > deployment-info.json <<EOF
 EOF
 
 # Run E2E tests against deployed site (only for local deployments, not CI)
-if [ -z "$CI" ] && [ -n "$CLOUDFRONT_ID" ] && [ "${SKIP_E2E_TESTS:-false}" != "true" ]; then
+if [ -z "$CI" ] && [ -n "$CLOUDFRONT_ID" ] && [ "${SKIP_E2E_TESTS}" != "true" ]; then
     echo -e "\n🧪 Running E2E tests against deployed site..."
     
     # Get CloudFront domain
@@ -418,6 +414,7 @@ if [ -z "$CI" ] && [ -n "$CLOUDFRONT_ID" ] && [ "${SKIP_E2E_TESTS:-false}" != "t
     
     # First, verify the site is accessible
     echo -e "  Checking if site is reachable..."
+    require_cmd curl
     HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYED_URL" || echo "000")
     
     if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "301" ] && [ "$HTTP_CODE" != "302" ]; then
@@ -435,18 +432,15 @@ if [ -z "$CI" ] && [ -n "$CLOUDFRONT_ID" ] && [ "${SKIP_E2E_TESTS:-false}" != "t
     sleep 15
     
     # Check if Playwright is available
-    if command -v npx &> /dev/null && [ -d "apps/game" ]; then
+    if command -v pnpm &> /dev/null && [ -d "apps/game" ]; then
         # Run E2E tests against the deployed site
-        cd apps/game
         echo -e "  Running Playwright E2E tests..."
-        if BASE_URL="$DEPLOYED_URL" pnpm exec playwright test --reporter=list; then
+        if BASE_URL="$DEPLOYED_URL" pnpm -C apps/game exec playwright test --reporter=list; then
             echo -e "${GREEN}✓ E2E tests passed${NC}"
-            cd ../..
         else
             echo -e "${RED}❌ E2E tests failed${NC}"
             echo -e "${YELLOW}⚠️  Deployment completed but E2E tests failed. Please investigate.${NC}"
             echo -e "${YELLOW}  View test report: apps/game/playwright-report/index.html${NC}"
-            cd ../..
             exit 1
         fi
     else

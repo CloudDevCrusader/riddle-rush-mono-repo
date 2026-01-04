@@ -1,5 +1,8 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
 # Build game app for monorepo
-cd apps/game || exit 1
-pnpm run generate
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+ensure_repo_root
+ensure_pnpm
+
+pnpm -C apps/game run generate

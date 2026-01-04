@@ -226,8 +226,33 @@ Deployments are automatically handled by GitLab CI/CD:
 
 See `.gitlab-ci.yml` for full CI/CD configuration.
 
+## Shared Script Library
+
+All deployment and CI scripts use a shared library (`scripts/lib.sh`) that provides common utilities:
+
+### Functions Provided
+
+- **`log()`** - Standard logging output
+- **`warn()`** - Warning messages (yellow, to stderr)
+- **`die()`** - Error messages with exit (red, to stderr)
+- **`require_cmd()`** - Check if a command exists, exit if missing
+- **`ensure_repo_root()`** - Change to repository root directory
+- **`ensure_pnpm()`** - Ensure pnpm is available via corepack, using version from `package.json` or default (10.26.2)
+
+### Usage
+
+Scripts source the library at the top:
+
+```bash
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+```
+
+This ensures consistent error handling, logging, and environment setup across all scripts.
+
 ## Related Scripts
 
+- `scripts/lib.sh` - Shared utility library (used by all scripts)
 - `scripts/deploy-common.sh` - Shared deployment functions
 - `aws-deploy.sh` - AWS-specific deployment (used by CI)
 - `scripts/deploy-with-terraform.sh` - Terraform-based deployment
