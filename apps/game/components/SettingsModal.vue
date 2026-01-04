@@ -1,14 +1,7 @@
 <template>
   <Transition name="fade">
-    <div
-      v-if="modelValue"
-      class="settings-overlay"
-      @click="closeModal"
-    >
-      <div
-        class="settings-card"
-        @click.stop
-      >
+    <div v-if="modelValue" class="settings-overlay" @click="closeModal">
+      <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
           :src="`${baseUrl}assets/settings/BACKGROUND.png`"
@@ -17,23 +10,13 @@
         />
 
         <!-- Back Button -->
-        <button
-          class="back-btn tap-highlight no-select"
-          @click="closeModal"
-        >
-          <img
-            :src="`${baseUrl}assets/settings/back.png`"
-            alt="Back"
-          />
+        <button class="back-btn tap-highlight no-select" @click="closeModal">
+          <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" />
         </button>
 
         <!-- Title -->
         <div class="title-container">
-          <img
-            :src="`${baseUrl}assets/settings/options.png`"
-            alt="OPTIONS"
-            class="title-image"
-          />
+          <img :src="`${baseUrl}assets/settings/options.png`" alt="OPTIONS" class="title-image" />
         </div>
 
         <!-- Settings Panel -->
@@ -41,16 +24,10 @@
           <!-- Sound Control -->
           <div class="control-item">
             <div class="control-icon-wrapper">
-              <img
-                :src="`${baseUrl}assets/settings/Sound.png`"
-                alt="Sound"
-                class="control-icon"
-              />
+              <img :src="`${baseUrl}assets/settings/Sound.png`" alt="Sound" class="control-icon" />
             </div>
             <div class="control-content">
-              <div class="control-label">
-                sound
-              </div>
+              <div class="control-label">sound</div>
               <div class="slider-container">
                 <input
                   v-model.number="soundVolume"
@@ -61,14 +38,8 @@
                   @input="updateSoundVolume"
                 />
                 <div class="slider-track">
-                  <div
-                    class="slider-fill"
-                    :style="{ width: `${soundVolume}%` }"
-                  ></div>
-                  <div
-                    class="slider-thumb"
-                    :style="{ left: `${soundVolume}%` }"
-                  ></div>
+                  <div class="slider-fill" :style="{ width: `${soundVolume}%` }" />
+                  <div class="slider-thumb" :style="{ left: `${soundVolume}%` }" />
                 </div>
               </div>
             </div>
@@ -77,16 +48,10 @@
           <!-- Music Control -->
           <div class="control-item">
             <div class="control-icon-wrapper">
-              <img
-                :src="`${baseUrl}assets/settings/Music.png`"
-                alt="Music"
-                class="control-icon"
-              />
+              <img :src="`${baseUrl}assets/settings/Music.png`" alt="Music" class="control-icon" />
             </div>
             <div class="control-content">
-              <div class="control-label">
-                Music
-              </div>
+              <div class="control-label">Music</div>
               <div class="slider-container">
                 <input
                   v-model.number="musicVolume"
@@ -97,14 +62,8 @@
                   @input="updateMusicVolume"
                 />
                 <div class="slider-track">
-                  <div
-                    class="slider-fill"
-                    :style="{ width: `${musicVolume}%` }"
-                  ></div>
-                  <div
-                    class="slider-thumb"
-                    :style="{ left: `${musicVolume}%` }"
-                  ></div>
+                  <div class="slider-fill" :style="{ width: `${musicVolume}%` }" />
+                  <div class="slider-thumb" :style="{ left: `${musicVolume}%` }" />
                 </div>
               </div>
             </div>
@@ -114,22 +73,23 @@
           <div class="control-item">
             <div class="control-icon-wrapper">
               <img
-                :src="`${baseUrl}assets/settings/Sound.png`"
+                :src="`${baseUrl}assets/settings/Validation.png`"
                 alt="Validation"
                 class="control-icon"
               />
             </div>
             <div class="control-content">
-              <div class="control-label">
-                Answer Validation
-              </div>
+              <div class="control-label">Answer Validation</div>
               <div class="toggle-container">
                 <button
                   class="toggle-btn"
                   :class="{ active: answerValidationEnabled }"
+                  role="switch"
+                  :aria-checked="answerValidationEnabled"
+                  aria-label="Toggle answer validation"
                   @click="toggleAnswerValidation"
                 >
-                  <div class="toggle-slider"></div>
+                  <div class="toggle-slider" />
                 </button>
                 <span class="toggle-label">
                   {{ answerValidationEnabled ? 'On' : 'Off' }}
@@ -140,14 +100,8 @@
         </div>
 
         <!-- OK Button -->
-        <button
-          class="ok-btn tap-highlight no-select"
-          @click="closeModal"
-        >
-          <img
-            :src="`${baseUrl}assets/settings/OK.png`"
-            alt="OK"
-          />
+        <button class="ok-btn tap-highlight no-select" @click="closeModal">
+          <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" />
         </button>
       </div>
     </div>
@@ -222,9 +176,9 @@ onMounted(() => {
   justify-content: center;
   z-index: 1000;
   padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-right, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-left, 0px));
+    max(var(--spacing-lg), env(safe-area-inset-right, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-left, 0px));
 }
 
 .settings-card {
@@ -491,14 +445,17 @@ onMounted(() => {
 @media (max-width: 640px) {
   .settings-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .settings-card {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -539,7 +496,10 @@ onMounted(() => {
 @media (max-width: 450px) and (min-height: 800px) {
   .settings-card {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 
   .title-image {

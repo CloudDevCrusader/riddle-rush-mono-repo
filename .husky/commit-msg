@@ -1,21 +1,53 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+set -e
+
+# Skip hooks in CI environments
+if [ -n "${CI:-}" ]; then
+  echo "⏭️  Skipping commit-msg hook in CI environment"
+  exit 0
+fi
+
+# Skip if git is not available
+if ! command -v git >/dev/null 2>&1; then
+  echo "⚠️  Git not found, skipping commit-msg hook"
+  exit 0
+fi
+
+# Skip if not in a git repository
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  echo "⚠️  Not in a git repository, skipping commit-msg hook"
+  exit 0
+fi
+
+# Validate commit message file exists
+readonly COMMIT_MSG_FILE="${1:-}"
+if [ -z "${COMMIT_MSG_FILE}" ] || [ ! -f "${COMMIT_MSG_FILE}" ]; then
+  echo "⚠️  Commit message file not found, skipping validation"
+  exit 0
+fi
 
 # Optional: Add commitlint if you want strict commit message format
 # Uncomment below if using commitlint
-# npx --no -- commitlint --edit "$1"
+# npx --no -- commitlint --edit "${COMMIT_MSG_FILE}"
 
 # Basic commit message validation
-commit_msg=$(cat "$1")
+commit_msg=$(cat "${COMMIT_MSG_FILE}")
 
-# Check minimum length
-if [ ${#commit_msg} -lt 10 ]; then
-  echo "❌ Commit message is too short. Please provide a meaningful commit message."
+# Remove leading/trailing whitespace
+commit_msg=$(echo "${commit_msg}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+# Check minimum length (excluding empty lines)
+readonly MIN_LENGTH=10
+if [ ${#commit_msg} -lt ${MIN_LENGTH} ]; then
+  echo "❌ Commit message is too short. Please provide a meaningful commit message (minimum ${MIN_LENGTH} characters)."
   exit 1
 fi
 
 # Check for common prefixes (optional, can be customized)
-if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?:"; then
+# This is a warning, not an error
+readonly CONVENTIONAL_PATTERN="^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?:"
+if ! echo "${commit_msg}" | grep -qE "${CONVENTIONAL_PATTERN}"; then
   echo "⚠️  Consider using conventional commit format: type(scope): description"
   echo "   Examples: feat: add new feature, fix: resolve bug, docs: update readme"
+  echo "   (This is a warning and will not block the commit)"
 fi

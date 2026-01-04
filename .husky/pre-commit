@@ -1,17 +1,42 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+set -e
+
+# Skip hooks in CI environments
+if [ -n "${CI:-}" ]; then
+  echo "⏭️  Skipping pre-commit hook in CI environment"
+  exit 0
+fi
+
+# Skip if git is not available
+if ! command -v git >/dev/null 2>&1; then
+  echo "⚠️  Git not found, skipping pre-commit hook"
+  exit 0
+fi
+
+# Skip if not in a git repository
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  echo "⚠️  Not in a git repository, skipping pre-commit hook"
+  exit 0
+fi
 
 echo "🔍 Running pre-commit checks..."
 
 # Check for secrets
-if [ -f "scripts/check-secrets.sh" ]; then
+readonly SECRETS_SCRIPT="scripts/check-secrets.sh"
+if [ -f "${SECRETS_SCRIPT}" ]; then
   echo "🔐 Scanning for secrets..."
-  chmod +x scripts/check-secrets.sh
-  ./scripts/check-secrets.sh || exit 1
+  chmod +x "${SECRETS_SCRIPT}"
+  if ! "${SECRETS_SCRIPT}"; then
+    echo "❌ Secret check failed"
+    exit 1
+  fi
 fi
 
 # Run lint-staged for monorepo
 echo "📝 Running lint-staged..."
-pnpm lint-staged || exit 1
+if ! pnpm lint-staged; then
+  echo "❌ Lint-staged failed"
+  exit 1
+fi
 
 echo "✅ Pre-commit checks passed!"

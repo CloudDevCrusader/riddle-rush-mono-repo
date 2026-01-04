@@ -1,28 +1,56 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+set -e
+
+# Skip hooks in CI environments
+if [ -n "${CI:-}" ]; then
+  echo "⏭️  Skipping pre-push hook in CI environment"
+  exit 0
+fi
+
+# Skip if git is not available
+if ! command -v git >/dev/null 2>&1; then
+  echo "⚠️  Git not found, skipping pre-push hook"
+  exit 0
+fi
+
+# Skip if not in a git repository
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  echo "⚠️  Not in a git repository, skipping pre-push hook"
+  exit 0
+fi
 
 echo "🚀 Running pre-push checks..."
 
 # Check for secrets (double-check before push)
-if [ -f "scripts/check-secrets.sh" ]; then
+readonly SECRETS_SCRIPT="scripts/check-secrets.sh"
+if [ -f "${SECRETS_SCRIPT}" ]; then
   echo "🔐 Scanning for secrets..."
-  chmod +x scripts/check-secrets.sh
-  ./scripts/check-secrets.sh || exit 1
+  chmod +x "${SECRETS_SCRIPT}"
+  if ! "${SECRETS_SCRIPT}"; then
+    echo "❌ Secret check failed"
+    exit 1
+  fi
 fi
 
 # Run type check across all packages
 echo "📘 Type checking all packages..."
-pnpm typecheck || exit 1
+if ! pnpm typecheck; then
+  echo "❌ Type check failed"
+  exit 1
+fi
 
 # Run unit tests
 echo "🧪 Running unit tests..."
-pnpm test:unit || exit 1
+if ! pnpm test:unit; then
+  echo "❌ Unit tests failed"
+  exit 1
+fi
 
 # Optional: Run syncpack check
 echo "📦 Checking dependency versions..."
-pnpm syncpack:check || {
+if ! pnpm syncpack:check; then
   echo "⚠️  Dependency version mismatches found. Run 'pnpm syncpack:fix' to fix."
   exit 1
-}
+fi
 
 echo "✅ Pre-push checks passed!"
