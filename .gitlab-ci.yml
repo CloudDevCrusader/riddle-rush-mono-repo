@@ -4,8 +4,8 @@
 image: ${CI_REGISTRY_IMAGE}/ci-build:latest
 
 variables:
-  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-  GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  SONAR_USER_HOME: '${CI_PROJECT_DIR}/.sonar' # Defines the location of the analysis task cache
+  GIT_DEPTH: '0' # Tells git to fetch all the branches of the project, required by the analysis task
   # Fallback to standard node image if custom image not available
   CI_IMAGE: ${CI_REGISTRY_IMAGE}/ci-build:latest
 
@@ -87,9 +87,9 @@ sonarcloud-check:
   stage: quality
   image:
     name: sonarsource/sonar-scanner-cli:latest
-    entrypoint: [""]
+    entrypoint: ['']
   cache:
-    key: "${CI_JOB_NAME}"
+    key: '${CI_JOB_NAME}'
     paths:
       - .sonar/cache
   script:
@@ -240,13 +240,13 @@ deploy:aws:
     - pnpm install --frozen-lockfile
   script:
     - echo "Deploying to AWS S3 + CloudFront..."
-    - chmod +x aws-deploy.sh
+    - chmod +x scripts/aws-deploy.sh
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
     - export AWS_S3_BUCKET=$AWS_S3_BUCKET
     - export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID
     - export AWS_REGION=${AWS_REGION:-us-east-1}
-    - ./aws-deploy.sh production
+    - ./scripts/aws-deploy.sh production
   artifacts:
     paths:
       - deployment-info.json

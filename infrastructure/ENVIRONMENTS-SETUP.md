@@ -3,7 +3,8 @@
 ## Overview
 
 The infrastructure is now organized into separate environments:
-- **Production (prod/)** - Existing infrastructure to be imported
+
+- **Production (production/)** - Existing infrastructure to be imported
 - **Development (development/)** - New infrastructure to be created
 
 ## Quick Start
@@ -12,7 +13,7 @@ The infrastructure is now organized into separate environments:
 
 ```bash
 # Find your existing resources
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 ./find-resources.sh
 
 # Import them
@@ -39,7 +40,7 @@ pnpm run infra:dev:apply
 
 ```
 infrastructure/environments/
-├── prod/                    # Production (import existing)
+├── production/              # Production (import existing)
 │   ├── main.tf              # Production infrastructure
 │   ├── variables.tf         # Production variables
 │   ├── outputs.tf           # Production outputs
@@ -82,8 +83,9 @@ pnpm run infra:dev:destroy   # Destroy development infrastructure
 ### Initial Setup
 
 1. **Import Production:**
+
    ```bash
-   cd infrastructure/environments/prod
+   cd infrastructure/environments/production
    ./find-resources.sh
    ./import-existing.sh
    terraform plan  # Verify
@@ -99,8 +101,9 @@ pnpm run infra:dev:destroy   # Destroy development infrastructure
 ### Daily Operations
 
 **Deploy to Production:**
+
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 BUCKET=$(terraform output -raw bucket_name)
 CF_ID=$(terraform output -raw cloudfront_distribution_id)
 cd ../../..
@@ -108,6 +111,7 @@ AWS_S3_BUCKET=$BUCKET AWS_CLOUDFRONT_ID=$CF_ID ./aws-deploy.sh production
 ```
 
 **Deploy to Development:**
+
 ```bash
 cd infrastructure/environments/development
 BUCKET=$(terraform output -raw bucket_name)
@@ -118,18 +122,18 @@ AWS_S3_BUCKET=$BUCKET AWS_CLOUDFRONT_ID=$CF_ID ./aws-deploy.sh development
 
 ## Key Differences
 
-| Feature | Production | Development |
-|---------|-----------|-------------|
-| **Source** | Import existing | Create new |
-| **Bucket** | `riddle-rush-pwa-prod-*` | `riddle-rush-pwa-dev-*` |
-| **Cache TTL** | 1 day | 1 hour |
-| **Lifecycle** | 30 days | 7 days |
-| **State** | `prod/terraform.tfstate` | `development/terraform.tfstate` |
+| Feature       | Production                     | Development                     |
+| ------------- | ------------------------------ | ------------------------------- |
+| **Source**    | Import existing                | Create new                      |
+| **Bucket**    | `riddle-rush-pwa-prod-*`       | `riddle-rush-pwa-dev-*`         |
+| **Cache TTL** | 1 day                          | 1 hour                          |
+| **Lifecycle** | 30 days                        | 7 days                          |
+| **State**     | `production/terraform.tfstate` | `development/terraform.tfstate` |
 
 ## Documentation
 
 - **Import Guide:** `environments/IMPORT-GUIDE.md` - Detailed import instructions
-- **Production:** `environments/prod/README.md` - Production setup
+- **Production:** `environments/production/README.md` - Production setup
 - **Development:** `environments/development/README.md` - Development setup
 - **Overview:** `environments/README.md` - Environments overview
 
@@ -140,4 +144,3 @@ AWS_S3_BUCKET=$BUCKET AWS_CLOUDFRONT_ID=$CF_ID ./aws-deploy.sh development
 3. ⏳ Set up remote state (optional, recommended for production)
 4. ⏳ Update CI/CD to use Terraform outputs
 5. ⏳ Document any custom configurations
-

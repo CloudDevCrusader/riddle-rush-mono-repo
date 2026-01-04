@@ -7,11 +7,13 @@ This directory contains Terraform configurations for managing AWS infrastructure
 ### Install tfenv (Terraform Version Manager)
 
 **macOS:**
+
 ```bash
 brew install tfenv
 ```
 
 **Linux:**
+
 ```bash
 git clone https://github.com/tfutils/tfenv.git ~/.tfenv
 echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bashrc
@@ -19,6 +21,7 @@ source ~/.bashrc
 ```
 
 **Install Terraform:**
+
 ```bash
 tfenv install latest
 tfenv use latest
@@ -27,11 +30,13 @@ tfenv use latest
 ### Install terraformer (Convert existing resources to Terraform)
 
 **macOS:**
+
 ```bash
 brew install terraformer
 ```
 
 **Linux:**
+
 ```bash
 # Download from releases
 wget https://github.com/GoogleCloudPlatform/terraformer/releases/download/0.8.24/terraformer-aws-linux-amd64
@@ -40,6 +45,7 @@ sudo mv terraformer-aws-linux-amd64 /usr/local/bin/terraformer
 ```
 
 **Or via Go:**
+
 ```bash
 go install github.com/GoogleCloudPlatform/terraformer/cmd/terraformer@latest
 ```
@@ -67,14 +73,16 @@ infrastructure/
 ### Quick Start
 
 **1. Import Production Infrastructure (Existing):**
+
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 ./find-resources.sh          # Find existing resources
 ./import-existing.sh         # Import them
 # Or use: pnpm run infra:prod:import
 ```
 
 **2. Create Development Infrastructure (New):**
+
 ```bash
 cd infrastructure/environments/development
 cp terraform.tfvars.example terraform.tfvars
@@ -87,14 +95,16 @@ terraform apply
 ### Environment-Specific Commands
 
 **Production:**
+
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 terraform init
 terraform plan
 terraform apply
 ```
 
 **Development:**
+
 ```bash
 cd infrastructure/environments/development
 terraform init
@@ -119,6 +129,7 @@ See `environments/IMPORT-GUIDE.md` for detailed import instructions.
 ## Variables
 
 Key variables (see `variables.tf`):
+
 - `project_name` - Project identifier
 - `environment` - Environment name (production/staging/development)
 - `domain_name` - Custom domain (optional)
@@ -128,6 +139,7 @@ Key variables (see `variables.tf`):
 ## Outputs
 
 After deployment, outputs include:
+
 - S3 bucket name
 - CloudFront distribution ID
 - CloudFront domain name
@@ -144,6 +156,7 @@ After deployment, outputs include:
 ## Migration from CloudFormation
 
 The Terraform configuration replicates the CloudFormation template:
+
 - S3 bucket with website hosting
 - CloudFront distribution
 - Proper cache behaviors
@@ -154,4 +167,3 @@ The Terraform configuration replicates the CloudFormation template:
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 - [tfenv](https://github.com/tfutils/tfenv)
 - [terraformer](https://github.com/GoogleCloudPlatform/terraformer)
-

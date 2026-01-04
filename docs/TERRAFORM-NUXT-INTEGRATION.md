@@ -5,6 +5,7 @@ This guide explains how to integrate Terraform outputs with Nuxt.js for seamless
 ## Overview
 
 The integration allows:
+
 - **Automatic configuration** - Nuxt.js reads Terraform outputs
 - **Deployment automation** - Deploy scripts use Terraform outputs
 - **Environment management** - Separate configs for prod/dev
@@ -21,10 +22,12 @@ terraform apply
 ```
 
 This creates:
+
 - S3 bucket for Terraform state
 - DynamoDB table for state locking
 
 **Get backend configuration:**
+
 ```bash
 terraform output backend_config
 ```
@@ -33,12 +36,13 @@ terraform output backend_config
 
 Update each environment's `main.tf` with backend configuration:
 
-**Production (`environments/prod/main.tf`):**
+**Production (`environments/production/main.tf`):**
+
 ```hcl
 terraform {
   backend "s3" {
     bucket         = "terraform-state-ACCOUNT_ID"
-    key            = "prod/terraform.tfstate"
+    key            = "production/terraform.tfstate"
     region         = "eu-central-1"
     encrypt        = true
     dynamodb_table = "terraform-state-lock"
@@ -47,6 +51,7 @@ terraform {
 ```
 
 **Development (`environments/development/main.tf`):**
+
 ```hcl
 terraform {
   backend "s3" {
@@ -60,9 +65,10 @@ terraform {
 ```
 
 **Migrate state:**
+
 ```bash
 # Production
-cd environments/prod
+cd environments/production
 terraform init -migrate-state
 
 # Development
@@ -76,13 +82,14 @@ After applying Terraform changes, sync outputs:
 
 ```bash
 # Sync production outputs
-pnpm run terraform:sync prod
+pnpm run terraform:sync production
 
 # Sync development outputs
 pnpm run terraform:sync development
 ```
 
 This creates:
+
 - `terraform-outputs.json` - JSON file with all outputs
 - `.env.terraform` - Environment variables file
 
@@ -101,18 +108,23 @@ runtimeConfig: {
 ```
 
 **Access in components:**
+
 ```typescript
-const { public: { cloudfrontDomain, websiteUrl } } = useRuntimeConfig()
+const {
+  public: { cloudfrontDomain, websiteUrl },
+} = useRuntimeConfig()
 ```
 
 ### 5. Deploy with Terraform Outputs
 
 **Option A: Using deploy script**
+
 ```bash
-pnpm run deploy:terraform prod
+pnpm run deploy:infrastructure production
 ```
 
 **Option B: Manual**
+
 ```bash
 # Get outputs
 source ./scripts/get-terraform-outputs.sh prod
@@ -134,6 +146,7 @@ pnpm run terraform:outputs [environment]
 ```
 
 **Exports:**
+
 - `AWS_S3_BUCKET`
 - `AWS_CLOUDFRONT_ID`
 - `AWS_REGION`
@@ -151,6 +164,7 @@ pnpm run terraform:sync [environment]
 ```
 
 **Creates:**
+
 - `infrastructure/environments/{env}/terraform-outputs.json`
 - `infrastructure/environments/{env}/.env.terraform`
 
@@ -169,6 +183,7 @@ pnpm run deploy:terraform [environment]
 ### Initial Setup
 
 1. **Create state bucket:**
+
    ```bash
    pnpm run infra:state:apply
    ```
@@ -177,27 +192,29 @@ pnpm run deploy:terraform [environment]
 
 3. **Migrate state:**
    ```bash
-   cd infrastructure/environments/prod
+   cd infrastructure/environments/production
    terraform init -migrate-state
    ```
 
 ### Daily Workflow
 
 1. **Make infrastructure changes:**
+
    ```bash
-   cd infrastructure/environments/prod
+   cd infrastructure/environments/production
    terraform plan
    terraform apply
    ```
 
 2. **Sync outputs:**
+
    ```bash
-   pnpm run terraform:sync prod
+   pnpm run terraform:sync production
    ```
 
 3. **Deploy application:**
    ```bash
-   pnpm run deploy:terraform prod
+   pnpm run deploy:infrastructure production
    ```
 
 ## CI/CD Integration
@@ -210,11 +227,11 @@ Add to `.gitlab-ci.yml`:
 deploy:terraform:
   stage: deploy
   script:
-    - cd infrastructure/environments/prod
+    - cd infrastructure/environments/production
     - terraform init
     - terraform output -json > terraform-outputs.json
     - cd ../../..
-    - source infrastructure/environments/prod/.env.terraform
+    - source infrastructure/environments/production/.env.terraform
     - pnpm run generate
     - ./aws-deploy.sh production
   only:
@@ -226,7 +243,7 @@ deploy:terraform:
 ```yaml
 - name: Get Terraform Outputs
   run: |
-    cd infrastructure/environments/prod
+    cd infrastructure/environments/productionuction
     terraform init
     terraform output -json > terraform-outputs.json
     source .env.terraform
@@ -241,6 +258,7 @@ deploy:terraform:
 **Problem:** `terraform output` returns empty
 
 **Solution:**
+
 1. Ensure Terraform has been applied: `terraform apply`
 2. Check state file exists: `terraform state list`
 3. Verify outputs defined in `outputs.tf`
@@ -250,8 +268,9 @@ deploy:terraform:
 **Problem:** Nuxt.js can't read Terraform outputs
 
 **Solution:**
-1. Run sync script: `pnpm run terraform:sync prod`
-2. Source the .env file: `source infrastructure/environments/prod/.env.terraform`
+
+1. Run sync script: `pnpm run terraform:sync production`
+2. Source the .env file: `source infrastructure/environments/production/.env.terraform`
 3. Or use get script: `source ./scripts/get-terraform-outputs.sh prod`
 
 ### State Lock Issues
@@ -259,6 +278,7 @@ deploy:terraform:
 **Problem:** `Error acquiring the state lock`
 
 **Solution:**
+
 1. Check if another process is running Terraform
 2. Check DynamoDB table for locks
 3. Force unlock (use with caution): `terraform force-unlock LOCK_ID`
@@ -283,4 +303,3 @@ deploy:terraform:
 
 **Status:** ✅ Integration Complete  
 **Last Updated:** 2026-01-02
-

@@ -214,7 +214,7 @@ Follow the instructions from ACM to add DNS records for validation.
 
 ### 3. Create CloudFront Distribution
 
-Use Terraform with custom domain variables (see `infrastructure/environments/prod/terraform.tfvars.example`).
+Use Terraform with custom domain variables (see `infrastructure/environments/production/terraform.tfvars.example`).
 
 ### 4. Update DNS
 
@@ -228,7 +228,7 @@ For Route 53:
 
 ```bash
 # Get your CloudFront domain
-CF_DOMAIN=$(cd infrastructure/environments/prod && terraform output -raw cloudfront_domain_name)
+CF_DOMAIN=$(cd infrastructure/environments/production && terraform output -raw cloudfront_domain_name)
 
 # Create/update Route 53 record
 # (Use AWS Console or create a change batch JSON)
@@ -476,6 +476,7 @@ For a small PWA with ~1,000 daily users:
 ---
 
 **✨ Your PWA is now deployed to AWS with enterprise-grade infrastructure!**
+
 # AWS Deployment Status & Verification
 
 ## 🚀 Deployment Ready
@@ -485,6 +486,7 @@ The application is ready for AWS deployment. Here's what's configured:
 ### Configuration
 
 Based on `deployment-info.json`:
+
 - **Bucket**: `riddlerush`
 - **CloudFront ID**: `ERCX6EFGWWFUV`
 - **Region**: `us-east-1`
@@ -502,18 +504,21 @@ export AWS_REGION="eu-central-1"
 ## ✅ Pre-Deployment Checklist
 
 ### Code Quality
+
 - ✅ **Lint**: PASSING
 - ✅ **TypeCheck**: PASSING
 - ✅ **Console Statements**: All use logger
 - ✅ **Code Organization**: Clean and optimized
 
 ### Build
+
 - ✅ **Build Script**: Ready (`pnpm run generate`)
 - ✅ **Base URL**: Configured for root (`/`)
 - ✅ **Assets**: All mockup assets included
 - ✅ **PWA**: Service worker configured
 
 ### Visual Quality
+
 - ✅ **Mockups**: All pages aligned
 - ✅ **Backgrounds**: Full opacity, properly displayed
 - ✅ **Assets**: All designer assets used correctly
@@ -536,6 +541,7 @@ This creates `.output/public/` with all static files.
 ```
 
 The script will:
+
 1. ✅ Run pre-deployment checks (lint, typecheck, tests)
 2. ✅ Build the application
 3. ✅ Create/verify S3 bucket
@@ -596,11 +602,13 @@ aws cloudfront get-distribution --id ERCX6EFGWWFUV
 ## 🎯 Expected URLs
 
 ### CloudFront (HTTPS)
+
 ```
 https://d[distribution-id].cloudfront.net
 ```
 
 ### S3 Website (HTTP only)
+
 ```
 http://riddlerush.s3-website-eu-central-1.amazonaws.com
 ```
@@ -608,6 +616,7 @@ http://riddlerush.s3-website-eu-central-1.amazonaws.com
 ## 📊 Deployment Metrics
 
 From last deployment:
+
 - **Build Size**: 19M
 - **File Count**: 332 files
 - **Environment**: production
@@ -629,6 +638,7 @@ Before considering deployment complete:
 ## 🚨 Troubleshooting
 
 ### Build Fails
+
 ```bash
 rm -rf .output .nuxt .cache
 pnpm install
@@ -636,16 +646,19 @@ BASE_URL=/ pnpm run generate
 ```
 
 ### Upload Fails
+
 - Check AWS credentials: `aws sts get-caller-identity`
 - Check bucket permissions
 - Check region matches
 
 ### Site Looks Broken
+
 - Clear browser cache
 - Check CloudFront invalidation status
 - Verify all assets uploaded
 
 ### 404 Errors
+
 - Check S3 bucket policy
 - Verify index.html exists
 - Check CloudFront origin configuration
@@ -663,6 +676,7 @@ BASE_URL=/ pnpm run generate
 
 **Status**: ✅ **READY FOR DEPLOYMENT**
 **Last Updated**: 2026-01-02
+
 # AWS Deployment - Quick Start Guide
 
 Deploy your Guess Game PWA to AWS in under 10 minutes.
@@ -683,12 +697,14 @@ aws configure
 ```
 
 Enter when prompted:
+
 - **AWS Access Key ID**: [From IAM Console]
 - **AWS Secret Access Key**: [From IAM Console]
 - **Default region**: `eu-central-1` (or your preferred region)
 - **Output format**: `json`
 
 **Verify it works:**
+
 ```bash
 aws sts get-caller-identity
 # Should show your AWS account info
@@ -704,6 +720,7 @@ export AWS_S3_BUCKET=riddle-rush-YOUR-NAME-HERE
 ```
 
 **Optional: Set region** (default is eu-central-1):
+
 ```bash
 export AWS_REGION=eu-central-1
 ```
@@ -715,6 +732,7 @@ export AWS_REGION=eu-central-1
 ```
 
 The script will:
+
 1. Run tests (lint, typecheck, unit tests)
 2. Build the app
 3. Create S3 bucket (if needed)
@@ -726,11 +744,13 @@ The script will:
 ### 4. Test Your Deployment
 
 Open the URL shown in the deployment output:
+
 ```
 http://your-bucket-name.s3-website-us-east-1.amazonaws.com
 ```
 
 Verify:
+
 - [ ] Homepage loads
 - [ ] Can navigate to /game
 - [ ] Can start a game
@@ -739,6 +759,7 @@ Verify:
 ## What If Something Goes Wrong?
 
 ### Error: "AWS CLI is not installed"
+
 ```bash
 # Install AWS CLI
 # MacOS:
@@ -752,12 +773,14 @@ pip install awscli
 ```
 
 ### Error: "AWS credentials not configured"
+
 ```bash
 aws configure
 # Enter your credentials again
 ```
 
 ### Error: "Bucket name already exists"
+
 ```bash
 # Choose a different name
 export AWS_S3_BUCKET=riddle-rush-different-name-here
@@ -765,6 +788,7 @@ export AWS_S3_BUCKET=riddle-rush-different-name-here
 ```
 
 ### Error: "Tests failed"
+
 ```bash
 # Fix test errors first, then redeploy
 pnpm run test:unit
@@ -773,6 +797,7 @@ pnpm run typecheck
 ```
 
 ### Site loads but looks broken
+
 ```bash
 # Hard refresh your browser
 # Windows/Linux: Ctrl + Shift + R
@@ -823,6 +848,7 @@ export APP_VERSION=1.0.0
 ```
 
 Load before deployment:
+
 ```bash
 source .env.aws
 ./aws-deploy.sh production
@@ -831,11 +857,13 @@ source .env.aws
 ## Cost Estimate
 
 **Free Tier** (first 12 months):
+
 - 5 GB S3 storage: **FREE**
 - 20,000 GET requests/month: **FREE**
 - 1 TB CloudFront transfer: **FREE**
 
 **After Free Tier** (typical small app):
+
 - Storage (20 MB): ~$0.0005/month
 - Traffic (10k views/month): ~$1-5/month
 - **Total: $1-5/month**
@@ -871,12 +899,14 @@ source .env.aws  # Load your bucket name
 ```
 
 The script will:
+
 - Run all tests
 - Build fresh version
 - Upload only changed files
 - Invalidate CloudFront cache (if configured)
 
 **Updates are live immediately** (or after CloudFront invalidation completes).
+
 # AWS Deployment - Ready for Tomorrow
 
 ## Summary
@@ -886,11 +916,13 @@ Your Guess Game PWA is ready for AWS deployment. All build processes have been t
 ## What's Been Done
 
 ### 1. Build Process ✅
+
 - TypeScript errors fixed in `pages/results.vue`, `tests/e2e/leaderboard.spec.ts`, `tests/unit/game-store.spec.ts`
 - Build tested and verified (generates ~196 files, 17.6 MB)
 - All pre-deployment checks pass (lint, typecheck, unit tests)
 
 ### 2. Deployment Script ✅
+
 - **Enhanced `aws-deploy.sh`** with:
   - Automatic AWS credential verification
   - Pre-deployment checks (lint, typecheck, tests)
@@ -901,6 +933,7 @@ Your Guess Game PWA is ready for AWS deployment. All build processes have been t
   - Deployment metadata logging
 
 ### 3. Documentation ✅
+
 - **AWS-QUICKSTART.md**: 10-minute deployment guide
 - **docs/AWS-DEPLOYMENT.md**: Comprehensive setup guide (15 pages)
 - **CLAUDE.md**: Updated with AWS deployment commands
@@ -949,13 +982,13 @@ Before you start tomorrow:
 
 ## Files Reference
 
-| File | Purpose |
-|------|---------|
-| `aws-deploy.sh` | Main deployment script |
-| `AWS-QUICKSTART.md` | Quick start guide (read this first) |
-| `docs/AWS-DEPLOYMENT.md` | Comprehensive guide |
-| `CLAUDE.md` | Updated with AWS commands |
-| `DEPLOYMENT-SUMMARY.md` | This file |
+| File                     | Purpose                             |
+| ------------------------ | ----------------------------------- |
+| `aws-deploy.sh`          | Main deployment script              |
+| `AWS-QUICKSTART.md`      | Quick start guide (read this first) |
+| `docs/AWS-DEPLOYMENT.md` | Comprehensive guide                 |
+| `CLAUDE.md`              | Updated with AWS commands           |
+| `DEPLOYMENT-SUMMARY.md`  | This file                           |
 
 ## What the Deployment Does
 
@@ -1015,6 +1048,7 @@ S3 Website URL:
    - [ ] Offline mode works
 
 2. **Run E2E tests** (optional):
+
    ```bash
    BASE_URL=http://your-bucket.s3-website-us-east-1.amazonaws.com pnpm run test:e2e
    ```
@@ -1024,12 +1058,14 @@ S3 Website URL:
 ## Estimated Costs
 
 **First 12 Months (Free Tier):**
+
 - Storage: FREE (up to 5 GB)
 - Requests: FREE (20k GET, 2k PUT)
 - CloudFront: FREE (1 TB transfer, 10M requests)
 - **Total: $0/month** (for typical traffic)
 
 **After Free Tier:**
+
 - S3 only: $1-5/month
 - S3 + CloudFront: $5-20/month
 - **For low traffic**: Usually under $5/month
@@ -1128,11 +1164,13 @@ After deployment settles:
 5. Test the URL
 
 **Good luck with your deployment!** 🚀
+
 # 🚀 Quick AWS Deployment Guide
 
 ## Prerequisites Check
 
 Before deploying, ensure:
+
 - ✅ AWS CLI installed (`aws --version`)
 - ✅ AWS credentials configured (`aws configure`)
 - ✅ Project dependencies installed (`pnpm install`)
@@ -1190,6 +1228,7 @@ export AWS_REGION="eu-central-1"
 ### Test the Site
 
 1. **S3 Website URL** (if no CloudFront):
+
    ```
    http://YOUR-BUCKET.s3-website-REGION.amazonaws.com
    ```
@@ -1211,6 +1250,7 @@ export AWS_REGION="eu-central-1"
 ## Troubleshooting
 
 ### Build Fails
+
 ```bash
 # Clear cache and rebuild
 rm -rf .output .nuxt .cache
@@ -1219,6 +1259,7 @@ BASE_URL=/ pnpm run generate
 ```
 
 ### AWS Credentials Error
+
 ```bash
 aws configure
 # Enter Access Key ID
@@ -1228,10 +1269,12 @@ aws configure
 ```
 
 ### Bucket Already Exists
+
 - Use existing bucket name
 - Or choose a different unique name
 
 ### CloudFront Not Working
+
 - Wait 5-15 minutes for invalidation
 - Check distribution status: `aws cloudfront get-distribution --id YOUR_ID`
 
@@ -1245,6 +1288,7 @@ aws configure
 ---
 
 **Ready to deploy?** Run: `./aws-deploy.sh production`
+
 # GitLab Pages Deployment Guide
 
 This guide explains how to deploy the Guess Game PWA to GitLab Pages with automated testing and coverage reports.
@@ -1265,6 +1309,7 @@ Before deploying, you need to generate the PWA icons referenced in `nuxt.config.
 - `public/pwa-512x512.png` (512x512 pixels)
 
 You can use the `public/pwa-icon-template.svg` as a starting point or use online tools like:
+
 - https://realfavicongenerator.net/
 - https://www.pwabuilder.com/imageGenerator
 
@@ -1337,9 +1382,11 @@ open coverage/index.html
 The GitLab CI pipeline consists of four stages:
 
 ### Test Stage
+
 The pipeline runs two test jobs in parallel:
 
 #### Unit Tests (`test:unit`)
+
 - Runs Vitest unit tests with coverage
 - Generates coverage reports in multiple formats (text, JSON, HTML, LCOV, Cobertura)
 - Coverage thresholds set at 80% for lines, functions, branches, and statements
@@ -1347,6 +1394,7 @@ The pipeline runs two test jobs in parallel:
 - Artifacts expire in 30 days
 
 #### E2E Tests (`test:e2e`)
+
 - Installs Playwright and Chromium browser
 - Generates the production build
 - Runs end-to-end tests using Playwright
@@ -1357,6 +1405,7 @@ The pipeline runs two test jobs in parallel:
 - Artifacts expire in 30 days
 
 **Smoke Tests Included:**
+
 - Homepage loads successfully
 - PWA manifest is accessible
 - Service worker registers correctly
@@ -1367,12 +1416,14 @@ The pipeline runs two test jobs in parallel:
 - Page load performance is acceptable
 
 ### Build Stage
+
 - Only runs if all tests pass
 - Installs dependencies using `npm ci`
 - Runs `npm run generate` to create the static site
 - Outputs to `.output/public` directory
 
 ### Deploy Stage
+
 - Only runs if build succeeds
 - Copies the built files to the `public` directory (required by GitLab Pages)
 - Includes test coverage and e2e reports at `/test-reports/`
@@ -1381,10 +1432,12 @@ The pipeline runs two test jobs in parallel:
 ## Viewing Test Reports
 
 After deployment, you can view test reports at:
+
 - Coverage report: `https://your-pages-url/test-reports/coverage/`
 - E2E test report: `https://your-pages-url/test-reports/playwright-report/`
 
 You can also view them in GitLab:
+
 1. Go to your project in GitLab
 2. Navigate to CI/CD > Pipelines
 3. Click on the pipeline
@@ -1403,6 +1456,7 @@ After deployment:
 ## Writing Tests
 
 ### Unit Tests
+
 Place unit tests in `tests/unit/` with the naming pattern `*.spec.ts` or `*.test.ts`:
 
 ```typescript
@@ -1416,6 +1470,7 @@ describe('MyComponent', () => {
 ```
 
 ### E2E Tests
+
 Place e2e tests in `tests/e2e/` with the naming pattern `*.spec.ts`:
 
 ```typescript
@@ -1430,29 +1485,35 @@ test('should load homepage', async ({ page }) => {
 ## Troubleshooting
 
 ### Tests failing in CI but passing locally
+
 - Ensure you're using the same Node.js version (20) as the CI
 - Check that all dependencies are properly listed in package.json
 - Review CI logs for specific error messages
 
 ### Coverage thresholds not met
+
 - Current thresholds are set to 80% for all metrics
 - Add more unit tests to increase coverage
 - View coverage report to see uncovered lines
 
 ### Icons not loading
+
 - Ensure `pwa-192x192.png` and `pwa-512x512.png` exist in the `public/` directory
 - Check browser console for 404 errors
 
 ### Routes not working
+
 - Verify the BASE_URL environment variable is set correctly with leading and trailing slashes
 - Check that the manifest start_url matches your base URL
 
 ### PWA not installable
+
 - Ensure the site is served over HTTPS (GitLab Pages provides this automatically)
 - Check that the manifest.json is accessible at `https://your-site/manifest.webmanifest`
 - Verify icons are properly sized and accessible
 
 ### Service Worker issues
+
 - Clear browser cache and service workers
 - Check Application tab in DevTools > Service Workers
 - Verify the service worker is registered and activated

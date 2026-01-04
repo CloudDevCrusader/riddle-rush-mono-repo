@@ -26,7 +26,7 @@ echo -e "\n${BLUE}CloudFront Distributions:${NC}"
 aws cloudfront list-distributions --query 'DistributionList.Items[*].[Id,Comment,DomainName]' --output table || echo "  No distributions found"
 
 echo -e "\n${BLUE}To import, use:${NC}"
-echo "  cd infrastructure/environments/prod"
+echo "  cd infrastructure/environments/production"
 echo "  ./import-existing.sh"
 echo ""
 echo "Or manually:"

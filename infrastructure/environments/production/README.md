@@ -9,11 +9,13 @@ If you have existing AWS resources (from CloudFormation or manual creation):
 ### Option 1: Using Import Script
 
 1. **Copy example variables:**
+
    ```bash
    cp terraform.tfvars.example terraform.tfvars
    ```
 
 2. **Edit terraform.tfvars:**
+
    ```hcl
    bucket_name = "your-existing-bucket-name"
    # Or leave empty to create new
@@ -27,16 +29,19 @@ If you have existing AWS resources (from CloudFormation or manual creation):
 ### Option 2: Manual Import
 
 1. **Initialize:**
+
    ```bash
    terraform init
    ```
 
 2. **Import S3 bucket:**
+
    ```bash
    terraform import aws_s3_bucket.website your-bucket-name
    ```
 
 3. **Import CloudFront:**
+
    ```bash
    terraform import aws_cloudfront_distribution.website E1234567890ABC
    ```
@@ -62,6 +67,7 @@ terraformer import aws --resources=s3,cloudfront --regions=eu-central-1 --filter
 ## After Import
 
 1. **Review plan:**
+
    ```bash
    terraform plan
    ```
@@ -80,7 +86,7 @@ terraformer import aws --resources=s3,cloudfront --regions=eu-central-1 --filter
 
 ```bash
 # Navigate to prod environment
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 
 # Initialize
 terraform init
@@ -100,20 +106,22 @@ terraform destroy
 See `terraform.tfvars.example` for available variables.
 
 **Important:** If importing existing resources, specify:
+
 - `bucket_name` - Your existing S3 bucket name
 - Or use terraform import commands with resource IDs
 
 ## Outputs
 
 After applying:
+
 ```bash
 terraform output
 ```
 
 Use outputs for deployment:
+
 ```bash
 BUCKET=$(terraform output -raw bucket_name)
 CF_ID=$(terraform output -raw cloudfront_distribution_id)
 AWS_S3_BUCKET=$BUCKET AWS_CLOUDFRONT_ID=$CF_ID ./aws-deploy.sh production
 ```
-

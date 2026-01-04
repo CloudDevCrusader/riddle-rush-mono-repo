@@ -1,18 +1,19 @@
 /**
  * Terraform Integration Configuration
- * 
+ *
  * This file can be used to read Terraform outputs and configure Nuxt
  * based on the infrastructure state.
- * 
+ *
  * Usage:
  * 1. Run: source ./scripts/get-terraform-outputs.sh prod
  * 2. This will export environment variables that can be used in nuxt.config.ts
- * 
+ *
  * Or use the terraform outputs directly in your deployment pipeline.
  */
 
-import { readFileSync } from 'fs'
-import { join } from 'path'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { execSync } from 'node:child_process'
 
 interface TerraformOutputs {
   bucket_name?: string
@@ -28,9 +29,12 @@ interface TerraformOutputs {
  */
 export function getTerraformOutputs(environment: string = 'prod'): TerraformOutputs {
   try {
-    const outputFile = join(process.cwd(), `infrastructure/environments/${environment}/terraform-outputs.json`)
+    const outputFile = join(
+      process.cwd(),
+      `infrastructure/environments/${environment}/terraform-outputs.json`
+    )
     const outputs = JSON.parse(readFileSync(outputFile, 'utf-8'))
-    
+
     return {
       bucket_name: outputs.bucket_name?.value,
       cloudfront_distribution_id: outputs.cloudfront_distribution_id?.value,
@@ -38,7 +42,7 @@ export function getTerraformOutputs(environment: string = 'prod'): TerraformOutp
       website_url: outputs.website_url?.value,
       aws_region: outputs.aws_region?.value || 'eu-central-1',
     }
-  } catch (error) {
+  } catch {
     // If file doesn't exist, return empty object
     // This allows the app to work without Terraform outputs
     return {}
@@ -64,19 +68,15 @@ export function getTerraformOutputsFromEnv(): TerraformOutputs {
  * Run this after terraform apply to update outputs
  */
 export function exportTerraformOutputs(environment: string = 'prod'): void {
-  const { execSync } = require('child_process')
-  const { writeFileSync } = require('fs')
-  const { join } = require('path')
-  
   try {
     const outputDir = join(process.cwd(), `infrastructure/environments/${environment}`)
     const outputs = execSync(`cd ${outputDir} && terraform output -json`, { encoding: 'utf-8' })
     const outputFile = join(outputDir, 'terraform-outputs.json')
-    
+
     writeFileSync(outputFile, outputs)
+    // eslint-disable-next-line no-console
     console.log(`✅ Terraform outputs exported to ${outputFile}`)
   } catch (error) {
     console.error('❌ Failed to export Terraform outputs:', error)
   }
 }
-

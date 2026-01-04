@@ -5,11 +5,12 @@ This guide will help you import your existing AWS infrastructure into Terraform.
 ## Step 1: Find Your Resources
 
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 ./find-resources.sh
 ```
 
 This will show:
+
 - Existing S3 buckets matching "riddle-rush"
 - Existing CloudFront distributions
 
@@ -22,6 +23,7 @@ This will show:
 ```
 
 The script will:
+
 1. Ask for your S3 bucket name
 2. Ask for your CloudFront distribution ID
 3. Import them automatically
@@ -57,6 +59,7 @@ This should show minimal or no changes if the import was successful.
 ## Step 4: Update Configuration (if needed)
 
 If `terraform plan` shows differences:
+
 1. Review the differences
 2. Update `main.tf` to match your existing setup
 3. Re-run `terraform plan` until no unwanted changes
@@ -78,6 +81,7 @@ If your existing infrastructure uses OAI (Origin Access Identity), Terraform wil
 ### Resource Not Found
 
 If import fails:
+
 - Verify resource names/IDs are correct
 - Check AWS region matches
 - Ensure you have proper permissions
@@ -85,6 +89,7 @@ If import fails:
 ### Many Changes After Import
 
 If plan shows many changes:
+
 - Review each change carefully
 - Update Terraform config to match existing
 - Some changes may be improvements (accept them)
@@ -92,7 +97,7 @@ If plan shows many changes:
 ## Next Steps
 
 After successful import:
-1. Set up remote state (see `infrastructure/SETUP-STATE-BUCKET.md`)
-2. Sync Terraform outputs: `pnpm run terraform:sync prod`
-3. Deploy using Terraform: `pnpm run deploy:terraform prod`
 
+1. Set up remote state (see `infrastructure/SETUP-STATE-BUCKET.md`)
+2. Sync Terraform outputs: `pnpm run terraform:sync production`
+3. Deploy using Terraform: `pnpm run deploy:infrastructure production`

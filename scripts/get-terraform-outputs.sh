@@ -2,11 +2,25 @@
 
 # Script to get Terraform outputs and export them as environment variables
 # Usage: source ./scripts/get-terraform-outputs.sh [environment]
-# Example: source ./scripts/get-terraform-outputs.sh prod
+# Example: source ./scripts/get-terraform-outputs.sh production
 
 set -e
 
-ENVIRONMENT="${1:-prod}"
+ENVIRONMENT="${1:-production}"
+
+# Map short environment names to full folder names
+case "$ENVIRONMENT" in
+    dev)
+        ENVIRONMENT="development"
+        ;;
+    prod|production)
+        ENVIRONMENT="production"
+        ;;
+    staging)
+        ENVIRONMENT="staging"
+        ;;
+esac
+
 INFRA_DIR="infrastructure/environments/${ENVIRONMENT}"
 
 # Colors

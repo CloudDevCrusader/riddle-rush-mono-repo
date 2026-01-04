@@ -5,7 +5,21 @@
 
 set -e
 
-ENVIRONMENT="${1:-prod}"
+ENVIRONMENT="${1:-production}"
+
+# Map short environment names to full folder names
+case "$ENVIRONMENT" in
+    dev)
+        ENVIRONMENT="development"
+        ;;
+    prod|production)
+        ENVIRONMENT="production"
+        ;;
+    staging)
+        ENVIRONMENT="staging"
+        ;;
+esac
+
 INFRA_DIR="infrastructure/environments/${ENVIRONMENT}"
 
 # Colors
@@ -75,5 +89,5 @@ echo -e "${BLUE}💡 To use in Nuxt.js:${NC}"
 echo -e "  ${YELLOW}source ${INFRA_DIR}/.env.terraform${NC}"
 echo ""
 echo -e "${BLUE}💡 To use in deployment:${NC}"
-echo -e "  ${YELLOW}source ${INFRA_DIR}/.env.terraform && ./aws-deploy.sh ${ENVIRONMENT}${NC}"
+echo -e "  ${YELLOW}source ${INFRA_DIR}/.env.terraform && ./scripts/aws-deploy.sh ${ENVIRONMENT}${NC}"
 

@@ -62,21 +62,51 @@ pnpm run format:check # Check formatting
 
 #### AWS (S3 + CloudFront) - Recommended
 
+**Application Deployment (Build + Upload + Invalidate):**
+
 ```bash
 # Production deployment (with optional version tagging)
-./scripts/deploy-prod.sh          # Deploy to production
+pnpm run deploy:prod              # Deploy to production
 ./scripts/deploy-prod.sh 1.2.0    # Deploy with version tag
 
 # Development deployment
-./scripts/deploy-dev.sh            # Deploy to development
+pnpm run deploy:dev                # Deploy to development
+# Or: ./scripts/deploy-dev.sh
+```
 
-# Staging deployment (still uses GitLab Pages)
+**Note:** These scripts assume infrastructure is already deployed. To manage infrastructure separately, see below.
+
+**Separate Operations:**
+
+```bash
+# 1. Plan infrastructure changes
+pnpm run terraform:plan production
+./scripts/terraform-plan.sh production
+
+# 2. Apply infrastructure changes
+pnpm run terraform:apply production
+./scripts/terraform-apply.sh production
+
+# 3. Deploy application (build + upload + invalidate)
+source ./scripts/get-terraform-outputs.sh production
+./scripts/aws-deploy.sh production
+```
+
+**Infrastructure + App (after infrastructure is ready):**
+
+```bash
+pnpm run deploy:infrastructure [environment]  # Deploy app using existing infrastructure
+```
+
+**Staging deployment (still uses GitLab Pages):**
+
+```bash
 ./scripts/deploy-staging.sh        # Deploy to staging
 ```
 
-**Note:** `deploy-prod.sh` and `deploy-dev.sh` automatically load AWS configuration from Terraform outputs. They will:
+**Note:** `deploy-prod.sh` and `deploy-dev.sh`:
 
-- Load AWS credentials and configuration
+- Load AWS configuration from Terraform outputs (infrastructure must be deployed separately)
 - Run pre-deployment checks (lint, typecheck, tests)
 - Build and deploy to AWS S3 + CloudFront
 - Display deployment URLs
@@ -89,17 +119,26 @@ For manual deployment without the scripts:
 # Quick deployment (S3 only)
 export AWS_S3_BUCKET=your-unique-bucket-name
 export AWS_REGION=eu-central-1
-./aws-deploy.sh production
+./scripts/aws-deploy.sh production
 
 # With CloudFront CDN
 export AWS_S3_BUCKET=your-bucket-name
 export AWS_CLOUDFRONT_ID=E1234567890ABC
 export AWS_REGION=eu-central-1
-./aws-deploy.sh production
+./scripts/aws-deploy.sh production
 
 # Test against AWS deployment
 BASE_URL=https://your-domain.com pnpm run test:e2e
 ```
+
+**Note:** You can also use npm scripts:
+
+- `pnpm run deploy:prod` - Deploy to production (full workflow)
+- `pnpm run deploy:dev` - Deploy to development (full workflow)
+- `pnpm run terraform:plan` - Plan infrastructure changes
+- `pnpm run terraform:apply` - Apply infrastructure changes
+- `pnpm run deploy:infrastructure` - Deploy app using existing infrastructure
+- `pnpm run deploy:aws` - Direct AWS deployment (requires env vars)
 
 #### GitLab Pages (Legacy - Staging only)
 

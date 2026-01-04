@@ -45,7 +45,7 @@ output "s3_website_url" {
 
 output "deploy_command" {
   description = "Command to deploy application updates"
-  value       = "AWS_S3_BUCKET=${aws_s3_bucket.website.id} AWS_CLOUDFRONT_ID=${aws_cloudfront_distribution.website.id} AWS_REGION=${var.aws_region} ./aws-deploy.sh ${var.environment}"
+  value       = "AWS_S3_BUCKET=${aws_s3_bucket.website.id} AWS_CLOUDFRONT_ID=${aws_cloudfront_distribution.website.id} AWS_REGION=${var.aws_region} ./scripts/aws-deploy.sh ${var.environment}"
 }
 
 output "terraform_state_info" {

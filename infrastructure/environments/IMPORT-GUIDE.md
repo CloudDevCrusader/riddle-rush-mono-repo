@@ -5,7 +5,8 @@ This guide explains how to import your existing AWS infrastructure into Terrafor
 ## Overview
 
 You have two environments:
-- **Production (prod/)** - Import existing infrastructure
+
+- **Production (production/)** - Import existing infrastructure
 - **Development (development/)** - Create new infrastructure
 
 ## Step 1: Find Your Existing Resources
@@ -13,11 +14,12 @@ You have two environments:
 ### Option A: Using the Find Script
 
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 ./find-resources.sh
 ```
 
 This will show:
+
 - Existing S3 buckets
 - Existing CloudFront distributions
 
@@ -36,12 +38,13 @@ aws cloudfront list-distributions --query 'DistributionList.Items[*].[Id,Comment
 ### Quick Import (Interactive)
 
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 terraform init
 ./import-existing.sh
 ```
 
 The script will:
+
 1. Ask for your existing bucket name
 2. Ask for your existing CloudFront ID
 3. Import the resources automatically
@@ -49,7 +52,7 @@ The script will:
 ### Manual Import
 
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 
 # 1. Initialize
 terraform init
@@ -86,13 +89,14 @@ terraformer import aws --resources=s3,cloudfront --regions=eu-central-1 --filter
 After importing, verify everything:
 
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 terraform plan
 ```
 
 **Expected:** Should show minimal or no changes if import was successful.
 
 **If you see changes:**
+
 - Review the differences
 - Update `main.tf` to match your existing configuration
 - Or accept the changes if they're improvements
@@ -106,6 +110,7 @@ If your existing infrastructure differs from the Terraform config:
 3. **Re-run plan** - Verify no unwanted changes
 
 Common adjustments:
+
 - Cache behaviors
 - Custom error responses
 - Domain names
@@ -140,6 +145,7 @@ terraform apply
 **Problem:** `Error: resource not found`
 
 **Solution:**
+
 - Verify resource names/IDs are correct
 - Check AWS region matches
 - Ensure you have proper permissions
@@ -149,6 +155,7 @@ terraform apply
 **Problem:** `Error: resource already managed`
 
 **Solution:**
+
 - Resource already in state
 - Check with `terraform state list`
 - Remove from state if needed: `terraform state rm aws_s3_bucket.website`
@@ -158,6 +165,7 @@ terraform apply
 **Problem:** Plan shows unexpected changes after import
 
 **Solution:**
+
 1. Review each change
 2. Update Terraform config to match existing
 3. Use `terraform show` to see current state
@@ -168,6 +176,7 @@ terraform apply
 **Problem:** Existing infrastructure uses OAI, Terraform uses OAC
 
 **Solution:**
+
 1. Import with OAI first
 2. Update to OAC in Terraform
 3. Apply changes (Terraform will migrate automatically)
@@ -198,4 +207,3 @@ After successful import:
 - [Terraform Import](https://www.terraform.io/docs/cli/import/index.html)
 - [Terraform State](https://www.terraform.io/docs/language/state/index.html)
 - [AWS Provider Import](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-

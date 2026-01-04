@@ -11,7 +11,9 @@ PATTERNS=(
   
   # AWS
   'AKIA[0-9A-Z]{16}'
-  'aws[_-]?secret[_-]?access[_-]?key'
+  # Match AWS secret access key assignments with actual values (not variable references)
+  # Excludes lines where value starts with $ (variable reference)
+  'aws[_-]?secret[_-]?access[_-]?key\s*[=:]\s*[^$][^=]{15,}'
   
   # Private keys
   '-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----'

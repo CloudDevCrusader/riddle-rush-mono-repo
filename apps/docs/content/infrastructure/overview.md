@@ -15,7 +15,7 @@ Riddle Rush infrastructure is managed with Terraform and deployed to AWS.
 
 ## Environments
 
-- **Production** (`environments/prod/`) - Live production infrastructure
+- **Production** (`environments/production/`) - Live production infrastructure
 - **Development** (`environments/development/`) - Development/testing infrastructure
 
 ## Quick Start
@@ -23,7 +23,7 @@ Riddle Rush infrastructure is managed with Terraform and deployed to AWS.
 ### Import Existing Infrastructure
 
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 ./find-resources.sh
 ./import-existing.sh
 ```
@@ -48,4 +48,3 @@ GitLab Pages now hosts the **documentation site** (this site).
 - [Terraform Setup](/docs/infrastructure/terraform)
 - [AWS Deployment](/docs/infrastructure/deployment)
 - [AWS Configuration](/docs/infrastructure/aws)
-

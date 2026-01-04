@@ -21,6 +21,7 @@ terraform apply
 ```
 
 **Or use npm script:**
+
 ```bash
 pnpm run infra:state:init
 pnpm run infra:state:plan
@@ -35,6 +36,7 @@ terraform output backend_config
 ```
 
 This will show:
+
 ```hcl
 backend "s3" {
   bucket         = "terraform-state-ACCOUNT_ID"
@@ -47,7 +49,8 @@ backend "s3" {
 
 ### 3. Update Environment Configs
 
-**Production (`environments/prod/main.tf`):**
+**Production (`environments/production/main.tf`):**
+
 ```hcl
 terraform {
   required_version = ">= 1.5.0"
@@ -57,10 +60,10 @@ terraform {
       version = "~> 5.0"
     }
   }
-  
+
   backend "s3" {
     bucket         = "terraform-state-ACCOUNT_ID"  # Replace with actual bucket name
-    key            = "prod/terraform.tfstate"
+    key            = "production/terraform.tfstate"
     region         = "eu-central-1"
     encrypt        = true
     dynamodb_table = "terraform-state-lock"
@@ -69,6 +72,7 @@ terraform {
 ```
 
 **Development (`environments/development/main.tf`):**
+
 ```hcl
 terraform {
   required_version = ">= 1.5.0"
@@ -78,7 +82,7 @@ terraform {
       version = "~> 5.0"
     }
   }
-  
+
   backend "s3" {
     bucket         = "terraform-state-ACCOUNT_ID"  # Replace with actual bucket name
     key            = "development/terraform.tfstate"
@@ -95,7 +99,7 @@ After updating backend configs, migrate existing state:
 
 ```bash
 # Production
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 terraform init -migrate-state
 # Answer "yes" when prompted
 
@@ -114,7 +118,8 @@ aws s3 ls s3://terraform-state-ACCOUNT_ID/
 ```
 
 You should see:
-- `prod/terraform.tfstate`
+
+- `production/terraform.tfstate`
 - `development/terraform.tfstate` (after creating dev environment)
 
 ## One-Time Setup
@@ -126,6 +131,7 @@ This setup is **one-time only**. After creating the state bucket and configuring
 ### State Lock Error
 
 If you get a state lock error:
+
 ```bash
 # Check DynamoDB table
 aws dynamodb scan --table-name terraform-state-lock
@@ -137,6 +143,7 @@ terraform force-unlock LOCK_ID
 ### Migration Failed
 
 If migration fails:
+
 1. Check S3 bucket exists
 2. Check DynamoDB table exists
 3. Verify backend configuration is correct
@@ -149,6 +156,5 @@ After setting up remote state:
 1. ✅ State bucket created
 2. ✅ Backend configured
 3. ✅ State migrated
-4. ⏳ Sync Terraform outputs: `pnpm run terraform:sync prod`
-5. ⏳ Deploy with Terraform: `pnpm run deploy:terraform prod`
-
+4. ⏳ Sync Terraform outputs: `pnpm run terraform:sync production`
+5. ⏳ Deploy with Terraform: `pnpm run deploy:infrastructure production`

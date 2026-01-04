@@ -32,12 +32,13 @@ terraform output backend_config
 
 Copy the backend configuration to each environment's `main.tf`:
 
-**For production (`environments/prod/main.tf`):**
+**For production (`environments/production/main.tf`):**
+
 ```hcl
 terraform {
   backend "s3" {
     bucket         = "terraform-state-ACCOUNT_ID"
-    key            = "prod/terraform.tfstate"
+    key            = "production/terraform.tfstate"
     region         = "eu-central-1"
     encrypt        = true
     dynamodb_table = "terraform-state-lock"
@@ -46,6 +47,7 @@ terraform {
 ```
 
 **For development (`environments/development/main.tf`):**
+
 ```hcl
 terraform {
   backend "s3" {
@@ -64,7 +66,7 @@ After updating backend configs, migrate state:
 
 ```bash
 # Production
-cd environments/prod
+cd environments/production
 terraform init -migrate-state
 
 # Development
@@ -87,4 +89,3 @@ This should be run **once** to set up state management for all environments.
 - `state_bucket_name` - Bucket name for backend config
 - `dynamodb_table_name` - Table name for backend config
 - `backend_config` - Ready-to-use backend configuration
-

@@ -22,7 +22,7 @@ pnpm run infra:prod:init
 If you have existing AWS resources:
 
 ```bash
-cd infrastructure/environments/prod
+cd infrastructure/environments/production
 ./find-resources.sh
 ./import-existing.sh
 ```
@@ -46,4 +46,3 @@ See `infrastructure/SETUP-STATE-BUCKET.md` for setup.
 
 - [Terraform Setup Guide](/docs/infrastructure/terraform)
 - [Terraform + Nuxt Integration](/docs/infrastructure/deployment)
-
