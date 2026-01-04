@@ -412,6 +412,8 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
+      - get-terraform-outputs:
+          environment: << parameters.environment >>
       - run:
           name: 'Get CloudFront domain and verify HTML response'
           command: |
@@ -419,19 +421,25 @@ jobs:
             export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
             export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
 
-            cd infrastructure/environments/<< parameters.environment >>
+            AWS_CLOUDFRONT_DOMAIN="${AWS_CLOUDFRONT_DOMAIN:-}"
 
-            # Initialize Terraform if needed (use backend for remote state)
-            if [ ! -d ".terraform" ]; then
-              echo "Initializing Terraform..."
-              terraform init
-            fi
+            if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
+              cd infrastructure/environments/<< parameters.environment >>
 
-            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || true)
-            if echo "$AWS_CLOUDFRONT_DOMAIN" | grep -qE 'Warning:|No outputs found|^╷'; then
-              AWS_CLOUDFRONT_DOMAIN=""
+              # Initialize Terraform if needed (use backend for remote state)
+              if [ ! -d ".terraform" ]; then
+                echo "Initializing Terraform..."
+                terraform init
+              fi
+
+              AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || true)
+              if echo "$AWS_CLOUDFRONT_DOMAIN" | grep -qE 'Warning:|No outputs found|^╷'; then
+                AWS_CLOUDFRONT_DOMAIN=""
+              fi
+              AWS_CLOUDFRONT_DOMAIN="$(echo "$AWS_CLOUDFRONT_DOMAIN" | tr -d '\r' | xargs)"
+
+              cd ../../..
             fi
-            AWS_CLOUDFRONT_DOMAIN="$(echo "$AWS_CLOUDFRONT_DOMAIN" | tr -d '\r' | xargs)"
 
             if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
               echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
@@ -440,8 +448,6 @@ jobs:
 
             export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
             echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN"
-
-            cd ../../..
 
             echo "Verifying AWS << parameters.environment >> deployment at: $BASE_URL"
             echo "Waiting << parameters.wait_time >> seconds for CloudFront invalidation to propagate..."
