@@ -49,8 +49,9 @@ For production deployments, configure manual approvals:
    - `verify-e2e-aws-prod` job
 
 For development deployments, you can optionally enable manual approvals for:
-   - `deploy-aws-dev` job
-   - `verify-e2e-aws-dev` job
+
+- `deploy-aws-dev` job
+- `verify-e2e-aws-dev` job
 
 ## Workflows
 
@@ -86,7 +87,7 @@ Runs on `main` branch or version tags (`v*`):
 
 ### test
 
-- **Image**: `cimg/node:20.0`
+- **Image**: `cimg/node:20.19.0`
 - **Steps**: Install dependencies, run unit tests
 - **Artifacts**: Test coverage reports
 
@@ -98,20 +99,20 @@ Runs on `main` branch or version tags (`v*`):
 
 ### build
 
-- **Image**: `cimg/node:20.0`
+- **Image**: `cimg/node:20.19.0`
 - **Steps**: Install dependencies, build game app
 - **Artifacts**: Built application in `apps/game/.output`
 
 ### build-docs
 
-- **Image**: `cimg/node:20.0`
+- **Image**: `cimg/node:20.19.0`
 - **Steps**: Build documentation site
 - **Artifacts**: Generated docs in `public/`
 - **Runs on**: main branch only
 
 ### deploy-aws-dev / deploy-aws-prod
 
-- **Image**: `cimg/node:20.0`
+- **Image**: `cimg/node:20.19.0`
 - **Steps**:
   1. Setup pnpm and install dependencies
   2. Install AWS CLI and Terraform
@@ -163,14 +164,14 @@ Some jobs can be triggered manually via CircleCI UI:
 
 ## Comparison with GitLab CI
 
-| Feature | GitLab CI | CircleCI |
-|---------|-----------|----------|
-| Change Detection | ✅ Automatic | ⚠️ Manual (via filters) |
-| Manual Approval | ✅ Built-in | ⚠️ UI configuration |
-| Monorepo Support | ✅ Change detection | ⚠️ Basic filtering |
-| Custom Docker Images | ✅ Registry support | ✅ Public images |
-| Artifacts | ✅ 7-30 days | ✅ Configurable |
-| Parallel Jobs | ✅ Yes | ✅ Yes |
+| Feature              | GitLab CI           | CircleCI                |
+| -------------------- | ------------------- | ----------------------- |
+| Change Detection     | ✅ Automatic        | ⚠️ Manual (via filters) |
+| Manual Approval      | ✅ Built-in         | ⚠️ UI configuration     |
+| Monorepo Support     | ✅ Change detection | ⚠️ Basic filtering      |
+| Custom Docker Images | ✅ Registry support | ✅ Public images        |
+| Artifacts            | ✅ 7-30 days        | ✅ Configurable         |
+| Parallel Jobs        | ✅ Yes              | ✅ Yes                  |
 
 ## Troubleshooting
 

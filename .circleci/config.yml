@@ -91,7 +91,7 @@ jobs:
   test:
     description: 'Run unit tests for game app'
     docker:
-      - image: cimg/node:20.0
+      - image: cimg/node:20.19.0
     steps:
       - checkout
       - setup-pnpm
@@ -129,7 +129,7 @@ jobs:
   build:
     description: 'Build game app for production'
     docker:
-      - image: cimg/node:20.0
+      - image: cimg/node:20.19.0
     steps:
       - checkout
       - setup-pnpm
@@ -146,7 +146,7 @@ jobs:
   build-docs:
     description: 'Build documentation site'
     docker:
-      - image: cimg/node:20.0
+      - image: cimg/node:20.19.0
     steps:
       - checkout
       - setup-pnpm
@@ -172,7 +172,7 @@ jobs:
   deploy-aws-dev:
     description: 'Deploy to AWS development environment'
     docker:
-      - image: cimg/node:20.0
+      - image: cimg/node:20.19.0
     steps:
       - checkout
       - setup-pnpm
@@ -244,7 +244,7 @@ jobs:
   deploy-aws-prod:
     description: 'Deploy to AWS production environment'
     docker:
-      - image: cimg/node:20.0
+      - image: cimg/node:20.19.0
     steps:
       - checkout
       - setup-pnpm
