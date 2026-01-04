@@ -11,6 +11,13 @@ test.describe('Main Menu Page', () => {
   test.beforeEach(async ({ page }) => {
     await navigateTo(page, '/')
     await waitForSplashScreen(page)
+    // Wait for menu buttons to be visible (they might be hidden initially)
+    await page
+      .waitForSelector('.play-btn, .menu-buttons', { state: 'visible', timeout: 10000 })
+      .catch(() => {
+        // If buttons aren't visible, wait a bit more for animations
+      })
+    await page.waitForTimeout(1000) // Additional wait for animations to complete
   })
 
   test('should display main menu with all elements', async ({ page }) => {

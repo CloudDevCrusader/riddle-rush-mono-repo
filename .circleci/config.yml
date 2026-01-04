@@ -57,7 +57,11 @@ commands:
             - deps-v3-
       - run:
           name: 'Install dependencies'
-          command: pnpm install --frozen-lockfile
+          command: |
+            # Ensure optional native bindings are installed on CI.
+            export NPM_CONFIG_OPTIONAL=true
+            export PNPM_CONFIG_OPTIONAL=true
+            pnpm install --frozen-lockfile
       - save_cache:
           key: deps-v3-{{ checksum "pnpm-lock.yaml" }}
           paths:

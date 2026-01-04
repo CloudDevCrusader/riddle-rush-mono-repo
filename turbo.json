@@ -1,18 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    "**/.env.*local"
-  ],
+  "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".nuxt/**", ".output/**", "dist/**"],
-      "env": [
-        "NODE_ENV",
-        "BASE_URL",
-        "GOOGLE_ANALYTICS_ID",
-        "APP_VERSION"
-      ]
+      "env": ["NODE_ENV", "BASE_URL", "GOOGLE_ANALYTICS_ID", "APP_VERSION"]
     },
     "dev": {
       "cache": false,
@@ -40,6 +33,10 @@
       "env": ["NODE_ENV"]
     },
     "test:unit": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "test:unit:coverage": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
     },
