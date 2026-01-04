@@ -43,13 +43,15 @@ ensure_pnpm() {
   local pnpm_version=""
 
   if command -v node >/dev/null 2>&1; then
-    package_manager=$(node -p "require('${REPO_ROOT}/package.json').packageManager" 2>/dev/null || true)
+    # Try to read package.json using fs.readFileSync (works with ES modules)
+    package_manager=$(node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('${REPO_ROOT}/package.json', 'utf8')); console.log(pkg.packageManager || '');" 2>/dev/null || true)
   fi
 
   if [[ "${package_manager}" == pnpm@* ]]; then
     pnpm_version="${package_manager#pnpm@}"
   else
-    pnpm_version="10.26.2"
+    # Fallback: try to read from package.json using grep
+    pnpm_version=$(grep -oE '"packageManager"\s*:\s*"pnpm@[^"]*"' "${REPO_ROOT}/package.json" 2>/dev/null | grep -oE 'pnpm@[^"]*' | cut -d'@' -f2 || echo "10.27.0")
   fi
 
   corepack enable
