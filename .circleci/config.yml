@@ -2,6 +2,17 @@ version: 2.1
 
 # CircleCI configuration for Riddle Rush Nuxt PWA monorepo
 # Mirrors GitLab CI pipeline structure with CircleCI-specific optimizations
+#
+# Custom Docker Image:
+# This configuration uses a custom Docker image with pre-installed tools (AWS CLI, Terraform, pnpm)
+# to speed up build times. Build and push your own image using:
+#   cd .circleci && ./build-docker-image.sh --push
+# The image will be pushed to GitLab Container Registry.
+
+# Custom image with pre-installed tools (Node.js 20.19.0, pnpm, AWS CLI, Terraform)
+# See .circleci/Dockerfile for details
+# TODO: Replace with your GitLab project path after building and pushing the image
+x-custom-image: &custom-image registry.gitlab.com/djdiox/riddle-rush-nuxt-pwa/ci-build:latest
 
 # Reusable commands
 commands:
@@ -84,6 +95,10 @@ commands:
       - run:
           name: 'Get Terraform outputs for << parameters.environment >>'
           command: |
+            # Ensure AWS region is set for Terraform/AWS SDK
+            export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
+            export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+
             # Disable colored output to prevent ANSI codes in variables
             export NO_COLOR=1
             export TF_CLI_ARGS="-no-color"
@@ -146,7 +161,7 @@ jobs:
   test:
     description: 'Run unit tests for game app'
     docker:
-      - image: cimg/node:20.19.0
+      - image: *custom-image
     steps:
       - checkout
       - setup-pnpm
@@ -201,7 +216,7 @@ jobs:
   build:
     description: 'Build game app for production'
     docker:
-      - image: cimg/node:20.19.0
+      - image: *custom-image
     steps:
       - checkout
       - setup-pnpm
@@ -218,7 +233,7 @@ jobs:
   build-docs:
     description: 'Build documentation site'
     docker:
-      - image: cimg/node:20.19.0
+      - image: *custom-image
     steps:
       - checkout
       - setup-pnpm
@@ -244,17 +259,16 @@ jobs:
   deploy-aws-dev:
     description: 'Deploy to AWS development environment'
     docker:
-      - image: cimg/node:20.19.0
-    environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_DEFAULT_REGION: ${AWS_REGION:-us-east-1}
+      - image: *custom-image
     steps:
       - checkout
       - setup-pnpm
       - install-dependencies
-      - setup-aws
-      - setup-terraform
+      # AWS CLI and Terraform are pre-installed in custom image
+      - run:
+          name: 'Verify AWS credentials'
+          command: |
+            aws sts get-caller-identity
       - get-terraform-outputs:
           environment: development
       - run:
@@ -269,17 +283,16 @@ jobs:
   deploy-aws-prod:
     description: 'Deploy to AWS production environment'
     docker:
-      - image: cimg/node:20.19.0
-    environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_DEFAULT_REGION: ${AWS_REGION:-us-east-1}
+      - image: *custom-image
     steps:
       - checkout
       - setup-pnpm
       - install-dependencies
-      - setup-aws
-      - setup-terraform
+      # AWS CLI and Terraform are pre-installed in custom image
+      - run:
+          name: 'Verify AWS credentials'
+          command: |
+            aws sts get-caller-identity
       - get-terraform-outputs:
           environment: prod
       - run:
@@ -334,6 +347,10 @@ jobs:
       - run:
           name: 'Get CloudFront domain and run E2E tests'
           command: |
+            # Ensure AWS region is set for Terraform/AWS SDK
+            export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
+            export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+
             cd infrastructure/environments/<< parameters.environment >>
 
             # Initialize Terraform if needed
