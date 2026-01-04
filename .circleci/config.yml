@@ -22,18 +22,17 @@ commands:
             PNPM_VERSION=$(grep -oE '"packageManager"\s*:\s*"pnpm@[^"]*"' package.json | grep -oE 'pnpm@[^"]*' | cut -d'@' -f2 || echo "10.27.0")
             echo "Using pnpm version: ${PNPM_VERSION}"
 
-            # Prepare pnpm (downloads and prepares without needing system directory access)
+            # Prepare pnpm (downloads without requiring system directory access)
             corepack prepare "pnpm@${PNPM_VERSION}" --activate
 
-            # Try to enable corepack (may fail due to permissions trying to modify /usr/local/bin)
-            # If it fails, we'll create a wrapper function for subsequent steps
-            if ! corepack enable 2>&1; then
-              echo "Warning: corepack enable failed (likely permission issue with /usr/local/bin)"
-              echo "Creating pnpm wrapper function for this shell session"
-              # Create a function that will be available in subsequent commands
-              echo 'pnpm() { corepack pnpm "$@"; }' >> "$BASH_ENV"
-              export -f pnpm 2>/dev/null || true
+            # Install corepack shims into a user-writable bin dir to avoid /usr/local/bin
+            if ! corepack enable --install-directory "$HOME/.local/bin" 2>&1; then
+              echo "Warning: corepack enable failed; using pnpm wrapper"
             fi
+
+            # Always define a pnpm wrapper so commands still work if shims are unavailable
+            echo 'pnpm() { corepack pnpm "$@"; }' >> "$BASH_ENV"
+            export -f pnpm 2>/dev/null || true
 
             # Verify pnpm is accessible (try multiple methods)
             if command -v pnpm >/dev/null 2>&1; then
