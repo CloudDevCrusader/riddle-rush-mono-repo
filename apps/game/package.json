@@ -43,14 +43,12 @@
     "@vueuse/nuxt": "^14.1.0",
     "idb": "^8.0.3",
     "nuxt": "^4.2.2",
-    "nuxt-viewport": "^2.3.1",
     "vue": "^3.5.26"
   },
   "devDependencies": {
     "@capacitor/android": "^8.0.0",
     "@faker-js/faker": "^9.0.0",
     "@nuxt/eslint": "^1.0.0",
-    "@nuxt/fonts": "^0.12.1",
     "@nuxt/image": "^1.9.0",
     "@nuxt/test-utils": "^3.21.0",
     "@playwright/test": "^1.49.1",

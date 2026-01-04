@@ -1,22 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import type { BuildOptions } from 'vite'
-import {
-  getDevPlugins,
-  getBuildPlugins,
-  getOptimizeDeps,
-  getBuildConfig,
-} from '@riddle-rush/config/vite'
+import { getDevPlugins, getBuildPlugins, getOptimizeDeps } from '@riddle-rush/config/vite'
 
 export default defineNuxtConfig({
   modules: [
     '@nuxtjs/i18n',
-    '@nuxt/test-utils/module',
+    '@nuxt/test-utils',
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
-    'nuxt-viewport',
     '@vueuse/nuxt',
     'nuxt-gtag',
-    '@nuxt/fonts',
     '@nuxt/image',
     '@nuxt/eslint',
   ],
@@ -134,29 +126,6 @@ export default defineNuxtConfig({
       ...(process.env.NODE_ENV === 'production' ? getBuildPlugins() : []),
     ],
     optimizeDeps: getOptimizeDeps(),
-    build: {
-      // Override with app-specific configs
-      ...(getBuildConfig().build as Partial<BuildOptions>),
-      rollupOptions: {
-        output: {
-          ...getBuildConfig().build.rollupOptions?.output,
-          manualChunks: (id: string) => {
-            // Vendor chunk for node_modules
-            if (id.includes('node_modules')) {
-              // Separate large libraries
-              if (id.includes('pinia')) return 'vendor-pinia'
-              if (id.includes('@vueuse')) return 'vendor-vueuse'
-              if (id.includes('howler')) return 'vendor-howler'
-              return 'vendor'
-            }
-            // Separate layouts
-            if (id.includes('/layouts/')) return 'layouts'
-            // Return null to use default chunking
-            return null
-          },
-        },
-      },
-    },
     css: {
       devSourcemap: true,
       preprocessorOptions: {
