@@ -498,38 +498,6 @@ jobs:
 workflows:
   version: 2
 
-  # Main workflow - runs on all branches and PRs
-  test-and-build:
-    jobs:
-      # Run tests on all branches and tags
-      - test
-      # SonarCloud analysis on main branches
-      - sonarcloud-check:
-          filters:
-            branches:
-              only: /^(main|development|staging)$/
-      # Build after tests pass
-      - build:
-          requires:
-            - test
-          filters:
-            branches:
-              only: /^(main|development|staging)$/
-            tags:
-              only: /^v.*/
-      # Build docs on main branch
-      - build-docs:
-          filters:
-            branches:
-              only: /^main$/
-      # MVP E2E tests (@critical only)
-      - test-e2e-mvp:
-          requires:
-            - build
-          filters:
-            branches:
-              only: /^(main|development|staging)$/
-
   # Development deployment workflow
   deploy-dev:
     jobs:
@@ -537,9 +505,21 @@ workflows:
           filters:
             branches:
               only: /^development$/
+      - sonarcloud-check:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^development$/
       - build:
           requires:
             - test
+          filters:
+            branches:
+              only: /^development$/
+      - test-e2e-mvp:
+          requires:
+            - build
           filters:
             branches:
               only: /^development$/
@@ -561,6 +541,14 @@ workflows:
               only: /^main$/
             tags:
               only: /^v.*/
+      - sonarcloud-check:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^main$/
+            tags:
+              only: /^v.*/
       - build:
           requires:
             - test
@@ -569,6 +557,20 @@ workflows:
               only: /^main$/
             tags:
               only: /^v.*/
+      - test-e2e-mvp:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /^main$/
+            tags:
+              only: /^v.*/
+      - build-docs:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /^main$/
       # Production deployment (should require manual approval in CircleCI UI)
       - deploy-aws-prod:
           requires:
