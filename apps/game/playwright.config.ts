@@ -53,7 +53,10 @@ export default defineConfig({
   // Web server - only start for local tests
   ...(!isDeployedTest && {
     webServer: {
-      command: 'pnpm exec serve .output/public -l 3000',
+      command: `node ${resolve(
+        repoRoot,
+        'node_modules/.bin/serve'
+      )} ${resolve(repoRoot, 'apps/game/.output/public')} -l 3000`,
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180000, // Increased to 3 minutes for slower builds
