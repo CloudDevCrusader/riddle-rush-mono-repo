@@ -103,6 +103,12 @@ commands:
               terraform init -no-color
             fi
 
+            # Apply infrastructure if state doesn't exist
+            if ! terraform output -raw cloudfront_domain_name > /dev/null 2>&1; then
+              echo "Terraform state not found or outputs missing, applying infrastructure..."
+              terraform apply -auto-approve -no-color
+            fi
+
             # Get and validate Terraform outputs (strip any whitespace/newlines)
             echo "Fetching Terraform outputs..."
             AWS_S3_BUCKET=$(terraform output -raw -no-color bucket_name 2>/dev/null | tr -d '\n\r' || echo "")
