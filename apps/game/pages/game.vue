@@ -1,7 +1,10 @@
 <template>
   <div class="game-page">
     <!-- Background -->
-    <div class="game-bg"></div>
+    <div
+      class="game-bg"
+      :style="{ backgroundImage: `url(\`${baseUrl}assets/alphabets/BACKGROUND.png\`)` }"
+    />
 
     <!-- Top Bar -->
     <header class="game-header">
@@ -9,20 +12,15 @@
       <button
         data-testid="back-button"
         class="back-btn tap-highlight no-select"
+        aria-label="Go back"
         @click="handleBack"
       >
-        <img
-          src="/assets/alphabets/back.png"
-          alt="Back"
-          class="back-icon"
-        />
+        <img :src="`${baseUrl}assets/alphabets/back.png`" alt="Back" class="back-icon" />
       </button>
 
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <span class="round-text">
-          ROUND {{ formattedRound }}
-        </span>
+        <span class="round-text"> ROUND {{ formattedRound }} </span>
       </div>
 
       <!-- Pause Button -->
@@ -41,18 +39,8 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <rect
-            x="6"
-            y="4"
-            width="4"
-            height="16"
-          />
-          <rect
-            x="14"
-            y="4"
-            width="4"
-            height="16"
-          />
+          <rect x="6" y="4" width="4" height="16" />
+          <rect x="14" y="4" width="4" height="16" />
         </svg>
       </button>
     </header>
@@ -66,9 +54,7 @@
           alt="Category"
           class="category-label-image"
         />
-        <div class="category-label">
-          CATEGORY
-        </div>
+        <div class="category-label">CATEGORY</div>
         <div class="category-name">
           {{ currentCategory?.name?.toUpperCase() || 'LOADING...' }}
         </div>
@@ -76,7 +62,7 @@
 
       <!-- Large Letter Display -->
       <div class="letter-display">
-        <span class="letter-value">
+        <span class="letter-value" :data-letter="currentLetter ? currentLetter.toUpperCase() : 'A'">
           {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
         </span>
       </div>
@@ -90,10 +76,7 @@
           <span class="turn-label">{{ $t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <form
-          class="answer-form"
-          @submit.prevent="submitAnswer"
-        >
+        <form class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-model="playerAnswer"
             type="text"
@@ -104,21 +87,14 @@
             maxlength="50"
             @input="sanitizeInput"
           />
-          <button
-            type="submit"
-            class="submit-answer-btn"
-            :disabled="!playerAnswer.trim()"
-          >
+          <button type="submit" class="submit-answer-btn" :disabled="!playerAnswer.trim()">
             {{ $t('game.submit', 'Submit') }}
           </button>
         </form>
       </div>
 
       <!-- All Players Submitted Message -->
-      <div
-        v-if="allPlayersSubmitted"
-        class="all-submitted-message"
-      >
+      <div v-if="allPlayersSubmitted" class="all-submitted-message">
         <p>{{ $t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
@@ -148,11 +124,7 @@
         class="next-btn btn-primary tap-highlight no-select"
         @click="handleNext"
       >
-        <img
-          src="/assets/alphabets/next.png"
-          alt="Next"
-          class="next-icon"
-        />
+        <img :src="`${baseUrl}assets/alphabets/next.png`" alt="Next" class="next-icon" />
         <span class="next-text">NEXT</span>
       </button>
     </div>
@@ -189,8 +161,7 @@ const goHome = () => {
 const handleBack = () => {
   if (gameStore.hasActiveSession) {
     showQuitModal.value = true
-  }
-  else {
+  } else {
     goHome()
   }
 }
@@ -218,15 +189,16 @@ const submitAnswer = async () => {
       const result = await checkAnswer(
         currentCategory.value?.searchWord || '',
         currentLetter.value,
-        playerAnswer.value.trim(),
+        playerAnswer.value.trim()
       )
 
       if (!result.found) {
-        toast.error(t('game.invalid_answer', 'This answer is not valid for the current category and letter'))
+        toast.error(
+          t('game.invalid_answer', 'This answer is not valid for the current category and letter')
+        )
         return
       }
-    }
-    catch (error) {
+    } catch (error) {
       const logger = useLogger()
       logger.error('Error validating answer:', error)
       // Allow submission if validation fails due to error
@@ -242,8 +214,7 @@ const submitAnswer = async () => {
     if (allPlayersSubmitted.value) {
       toast.info(t('game.all_submitted', 'All players have submitted!'))
     }
-  }
-  catch (error) {
+  } catch (error) {
     const logger = useLogger()
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))
@@ -328,7 +299,6 @@ useHead({
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/assets/alphabets/BACKGROUND.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -358,7 +328,9 @@ useHead({
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), var(--shadow-lg);
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-lg);
   position: relative;
   overflow: hidden;
 }
@@ -376,7 +348,14 @@ useHead({
 
 .back-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2), var(--shadow-md);
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-md);
+}
+
+.back-btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 4px;
 }
 
 .back-icon {
@@ -418,7 +397,9 @@ useHead({
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), var(--shadow-lg);
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-lg);
   color: var(--color-white);
   position: relative;
   overflow: hidden;
@@ -437,7 +418,14 @@ useHead({
 
 .pause-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2), var(--shadow-md);
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-md);
+}
+
+.pause-btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 4px;
 }
 
 .pause-btn svg {
@@ -645,6 +633,11 @@ useHead({
   cursor: not-allowed;
 }
 
+.submit-answer-btn:focus-visible {
+  outline: 3px solid rgba(255, 170, 0, 0.8);
+  outline-offset: 3px;
+}
+
 .all-submitted-message {
   width: 100%;
   max-width: 500px;
@@ -711,6 +704,11 @@ useHead({
     0 6px 0 rgba(58, 140, 20, 0.4),
     inset 0 2px 10px rgba(255, 255, 255, 0.2),
     var(--shadow-lg);
+}
+
+.next-btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 4px;
 }
 
 .next-icon {
