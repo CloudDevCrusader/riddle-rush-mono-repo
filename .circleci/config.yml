@@ -391,13 +391,17 @@ jobs:
 
             cd infrastructure/environments/<< parameters.environment >>
 
-            # Initialize Terraform if needed
+            # Initialize Terraform if needed (use backend for remote state)
             if [ ! -d ".terraform" ]; then
               echo "Initializing Terraform..."
-              terraform init -backend=false || terraform init
+              terraform init
             fi
 
-            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || true)
+            if echo "$AWS_CLOUDFRONT_DOMAIN" | grep -qE 'Warning:|No outputs found|^╷'; then
+              AWS_CLOUDFRONT_DOMAIN=""
+            fi
+            AWS_CLOUDFRONT_DOMAIN="$(echo "$AWS_CLOUDFRONT_DOMAIN" | tr -d '\r' | xargs)"
 
             if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
               echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
