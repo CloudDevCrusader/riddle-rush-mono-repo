@@ -167,10 +167,6 @@ jobs:
     description: 'Run SonarCloud code quality analysis'
     docker:
       - image: sonarsource/sonar-scanner-cli:latest
-    environment:
-      SONAR_TOKEN: ${SONAR_TOKEN}
-      SONAR_PROJECT_KEY: ${SONAR_PROJECT_KEY}
-      SONAR_ORGANIZATION: ${SONAR_ORGANIZATION}
     steps:
       - checkout
       - restore_cache:
@@ -180,13 +176,23 @@ jobs:
       - run:
           name: 'Run SonarCloud analysis'
           command: |
+            # CircleCI project-level environment variables are automatically available
             echo "Running SonarCloud analysis..."
-            echo "Project: ${SONAR_PROJECT_KEY}"
-            echo "Organization: ${SONAR_ORGANIZATION}"
+            echo "Project: $SONAR_PROJECT_KEY"
+            echo "Organization: $SONAR_ORGANIZATION"
+
+            # Verify variables are set
+            if [ -z "$SONAR_TOKEN" ] || [ -z "$SONAR_PROJECT_KEY" ] || [ -z "$SONAR_ORGANIZATION" ]; then
+              echo "ERROR: SonarCloud environment variables not set in CircleCI!"
+              echo "Please configure in: Project Settings > Environment Variables"
+              echo "Required: SONAR_TOKEN, SONAR_PROJECT_KEY, SONAR_ORGANIZATION"
+              exit 1
+            fi
+
             sonar-scanner \
-              -Dsonar.token="${SONAR_TOKEN}" \
-              -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
-              -Dsonar.organization="${SONAR_ORGANIZATION}"
+              -Dsonar.token="$SONAR_TOKEN" \
+              -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+              -Dsonar.organization="$SONAR_ORGANIZATION"
       - save_cache:
           key: sonar-cache-{{ checksum "sonar-project.properties" }}
           paths:
