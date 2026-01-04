@@ -230,6 +230,10 @@ jobs:
           command: |
             chmod +x scripts/ci-build.sh
             ./scripts/ci-build.sh
+      - persist_to_workspace:
+          root: .
+          paths:
+            - apps/game/.output
       - store_artifacts:
           path: apps/game/.output
           when: always
@@ -271,6 +275,8 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - install-dependencies
       # AWS CLI and Terraform are pre-installed in custom image
       - run:
@@ -297,6 +303,8 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - install-dependencies
       # AWS CLI and Terraform are pre-installed in custom image
       - run:
