@@ -1,4 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const isCI = !!process.env.CI
 // Allow testing against deployed sites via BASE_URL env var
@@ -7,6 +9,8 @@ const baseURL =
 const isDeployedTest =
   (baseURL.startsWith('http://') || baseURL.startsWith('https://')) &&
   !baseURL.includes('localhost')
+const configDir = dirname(fileURLToPath(import.meta.url))
+const repoRoot = resolve(configDir, '../..')
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -19,10 +23,12 @@ export default defineConfig({
   timeout: isDeployedTest ? 60000 : 45000, // 60s for deployed, 45s for local
 
   reporter: [
-    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+    ['html', { open: 'never', outputFolder: resolve(repoRoot, 'playwright-report') }],
     ['list'],
-    ['json', { outputFile: 'test-results/results.json' }],
-    ...(isCI ? [['junit', { outputFile: 'test-results/junit.xml' }] as const] : []),
+    ['json', { outputFile: resolve(repoRoot, 'test-results/results.json') }],
+    ...(isCI
+      ? [['junit', { outputFile: resolve(repoRoot, 'test-results/junit.xml') }] as const]
+      : []),
   ],
 
   use: {
@@ -67,5 +73,5 @@ export default defineConfig({
   ],
 
   // Output directories
-  outputDir: 'test-results/',
+  outputDir: resolve(repoRoot, 'test-results'),
 })
