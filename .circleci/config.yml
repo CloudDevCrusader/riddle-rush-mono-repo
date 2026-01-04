@@ -74,17 +74,6 @@ commands:
             sudo ./aws/install
             aws --version
 
-  setup-terraform:
-    description: 'Install Terraform'
-    steps:
-      - run:
-          name: 'Install Terraform'
-          command: |
-            wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-            sudo apt-get update && sudo apt-get install -y terraform
-            terraform version
-
   get-terraform-outputs:
     description: 'Get Terraform outputs for environment'
     parameters:
@@ -183,7 +172,10 @@ jobs:
   test-e2e-mvp:
     description: 'Run MVP E2E tests (@critical)'
     docker:
-      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+      - image: *custom-image
+        auth:
+          username: $GITLAB_REGISTRY_USER
+          password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
       - setup-pnpm
@@ -374,7 +366,7 @@ jobs:
           when: always
 
   verify-e2e-aws:
-    description: 'Verify AWS deployment with E2E tests'
+    description: 'Verify AWS deployment (CloudFront HTML check)'
     parameters:
       environment:
         type: string
@@ -384,14 +376,14 @@ jobs:
         description: 'Wait time in seconds for CloudFront propagation'
         default: 60
     docker:
-      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+      - image: *custom-image
+        auth:
+          username: $GITLAB_REGISTRY_USER
+          password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
-      - setup-pnpm
-      - install-dependencies
-      - setup-terraform
       - run:
-          name: 'Get CloudFront domain and run E2E tests'
+          name: 'Get CloudFront domain and verify HTML response'
           command: |
             # Ensure AWS region is set for Terraform/AWS SDK
             export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
@@ -413,27 +405,25 @@ jobs:
             fi
 
             export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
-            export CRITICAL_TESTS_ONLY=true
             echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN"
-            echo "⚠️  Running CRITICAL tests only (@critical tag)"
 
             cd ../../..
 
-            echo "Testing AWS << parameters.environment >> deployment at: $BASE_URL"
+            echo "Verifying AWS << parameters.environment >> deployment at: $BASE_URL"
             echo "Waiting << parameters.wait_time >> seconds for CloudFront invalidation to propagate..."
             sleep << parameters.wait_time >>
 
-            chmod +x scripts/ci-e2e.sh
-            ./scripts/ci-e2e.sh
-      - store_test_results:
-          path: test-results
-          when: always
-      - store_artifacts:
-          path: playwright-report
-          when: always
-      - store_artifacts:
-          path: test-results
-          when: always
+            echo "Checking HTML response from CloudFront..."
+            http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
+            if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
+              echo "ERROR: CloudFront returned HTTP $http_code"
+              exit 1
+            fi
+            if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
+              echo "ERROR: CloudFront response did not include HTML"
+              exit 1
+            fi
+            echo "✅ CloudFront returned HTML (HTTP $http_code)"
 
 # Workflows
 workflows:

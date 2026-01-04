@@ -6,6 +6,7 @@
 # - pnpm (via corepack)
 # - AWS CLI v2
 # - Terraform
+# - Playwright (browsers + deps)
 # - Common build dependencies
 #
 # Build and push:
@@ -32,6 +33,7 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     lsb-release \
     git \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install AWS CLI v2
@@ -51,6 +53,10 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     && rm -rf /var/lib/apt/lists/* \
     && terraform version
 
+# Install Playwright browsers and dependencies
+RUN npm install -g playwright@1.57.0 \
+    && playwright install --with-deps
+
 # Switch back to circleci user
 USER circleci
 
@@ -67,6 +73,7 @@ RUN echo "=== Installed Tools ===" \
     && npm --version \
     && corepack pnpm --version \
     && aws --version \
+    && playwright --version \
     && terraform version
 
 # Set working directory
