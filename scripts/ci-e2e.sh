@@ -19,6 +19,6 @@ if [ -n "${BASE_URL:-}" ]; then
   BASE_URL="${BASE_URL}" "${TEST_CMD[@]}"
 else
   log "Testing local build"
-  BASE_URL="/" pnpm -C apps/game run generate
-  BASE_URL="" PLAYWRIGHT_TEST_BASE_URL="http://localhost:3000" "${TEST_CMD[@]}"
+  NUXT_PUBLIC_BASE_URL="/" BASE_URL="/" pnpm -C apps/game run generate
+  NUXT_PUBLIC_BASE_URL="/" BASE_URL="" PLAYWRIGHT_TEST_BASE_URL="http://localhost:3000" "${TEST_CMD[@]}"
 fi

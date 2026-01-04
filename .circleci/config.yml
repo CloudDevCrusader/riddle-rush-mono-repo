@@ -232,84 +232,6 @@ jobs:
           path: test-results
           when: always
 
-  sonarcloud-check:
-    description: 'Run SonarCloud code quality analysis'
-    docker:
-      - image: sonarsource/sonar-scanner-cli:latest
-    steps:
-      - checkout
-      - run:
-          name: 'Prepare git history for SonarCloud'
-          command: |
-            # Ensure we have enough objects for SCM blame and avoid missing blob errors.
-            git fetch --prune --tags --force origin '+refs/heads/*:refs/remotes/origin/*' || true
-            git fetch --prune --tags --unshallow || true
-            git fetch --prune --tags --depth=100000 || true
-      - restore_cache:
-          keys:
-            - sonar-cache-{{ checksum "sonar-project.properties" }}
-            - sonar-cache-
-      - run:
-          name: 'Run SonarCloud analysis'
-          command: |
-            # CircleCI project-level environment variables are automatically available
-            echo "Running SonarCloud analysis..."
-            echo "Project: $SONAR_PROJECT_KEY"
-            echo "Organization: $SONAR_ORGANIZATION"
-
-            # Verify variables are set
-            if [ -z "$SONAR_TOKEN" ] || [ -z "$SONAR_PROJECT_KEY" ] || [ -z "$SONAR_ORGANIZATION" ]; then
-              echo "ERROR: SonarCloud environment variables not set in CircleCI!"
-              echo "Please configure in: Project Settings > Environment Variables"
-              echo "Required: SONAR_TOKEN, SONAR_PROJECT_KEY, SONAR_ORGANIZATION"
-              exit 1
-            fi
-
-            # Check if we have sufficient git history for blame
-            # Disable SCM/blame if repository is shallow or missing objects
-            IS_SHALLOW=$(git rev-parse --is-shallow-repository 2>/dev/null || echo "false")
-            GIT_DEPTH=$(git rev-list --count HEAD 2>/dev/null || echo "0")
-            echo "Git repository info:"
-            echo "  Is shallow: $IS_SHALLOW"
-            echo "  History depth: $GIT_DEPTH commits"
-
-            MISSING_OBJECTS="$(git fsck --no-reflogs --full 2>&1 | grep -E 'missing (blob|tree|commit)' || true)"
-            if [ -n "$MISSING_OBJECTS" ]; then
-              echo "⚠️  Warning: Missing git objects detected. Disabling SCM blame."
-              SCM_DISABLED="-Dsonar.scm.disabled=true"
-            elif [ "$IS_SHALLOW" = "true" ]; then
-              echo "⚠️  Warning: Shallow repository detected. Disabling SCM blame to prevent missing object errors."
-              echo "   SonarCloud will analyze code quality but won't show git blame information."
-              SCM_DISABLED="-Dsonar.scm.disabled=true"
-            elif [ "$GIT_DEPTH" -lt 10 ]; then
-              echo "⚠️  Warning: Very shallow git history (< 10 commits). Disabling SCM blame."
-              SCM_DISABLED="-Dsonar.scm.disabled=true"
-            else
-              echo "✓ Full git history available - SCM blame enabled"
-              SCM_DISABLED=""
-            fi
-
-            # Run SonarCloud scanner with timeout protection
-            # Note: This job is configured to not block other jobs in the workflow
-            # Failures here will be visible but won't stop the pipeline
-            timeout 1800 sonar-scanner \
-              -Dsonar.token="$SONAR_TOKEN" \
-              -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
-              -Dsonar.organization="$SONAR_ORGANIZATION" \
-              -Dsonar.scm.provider=git \
-              -Dsonar.scm.forceReloadAll=false \
-              $SCM_DISABLED || {
-              echo "⚠️  Warning: SonarCloud analysis timed out or failed"
-              echo "This may be due to git blame operations taking too long"
-              echo "Pipeline will continue - SonarCloud failure is non-blocking"
-              # Exit with failure code for visibility, but no other jobs depend on this
-              exit 1
-            }
-      - save_cache:
-          key: sonar-cache-{{ checksum "sonar-project.properties" }}
-          paths:
-            - .sonar/cache
-
   build:
     description: 'Build game app for production'
     docker:
@@ -610,13 +532,6 @@ workflows:
           filters:
             branches:
               only: /^development$/
-      # SonarCloud check runs in parallel (non-blocking)
-      - sonarcloud-check:
-          requires:
-            - test
-          filters:
-            branches:
-              only: /^development$/
       - test-e2e-mvp:
           requires:
             - build
@@ -642,15 +557,6 @@ workflows:
             tags:
               only: /^v.*/
       - build:
-          requires:
-            - test
-          filters:
-            branches:
-              only: /^main$/
-            tags:
-              only: /^v.*/
-      # SonarCloud check runs in parallel (non-blocking)
-      - sonarcloud-check:
           requires:
             - test
           filters:

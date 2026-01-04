@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const isCI = !!process.env.CI
+const timeoutScale = isCI ? 0.75 : 1
 // Allow testing against deployed sites via BASE_URL env var
 const baseURL =
   process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000'
@@ -20,7 +21,7 @@ export default defineConfig({
   workers: isCI ? 1 : undefined,
 
   // Global test timeout - increased for complex game flows
-  timeout: isDeployedTest ? 60000 : 45000, // 60s for deployed, 45s for local
+  timeout: Math.round((isDeployedTest ? 60000 : 45000) * timeoutScale), // 60s for deployed, 45s for local
 
   reporter: [
     ['html', { open: 'never', outputFolder: resolve(repoRoot, 'playwright-report') }],
@@ -45,14 +46,14 @@ export default defineConfig({
     video: 'on-first-retry',
 
     // Timeout settings - more generous for better reliability
-    navigationTimeout: isDeployedTest ? 30000 : 20000,
-    actionTimeout: isDeployedTest ? 15000 : 10000,
+    navigationTimeout: Math.round((isDeployedTest ? 30000 : 20000) * timeoutScale),
+    actionTimeout: Math.round((isDeployedTest ? 15000 : 10000) * timeoutScale),
   },
 
   // Web server - only start for local tests
   ...(!isDeployedTest && {
     webServer: {
-      command: 'npx serve .output/public -p 3000',
+      command: 'pnpm exec serve .output/public -l 3000',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180000, // Increased to 3 minutes for slower builds

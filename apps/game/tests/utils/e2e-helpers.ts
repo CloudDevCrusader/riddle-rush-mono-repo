@@ -9,14 +9,18 @@ import type { Page, Locator } from '@playwright/test'
  */
 
 // Timeout constants (in milliseconds)
+const isCI = !!process.env.CI
+const timeoutScale = isCI ? 0.75 : 1
+const scaleTimeout = (value: number) => Math.round(value * timeoutScale)
+
 export const TIMEOUTS = {
-  SHORT: 2000,
-  MEDIUM: 5000,
-  LONG: 15000,
-  VERY_LONG: 30000,
-  NAVIGATION: 20000,
-  ANIMATION: 2000,
-  NETWORK: 5000,
+  SHORT: scaleTimeout(2000),
+  MEDIUM: scaleTimeout(5000),
+  LONG: scaleTimeout(15000),
+  VERY_LONG: scaleTimeout(30000),
+  NAVIGATION: scaleTimeout(20000),
+  ANIMATION: scaleTimeout(2000),
+  NETWORK: scaleTimeout(5000),
 } as const
 
 /**

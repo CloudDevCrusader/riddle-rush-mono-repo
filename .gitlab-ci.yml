@@ -1,0 +1,37 @@
+stages:
+  - pages
+  - sonar
+
+default:
+  image: node:20-bullseye
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@10.27.0 --activate
+    - pnpm --version
+    - pnpm install --frozen-lockfile
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - .pnpm-store/
+
+variables:
+  GIT_DEPTH: '0'
+
+pages:
+  stage: pages
+  script:
+    - pnpm --filter @riddle-rush/docs run generate
+    - mkdir -p public
+    - cp -r apps/docs/.output/public/* public/
+  artifacts:
+    paths:
+      - public
+
+sonarcloud:
+  stage: sonar
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    GIT_DEPTH: '0'
+  script:
+    - sonar-scanner -Dsonar.token="$SONAR_TOKEN" -Dsonar.projectKey="$SONAR_PROJECT_KEY" -Dsonar.organization="$SONAR_ORGANIZATION"

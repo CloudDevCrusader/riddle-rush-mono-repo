@@ -42,7 +42,10 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
 
   app: {
-    baseURL: process.env.BASE_URL || (process.env.CI ? '/riddle-rush-nuxt-pwa/' : '/'),
+    baseURL:
+      process.env.NUXT_PUBLIC_BASE_URL ||
+      process.env.BASE_URL ||
+      (process.env.CI ? '/riddle-rush-nuxt-pwa/' : '/'),
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       charset: 'utf-8',
@@ -97,7 +100,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      baseUrl: process.env.BASE_URL || (process.env.CI ? '/riddle-rush-nuxt-pwa/' : '/'),
+      baseUrl:
+        process.env.NUXT_PUBLIC_BASE_URL ||
+        process.env.BASE_URL ||
+        (process.env.CI ? '/riddle-rush-nuxt-pwa/' : '/'),
       googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID || '',
       appVersion: process.env.APP_VERSION || '1.0.0',
       environment: process.env.NODE_ENV || 'development',
