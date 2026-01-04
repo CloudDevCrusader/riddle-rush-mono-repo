@@ -180,12 +180,40 @@ jobs:
           path: apps/game/coverage
           when: always
 
+  test-e2e-mvp:
+    description: 'Run MVP E2E tests (@critical)'
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+    steps:
+      - checkout
+      - setup-pnpm
+      - install-dependencies
+      - run:
+          name: 'Run MVP E2E tests'
+          command: |
+            export CRITICAL_TESTS_ONLY=true
+            chmod +x scripts/ci-e2e.sh
+            ./scripts/ci-e2e.sh
+      - store_test_results:
+          path: test-results
+          when: always
+      - store_artifacts:
+          path: playwright-report
+          when: always
+      - store_artifacts:
+          path: test-results
+          when: always
+
   sonarcloud-check:
     description: 'Run SonarCloud code quality analysis'
     docker:
       - image: sonarsource/sonar-scanner-cli:latest
     steps:
       - checkout
+      - run:
+          name: 'Fetch full git history for Sonar blame'
+          command: |
+            git fetch --unshallow || git fetch --depth=200
       - restore_cache:
           keys:
             - sonar-cache-{{ checksum "sonar-project.properties" }}
@@ -435,14 +463,13 @@ workflows:
           filters:
             branches:
               only: /^main$/
-      # E2E tests (can be triggered manually via CircleCI UI)
-      - test-e2e-local:
+      # MVP E2E tests (@critical only)
+      - test-e2e-mvp:
           requires:
             - build
           filters:
             branches:
               only: /^(main|development|staging)$/
-            # Note: Can be set to manual in CircleCI UI project settings
 
   # Development deployment workflow
   deploy-dev:
