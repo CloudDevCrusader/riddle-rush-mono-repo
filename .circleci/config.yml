@@ -9,9 +9,9 @@ commands:
     description: 'Setup pnpm via corepack'
     steps:
       - run:
-          name: 'Enable corepack and prepare pnpm'
+          name: 'Prepare pnpm with corepack'
           command: |
-            # Setup user directories
+            # Setup user directories for corepack cache
             export COREPACK_HOME="$HOME/.corepack"
             export PNPM_HOME="$HOME/.local/share/pnpm"
             export PATH="$PNPM_HOME:$COREPACK_HOME/bin:$PATH"
@@ -21,17 +21,15 @@ commands:
             PNPM_VERSION=$(grep -oE '"packageManager"\s*:\s*"pnpm@[^"]*"' package.json | grep -oE 'pnpm@[^"]*' | cut -d'@' -f2 || echo "10.27.0")
             echo "Using pnpm version: ${PNPM_VERSION}"
 
-            # Enable corepack (Node.js 16.9+ includes corepack)
-            corepack enable
-
-            # Prepare pnpm (downloads to user cache)
+            # Prepare pnpm (downloads to user cache, no system-wide installation)
             corepack prepare "pnpm@${PNPM_VERSION}" --activate
 
-            # Create pnpm wrapper function for all subsequent steps
+            # Create pnpm wrapper that always uses corepack (avoids permission issues)
             echo 'pnpm() { corepack pnpm "$@"; }' >> "$BASH_ENV"
             echo 'export -f pnpm 2>/dev/null || true' >> "$BASH_ENV"
 
             # Verify pnpm works
+            echo "Verifying pnpm installation..."
             corepack pnpm --version
 
   install-dependencies:
