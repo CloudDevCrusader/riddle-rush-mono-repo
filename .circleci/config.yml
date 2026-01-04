@@ -352,6 +352,12 @@ jobs:
 
             cd infrastructure/environments/development
             terraform init -no-color -input=false -reconfigure
+            if ! terraform state list | grep -q "module.website.aws_cloudfront_origin_access_control.website"; then
+              oac_id="$(aws cloudfront list-origin-access-controls --query "OriginAccessControlList.Items[?Name=='riddle-rush-pwa-oac-development'].Id | [0]" --output text)"
+              if [ -n "$oac_id" ] && [ "$oac_id" != "None" ]; then
+                terraform import module.website.aws_cloudfront_origin_access_control.website "$oac_id"
+              fi
+            fi
             terraform plan -no-color -out=tfplan
             terraform apply -no-color -auto-approve tfplan
             cd ../../..
@@ -419,6 +425,12 @@ jobs:
 
             cd infrastructure/environments/prod
             terraform init -no-color -input=false -reconfigure
+            if ! terraform state list | grep -q "module.website.aws_cloudfront_origin_access_control.website"; then
+              oac_id="$(aws cloudfront list-origin-access-controls --query "OriginAccessControlList.Items[?Name=='riddle-rush-pwa-oac-production'].Id | [0]" --output text)"
+              if [ -n "$oac_id" ] && [ "$oac_id" != "None" ]; then
+                terraform import module.website.aws_cloudfront_origin_access_control.website "$oac_id"
+              fi
+            fi
             terraform plan -no-color -out=tfplan
             terraform apply -no-color -auto-approve tfplan
             cd ../../..

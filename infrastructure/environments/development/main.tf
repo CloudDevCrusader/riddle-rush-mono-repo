@@ -32,6 +32,9 @@ provider "aws" {
   }
 }
 
+# Resolve account ID to stabilize the dev bucket name when not explicitly set.
+data "aws_caller_identity" "current" {}
+
 # S3 + CloudFront Module
 module "website" {
   source = "../../modules/s3-cloudfront"
@@ -39,7 +42,7 @@ module "website" {
   project_name                        = var.project_name
   environment                         = "development"
   aws_region                          = var.aws_region
-  bucket_name                         = var.bucket_name
+  bucket_name                         = var.bucket_name != "" ? var.bucket_name : "${var.project_name}-dev-${data.aws_caller_identity.current.account_id}"
   domain_name                         = var.domain_name
   certificate_arn                     = var.certificate_arn
   cloudfront_price_class              = var.cloudfront_price_class
