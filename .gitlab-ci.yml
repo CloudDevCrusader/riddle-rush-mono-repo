@@ -20,6 +20,7 @@ variables:
 
 pages:
   stage: pages
+  image: node:20-bullseye
   script:
     - pnpm --filter @riddle-rush/docs run generate
     - mkdir -p public
