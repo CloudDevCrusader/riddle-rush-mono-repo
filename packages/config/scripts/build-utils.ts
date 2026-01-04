@@ -98,10 +98,10 @@ export function getWorkspacePackages(workspaceRoot?: string): string[] {
  */
 export function isCI(): boolean {
   return !!(
-    process.env.CI
-    || process.env.GITLAB_CI
-    || process.env.GITHUB_ACTIONS
-    || process.env.CIRCLECI
+    process.env.CI ||
+    process.env.GITLAB_CI ||
+    process.env.GITHUB_ACTIONS ||
+    process.env.CIRCLECI
   )
 }
 
@@ -110,13 +110,7 @@ export function isCI(): boolean {
  */
 export function getBaseURL(environment?: string): string {
   if (environment === 'production' || process.env.NODE_ENV === 'production') {
-    return process.env.BASE_URL || '/riddle-rush-nuxt-pwa/'
-  }
-  if (environment === 'staging') {
-    return '/staging/'
-  }
-  if (environment === 'development') {
-    return '/dev/'
+    return process.env.BASE_URL || '/'
   }
   return process.env.BASE_URL || '/'
 }

@@ -67,6 +67,11 @@ if [ -z "$CI" ]; then
   # Build the application
   echo -e "\n🏗️  Building application..."
   cd apps/game
+  # Use NODE_ENV if set, otherwise default to production
+  if [ -z "$NODE_ENV" ]; then
+    export NODE_ENV=production
+  fi
+  echo -e "  ${BLUE}Building with NODE_ENV=${NODE_ENV}${NC}"
   BASE_URL=/ pnpm run generate
   cd ../..
 else

@@ -60,15 +60,30 @@ pnpm run format:check # Check formatting
 
 ### Deployment
 
-#### GitLab Pages (Default)
+#### AWS (S3 + CloudFront) - Recommended
 
 ```bash
-./scripts/deploy-prod.sh     # Deploy to production (main branch)
-./scripts/deploy-staging.sh  # Deploy to staging
-./scripts/deploy-dev.sh      # Deploy to development
+# Production deployment (with optional version tagging)
+./scripts/deploy-prod.sh          # Deploy to production
+./scripts/deploy-prod.sh 1.2.0    # Deploy with version tag
+
+# Development deployment
+./scripts/deploy-dev.sh            # Deploy to development
+
+# Staging deployment (still uses GitLab Pages)
+./scripts/deploy-staging.sh        # Deploy to staging
 ```
 
-#### AWS (S3 + CloudFront)
+**Note:** `deploy-prod.sh` and `deploy-dev.sh` automatically load AWS configuration from Terraform outputs. They will:
+
+- Load AWS credentials and configuration
+- Run pre-deployment checks (lint, typecheck, tests)
+- Build and deploy to AWS S3 + CloudFront
+- Display deployment URLs
+
+#### Manual AWS Deployment
+
+For manual deployment without the scripts:
 
 ```bash
 # Quick deployment (S3 only)
@@ -84,6 +99,12 @@ export AWS_REGION=eu-central-1
 
 # Test against AWS deployment
 BASE_URL=https://your-domain.com pnpm run test:e2e
+```
+
+#### GitLab Pages (Legacy - Staging only)
+
+```bash
+./scripts/deploy-staging.sh  # Deploy to staging (GitLab Pages)
 ```
 
 See [AWS Deployment Guide](docs/AWS-DEPLOYMENT.md) for detailed setup instructions.
@@ -441,23 +462,27 @@ See `infrastructure/README.md` and `docs/TERRAFORM-SETUP.md` for detailed setup 
 ## Additional Resources
 
 ### Deployment & Infrastructure
+
 - **AWS Deployment**: See `docs/AWS-DEPLOYMENT.md` for comprehensive AWS setup
 - **Terraform Setup**: See `docs/TERRAFORM-SETUP.md` for Terraform infrastructure guide
 - **Docker CI Image**: See `docs/DOCKER-CI-IMAGE.md` for custom Docker image documentation
 - **Monorepo CI Optimization**: See `docs/MONOREPO-CI-OPTIMIZATION.md` for change detection strategy
 
 ### Optimization & Performance
+
 - **Asset Optimization**: See `docs/ASSET-OPTIMIZATION.md` for asset loading strategies and image optimization
 - **AWS Asset Optimization**: See `docs/AWS-ASSET-OPTIMIZATION.md` for CloudFront CDN integration and cost optimization
 - **Build Optimization**: See `docs/BUILD-OPTIMIZATION.md` for build performance optimizations
 
 ### Development & Testing
+
 - **Testing Guide**: See `docs/TESTING.md` for detailed testing documentation
 - **Development Guide**: See `docs/DEVELOPMENT.md` for refactoring history and optimizations
 - **Dependency Management**: See `docs/DEPENDENCY-MANAGEMENT.md` for dependency upgrade workflows
 - **Useful Packages**: See `docs/USEFUL-PACKAGES.md` for recommended Nuxt packages and plugins
 
 ### Project Information
+
 - **Project History**: See `docs/PROJECT-HISTORY.md` for consolidated history of completed work
 - **Game Workflow**: See `docs/WORKFLOW.md` for complete game flow documentation
 - **MVP Tasks**: See `docs/MVP-TASKS.md` for critical tasks and known issues

@@ -8,8 +8,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
-    'nuxt-gtag',
-    '@nuxt/image',
     '@nuxt/eslint',
   ],
   ssr: false,
@@ -30,7 +28,7 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['composables', 'composables/**', 'services'],
   },
-  devtools: { enabled: false },
+  devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
   app: {
     baseURL: process.env.BASE_URL || (process.env.CI ? '/riddle-rush-nuxt-pwa/' : '/'),
@@ -144,21 +142,6 @@ export default defineNuxtConfig({
 
   typescript: { strict: true },
 
-  gtag: {
-    // Only enable when GA ID is provided
-    // Note: nuxt-gtag is disabled due to Nuxt 4 incompatibility
-    // This config is kept for when the module is updated
-    ...(process.env.GOOGLE_ANALYTICS_ID
-      ? {
-          id: process.env.GOOGLE_ANALYTICS_ID,
-          config: {
-            anonymize_ip: true,
-            cookie_flags: 'SameSite=None;Secure',
-          },
-        }
-      : {}),
-  } as Record<string, unknown>,
-
   i18n: {
     locales: [
       { code: 'de', language: 'de-DE', file: 'de.json', name: 'Deutsch' },
@@ -167,7 +150,10 @@ export default defineNuxtConfig({
     defaultLocale: 'de',
     langDir: 'locales',
     strategy: 'no_prefix',
-    detectBrowserLanguage: false,
+    detectBrowserLanguage: {
+      useCookie: true,
+      fallbackLocale: 'de',
+    },
   },
 
   pwa: {
@@ -282,10 +268,10 @@ export default defineNuxtConfig({
       ],
     },
     devOptions: {
-      enabled: true,
+      enabled: process.env.NODE_ENV !== 'production',
       type: 'module',
       /* Suppress warnings about missing files in dev mode */
-      suppressWarnings: true,
+      suppressWarnings: process.env.NODE_ENV !== 'production',
     },
   },
 })

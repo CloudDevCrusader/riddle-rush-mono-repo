@@ -40,10 +40,9 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         inspect({
           enabled: true,
           build: false,
-        }),
+        })
       )
-    }
-    catch {
+    } catch {
       // Plugin not installed, skip
     }
 
@@ -54,37 +53,13 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         VueDevTools({
           enabled: true,
           componentInspector: true,
-        }),
+        })
       )
-    }
-    catch {
+    } catch {
       // Plugin not installed, skip
     }
 
-    try {
-      // Type checking and linting during dev
-      const { checker } = require('vite-plugin-checker')
-      plugins.push(
-        checker({
-          typescript: {
-            tsconfigPath: options.root ? resolve(options.root, 'tsconfig.json') : 'tsconfig.json',
-            root: options.root || process.cwd(),
-          },
-          eslint: {
-            lintCommand: 'eslint "./**/*.{ts,tsx,vue}"',
-            dev: {
-              logLevel: ['error', 'warning'],
-            },
-          },
-          vueTsc: {
-            tsconfigPath: options.root ? resolve(options.root, 'tsconfig.json') : 'tsconfig.json',
-          },
-        }),
-      )
-    }
-    catch {
-      // Plugin not installed, skip
-    }
+    // Type checking is handled by 'nuxt typecheck' command, not in dev server
 
     try {
       // Visualize bundle size
@@ -96,10 +71,9 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
           open: false,
           gzipSize: true,
           brotliSize: true,
-        }) as Plugin,
+        }) as Plugin
       )
-    }
-    catch {
+    } catch {
       // Plugin not installed, skip
     }
   }
@@ -123,10 +97,9 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         gzipSize: true,
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
-      }) as Plugin,
+      }) as Plugin
     )
-  }
-  catch {
+  } catch {
     // Plugin not installed, skip
   }
 
@@ -138,15 +111,8 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
  */
 export function getOptimizeDeps() {
   return {
-    include: [
-      'pinia',
-      '@vueuse/core',
-      '@vueuse/nuxt',
-      'idb',
-    ],
-    exclude: [
-      '@nuxt/test-utils',
-    ],
+    include: ['pinia', '@vueuse/core', '@vueuse/nuxt', 'idb'],
+    exclude: ['@nuxt/test-utils'],
   }
 }
 
@@ -172,29 +138,6 @@ export function getBuildConfig() {
         },
         format: {
           comments: false,
-        },
-      },
-      // Optimize chunk splitting
-      rollupOptions: {
-        output: {
-          manualChunks: (id: string) => {
-            // Vendor chunk for node_modules
-            if (id.includes('node_modules')) {
-              // Separate large libraries
-              if (id.includes('pinia')) return 'vendor-pinia'
-              if (id.includes('@vueuse')) return 'vendor-vueuse'
-              if (id.includes('howler')) return 'vendor-howler'
-              return 'vendor'
-            }
-            // Separate layouts
-            if (id.includes('/layouts/')) return 'layouts'
-            // Return null to use default chunking
-            return null
-          },
-          // Optimize asset naming
-          chunkFileNames: '_nuxt/[name]-[hash].js',
-          entryFileNames: '_nuxt/[name]-[hash].js',
-          assetFileNames: '_nuxt/[name]-[hash][extname]',
         },
       },
     },
