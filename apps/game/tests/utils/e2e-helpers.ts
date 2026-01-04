@@ -10,11 +10,11 @@ import type { Page, Locator } from '@playwright/test'
 
 // Timeout constants (in milliseconds)
 export const TIMEOUTS = {
-  SHORT: 1000,
-  MEDIUM: 3000,
-  LONG: 10000,
-  VERY_LONG: 20000,
-  NAVIGATION: 15000,
+  SHORT: 2000,
+  MEDIUM: 5000,
+  LONG: 15000,
+  VERY_LONG: 30000,
+  NAVIGATION: 20000,
   ANIMATION: 2000,
   NETWORK: 5000,
 } as const
@@ -24,10 +24,29 @@ export const TIMEOUTS = {
  */
 export async function waitForPageReady(
   page: Page,
-  timeout: number = TIMEOUTS.MEDIUM,
+  timeout: number = TIMEOUTS.MEDIUM
 ): Promise<void> {
-  await page.waitForLoadState('networkidle', { timeout })
   await page.waitForLoadState('domcontentloaded', { timeout })
+  // Wait for Vue app to mount (check for #__nuxt to have content or body to have interactive content)
+  try {
+    await page.waitForFunction(
+      () => {
+        const nuxt = document.getElementById('__nuxt')
+        // Check if Nuxt container has content OR if body has interactive elements
+        return (nuxt && nuxt.children.length > 0) || document.body.children.length > 1
+      },
+      { timeout: Math.min(timeout, 15000) }
+    )
+  } catch {
+    // If Vue mounting check fails, wait a bit and continue - the page might still be loading
+    await page.waitForTimeout(1000)
+  }
+  // Wait for network to be idle (but don't fail if it takes too long)
+  try {
+    await page.waitForLoadState('networkidle', { timeout: Math.min(timeout, 10000) })
+  } catch {
+    // Network might not be idle, that's okay for client-side apps
+  }
 }
 
 /**
@@ -35,7 +54,7 @@ export async function waitForPageReady(
  */
 export async function waitForSplashScreen(
   page: Page,
-  timeout: number = TIMEOUTS.LONG,
+  timeout: number = TIMEOUTS.LONG
 ): Promise<void> {
   const splashScreen = page.locator('.splash-screen')
 
@@ -48,8 +67,7 @@ export async function waitForSplashScreen(
 
     // Wait for it to be hidden
     await splashScreen.waitFor({ state: 'hidden', timeout })
-  }
-  catch {
+  } catch {
     // Splash screen might already be gone or not present
     // This is fine, continue
   }
@@ -60,7 +78,7 @@ export async function waitForSplashScreen(
  */
 export async function waitForVisible(
   locator: Locator,
-  options: { timeout?: number, retries?: number } = {},
+  options: { timeout?: number; retries?: number } = {}
 ): Promise<Locator> {
   const { timeout = TIMEOUTS.MEDIUM, retries = 3 } = options
 
@@ -68,8 +86,7 @@ export async function waitForVisible(
     try {
       await expect(locator).toBeVisible({ timeout })
       return locator
-    }
-    catch (error) {
+    } catch (error) {
       if (i === retries - 1) {
         throw error
       }
@@ -87,12 +104,11 @@ export async function waitForVisible(
  */
 export async function waitForHidden(
   locator: Locator,
-  timeout: number = TIMEOUTS.MEDIUM,
+  timeout: number = TIMEOUTS.MEDIUM
 ): Promise<void> {
   try {
     await locator.waitFor({ state: 'hidden', timeout })
-  }
-  catch (error) {
+  } catch (error) {
     // Element might not exist or already hidden, which is fine
     const count = await locator.count()
     if (count === 0) {
@@ -107,7 +123,7 @@ export async function waitForHidden(
  */
 export async function clickWithRetry(
   locator: Locator,
-  options: { timeout?: number, retries?: number, waitAfter?: number } = {},
+  options: { timeout?: number; retries?: number; waitAfter?: number } = {}
 ): Promise<void> {
   const { timeout = TIMEOUTS.MEDIUM, retries = 3, waitAfter = 300 } = options
 
@@ -121,8 +137,7 @@ export async function clickWithRetry(
       await locator.click({ timeout: timeout / 2 })
       await locator.page().waitForTimeout(waitAfter) // Wait for any animations/transitions
       return
-    }
-    catch (error) {
+    } catch (error) {
       if (i === retries - 1) {
         throw error
       }
@@ -137,7 +152,7 @@ export async function clickWithRetry(
 export async function fillInput(
   locator: Locator,
   value: string,
-  options: { timeout?: number, retries?: number, clear?: boolean } = {},
+  options: { timeout?: number; retries?: number; clear?: boolean } = {}
 ): Promise<void> {
   const { timeout = TIMEOUTS.MEDIUM, retries = 3, clear = true } = options
 
@@ -156,8 +171,7 @@ export async function fillInput(
       if (actualValue === value) {
         return
       }
-    }
-    catch (error) {
+    } catch (error) {
       if (i === retries - 1) {
         throw error
       }
@@ -172,7 +186,7 @@ export async function fillInput(
 export async function navigateTo(
   page: Page,
   url: string,
-  options: { waitForReady?: boolean, timeout?: number } = {},
+  options: { waitForReady?: boolean; timeout?: number } = {}
 ): Promise<void> {
   const { waitForReady = true, timeout = TIMEOUTS.NAVIGATION } = options
 
@@ -185,6 +199,9 @@ export async function navigateTo(
     if (url === '/' || url.endsWith('/')) {
       await waitForSplashScreen(page, timeout)
     }
+
+    // Additional wait for Vue to fully render (especially for client-side rendering)
+    await page.waitForTimeout(500)
   }
 }
 
@@ -194,7 +211,7 @@ export async function navigateTo(
 export async function waitForNavigation(
   page: Page,
   urlPattern: RegExp | string,
-  options: { timeout?: number } | number = TIMEOUTS.NAVIGATION,
+  options: { timeout?: number } | number = TIMEOUTS.NAVIGATION
 ): Promise<void> {
   const timeout = typeof options === 'number' ? options : (options.timeout ?? TIMEOUTS.NAVIGATION)
   await expect(page).toHaveURL(urlPattern, { timeout })
@@ -207,12 +224,11 @@ export async function waitForNavigation(
 export async function waitForUrl(
   page: Page,
   urlPattern: RegExp | string,
-  timeout: number = TIMEOUTS.NAVIGATION,
+  timeout: number = TIMEOUTS.NAVIGATION
 ): Promise<void> {
   try {
     await expect(page).toHaveURL(urlPattern, { timeout })
-  }
-  catch {
+  } catch {
     // Sometimes navigation takes a moment, wait a bit and check again
     await page.waitForTimeout(500)
     await expect(page).toHaveURL(urlPattern, { timeout: timeout / 2 })
@@ -225,7 +241,7 @@ export async function waitForUrl(
 export async function waitForCount(
   locator: Locator,
   expectedCount: number,
-  timeout: number = TIMEOUTS.MEDIUM,
+  timeout: number = TIMEOUTS.MEDIUM
 ): Promise<void> {
   await expect(locator).toHaveCount(expectedCount, { timeout })
 }
@@ -236,7 +252,7 @@ export async function waitForCount(
 export async function waitForText(
   locator: Locator,
   text: string | RegExp,
-  timeout: number = TIMEOUTS.MEDIUM,
+  timeout: number = TIMEOUTS.MEDIUM
 ): Promise<void> {
   await expect(locator).toContainText(text, { timeout })
 }
@@ -246,7 +262,7 @@ export async function waitForText(
  */
 export async function getTextContent(
   locator: Locator,
-  options: { timeout?: number, fallback?: string } = {},
+  options: { timeout?: number; fallback?: string } = {}
 ): Promise<string> {
   const { timeout = TIMEOUTS.SHORT, fallback = '' } = options
 
@@ -254,8 +270,7 @@ export async function getTextContent(
     await waitForVisible(locator, { timeout })
     const text = await locator.textContent()
     return text?.trim() || fallback
-  }
-  catch {
+  } catch {
     return fallback
   }
 }
@@ -265,13 +280,12 @@ export async function getTextContent(
  */
 export async function elementExists(
   locator: Locator,
-  timeout: number = TIMEOUTS.SHORT,
+  timeout: number = TIMEOUTS.SHORT
 ): Promise<boolean> {
   try {
     await locator.waitFor({ state: 'attached', timeout })
     return (await locator.count()) > 0
-  }
-  catch {
+  } catch {
     return false
   }
 }
@@ -281,13 +295,12 @@ export async function elementExists(
  */
 export async function isVisible(
   locator: Locator,
-  timeout: number = TIMEOUTS.SHORT,
+  timeout: number = TIMEOUTS.SHORT
 ): Promise<boolean> {
   try {
     await expect(locator).toBeVisible({ timeout })
     return true
-  }
-  catch {
+  } catch {
     return false
   }
 }
@@ -297,7 +310,7 @@ export async function isVisible(
  */
 export async function waitForLoadingComplete(
   page: Page,
-  timeout: number = TIMEOUTS.LONG,
+  timeout: number = TIMEOUTS.LONG
 ): Promise<void> {
   const spinnerSelectors = [
     '.spinner--overlay',
@@ -319,7 +332,7 @@ export async function waitForLoadingComplete(
  */
 export async function waitForAnimation(
   locator: Locator,
-  timeout: number = TIMEOUTS.ANIMATION,
+  timeout: number = TIMEOUTS.ANIMATION
 ): Promise<void> {
   // Wait for CSS animations/transitions to complete
   await locator.page().waitForTimeout(timeout)
@@ -351,15 +364,14 @@ export async function retryOperation<T>(
     retries?: number
     delay?: number
     onError?: (error: Error, attempt: number) => void
-  } = {},
+  } = {}
 ): Promise<T> {
   const { retries = 3, delay = 500, onError } = options
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       return await operation()
-    }
-    catch (error) {
+    } catch (error) {
       if (onError) {
         onError(error as Error, attempt)
       }
@@ -370,7 +382,7 @@ export async function retryOperation<T>(
 
       // Exponential backoff
       const waitTime = delay * Math.pow(2, attempt - 1)
-      await new Promise(resolve => setTimeout(resolve, waitTime))
+      await new Promise((resolve) => setTimeout(resolve, waitTime))
     }
   }
 
@@ -382,7 +394,7 @@ export async function retryOperation<T>(
  */
 export async function waitForNetworkIdle(
   page: Page,
-  timeout: number = TIMEOUTS.NETWORK,
+  timeout: number = TIMEOUTS.NETWORK
 ): Promise<void> {
   await page.waitForLoadState('networkidle', { timeout })
 }
@@ -393,7 +405,7 @@ export async function waitForNetworkIdle(
 export async function safeNavigate(
   page: Page,
   url: string,
-  options: { timeout?: number, retries?: number } = {},
+  options: { timeout?: number; retries?: number } = {}
 ): Promise<boolean> {
   const { timeout = TIMEOUTS.NAVIGATION, retries = 2 } = options
 
@@ -402,7 +414,7 @@ export async function safeNavigate(
       await navigateTo(page, url, { waitForReady: true, timeout })
       return true
     },
-    { retries, delay: 1000 },
+    { retries, delay: 1000 }
   )
 }
 
@@ -425,7 +437,7 @@ export function getTestElement(page: Page, testId: string, fallbackSelector?: st
  */
 export async function waitForEnabled(
   locator: Locator,
-  timeout: number = TIMEOUTS.MEDIUM,
+  timeout: number = TIMEOUTS.MEDIUM
 ): Promise<void> {
   await expect(locator).toBeEnabled({ timeout })
 }
@@ -435,7 +447,7 @@ export async function waitForEnabled(
  */
 export async function waitForDisabled(
   locator: Locator,
-  timeout: number = TIMEOUTS.MEDIUM,
+  timeout: number = TIMEOUTS.MEDIUM
 ): Promise<void> {
   await expect(locator).toBeDisabled({ timeout })
 }

@@ -12,7 +12,9 @@ PATTERNS=(
   
   # AWS
   'AKIA[0-9A-Z]{16}'
-  'aws[_-]?secret[_-]?access[_-]?key'
+  # Match AWS secret access key with actual value (not just variable name)
+  # This pattern requires an actual value after = or :, not a variable reference
+  'aws[_-]?secret[_-]?access[_-]?key\s*[=:]\s*["\x27]?[a-zA-Z0-9/+=]{20,}["\x27]?'
   
   # Private keys
   '-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----'
@@ -50,6 +52,16 @@ IGNORE_FILES=(
   ".env.example"
 )
 
+# Patterns to ignore (context-specific false positives)
+# These patterns indicate the line is just exporting a variable, not setting a secret value
+IGNORE_PATTERNS=(
+  # Environment variable exports without values (just variable names)
+  'export\s+[A-Z_]+=\$\{[A-Z_]+\}'
+  'export\s+[A-Z_]+=\$[A-Z_]+'
+  '[A-Z_]+=\$\{[A-Z_]+\}'
+  '[A-Z_]+=\$[A-Z_]+'
+)
+
 check_file() {
   local file="$1"
   
@@ -64,11 +76,34 @@ check_file() {
   [ -f "$file" ] || return 0
   
   for pattern in "${PATTERNS[@]}"; do
-    if grep -qiE "$pattern" "$file" 2>/dev/null; then
-      echo -e "${RED}BLOCKED${NC}: Potential secret found in $file"
-      echo "Pattern: $pattern"
-      grep -niE "$pattern" "$file" 2>/dev/null | head -3
-      return 1
+    # Check if pattern matches
+    local matched_lines=$(grep -niE "$pattern" "$file" 2>/dev/null || true)
+    if [ -n "$matched_lines" ]; then
+      # Check each matched line to see if it's a false positive
+      local has_real_secret=false
+      while IFS= read -r line; do
+        [ -z "$line" ] && continue
+        local is_false_positive=false
+        # Check if this line matches any ignore pattern (environment variable export)
+        for ignore_pattern in "${IGNORE_PATTERNS[@]}"; do
+          if echo "$line" | grep -qiE "$ignore_pattern" 2>/dev/null; then
+            is_false_positive=true
+            break
+          fi
+        done
+        
+        if [ "$is_false_positive" = false ]; then
+          has_real_secret=true
+          break
+        fi
+      done <<< "$matched_lines"
+      
+      if [ "$has_real_secret" = true ]; then
+        echo -e "${RED}BLOCKED${NC}: Potential secret found in $file"
+        echo "Pattern: $pattern"
+        echo "$matched_lines" | head -3
+        return 1
+      fi
     fi
   done
   
