@@ -1,3 +1,4 @@
+import { defineStore } from 'pinia'
 import { useIndexedDB } from '../composables/useIndexedDB'
 import { useStatistics } from '../composables/useStatistics'
 import { useLogger } from '../composables/useLogger'
