@@ -5,8 +5,9 @@ import {
   getOptimizeDeps,
   getBuildConfig,
 } from '@riddle-rush/config/vite'
+import type { BuildOptions, PluginOption } from 'vite'
 
-const baseBuild = getBuildConfig().build
+const baseBuild = getBuildConfig().build as unknown as BuildOptions
 
 export default defineNuxtConfig({
   modules: [
@@ -135,11 +136,13 @@ export default defineNuxtConfig({
       },
     },
     plugins: [
-      ...getDevPlugins({
+      ...(getDevPlugins({
         isDev: process.env.NODE_ENV !== 'production',
         root: new URL('.', import.meta.url).pathname,
-      }),
-      ...(process.env.NODE_ENV === 'production' ? getBuildPlugins() : []),
+      }) as unknown as PluginOption[]),
+      ...((process.env.NODE_ENV === 'production'
+        ? getBuildPlugins()
+        : []) as unknown as PluginOption[]),
     ],
     optimizeDeps: getOptimizeDeps(),
     build: {

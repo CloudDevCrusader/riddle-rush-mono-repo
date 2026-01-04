@@ -6,7 +6,7 @@ import type { PluginOption } from 'vite'
 
 export default defineConfig({
   plugins: [
-    vue() as PluginOption,
+    vue(),
     AutoImport({
       imports: [
         'vue',
@@ -65,8 +65,8 @@ export default defineConfig({
         },
       ],
       dts: false,
-    }) as PluginOption,
-  ],
+    }),
+  ] as unknown as PluginOption[],
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./', import.meta.url)),
