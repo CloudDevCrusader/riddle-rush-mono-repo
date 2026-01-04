@@ -211,10 +211,7 @@ jobs:
   test-e2e-mvp:
     description: 'Run MVP E2E tests (@critical)'
     docker:
-      - image: *custom-image
-        auth:
-          username: $GITLAB_REGISTRY_USER
-          password: $GITLAB_REGISTRY_TOKEN
+      - image: mcr.microsoft.com/playwright:v1.57.0-noble
     steps:
       - checkout
       - setup-pnpm
