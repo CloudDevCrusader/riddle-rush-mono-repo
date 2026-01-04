@@ -117,6 +117,9 @@ if [ -f "$TERRAFORM_ENV_FILE" ]; then
     source "$TERRAFORM_ENV_FILE" 2>/dev/null || . "$TERRAFORM_ENV_FILE" 2>/dev/null || true
     set +a  # Disable automatic export
     echo -e "  ${GREEN}✓${NC} Loaded from ${TERRAFORM_ENV_FILE}"
+    
+    # Store values from .env file for comparison
+    ENV_CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
 fi
 
 # Try to get Terraform outputs directly (as fallback or validation)
@@ -134,10 +137,18 @@ if [ -z "$CI" ] && [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null;
     fi
     
     # Get Terraform outputs (validate or override .env file values)
-    S3_BUCKET_FROM_TF=$(terraform output -raw bucket_name 2>/dev/null || echo "")
-    CLOUDFRONT_ID_FROM_TF=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
-    AWS_REGION_FROM_TF=$(terraform output -raw aws_region 2>/dev/null || echo "")
-    CLOUDFRONT_DOMAIN_FROM_TF=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
+    echo -e "  ${BLUE}📋 Fetching Terraform outputs...${NC}"
+    S3_BUCKET_FROM_TF=$(terraform output -raw bucket_name 2>/dev/null | tr -d '\n\r' || echo "")
+    CLOUDFRONT_ID_FROM_TF=$(terraform output -raw cloudfront_distribution_id 2>/dev/null | tr -d '\n\r' || echo "")
+    AWS_REGION_FROM_TF=$(terraform output -raw aws_region 2>/dev/null | tr -d '\n\r' || echo "")
+    CLOUDFRONT_DOMAIN_FROM_TF=$(terraform output -raw cloudfront_domain_name 2>/dev/null | tr -d '\n\r' || echo "")
+    
+    # Debug: Show what Terraform actually outputs
+    echo -e "  ${BLUE}📊 Terraform outputs:${NC}"
+    echo -e "     S3 Bucket: ${S3_BUCKET_FROM_TF:-<not set>}"
+    echo -e "     CloudFront ID: ${CLOUDFRONT_ID_FROM_TF:-<not set>}"
+    echo -e "     CloudFront Domain: ${CLOUDFRONT_DOMAIN_FROM_TF:-<not set>}"
+    echo -e "     AWS Region: ${AWS_REGION_FROM_TF:-<not set>}"
     
     # Use Terraform outputs if available (they take precedence)
     if [ -n "$S3_BUCKET_FROM_TF" ]; then
@@ -152,6 +163,18 @@ if [ -z "$CI" ] && [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null;
     if [ -n "$CLOUDFRONT_ID_FROM_TF" ]; then
         export AWS_CLOUDFRONT_ID="$CLOUDFRONT_ID_FROM_TF"
         echo -e "  ${GREEN}✓${NC} CloudFront ID from Terraform: $CLOUDFRONT_ID_FROM_TF"
+        
+        # Verify the distribution actually exists in AWS
+        if command -v aws &> /dev/null; then
+            if aws cloudfront get-distribution --id "$CLOUDFRONT_ID_FROM_TF" &> /dev/null; then
+                echo -e "  ${GREEN}✓${NC} CloudFront distribution verified in AWS"
+            else
+                echo -e "  ${YELLOW}⚠️  CloudFront distribution '${CLOUDFRONT_ID_FROM_TF}' not found in AWS${NC}"
+                echo -e "  ${YELLOW}   This may indicate the distribution was deleted or Terraform state is out of sync${NC}"
+                echo -e "  ${YELLOW}   Run 'terraform apply' in ${TERRAFORM_DIR} to recreate it${NC}"
+                # Don't clear the ID, but warn - the invalidation step will handle it gracefully
+            fi
+        fi
     elif [ -z "$AWS_CLOUDFRONT_ID" ]; then
         echo -e "  ${YELLOW}⚠️  CloudFront ID not found in Terraform outputs${NC}"
         echo -e "  ${YELLOW}   Cache invalidation will be skipped${NC}"
@@ -355,13 +378,28 @@ echo -e "  Total size: ${TOTAL_SIZE}"
 # Invalidate CloudFront cache if distribution ID is provided
 if [ -n "$CLOUDFRONT_ID" ]; then
     echo -e "\n🔄 Invalidating CloudFront cache..."
-    INVALIDATION_ID=$(aws cloudfront create-invalidation \
-        --distribution-id "$CLOUDFRONT_ID" \
-        --paths "/*" \
-        --query 'Invalidation.Id' \
-        --output text)
-    echo -e "${GREEN}✓ CloudFront cache invalidated (ID: ${INVALIDATION_ID})${NC}"
-    echo -e "  Note: Invalidation may take 5-15 minutes to complete"
+    
+    # Check if the distribution exists before attempting invalidation
+    if aws cloudfront get-distribution --id "$CLOUDFRONT_ID" &> /dev/null; then
+        INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$CLOUDFRONT_ID" \
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text 2>&1)
+        
+        if [ $? -eq 0 ] && [ -n "$INVALIDATION_ID" ]; then
+            echo -e "${GREEN}✓ CloudFront cache invalidated (ID: ${INVALIDATION_ID})${NC}"
+            echo -e "  Note: Invalidation may take 5-15 minutes to complete"
+        else
+            echo -e "${YELLOW}⚠️  Failed to create CloudFront invalidation${NC}"
+            echo -e "${YELLOW}  Error: ${INVALIDATION_ID}${NC}"
+            echo -e "${YELLOW}  Continuing deployment...${NC}"
+        fi
+    else
+        echo -e "${YELLOW}⚠️  CloudFront distribution '${CLOUDFRONT_ID}' does not exist${NC}"
+        echo -e "${YELLOW}  Skipping cache invalidation. Deployment will continue.${NC}"
+        echo -e "${YELLOW}  Note: You may need to run 'terraform apply' to create the distribution${NC}"
+    fi
 else
     echo -e "${YELLOW}⚠️  No CloudFront distribution ID provided. Skipping cache invalidation.${NC}"
     echo -e "${YELLOW}  Set AWS_CLOUDFRONT_ID environment variable to enable this.${NC}"
@@ -373,9 +411,16 @@ echo -e "${GREEN}🎉 Deployment complete!${NC}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 if [ -n "$CLOUDFRONT_ID" ]; then
-    CF_DOMAIN=$(aws cloudfront get-distribution --id "$CLOUDFRONT_ID" --query 'Distribution.DomainName' --output text)
-    echo -e "\n${BLUE}CloudFront URL:${NC}"
-    echo -e "  ${GREEN}https://$CF_DOMAIN${NC}"
+    # Try to get CloudFront domain, but handle case where distribution doesn't exist
+    CF_DOMAIN=$(aws cloudfront get-distribution --id "$CLOUDFRONT_ID" --query 'Distribution.DomainName' --output text 2>/dev/null)
+    if [ $? -eq 0 ] && [ -n "$CF_DOMAIN" ]; then
+        echo -e "\n${BLUE}CloudFront URL:${NC}"
+        echo -e "  ${GREEN}https://$CF_DOMAIN${NC}"
+    else
+        echo -e "\n${YELLOW}⚠️  CloudFront distribution '${CLOUDFRONT_ID}' not found${NC}"
+        echo -e "\n${BLUE}S3 Website URL:${NC}"
+        echo -e "  ${GREEN}http://$S3_BUCKET.s3-website-$AWS_REGION.amazonaws.com${NC}"
+    fi
 else
     echo -e "\n${BLUE}S3 Website URL:${NC}"
     echo -e "  ${GREEN}http://$S3_BUCKET.s3-website-$AWS_REGION.amazonaws.com${NC}"
@@ -412,46 +457,52 @@ EOF
 if [ -z "$CI" ] && [ -n "$CLOUDFRONT_ID" ] && [ "${SKIP_E2E_TESTS}" != "true" ]; then
     echo -e "\n🧪 Running E2E tests against deployed site..."
     
-    # Get CloudFront domain
-    CF_DOMAIN=$(aws cloudfront get-distribution --id "$CLOUDFRONT_ID" --query 'Distribution.DomainName' --output text)
-    DEPLOYED_URL="https://$CF_DOMAIN"
-    
-    echo -e "  Testing URL: ${DEPLOYED_URL}"
-    
-    # First, verify the site is accessible
-    echo -e "  Checking if site is reachable..."
-    require_cmd curl
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYED_URL" || echo "000")
-    
-    if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "301" ] && [ "$HTTP_CODE" != "302" ]; then
-        echo -e "${RED}❌ Site returned HTTP $HTTP_CODE - deployment may have failed${NC}"
-        echo -e "${YELLOW}⚠️  Please check:${NC}"
-        echo -e "${YELLOW}  1. CloudFront distribution status${NC}"
-        echo -e "${YELLOW}  2. S3 bucket permissions${NC}"
-        echo -e "${YELLOW}  3. CloudFront Origin Access Control configuration${NC}"
-        echo -e "${YELLOW}  Skipping E2E tests due to deployment verification failure${NC}"
-        exit 1
-    fi
-    
-    echo -e "${GREEN}✓ Site is reachable (HTTP $HTTP_CODE)${NC}"
-    echo -e "  Waiting 15 seconds for CloudFront cache invalidation to propagate..."
-    sleep 15
-    
-    # Check if Playwright is available
-    if command -v pnpm &> /dev/null && [ -d "apps/game" ]; then
-        # Run E2E tests against the deployed site
-        echo -e "  Running Playwright E2E tests..."
-        if BASE_URL="$DEPLOYED_URL" pnpm -C apps/game exec playwright test --reporter=list; then
-            echo -e "${GREEN}✓ E2E tests passed${NC}"
-        else
-            echo -e "${RED}❌ E2E tests failed${NC}"
-            echo -e "${YELLOW}⚠️  Deployment completed but E2E tests failed. Please investigate.${NC}"
-            echo -e "${YELLOW}  View test report: apps/game/playwright-report/index.html${NC}"
+    # Get CloudFront domain (check if distribution exists first)
+    CF_DOMAIN=$(aws cloudfront get-distribution --id "$CLOUDFRONT_ID" --query 'Distribution.DomainName' --output text 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$CF_DOMAIN" ]; then
+        echo -e "${YELLOW}⚠️  CloudFront distribution '${CLOUDFRONT_ID}' not found${NC}"
+        echo -e "${YELLOW}  Skipping E2E tests. Use S3 website URL for testing:${NC}"
+        echo -e "${YELLOW}  http://$S3_BUCKET.s3-website-$AWS_REGION.amazonaws.com${NC}"
+    else
+        DEPLOYED_URL="https://$CF_DOMAIN"
+        
+        echo -e "  Testing URL: ${DEPLOYED_URL}"
+        
+        # First, verify the site is accessible
+        echo -e "  Checking if site is reachable..."
+        require_cmd curl
+        HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYED_URL" || echo "000")
+        
+        if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "301" ] && [ "$HTTP_CODE" != "302" ]; then
+            echo -e "${RED}❌ Site returned HTTP $HTTP_CODE - deployment may have failed${NC}"
+            echo -e "${YELLOW}⚠️  Please check:${NC}"
+            echo -e "${YELLOW}  1. CloudFront distribution status${NC}"
+            echo -e "${YELLOW}  2. S3 bucket permissions${NC}"
+            echo -e "${YELLOW}  3. CloudFront Origin Access Control configuration${NC}"
+            echo -e "${YELLOW}  Skipping E2E tests due to deployment verification failure${NC}"
             exit 1
         fi
-    else
-        echo -e "${YELLOW}⚠️  Playwright not available. Skipping E2E tests.${NC}"
-        echo -e "${YELLOW}  Install with: pnpm install${NC}"
+        
+        echo -e "${GREEN}✓ Site is reachable (HTTP $HTTP_CODE)${NC}"
+        echo -e "  Waiting 15 seconds for CloudFront cache invalidation to propagate..."
+        sleep 15
+        
+        # Check if Playwright is available
+        if command -v pnpm &> /dev/null && [ -d "apps/game" ]; then
+            # Run E2E tests against the deployed site
+            echo -e "  Running Playwright E2E tests..."
+            if BASE_URL="$DEPLOYED_URL" pnpm -C apps/game exec playwright test --reporter=list; then
+                echo -e "${GREEN}✓ E2E tests passed${NC}"
+            else
+                echo -e "${RED}❌ E2E tests failed${NC}"
+                echo -e "${YELLOW}⚠️  Deployment completed but E2E tests failed. Please investigate.${NC}"
+                echo -e "${YELLOW}  View test report: apps/game/playwright-report/index.html${NC}"
+                exit 1
+            fi
+        else
+            echo -e "${YELLOW}⚠️  Playwright not available. Skipping E2E tests.${NC}"
+            echo -e "${YELLOW}  Install with: pnpm install${NC}"
+        fi
     fi
 elif [ -z "$CI" ] && [ -z "$CLOUDFRONT_ID" ]; then
     echo -e "\n${YELLOW}⚠️  No CloudFront ID provided. Skipping E2E tests.${NC}"
