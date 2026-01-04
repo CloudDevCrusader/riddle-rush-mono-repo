@@ -1,0 +1,6 @@
+project_name         = "riddle-rush-pwa"
+aws_region           = "eu-central-1"
+bucket_name          = ""  # Leave empty for auto-generated name
+domain_name          = ""  # Optional custom domain
+certificate_arn      = ""  # Required if domain_name is set
+cloudfront_price_class = "PriceClass_100"

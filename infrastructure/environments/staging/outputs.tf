@@ -30,5 +30,5 @@ output "website_url" {
 
 output "deploy_command" {
   description = "Command to deploy application updates"
-  value       = "AWS_S3_BUCKET=${module.website.bucket_name} AWS_CLOUDFRONT_ID=${module.website.cloudfront_distribution_id} AWS_REGION=${var.aws_region} ./aws-deploy.sh production"
+  value       = "AWS_S3_BUCKET=${module.website.bucket_name} AWS_CLOUDFRONT_ID=${module.website.cloudfront_distribution_id} AWS_REGION=${var.aws_region} ./aws-deploy.sh staging"
 }
