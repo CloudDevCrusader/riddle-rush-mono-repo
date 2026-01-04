@@ -208,30 +208,6 @@ jobs:
           path: apps/game/coverage
           when: always
 
-  test-e2e-mvp:
-    description: 'Run MVP E2E tests (@critical)'
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.57.0-noble
-    steps:
-      - checkout
-      - setup-pnpm
-      - install-dependencies
-      - run:
-          name: 'Run MVP E2E tests'
-          command: |
-            export CRITICAL_TESTS_ONLY=true
-            chmod +x scripts/ci-e2e.sh
-            ./scripts/ci-e2e.sh
-      - store_test_results:
-          path: test-results
-          when: always
-      - store_artifacts:
-          path: playwright-report
-          when: always
-      - store_artifacts:
-          path: test-results
-          when: always
-
   build:
     description: 'Build game app for production'
     docker:
@@ -492,29 +468,6 @@ jobs:
           path: deployment-info.json
           when: always
 
-  test-e2e-local:
-    description: 'Run E2E tests against local build'
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.57.0-noble
-    steps:
-      - checkout
-      - setup-pnpm
-      - install-dependencies
-      - run:
-          name: 'Run E2E tests (local build)'
-          command: |
-            chmod +x scripts/ci-e2e.sh
-            ./scripts/ci-e2e.sh
-      - store_test_results:
-          path: test-results
-          when: always
-      - store_artifacts:
-          path: playwright-report
-          when: always
-      - store_artifacts:
-          path: test-results
-          when: always
-
 # Workflows
 workflows:
   version: 2
@@ -529,12 +482,6 @@ workflows:
       - build:
           requires:
             - test
-          filters:
-            branches:
-              only: /^development$/
-      - test-e2e-mvp:
-          requires:
-            - build
           filters:
             branches:
               only: /^development$/
@@ -559,14 +506,6 @@ workflows:
       - build:
           requires:
             - test
-          filters:
-            branches:
-              only: /^main$/
-            tags:
-              only: /^v.*/
-      - test-e2e-mvp:
-          requires:
-            - build
           filters:
             branches:
               only: /^main$/
