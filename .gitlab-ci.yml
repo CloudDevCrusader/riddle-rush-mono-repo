@@ -6,12 +6,13 @@ default:
   image: node:20-bullseye
   before_script:
     - apt-get update
-    - apt-get install -y --no-install-recommends python3 make g++
+    - apt-get install -y --no-install-recommends python3 make g++ libsqlite3-dev
     - rm -rf /var/lib/apt/lists/*
     - corepack enable
     - corepack prepare pnpm@10.27.0 --activate
     - pnpm --version
     - pnpm config set store-dir .pnpm-store
+    - export npm_config_build_from_source=better-sqlite3
     - pnpm install --frozen-lockfile
   cache:
     key: ${CI_COMMIT_REF_SLUG}
