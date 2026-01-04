@@ -1,17 +1,24 @@
 /**
  * Analytics composable for tracking events
- * Uses Google Analytics 4 via nuxt-gtag module
+ * Uses Google Analytics 4 (manual implementation, compatible with Nuxt 4)
  */
 export const useAnalytics = () => {
   const resolveGtag = () => {
     if (!import.meta.client) return null
-    const nuxtApp = useNuxtApp()
-    const appGtag = (nuxtApp as { $gtag?: (...args: unknown[]) => void }).$gtag
 
-    if (typeof appGtag === 'function') return appGtag
-
+    // Check for global gtag function (loaded manually in app.vue)
     const globalGtag = (globalThis as { gtag?: (...args: unknown[]) => void }).gtag
-    return typeof globalGtag === 'function' ? globalGtag : null
+    if (typeof globalGtag === 'function') return globalGtag
+
+    // Fallback: check if dataLayer exists and create a wrapper
+    const dataLayer = (globalThis as { dataLayer?: unknown[] }).dataLayer
+    if (Array.isArray(dataLayer)) {
+      return (...args: unknown[]) => {
+        dataLayer.push(args)
+      }
+    }
+
+    return null
   }
 
   /**

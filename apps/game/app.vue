@@ -1,17 +1,8 @@
 <template>
-  <div
-    id="app"
-    class="app-container"
-  >
-    <SplashScreen
-      v-if="showSplash"
-      @complete="onSplashComplete"
-    />
+  <div id="app" class="app-container">
+    <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
     <NuxtLayout v-show="!showSplash">
-      <Transition
-        name="page"
-        mode="out-in"
-      >
+      <Transition name="page" mode="out-in">
         <NuxtPage :key="$route.path" />
       </Transition>
     </NuxtLayout>
@@ -40,29 +31,74 @@ onMounted(() => {
   settingsStore.loadSettings()
 
   // Monitor online status
-  window.addEventListener('online', () => gameStore.setOnlineStatus(true))
-  window.addEventListener('offline', () => gameStore.setOnlineStatus(false))
+  const handleOnline = () => gameStore.setOnlineStatus(true)
+  const handleOffline = () => gameStore.setOnlineStatus(false)
+  window.addEventListener('online', handleOnline)
+  window.addEventListener('offline', handleOffline)
 
   // PWA install prompt
-  window.addEventListener('beforeinstallprompt', (e) => {
+  const handleBeforeInstallPrompt = (e: Event) => {
     e.preventDefault()
     gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
-  })
+  }
+  window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
   // Debug mode shortcut: Ctrl+Shift+D
-  window.addEventListener('keydown', (e) => {
+  const handleKeydown = (e: KeyboardEvent) => {
     if (e.ctrlKey && e.shiftKey && e.key === 'D') {
       e.preventDefault()
       settingsStore.toggleDebugMode()
     }
+  }
+  window.addEventListener('keydown', handleKeydown)
+
+  // Load Google Analytics if configured
+  const config = useRuntimeConfig()
+  const gaId = config.public.googleAnalyticsId
+  if (gaId && typeof window !== 'undefined') {
+    // Load GA4 script
+    const script = document.createElement('script')
+    script.async = true
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`
+    document.head.appendChild(script)
+
+    // Initialize gtag
+    window.dataLayer = window.dataLayer || []
+    function gtag(...args: unknown[]) {
+      window.dataLayer.push(args)
+    }
+    window.gtag = gtag
+
+    gtag('js', new Date())
+    gtag('config', gaId, {
+      anonymize_ip: true,
+      cookie_flags: 'SameSite=None;Secure',
+    })
+  }
+
+  // Cleanup on unmount
+  onBeforeUnmount(() => {
+    window.removeEventListener('online', handleOnline)
+    window.removeEventListener('offline', handleOffline)
+    window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.removeEventListener('keydown', handleKeydown)
   })
 })
 
+// Fonts are handled by @nuxt/fonts module
+// Google Analytics is loaded manually in onMounted
 useHead({
   link: [
+    // Preconnect to Google Fonts for faster loading
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap' },
+    // Google Analytics preconnect (if enabled)
+    ...(process.env.GOOGLE_ANALYTICS_ID
+      ? [
+          { rel: 'preconnect', href: 'https://www.googletagmanager.com' },
+          { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },
+        ]
+      : []),
   ],
 })
 </script>
