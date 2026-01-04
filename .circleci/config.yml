@@ -80,6 +80,10 @@ commands:
       environment:
         type: string
         description: 'Environment name (development, prod)'
+      apply_if_missing:
+        type: boolean
+        description: 'Apply infrastructure if outputs are missing'
+        default: true
     steps:
       - run:
           name: 'Get Terraform outputs for << parameters.environment >>'
@@ -121,17 +125,9 @@ commands:
               aws dynamodb create-table --table-name "${LOCK_TABLE}" --attribute-definitions AttributeName=LockID,AttributeType=S --key-schema AttributeName=LockID,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 --region eu-central-1
             fi
 
-            # Initialize Terraform if needed
-            if [ ! -d ".terraform" ]; then
-              echo "Initializing Terraform..."
-              terraform init -no-color
-            fi
-
-            # Apply infrastructure if state doesn't exist
-            if ! terraform output -raw cloudfront_domain_name > /dev/null 2>&1; then
-              echo "Terraform state not found or outputs missing, applying infrastructure..."
-              terraform apply -auto-approve -no-color
-            fi
+            # Initialize Terraform (reconfigure to ensure backend is correct)
+            echo "Initializing Terraform..."
+            terraform init -no-color -input=false -reconfigure
 
             # Get and validate Terraform outputs (strip any whitespace/newlines)
             echo "Fetching Terraform outputs..."
@@ -139,6 +135,19 @@ commands:
             AWS_CLOUDFRONT_ID=$(terraform output -raw -no-color cloudfront_distribution_id 2>/dev/null | tr -d '\n\r' || echo "")
             AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw -no-color cloudfront_domain_name 2>/dev/null | tr -d '\n\r' || echo "")
             AWS_REGION=$(terraform output -raw -no-color aws_region 2>/dev/null | tr -d '\n\r' || echo "")
+
+            if [ -z "$AWS_S3_BUCKET" ] || [ -z "$AWS_CLOUDFRONT_ID" ] || [ -z "$AWS_CLOUDFRONT_DOMAIN" ] || [ -z "$AWS_REGION" ]; then
+              if [ "<< parameters.apply_if_missing >>" = "true" ]; then
+                echo "Terraform outputs missing; applying infrastructure..."
+                terraform plan -no-color -out=tfplan
+                terraform apply -no-color -auto-approve tfplan
+
+                AWS_S3_BUCKET=$(terraform output -raw -no-color bucket_name 2>/dev/null | tr -d '\n\r' || echo "")
+                AWS_CLOUDFRONT_ID=$(terraform output -raw -no-color cloudfront_distribution_id 2>/dev/null | tr -d '\n\r' || echo "")
+                AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw -no-color cloudfront_domain_name 2>/dev/null | tr -d '\n\r' || echo "")
+                AWS_REGION=$(terraform output -raw -no-color aws_region 2>/dev/null | tr -d '\n\r' || echo "")
+              fi
+            fi
 
             # Validate required outputs
             if [ -z "$AWS_S3_BUCKET" ]; then
@@ -333,13 +342,52 @@ jobs:
           name: 'Verify AWS credentials'
           command: |
             aws sts get-caller-identity
+      - run:
+          name: 'Terraform plan & apply (development)'
+          command: |
+            export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
+            export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+            export NO_COLOR=1
+            export TF_CLI_ARGS="-no-color"
+
+            cd infrastructure/environments/development
+            terraform init -no-color -input=false -reconfigure
+            terraform plan -no-color -out=tfplan
+            terraform apply -no-color -auto-approve tfplan
+            cd ../../..
       - get-terraform-outputs:
           environment: development
+          apply_if_missing: false
       - run:
-          name: 'Deploy to AWS development'
+          name: 'Deploy to AWS development and verify'
           command: |
+            export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
+            export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+
             chmod +x aws-deploy.sh
             ./aws-deploy.sh development
+
+            if [ -z "${AWS_CLOUDFRONT_DOMAIN:-}" ]; then
+              echo "ERROR: Missing AWS_CLOUDFRONT_DOMAIN for verification"
+              exit 1
+            fi
+
+            export BASE_URL="https://${AWS_CLOUDFRONT_DOMAIN}"
+            echo "Verifying development deployment at: $BASE_URL"
+            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
+            sleep 60
+
+            echo "Checking HTML response from CloudFront..."
+            http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
+            if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
+              echo "ERROR: CloudFront returned HTTP $http_code"
+              exit 1
+            fi
+            if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
+              echo "ERROR: CloudFront response did not include HTML"
+              exit 1
+            fi
+            echo "✅ CloudFront returned HTML (HTTP $http_code)"
       - store_artifacts:
           path: deployment-info.json
           when: always
@@ -361,13 +409,52 @@ jobs:
           name: 'Verify AWS credentials'
           command: |
             aws sts get-caller-identity
+      - run:
+          name: 'Terraform plan & apply (production)'
+          command: |
+            export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
+            export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+            export NO_COLOR=1
+            export TF_CLI_ARGS="-no-color"
+
+            cd infrastructure/environments/prod
+            terraform init -no-color -input=false -reconfigure
+            terraform plan -no-color -out=tfplan
+            terraform apply -no-color -auto-approve tfplan
+            cd ../../..
       - get-terraform-outputs:
           environment: prod
+          apply_if_missing: false
       - run:
-          name: 'Deploy to AWS production'
+          name: 'Deploy to AWS production and verify'
           command: |
+            export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
+            export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+
             chmod +x aws-deploy.sh
             ./aws-deploy.sh production
+
+            if [ -z "${AWS_CLOUDFRONT_DOMAIN:-}" ]; then
+              echo "ERROR: Missing AWS_CLOUDFRONT_DOMAIN for verification"
+              exit 1
+            fi
+
+            export BASE_URL="https://${AWS_CLOUDFRONT_DOMAIN}"
+            echo "Verifying production deployment at: $BASE_URL"
+            echo "Waiting 60 seconds for CloudFront invalidation to propagate..."
+            sleep 60
+
+            echo "Checking HTML response from CloudFront..."
+            http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
+            if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
+              echo "ERROR: CloudFront returned HTTP $http_code"
+              exit 1
+            fi
+            if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
+              echo "ERROR: CloudFront response did not include HTML"
+              exit 1
+            fi
+            echo "✅ CloudFront returned HTML (HTTP $http_code)"
       - store_artifacts:
           path: deployment-info.json
           when: always
@@ -394,76 +481,6 @@ jobs:
       - store_artifacts:
           path: test-results
           when: always
-
-  verify-e2e-aws:
-    description: 'Verify AWS deployment (CloudFront HTML check)'
-    parameters:
-      environment:
-        type: string
-        description: 'Environment name (development, prod)'
-      wait_time:
-        type: integer
-        description: 'Wait time in seconds for CloudFront propagation'
-        default: 60
-    docker:
-      - image: *custom-image
-        auth:
-          username: $GITLAB_REGISTRY_USER
-          password: $GITLAB_REGISTRY_TOKEN
-    steps:
-      - checkout
-      - get-terraform-outputs:
-          environment: << parameters.environment >>
-      - run:
-          name: 'Get CloudFront domain and verify HTML response'
-          command: |
-            # Ensure AWS region is set for Terraform/AWS SDK
-            export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-eu-central-1}"
-            export AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
-
-            AWS_CLOUDFRONT_DOMAIN="${AWS_CLOUDFRONT_DOMAIN:-}"
-
-            if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
-              cd infrastructure/environments/<< parameters.environment >>
-
-              # Initialize Terraform if needed (use backend for remote state)
-              if [ ! -d ".terraform" ]; then
-                echo "Initializing Terraform..."
-                terraform init
-              fi
-
-              AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || true)
-              if echo "$AWS_CLOUDFRONT_DOMAIN" | grep -qE 'Warning:|No outputs found|^╷'; then
-                AWS_CLOUDFRONT_DOMAIN=""
-              fi
-              AWS_CLOUDFRONT_DOMAIN="$(echo "$AWS_CLOUDFRONT_DOMAIN" | tr -d '\r' | xargs)"
-
-              cd ../../..
-            fi
-
-            if [ -z "$AWS_CLOUDFRONT_DOMAIN" ]; then
-              echo "ERROR: Failed to get CloudFront domain name from Terraform outputs"
-              exit 1
-            fi
-
-            export BASE_URL=https://$AWS_CLOUDFRONT_DOMAIN
-            echo "✅ Using CloudFront domain from Terraform: $AWS_CLOUDFRONT_DOMAIN"
-
-            echo "Verifying AWS << parameters.environment >> deployment at: $BASE_URL"
-            echo "Waiting << parameters.wait_time >> seconds for CloudFront invalidation to propagate..."
-            sleep << parameters.wait_time >>
-
-            echo "Checking HTML response from CloudFront..."
-            http_code="$(curl -sS -L -o /tmp/cloudfront-response.html -w "%{http_code}" "$BASE_URL" || true)"
-            if [ -z "$http_code" ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
-              echo "ERROR: CloudFront returned HTTP $http_code"
-              exit 1
-            fi
-            if ! grep -i "<html" /tmp/cloudfront-response.html >/dev/null 2>&1; then
-              echo "ERROR: CloudFront response did not include HTML"
-              exit 1
-            fi
-            echo "✅ CloudFront returned HTML (HTTP $http_code)"
 
 # Workflows
 workflows:
@@ -522,15 +539,6 @@ workflows:
           filters:
             branches:
               only: /^development$/
-      # Verification (can be set to manual approval in CircleCI UI)
-      - verify-e2e-aws:
-          name: verify-e2e-aws-dev
-          environment: development
-          requires:
-            - deploy-aws-dev
-          filters:
-            branches:
-              only: /^development$/
 
   # Production deployment workflow
   deploy-prod:
@@ -553,17 +561,6 @@ workflows:
       - deploy-aws-prod:
           requires:
             - build
-          filters:
-            branches:
-              only: /^main$/
-            tags:
-              only: /^v.*/
-      # Production verification (should require manual approval in CircleCI UI)
-      - verify-e2e-aws:
-          name: verify-e2e-aws-prod
-          environment: prod
-          requires:
-            - deploy-aws-prod
           filters:
             branches:
               only: /^main$/

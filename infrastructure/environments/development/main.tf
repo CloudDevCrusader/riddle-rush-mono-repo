@@ -48,3 +48,44 @@ module "website" {
   noncurrent_version_expiration_days  = 7      # Shorter retention for dev
   error_caching_min_ttl               = 60    # 1 minute (shorter for dev)
 }
+
+# Preserve existing state after refactoring root resources into the module.
+moved {
+  from = aws_s3_bucket.website
+  to   = module.website.aws_s3_bucket.website
+}
+
+moved {
+  from = aws_s3_bucket_versioning.website
+  to   = module.website.aws_s3_bucket_versioning.website
+}
+
+moved {
+  from = aws_s3_bucket_lifecycle_configuration.website
+  to   = module.website.aws_s3_bucket_lifecycle_configuration.website
+}
+
+moved {
+  from = aws_s3_bucket_public_access_block.website
+  to   = module.website.aws_s3_bucket_public_access_block.website
+}
+
+moved {
+  from = aws_s3_bucket_website_configuration.website
+  to   = module.website.aws_s3_bucket_website_configuration.website
+}
+
+moved {
+  from = aws_cloudfront_origin_access_control.website
+  to   = module.website.aws_cloudfront_origin_access_control.website
+}
+
+moved {
+  from = aws_cloudfront_distribution.website
+  to   = module.website.aws_cloudfront_distribution.website
+}
+
+moved {
+  from = aws_s3_bucket_policy.website
+  to   = module.website.aws_s3_bucket_policy.website
+}
