@@ -5,6 +5,9 @@ stages:
 default:
   image: node:20-bullseye
   before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends python3 make g++
+    - rm -rf /var/lib/apt/lists/*
     - corepack enable
     - corepack prepare pnpm@10.27.0 --activate
     - pnpm --version
