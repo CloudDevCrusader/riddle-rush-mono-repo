@@ -100,7 +100,7 @@ commands:
             # Initialize Terraform if needed
             if [ ! -d ".terraform" ]; then
               echo "Initializing Terraform..."
-              terraform init -backend=false -no-color || terraform init -no-color
+              terraform init -no-color
             fi
 
             # Get and validate Terraform outputs (strip any whitespace/newlines)

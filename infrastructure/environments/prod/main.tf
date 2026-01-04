@@ -11,14 +11,13 @@ terraform {
     }
   }
 
-  # Uncomment to use remote state
-  # backend "s3" {
-  #   bucket         = "riddle-rush-terraform-state-prod"
-  #   key            = "prod/terraform.tfstate"
-  #   region         = "eu-central-1"
-  #   encrypt        = true
-  #   dynamodb_table = "terraform-state-lock"
-  # }
+  backend "s3" {
+    bucket         = "riddle-rush-terraform-state-prod"
+    key            = "production/terraform.tfstate"
+    region         = "eu-central-1"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock-prod"
+  }
 }
 
 provider "aws" {
