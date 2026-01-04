@@ -1,5 +1,5 @@
 <template>
-  <div class="about-page">
+  <div class="about">
     <!-- Background Image -->
     <img
       :src="`${baseUrl}assets/main-menu/BACKGROUND.png`"
@@ -22,11 +22,11 @@
     <div class="container">
       <!-- Title -->
       <div class="title-container animate-fade-in">
-        <h1>{{ $t('about.title', 'ABOUT') }}</h1>
+        <h1>About Riddle Rush</h1>
       </div>
 
       <!-- About Panel -->
-      <div class="about-panel animate-scale-in">
+      <div class="info animate-scale-in">
         <!-- Creators Section -->
         <div class="section">
           <p class="creators">
@@ -69,7 +69,7 @@
           <h2 class="section-heading">
             {{ $t('about.technologies.title', 'Technologies Used') }}
           </h2>
-          <ul class="tech-list">
+          <ul>
             <li>Nuxt 4</li>
             <li>Vue 3</li>
             <li>Pinia</li>
@@ -98,7 +98,7 @@
 const { baseUrl, goBack, t } = usePageSetup()
 
 useHead({
-  title: `${t('about.title', 'ABOUT')} - Riddle Rush`,
+  title: 'Riddle Rush - About',
   meta: [
     {
       name: 'description',
@@ -112,7 +112,7 @@ useHead({
 </script>
 
 <style scoped>
-.about-page {
+.about {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
@@ -185,8 +185,8 @@ useHead({
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* About Panel */
-.about-panel {
+/* Info Panel */
+.info {
   width: 100%;
   background: linear-gradient(180deg, rgba(68, 200, 255, 0.95) 0%, rgba(10, 107, 194, 0.95) 100%);
   border: 6px solid #ff8800;
@@ -241,7 +241,7 @@ useHead({
 }
 
 /* Technology List */
-.tech-list {
+.info ul {
   list-style: none;
   padding: 0;
   margin: var(--spacing-md) 0 0 0;
@@ -250,7 +250,7 @@ useHead({
   gap: var(--spacing-sm);
 }
 
-.tech-list li {
+.info ul li {
   font-family: var(--font-display);
   font-size: clamp(1rem, 2vw, 1.125rem);
   color: var(--color-white);
@@ -333,11 +333,11 @@ useHead({
     width: 40px;
   }
 
-  .about-panel {
+  .info {
     padding: var(--spacing-xl);
   }
 
-  .tech-list {
+  .info ul {
     grid-template-columns: repeat(2, 1fr);
   }
 
