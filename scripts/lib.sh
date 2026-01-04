@@ -54,6 +54,7 @@ ensure_pnpm() {
     pnpm_version=$(grep -oE '"packageManager"\s*:\s*"pnpm@[^"]*"' "${REPO_ROOT}/package.json" 2>/dev/null | grep -oE 'pnpm@[^"]*' | cut -d'@' -f2 || echo "10.27.0")
   fi
 
-  corepack enable
+  # Skip 'corepack enable' to avoid permission errors in CI environments
+  # Just prepare pnpm to user cache directory (no system-wide installation)
   corepack prepare "pnpm@${pnpm_version}" --activate
 }
