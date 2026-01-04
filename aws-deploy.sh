@@ -120,7 +120,8 @@ if [ -f "$TERRAFORM_ENV_FILE" ]; then
 fi
 
 # Try to get Terraform outputs directly (as fallback or validation)
-if [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null; then
+# In CI, prefer values already loaded from .env/terraform step to avoid warnings overriding them.
+if [ -z "$CI" ] && [ -d "$TERRAFORM_DIR" ] && command -v terraform &> /dev/null; then
     cd "$TERRAFORM_DIR"
     
     # Initialize Terraform if needed
@@ -202,6 +203,11 @@ require_cmd aws
 
 # Check AWS credentials
 echo -e "\n🔑 Checking AWS credentials..."
+if [ -n "$CI" ] && { [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; }; then
+    echo -e "${RED}❌ AWS credentials missing in CI environment${NC}"
+    echo -e "${YELLOW}   Ensure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set in the CircleCI context${NC}"
+    exit 1
+fi
 if ! aws sts get-caller-identity &> /dev/null; then
     echo -e "${RED}❌ AWS credentials not configured. Please run 'aws configure'${NC}"
     exit 1
