@@ -84,6 +84,10 @@ commands:
       - run:
           name: 'Get Terraform outputs for << parameters.environment >>'
           command: |
+            # Disable colored output to prevent ANSI codes in variables
+            export NO_COLOR=1
+            export TF_CLI_ARGS="-no-color"
+
             # Map environment to directory name
             ENV_DIR="<< parameters.environment >>"
 
@@ -92,15 +96,15 @@ commands:
             # Initialize Terraform if needed
             if [ ! -d ".terraform" ]; then
               echo "Initializing Terraform..."
-              terraform init -backend=false || terraform init
+              terraform init -backend=false -no-color || terraform init -no-color
             fi
 
-            # Get and validate Terraform outputs
+            # Get and validate Terraform outputs (strip any whitespace/newlines)
             echo "Fetching Terraform outputs..."
-            AWS_S3_BUCKET=$(terraform output -raw bucket_name 2>/dev/null || echo "")
-            AWS_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
-            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw cloudfront_domain_name 2>/dev/null || echo "")
-            AWS_REGION=$(terraform output -raw aws_region 2>/dev/null || echo "")
+            AWS_S3_BUCKET=$(terraform output -raw -no-color bucket_name 2>/dev/null | tr -d '\n\r' || echo "")
+            AWS_CLOUDFRONT_ID=$(terraform output -raw -no-color cloudfront_distribution_id 2>/dev/null | tr -d '\n\r' || echo "")
+            AWS_CLOUDFRONT_DOMAIN=$(terraform output -raw -no-color cloudfront_domain_name 2>/dev/null | tr -d '\n\r' || echo "")
+            AWS_REGION=$(terraform output -raw -no-color aws_region 2>/dev/null | tr -d '\n\r' || echo "")
 
             # Validate required outputs
             if [ -z "$AWS_S3_BUCKET" ]; then
@@ -123,11 +127,11 @@ commands:
               exit 1
             fi
 
-            # Export validated outputs
-            echo "export AWS_S3_BUCKET=$AWS_S3_BUCKET" >> $BASH_ENV
-            echo "export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID" >> $BASH_ENV
-            echo "export AWS_CLOUDFRONT_DOMAIN=$AWS_CLOUDFRONT_DOMAIN" >> $BASH_ENV
-            echo "export AWS_REGION=$AWS_REGION" >> $BASH_ENV
+            # Export validated outputs (ensure clean values)
+            echo "export AWS_S3_BUCKET='${AWS_S3_BUCKET}'" >> "$BASH_ENV"
+            echo "export AWS_CLOUDFRONT_ID='${AWS_CLOUDFRONT_ID}'" >> "$BASH_ENV"
+            echo "export AWS_CLOUDFRONT_DOMAIN='${AWS_CLOUDFRONT_DOMAIN}'" >> "$BASH_ENV"
+            echo "export AWS_REGION='${AWS_REGION}'" >> "$BASH_ENV"
 
             echo "✅ Terraform outputs validated:"
             echo "  S3 Bucket: $AWS_S3_BUCKET"
