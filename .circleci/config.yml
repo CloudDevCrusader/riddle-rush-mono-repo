@@ -239,6 +239,9 @@ jobs:
     description: 'Deploy to AWS development environment'
     docker:
       - image: cimg/node:20.19.0
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     steps:
       - checkout
       - setup-pnpm
@@ -251,8 +254,6 @@ jobs:
           name: 'Deploy to AWS development'
           command: |
             chmod +x aws-deploy.sh
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             ./aws-deploy.sh development
       - store_artifacts:
           path: deployment-info.json
@@ -262,6 +263,9 @@ jobs:
     description: 'Deploy to AWS production environment'
     docker:
       - image: cimg/node:20.19.0
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     steps:
       - checkout
       - setup-pnpm
@@ -274,8 +278,6 @@ jobs:
           name: 'Deploy to AWS production'
           command: |
             chmod +x aws-deploy.sh
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             ./aws-deploy.sh production
       - store_artifacts:
           path: deployment-info.json
