@@ -7,6 +7,7 @@ This document describes the enhanced monorepo setup with additional Vite plugins
 ### Development Plugins
 
 #### 1. vite-plugin-inspect (`^1.1.0`)
+
 - **Purpose**: Inspect the Vite transformation pipeline
 - **Access**: `http://localhost:3000/__inspect/` during development
 - **Features**:
@@ -15,6 +16,7 @@ This document describes the enhanced monorepo setup with additional Vite plugins
   - Inspect plugin transformations
 
 #### 2. vite-plugin-vue-devtools (`^7.0.0`)
+
 - **Purpose**: Enhanced Vue debugging with DevTools
 - **Features**:
   - Component inspector
@@ -23,6 +25,7 @@ This document describes the enhanced monorepo setup with additional Vite plugins
   - Timeline view
 
 #### 3. vite-plugin-checker (`^0.8.0`)
+
 - **Purpose**: Type checking and linting during development
 - **Features**:
   - Real-time TypeScript type checking
@@ -32,6 +35,7 @@ This document describes the enhanced monorepo setup with additional Vite plugins
   - Non-blocking (doesn't stop dev server)
 
 #### 4. rollup-plugin-visualizer (`^5.12.0`)
+
 - **Purpose**: Bundle size visualization
 - **Output**: `.vite/stats.html` after build
 - **Features**:
@@ -98,6 +102,7 @@ export default defineConfig({
 **Configuration**: `.changeset/config.json`
 
 **Usage**:
+
 ```bash
 # Create a changeset
 pnpm changeset
@@ -110,6 +115,7 @@ pnpm changeset:publish
 ```
 
 **Features**:
+
 - Semantic versioning
 - Automatic changelog generation
 - Linked package versioning
@@ -122,6 +128,7 @@ pnpm changeset:publish
 **Configuration**: `.syncpackrc.json`
 
 **Usage**:
+
 ```bash
 # Check for mismatches
 pnpm syncpack:check
@@ -134,6 +141,7 @@ pnpm syncpack:format
 ```
 
 **Features**:
+
 - Enforce consistent versions
 - Workspace package version sync
 - Dependency range management
@@ -144,6 +152,7 @@ pnpm syncpack:format
 **Purpose**: Enhanced workspace package filtering
 
 **Features**:
+
 - Better workspace package selection
 - Pattern matching
 - Dependency graph filtering
@@ -301,16 +310,19 @@ pnpm changeset:publish
 ## Configuration Files
 
 ### .changeset/config.json
+
 - Changeset configuration
 - Changelog settings
 - Ignored packages
 
 ### .syncpackrc.json
+
 - Dependency version rules
 - Workspace package sync
 - Version range preferences
 
 ### .prettierrc.json
+
 - Root Prettier config for IDE
 - Shared with all packages
 
@@ -319,6 +331,7 @@ pnpm changeset:publish
 ### Plugin Not Loading
 
 If a plugin doesn't load, check:
+
 1. Is it installed in the app's `package.json`?
 2. Is it listed in `peerDependencies` of `@riddle-rush/config`?
 3. Check console for error messages

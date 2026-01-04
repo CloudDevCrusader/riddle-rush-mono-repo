@@ -38,6 +38,7 @@ Created `packages/config` with shared Vite configuration utilities:
   - Shows chunk sizes and optimization opportunities
 
 These plugins are conditionally loaded:
+
 - Development plugins only in dev mode
 - Build plugins only in production builds
 - Gracefully handles missing dependencies
@@ -47,6 +48,7 @@ These plugins are conditionally loaded:
 #### Enhanced Settings
 
 Updated `.vscode/settings.json`:
+
 - Improved TypeScript import preferences (`shortest` instead of `relative`)
 - Added workspace package auto-imports
 - Enhanced monorepo file watching exclusions
@@ -55,6 +57,7 @@ Updated `.vscode/settings.json`:
 #### Environment Configuration
 
 Updated `.cursor/environment.json`:
+
 - Added workspace structure definition
 - Defined all workspace packages (apps and packages)
 - Added workspace-specific commands
@@ -87,6 +90,7 @@ Updated `.cursor/environment.json`:
 ### 5. Game App Integration
 
 Updated `apps/game/nuxt.config.ts`:
+
 - Imports shared Vite config utilities
 - Uses `getWorkspaceAliases()` for alias resolution
 - Conditionally loads dev/build plugins
@@ -94,6 +98,7 @@ Updated `apps/game/nuxt.config.ts`:
 - Maintains app-specific overrides where needed
 
 Updated `apps/game/package.json`:
+
 - Added `@riddle-rush/config` dependency
 - Added `vite-plugin-inspect` and `rollup-plugin-visualizer` dev dependencies
 
@@ -116,12 +121,12 @@ packages/config/
 
 ```typescript
 // In nuxt.config.ts or vite.config.ts
-import { 
-  getWorkspaceAliases, 
-  getDevPlugins, 
-  getBuildPlugins, 
-  getOptimizeDeps, 
-  getBuildConfig 
+import {
+  getWorkspaceAliases,
+  getDevPlugins,
+  getBuildPlugins,
+  getOptimizeDeps,
+  getBuildConfig,
 } from '@riddle-rush/config/vite'
 
 export default defineNuxtConfig({
@@ -129,9 +134,7 @@ export default defineNuxtConfig({
     resolve: {
       alias: getWorkspaceAliases(),
     },
-    plugins: [
-      ...getDevPlugins({ isDev: true }),
-    ],
+    plugins: [...getDevPlugins({ isDev: true })],
     optimizeDeps: getOptimizeDeps(),
     build: getBuildConfig().build,
   },
@@ -141,12 +144,12 @@ export default defineNuxtConfig({
 ### Using Build Utilities
 
 ```typescript
-import { 
-  getWorkspaceRoot, 
-  packageExists, 
+import {
+  getWorkspaceRoot,
+  packageExists,
   runInPackage,
   isCI,
-  getBaseURL 
+  getBaseURL,
 } from '@riddle-rush/config/build-utils'
 
 const root = getWorkspaceRoot()
@@ -180,6 +183,7 @@ Potential future enhancements:
 ### For Existing Code
 
 No breaking changes. The refactoring is additive:
+
 - Existing code continues to work
 - New shared config is optional to use
 - Plugins are conditionally loaded (won't break if not installed)
@@ -206,6 +210,7 @@ After refactoring, verify:
 ## Files Changed
 
 ### New Files
+
 - `packages/config/vite.config.ts`
 - `packages/config/scripts/build-utils.ts`
 - `packages/config/index.ts`
@@ -214,6 +219,7 @@ After refactoring, verify:
 - `docs/MONOREPO-REFACTOR.md`
 
 ### Modified Files
+
 - `apps/game/nuxt.config.ts`
 - `apps/game/package.json`
 - `apps/game/tsconfig.json`

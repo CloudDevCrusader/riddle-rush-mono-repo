@@ -7,11 +7,13 @@ Complete guide for setting up and using Terraform infrastructure with tfenv and 
 ### 1. Install tfenv (Terraform Version Manager)
 
 **macOS:**
+
 ```bash
 brew install tfenv
 ```
 
 **Linux:**
+
 ```bash
 git clone https://github.com/tfutils/tfenv.git ~/.tfenv
 echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bashrc
@@ -19,6 +21,7 @@ source ~/.bashrc
 ```
 
 **Install Terraform:**
+
 ```bash
 cd infrastructure
 tfenv install
@@ -26,6 +29,7 @@ tfenv use
 ```
 
 Or use the setup script:
+
 ```bash
 pnpm run infra:setup
 ```
@@ -33,11 +37,13 @@ pnpm run infra:setup
 ### 2. Install terraformer (Optional - for importing existing resources)
 
 **macOS:**
+
 ```bash
 brew install terraformer
 ```
 
 **Linux:**
+
 ```bash
 wget https://github.com/GoogleCloudPlatform/terraformer/releases/download/0.8.24/terraformer-aws-linux-amd64
 chmod +x terraformer-aws-linux-amd64
@@ -45,6 +51,7 @@ sudo mv terraformer-aws-linux-amd64 /usr/local/bin/terraformer
 ```
 
 **Or via Go:**
+
 ```bash
 go install github.com/GoogleCloudPlatform/terraformer/cmd/terraformer@latest
 ```
@@ -190,6 +197,7 @@ terraform output
 ```
 
 Available outputs:
+
 - `bucket_name` - S3 bucket name
 - `cloudfront_distribution_id` - CloudFront distribution ID
 - `cloudfront_domain_name` - CloudFront domain name
@@ -229,6 +237,7 @@ terraform {
 ```
 
 **Setup S3 backend:**
+
 ```bash
 # Create S3 bucket for state
 aws s3 mb s3://riddle-rush-terraform-state --region eu-central-1
@@ -307,4 +316,3 @@ terraform import aws_cloudfront_distribution.website E1234567890ABC
 
 **Last Updated:** 2026-01-02  
 **Status:** ✅ Terraform Infrastructure Ready
-

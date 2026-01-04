@@ -34,14 +34,15 @@ These jobs run when files in the game app or shared packages change:
 - **`verify:e2e:aws`** - E2E verification of AWS deployment
 
 **Trigger patterns**:
+
 ```yaml
 changes:
-  - apps/game/**/*        # Game app source code
-  - packages/**/*         # Shared packages
-  - pnpm-lock.yaml        # Dependency changes
-  - package.json          # Root package config
-  - .gitlab-ci.yml        # CI config changes
-  - scripts/ci-*.sh       # CI scripts
+  - apps/game/**/* # Game app source code
+  - packages/**/* # Shared packages
+  - pnpm-lock.yaml # Dependency changes
+  - package.json # Root package config
+  - .gitlab-ci.yml # CI config changes
+  - scripts/ci-*.sh # CI scripts
 ```
 
 ### Docs App Jobs
@@ -52,12 +53,13 @@ These jobs run when documentation or docs app files change:
 - **`pages`** - GitLab Pages deployment
 
 **Trigger patterns**:
+
 ```yaml
 changes:
-  - apps/docs/**/*        # Docs app source code
-  - docs/**/*             # Documentation markdown files
-  - CLAUDE.md             # Project documentation
-  - README.md             # Main readme
+  - apps/docs/**/* # Docs app source code
+  - docs/**/* # Documentation markdown files
+  - CLAUDE.md # Project documentation
+  - README.md # Main readme
 ```
 
 ### Always-Run Jobs
@@ -75,6 +77,7 @@ Some jobs always run regardless of changes:
 **Change**: Update `apps/game/pages/index.vue`
 
 **Jobs that run**:
+
 - ✅ `test` - Unit tests run
 - ✅ `build` - Game build runs
 - ✅ `test:e2e:local` - Available manually
@@ -88,6 +91,7 @@ Some jobs always run regardless of changes:
 **Change**: Update `docs/AWS-DEPLOYMENT.md`
 
 **Jobs that run**:
+
 - ❌ `test` - Skipped (no game changes)
 - ❌ `build` - Skipped (no game changes)
 - ✅ `build:docs` - Docs build runs
@@ -100,6 +104,7 @@ Some jobs always run regardless of changes:
 **Change**: Update `packages/types/game.ts`
 
 **Jobs that run**:
+
 - ✅ `test` - Unit tests run (shared types changed)
 - ✅ `build` - Game build runs
 - ❌ `build:docs` - Skipped (docs not affected)
@@ -109,6 +114,7 @@ Some jobs always run regardless of changes:
 **Change**: Create tag `v1.2.0`
 
 **Jobs that run**:
+
 - ✅ ALL jobs run (full pipeline for releases)
 - ✅ `deploy:aws` - AWS deployment triggered
 - ✅ `verify:e2e:aws` - Available manually
@@ -118,6 +124,7 @@ Some jobs always run regardless of changes:
 ### Rules vs. Only/Except
 
 **Before** (old approach):
+
 ```yaml
 test:
   only:
@@ -127,6 +134,7 @@ test:
 ```
 
 **After** (new approach with change detection):
+
 ```yaml
 test:
   rules:
@@ -153,6 +161,7 @@ test:
 ### Before Optimization
 
 **Full pipeline on every commit** (docs update example):
+
 ```
 Stage        Job              Duration
 -----        ---              --------
@@ -167,6 +176,7 @@ TOTAL                         8m 45s
 ### After Optimization
 
 **Smart pipeline** (docs update example):
+
 ```
 Stage        Job              Duration    Status
 -----        ---              --------    ------
@@ -185,6 +195,7 @@ TOTAL                         3m 00s      💰 66% faster
 ### 1. Keep Patterns Specific
 
 ✅ **Good**:
+
 ```yaml
 changes:
   - apps/game/**/*
@@ -192,40 +203,45 @@ changes:
 ```
 
 ❌ **Bad**:
+
 ```yaml
 changes:
-  - "**/*"  # Too broad, defeats purpose
+  - '**/*' # Too broad, defeats purpose
 ```
 
 ### 2. Include Related Files
 
 ✅ **Good**:
+
 ```yaml
 changes:
   - apps/game/**/*
-  - packages/**/*        # Shared dependencies
-  - pnpm-lock.yaml       # Dependency updates
-  - .gitlab-ci.yml       # CI changes
+  - packages/**/* # Shared dependencies
+  - pnpm-lock.yaml # Dependency updates
+  - .gitlab-ci.yml # CI changes
 ```
 
 ❌ **Bad**:
+
 ```yaml
 changes:
-  - apps/game/**/*  # Misses shared package changes
+  - apps/game/**/* # Misses shared package changes
 ```
 
 ### 3. Provide Manual Overrides
 
 ✅ **Good**:
+
 ```yaml
 rules:
-  - if: $CI_PIPELINE_SOURCE == "web"  # Manual trigger
+  - if: $CI_PIPELINE_SOURCE == "web" # Manual trigger
   - if: $CI_COMMIT_BRANCH == "main"
     changes:
       - apps/game/**/*
 ```
 
 ❌ **Bad**:
+
 ```yaml
 rules:
   - if: $CI_COMMIT_BRANCH == "main"
@@ -237,6 +253,7 @@ rules:
 ### 4. Test Critical Paths Fully
 
 Always run full pipeline on:
+
 - Version tags (releases)
 - Manual triggers
 - Critical branches (main)
@@ -253,12 +270,14 @@ Always run full pipeline on:
 ### Force Run All Jobs
 
 **Option 1**: Manual trigger via web UI
+
 1. **CI/CD → Pipelines**
 2. **Run Pipeline**
 3. Select branch
 4. All jobs available
 
 **Option 2**: Create a version tag
+
 ```bash
 git tag v1.2.3
 git push --tags
@@ -283,10 +302,11 @@ git diff --name-only HEAD~1 | grep -E "(apps/docs/|docs/|CLAUDE.md)"
 **Cause**: Change pattern doesn't match modified files
 
 **Solution**: Update `changes:` pattern to include the files
+
 ```yaml
 changes:
   - apps/game/**/*
-  - apps/game/.env.example  # Add specific files if needed
+  - apps/game/.env.example # Add specific files if needed
 ```
 
 ### Issue: Job runs when it shouldn't
@@ -294,6 +314,7 @@ changes:
 **Cause**: Pattern too broad or multiple rules matching
 
 **Solution**: Make patterns more specific
+
 ```yaml
 # Instead of:
 changes:
@@ -309,10 +330,11 @@ changes:
 **Cause**: Rules don't match any trigger condition
 
 **Solution**: Add fallback rules
+
 ```yaml
 rules:
-  - if: $CI_PIPELINE_SOURCE == "web"  # Always allow manual
-  - if: $CI_COMMIT_TAG                 # Always run on tags
+  - if: $CI_PIPELINE_SOURCE == "web" # Always allow manual
+  - if: $CI_COMMIT_TAG # Always run on tags
   - if: $CI_COMMIT_BRANCH == "main"
     changes:
       - apps/game/**/*
@@ -320,7 +342,7 @@ rules:
 
 ## Future Improvements
 
-- [ ] Add change detection for infrastructure/* (Terraform)
+- [ ] Add change detection for infrastructure/\* (Terraform)
 - [ ] Parallel job execution for independent apps
 - [ ] Cache dependencies per app (not just globally)
 - [ ] Dynamic pipeline generation based on changes

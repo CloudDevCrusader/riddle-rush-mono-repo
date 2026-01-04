@@ -11,6 +11,7 @@ This guide explains how to run end-to-end (E2E) tests for the Guess Game PWA usi
 ## Overview
 
 The project includes comprehensive E2E tests that can run against:
+
 - **Local builds** - Test before deploying
 - **Deployed sites** - Verify production, staging, and development environments
 
@@ -19,6 +20,7 @@ The project includes comprehensive E2E tests that can run against:
 The E2E test suite includes:
 
 ### 1. Home Page Tests (`tests/e2e/home.spec.ts`)
+
 - Page loads successfully
 - Categories display correctly
 - Navigation works
@@ -26,6 +28,7 @@ The E2E test suite includes:
 - Service worker registration
 
 ### 2. Game Flow Tests (`tests/e2e/game.spec.ts`)
+
 - Starting a new game
 - Game interface elements
 - Input handling
@@ -33,11 +36,13 @@ The E2E test suite includes:
 - Navigation back to home
 
 ### 3. Offline Functionality (`tests/e2e/offline.spec.ts`)
+
 - App works offline after initial load
 - Offline indicator shows when offline
 - Online state restoration
 
 ### 4. Accessibility Tests (`tests/e2e/accessibility.spec.ts`)
+
 - Proper page structure
 - Keyboard navigation
 - Accessible forms
@@ -46,25 +51,31 @@ The E2E test suite includes:
 ## Running Tests Locally
 
 ### Option 1: Quick Local Test
+
 ```bash
 npm run test:e2e
 ```
+
 This runs tests against a local build (http://localhost:3000).
 
 ### Option 2: Full Local Build Test
+
 ```bash
 npm run test:e2e:local
 # or
 ./scripts/e2e-local.sh
 ```
+
 This generates a production build and tests it locally.
 
 ### Option 3: Headed Mode (See Browser)
+
 ```bash
 npm run test:e2e:headed
 ```
 
 ### Option 4: UI Mode (Interactive)
+
 ```bash
 npm run test:e2e:ui
 ```
@@ -72,30 +83,37 @@ npm run test:e2e:ui
 ## Testing Deployed Sites
 
 ### Test Production Deployment
+
 ```bash
 npm run test:e2e:production
 # or
 ./scripts/e2e-deployed.sh production
 ```
+
 Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa
 
 ### Test Staging Deployment
+
 ```bash
 npm run test:e2e:staging
 # or
 ./scripts/e2e-deployed.sh staging
 ```
+
 Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/staging
 
 ### Test Development Deployment
+
 ```bash
 npm run test:e2e:dev
 # or
 ./scripts/e2e-deployed.sh dev
 ```
+
 Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/dev
 
 ### Custom URL
+
 ```bash
 BASE_URL=https://your-custom-url.com npm run test:e2e
 ```
@@ -105,6 +123,7 @@ BASE_URL=https://your-custom-url.com npm run test:e2e
 The GitLab CI pipeline includes E2E tests in the `verify` stage:
 
 ### Manual E2E Tests (After Deployment)
+
 After deploying to any environment, you can manually trigger E2E tests:
 
 1. Go to your GitLab project → CI/CD → Pipelines
@@ -115,7 +134,9 @@ After deploying to any environment, you can manually trigger E2E tests:
    - `verify:e2e:dev` (for development branch)
 
 ### Test Results
+
 Test results are available as artifacts:
+
 - HTML report: `playwright-report/`
 - JSON results: `test-results/results.json`
 - JUnit XML: `test-results/junit.xml`
@@ -126,6 +147,7 @@ Artifacts expire after 7 days.
 ## Configuration
 
 ### Playwright Configuration
+
 The main configuration is in `playwright.config.ts`:
 
 - **Base URL**: Controlled via `BASE_URL` or `PLAYWRIGHT_TEST_BASE_URL` environment variable
@@ -134,6 +156,7 @@ The main configuration is in `playwright.config.ts`:
 - **Timeouts**: Extended for deployed sites (network latency)
 
 ### Environment Variables
+
 - `BASE_URL`: Override the base URL for testing
 - `CI`: Detected automatically in CI environments
 - `PLAYWRIGHT_TEST_BASE_URL`: Alternative to BASE_URL
@@ -141,32 +164,39 @@ The main configuration is in `playwright.config.ts`:
 ## Debugging Failed Tests
 
 ### 1. View HTML Report
+
 ```bash
 npx playwright show-report
 ```
 
 ### 2. Run Specific Test
+
 ```bash
 npx playwright test tests/e2e/home.spec.ts
 ```
 
 ### 3. Run in Debug Mode
+
 ```bash
 npx playwright test --debug
 ```
 
 ### 4. View Trace
+
 After a test failure with retries, traces are captured:
+
 ```bash
 npx playwright show-trace test-results/.../trace.zip
 ```
 
 ### 5. Screenshots
+
 Screenshots are automatically captured on failure in `test-results/`
 
 ## Writing New Tests
 
 ### Test Structure
+
 ```typescript
 import { test, expect } from '@playwright/test'
 
@@ -179,6 +209,7 @@ test.describe('Feature Name', () => {
 ```
 
 ### Best Practices
+
 1. **Use data-testid attributes** for reliable selectors
 2. **Wait for elements** before interacting
 3. **Use soft assertions** for multiple checks
@@ -186,6 +217,7 @@ test.describe('Feature Name', () => {
 5. **Use descriptive test names** - explain what you're testing
 
 ### Common Patterns
+
 ```typescript
 // Wait for navigation
 await page.waitForURL(/game/)
@@ -197,7 +229,7 @@ await page.waitForLoadState('networkidle')
 await expect(element).toBeVisible({ timeout: 5000 })
 
 // Handle optional elements
-if (await element.count() > 0) {
+if ((await element.count()) > 0) {
   await expect(element).toBeVisible()
 }
 ```
@@ -205,22 +237,27 @@ if (await element.count() > 0) {
 ## Troubleshooting
 
 ### Tests Fail Locally
+
 - Ensure dependencies are installed: `npm ci`
 - Build the app first: `npm run generate`
 - Check if port 3000 is available
 
 ### Tests Fail on Deployed Site
+
 - Verify the site is accessible: `curl -I <URL>`
 - Check for CORS issues
 - Ensure service worker has time to register (add delays if needed)
 
 ### Playwright Not Found
+
 ```bash
 npx playwright install
 ```
 
 ### Timeout Errors
+
 Increase timeouts in `playwright.config.ts` or use:
+
 ```typescript
 await expect(element).toBeVisible({ timeout: 10000 })
 ```
@@ -249,19 +286,23 @@ await expect(element).toBeVisible({ timeout: 10000 })
 ## Support
 
 For issues or questions:
+
 1. Check the [Playwright documentation](https://playwright.dev/docs/intro)
 2. Review existing test examples in `tests/e2e/`
 3. Check GitLab CI logs for detailed error messages
+
 # Quick Start: E2E Testing
 
 ## Setup (One-time)
 
 ### 1. Install Playwright Browsers
+
 ```bash
 npx playwright install chromium firefox
 ```
 
 On Linux, you may need to install dependencies:
+
 ```bash
 npx playwright install-deps
 ```
@@ -269,22 +310,27 @@ npx playwright install-deps
 ## Running Tests
 
 ### Test Locally (Easiest)
+
 ```bash
 npm run test:e2e:local
 ```
+
 This builds and tests the app automatically.
 
 ### Test Production Deployment
+
 ```bash
 npm run test:e2e:production
 ```
 
 ### Test with UI (Interactive)
+
 ```bash
 npm run test:e2e:ui
 ```
 
 ### Watch Mode (During Development)
+
 ```bash
 npm run test:e2e:headed
 ```
@@ -292,11 +338,13 @@ npm run test:e2e:headed
 ## In GitLab CI
 
 E2E tests **run automatically** after each deployment:
+
 - **Main branch** → Tests production site
 - **Staging branch** → Tests staging site
 - **Development branch** → Tests dev site
 
 ### View Results
+
 1. Go to: **CI/CD → Pipelines**
 2. Click on your pipeline
 3. Go to the **verify** stage
@@ -306,17 +354,20 @@ E2E tests **run automatically** after each deployment:
 ## Troubleshooting
 
 ### "Executable doesn't exist" error
+
 ```bash
 npx playwright install
 ```
 
 ### Port 3000 already in use
+
 ```bash
 # Kill the process using port 3000
 lsof -ti:3000 | xargs kill -9
 ```
 
 ### Tests timeout
+
 The deployed site might be slow. Tests automatically retry 2 times in CI.
 
 ## What's Tested
@@ -330,6 +381,7 @@ The deployed site might be slow. Tests automatically retry 2 times in CI.
 ✅ Accessibility basics
 
 For full documentation, see [E2E_TESTING.md](./E2E_TESTING.md)
+
 # Testing Guide
 
 This project uses Vitest for unit testing and Playwright for end-to-end testing.
@@ -364,6 +416,7 @@ npm run test:e2e:report
 ### Configuration
 
 Unit tests are configured in `vitest.config.ts` with:
+
 - **Environment**: happy-dom (lightweight DOM simulation)
 - **Coverage Provider**: v8
 - **Coverage Thresholds**: 80% for lines, functions, branches, statements
@@ -382,8 +435,8 @@ describe('MyComponent', () => {
   it('renders correctly', () => {
     const wrapper = mount(MyComponent, {
       props: {
-        title: 'Test Title'
-      }
+        title: 'Test Title',
+      },
     })
 
     expect(wrapper.text()).toContain('Test Title')
@@ -451,7 +504,7 @@ mockFn.mockReturnValue(42)
 
 // Mock a module
 vi.mock('@/services/api', () => ({
-  fetchData: vi.fn(() => Promise.resolve({ data: 'test' }))
+  fetchData: vi.fn(() => Promise.resolve({ data: 'test' })),
 }))
 
 // Mock timers
@@ -465,6 +518,7 @@ vi.useRealTimers()
 ### Configuration
 
 E2E tests are configured in `playwright.config.ts` with:
+
 - **Test Directory**: `tests/e2e/`
 - **Browsers**: Desktop Chrome and Mobile (Pixel 5)
 - **Base URL**: http://localhost:3000 (configurable via BASE_URL env var)
@@ -572,6 +626,7 @@ start coverage/index.html
 ```
 
 The report shows:
+
 - Overall coverage percentages
 - Line-by-line coverage for each file
 - Uncovered lines highlighted in red
@@ -580,6 +635,7 @@ The report shows:
 ### Coverage in CI
 
 GitLab CI automatically:
+
 1. Generates coverage reports
 2. Displays coverage percentage in merge requests
 3. Stores coverage artifacts for 30 days
@@ -588,6 +644,7 @@ GitLab CI automatically:
 ## Best Practices
 
 ### Unit Tests
+
 - Test one thing per test
 - Use descriptive test names
 - Keep tests simple and focused
@@ -596,6 +653,7 @@ GitLab CI automatically:
 - Aim for 80%+ coverage
 
 ### E2E Tests
+
 - Test critical user flows
 - Keep tests independent
 - Use data-testid attributes for stable selectors
@@ -604,6 +662,7 @@ GitLab CI automatically:
 - Avoid testing implementation details
 
 ### General
+
 - Run tests before committing
 - Keep tests fast
 - Review coverage reports regularly
@@ -613,12 +672,14 @@ GitLab CI automatically:
 ## CI/CD Integration
 
 Tests run automatically in GitLab CI:
+
 1. **Unit tests** run in parallel with e2e tests
 2. **E2E tests** run against the production build
 3. **Build stage** only runs if all tests pass
 4. **Deploy stage** only runs if build succeeds
 
 If tests fail:
+
 - Check the CI logs for error details
 - Review test artifacts (screenshots, traces)
 - Run tests locally to reproduce
@@ -627,26 +688,31 @@ If tests fail:
 ## Troubleshooting
 
 ### Tests timing out
+
 - Increase timeout in test file: `test.setTimeout(60000)`
 - Check for missing awaits
 - Ensure test server is running
 
 ### Flaky tests
+
 - Add proper waits: `await page.waitForSelector()`
 - Use retry logic for unstable operations
 - Check for race conditions
 - Use Playwright's auto-waiting features
 
 ### Coverage not updating
+
 - Clear coverage directory: `rm -rf coverage`
 - Ensure all source files are being tested
 - Check vitest.config.ts coverage settings
 
 ### E2E tests failing in CI but passing locally
+
 - Check browser versions
 - Verify BASE_URL configuration
 - Review CI-specific settings in playwright.config.ts
 - Check for timing issues (CI is usually slower)
+
 # Test Updates Summary
 
 ## E2E Tests Updated
@@ -749,6 +815,7 @@ npm run test:unit
 # Run specific test file
 npm run test:e2e tests/e2e/game-flow.spec.ts
 ```
+
 # i18n and Testing Setup Guide
 
 ## Summary of Changes
@@ -770,6 +837,7 @@ npm install
 ```
 
 This will install:
+
 - `@nuxtjs/i18n` - Internationalization support
 - All existing dependencies including `nuxt-gtag`
 
@@ -792,26 +860,32 @@ The app should now run at `http://localhost:3000`
 ### New Files Created
 
 **Translations:**
+
 - `locales/de.json` - German translations (default language)
 - `i18n.config.ts` - i18n configuration
 
 **Tests:**
+
 - `tests/e2e/gitlab-pages.spec.ts` - GitLab Pages smoke tests
 
 **Documentation:**
+
 - `I18N_AND_TESTING_SETUP.md` - This file
 
 ### Modified Files
 
 **Configuration:**
+
 - `package.json` - Added @nuxtjs/i18n dependency
 - `nuxt.config.ts` - Added i18n module and configuration
 
 **Components:**
+
 - `pages/index.vue` - Replaced hardcoded text with `$t()` calls, added test IDs
 - `pages/game.vue` - Replaced hardcoded text with `$t()` calls, added test IDs
 
 **Tests:**
+
 - `tests/e2e/navigation.spec.ts` - Updated to use data-testid (need to recreate)
 - `tests/e2e/game.spec.ts` - Comprehensive game tests (need to recreate)
 - `tests/e2e/pwa.spec.ts` - Enhanced PWA tests (need to recreate)
@@ -848,8 +922,8 @@ All text is now in `locales/de.json`:
 
   <!-- In script -->
   <script setup>
-  const { t } = useI18n()
-  const message = t('game.correct')
+    const { t } = useI18n()
+    const message = t('game.correct')
   </script>
 </template>
 ```
@@ -903,16 +977,19 @@ npm run test:e2e:headed
 ### Test Structure
 
 **Unit Tests** (`tests/unit/**/*.spec.ts`)
+
 - Test individual functions and components
 - Use Vitest and Vue Test Utils
 - Language-agnostic
 
 **E2E Tests** (`tests/e2e/**/*.spec.ts`)
+
 - Test user flows and interactions
 - Use Playwright
 - Use `data-testid` attributes (language-agnostic)
 
 **GitLab Pages Tests** (`tests/e2e/gitlab-pages.spec.ts`)
+
 - Run against deployed site
 - Verify assets load correctly
 - Check PWA functionality
@@ -923,11 +1000,13 @@ npm run test:e2e:headed
 All interactive elements have `data-testid` attributes:
 
 **Homepage:**
+
 - `quick-start-button` - Quick start button
 - `categories-grid` - Categories container
 - `category-card-{id}` - Individual category cards
 
 **Game Page:**
+
 - `answer-input` - Answer input field
 - `submit-answer-button` - Submit button
 - `score-display` - Score display container
@@ -941,11 +1020,13 @@ All interactive elements have `data-testid` attributes:
 ### Writing Language-Agnostic Tests
 
 **❌ Don't do this:**
+
 ```typescript
 await page.click('text=Start Playing') // Breaks with different languages
 ```
 
 **✅ Do this:**
+
 ```typescript
 await page.getByTestId('quick-start-button').click() // Works in any language
 ```
@@ -955,6 +1036,7 @@ await page.getByTestId('quick-start-button').click() // Works in any language
 ### Issue: Module not found errors
 
 **Solution:**
+
 ```bash
 rm -rf node_modules
 rm package-lock.json
@@ -964,6 +1046,7 @@ npm install
 ### Issue: i18n not working
 
 **Solution:**
+
 1. Check `locales/de.json` exists
 2. Verify `nuxt.config.ts` has i18n config
 3. Run `npm run dev` to regenerate types
@@ -971,6 +1054,7 @@ npm install
 ### Issue: Tests failing
 
 **Solution:**
+
 1. Ensure dev server is running for E2E tests
 2. Check that all test IDs exist in components
 3. Run with `--headed` to see what's happening:
@@ -981,6 +1065,7 @@ npm install
 ### Issue: Playwright browsers not installed
 
 **Solution:**
+
 ```bash
 npx playwright install --with-deps
 ```
@@ -1017,11 +1102,13 @@ npx playwright test tests/e2e/gitlab-pages.spec.ts
 ### Required
 
 1. **Install Dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Test Locally:**
+
    ```bash
    npm run dev
    npm run test:e2e
@@ -1064,6 +1151,7 @@ Before deploying:
 - **Smoke Tests:** Verify deployment works
 
 Current test coverage:
+
 - Navigation flows ✅
 - Game functionality ✅
 - PWA features ✅

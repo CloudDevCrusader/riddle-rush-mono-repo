@@ -8,6 +8,7 @@
 ## Why Usersnap?
 
 Usersnap is a professional feedback and bug tracking tool that provides:
+
 - 📸 Visual bug reporting with screenshots and annotations
 - 💬 User feedback collection
 - 🎯 Feature request management
@@ -21,6 +22,7 @@ Usersnap is a professional feedback and bug tracking tool that provides:
 ## Installation Steps
 
 ### 1. Create Usersnap Account
+
 1. Go to [https://usersnap.com](https://usersnap.com)
 2. Sign up for free account
 3. Create a new project for "Riddle Rush"
@@ -55,7 +57,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         },
         lang: 'de', // German language
         collect: {
-          email: false,  // Don't collect email by default
+          email: false, // Don't collect email by default
         },
       })
     })
@@ -168,22 +170,26 @@ export default defineNuxtConfig({
 ## Features You Get
 
 ### 1. Visual Bug Reporting
+
 - Users can take screenshots with annotations
 - Automatically captures browser info, URL, console logs
 - Draw arrows, highlight areas, add text
 
 ### 2. Feedback Collection
+
 - Simple feedback form
 - Customizable fields
 - Email notifications
 
 ### 3. Dashboard
+
 - View all feedback in one place
 - Categorize and prioritize
 - Assign to team members
 - Export to other tools
 
 ### 4. Integrations
+
 - **Jira**: Auto-create tickets
 - **Trello**: Add cards
 - **Slack**: Get notifications
@@ -237,6 +243,7 @@ lang: 'de',  // German
 ### Test Production
 
 After deploying:
+
 ```bash
 pnpm run generate
 pnpm run preview
@@ -254,6 +261,7 @@ Navigate to site and test feedback widget.
 - **7-day data retention**
 
 **Paid Plans**:
+
 - Startup: €19/month (500 items)
 - Company: €99/month (5000 items)
 - Enterprise: Custom pricing
@@ -281,12 +289,14 @@ interface Window {
 ## Best Practices
 
 ### 1. Only Load on Client
+
 ```typescript
 // Use .client.ts suffix for plugin
-plugins/usersnap.client.ts
+plugins / usersnap.client.ts
 ```
 
 ### 2. Lazy Load
+
 Don't load until user interacts:
 
 ```typescript
@@ -305,12 +315,14 @@ export function loadUsersnap() {
 ```
 
 ### 3. Disable in Development (Optional)
+
 ```typescript
 const isDev = process.env.NODE_ENV === 'development'
-if (isDev) return  // Don't load Usersnap in dev
+if (isDev) return // Don't load Usersnap in dev
 ```
 
 ### 4. Track User Context
+
 ```typescript
 api.init({
   custom: {
@@ -326,11 +338,13 @@ api.init({
 ## Cleanup Checklist
 
 ✅ **Removed**:
+
 - `/components/FeedbackWidget.vue` (deleted)
 - Reference in `/app.vue` (removed)
 - Old localStorage feedback data (optional: `localStorage.removeItem('app-feedback')`)
 
 **Ready for**:
+
 - Usersnap integration
 - Professional feedback collection
 - Visual bug reporting

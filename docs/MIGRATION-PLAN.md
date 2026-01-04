@@ -5,11 +5,13 @@ This document outlines the migration to a monorepo structure.
 ## Migration Steps
 
 ### Phase 1: Structure Setup ✅
+
 - [x] Create monorepo structure (apps/, packages/)
 - [x] Set up pnpm workspace
 - [x] Create package.json files for each workspace
 
 ### Phase 2: Move Game App
+
 - [ ] Move game files to `apps/game/`
   - [ ] components/
   - [ ] composables/
@@ -27,6 +29,7 @@ This document outlines the migration to a monorepo structure.
   - [ ] playwright.config.ts
 
 ### Phase 3: Move Docs App
+
 - [ ] Move docs files to `apps/docs/`
   - [ ] docs/content/ → apps/docs/content/
   - [ ] pages/docs/ → apps/docs/pages/
@@ -34,6 +37,7 @@ This document outlines the migration to a monorepo structure.
   - [ ] Create tsconfig.json for docs
 
 ### Phase 4: Create Shared Packages
+
 - [ ] packages/shared/
   - [ ] Move utils/constants.ts
   - [ ] Move common utilities
@@ -46,6 +50,7 @@ This document outlines the migration to a monorepo structure.
   - [ ] TypeScript configs
 
 ### Phase 5: Update Imports
+
 - [ ] Update all imports to use workspace packages
   - [ ] `@riddle-rush/shared`
   - [ ] `@riddle-rush/types`
@@ -53,11 +58,13 @@ This document outlines the migration to a monorepo structure.
 - [ ] Update test configs
 
 ### Phase 6: Update CI/CD
+
 - [ ] Update .gitlab-ci.yml for monorepo
 - [ ] Update build scripts
 - [ ] Update deployment scripts
 
 ### Phase 7: Cleanup
+
 - [ ] Remove old files from root
 - [ ] Update documentation
 - [ ] Test everything
@@ -77,4 +84,3 @@ pnpm dev:docs
 # Build all
 pnpm -r build
 ```
-

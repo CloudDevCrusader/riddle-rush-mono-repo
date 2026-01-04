@@ -12,20 +12,23 @@ This document tracks design assets and pages that need to be created, updated, o
 The following UI elements have been **hidden or removed for MVP** to focus on core gameplay:
 
 ### Hidden for MVP
+
 - **Coin System** - All coin displays and coin bars removed from:
   - Main menu top bar
   - Alphabet selection page
   - Settings page assets (designed but not shown)
   - Profile page assets (designed but not shown)
-  - *Reason*: Coin/currency system not implemented yet, will be added post-MVP
+  - _Reason_: Coin/currency system not implemented yet, will be added post-MVP
 
 ### Removed for MVP
+
 - **EXIT Button** - Main menu EXIT button (X icon) commented out
-  - *Reason*: Caused positioning issues, users can use browser back button
+  - _Reason_: Caused positioning issues, users can use browser back button
 - **Menu Icon** - Main menu bottom-right menu icon removed
-  - *Reason*: Overlapped with feedback button, simplified navigation
+  - _Reason_: Overlapped with feedback button, simplified navigation
 
 ### Mobile Optimizations Completed ✅
+
 - **Navbar** - Hidden on mobile (≤640px) to maximize screen space
 - **Fortune Wheel** - Optimized for mobile display:
   - Title image hidden on small screens
@@ -54,6 +57,7 @@ The following pages have complete design assets AND are fully implemented:
 ## 🚧 Pages/Modals Needing Implementation (Design Complete, Code Missing)
 
 ### 1. Settings Page ⚠️ HIGH PRIORITY
+
 - **Design Location**: `docs/gfx/settings/`, `public/assets/settings/`
 - **Status**: ❌ Page does not exist (`pages/settings.vue` not found)
 - **Assets Available**:
@@ -64,7 +68,7 @@ The following pages have complete design assets AND are fully implemented:
   - ✅ Volume slider bars (`sound low bar.png`)
   - ✅ OK button (`ok buttton.png`, `OK.png`)
   - ✅ Back button (`back.png`)
-  - ✅ Coin bar (`COIN BAR.png`, `100.png`) - *Hidden for MVP*
+  - ✅ Coin bar (`COIN BAR.png`, `100.png`) - _Hidden for MVP_
   - ✅ Options button (`options.png`)
 - **Implementation Needed**:
   - Create `/pages/settings.vue`
@@ -75,6 +79,7 @@ The following pages have complete design assets AND are fully implemented:
   - Connect "Options" button in main menu to `/settings` route
 
 ### 2. Profile Page ⚠️ MEDIUM PRIORITY
+
 - **Design Location**: `docs/gfx/profile/`, `public/assets/profile/`
 - **Status**: ❌ Page does not exist (`pages/profile.vue` not found)
 - **Assets Available**:
@@ -85,7 +90,7 @@ The following pages have complete design assets AND are fully implemented:
   - ✅ Profile box/container (`box.png`)
   - ✅ OK button (`ok.png`)
   - ✅ Back buttons (`back.png`, `back-1.png`)
-  - ✅ Coin bar (`COIN BAR.png`, `100.png`) - *Hidden for MVP*
+  - ✅ Coin bar (`COIN BAR.png`, `100.png`) - _Hidden for MVP_
   - ✅ Mockup reference (`profile mockup.png`)
 - **Implementation Needed**:
   - Create `/pages/profile.vue`
@@ -95,6 +100,7 @@ The following pages have complete design assets AND are fully implemented:
   - Connect "Profile" button in main menu to `/profile` route
 
 ### 3. Paused Modal/Overlay ⚠️ HIGH PRIORITY
+
 - **Design Location**: `docs/gfx/paused/`, `public/assets/paused/`
 - **Status**: ❌ Pause functionality not implemented
 - **Assets Available**:
@@ -113,6 +119,7 @@ The following pages have complete design assets AND are fully implemented:
   - Pause timer if timed mode exists
 
 ### 4. Quit Game Modal ⚠️ MEDIUM PRIORITY
+
 - **Design Location**: `docs/gfx/quit game/`, `public/assets/quit/`
 - **Status**: ❌ Quit confirmation not implemented
 - **Assets Available**:
@@ -132,6 +139,7 @@ The following pages have complete design assets AND are fully implemented:
 ## ❌ Missing Design Assets (Page Exists, Design Incomplete)
 
 ### 1. Main Gameplay Screen ⚠️ CRITICAL PRIORITY
+
 - **Current File**: `pages/game.vue`
 - **Status**: ⚠️ Implemented with basic CSS, missing design assets
 - **Current Features**:
@@ -158,6 +166,7 @@ The following pages have complete design assets AND are fully implemented:
   - ❌ Timer UI if timed mode is added
 
 **Suggested Design Elements**:
+
 - Background matching other pages' theme
 - Category card with decorative frame similar to other screens
 - Large letter badge with glow effect (similar to alphabet selection)
@@ -167,6 +176,7 @@ The following pages have complete design assets AND are fully implemented:
 - Player turn indicator with avatar frame/highlight
 
 ### 2. Credits Page
+
 - **Current File**: `pages/credits.vue`
 - **Status**: ⚠️ Implemented with basic styling, no design mockup
 - **Current Features**:
@@ -183,6 +193,7 @@ The following pages have complete design assets AND are fully implemented:
   - ❌ Layout grid/positioning guide
 
 ### 3. About Page
+
 - **Current File**: `pages/about.vue`
 - **Status**: ⚠️ Basic implementation, needs design
 - **Current Features**:
@@ -201,6 +212,7 @@ The following pages have complete design assets AND are fully implemented:
 ## 🎮 Multi-Player Design Elements Status
 
 ### ✅ Already Designed & Implemented
+
 - Player slots with add/remove buttons (`pages/players.vue`)
 - Round indicator in game header
 - Player count display in game header
@@ -210,11 +222,13 @@ The following pages have complete design assets AND are fully implemented:
 ### ❌ Missing Multi-Player Designs
 
 #### 1. Rank Badge for 6th Place
+
 - **Location**: Leaderboard page
 - **Current**: Only has rank badges 1-5 (`1.png`, `2.png`, `3.png`, `4.png`, `5.png`)
 - **Needed**: `6.png` rank badge to support 6-player games
 
 #### 2. Player Turn Indicator Highlight
+
 - **Location**: Game page during multi-player
 - **Current**: Simple text "Current Turn: Player 1"
 - **Needed Design**:
@@ -224,6 +238,7 @@ The following pages have complete design assets AND are fully implemented:
   - Turn number indicator
 
 #### 3. All Players Submitted Card
+
 - **Location**: Game page when round completes
 - **Current**: Basic card with button
 - **Needed Design**:
@@ -238,7 +253,9 @@ The following pages have complete design assets AND are fully implemented:
 ## 🔄 Design Review Needed
 
 ### 1. Button States & Interactions
+
 **Review all buttons across pages for:**
+
 - ✅ Normal state (exists for most buttons)
 - ⚠️ Hover state (some buttons have `-1.png` variants, inconsistent)
 - ❌ Active/pressed state (missing for most buttons)
@@ -248,7 +265,9 @@ The following pages have complete design assets AND are fully implemented:
 **Pages to review**: All pages, especially game, players, results
 
 ### 2. Input Field States
+
 **Text input fields need:**
+
 - ⚠️ Default state (basic styling exists)
 - ❌ Focus state (highlight border, glow)
 - ❌ Error state (red border for invalid input)
@@ -257,7 +276,9 @@ The following pages have complete design assets AND are fully implemented:
 **Found in**: game.vue (answer input)
 
 ### 3. Responsive Design Verification
+
 **All pages need mobile/tablet testing:**
+
 - ✅ Touch target sizes - Verified ≥44x44px for mobile (buttons optimized to 50px on alphabet page)
 - ⚠️ Text readability (font sizes, contrast) - Needs comprehensive review
 - ⚠️ Layout stacking (elements overlapping on small screens) - Needs testing on game/results pages
@@ -267,7 +288,9 @@ The following pages have complete design assets AND are fully implemented:
 **Priority pages still needing mobile testing**: game, players, results
 
 ### 4. Accessibility
+
 **Design considerations needed:**
+
 - Color contrast ratios (WCAG AA compliance)
 - Focus indicators for keyboard navigation
 - Screen reader friendly element labeling
@@ -278,6 +301,7 @@ The following pages have complete design assets AND are fully implemented:
 ## 🎨 Missing UI Components
 
 ### Loading States
+
 - **Current**: Generic `components/Spinner.vue`
 - **Needed**:
   - Branded loading spinner matching game theme
@@ -286,6 +310,7 @@ The following pages have complete design assets AND are fully implemented:
   - Skeleton screens for content loading
 
 ### Error States
+
 - **Current**: No error state designs
 - **Needed**:
   - Network error display (offline mode, API failure)
@@ -294,6 +319,7 @@ The following pages have complete design assets AND are fully implemented:
   - Generic error modal/toast design
 
 ### Empty States
+
 - **Current**: Basic "No entries" text
 - **Needed**:
   - Empty leaderboard illustration
@@ -302,6 +328,7 @@ The following pages have complete design assets AND are fully implemented:
   - Empty state icons/illustrations matching theme
 
 ### Notifications/Toasts
+
 - **Needed**:
   - Success notification design
   - Error notification design
@@ -313,12 +340,14 @@ The following pages have complete design assets AND are fully implemented:
 ## 📋 Animation & Sound Design
 
 ### Page Transitions (CSS/Animation Needed)
+
 - Fade/slide between page navigation
 - Modal slide-up/fade-in animations
 - Button hover effects (scale, glow, shadow)
 - Drawer/menu slide animations
 
 ### Game-Specific Animations (Need Design Specs)
+
 - ✅ Fortune wheel spin (implemented in `alphabet.vue`)
 - ❌ Correct answer celebration (confetti, score popup)
 - ❌ Wrong answer feedback (shake, red flash)
@@ -328,6 +357,7 @@ The following pages have complete design assets AND are fully implemented:
 - ❌ Level up/achievement popup
 
 ### Sound Design Integration (Audio Files Needed)
+
 - ❌ Button click sound
 - ❌ Correct answer chime
 - ❌ Wrong answer buzz
@@ -343,24 +373,28 @@ The following pages have complete design assets AND are fully implemented:
 ## 🚀 Implementation Priority
 
 ### 🔴 Critical (Blocking MVP Completeness)
+
 1. **Settings Page** - Users expect settings from main menu "Options" button
 2. **Pause Modal** - Essential for game interruption handling
 3. **Main Gameplay Screen Design** - Current implementation needs visual polish
 4. **Game Visual Feedback** - Correct/wrong answer animations
 
 ### 🟡 High (Core Features)
+
 5. **Quit Game Modal** - Prevent accidental game exits
 6. **Profile Page** - Main menu "Profile" button currently broken
 7. **Rank Badge #6** - Support full 6-player mode
 8. **Error/Loading States** - Improve UX for edge cases
 
 ### 🟢 Medium (Polish & Enhancement)
+
 9. **Credits Page Design** - Make credits visually appealing
 10. **About Page Design** - Professional game info page
 11. **Button States** - Hover/active/disabled consistency
 12. **Multi-player UI Polish** - Turn indicators, submission cards
 
 ### 🔵 Low (Nice to Have)
+
 13. **Animations** - Advanced effects and transitions
 14. **Sound Effects** - Audio feedback library
 15. **Empty States** - Illustrations for empty data
@@ -371,6 +405,7 @@ The following pages have complete design assets AND are fully implemented:
 ## 📂 Asset Organization & Naming
 
 ### Current Structure
+
 ```
 docs/gfx/           # Original design files (Photoshop/AI exports)
   ├── Main Menu/
@@ -402,12 +437,14 @@ public/assets/      # Production-ready assets
 ```
 
 ### Naming Convention Issues
+
 - ⚠️ Inconsistent folder naming (`Main Menu` vs `main-menu`, `quit game` vs `quit`)
 - ⚠️ Mixed capitalization in filenames (`BACKGROUND.png`, `back.png`, `ok buttton.png`)
 - ⚠️ Typos in asset names (`ok buttton.png` should be `ok button.png`)
 - ⚠️ Unclear naming (`profile-1.png`, `back-1.png` - what's the variant?)
 
 ### Recommended Naming Standards
+
 1. **Folders**: Use kebab-case consistently (`main-menu`, `quit-game`, `you-win`)
 2. **Files**: Use descriptive lowercase with hyphens (`background.png`, `ok-button.png`)
 3. **Variants**: Use suffixes for states (`button-normal.png`, `button-hover.png`, `button-disabled.png`)
@@ -418,6 +455,7 @@ public/assets/      # Production-ready assets
 ## 📝 Notes for Designer
 
 ### Technical Specifications
+
 - **Base Resolution**: 1920x1080 for desktop, scale down for mobile
 - **Format**: PNG with transparency for UI elements
 - **Compression**: Optimize for web (use tools like TinyPNG, ImageOptim)
@@ -426,6 +464,7 @@ public/assets/      # Production-ready assets
 - **Sprite Sheets**: Consider for small icons to reduce HTTP requests
 
 ### Current Design System (Extracted from Existing Assets)
+
 - **Color Palette**:
   - Primary: Purple/blue gradients (#667eea, #764ba2)
   - Accent: Gold/yellow (#FFD700)
@@ -445,6 +484,7 @@ public/assets/      # Production-ready assets
   - `var(--spacing-sm)`, `--spacing-md`, `--spacing-lg`, etc.
 
 ### Multi-Player Design Considerations
+
 - **Player Count**: Support 2-6 players simultaneously
 - **Scalability**: UI elements should stack/grid gracefully
 - **Visual Distinction**: "Active player" must stand out clearly
@@ -475,6 +515,7 @@ These features are not yet implemented and don't need designs immediately:
 ## 🎯 Quick Action Checklist for Designer
 
 ### Immediate Actions (This Week)
+
 - [ ] Create Settings page mockup and export assets
 - [ ] Create Profile page mockup and export assets
 - [ ] Create Pause modal overlay design
@@ -484,6 +525,7 @@ These features are not yet implemented and don't need designs immediately:
 - [ ] Design rank badge #6 for leaderboard
 
 ### Next Sprint
+
 - [ ] Create Credits page design
 - [ ] Create About page design
 - [ ] Design button states (hover, active, disabled) for all buttons
@@ -492,6 +534,7 @@ These features are not yet implemented and don't need designs immediately:
 - [ ] Create notification/toast component designs
 
 ### Polish Phase
+
 - [ ] Define animation timing and easing curves
 - [ ] Create sound effect specifications
 - [ ] Design advanced transitions and microinteractions

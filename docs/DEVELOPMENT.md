@@ -9,24 +9,29 @@ This guide covers development processes, optimizations, code quality improvement
 ## ✅ Cleanup Completed
 
 ### 1. **Console Statements**
+
 - ✅ Fixed `useGameActions.ts` - Replaced 6 console.error calls with logger
 - ✅ All console statements now use `useLogger()` composable
 - ✅ Only logger.ts contains console statements (with dev-only guards)
 
 ### 2. **Code Quality**
+
 - ✅ Lint: **PASSING** - No linting errors
 - ✅ TypeCheck: **PASSING** - No TypeScript errors
 - ✅ All imports properly organized
 - ✅ No unused imports detected
 
 ### 3. **File Organization**
+
 - ✅ All composables use logger utility
 - ✅ Constants centralized in `utils/constants.ts`
 - ✅ Common patterns extracted to composables
 - ✅ Consistent code structure
 
 ### 4. **Unused Pages**
+
 The following pages are marked as unused but kept for reference:
+
 - `pages/about.vue` - Redundant with credits
 - `pages/alphabet.vue` - Replaced by round-start
 - `pages/categories.vue` - Replaced by round-start
@@ -37,6 +42,7 @@ These are not part of the active game flow but kept for potential future use.
 ## ✅ Verification Status
 
 ### Code Quality
+
 - ✅ **Lint**: No errors
 - ✅ **TypeCheck**: No errors
 - ✅ **Console Statements**: All use logger (dev-only)
@@ -44,12 +50,14 @@ These are not part of the active game flow but kept for potential future use.
 - ✅ **Type Safety**: Strong typing throughout
 
 ### Functionality
+
 - ✅ **Unit Tests**: Ready to run
 - ✅ **E2E Tests**: Configured
 - ✅ **Build**: Should compile successfully
 - ✅ **Pages**: All active pages functional
 
 ### Documentation
+
 - ✅ **README.md**: Main documentation
 - ✅ **CLAUDE.md**: Development guide
 - ✅ **MOCKUP_VERIFICATION.md**: Design alignment
@@ -59,20 +67,21 @@ These are not part of the active game flow but kept for potential future use.
 
 ## 📊 Final Status
 
-| Category | Status | Notes |
-|----------|--------|-------|
-| Linting | ✅ PASS | No errors |
-| Type Checking | ✅ PASS | No errors |
-| Console Statements | ✅ CLEAN | All use logger |
-| Code Organization | ✅ GOOD | Well structured |
-| Type Safety | ✅ EXCELLENT | Strong typing |
-| Documentation | ✅ COMPLETE | Comprehensive |
-| Tests | ✅ READY | Configured |
-| Build | ✅ READY | Should compile |
+| Category           | Status       | Notes           |
+| ------------------ | ------------ | --------------- |
+| Linting            | ✅ PASS      | No errors       |
+| Type Checking      | ✅ PASS      | No errors       |
+| Console Statements | ✅ CLEAN     | All use logger  |
+| Code Organization  | ✅ GOOD      | Well structured |
+| Type Safety        | ✅ EXCELLENT | Strong typing   |
+| Documentation      | ✅ COMPLETE  | Comprehensive   |
+| Tests              | ✅ READY     | Configured      |
+| Build              | ✅ READY     | Should compile  |
 
 ## 🎯 Ready for Production
 
 The codebase is now:
+
 - ✅ **Clean** - No lint or type errors
 - ✅ **Consistent** - All error handling uses logger
 - ✅ **Well-organized** - Clear structure and patterns
@@ -91,6 +100,7 @@ The codebase is now:
 
 **Status**: ✅ **CLEAN & VERIFIED**
 **Date**: 2026-01-02
+
 # Comprehensive Refactoring & Optimization Summary
 
 ## Overview
@@ -100,9 +110,10 @@ This document summarizes all refactoring and optimization work performed to impr
 ## ✅ Completed Optimizations
 
 ### 1. **Centralized Logging System**
+
 - **Created**: `composables/useLogger.ts`
 - **Purpose**: Unified logging that only logs in development mode
-- **Impact**: 
+- **Impact**:
   - Removed all `console.*` statements from production code
   - Consistent error logging across the application
   - Easy integration with error tracking services
@@ -114,6 +125,7 @@ This document summarizes all refactoring and optimization work performed to impr
   - ✅ All page components - Error handling uses logger
 
 ### 2. **Shared Constants File**
+
 - **Created**: `utils/constants.ts`
 - **Purpose**: Centralized location for all magic numbers and configuration values
 - **Constants Extracted**:
@@ -137,6 +149,7 @@ This document summarizes all refactoring and optimization work performed to impr
   - ✅ `pages/players.vue` - Uses shared constants
 
 ### 3. **Common Page Setup Composable**
+
 - **Created**: `composables/usePageSetup.ts`
 - **Purpose**: Reduces code duplication across pages
 - **Provides**: `router`, `t`, `baseUrl`, `toast`
@@ -146,6 +159,7 @@ This document summarizes all refactoring and optimization work performed to impr
   - Easier to maintain and update
 
 ### 4. **Answer Check Optimization**
+
 - **File**: `composables/useAnswerCheck.ts`
 - **Improvements**:
   - ✅ **Category Caching**: Categories are now cached for 5 minutes to avoid repeated fetches
@@ -155,11 +169,13 @@ This document summarizes all refactoring and optimization work performed to impr
   - ✅ **Constants**: Uses shared constants from `utils/constants.ts`
 
 ### 5. **Type Safety Improvements**
+
 - **PetScan API Response**: Added proper type definitions
 - **Error Handling**: All errors are properly typed
 - **Removed**: All `any` and `unknown` type usages (where found)
 
 ### 6. **Code Organization**
+
 - **Constants**: Moved to centralized `utils/constants.ts`
 - **Composables**: Better organization and separation of concerns
 - **Imports**: Consistent import ordering and grouping
@@ -167,11 +183,13 @@ This document summarizes all refactoring and optimization work performed to impr
 ## 📊 Performance Optimizations
 
 ### 1. **Category Caching**
+
 - **Before**: Categories fetched from API on every answer check
 - **After**: Categories cached for 5 minutes
 - **Impact**: Reduces API calls and improves response time
 
 ### 2. **Reduced Code Duplication**
+
 - **Before**: Common setup code repeated in every page
 - **After**: Centralized in `usePageSetup` composable
 - **Impact**: Smaller bundle size, easier maintenance
@@ -186,6 +204,7 @@ This document summarizes all refactoring and optimization work performed to impr
 ## 📝 Code Quality Metrics
 
 ### Before Refactoring
+
 - ❌ Console statements in production code
 - ❌ Magic numbers scattered throughout codebase
 - ❌ Code duplication across pages
@@ -193,6 +212,7 @@ This document summarizes all refactoring and optimization work performed to impr
 - ❌ Inconsistent error handling
 
 ### After Refactoring
+
 - ✅ No console statements in production
 - ✅ All magic numbers in constants file
 - ✅ Reduced code duplication
@@ -255,6 +275,7 @@ This document summarizes all refactoring and optimization work performed to impr
 
 **Last Updated**: 2026-01-02
 **Status**: ✅ Complete
+
 # 🚀 Comprehensive Refactoring & Optimization Complete
 
 ## Executive Summary
@@ -264,45 +285,51 @@ The codebase has been comprehensively refactored and optimized with industry bes
 ## ✅ Major Improvements Completed
 
 ### 1. **Centralized Logging System** 🎯
+
 - **Created**: `composables/useLogger.ts`
 - **Impact**: Eliminated all console statements from production code
 - **Files Updated**: 8+ files across composables, stores, and pages
 - **Benefit**: Production-ready logging, easy integration with error tracking
 
 ### 2. **Shared Constants** 📦
+
 - **Created**: `utils/constants.ts`
 - **Impact**: All magic numbers extracted to single source of truth
 - **Constants**: 15+ constants including scores, timing, API configs
 - **Benefit**: Easy to modify, no scattered magic numbers
 
 ### 3. **Common Page Setup** 🔧
+
 - **Created**: `composables/usePageSetup.ts`
 - **Impact**: Reduces boilerplate in every page component
 - **Benefit**: DRY principle, easier maintenance
 
 ### 4. **Performance Optimization** ⚡
+
 - **Category Caching**: 5-minute cache reduces API calls
 - **Type Safety**: Improved PetScan API response typing
 - **Error Handling**: Better HTTP status checking
 
 ### 5. **Type Safety** 🛡️
+
 - Removed `any` and `unknown` types
 - Added proper type definitions for API responses
 - Improved error type handling
 
 ## 📊 Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Console Statements | 15+ | 0 | ✅ 100% |
-| Magic Numbers | Scattered | Centralized | ✅ 100% |
-| Code Duplication | High | Low | ✅ ~40% |
-| Type Safety | Good | Excellent | ✅ Improved |
+| Metric                   | Before     | After       | Improvement       |
+| ------------------------ | ---------- | ----------- | ----------------- |
+| Console Statements       | 15+        | 0           | ✅ 100%           |
+| Magic Numbers            | Scattered  | Centralized | ✅ 100%           |
+| Code Duplication         | High       | Low         | ✅ ~40%           |
+| Type Safety              | Good       | Excellent   | ✅ Improved       |
 | API Calls (Answer Check) | Every call | Cached 5min | ✅ ~80% reduction |
 
 ## 🎯 Code Quality Improvements
 
 ### Before
+
 - ❌ Console statements in production
 - ❌ Magic numbers everywhere
 - ❌ Repeated setup code in pages
@@ -310,6 +337,7 @@ The codebase has been comprehensively refactored and optimized with industry bes
 - ❌ Inconsistent error handling
 
 ### After
+
 - ✅ Zero console statements
 - ✅ All constants centralized
 - ✅ Common patterns extracted
@@ -327,18 +355,22 @@ The codebase has been comprehensively refactored and optimized with industry bes
 ## 🔄 Files Optimized
 
 ### Composables
+
 - ✅ `useIndexedDB.ts` - Logger integration (8 error handlers)
 - ✅ `useAnswerCheck.ts` - Caching, constants, type safety
 
 ### Stores
+
 - ✅ `game.ts` - Constants usage, cleaner code
 
 ### Pages
+
 - ✅ `results.vue` - Constants usage
 - ✅ `round-start.vue` - Constants usage
 - ✅ `players.vue` - Constants usage
 
 ### Tests
+
 - ✅ `game-store.spec.ts` - Updated comments
 
 ## 🚀 Performance Gains
@@ -373,6 +405,7 @@ The codebase has been comprehensively refactored and optimized with industry bes
 ## 🎉 Result
 
 The codebase is now:
+
 - **More maintainable** - Centralized constants and patterns
 - **More performant** - Smart caching reduces API calls
 - **More type-safe** - Better TypeScript coverage
@@ -390,6 +423,7 @@ The codebase is now:
 **Status**: ✅ **OPTIMIZATION COMPLETE**
 **Date**: 2026-01-02
 **Quality**: Production-ready ✨
+
 # SonarCloud Optimizations Applied
 
 ## Summary
@@ -399,14 +433,16 @@ The codebase has been optimized for SonarCloud analysis with the following impro
 ## ✅ Optimizations Completed
 
 ### 1. **Logger Utility Created**
+
 - **File**: `composables/useLogger.ts`
 - **Purpose**: Centralized logging that only logs in development mode
-- **Benefits**: 
+- **Benefits**:
   - Removes console statements from production builds
   - Complies with SonarCloud "no console" rules
   - Allows easy integration with error tracking services
 
 ### 2. **Replaced All Console Statements**
+
 - ✅ `composables/useAnswerCheck.ts` - Replaced console.log/error/warn with logger
 - ✅ `composables/useAnalytics.ts` - Removed development console.log statements
 - ✅ `stores/game.ts` - Replaced console.error/warn with logger
@@ -417,6 +453,7 @@ The codebase has been optimized for SonarCloud analysis with the following impro
 - ✅ `pages/results.vue` - Replaced console.error with logger
 
 ### 3. **Extracted Magic Numbers**
+
 - ✅ **Score increment**: `SCORE_INCREMENT = 10` in `pages/results.vue`
 - ✅ **Score per answer**: `SCORE_PER_CORRECT_ANSWER = 10` in `stores/game.ts`
 - ✅ **Min round number**: `MIN_ROUND_NUMBER = 1` in `stores/game.ts`
@@ -425,11 +462,13 @@ The codebase has been optimized for SonarCloud analysis with the following impro
 - ✅ **Navigation delay**: `NAVIGATION_DELAY_MS = 500` in `pages/results.vue`
 
 ### 4. **Improved Error Handling**
+
 - All error handlers now use the logger utility
 - Errors are properly typed and handled
 - No empty catch blocks (all have proper error handling)
 
 ### 5. **Code Quality Improvements**
+
 - Removed duplicate variable declarations
 - Fixed TypeScript errors
 - All lint errors resolved
@@ -438,16 +477,19 @@ The codebase has been optimized for SonarCloud analysis with the following impro
 ## 📊 SonarCloud Metrics Expected
 
 ### Code Smells Reduced
+
 - ✅ No console statements in production code
 - ✅ Magic numbers extracted to constants
 - ✅ Improved error handling patterns
 
 ### Maintainability
+
 - ✅ Centralized logging utility
 - ✅ Constants defined at module level
 - ✅ Consistent error handling
 
 ### Reliability
+
 - ✅ Proper error handling in all async operations
 - ✅ Type-safe error handling
 - ✅ No silent failures
@@ -473,6 +515,7 @@ The following will be analyzed by SonarCloud when the pipeline runs:
 ## Configuration
 
 The SonarCloud configuration is in:
+
 - `.gitlab-ci.yml` - CI/CD pipeline configuration
 - `sonar-project.properties` - SonarCloud project settings
 
@@ -480,6 +523,7 @@ The SonarCloud configuration is in:
 
 - [SonarCloud Documentation](https://docs.sonarcloud.io/)
 - [Code Quality Rules](https://rules.sonarsource.com/)
+
 # SonarCloud Setup Guide
 
 ## Overview
@@ -491,6 +535,7 @@ SonarCloud has been integrated into the GitLab CI/CD pipeline to provide code qu
 ### GitLab CI Integration
 
 The SonarCloud analysis runs in the `quality` stage of the pipeline and executes on:
+
 - Merge requests
 - `main` branch
 - `develop`/`development` branches
@@ -545,6 +590,7 @@ You need to set the following variables in your GitLab project settings (Setting
 ## Exclusions
 
 The following are excluded from analysis:
+
 - `node_modules/`
 - `.nuxt/`, `.output/`, `dist/`
 - `coverage/`, `playwright-report/`, `test-results/`
@@ -565,14 +611,17 @@ The coverage report should be at: `coverage/lcov.info`
 ## Troubleshooting
 
 ### Job Fails with "Authentication failed"
+
 - Verify `SONAR_TOKEN` is set correctly in GitLab CI/CD variables
 - Ensure the token hasn't expired
 
 ### Job Fails with "Project not found"
+
 - Verify `SONAR_PROJECT_KEY` matches your SonarCloud project key
 - Check `SONAR_ORGANIZATION` is correct
 
 ### No coverage data
+
 - Ensure coverage reports are generated before SonarCloud runs
 - Check that `coverage/lcov.info` exists
 - Verify the path in `sonar-project.properties`
@@ -582,17 +631,20 @@ The coverage report should be at: `coverage/lcov.info`
 - [SonarCloud Documentation](https://docs.sonarcloud.io/)
 - [GitLab Integration Guide](https://docs.sonarcloud.io/getting-started/gitlab-integration/)
 - [SonarCloud Dashboard](https://sonarcloud.io)
+
 # Visual Polish & Mockup Alignment
 
 ## ✅ Visual Enhancements Completed
 
 ### 1. **Background Images**
+
 - ✅ All pages use full-opacity background images from mockups
 - ✅ Game page background changed from 30% to 100% opacity for better visibility
 - ✅ All backgrounds use `object-fit: cover` for proper scaling
 - ✅ Consistent z-index layering across all pages
 
 ### 2. **Page Consistency**
+
 - ✅ All pages follow the same structure:
   - Background image (`.page-bg` or `.game-bg`)
   - Container with proper z-index
@@ -601,18 +653,21 @@ The coverage report should be at: `coverage/lcov.info`
 - ✅ Proper visual hierarchy maintained
 
 ### 3. **Button Interactions**
+
 - ✅ All buttons have `tap-highlight` class for mobile feedback
 - ✅ All buttons have `no-select` class to prevent text selection
 - ✅ Hover states implemented on menu buttons
 - ✅ Active states for better user feedback
 
 ### 4. **Typography & Spacing**
+
 - ✅ Consistent use of design system variables
 - ✅ Responsive font sizes with `clamp()`
 - ✅ Proper spacing using CSS variables
 - ✅ Text shadows and effects match mockup style
 
 ### 5. **Visual Effects**
+
 - ✅ Drop shadows on images and buttons
 - ✅ Animations (fade-in, slide-up, scale-in)
 - ✅ Transitions for smooth interactions
@@ -621,23 +676,27 @@ The coverage report should be at: `coverage/lcov.info`
 ## 📱 Pages Verified
 
 ### Main Menu (`pages/index.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Logo properly sized and centered
 - ✅ Menu buttons with hover states
 - ✅ Menu panel with smooth transitions
 
 ### Players Page (`pages/players.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Player slots use `Group 10.png`
 - ✅ Add/remove buttons use mockup assets
 - ✅ Scroll bar assets properly displayed
 
 ### Round Start (`pages/round-start.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Fortune wheels properly styled
 - ✅ Smooth transitions between phases
 
 ### Game Page (`pages/game.vue`) - **IMPROVED**
+
 - ✅ Background now at full opacity (was 30%)
 - ✅ Category panel with proper styling
 - ✅ Large letter display with glow effects
@@ -645,28 +704,33 @@ The coverage report should be at: `coverage/lcov.info`
 - ✅ All mockup assets used correctly
 
 ### Results Page (`pages/results.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Score slots use `Shape 2.png`
 - ✅ Player avatars use `xyz.png`
 - ✅ Add/minus buttons use mockup assets
 
 ### Leaderboard (`pages/leaderboard.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Rank badges (1.png, 2.png, etc.)
 - ✅ Player avatars use `tobi.png`
 - ✅ Score icons use `500.png`
 
 ### Settings (`pages/settings.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Volume sliders match mockup design
 - ✅ Sound/Music icons properly displayed
 
 ### Credits (`pages/credits.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Title image properly displayed
 - ✅ Clean, readable layout
 
 ### Language (`pages/language.vue`)
+
 - ✅ Uses `BACKGROUND.png` from mockups
 - ✅ Flag buttons properly styled
 - ✅ Selection indicator works correctly
@@ -674,6 +738,7 @@ The coverage report should be at: `coverage/lcov.info`
 ## 🎨 Design System
 
 All pages use the centralized design system:
+
 - ✅ Color variables (`--color-primary`, etc.)
 - ✅ Typography variables (`--font-display`, `--font-size-*`)
 - ✅ Spacing variables (`--spacing-*`)
@@ -697,6 +762,7 @@ All pages use the centralized design system:
 ## 🚀 Result
 
 The app now:
+
 - **Looks amazing** - Full mockup alignment
 - **Feels polished** - Smooth animations and interactions
 - **Is consistent** - Same design language throughout
@@ -707,6 +773,7 @@ The app now:
 
 **Status**: ✅ **VISUALLY POLISHED & MOCKUP-ALIGNED**
 **Date**: 2026-01-02
+
 # 🎉 Guess Game PWA - Setup Complete!
 
 ## ✅ What Was Built
@@ -714,12 +781,14 @@ The app now:
 A **complete 100% Progressive Web App** with all requested features:
 
 ### 1. ✅ Nuxt 3 Project
+
 - Fresh Nuxt 3 setup with TypeScript
 - Modern Vue 3 Composition API
 - Auto-imports for components and composables
 - Frontend-only architecture (no backend needed)
 
 ### 2. ✅ Full PWA Support (@vite-pwa/nuxt)
+
 - ✅ Service Worker with automatic caching
 - ✅ Web App Manifest (installable)
 - ✅ Offline support
@@ -728,12 +797,14 @@ A **complete 100% Progressive Web App** with all requested features:
 - ✅ Cache-first strategy for PetScan API
 
 ### 3. ✅ IndexedDB Integration
+
 - ✅ `idb` wrapper for easy IndexedDB access
 - ✅ Game session persistence
 - ✅ Game history storage
 - ✅ Automatic state synchronization
 
 ### 4. ✅ Pinia State Management
+
 - ✅ Game store with full game logic
 - ✅ Session management
 - ✅ Online/offline state
@@ -741,6 +812,7 @@ A **complete 100% Progressive Web App** with all requested features:
 - ✅ Score and attempts tracking
 
 ### 5. ✅ Client-Side Game Logic
+
 - ✅ All game logic runs in the browser
 - ✅ Direct PetScan API integration from client
 - ✅ Category selection and validation handled client-side
@@ -748,6 +820,7 @@ A **complete 100% Progressive Web App** with all requested features:
 - ✅ Categories data included
 
 ### 6. ✅ Complete E2E Testing (Playwright)
+
 - ✅ Navigation tests
 - ✅ Game functionality tests
 - ✅ PWA feature tests:
@@ -759,6 +832,7 @@ A **complete 100% Progressive Web App** with all requested features:
   - Online/offline detection
 
 ### 7. ✅ Migrated Components
+
 - ✅ Home page with features showcase
 - ✅ Game page with full functionality
 - ✅ About page with project info
@@ -793,18 +867,21 @@ npm run test:e2e:ui
 ## 🧪 Testing the PWA
 
 ### Test Offline Mode
+
 1. Open http://localhost:3000 in Chrome
 2. Open DevTools (F12) → Application tab
 3. Check "Offline" under Service Workers
 4. Navigate around - app still works!
 
 ### Test Install Prompt
+
 1. Build for production: `npm run build && npm run preview`
 2. Open in Chrome
 3. Click "Install App" button in navigation
 4. App installs to your device!
 
 ### Run Lighthouse Audit
+
 1. Build and preview: `npm run build && npm run preview`
 2. Open in Chrome
 3. DevTools (F12) → Lighthouse tab
@@ -813,6 +890,7 @@ npm run test:e2e:ui
 6. **Expected: 100 PWA score** (after adding icons)
 
 ### Test IndexedDB
+
 1. Open http://localhost:3000/game
 2. Play a game
 3. Open DevTools → Application → IndexedDB
@@ -874,6 +952,7 @@ npm run test:e2e
 ```
 
 Tests cover:
+
 - ✅ Navigation between all pages
 - ✅ Loading categories from API
 - ✅ Submitting answers
@@ -903,16 +982,16 @@ Tests cover:
 
 ## 🔄 Differences from Original
 
-| Feature | Original | New PWA |
-|---------|----------|---------|
-| Framework | Vue CLI | Nuxt 3 |
-| State Mgmt | Empty Vuex | Pinia (fully implemented) |
-| API | Separate serverless | Client-side composables |
-| Storage | None | IndexedDB |
-| PWA | Basic service worker | Full PWA with offline |
-| Testing | Unit tests only | E2E tests with Playwright |
-| TypeScript | Partial | Complete |
-| API Style | Options API | Composition API |
+| Feature    | Original             | New PWA                   |
+| ---------- | -------------------- | ------------------------- |
+| Framework  | Vue CLI              | Nuxt 3                    |
+| State Mgmt | Empty Vuex           | Pinia (fully implemented) |
+| API        | Separate serverless  | Client-side composables   |
+| Storage    | None                 | IndexedDB                 |
+| PWA        | Basic service worker | Full PWA with offline     |
+| Testing    | Unit tests only      | E2E tests with Playwright |
+| TypeScript | Partial              | Complete                  |
+| API Style  | Options API          | Composition API           |
 
 ## 📝 Next Steps
 
@@ -927,15 +1006,18 @@ Tests cover:
 ## 🐛 Troubleshooting
 
 ### Service worker not registering
+
 - Service workers require HTTPS or localhost
 - Clear browser cache and reload
 
 ### IndexedDB not working
+
 - Check browser console for errors
 - Ensure private browsing is disabled
 - Check Application → IndexedDB in DevTools
 
 ### Tests failing
+
 - Make sure dev server is not already running
 - Check that port 3000 is available
 - Run `npx playwright install` if browsers missing
@@ -943,6 +1025,7 @@ Tests cover:
 ## 🎉 Success!
 
 You now have a **production-ready, 100% PWA** with:
+
 - ✅ Offline support
 - ✅ Installable on devices
 - ✅ Persistent storage
@@ -957,6 +1040,7 @@ You now have a **production-ready, 100% PWA** with:
 
 Created by Claude Code
 Based on original work by Tobias Wirl & Markus Wagner
+
 # PWA Optimization Summary
 
 This document summarizes all the PWA optimizations and improvements made to Riddle Rush.
@@ -964,9 +1048,11 @@ This document summarizes all the PWA optimizations and improvements made to Ridd
 ## ✅ Completed Optimizations
 
 ### 1. Icon Generation
+
 Created comprehensive icon set for all platforms:
 
 **PWA Icons:**
+
 - `pwa-72x72.png` - Android
 - `pwa-96x96.png` - Android
 - `pwa-128x128.png` - Android
@@ -978,20 +1064,24 @@ Created comprehensive icon set for all platforms:
 - `pwa-512x512-maskable.png` - Android adaptive icon with safe zone
 
 **Favicons:**
+
 - `favicon.ico` - Multi-size (16, 32, 48, 64, 256)
 - `favicon-16x16.png`
 - `favicon-32x32.png`
 
 **Apple Touch Icons:**
+
 - `apple-touch-icon.png` (180x180) - iOS home screen
 
 **Source Files:**
+
 - `icon.svg` - Main icon design with gradient background, question mark, and lightning bolt
 - `icon-maskable.svg` - Maskable version with 70% safe zone
 
 ### 2. App Metadata Updates
 
 **Updated app.head in nuxt.config.ts:**
+
 - Title: "Riddle Rush - The Ultimate Guessing Game"
 - Enhanced viewport with proper scaling
 - Comprehensive meta tags for SEO
@@ -1002,6 +1092,7 @@ Created comprehensive icon set for all platforms:
   - `format-detection` (disable auto phone number detection)
 
 **Social Media Meta Tags:**
+
 - Open Graph (Facebook, LinkedIn):
   - `og:type`, `og:title`, `og:description`, `og:image`, `og:site_name`
 - Twitter Cards:
@@ -1010,16 +1101,19 @@ Created comprehensive icon set for all platforms:
 ### 3. PWA Manifest Enhancements
 
 **Branding:**
+
 - Updated from "Guess Game" to "Riddle Rush - The Ultimate Guessing Game"
 - Short name: "Riddle Rush"
 - Updated description to match app purpose
 
 **Icons:**
+
 - Added all 9 icon sizes (72x72 to 512x512)
 - Separate maskable icon for Android adaptive icons
 - Proper `purpose` attributes for optimal display
 
 **Additional Manifest Features:**
+
 - `lang: 'en'` and `dir: 'ltr'` for internationalization
 - `start_url: '/'` and `scope: '/'` for proper PWA behavior
 - `background_color: '#ffffff'` for splash screen
@@ -1029,35 +1123,41 @@ Created comprehensive icon set for all platforms:
 
 **App Shortcuts:**
 Added 3 quick action shortcuts (long-press app icon on Android):
+
 1. **Quick Start** - Start a new game instantly (/)
 2. **Statistics** - View game statistics (/statistics)
 3. **Settings** - Adjust game settings (/settings)
 
 **Adaptive Icons:**
+
 - Maskable icon with proper safe zone (70% content area)
 - Background color optimization
 
 ### 5. iOS-Specific Optimizations
 
 **Meta Tags:**
+
 - `apple-mobile-web-app-capable: yes` - Enables standalone mode
 - `apple-mobile-web-app-status-bar-style: black-translucent` - Transparent status bar
 - `apple-mobile-web-app-title: Riddle Rush` - Name on home screen
 - `format-detection: telephone=no` - Prevents unwanted phone number linking
 
 **Icons:**
+
 - 180x180 apple-touch-icon for home screen
 - Proper favicon links in multiple sizes
 
 ### 6. Icon Design
 
 **Design Elements:**
+
 - **Background:** Purple gradient (#764ba2 to #667eea) matching app theme
 - **Main Symbol:** Question mark (represents riddles/guessing)
 - **Accent:** Gold lightning bolt (represents "Rush" - speed/excitement)
 - **Style:** Modern, clean, with subtle shadows for depth
 
 **Maskable Icon:**
+
 - Content scaled to 70% to ensure safe zone compliance
 - Full background fill (no transparency) required for maskable icons
 - Compatible with all Android adaptive icon shapes (circle, squircle, rounded square)
@@ -1072,6 +1172,7 @@ Added 3 quick action shortcuts (long-press app icon on Android):
 ## 🚀 Installation Benefits
 
 Users can now:
+
 1. Install "Riddle Rush" as a standalone app on both iOS and Android
 2. See proper branding with custom icon and name
 3. Access quick actions via app icon long-press (Android)
@@ -1082,6 +1183,7 @@ Users can now:
 ## 📱 Platform Support
 
 **Android:**
+
 - Full PWA support with install prompt
 - Adaptive icons with maskable support
 - App shortcuts (quick actions)
@@ -1089,6 +1191,7 @@ Users can now:
 - Offline functionality
 
 **iOS:**
+
 - Add to Home Screen support
 - Custom app icon and title
 - Standalone mode (hides Safari UI)
@@ -1098,6 +1201,7 @@ Users can now:
 ## 🎨 Branding Consistency
 
 All references updated from "Guess Game" to "Riddle Rush":
+
 - App manifest name and short_name
 - HTML title tag
 - Meta descriptions
@@ -1129,6 +1233,7 @@ All references updated from "Guess Game" to "Riddle Rush":
 - [iOS Web App Meta Tags](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html)
 - [Maskable Icons](https://web.dev/maskable-icon/)
 - [PWA Shortcuts](https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts)
+
 # Google Analytics Integration Guide
 
 This project uses Google Analytics 4 (GA4) via the `nuxt-gtag` module for tracking user interactions and application performance.
@@ -1185,7 +1290,7 @@ const { trackEvent, trackGameEvent } = useAnalytics()
 const handleButtonClick = () => {
   trackEvent('button_click', {
     button_name: 'start_game',
-    location: 'homepage'
+    location: 'homepage',
   })
 }
 
@@ -1237,13 +1342,13 @@ trackEvent('share_clicked')
 // Event with parameters
 trackEvent('filter_applied', {
   filter_type: 'category',
-  filter_value: 'sports'
+  filter_value: 'sports',
 })
 
 // User interaction
 trackEvent('settings_changed', {
   setting_name: 'theme',
-  setting_value: 'dark'
+  setting_value: 'dark',
 })
 ```
 
@@ -1273,11 +1378,7 @@ const handleAnswer = (correct: boolean, itemName: string) => {
 
 const handleGameEnd = () => {
   const duration = Math.floor((Date.now() - startTime.value) / 1000)
-  trackGameEvent.gameComplete(
-    gameStore.currentCategory,
-    gameStore.score,
-    duration
-  )
+  trackGameEvent.gameComplete(gameStore.currentCategory, gameStore.score, duration)
 }
 </script>
 ```
@@ -1307,14 +1408,14 @@ const { gtag } = useGtag()
 const acceptCookies = () => {
   // Enable analytics
   gtag('consent', 'update', {
-    analytics_storage: 'granted'
+    analytics_storage: 'granted',
   })
 }
 
 const rejectCookies = () => {
   // Disable analytics
   gtag('consent', 'update', {
-    analytics_storage: 'denied'
+    analytics_storage: 'denied',
   })
 }
 </script>
@@ -1323,6 +1424,7 @@ const rejectCookies = () => {
 ### User Privacy
 
 The configuration includes:
+
 - IP anonymization enabled
 - Secure cookie flags (`SameSite=None;Secure`)
 - Analytics only enabled when `GOOGLE_ANALYTICS_ID` is set
@@ -1364,6 +1466,7 @@ gtag: {
 ## Useful Reports in GA4
 
 ### Engagement Reports
+
 - **Events**: See all tracked events and their counts
 - **Pages and screens**: View most visited pages
 - **Realtime**: Monitor current active users
@@ -1371,6 +1474,7 @@ gtag: {
 ### Custom Reports
 
 Create custom reports to track:
+
 1. Game completion rate
 2. Average game duration by category
 3. Most popular categories
@@ -1411,8 +1515,9 @@ app: {
     meta: [
       {
         'http-equiv': 'Content-Security-Policy',
-        content: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com;"
-      }
+        content:
+          "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com;",
+      },
     ]
   }
 }

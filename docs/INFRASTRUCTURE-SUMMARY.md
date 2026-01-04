@@ -11,6 +11,7 @@ The project has been migrated from CloudFormation to Terraform for Infrastructur
 **Location:** `infrastructure/`
 
 **Files Created:**
+
 - `main.tf` - Main Terraform configuration (S3 + CloudFront)
 - `variables.tf` - Input variables
 - `outputs.tf` - Output values
@@ -23,10 +24,12 @@ The project has been migrated from CloudFormation to Terraform for Infrastructur
 - `Makefile` - Helper commands
 
 **Scripts:**
+
 - `scripts/setup-tfenv.sh` - Install tfenv and Terraform
 - `scripts/import-with-terraformer.sh` - Import existing AWS resources
 
 **Environments:**
+
 - `environments/production/` - Production configuration
 - `environments/staging/` - Staging configuration
 - `environments/development/` - Development configuration
@@ -37,6 +40,7 @@ The project has been migrated from CloudFormation to Terraform for Infrastructur
 
 **Purpose:** Manage Terraform versions per project
 **Installation:**
+
 ```bash
 # macOS
 brew install tfenv
@@ -47,6 +51,7 @@ echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bashrc
 ```
 
 **Usage:**
+
 ```bash
 cd infrastructure
 tfenv install  # Installs version from .terraform-version
@@ -57,6 +62,7 @@ tfenv use      # Activates the version
 
 **Purpose:** Import existing AWS resources to Terraform
 **Installation:**
+
 ```bash
 # macOS
 brew install terraformer
@@ -68,6 +74,7 @@ sudo mv terraformer-aws-linux-amd64 /usr/local/bin/terraformer
 ```
 
 **Usage:**
+
 ```bash
 cd infrastructure
 ./scripts/import-with-terraformer.sh
@@ -100,6 +107,7 @@ The Terraform configuration replicates the CloudFormation template:
 ### Key Differences
 
 **CloudFormation → Terraform:**
+
 - OAI → OAC (Origin Access Control)
 - YAML → HCL (HashiCorp Configuration Language)
 - Stack-based → Resource-based
@@ -128,11 +136,13 @@ pnpm run infra:import   # Import existing resources
 ### Recommended Packages (See docs/USEFUL-PACKAGES.md)
 
 **High Priority:**
+
 - `@nuxt/icon` - Icon management (200,000+ icons)
 - `@nuxt/scripts` - Optimized script loading
 - `@nuxtjs/seo` - Enhanced SEO
 
 **Medium Priority:**
+
 - `@nuxtjs/color-mode` - Dark/light mode
 - `@vueuse/motion` - Animations
 - `zod` - Schema validation
@@ -193,6 +203,7 @@ terraformer import aws --resources=s3,cloudfront --regions=eu-central-1
 ## Next Steps
 
 1. **Install tools:**
+
    ```bash
    pnpm run infra:setup
    ```
@@ -203,16 +214,19 @@ terraformer import aws --resources=s3,cloudfront --regions=eu-central-1
    - Customize `terraform.tfvars`
 
 3. **Test locally:**
+
    ```bash
    pnpm run infra:plan
    ```
 
 4. **Import existing resources (if any):**
+
    ```bash
    pnpm run infra:import
    ```
 
 5. **Apply infrastructure:**
+
    ```bash
    pnpm run infra:apply
    ```
@@ -234,4 +248,3 @@ terraformer import aws --resources=s3,cloudfront --regions=eu-central-1
 **Status:** ✅ Terraform Infrastructure Ready  
 **Migration:** CloudFormation → Terraform Complete  
 **Tools:** tfenv + terraformer Configured
-

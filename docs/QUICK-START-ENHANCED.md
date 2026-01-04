@@ -26,7 +26,7 @@ pnpm dev
 Once the dev server is running:
 
 - **App**: http://localhost:3000
-- **Vite Inspect**: http://localhost:3000/__inspect/
+- **Vite Inspect**: http://localhost:3000/\_\_inspect/
 - **Vue DevTools**: Install browser extension or use built-in
 - **Type Checker**: Errors shown in browser overlay
 
@@ -170,11 +170,13 @@ pnpm -r <command>
 ### Plugin Not Working
 
 1. Check if plugin is installed:
+
    ```bash
    pnpm --filter game list | grep vite-plugin
    ```
 
 2. Check peer dependencies:
+
    ```bash
    pnpm --filter game list --depth=0
    ```
@@ -243,7 +245,7 @@ pnpm clean                 # Clean all builds
    - [MONOREPO-REFACTOR.md](./MONOREPO-REFACTOR.md) - Refactoring details
 
 2. **Explore Tools**:
-   - Try Vite inspect plugin: http://localhost:3000/__inspect/
+   - Try Vite inspect plugin: http://localhost:3000/\_\_inspect/
    - Check bundle stats after build
    - Use Vue DevTools for debugging
 

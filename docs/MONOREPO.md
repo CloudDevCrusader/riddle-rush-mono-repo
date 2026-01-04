@@ -160,4 +160,3 @@ All scripts now use Turborepo under the hood. See [Husky & Turborepo Setup](docs
 - ✅ **Code quality** - Git hooks ensure code quality before commit/push
 - ✅ **Fast builds** - Turborepo caching speeds up task execution
 - ✅ **Task orchestration** - Efficient parallel task execution
-

@@ -11,6 +11,7 @@ Run the automated setup script:
 ```
 
 This script will:
+
 1. ✅ Create an IAM policy with S3 and CloudFront permissions
 2. ✅ Create an IAM user `gitlab-ci-deployer`
 3. ✅ Attach the policy to the user
@@ -22,6 +23,7 @@ This script will:
 The policy grants the following permissions:
 
 ### S3 Bucket Operations
+
 - `s3:ListBucket` - List objects in buckets
 - `s3:GetBucketLocation` - Get bucket region
 - `s3:GetBucketWebsite` - Read website configuration
@@ -30,6 +32,7 @@ The policy grants the following permissions:
 - `s3:PutBucketPolicy` - Set bucket policy (for public access)
 
 ### S3 Object Operations
+
 - `s3:PutObject` - Upload files
 - `s3:PutObjectAcl` - Set object ACLs (for public read)
 - `s3:GetObject` - Download files
@@ -38,12 +41,14 @@ The policy grants the following permissions:
 - `s3:AbortMultipartUpload` - Cancel failed uploads
 
 ### CloudFront Operations
+
 - `cloudfront:CreateInvalidation` - Clear CDN cache after deployment
 - `cloudfront:GetInvalidation` - Check invalidation status
 - `cloudfront:ListInvalidations` - List cache invalidations
 - `cloudfront:GetDistribution` - Get distribution details
 
 ### Identity Verification
+
 - `sts:GetCallerIdentity` - Verify AWS credentials
 
 ## Manual Setup (Alternative)
@@ -123,17 +128,18 @@ Go to GitLab → Your Project → Settings → CI/CD → Variables
 
 Add these variables:
 
-| Variable Name | Value | Type | Flags |
-|--------------|-------|------|-------|
-| `AWS_ACCESS_KEY_ID` | Your access key ID | Variable | Protected ✓, Masked ✓ |
-| `AWS_SECRET_ACCESS_KEY` | Your secret key | Variable | Protected ✓, Masked ✓ |
-| `AWS_S3_BUCKET` | Your S3 bucket name | Variable | Protected ✓ |
-| `AWS_CLOUDFRONT_ID` | Your CloudFront ID | Variable | Protected ✓ |
-| `AWS_REGION` | e.g., us-east-1 (optional) | Variable | Protected ✓ |
+| Variable Name           | Value                      | Type     | Flags                 |
+| ----------------------- | -------------------------- | -------- | --------------------- |
+| `AWS_ACCESS_KEY_ID`     | Your access key ID         | Variable | Protected ✓, Masked ✓ |
+| `AWS_SECRET_ACCESS_KEY` | Your secret key            | Variable | Protected ✓, Masked ✓ |
+| `AWS_S3_BUCKET`         | Your S3 bucket name        | Variable | Protected ✓           |
+| `AWS_CLOUDFRONT_ID`     | Your CloudFront ID         | Variable | Protected ✓           |
+| `AWS_REGION`            | e.g., us-east-1 (optional) | Variable | Protected ✓           |
 
 ## Security Best Practices
 
 ### ✅ DO:
+
 - Mark credentials as **Protected** (only available on protected branches/tags)
 - Mark credentials as **Masked** (hidden in job logs)
 - Regularly rotate access keys
@@ -141,6 +147,7 @@ Add these variables:
 - Monitor CloudTrail logs for unauthorized access
 
 ### ❌ DON'T:
+
 - Commit credentials to Git
 - Share access keys
 - Use root account credentials
@@ -150,6 +157,7 @@ Add these variables:
 ## Principle of Least Privilege
 
 This policy follows AWS best practices by:
+
 - ✅ Granting only required permissions
 - ✅ Using specific service permissions (not `*`)
 - ✅ Scoping to specific resources where possible
@@ -173,19 +181,25 @@ This policy follows AWS best practices by:
 ### Policy too permissive?
 
 If you want to restrict to specific buckets, change:
+
 ```json
 "Resource": "arn:aws:s3:::*"
 ```
+
 to:
+
 ```json
 "Resource": "arn:aws:s3:::your-specific-bucket-name"
 ```
 
 And for objects:
+
 ```json
 "Resource": "arn:aws:s3:::*/*"
 ```
+
 to:
+
 ```json
 "Resource": "arn:aws:s3:::your-specific-bucket-name/*"
 ```
@@ -214,6 +228,7 @@ aws iam delete-policy --policy-arn arn:aws:iam::YOUR_ACCOUNT_ID:policy/GitLabCID
 ## Next Steps
 
 After setting up IAM:
+
 1. ✅ Configure GitLab CI/CD Variables
 2. ✅ Create S3 bucket (if not exists)
 3. ✅ Create CloudFront distribution (if not exists)

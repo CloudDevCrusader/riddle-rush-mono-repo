@@ -6,10 +6,12 @@
 ## 📊 Current State Analysis
 
 ### Pinia Stores
+
 - **game.ts** (14 KB) - Main game logic, session management
 - **settings.ts** (2.4 KB) - Settings with localStorage
 
 ### Composables
+
 - useAnalytics.ts (1.9 KB)
 - useAnswerCheck.ts (4.4 KB)
 - useAudio.ts (3.1 KB)
@@ -22,6 +24,7 @@
 - useToast.ts (1.6 KB)
 
 ### Pages (by size)
+
 1. players.vue (673 lines) - Largest
 2. game.vue (600 lines)
 3. results.vue (546 lines)
@@ -35,6 +38,7 @@
 ## 🔍 Identified Issues
 
 ### 1. **Unused Composable - usePageSetup** ⚠️ CRITICAL
+
 **Problem**: Created but only used in 0/9 pages!
 
 ```typescript
@@ -50,6 +54,7 @@ export function usePageSetup() {
 ```
 
 **Current Pattern** (repeated in 9 pages):
+
 ```typescript
 const router = useRouter()
 const { t } = useI18n()
@@ -64,6 +69,7 @@ const gameStore = useGameStore() // In 5 pages
 ---
 
 ### 2. **Category Emoji Logic Trapped in Store**
+
 **Problem**: Category emoji mapping is hardcoded in `stores/game.ts`
 
 ```typescript
@@ -79,6 +85,7 @@ const resolveCategoryEmoji = (name?: string | null) => {
 ```
 
 **Issue**:
+
 - Not reusable outside store
 - Makes store larger than necessary
 - Belongs in utils, not state management
@@ -86,11 +93,14 @@ const resolveCategoryEmoji = (name?: string | null) => {
 ---
 
 ### 3. **localStorage Scattered Across Files**
+
 **Files using localStorage directly**:
+
 - stores/settings.ts (load/save settings)
 - components/FeedbackWidget.vue (dismissed state)
 
 **Problem**: No centralized storage utility
+
 - Error handling duplicated
 - No type safety
 - No consistent naming
@@ -98,7 +108,9 @@ const resolveCategoryEmoji = (name?: string | null) => {
 ---
 
 ### 4. **Common Computed Properties from Store**
+
 **Pattern repeated across pages**:
+
 ```typescript
 // In game.vue, results.vue, round-start.vue, leaderboard.vue, players.vue
 const gameStore = useGameStore()
@@ -113,7 +125,9 @@ const currentRound = computed(() => gameStore.currentRound)
 ---
 
 ### 5. **Navigation Logic Duplication**
+
 **Pattern**: Every page has its own navigation functions
+
 ```typescript
 // Repeated across pages
 const goHome = () => router.push('/')
@@ -126,14 +140,17 @@ const goToSettings = () => router.push('/settings')
 ---
 
 ### 6. **Toast Usage Not Centralized**
+
 **Found**: 18 toast-related calls across pages
 **Pattern**:
+
 ```typescript
 const toast = useToast()
 toast.show('message', 'type')
 ```
 
 **Missing**:
+
 - Toast could be part of usePageSetup
 - Common toast messages could be predefined
 
@@ -144,6 +161,7 @@ toast.show('message', 'type')
 ### Priority 1: High Impact, Low Risk
 
 #### 1.1. Expand and Use `usePageSetup` Composable
+
 **Action**: Enhance and actually use the existing composable
 
 ```typescript
@@ -176,6 +194,7 @@ export function usePageSetup() {
 ---
 
 #### 1.2. Create `useCategoryEmoji` Utility
+
 **Action**: Extract emoji logic from store
 
 ```typescript
@@ -200,6 +219,7 @@ export function useCategoryEmoji() {
 ```
 
 **Then update store**:
+
 ```typescript
 // stores/game.ts
 import { useCategoryEmoji } from '~/composables/useCategoryEmoji'
@@ -217,6 +237,7 @@ getters: {
 ---
 
 #### 1.3. Create `useGameState` Composable
+
 **Action**: Centralize common game store computeds
 
 ```typescript
@@ -256,6 +277,7 @@ export function useGameState() {
 ### Priority 2: Medium Impact, Low Risk
 
 #### 2.1. Create `useLocalStorage` Utility
+
 **Action**: Centralize localStorage access
 
 ```typescript
@@ -300,6 +322,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
 ---
 
 #### 2.2. Create Navigation Constants/Helpers
+
 **Action**: Define common routes and navigation
 
 ```typescript
@@ -342,6 +365,7 @@ export function useNavigation() {
 ### Priority 3: Nice to Have
 
 #### 3.1. Create Common Toast Messages
+
 ```typescript
 // composables/useGameToasts.ts
 export function useGameToasts() {
@@ -361,6 +385,7 @@ export function useGameToasts() {
 ---
 
 #### 3.2. Extract Alphabet/Random Letter Logic
+
 **Current**: In game store
 **Better**: Separate utility
 
@@ -383,11 +408,13 @@ export const isValidLetter = (letter: string) => {
 ## 📈 Impact Summary
 
 ### Code Reduction
+
 - **Before**: ~4083 lines across 9 pages
 - **After**: ~3800 lines (estimated)
 - **Savings**: ~280 lines of duplicated code
 
 ### Maintainability Improvements
+
 - ✅ Single source of truth for common setup
 - ✅ Easier to update navigation routes
 - ✅ Consistent localStorage access
@@ -396,6 +423,7 @@ export const isValidLetter = (letter: string) => {
 - ✅ Smaller, focused stores
 
 ### Developer Experience
+
 - ✅ Less boilerplate in new pages
 - ✅ Auto-complete for routes
 - ✅ Common patterns obvious
@@ -406,22 +434,26 @@ export const isValidLetter = (letter: string) => {
 ## 🚀 Implementation Plan
 
 ### Phase 1: Core Refactoring (High Impact)
+
 1. ✅ Expand `usePageSetup` with toast + navigation
 2. ✅ Create `useCategoryEmoji` composable
 3. ✅ Create `useGameState` composable
 4. ✅ Apply to all pages (one at a time)
 
 ### Phase 2: Utilities (Medium Impact)
+
 5. ✅ Create `useLocalStorage` composable
 6. ✅ Refactor settings store to use it
 7. ✅ Update FeedbackWidget component
 8. ✅ Create `ROUTES` constants + `useNavigation`
 
 ### Phase 3: Polish (Nice to Have)
+
 9. ✅ Create `useGameToasts` for common messages
 10. ✅ Extract alphabet utils
 
 ### Phase 4: Testing & Verification
+
 11. ✅ Run lint + typecheck after each change
 12. ✅ Test each page after refactoring
 13. ✅ Verify no regressions
@@ -432,6 +464,7 @@ export const isValidLetter = (letter: string) => {
 ## 📝 File Changes Required
 
 ### New Files
+
 - `composables/useCategoryEmoji.ts`
 - `composables/useGameState.ts`
 - `composables/useLocalStorage.ts`
@@ -441,6 +474,7 @@ export const isValidLetter = (letter: string) => {
 - `utils/alphabet.ts` (optional)
 
 ### Modified Files
+
 - `composables/usePageSetup.ts` (expand)
 - `stores/game.ts` (remove emoji map)
 - `stores/settings.ts` (use useLocalStorage)
@@ -452,18 +486,24 @@ export const isValidLetter = (letter: string) => {
 ## ⚠️ Risks & Mitigation
 
 ### Risk: Breaking Changes
+
 **Mitigation**:
+
 - Refactor one page at a time
 - Test after each change
 - Keep git commits small
 
 ### Risk: Type Errors
+
 **Mitigation**:
+
 - Run typecheck after each file
 - Use strict TypeScript
 
 ### Risk: Runtime Errors
+
 **Mitigation**:
+
 - Test in browser after each page
 - Check console for errors
 
@@ -484,11 +524,13 @@ export const isValidLetter = (letter: string) => {
 ## 📚 Benefits
 
 ### Immediate
+
 - Cleaner, smaller page files
 - Less boilerplate to write
 - Easier to find common logic
 
 ### Long-term
+
 - Easier to add new pages
 - Easier to update navigation
 - Easier to test composables

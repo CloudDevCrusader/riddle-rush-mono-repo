@@ -40,6 +40,7 @@ pnpm run generate
 ## Deployment
 
 GitLab CI automatically:
+
 1. Builds the site with `pnpm run generate`
 2. Deploys to GitLab Pages
 3. Available at: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/docs`
@@ -64,4 +65,3 @@ GitLab CI automatically:
 - **Search** - Can add search functionality
 - **Components** - Use Vue components in markdown
 - **Custom styling** - Full control with CSS
-

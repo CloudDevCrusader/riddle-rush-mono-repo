@@ -23,6 +23,7 @@ This guide walks you through deploying the Guess Game PWA to Amazon Web Services
 ### 2. AWS CLI Installation
 
 **MacOS/Linux:**
+
 ```bash
 # Using Homebrew (MacOS)
 brew install awscli
@@ -35,6 +36,7 @@ pip install awscli
 Download from [AWS CLI Windows Installer](https://aws.amazon.com/cli/)
 
 **Verify installation:**
+
 ```bash
 aws --version
 # Should output: aws-cli/2.x.x ...
@@ -49,6 +51,7 @@ aws configure
 ```
 
 You'll be prompted for:
+
 - **AWS Access Key ID**: Get from [IAM Console](https://console.aws.amazon.com/iam/)
 - **AWS Secret Access Key**: Generated with Access Key
 - **Default region**: e.g., `us-east-1`, `eu-west-1`, `ap-southeast-1`
@@ -81,6 +84,7 @@ export AWS_REGION=us-east-1
 ```
 
 The script will:
+
 1. ✅ Run linter, type checks, and unit tests
 2. 🏗️ Build the production bundle
 3. 🪣 Create S3 bucket (if it doesn't exist)
@@ -88,6 +92,7 @@ The script will:
 5. 🎉 Display your deployment URL
 
 **Your app will be live at:**
+
 ```
 http://my-riddle-rush-app.s3-website-us-east-1.amazonaws.com
 ```
@@ -97,17 +102,20 @@ http://my-riddle-rush-app.s3-website-us-east-1.amazonaws.com
 ### Step 1: Choose a Bucket Name
 
 S3 bucket names must be:
+
 - Globally unique across all AWS accounts
 - 3-63 characters long
 - Lowercase letters, numbers, and hyphens only
 - No periods (for SSL compatibility)
 
 **Good examples:**
+
 - `riddle-rush-prod-2024`
 - `my-company-riddle-rush`
 - `guessgame-john-doe`
 
 **Bad examples:**
+
 - `guess.game.com` (contains periods)
 - `GuessGame` (uppercase)
 - `gg` (too short)
@@ -132,6 +140,7 @@ export APP_VERSION=1.0.0
 ```
 
 Load it before deployment:
+
 ```bash
 source .env.aws
 ./aws-deploy.sh production
@@ -177,18 +186,21 @@ Check these after deployment:
 Deploy to different buckets for different environments:
 
 **Production:**
+
 ```bash
 export AWS_S3_BUCKET=riddle-rush-prod
 ./aws-deploy.sh production
 ```
 
 **Staging:**
+
 ```bash
 export AWS_S3_BUCKET=riddle-rush-staging
 ./aws-deploy.sh staging
 ```
 
 **Development:**
+
 ```bash
 export AWS_S3_BUCKET=riddle-rush-dev
 ./aws-deploy.sh development
@@ -214,6 +226,7 @@ export default defineNuxtConfig({
 ## CloudFront Setup (Optional)
 
 CloudFront provides:
+
 - HTTPS support (required for production PWAs)
 - Global CDN (faster loading worldwide)
 - Custom domain support
@@ -270,6 +283,7 @@ export AWS_CLOUDFRONT_ID=E1234567890ABC
 Initial CloudFront deployment takes 15-20 minutes. Status will change from "In Progress" to "Deployed".
 
 Your app will then be available at:
+
 ```
 https://d1234abcd5678.cloudfront.net
 ```
@@ -313,6 +327,7 @@ https://d1234abcd5678.cloudfront.net
 #### Using External DNS Provider:
 
 Add CNAME record:
+
 ```
 Type: CNAME
 Name: www
@@ -355,18 +370,21 @@ open https://yourdomain.com
 
 **Problem**: S3 URL returns AccessDenied
 **Solution**: Check bucket policy allows public read access:
+
 ```bash
 aws s3api get-bucket-policy --bucket your-bucket-name
 ```
 
 **Problem**: CloudFront shows 403 error
 **Solution**:
+
 - Verify origin is S3 website endpoint, not bucket name
 - Check custom error responses are configured
 - Check bucket policy allows CloudFront access
 
 **Problem**: Old version still showing after deployment
 **Solution**:
+
 - Wait 5-15 minutes for CloudFront invalidation
 - Clear browser cache: Ctrl+Shift+R (hard refresh)
 - Check invalidation status in CloudFront console
@@ -378,12 +396,14 @@ aws s3api get-bucket-policy --bucket your-bucket-name
 
 **Problem**: Install prompt not showing
 **Solution**:
+
 - Must be served over HTTPS
 - User must visit site at least twice
 - Check manifest.json is accessible
 
 **Problem**: Offline mode not working
 **Solution**:
+
 - Check service worker registered in DevTools
 - Check cache storage in DevTools → Application → Cache Storage
 - Verify workbox files uploaded correctly
@@ -395,6 +415,7 @@ aws s3api get-bucket-policy --bucket your-bucket-name
 
 **Problem**: Domain shows "This site can't be reached"
 **Solution**:
+
 - Wait for DNS propagation (can take 24-48 hours)
 - Verify CNAME points to CloudFront distribution
 - Test with `dig yourdomain.com`
@@ -407,15 +428,18 @@ aws s3api get-bucket-policy --bucket your-bucket-name
 ### S3 Costs (as of 2024)
 
 **Storage**: $0.023 per GB/month
+
 - App size: ~20 MB = $0.0005/month
 - 1,000 deployments: ~$0.50/month
 
 **Data Transfer**:
+
 - First 1 GB/month: Free (AWS Free Tier)
 - Next 9.999 TB: $0.09/GB
 - 10,000 pageviews × 20 MB = 200 GB = ~$18/month
 
 **Requests**:
+
 - Free Tier: 2,000 PUT, 20,000 GET requests/month
 - After: $0.005 per 1,000 PUT, $0.0004 per 1,000 GET
 
@@ -424,10 +448,12 @@ aws s3api get-bucket-policy --bucket your-bucket-name
 ### CloudFront Costs
 
 **Data Transfer**:
+
 - First 1 TB/month: $0.085/GB
 - 200 GB = $17/month (cheaper than S3 alone!)
 
 **Requests**:
+
 - First 10M requests/month: $0.0075/10,000
 - 100,000 requests = $0.075/month
 
@@ -444,16 +470,19 @@ aws s3api get-bucket-policy --bucket your-bucket-name
 ### Production Recommendations
 
 **Minimal Setup** ($0-5/month):
+
 - S3 static hosting only
 - Use S3 website URL
 - Good for: Testing, internal apps, low traffic
 
 **Recommended Setup** ($5-20/month):
+
 - S3 + CloudFront
 - Custom domain + SSL
 - Good for: Production apps, public sites
 
 **Enterprise Setup** ($50+/month):
+
 - S3 + CloudFront + WAF
 - Multiple regions
 - CloudWatch monitoring & alerts

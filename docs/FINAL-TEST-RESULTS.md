@@ -23,16 +23,19 @@
 ## 🧪 Build Tests
 
 ### Game App
+
 - Run: `cd apps/game && pnpm run generate`
 - Expected: Builds to `apps/game/.output/public/`
 
-### Docs App  
+### Docs App
+
 - Run: `cd apps/docs && pnpm run generate`
 - Expected: Builds to `apps/docs/.output/public/`
 
 ## 📦 GitLab Pages Deployment
 
 ### Docs Deployment Flow
+
 1. Push to `main` branch
 2. `build:docs` job:
    - Builds from `apps/docs/`
@@ -42,6 +45,7 @@
    - URL: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
 
 ### Game App Deployment Flow
+
 1. Create version tag
 2. `build` job:
    - Builds from `apps/game/`
@@ -53,24 +57,27 @@
 ## 🚀 Next Steps
 
 1. **Complete dependency installation:**
+
    ```bash
    pnpm install
    ```
 
 2. **Test builds:**
+
    ```bash
    # Game
    cd apps/game && pnpm run generate
-   
+
    # Docs
    cd apps/docs && pnpm run generate
    ```
 
 3. **Test locally:**
+
    ```bash
    # Game dev server
    pnpm dev
-   
+
    # Docs dev server
    pnpm dev:docs
    ```
@@ -78,4 +85,3 @@
 4. **Deploy:**
    - Push to `main` → Docs to GitLab Pages
    - Tag release → Game to AWS
-

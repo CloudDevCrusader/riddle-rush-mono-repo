@@ -7,11 +7,13 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ## Complete Game Flow
 
 ### 1. App Launch → Splash Screen
+
 **Screen:** `components/SplashScreen.vue`
 **Design Assets:** `docs/gfx/splash/`
 **Features:**
+
 - Display logo (LOGO.png)
-- Show loading bar animation (loading top.png, loading down.png, LOADING_.png)
+- Show loading bar animation (loading top.png, loading down.png, LOADING\_.png)
 - Background (background.png)
 - Auto-proceed after loading completes (2-3 seconds)
 
@@ -20,9 +22,11 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 2. Language Selection (First Time Only)
+
 **Screen:** `pages/language.vue`
 **Design Assets:** `docs/gfx/language/`
 **Features:**
+
 - Background (BACKGROUND.png)
 - Language title (LANGUAGE.png)
 - English flag button (Eng Flag.png)
@@ -37,9 +41,11 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 3. Main Menu
+
 **Screen:** `pages/index.vue` (needs redesign) or new `pages/menu.vue`
 **Design Assets:** `docs/gfx/Main Menu/`
 **Features:**
+
 - Background (BACKGROUND.png)
 - Logo (LOGO.png)
 - Coin bar/score display (COIN BAR.png, 100.png)
@@ -52,6 +58,7 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 - Menu icon (MENU.png, MENU-1.png)
 
 **Navigation:**
+
 - PLAY → Player Management
 - OPTIONS → Settings
 - CREDITS → Credits Page
@@ -60,9 +67,11 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 4. Settings
+
 **Screen:** `pages/settings.vue` (needs creation)
 **Design Assets:** `docs/gfx/settings/`
 **Features:**
+
 - Background (BACKGROUND.png)
 - Settings title (options.png)
 - Sound/Music controls:
@@ -78,9 +87,11 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 5. Player Management
+
 **Screen:** `pages/players.vue` (needs creation)
 **Design Assets:** `docs/gfx/players/`
 **Features:**
+
 - Background (BACKGROUND.png)
 - Players title (players.png)
 - Player list with scroll (scroll bar.png, screoll.png)
@@ -91,14 +102,17 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 - Back button (back.png)
 
 **Navigation:**
+
 - START → Category Selection (current index.vue categories) OR → Alphabet Selection
 - BACK → Main Menu
 
 ---
 
 ### 6. Category Selection
+
 **Screen:** Current `pages/index.vue` categories section (keep as-is or integrate)
 **Features:**
+
 - Grid of available categories
 - Each category shows icon and name
 - Select category to start game
@@ -108,9 +122,11 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 7. Alphabet/Letter Selection
+
 **Screen:** `pages/alphabet.vue` (needs creation)
 **Design Assets:** `docs/gfx/alphabets/`
 **Features:**
+
 - Background (BACKGROUND.png, back.png)
 - Alphabet title (alphabet.png)
 - Category display (CATEGORY.png)
@@ -121,14 +137,17 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 - Back button (back-1.png, back.png)
 
 **Navigation:**
+
 - NEXT → Game Screen
 - BACK → Category Selection
 
 ---
 
 ### 8. Game Screen
+
 **Screen:** `pages/game.vue` (existing)
 **Features:**
+
 - Show selected category and letter
 - Text input for player answer
 - Timer/round counter
@@ -136,24 +155,28 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 - Pause button → Pause Menu Dialog
 
 **Navigation:**
+
 - PAUSE → Pause Menu Dialog
 - Time up/Complete → Win Screen OR Scoring Screen
 
 ---
 
 ### 9. Pause Menu (Dialog)
+
 **Component:** `components/PauseMenu.vue` (needs creation)
 **Design Assets:** `docs/gfx/paused/`
 **Features:**
+
 - Background overlay (BACKGROUND.png)
 - "Game Paused" title (Game Paused.png)
-- Message (Game is paused, press resume to continue_.png)
+- Message (Game is paused, press resume to continue\_.png)
 - Resume button (Resume.png)
 - Restart button (Restart.png)
 - Home button (Home.png)
 - Back button (back.png)
 
 **Navigation:**
+
 - RESUME → Return to Game
 - RESTART → Restart current game
 - HOME → Main Menu
@@ -161,9 +184,11 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 10. Win Screen
+
 **Screen:** `pages/win.vue` (needs creation)
 **Design Assets:** `docs/gfx/you win/`
 **Features:**
+
 - Background (BACKGROUND.png)
 - "You Win" title (you-win.png)
 - Pop-up card (pop up.png)
@@ -174,15 +199,18 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 - Back button (back.png)
 
 **Navigation:**
+
 - NEXT → Next Round OR Scoring Screen
 - HOME → Main Menu
 
 ---
 
 ### 11. Scoring Screen
+
 **Screen:** `pages/results.vue` or `pages/scoring.vue` (needs update)
 **Design Assets:** `docs/gfx/scoring/`
 **Features:**
+
 - Background (BACKGROUND.png, back.png)
 - Scoring title (scoring.png)
 - Player scores list (scroll bar.png, screoll.png)
@@ -191,15 +219,18 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 - Back buttons (back-1.png, back.png)
 
 **Navigation:**
+
 - NEXT → Leaderboard
 - BACK → Main Menu
 
 ---
 
 ### 12. Leaderboard
+
 **Screen:** `components/Leaderboard.vue` or `pages/leaderboard.vue` (needs update)
 **Design Assets:** `docs/gfx/Leaderboard/`
 **Features:**
+
 - Leaderboard title (leaderboard.png, leaderbpard.png)
 - Ranking display (ranking.png)
 - Top positions (1.png, 2.png, 3.png, 4.png, 5.png, s.png)
@@ -216,17 +247,19 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 13. Profile
+
 **Screen:** `pages/profile.vue` (needs creation)
 **Design Assets:** `docs/gfx/profile/`
 **Features:**
+
 - Background (BACKGROUND.png)
 - Profile title (profile.png, profile-1.png)
 - Profile photo area (box.png, camera.png)
 - Input fields:
-  - First Name (First Name_.png)
-  - Last Name (Last Name_.png)
-  - Nickname (Nickname_.png)
-  - Date of Birth (Date of Birth_.png)
+  - First Name (First Name\_.png)
+  - Last Name (Last Name\_.png)
+  - Nickname (Nickname\_.png)
+  - Date of Birth (Date of Birth\_.png)
 - OK button (ok.png)
 - Back buttons (back.png, back-1.png)
 - Coin bar (COIN BAR.png, 100.png)
@@ -236,16 +269,19 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 ---
 
 ### 14. Quit Game Confirmation (Dialog)
+
 **Component:** `components/QuitDialog.vue` (needs creation)
 **Design Assets:** `docs/gfx/quit game/`
 **Features:**
+
 - "QUIT GAME" title (QUIT GAME.png)
-- Confirmation message (Are you sure you want to quit game_.png)
+- Confirmation message (Are you sure you want to quit game\_.png)
 - Yes button (yes.png)
 - No button (no.png)
 - Back button (back.png)
 
 **Navigation:**
+
 - YES → Exit app (or return to main menu)
 - NO → Return to previous screen
 

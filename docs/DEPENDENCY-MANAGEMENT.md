@@ -5,6 +5,7 @@ This guide covers how to manage and upgrade dependencies in the project.
 ## Overview
 
 The project uses multiple tools for dependency management:
+
 - **npm-check-updates (ncu)** - Check and update dependencies
 - **Dependabot** - Automated dependency updates via GitHub
 - **Renovate** - Alternative automated dependency updates (if using GitLab)
@@ -34,6 +35,7 @@ pnpm run deps:check
 ```
 
 This will:
+
 - Show all outdated packages
 - Check for security vulnerabilities
 - Provide update commands
@@ -41,6 +43,7 @@ This will:
 ### 2. Review Updates
 
 Review the list of outdated packages. Pay special attention to:
+
 - **Major versions** - May include breaking changes
 - **Nuxt/Vue packages** - Core framework updates
 - **Security updates** - Should be applied immediately
@@ -48,16 +51,19 @@ Review the list of outdated packages. Pay special attention to:
 ### 3. Update Dependencies
 
 **Interactive Update (Recommended):**
+
 ```bash
 pnpm run deps:update
 ```
 
 This opens an interactive prompt where you can:
+
 - Select which packages to update
 - Review changes before applying
 - Skip packages that might cause issues
 
 **Automatic Update (Minor/Patch only):**
+
 ```bash
 # Only patch versions (safest)
 pnpm run deps:update:patch
@@ -98,12 +104,14 @@ git commit -m "chore: update dependencies"
 If using GitHub, Dependabot is configured in `.github/dependabot.yml`:
 
 **Features:**
+
 - Weekly updates (Mondays at 9:00 AM)
 - Groups updates by type (production/dev)
 - Only minor and patch updates (major requires manual review)
 - Creates PRs automatically
 
 **Configuration:**
+
 - Updates: Weekly on Mondays
 - Limit: 5 open PRs at a time
 - Labels: `dependencies`, `automated`
@@ -114,12 +122,14 @@ If using GitHub, Dependabot is configured in `.github/dependabot.yml`:
 If using Renovate, configuration is in `renovate.json`:
 
 **Features:**
+
 - Groups updates by ecosystem (Nuxt, Vue, Testing)
 - Weekly schedule (Mondays before 10 AM)
 - Only minor and patch updates
 - Requires status checks to pass
 
 **Setup:**
+
 1. Install Renovate app (GitHub) or bot (GitLab)
 2. Configuration is automatically read from `renovate.json`
 3. PRs are created automatically
@@ -127,16 +137,19 @@ If using Renovate, configuration is in `renovate.json`:
 ## Update Strategy
 
 ### Patch Updates (x.x.X)
+
 - **Frequency**: Weekly
 - **Risk**: Low
 - **Action**: Auto-merge after tests pass
 
 ### Minor Updates (x.X.x)
+
 - **Frequency**: Monthly
 - **Risk**: Medium
 - **Action**: Review changelog, test thoroughly
 
 ### Major Updates (X.x.x)
+
 - **Frequency**: As needed
 - **Risk**: High
 - **Action**: Manual review, migration guide, extensive testing
@@ -146,16 +159,19 @@ If using Renovate, configuration is in `renovate.json`:
 These packages require extra care when updating:
 
 ### Core Framework
+
 - `nuxt` - Check migration guides
 - `vue` - Check breaking changes
 - `@nuxt/*` - Check compatibility
 
 ### Build Tools
+
 - `vite` - Check build configuration
 - `@vite-pwa/nuxt` - Check PWA config
 - `@nuxt/image` - Check image optimization
 
 ### Testing
+
 - `@playwright/test` - Check test compatibility
 - `vitest` - Check test configuration
 
@@ -254,4 +270,3 @@ Dependency updates are automatically tested in CI:
 
 **Last Updated:** 2026-01-02  
 **Status:** ✅ Dependency Management Configured
-

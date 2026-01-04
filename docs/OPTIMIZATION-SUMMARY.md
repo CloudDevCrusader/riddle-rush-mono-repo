@@ -36,21 +36,25 @@ Created a clean separation of concerns:
 ### New Abstractions Created
 
 **Base Components** (3):
+
 - `BaseButton` - Versatile button with variants, sizes, loading states
 - `BaseImageButton` - Image button with hover states
 - `BaseModal` - Full-featured modal with accessibility
 
 **Composables** (4):
+
 - `useMenu` - Menu state management with auto-cleanup
 - `useAssets` - Asset path management with baseURL handling
 - `useModal` - Modal state with data passing
 - `useForm` - Comprehensive form validation and submission
 
 **Services** (2):
+
 - `GameService` - Pure business logic functions
 - `StorageService` - LocalStorage/IndexedDB abstraction
 
 **Layouts** (3):
+
 - `default.vue` - Basic layout with background support
 - `game.vue` - Game pages with back button
 - `menu.vue` - Menu pages with toggle button
@@ -62,6 +66,7 @@ Created a clean separation of concerns:
 ### Vite Configuration Enhancements
 
 **Smart Code Splitting:**
+
 ```typescript
 manualChunks: (id) => {
   // Vendor chunks
@@ -78,15 +83,18 @@ manualChunks: (id) => {
 ```
 
 **Minification:**
+
 - Enabled Terser for production builds
 - Removes `console.log` and `console.info` in production
 - Strips comments and debugger statements
 
 **Dependency Optimization:**
+
 - Pre-bundled critical dependencies (Pinia, VueUse, Howler)
 - Excluded test utilities from optimization
 
 **Benefits:**
+
 - ✅ Better caching (vendor chunks change less frequently)
 - ✅ Faster initial load (smaller entry chunk)
 - ✅ Improved code splitting (per-page chunks)
@@ -99,12 +107,14 @@ manualChunks: (id) => {
 ### ESLint Configuration
 
 **Features:**
+
 - Nuxt-optimized flat config
 - Stylistic rules aligned with Prettier
 - TypeScript strict mode
 - Custom rules for unused vars (`_` prefix)
 
 **Key Rules:**
+
 ```javascript
 {
   semi: false,
@@ -121,6 +131,7 @@ manualChunks: (id) => {
 ### Prettier Configuration
 
 **Settings:**
+
 ```json
 {
   "semi": false,
@@ -134,6 +145,7 @@ manualChunks: (id) => {
 ```
 
 **Integration:**
+
 - Auto-format on save (VSCode/Cursor)
 - Pre-commit hooks via Husky
 - Aligned with ESLint rules
@@ -141,12 +153,14 @@ manualChunks: (id) => {
 ### Stylelint Configuration
 
 **Features:**
+
 - SCSS standard config
 - Vue SFC support
 - Prettier integration
 - Custom rule ignores for SCSS functions
 
 **Commands:**
+
 ```bash
 pnpm run lint:style       # Check styles
 pnpm run lint:style:fix   # Auto-fix styles
@@ -155,12 +169,14 @@ pnpm run lint:style:fix   # Auto-fix styles
 ### SonarQube Integration
 
 **Configuration:**
+
 - Coverage reporting (LCOV format)
 - Test/coverage exclusions
 - Source encoding UTF-8
 - Proper file suffix mappings
 
 **Exclusions:**
+
 - Test files, config files, docs
 - Build artifacts (.nuxt, .output, dist)
 - Generated files
@@ -172,11 +188,13 @@ pnpm run lint:style:fix   # Auto-fix styles
 ### Before (CSS)
 
 Simple CSS file with:
+
 - CSS custom properties
 - Basic styles
 - No organization
 
 **Problems:**
+
 - No variables for reuse
 - Repetitive code
 - Difficult to maintain
@@ -185,6 +203,7 @@ Simple CSS file with:
 ### After (SCSS)
 
 Organized SCSS with:
+
 - **Variables** via Sass maps
 - **Mixins** for responsive design
 - **Functions** for value access
@@ -192,12 +211,12 @@ Organized SCSS with:
 - **CSS custom properties** for runtime changes
 
 **Structure:**
+
 ```scss
 // Variables (organized in maps)
 $colors: (
   'primary': #0bb4ff,
-  'secondary': #f9c43c,
-  // ...
+  'secondary': #f9c43c, // ...
 );
 
 // Mixins for responsive design
@@ -223,6 +242,7 @@ $colors: (
 ```
 
 **Benefits:**
+
 - ✅ Reusable variables and mixins
 - ✅ Better organization and maintainability
 - ✅ Nested rules for cleaner code
@@ -236,6 +256,7 @@ $colors: (
 ### Auto-Import Configuration
 
 **Components:**
+
 ```typescript
 components: [
   {
@@ -251,6 +272,7 @@ components: [
 ```
 
 **Imports:**
+
 ```typescript
 imports: {
   dirs: [
@@ -268,6 +290,7 @@ No more manual imports! Just use components and functions directly.
 ### VSCode/Cursor Extensions
 
 **Recommended:**
+
 - `vue.volar` - Vue 3 language support
 - `dbaeumer.vscode-eslint` - ESLint integration
 - `esbenp.prettier-vscode` - Prettier formatting
@@ -282,6 +305,7 @@ No more manual imports! Just use components and functions directly.
 ### Lint Scripts
 
 **Available commands:**
+
 ```bash
 pnpm run lint              # ESLint
 pnpm run lint:fix          # ESLint auto-fix
@@ -295,11 +319,13 @@ pnpm run typecheck         # TypeScript check
 ### Git Hooks (Husky)
 
 **Pre-commit:**
+
 - Lint staged files with ESLint
 - Format staged files with Prettier
 - Auto-fix issues
 
 **Pre-push:**
+
 - TypeScript type checking
 - Unit tests
 
@@ -310,11 +336,13 @@ pnpm run typecheck         # TypeScript check
 ### Bundle Size Improvements
 
 **Before optimization:**
+
 - Entry chunk: ~450kb
 - Vendor chunk: ~850kb
 - Total: ~1.3MB (uncompressed)
 
 **After optimization:**
+
 - Entry chunk: ~180kb (-60%)
 - Vendor chunks (split): ~600kb total (-30%)
 - Page chunks: 20-50kb each
@@ -323,22 +351,26 @@ pnpm run typecheck         # TypeScript check
 ### Build Time
 
 **Development:**
+
 - Before: ~8s cold start
 - After: ~5s cold start (-37%)
 - HMR: <100ms (unchanged)
 
 **Production:**
+
 - Before: ~35s
 - After: ~42s (+20% due to Terser, but better output)
 
 ### Runtime Performance
 
 **Initial Load:**
+
 - Faster due to smaller entry chunk
 - Better caching with split vendor chunks
 - Preloaded critical dependencies
 
 **Code Splitting:**
+
 - Pages load on-demand
 - Vendor libraries cached separately
 - Layout chunks shared across pages
@@ -350,6 +382,7 @@ pnpm run typecheck         # TypeScript check
 ### For Existing Code
 
 1. **Replace inline buttons:**
+
    ```vue
    <!-- Before -->
    <button class="custom-btn" @click="handler">Click</button>
@@ -359,6 +392,7 @@ pnpm run typecheck         # TypeScript check
    ```
 
 2. **Use composables:**
+
    ```vue
    <script setup>
    // Before
@@ -371,6 +405,7 @@ pnpm run typecheck         # TypeScript check
    ```
 
 3. **Extract business logic:**
+
    ```typescript
    // Before (in store)
    createPlayer(name: string) {
@@ -389,6 +424,7 @@ pnpm run typecheck         # TypeScript check
    ```
 
 4. **Apply layouts:**
+
    ```vue
    <script setup>
    definePageMeta({
@@ -407,12 +443,14 @@ pnpm run typecheck         # TypeScript check
 ## Next Steps
 
 ### Immediate
+
 - [x] Fix remaining TypeScript errors
 - [ ] Add unit tests for services and composables
 - [ ] Migrate existing pages to use base components
 - [ ] Document component API in Storybook (optional)
 
 ### Future Enhancements
+
 - [ ] Add more base components (BaseInput, BaseCard, BaseSelect)
 - [ ] Create animation composables (useTransition, useAnimation)
 - [ ] Add E2E tests for critical user flows
@@ -443,6 +481,7 @@ pnpm run typecheck         # TypeScript check
 ✅ Added comprehensive documentation
 
 **Impact:**
+
 - **Maintainability:** Easier to understand and modify code
 - **Performance:** Faster load times and better caching
 - **Developer Experience:** Less boilerplate, better tooling

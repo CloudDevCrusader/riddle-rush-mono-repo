@@ -38,6 +38,7 @@ The project documentation and pages have been reorganized and simplified for bet
 ### Files Removed from Root
 
 28 documentation files removed from root directory:
+
 - All AWS deployment docs (merged)
 - All testing docs (merged)
 - All development summaries (merged)
@@ -46,6 +47,7 @@ The project documentation and pages have been reorganized and simplified for bet
 ### Files Kept in Root
 
 Only essential files remain:
+
 - **README.md** - Main project readme
 - **CLAUDE.md** - Claude Code project instructions
 - **ORGANIZATION_SUMMARY.md** - This file
@@ -55,6 +57,7 @@ Only essential files remain:
 ### Pages Removed
 
 Deleted 4 unused pages:
+
 - `pages/about.vue` - Redundant with credits page
 - `pages/alphabet.vue` - Replaced by round-start page
 - `pages/categories.vue` - Replaced by round-start page
@@ -63,6 +66,7 @@ Deleted 4 unused pages:
 ### Active Pages (9 total)
 
 Core game flow:
+
 1. **index.vue** - Main menu
 2. **players.vue** - Player setup
 3. **round-start.vue** - Category & letter selection (fortune wheels)
@@ -70,10 +74,7 @@ Core game flow:
 5. **results.vue** - Score adjustment
 6. **leaderboard.vue** - Final rankings
 
-Supporting pages:
-7. **settings.vue** - Game settings
-8. **credits.vue** - Credits
-9. **language.vue** - Language selection
+Supporting pages: 7. **settings.vue** - Game settings 8. **credits.vue** - Credits 9. **language.vue** - Language selection
 
 ## Documentation Structure
 
@@ -101,6 +102,7 @@ Supporting pages:
 ## Benefits
 
 ### Documentation
+
 ✅ Reduced from 28+ markdown files to 4 main guides
 ✅ Easier to find information (grouped by topic)
 ✅ Less duplication and redundancy
@@ -108,6 +110,7 @@ Supporting pages:
 ✅ Maintained all information (no data loss)
 
 ### Pages
+
 ✅ Removed 4 unused pages
 ✅ Simpler, focused game flow
 ✅ Easier to maintain
@@ -125,10 +128,12 @@ Supporting pages:
 ## File Count Summary
 
 Before:
+
 - 28 markdown files in root directory
 - 13 page files in pages/
 
 After:
+
 - 3 markdown files in root directory
 - 9 page files in pages/
 - 11 markdown files in docs/

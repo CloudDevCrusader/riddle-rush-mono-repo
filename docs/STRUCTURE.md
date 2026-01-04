@@ -48,11 +48,13 @@ docs/
 ## Adding New Documentation
 
 1. Create markdown file in `docs/content/`:
+
    ```bash
    docs/content/guides/new-feature.md
    ```
 
 2. Add frontmatter:
+
    ```markdown
    ---
    title: New Feature Guide
@@ -70,4 +72,3 @@ docs/
 - ✅ **Component support** - Use Vue components in markdown
 - ✅ **Syntax highlighting** - Code blocks with themes
 - ✅ **Table of contents** - Auto-generated from headings
-

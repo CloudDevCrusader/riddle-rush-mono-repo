@@ -16,6 +16,7 @@
 ## 1. Security Audit
 
 ### Results
+
 ```
 Vulnerabilities: 0
 ├── Critical: 0
@@ -27,6 +28,7 @@ Vulnerabilities: 0
 **Status:** ✅ **PASS** - No security vulnerabilities detected
 
 ### Recommendations
+
 - ✅ Dependencies are secure
 - Consider adding `npm-audit` to CI pipeline
 - Enable Dependabot for automated security updates
@@ -37,19 +39,21 @@ Vulnerabilities: 0
 
 ### Outdated Packages
 
-| Package | Current | Latest | Priority |
-|---------|---------|--------|----------|
-| @faker-js/faker (dev) | 9.9.0 | 10.1.0 | Medium |
-| @types/node (dev) | 22.19.3 | 25.0.3 | Low |
-| @vitest/coverage-v8 (dev) | 3.2.4 | 4.0.16 | Medium |
-| lint-staged (dev) | 15.5.2 | 16.2.7 | Low |
+| Package                   | Current | Latest | Priority |
+| ------------------------- | ------- | ------ | -------- |
+| @faker-js/faker (dev)     | 9.9.0   | 10.1.0 | Medium   |
+| @types/node (dev)         | 22.19.3 | 25.0.3 | Low      |
+| @vitest/coverage-v8 (dev) | 3.2.4   | 4.0.16 | Medium   |
+| lint-staged (dev)         | 15.5.2  | 16.2.7 | Low      |
 
 ### Missing High-Value Modules
 
 Based on Nuxt 4 best practices (2026), consider adding:
 
 #### 1. **@nuxt/fonts** (High Priority)
+
 **Why:** Automatic self-hosting for fonts with optimally loaded web fonts
+
 - Reduces layout shift
 - Creates fallback metrics
 - Bundles fonts with project
@@ -60,12 +64,15 @@ pnpm add -D @nuxt/fonts
 ```
 
 Add to `nuxt.config.ts`:
+
 ```typescript
 modules: ['@nuxt/fonts']
 ```
 
 #### 2. **@nuxt/image** (High Priority)
+
 **Why:** Image optimization for better performance
+
 - Automatic image compression
 - Lazy loading
 - Multiple format support (WebP, AVIF)
@@ -76,7 +83,9 @@ pnpm add -D @nuxt/image
 ```
 
 #### 3. **@nuxt/icon** (Medium Priority)
+
 **Why:** Access to 200,000+ icons with on-demand loading
+
 - Keeps bundle lean
 - No manual SVG management
 - Tree-shakeable
@@ -86,7 +95,9 @@ pnpm add -D @nuxt/icon
 ```
 
 #### 4. **@nuxt/scripts** (Medium Priority)
+
 **Why:** Optimizes third-party scripts (Google Analytics, etc.)
+
 - Intelligent non-blocking loading
 - Page load triggers
 - User interaction triggers
@@ -101,6 +112,7 @@ pnpm add -D @nuxt/scripts
 ## 3. Code Quality Analysis
 
 ### Async Functions Analysis
+
 - **Total async functions:** 23 across 3 files
 - **Error handling:** Present in 16 files ✅
 - **Potential issues:** Several unhandled edge cases
@@ -108,9 +120,11 @@ pnpm add -D @nuxt/scripts
 ### Critical Files Reviewed
 
 #### `stores/game.ts` (346 lines)
+
 **Issues Found:**
 
 1. **Race Condition Risk** (Line 77-100)
+
    ```typescript
    async fetchCategories(force = false) {
      if (this.categoriesLoaded && !force) {
@@ -119,8 +133,10 @@ pnpm add -D @nuxt/scripts
      // Multiple simultaneous calls could load twice
    }
    ```
+
    **Risk:** Multiple components calling simultaneously
    **Fix:** Add loading state guard:
+
    ```typescript
    if (this.categoriesLoading) {
      await until(() => !this.categoriesLoading).toBeTruthy()
@@ -129,14 +145,17 @@ pnpm add -D @nuxt/scripts
    ```
 
 2. **Missing Null Check** (Line 12-15)
+
    ```typescript
    const randomLetter = () => {
      const index = Math.floor(Math.random() * ALPHABET.length)
      return ALPHABET.charAt(index).toLowerCase()
    }
    ```
+
    **Risk:** ALPHABET could be empty or undefined
    **Fix:** Add validation:
+
    ```typescript
    const randomLetter = () => {
      if (!ALPHABET || ALPHABET.length === 0) {
@@ -148,9 +167,11 @@ pnpm add -D @nuxt/scripts
    ```
 
 3. **Array Sort Mutation** (Line 61)
+
    ```typescript
    const sorted = [...players].sort((a, b) => b.totalScore - a.totalScore)
    ```
+
    **Status:** ✅ Good - Using spread operator to avoid mutation
 
 4. **Potential Memory Leak** (Line 59-71)
@@ -189,6 +210,7 @@ pnpm add -D @nuxt/scripts
 ### Bundle Size Analysis
 
 Current modules loading:
+
 - Pinia: State management
 - i18n: Internationalization
 - PWA: Service worker
@@ -201,6 +223,7 @@ Current modules loading:
 #### A. Lazy Loading (Implement Immediately)
 
 **Components to Lazy Load:**
+
 ```vue
 <!-- Current -->
 <SettingsModal v-if="showSettings" />
@@ -210,6 +233,7 @@ Current modules loading:
 ```
 
 Files to update:
+
 - `components/SettingsModal.vue`
 - `components/QuitModal.vue`
 - `components/PauseModal.vue`
@@ -221,22 +245,26 @@ Files to update:
 #### B. Dynamic Imports
 
 **Current:**
+
 ```typescript
 import { useAnalytics } from '../composables/useAnalytics'
 ```
 
 **Optimized:**
+
 ```typescript
 const { useAnalytics } = await import('../composables/useAnalytics')
 ```
 
 **Applies to:**
+
 - Analytics composable (only needed when GA is enabled)
 - Audio composable (only needed when sounds enabled)
 
 #### C. Tree Shaking Improvements
 
 **nuxt.config.ts additions:**
+
 ```typescript
 vite: {
   build: {
@@ -263,10 +291,12 @@ vite: {
 #### D. PWA Caching Strategy Improvements
 
 **Current Issues:**
+
 - No runtime caching for API calls
 - Missing precache for critical assets
 
 **Recommended Changes to `nuxt.config.ts`:**
+
 ```typescript
 workbox: {
   runtimeCaching: [
@@ -307,6 +337,7 @@ workbox: {
 ### High Priority
 
 1. **Extract Magic Numbers to Constants**
+
    ```typescript
    // Before
    if (score > 100) { ... }
@@ -322,6 +353,7 @@ workbox: {
    - Add error boundary components
 
 3. **Type Safety Improvements**
+
    ```typescript
    // Add strict type for game status
    type GameStatus = 'active' | 'paused' | 'completed' | 'abandoned'
@@ -349,6 +381,7 @@ workbox: {
 ### Current Test Issues
 
 Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
+
 - CI environment mocking issues (Node 20 vs 24)
 - Category data mismatches
 - State pollution between tests
@@ -357,6 +390,7 @@ Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
 ### Recommendations
 
 1. **Fix CI Test Issues**
+
    ```typescript
    // Add test isolation
    beforeEach(() => {
@@ -419,6 +453,7 @@ Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
 ## 8. Docker Deployment Enhancements
 
 ### Current Status
+
 ✅ Multi-stage build
 ✅ Non-root user
 ✅ Health checks
@@ -427,6 +462,7 @@ Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
 ### Additional Recommendations
 
 1. **Add Docker Health Check Monitoring**
+
    ```yaml
    # docker-compose.yml
    services:
@@ -439,6 +475,7 @@ Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
    ```
 
 2. **Implement Blue-Green Deployment**
+
    ```bash
    # Add to deployment script
    docker tag riddle-rush:latest riddle-rush:blue
@@ -459,18 +496,21 @@ Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
 ## 9. Immediate Action Items
 
 ### Critical (Do Today)
+
 1. ✅ Fix Husky setup (completed)
 2. ✅ Docker deployment working (completed)
 3. 🔨 Add race condition guard to `fetchCategories`
 4. 🔨 Fix null check in `randomLetter`
 
 ### High Priority (This Week)
+
 1. 📦 Install `@nuxt/fonts` module
 2. 📦 Install `@nuxt/image` module
 3. 🧪 Fix TODO items in test suite
 4. 🎨 Implement lazy loading for modals
 
 ### Medium Priority (This Month)
+
 1. 📦 Add `@nuxt/icon` module
 2. 📦 Add `@nuxt/scripts` for analytics optimization
 3. ♿ Improve accessibility (ARIA labels, keyboard nav)
@@ -482,18 +522,21 @@ Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
 ## 10. Performance Metrics & Goals
 
 ### Current Metrics (Estimated)
+
 - **Bundle Size:** ~280 KB (gzipped)
 - **First Contentful Paint:** ~1.2s
 - **Time to Interactive:** ~1.8s
 - **Lighthouse Score:** ~85/100
 
 ### Target Metrics (After Optimizations)
+
 - **Bundle Size:** ~180 KB (36% reduction)
 - **First Contentful Paint:** <0.8s
 - **Time to Interactive:** <1.2s
 - **Lighthouse Score:** >95/100
 
 ### How to Measure
+
 ```bash
 # Build production
 pnpm run generate
@@ -545,15 +588,18 @@ performance:
 ## 12. Resources & References
 
 ### Nuxt 4 Performance Best Practices
+
 - [Nuxt Performance Guide](https://nuxt.com/docs/4.x/guide/best-practices/performance)
 - [15 Must-Have Nuxt Modules 2025](https://masteringnuxt.com/blog/15-must-have-nuxt-modules-to-supercharge-your-development-in-2025)
 - [Vue and Nuxt Performance Optimization](https://alokai.com/blog/vue-and-nuxt-performance-optimization-checklist)
 
 ### PWA Optimization
+
 - [Nuxt PWA Module](https://nuxt.com/modules/pwa)
 - [Workbox Caching Strategies](https://developer.chrome.com/docs/workbox/caching-strategies-overview/)
 
 ### Docker Best Practices
+
 - [Docker Security Best Practices](https://docs.docker.com/develop/security-best-practices/)
 - [Multi-stage Builds](https://docs.docker.com/build/building/multi-stage/)
 
@@ -569,6 +615,7 @@ This Nuxt 4 PWA is **well-structured** with good security practices. The main op
 4. **Accessibility**: Add proper ARIA labels and keyboard navigation
 
 Implementing the recommended changes will result in:
+
 - ⚡ **36% smaller bundle**
 - 🚀 **33% faster load time**
 - 🐛 **Fewer production bugs**

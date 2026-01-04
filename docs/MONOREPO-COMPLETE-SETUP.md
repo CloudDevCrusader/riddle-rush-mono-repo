@@ -5,32 +5,38 @@ This document provides a complete overview of all monorepo tools and configurati
 ## Tools Overview
 
 ### 1. Package Management
+
 - **pnpm** - Fast, disk space efficient package manager
 - **Workspaces** - Monorepo workspace configuration
 
 ### 2. Task Orchestration
+
 - **Turborepo** - High-performance build system
   - Task caching
   - Parallel execution
   - Dependency management
 
 ### 3. Git Hooks
+
 - **Husky** - Git hooks made easy
   - Pre-commit: Lint-staged
   - Pre-push: Typecheck + tests
   - Commit-msg: Message validation
 
 ### 4. Code Quality
+
 - **ESLint** - Linting with shared config
 - **Prettier** - Code formatting
 - **TypeScript** - Type checking
 - **lint-staged** - Run linters on staged files
 
 ### 5. Version Management
+
 - **@changesets/cli** - Version and changelog management
 - **syncpack** - Dependency version synchronization
 
 ### 6. Development Tools
+
 - **Vite plugins** - Inspect, DevTools, checker, visualizer
 - **Nuxt modules** - Various Nuxt enhancements
 
@@ -158,6 +164,7 @@ pnpm syncpack:fix
 ### Turborepo (`turbo.json`)
 
 Defines task pipeline:
+
 - Task dependencies
 - Output directories
 - Environment variables
@@ -166,6 +173,7 @@ Defines task pipeline:
 ### Husky (`.husky/`)
 
 Git hooks:
+
 - Pre-commit: Lint-staged
 - Pre-push: Typecheck + tests
 - Commit-msg: Message validation
@@ -173,6 +181,7 @@ Git hooks:
 ### Lint-Staged (`.lintstagedrc.json`)
 
 Staged file processing:
+
 - ESLint on TS/JS/Vue files
 - Prettier on all files
 - Only processes staged files
@@ -180,6 +189,7 @@ Staged file processing:
 ### Syncpack (`.syncpackrc.json`)
 
 Dependency version rules:
+
 - Workspace package sync
 - Version range preferences
 - Dependency type handling
@@ -187,6 +197,7 @@ Dependency version rules:
 ### Changesets (`.changeset/config.json`)
 
 Version management:
+
 - Changelog generation
 - Version bump rules
 - Package linking
@@ -225,12 +236,14 @@ Version management:
 ### Turborepo
 
 **Cache issues:**
+
 ```bash
 rm -rf .turbo
 pnpm turbo:build --force
 ```
 
 **Task not running:**
+
 - Check `turbo.json` pipeline
 - Verify task exists in package.json
 - Check task dependencies
@@ -238,12 +251,14 @@ pnpm turbo:build --force
 ### Husky
 
 **Hooks not running:**
+
 ```bash
 pnpm prepare
 chmod +x .husky/*
 ```
 
 **Lint-staged not working:**
+
 ```bash
 npx lint-staged --debug
 ```
@@ -251,6 +266,7 @@ npx lint-staged --debug
 ### Syncpack
 
 **Version mismatches:**
+
 ```bash
 pnpm syncpack:check
 pnpm syncpack:fix

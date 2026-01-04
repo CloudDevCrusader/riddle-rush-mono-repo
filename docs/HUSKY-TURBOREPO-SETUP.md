@@ -29,6 +29,7 @@ Runs before each commit:
    - Prevents commit if unfixable errors exist
 
 **What it does:**
+
 - Scans for secrets using `scripts/check-secrets.sh`
 - Runs `lint-staged` which:
   - Lints TypeScript/JavaScript/Vue files
@@ -45,6 +46,7 @@ Runs before pushing to remote:
 4. **Dependency Check**: Verifies dependency versions with syncpack
 
 **What it does:**
+
 - Ensures code quality before pushing
 - Catches type errors early
 - Verifies tests pass
@@ -64,17 +66,13 @@ Located in `.lintstagedrc.json`:
 
 ```json
 {
-  "*.{ts,tsx,vue}": [
-    "eslint --fix",
-    "prettier --write"
-  ],
-  "*.{json,md,yml,yaml}": [
-    "prettier --write"
-  ]
+  "*.{ts,tsx,vue}": ["eslint --fix", "prettier --write"],
+  "*.{json,md,yml,yaml}": ["prettier --write"]
 }
 ```
 
 **Features:**
+
 - Only processes staged files
 - Runs ESLint with auto-fix
 - Formats with Prettier
@@ -128,6 +126,7 @@ Configuration is in `turbo.json`:
 #### 1. Task Caching
 
 Turborepo caches task outputs:
+
 - **Build tasks**: Cached based on inputs
 - **Test tasks**: Cached when inputs don't change
 - **Lint tasks**: Fast execution with caching
@@ -135,12 +134,14 @@ Turborepo caches task outputs:
 #### 2. Task Dependencies
 
 Tasks can depend on other tasks:
+
 - `build` depends on `^build` (dependencies must build first)
 - `test` depends on `^build` (tests need built code)
 
 #### 3. Parallel Execution
 
 Tasks run in parallel when possible:
+
 - Multiple packages can build simultaneously
 - Independent tasks don't block each other
 
@@ -230,6 +231,7 @@ Turborepo caches task outputs in `.turbo/`:
 #### Cache Invalidation
 
 Cache is automatically invalidated when:
+
 - Source files change
 - Dependencies change
 - Configuration changes
@@ -326,6 +328,7 @@ test:
 ```
 
 **Benefits:**
+
 - Parallel task execution
 - Caching speeds up CI runs
 - Consistent with local development
@@ -335,11 +338,13 @@ test:
 ### Husky Hooks Not Running
 
 1. **Check installation**:
+
    ```bash
    pnpm prepare
    ```
 
 2. **Verify hooks are executable**:
+
    ```bash
    ls -la .husky/
    chmod +x .husky/*
@@ -353,12 +358,14 @@ test:
 ### Turborepo Cache Issues
 
 1. **Clear cache**:
+
    ```bash
    rm -rf .turbo
    pnpm turbo:clean
    ```
 
 2. **Force rebuild**:
+
    ```bash
    pnpm turbo:build --force
    ```
@@ -372,11 +379,13 @@ test:
 ### Lint-Staged Not Working
 
 1. **Check configuration**:
+
    ```bash
    cat .lintstagedrc.json
    ```
 
 2. **Test manually**:
+
    ```bash
    npx lint-staged --debug
    ```
@@ -424,6 +433,7 @@ turbo run lint
 ```
 
 **Benefits:**
+
 - Faster execution (caching)
 - Better parallelization
 - Task dependency management

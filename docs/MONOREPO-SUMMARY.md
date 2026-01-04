@@ -38,6 +38,7 @@ riddle-rush-monorepo/
 ## What Changed
 
 ### Moved to `apps/game/`:
+
 - All game application code
 - Components, composables, layouts, stores
 - Pages (except docs)
@@ -46,10 +47,12 @@ riddle-rush-monorepo/
 - Nuxt config
 
 ### Moved to `apps/docs/`:
+
 - Documentation content (`docs/content/`)
 - Documentation pages (`pages/docs/`)
 
 ### Created `packages/`:
+
 - `shared/` - Utilities and constants
 - `types/` - TypeScript types
 - `config/` - Shared configurations
@@ -57,16 +60,20 @@ riddle-rush-monorepo/
 ## Next Steps
 
 ### 1. Install Dependencies
+
 ```bash
 pnpm install
 ```
 
 ### 2. Update Imports
+
 Replace imports in `apps/game/`:
+
 - `~/utils/constants` → `@riddle-rush/shared/constants`
 - `~/types/game` → `@riddle-rush/types/game`
 
 ### 3. Test
+
 ```bash
 # Test game
 pnpm dev
@@ -76,7 +83,9 @@ pnpm dev:docs
 ```
 
 ### 4. Update CI/CD
+
 Update `.gitlab-ci.yml` to:
+
 - Build from `apps/game/`
 - Build docs from `apps/docs/`
 
@@ -86,7 +95,7 @@ Update `.gitlab-ci.yml` to:
 ✅ **Shared code** - Reuse types and utils  
 ✅ **Independent builds** - Build apps separately  
 ✅ **Better organization** - Easier to navigate  
-✅ **Scalable** - Easy to add new apps/packages  
+✅ **Scalable** - Easy to add new apps/packages
 
 ## Commands
 
@@ -109,15 +118,16 @@ pnpm lint             # All linting
 ## Workspace Packages
 
 Use in code:
+
 ```typescript
 import { DB_NAME } from '@riddle-rush/shared/constants'
 import type { GameSession } from '@riddle-rush/types/game'
 ```
 
 Add dependencies:
+
 ```bash
 pnpm --filter game add <package>
 pnpm --filter docs add <package>
 pnpm --filter shared add <package>
 ```
-

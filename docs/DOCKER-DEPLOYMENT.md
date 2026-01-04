@@ -5,6 +5,7 @@ Complete guide for deploying Riddle Rush as a containerized application using Do
 ## Overview
 
 The Docker setup provides a production-ready deployment of this Nuxt 4 PWA using:
+
 - **Multi-stage build** for optimized image size
 - **nginx** for serving static files
 - **Security hardening** with non-root user
@@ -264,22 +265,22 @@ spec:
         app: riddle-rush
     spec:
       containers:
-      - name: riddle-rush
-        image: riddle-rush:latest
-        ports:
-        - containerPort: 8080
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
+        - name: riddle-rush
+          image: riddle-rush:latest
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
@@ -289,9 +290,9 @@ spec:
   selector:
     app: riddle-rush
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
   type: LoadBalancer
 ```
 
@@ -307,11 +308,11 @@ kubectl get services
 
 The following environment variables can be customized at build time:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `BASE_URL` | Base URL for the app | `/` |
-| `NODE_ENV` | Environment mode | `production` |
-| `GOOGLE_ANALYTICS_ID` | Google Analytics tracking ID | (none) |
+| Variable              | Description                  | Default      |
+| --------------------- | ---------------------------- | ------------ |
+| `BASE_URL`            | Base URL for the app         | `/`          |
+| `NODE_ENV`            | Environment mode             | `production` |
+| `GOOGLE_ANALYTICS_ID` | Google Analytics tracking ID | (none)       |
 
 Example with custom variables:
 
@@ -327,12 +328,14 @@ docker build \
 The container uses a custom nginx configuration with:
 
 ### Security Headers
+
 - `X-Frame-Options`: Prevents clickjacking
 - `X-Content-Type-Options`: Prevents MIME sniffing
 - `X-XSS-Protection`: Basic XSS protection
 - `Referrer-Policy`: Controls referrer information
 
 ### Caching Strategy
+
 - **Service Worker** (`/sw.js`): No cache (always fresh)
 - **Workbox scripts**: 1 year cache (immutable)
 - **Static assets** (js, css, images): 1 year cache
@@ -340,11 +343,13 @@ The container uses a custom nginx configuration with:
 - **HTML**: Dynamic (served fresh)
 
 ### Compression
+
 - Gzip enabled for text-based assets
 - Minimum size: 1KB
 - All relevant MIME types included
 
 ### Health Check
+
 - Endpoint: `/health`
 - Returns: `200 OK` with "healthy" text
 - Used by Docker health checks and load balancers
@@ -397,10 +402,12 @@ docker exec riddle-rush cat /var/log/nginx/error.log
 ### Service Worker not working
 
 Ensure you're accessing via:
+
 - `http://localhost:8080` (localhost is allowed)
 - `https://` (HTTPS required for PWA)
 
 Service Workers don't work with:
+
 - HTTP on non-localhost domains
 - IP addresses (without localhost)
 
@@ -555,12 +562,12 @@ jobs:
 
 ## Comparison with Other Deployment Methods
 
-| Method | Pros | Cons |
-|--------|------|------|
-| **Docker** | Portable, consistent, easy scaling | Requires Docker runtime, slight overhead |
-| **GitLab Pages** | Free, automatic SSL, CDN | GitLab-specific, limited control |
-| **AWS S3 + CloudFront** | Scalable, cheap for static | AWS-specific, more setup |
-| **Kubernetes** | Powerful orchestration, auto-scaling | Complex setup, overkill for static site |
+| Method                  | Pros                                 | Cons                                     |
+| ----------------------- | ------------------------------------ | ---------------------------------------- |
+| **Docker**              | Portable, consistent, easy scaling   | Requires Docker runtime, slight overhead |
+| **GitLab Pages**        | Free, automatic SSL, CDN             | GitLab-specific, limited control         |
+| **AWS S3 + CloudFront** | Scalable, cheap for static           | AWS-specific, more setup                 |
+| **Kubernetes**          | Powerful orchestration, auto-scaling | Complex setup, overkill for static site  |
 
 ## Next Steps
 

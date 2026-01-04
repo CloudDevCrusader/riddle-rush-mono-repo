@@ -34,6 +34,7 @@ The refactoring introduces a layered architecture:
 ```
 
 **Key Benefits:**
+
 - Reusable UI components reduce code duplication
 - Composables provide reactive, testable logic
 - Services abstract business logic from UI concerns
@@ -51,6 +52,7 @@ Location: `components/Base/`
 A versatile button component with variants, sizes, and loading states.
 
 **Props:**
+
 ```typescript
 {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
@@ -63,24 +65,22 @@ A versatile button component with variants, sizes, and loading states.
 ```
 
 **Usage:**
+
 ```vue
 <template>
-  <BaseButton
-    variant="primary"
-    size="lg"
-    :loading="isSubmitting"
-    @click="handleSubmit"
-  >
+  <BaseButton variant="primary" size="lg" :loading="isSubmitting" @click="handleSubmit">
     Submit
   </BaseButton>
 </template>
 ```
 
 **Slots:**
+
 - `default` - Button content
 - `icon` - Optional icon (prepended to content)
 
 **When to use:**
+
 - Any clickable action requiring consistent styling
 - Forms with submit buttons
 - Action buttons in modals or pages
@@ -92,6 +92,7 @@ A versatile button component with variants, sizes, and loading states.
 A button component that uses an image with hover states.
 
 **Props:**
+
 ```typescript
 {
   src: string           // Main image source
@@ -104,6 +105,7 @@ A button component that uses an image with hover states.
 ```
 
 **Usage:**
+
 ```vue
 <template>
   <BaseImageButton
@@ -116,6 +118,7 @@ A button component that uses an image with hover states.
 ```
 
 **When to use:**
+
 - Menu buttons with custom graphics
 - Icon-based navigation
 - Game UI elements
@@ -127,6 +130,7 @@ A button component that uses an image with hover states.
 A full-featured modal component with teleport, transitions, keyboard handling, and scroll locking.
 
 **Props:**
+
 ```typescript
 {
   modelValue: boolean      // v-model binding for open/close
@@ -139,14 +143,10 @@ A full-featured modal component with teleport, transitions, keyboard handling, a
 ```
 
 **Usage:**
+
 ```vue
 <template>
-  <BaseModal
-    v-model="isOpen"
-    title="Settings"
-    size="lg"
-    @close="handleClose"
-  >
+  <BaseModal v-model="isOpen" title="Settings" size="lg" @close="handleClose">
     <template #default>
       <!-- Modal content -->
     </template>
@@ -164,11 +164,13 @@ const isOpen = ref(false)
 ```
 
 **Slots:**
+
 - `default` - Modal body content
 - `header` - Custom header (overrides title)
 - `footer` - Modal footer actions
 
 **Features:**
+
 - Automatic focus trap
 - Escape key to close
 - Scroll lock when open
@@ -176,6 +178,7 @@ const isOpen = ref(false)
 - Teleport to body for z-index isolation
 
 **When to use:**
+
 - Settings dialogs
 - Confirmation prompts
 - Forms requiring user input
@@ -192,6 +195,7 @@ Location: `composables/`
 Manages menu state with automatic cleanup on route changes.
 
 **API:**
+
 ```typescript
 {
   isOpen: Readonly<Ref<boolean>>
@@ -204,6 +208,7 @@ Manages menu state with automatic cleanup on route changes.
 ```
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 const menu = useMenu()
@@ -218,6 +223,7 @@ const menu = useMenu()
 ```
 
 **Features:**
+
 - Automatic close on route navigation
 - Active item tracking
 - Readonly state exposure
@@ -229,6 +235,7 @@ const menu = useMenu()
 Manages asset paths with baseURL prefix handling.
 
 **API:**
+
 ```typescript
 {
   baseUrl: string
@@ -243,6 +250,7 @@ Manages asset paths with baseURL prefix handling.
 ```
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 const assets = useAssets()
@@ -257,11 +265,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <img :src="assets.getMenuAsset('LOGO.png')" alt="Logo">
+  <img :src="assets.getMenuAsset('LOGO.png')" alt="Logo" />
 </template>
 ```
 
 **When to use:**
+
 - Loading any asset (images, sounds, etc.)
 - Preloading critical resources
 - Ensuring correct paths across environments (dev/staging/prod)
@@ -273,6 +282,7 @@ onMounted(async () => {
 Manages modal state with data passing capabilities.
 
 **API:**
+
 ```typescript
 {
   isOpen: Readonly<Ref<boolean>>
@@ -284,6 +294,7 @@ Manages modal state with data passing capabilities.
 ```
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 const confirmModal = useModal()
@@ -308,6 +319,7 @@ async function handleConfirm() {
 ```
 
 **Multi-Modal Management:**
+
 ```typescript
 const { modals, openModal, closeModal, closeAll } = useModals(['settings', 'confirm', 'help'])
 
@@ -324,6 +336,7 @@ closeAll()
 Comprehensive form handling with validation, submission, and error management.
 
 **API:**
+
 ```typescript
 {
   values: Readonly<T>
@@ -344,6 +357,7 @@ Comprehensive form handling with validation, submission, and error management.
 ```
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 import { validationRules } from '~/composables/useForm'
@@ -359,10 +373,7 @@ const form = useForm({
   },
   email: {
     initialValue: '',
-    rules: [
-      validationRules.required(),
-      validationRules.email(),
-    ],
+    rules: [validationRules.required(), validationRules.email()],
   },
 })
 
@@ -380,14 +391,10 @@ async function submit() {
       :value="form.values.name"
       @input="form.handleChange('name', $event.target.value)"
       @blur="form.handleBlur('name')"
-    >
+    />
     <span v-if="form.errors.name">{{ form.errors.name }}</span>
 
-    <BaseButton
-      type="submit"
-      :disabled="!form.isValid.value"
-      :loading="form.isSubmitting.value"
-    >
+    <BaseButton type="submit" :disabled="!form.isValid.value" :loading="form.isSubmitting.value">
       Submit
     </BaseButton>
   </form>
@@ -395,6 +402,7 @@ async function submit() {
 ```
 
 **Built-in Validation Rules:**
+
 - `required(message?)`
 - `minLength(length, message?)`
 - `maxLength(length, message?)`
@@ -404,6 +412,7 @@ async function submit() {
 - `max(maxValue, message?)`
 
 **Custom Validation:**
+
 ```typescript
 const customRule: ValidationRule<string> = {
   validate: (value) => value.includes('@'),
@@ -430,16 +439,19 @@ Business logic for game operations - pure functions with no side effects.
 **Methods:**
 
 **Letter Generation:**
+
 ```typescript
 GameService.generateRandomLetter(alphabet: string): string
 ```
 
 **Score Calculation:**
+
 ```typescript
 GameService.calculateScore(baseScore: number, timeBonus = 0): number
 ```
 
 **Session Management:**
+
 ```typescript
 GameService.createSession(
   category: Category,
@@ -450,6 +462,7 @@ GameService.createSession(
 ```
 
 **Player Management:**
+
 ```typescript
 GameService.createPlayer(name: string, avatar?: string): Player
 
@@ -464,6 +477,7 @@ GameService.getCurrentTurnPlayer(players: Player[]): Player | null
 ```
 
 **Utilities:**
+
 ```typescript
 GameService.formatDuration(milliseconds: number): string
 
@@ -484,6 +498,7 @@ GameService.getRandomCategories(
 ```
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 // In a Pinia store or component
@@ -505,6 +520,7 @@ const isCorrect = GameService.areSimilarAnswers(normalizedAnswer, correctAnswer,
 ```
 
 **When to use:**
+
 - Game logic calculations
 - Player validation
 - Answer comparison
@@ -512,6 +528,7 @@ const isCorrect = GameService.areSimilarAnswers(normalizedAnswer, correctAnswer,
 - Any game-related business logic
 
 **Benefits:**
+
 - Pure functions - easy to test
 - No dependencies on stores or composables
 - Reusable across different contexts
@@ -526,11 +543,13 @@ LocalStorage abstraction with prefix and error handling.
 **Methods:**
 
 **Availability Check:**
+
 ```typescript
 StorageService.isStorageAvailable(type: 'localStorage' | 'sessionStorage' = 'localStorage'): boolean
 ```
 
 **CRUD Operations:**
+
 ```typescript
 StorageService.getItem<T>(key: string, defaultValue?: T): T | null
 
@@ -542,6 +561,7 @@ StorageService.clear(): boolean
 ```
 
 **Utilities:**
+
 ```typescript
 StorageService.getStorageSize(): number
 
@@ -551,6 +571,7 @@ StorageService.importData(data: Record<string, any>): boolean
 ```
 
 **Usage:**
+
 ```typescript
 // Save user preferences
 const saved = StorageService.setItem('user_prefs', {
@@ -570,6 +591,7 @@ StorageService.importData(backup)
 ```
 
 **Features:**
+
 - Automatic prefixing (`riddle_rush_`)
 - JSON serialization/deserialization
 - Error handling with fallback
@@ -583,6 +605,7 @@ StorageService.importData(backup)
 IndexedDB wrapper with promises.
 
 **Methods:**
+
 ```typescript
 static isAvailable(): boolean
 
@@ -592,6 +615,7 @@ async clearAll(): Promise<boolean>
 ```
 
 **Usage:**
+
 ```typescript
 const db = new IndexedDBService('riddle-rush-db', 1)
 
@@ -615,6 +639,7 @@ Location: `layouts/`
 Basic layout with optional background image support.
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 definePageMeta({
@@ -636,6 +661,7 @@ onMounted(() => {
 Game pages layout with back button and centered container.
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 definePageMeta({
@@ -675,6 +701,7 @@ onMounted(() => {
 Menu layout with menu toggle button and panel support.
 
 **Usage:**
+
 ```vue
 <script setup lang="ts">
 definePageMeta({
@@ -693,7 +720,7 @@ onMounted(() => {
 <template>
   <!-- Main content -->
   <div class="logo-container">
-    <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo">
+    <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" />
   </div>
 
   <!-- Menu panel (shown when menu is open) -->
@@ -738,6 +765,7 @@ Auto-imports are configured in `nuxt.config.ts`:
 ```
 
 **What's Auto-Imported:**
+
 - All components in `components/` directory
 - All Base components with `Base` prefix
 - All composables in `composables/` directory
@@ -745,6 +773,7 @@ Auto-imports are configured in `nuxt.config.ts`:
 - All utilities in `utils/` directory
 
 **No Import Statements Needed:**
+
 ```vue
 <!-- Before refactoring -->
 <script setup lang="ts">
@@ -774,14 +803,12 @@ const player = GameService.createPlayer('Alice')
 ### Example 1: Refactoring a Page to Use Base Components
 
 **Before:**
+
 ```vue
 <template>
-  <button
-    class="menu-btn play-btn tap-highlight no-select"
-    @click="handlePlay"
-  >
-    <img :src="`${baseUrl}assets/main-menu/PLAY.png`" alt="Play">
-    <img :src="`${baseUrl}assets/main-menu/PLAY-1.png`" alt="Play hover">
+  <button class="menu-btn play-btn tap-highlight no-select" @click="handlePlay">
+    <img :src="`${baseUrl}assets/main-menu/PLAY.png`" alt="Play" />
+    <img :src="`${baseUrl}assets/main-menu/PLAY-1.png`" alt="Play hover" />
   </button>
 </template>
 
@@ -799,6 +826,7 @@ const player = GameService.createPlayer('Alice')
 ```
 
 **After:**
+
 ```vue
 <template>
   <BaseImageButton
@@ -811,6 +839,7 @@ const player = GameService.createPlayer('Alice')
 ```
 
 **Savings:**
+
 - 30+ lines of CSS removed
 - Consistent styling automatically applied
 - Hover state handled automatically
@@ -820,6 +849,7 @@ const player = GameService.createPlayer('Alice')
 ### Example 2: Using GameService in a Store
 
 **Before (in store):**
+
 ```typescript
 // Pinia store
 export const useGameStore = defineStore('game', {
@@ -848,6 +878,7 @@ export const useGameStore = defineStore('game', {
 ```
 
 **After (in store):**
+
 ```typescript
 export const useGameStore = defineStore('game', {
   actions: {
@@ -867,6 +898,7 @@ export const useGameStore = defineStore('game', {
 ```
 
 **Benefits:**
+
 - Business logic extracted to testable service
 - Validation centralized and reusable
 - Store remains focused on state management
@@ -876,6 +908,7 @@ export const useGameStore = defineStore('game', {
 ### Example 3: Form with Validation
 
 **Before:**
+
 ```vue
 <script setup lang="ts">
 const playerName = ref('')
@@ -908,13 +941,14 @@ async function submit() {
 </script>
 
 <template>
-  <input v-model="playerName" @blur="validateName">
+  <input v-model="playerName" @blur="validateName" />
   <span v-if="nameError">{{ nameError }}</span>
   <button :disabled="isSubmitting" @click="submit">Submit</button>
 </template>
 ```
 
 **After:**
+
 ```vue
 <script setup lang="ts">
 import { validationRules } from '~/composables/useForm'
@@ -941,19 +975,16 @@ async function submit() {
     :value="form.values.playerName"
     @input="form.handleChange('playerName', $event.target.value)"
     @blur="form.handleBlur('playerName')"
-  >
+  />
   <span v-if="form.errors.playerName">{{ form.errors.playerName }}</span>
-  <BaseButton
-    :disabled="!form.isValid.value"
-    :loading="form.isSubmitting.value"
-    @click="submit"
-  >
+  <BaseButton :disabled="!form.isValid.value" :loading="form.isSubmitting.value" @click="submit">
     Submit
   </BaseButton>
 </template>
 ```
 
 **Benefits:**
+
 - Declarative validation rules
 - Built-in touched/dirty state
 - Automatic loading state
@@ -964,13 +995,14 @@ async function submit() {
 ### Example 4: Converting to Layout
 
 **Before (players.vue):**
+
 ```vue
 <template>
   <div class="players-page">
-    <img :src="`${baseUrl}assets/players/BACKGROUND.png`" class="page-bg">
+    <img :src="`${baseUrl}assets/players/BACKGROUND.png`" class="page-bg" />
 
     <button class="back-btn" @click="goBack">
-      <img :src="`${baseUrl}assets/players/back.png`" alt="Back">
+      <img :src="`${baseUrl}assets/players/back.png`" alt="Back" />
     </button>
 
     <div class="container">
@@ -980,15 +1012,24 @@ async function submit() {
 </template>
 
 <style scoped>
-.players-page { /* ... */ }
-.page-bg { /* ... */ }
-.back-btn { /* ... */ }
-.container { /* ... */ }
+.players-page {
+  /* ... */
+}
+.page-bg {
+  /* ... */
+}
+.back-btn {
+  /* ... */
+}
+.container {
+  /* ... */
+}
 /* 100+ lines of layout styles */
 </style>
 ```
 
 **After (players.vue):**
+
 ```vue
 <script setup lang="ts">
 definePageMeta({
@@ -1022,12 +1063,17 @@ onMounted(() => {
 
 <style scoped>
 /* Only page-specific styles, layout styles handled by layout */
-.title-container { /* ... */ }
-.players-list { /* ... */ }
+.title-container {
+  /* ... */
+}
+.players-list {
+  /* ... */
+}
 </style>
 ```
 
 **Savings:**
+
 - 100+ lines of layout CSS eliminated
 - Consistent page structure
 - Centralized layout logic
@@ -1039,6 +1085,7 @@ onMounted(() => {
 ### Component Organization
 
 **Do:**
+
 ```
 components/
 ├── Base/           # Reusable primitives
@@ -1054,6 +1101,7 @@ components/
 ```
 
 **Don't:**
+
 ```
 components/
 ├── button.vue      # Not descriptive
@@ -1064,6 +1112,7 @@ components/
 ### Composable Best Practices
 
 1. **Return Readonly State:**
+
 ```typescript
 // ✅ Good - prevents external mutations
 export function useCounter() {
@@ -1082,14 +1131,21 @@ export function useCounter() {
 ```
 
 2. **Provide Clear API:**
+
 ```typescript
 // ✅ Good - clear method names
 export function useModal() {
   return {
     isOpen: readonly(isOpen),
-    open: (data?: any) => { /* ... */ },
-    close: () => { /* ... */ },
-    toggle: () => { /* ... */ },
+    open: (data?: any) => {
+      /* ... */
+    },
+    close: () => {
+      /* ... */
+    },
+    toggle: () => {
+      /* ... */
+    },
   }
 }
 
@@ -1097,12 +1153,15 @@ export function useModal() {
 export function useModal() {
   return {
     state: isOpen,
-    set: (val: boolean) => { isOpen.value = val },
+    set: (val: boolean) => {
+      isOpen.value = val
+    },
   }
 }
 ```
 
 3. **Cleanup Side Effects:**
+
 ```typescript
 export function useEventListener(target: EventTarget, event: string, handler: Function) {
   onMounted(() => {
@@ -1119,6 +1178,7 @@ export function useEventListener(target: EventTarget, event: string, handler: Fu
 ### Service Best Practices
 
 1. **Keep Services Pure:**
+
 ```typescript
 // ✅ Good - pure function
 export class GameService {
@@ -1132,12 +1192,13 @@ export class GameService {
   static score = 0
 
   static addScore(points: number) {
-    this.score += points  // Mutates global state
+    this.score += points // Mutates global state
   }
 }
 ```
 
 2. **Validate Inputs:**
+
 ```typescript
 // ✅ Good - validates inputs
 static validatePlayerName(name: string, players: Player[]): ValidationResult {
@@ -1155,6 +1216,7 @@ static validatePlayerName(name: string) {
 ```
 
 3. **Return Descriptive Objects:**
+
 ```typescript
 // ✅ Good - descriptive return value
 static validatePlayerName(name: string): { valid: boolean, error?: string } {
@@ -1170,15 +1232,17 @@ static isValidPlayerName(name: string): boolean {
 ### TypeScript Best Practices
 
 1. **Use Type Inference:**
+
 ```typescript
 // ✅ Good
-const count = ref(0)  // Inferred as Ref<number>
+const count = ref(0) // Inferred as Ref<number>
 
 // ❌ Unnecessary
 const count: Ref<number> = ref(0)
 ```
 
 2. **Define Interfaces for Props:**
+
 ```typescript
 // ✅ Good
 interface Props {
@@ -1196,6 +1260,7 @@ const props = defineProps({
 ```
 
 3. **Use Generics for Reusability:**
+
 ```typescript
 // ✅ Good
 export class StorageService {
@@ -1215,6 +1280,7 @@ export class StorageService {
 ### Testing Recommendations
 
 1. **Test Services in Isolation:**
+
 ```typescript
 import { describe, it, expect } from 'vitest'
 import { GameService } from '~/services/GameService'
@@ -1229,6 +1295,7 @@ describe('GameService', () => {
 ```
 
 2. **Test Composables with Mounting:**
+
 ```typescript
 import { mount } from '@vue/test-utils'
 import { useForm } from '~/composables/useForm'
@@ -1236,7 +1303,14 @@ import { useForm } from '~/composables/useForm'
 it('validates required fields', async () => {
   const wrapper = mount({
     setup() {
-      return useForm({ name: { initialValue: '', rules: [/* ... */] } })
+      return useForm({
+        name: {
+          initialValue: '',
+          rules: [
+            /* ... */
+          ],
+        },
+      })
     },
   })
   // Test implementation
@@ -1273,6 +1347,7 @@ The refactoring introduces:
 ✅ **Auto-imports** - Zero-boilerplate development
 
 **Result:**
+
 - Less code duplication
 - Better separation of concerns
 - Improved testability
@@ -1280,6 +1355,7 @@ The refactoring introduces:
 - Faster development
 
 **Next Steps:**
+
 1. Gradually migrate existing pages to use new abstractions
 2. Write unit tests for services and composables
 3. Consider adding more base components (BaseInput, BaseCard, etc.)

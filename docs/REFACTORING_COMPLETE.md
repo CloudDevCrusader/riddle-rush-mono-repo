@@ -10,9 +10,11 @@ Successfully refactored all 9 pages and created 5 new composables to eliminate c
 ## New Composables Created
 
 ### 1. `composables/usePageSetup.ts` (Enhanced)
+
 **Purpose**: Centralize common page setup utilities
 
 **Exports**:
+
 - `router` - Vue Router instance
 - `t` - i18n translation function
 - `baseUrl` - Runtime config base URL
@@ -25,13 +27,16 @@ Successfully refactored all 9 pages and created 5 new composables to eliminate c
 ---
 
 ### 2. `composables/useCategoryEmoji.ts` (New)
+
 **Purpose**: Extract emoji mapping logic from game store
 
 **Exports**:
+
 - `resolve(name)` - Get emoji for category name
 - `emojiMap` - Full emoji mapping object
 
 **Benefits**:
+
 - Reusable outside the store
 - Makes store ~50 lines cleaner
 - Can be used in components directly
@@ -39,9 +44,11 @@ Successfully refactored all 9 pages and created 5 new composables to eliminate c
 ---
 
 ### 3. `composables/useGameState.ts` (New)
+
 **Purpose**: Centralize common game store computeds
 
 **Exports**:
+
 - `gameStore` - Game store instance
 - `currentCategory` - Current game category
 - `currentLetter` - Current game letter
@@ -59,14 +66,17 @@ Successfully refactored all 9 pages and created 5 new composables to eliminate c
 ---
 
 ### 4. `composables/useLocalStorage.ts` (New)
+
 **Purpose**: Type-safe localStorage utility with error handling
 
 **Exports**:
+
 - `get()` - Get value from localStorage
 - `set(value)` - Set value to localStorage
 - `remove()` - Remove value from localStorage
 
 **Benefits**:
+
 - Consistent error handling
 - Type safety
 - SSR-safe (checks for window)
@@ -74,9 +84,11 @@ Successfully refactored all 9 pages and created 5 new composables to eliminate c
 ---
 
 ### 5. `composables/useNavigation.ts` (New)
+
 **Purpose**: Type-safe navigation helpers
 
 **Exports**:
+
 - `goHome()` - Navigate to /
 - `goToPlayers()` - Navigate to /players
 - `goToRoundStart()` - Navigate to /round-start
@@ -93,14 +105,17 @@ Successfully refactored all 9 pages and created 5 new composables to eliminate c
 ---
 
 ### 6. `utils/routes.ts` (New)
+
 **Purpose**: Route path constants
 
 **Exports**:
+
 - `ROUTES` - Object with all route paths
 - `RouteKey` - Type for route keys
 - `RoutePath` - Type for route paths
 
 **Benefits**:
+
 - Single source of truth for routes
 - Auto-complete in IDE
 - Prevents typos
@@ -112,7 +127,9 @@ Successfully refactored all 9 pages and created 5 new composables to eliminate c
 All 9 pages successfully refactored to use new composables:
 
 ### 1. ✅ `pages/settings.vue` (91 lines)
+
 **Before**:
+
 ```typescript
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -120,6 +137,7 @@ const baseUrl = config.public.baseUrl
 ```
 
 **After**:
+
 ```typescript
 const { router, baseUrl } = usePageSetup()
 ```
@@ -129,7 +147,9 @@ const { router, baseUrl } = usePageSetup()
 ---
 
 ### 2. ✅ `pages/credits.vue` (315 lines)
+
 **Before**:
+
 ```typescript
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -138,6 +158,7 @@ const goBack = () => router.back()
 ```
 
 **After**:
+
 ```typescript
 const { baseUrl, goBack } = usePageSetup()
 ```
@@ -147,7 +168,9 @@ const { baseUrl, goBack } = usePageSetup()
 ---
 
 ### 3. ✅ `pages/language.vue` (403 lines)
+
 **Before**:
+
 ```typescript
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -156,6 +179,7 @@ const goBack = () => router.back()
 ```
 
 **After**:
+
 ```typescript
 const { baseUrl, goHome, goBack } = usePageSetup()
 ```
@@ -165,7 +189,9 @@ const { baseUrl, goHome, goBack } = usePageSetup()
 ---
 
 ### 4. ✅ `pages/index.vue` (421 lines)
+
 **Before**:
+
 ```typescript
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -179,6 +205,7 @@ const goToLanguage = () => router.push('/language')
 ```
 
 **After**:
+
 ```typescript
 const { router, baseUrl, toast, t } = usePageSetup()
 const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
@@ -189,7 +216,9 @@ const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
 ---
 
 ### 5. ✅ `pages/leaderboard.vue` (495 lines)
+
 **Before**:
+
 ```typescript
 import { useGameStore } from '~/stores/game'
 const router = useRouter()
@@ -204,6 +233,7 @@ const goBack = () => router.push('/')
 ```
 
 **After**:
+
 ```typescript
 const { baseUrl } = usePageSetup()
 const { goHome, goToRoundStart } = useNavigation()
@@ -215,7 +245,9 @@ const { gameStore, leaderboard: leaderboardEntries, isGameCompleted } = useGameS
 ---
 
 ### 6. ✅ `pages/round-start.vue` (539 lines)
+
 **Before**:
+
 ```typescript
 import { useGameStore } from '~/stores/game'
 const router = useRouter()
@@ -228,6 +260,7 @@ await router.push('/game')
 ```
 
 **After**:
+
 ```typescript
 const { baseUrl, t } = usePageSetup()
 const { goToGame } = useNavigation()
@@ -241,7 +274,9 @@ await goToGame()
 ---
 
 ### 7. ✅ `pages/results.vue` (546 lines)
+
 **Before**:
+
 ```typescript
 import { useGameStore } from '~/stores/game'
 const router = useRouter()
@@ -259,6 +294,7 @@ router.push('/leaderboard')
 ```
 
 **After**:
+
 ```typescript
 const { baseUrl, toast, t, goBack } = usePageSetup()
 const { goToGame, goToLeaderboard: navigateToLeaderboard } = useNavigation()
@@ -273,7 +309,9 @@ navigateToLeaderboard()
 ---
 
 ### 8. ✅ `pages/game.vue` (600 lines)
+
 **Before**:
+
 ```typescript
 import { useGameStore } from '~/stores/game'
 const gameStore = useGameStore()
@@ -295,6 +333,7 @@ router.push('/results')
 ```
 
 **After**:
+
 ```typescript
 const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
 const { goToResults } = useNavigation()
@@ -317,7 +356,9 @@ goToResults()
 ---
 
 ### 9. ✅ `pages/players.vue` (673 lines)
+
 **Before**:
+
 ```typescript
 import { useGameStore } from '~/stores/game'
 const router = useRouter()
@@ -332,6 +373,7 @@ const goBack = () => router.back()
 ```
 
 **After**:
+
 ```typescript
 const { baseUrl, toast, t, goBack: navigateBack } = usePageSetup()
 const { goToRoundStart } = useNavigation()
@@ -348,6 +390,7 @@ const goBack = () => navigateBack()
 ## Game Store Improvements
 
 ### Before (stores/game.ts)
+
 ```typescript
 const CATEGORY_EMOJI_MAP: Record<string, string> = {
   'Weiblicher Vorname': '👩',
@@ -365,6 +408,7 @@ getters: {
 ```
 
 ### After (stores/game.ts)
+
 ```typescript
 import { useCategoryEmoji } from '../composables/useCategoryEmoji'
 
@@ -383,6 +427,7 @@ getters: {
 ## Code Metrics
 
 ### Before Refactoring
+
 - **Total duplicated lines**: ~280 lines
 - **Setup boilerplate per page**: 6-17 lines
 - **Repeated computed properties**: 20+ declarations
@@ -390,12 +435,14 @@ getters: {
 - **Toast usage locations**: 18 calls
 
 ### After Refactoring
+
 - **Setup boilerplate per page**: 1-6 lines
 - **Repeated code**: Minimal (only page-specific logic)
 - **Type safety**: Improved with route constants
 - **Maintainability**: Much easier to update common logic
 
 ### Lines Saved
+
 - **Direct line reduction**: ~200 lines
 - **Improved readability**: ~80 lines cleaner
 - **Total estimated savings**: ~280 lines
@@ -405,24 +452,28 @@ getters: {
 ## Benefits Achieved
 
 ### ✅ Code Quality
+
 - Eliminated code duplication
 - Consistent patterns across pages
 - Better separation of concerns
 - Smaller, focused files
 
 ### ✅ Maintainability
+
 - Single source of truth for common logic
 - Easier to update routes (change one place)
 - Easier to update navigation logic
 - Testable composables
 
 ### ✅ Developer Experience
+
 - Less boilerplate in new pages
 - Auto-complete for routes
 - Type-safe navigation
 - Clear, obvious patterns
 
 ### ✅ Type Safety
+
 - Route paths are typed
 - Navigation functions are typed
 - localStorage utility is type-safe
@@ -432,18 +483,23 @@ getters: {
 ## Testing & Verification
 
 ### ✅ TypeScript Compilation
+
 ```bash
 pnpm run typecheck
 ```
+
 **Result**: ✅ All checks passed
 
 ### ✅ ESLint
+
 ```bash
 pnpm run lint
 ```
+
 **Result**: ✅ All checks passed (auto-fixed brace-style issues)
 
 ### ✅ All Pages Refactored
+
 - ✅ settings.vue
 - ✅ credits.vue
 - ✅ language.vue
@@ -479,6 +535,7 @@ pnpm run lint
 ## Next Steps (Future Improvements)
 
 ### Optional Enhancements
+
 1. Create `useGameToasts` for common toast messages
 2. Extract alphabet utils to separate file
 3. Update `settings.ts` to use `useLocalStorage`

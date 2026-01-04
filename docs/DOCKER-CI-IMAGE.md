@@ -20,6 +20,7 @@ The custom Docker image (`ci-build`) includes all project dependencies pre-insta
 The Docker image is built and published to GitLab Container Registry using a dedicated pipeline.
 
 **Option 1: Manual Trigger (Recommended)**
+
 1. Go to GitLab: **CI/CD → Pipelines**
 2. Click **Run Pipeline**
 3. Select the `.gitlab/docker-image.yml` pipeline file
@@ -27,6 +28,7 @@ The Docker image is built and published to GitLab Container Registry using a ded
 
 **Option 2: Git Commit Message**
 Include `[build-docker]` in your commit message on the main branch:
+
 ```bash
 git commit -m "chore: update dependencies [build-docker]"
 git push origin main
@@ -35,6 +37,7 @@ git push origin main
 ### When to Rebuild the Image
 
 Rebuild the Docker image when:
+
 - **Dependencies change**: After updating `package.json` or `pnpm-lock.yaml`
 - **Major updates**: When Node.js or pnpm versions are upgraded
 - **CI failures**: If CI fails due to missing or outdated dependencies
@@ -62,6 +65,7 @@ Rebuild the Docker image when:
 ### GitLab Container Registry
 
 Images are stored at:
+
 ```
 registry.gitlab.com/djdiox/riddle-rush-nuxt-pwa/ci-build:latest
 registry.gitlab.com/djdiox/riddle-rush-nuxt-pwa/ci-build:<commit-sha>
@@ -80,20 +84,23 @@ image: ${CI_REGISTRY_IMAGE}/ci-build:latest
 ### Job-Specific Images
 
 Some jobs override the default image for specific tools:
+
 - **SonarCloud**: Uses `sonarsource/sonar-scanner-cli:latest`
 - **Playwright E2E**: Uses `mcr.microsoft.com/playwright:v1.57.0-noble`
 
 ### Fallback Mechanism
 
 If the custom image is unavailable (not built yet), the CI will:
+
 1. Detect missing `node_modules`
 2. Run `pnpm install --frozen-lockfile` as usual
 3. Continue the pipeline normally
 
 To force using the standard Node image instead:
+
 ```yaml
 # In .gitlab-ci.yml
-image: node:20  # Replace custom image line
+image: node:20 # Replace custom image line
 ```
 
 ## Building Locally (Optional)
@@ -118,6 +125,7 @@ ls -la node_modules/
 **Error**: `Failed to pull image`
 
 **Solutions**:
+
 1. Ensure the image has been built (check Container Registry)
 2. Verify GitLab registry authentication is working
 3. Temporarily switch to `image: node:20` until image is built
@@ -127,6 +135,7 @@ ls -la node_modules/
 **Error**: Tests fail due to version mismatches
 
 **Solution**:
+
 1. Rebuild the Docker image after updating dependencies
 2. Check that `pnpm-lock.yaml` is committed
 
@@ -135,6 +144,7 @@ ls -la node_modules/
 **Current size**: ~500MB (compressed)
 
 If image becomes too large:
+
 - Remove unnecessary system dependencies in Dockerfile
 - Use multi-stage build to reduce final layer size
 - Consider separate images for different job types
@@ -144,6 +154,7 @@ If image becomes too large:
 When modifying `.gitlab/Dockerfile.ci`:
 
 1. **Test locally first**:
+
    ```bash
    docker build -f .gitlab/Dockerfile.ci -t riddle-rush-ci:test .
    docker run --rm -it riddle-rush-ci:test pnpm run test:unit
@@ -170,11 +181,13 @@ When modifying `.gitlab/Dockerfile.ci`:
 ## Performance Metrics
 
 ### Before Custom Image
+
 - **Test Job**: ~90 seconds (60s install + 30s tests)
 - **Build Job**: ~120 seconds (60s install + 60s build)
 - **Total Pipeline**: ~4-5 minutes
 
 ### After Custom Image
+
 - **Test Job**: ~35 seconds (5s verify + 30s tests)
 - **Build Job**: ~65 seconds (5s verify + 60s build)
 - **Total Pipeline**: ~2-3 minutes
@@ -186,14 +199,18 @@ When modifying `.gitlab/Dockerfile.ci`:
 If the custom image approach doesn't work for your use case:
 
 ### 1. GitLab Dependency Proxy
+
 Use GitLab's dependency proxy to cache npm packages:
+
 ```yaml
 variables:
   npm_config_registry: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/registry.npmjs.org
 ```
 
 ### 2. Shared Cache
+
 Use GitLab's cache with longer TTL:
+
 ```yaml
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -204,7 +221,9 @@ cache:
 ```
 
 ### 3. Build Artifacts
+
 Save `node_modules` as artifacts between jobs:
+
 ```yaml
 artifacts:
   paths:
