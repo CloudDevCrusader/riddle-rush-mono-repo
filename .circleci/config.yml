@@ -163,6 +163,10 @@ jobs:
     description: 'Run SonarCloud code quality analysis'
     docker:
       - image: sonarsource/sonar-scanner-cli:latest
+    environment:
+      SONAR_TOKEN: ${SONAR_TOKEN}
+      SONAR_PROJECT_KEY: ${SONAR_PROJECT_KEY}
+      SONAR_ORGANIZATION: ${SONAR_ORGANIZATION}
     steps:
       - checkout
       - restore_cache:
@@ -171,7 +175,14 @@ jobs:
             - sonar-cache-
       - run:
           name: 'Run SonarCloud analysis'
-          command: sonar-scanner
+          command: |
+            echo "Running SonarCloud analysis..."
+            echo "Project: ${SONAR_PROJECT_KEY}"
+            echo "Organization: ${SONAR_ORGANIZATION}"
+            sonar-scanner \
+              -Dsonar.token="${SONAR_TOKEN}" \
+              -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+              -Dsonar.organization="${SONAR_ORGANIZATION}"
       - save_cache:
           key: sonar-cache-{{ checksum "sonar-project.properties" }}
           paths:
