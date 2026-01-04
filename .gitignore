@@ -57,6 +57,9 @@ terraform.tfstate
 terraform.tfstate.backup
 *.tfvars
 .terraform-version
+# Auto-generated Terraform output files (use terraform output command instead)
+**/.env.terraform
+**/terraform-outputs.json
 
 # AWS
 .aws-sam
@@ -72,6 +75,9 @@ aws-credentials.txt
 **/.eslintcache
 nuxt
 preview
+
+# Deployment artifacts (auto-generated)
+deployment-info.json
 
 # npm/pnpm lockfiles (use pnpm-lock.yaml only)
 package-lock.json

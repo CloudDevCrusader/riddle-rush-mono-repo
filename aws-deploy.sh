@@ -34,12 +34,13 @@ echo -e "\n📋 Getting deployment configuration for ${ENVIRONMENT}..."
 # In CI, environment variables should be set by get-terraform-outputs command
 if [ -n "$CI" ]; then
     echo -e "  ${BLUE}🔧 CI mode detected - using environment variables from Terraform apply stage${NC}"
-    echo -e "  ${BLUE}📊 Current environment variables:${NC}"
+    echo -e "  ${BLUE}📊 Current environment variables (from get-terraform-outputs):${NC}"
     echo -e "     AWS_S3_BUCKET: ${AWS_S3_BUCKET:-<not set>}"
     echo -e "     AWS_CLOUDFRONT_ID: ${AWS_CLOUDFRONT_ID:-<not set>}"
     echo -e "     AWS_CLOUDFRONT_DOMAIN: ${AWS_CLOUDFRONT_DOMAIN:-<not set>}"
     echo -e "     AWS_CLOUDFRONT_DOMAIN_DEV: ${AWS_CLOUDFRONT_DOMAIN_DEV:-<not set>}"
     echo -e "     AWS_REGION: ${AWS_REGION:-<not set>}"
+    echo -e "  ${YELLOW}⚠️  Note: .env.terraform file will be ignored in CI mode${NC}"
 fi
 
 # Normalize environment name for Terraform directory
@@ -120,8 +121,9 @@ EOF
     fi
 fi
 
-# Load .env.terraform file if it exists (for local deployments)
-if [ -f "$TERRAFORM_ENV_FILE" ]; then
+# Load .env.terraform file if it exists (for local deployments only)
+# In CI, skip this to use environment variables from get-terraform-outputs
+if [ -z "$CI" ] && [ -f "$TERRAFORM_ENV_FILE" ]; then
     echo -e "  ${BLUE}📄 Loading Terraform outputs from .env file...${NC}"
     # Source the file to load variables
     set -a  # Automatically export all variables
@@ -131,6 +133,9 @@ if [ -f "$TERRAFORM_ENV_FILE" ]; then
     
     # Store values from .env file for comparison
     ENV_CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
+elif [ -n "$CI" ] && [ -f "$TERRAFORM_ENV_FILE" ]; then
+    echo -e "  ${BLUE}ℹ️  Skipping .env.terraform file in CI mode${NC}"
+    echo -e "  ${BLUE}   Using environment variables from get-terraform-outputs instead${NC}"
 fi
 
 # Try to get Terraform outputs directly (as fallback or validation)
@@ -236,10 +241,28 @@ if [ -z "$AWS_S3_BUCKET" ]; then
     exit 1
 fi
 
-# Use validated variables
+# Use validated variables (never use hardcoded values)
 S3_BUCKET="$AWS_S3_BUCKET"
 CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
 AWS_REGION="${AWS_REGION:-eu-central-1}"
+
+# Validate that we're not using any hardcoded/stale values
+# In CI, all values must come from environment variables (set by get-terraform-outputs)
+if [ -n "$CI" ]; then
+    if [ -z "$S3_BUCKET" ]; then
+        echo -e "${RED}❌ ERROR: S3 bucket not set in CI environment${NC}"
+        echo -e "${YELLOW}   This should be set by get-terraform-outputs command${NC}"
+        echo -e "${YELLOW}   Ensure get-terraform-outputs runs before deployment${NC}"
+        exit 1
+    fi
+    
+    # CloudFront ID is optional, but if it's set, it should be from Terraform
+    if [ -n "$CLOUDFRONT_ID" ]; then
+        echo -e "  ${GREEN}✓${NC} Using CloudFront ID from Terraform outputs: ${CLOUDFRONT_ID}"
+    else
+        echo -e "  ${YELLOW}⚠️  CloudFront ID not set - cache invalidation will be skipped${NC}"
+    fi
+fi
 
 echo -e "${BLUE}🚀 Starting AWS deployment for ${ENVIRONMENT}...${NC}"
 echo "======================================="
