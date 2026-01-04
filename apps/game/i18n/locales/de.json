@@ -194,6 +194,21 @@
   "language": {
     "title": "SPRACHE"
   },
+  "about": {
+    "title": "ÜBER",
+    "creators": "Erstellt von Tobias Wirl und Markus Wagner",
+    "how_it_works": {
+      "title": "Wie es funktioniert",
+      "description": "Riddle Rush ist ein Wortratespiel, das Wikipedia-Kategorien über die PetScan API verwendet. Spieler raten Begriffe aus einer ausgewählten Kategorie, die mit einem bestimmten Buchstaben beginnen."
+    },
+    "pwa": {
+      "title": "Progressive Web App",
+      "description": "Dieses Spiel ist als Progressive Web App (PWA) mit vollständiger Offline-Unterstützung gebaut. Du kannst es auf deinem Gerät installieren und ohne Internetverbindung spielen."
+    },
+    "technologies": {
+      "title": "Verwendete Technologien"
+    }
+  },
   "results": {
     "your_score": "Dein Score",
     "next": "Weiter",

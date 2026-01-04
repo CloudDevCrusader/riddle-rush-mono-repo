@@ -47,6 +47,7 @@ pnpm android:sync
 ```
 
 This will:
+
 1. Build the Nuxt app
 2. Sync the web assets to the Android project
 
@@ -55,11 +56,13 @@ This will:
 ### Development Build
 
 1. **Build and sync the app**:
+
    ```bash
    pnpm android:sync
    ```
 
 2. **Open in Android Studio**:
+
    ```bash
    pnpm android:open
    ```
@@ -75,11 +78,13 @@ This will:
 ### Production Build (APK/AAB)
 
 1. **Create a keystore** (first time only):
+
    ```bash
    keytool -genkey -v -keystore riddlerush-release.keystore -alias riddlerush -keyalg RSA -keysize 2048 -validity 10000
    ```
 
 2. **Set environment variables** (optional, for automated signing):
+
    ```bash
    export ANDROID_KEYSTORE_PATH=/path/to/riddlerush-release.keystore
    export ANDROID_KEYSTORE_PASSWORD=your_keystore_password
@@ -88,6 +93,7 @@ This will:
    ```
 
 3. **Build the app**:
+
    ```bash
    pnpm android:sync
    pnpm android:open
@@ -154,6 +160,7 @@ The following Capacitor plugins are included:
 1. **Make changes to the web app** in `apps/game/`
 
 2. **Rebuild and sync**:
+
    ```bash
    pnpm android:sync
    ```
@@ -161,10 +168,11 @@ The following Capacitor plugins are included:
 3. **Test in Android Studio** or on a connected device
 
 4. **For hot reload during development**, you can use:
+
    ```bash
    # Terminal 1: Start Nuxt dev server
    pnpm dev
-   
+
    # Terminal 2: Run Capacitor with live reload
    npx cap run android -l --external
    ```

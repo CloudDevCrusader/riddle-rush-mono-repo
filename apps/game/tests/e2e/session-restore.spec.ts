@@ -119,7 +119,7 @@ test.describe('Session Restore', () => {
       await page.waitForTimeout(500)
 
       // If there are more players, submit for them too
-      if (initialPlayerCount > 1 && await answerInput.isVisible()) {
+      if (initialPlayerCount > 1 && (await answerInput.isVisible())) {
         await answerInput.fill('test answer 2')
         await answerInput.press('Enter')
         await page.waitForTimeout(500)

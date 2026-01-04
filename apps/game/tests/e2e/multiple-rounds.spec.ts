@@ -108,7 +108,9 @@ test.describe('Multiple Rounds Flow', () => {
     await expect(leaderboardItems).toHaveCount(2)
   })
 
-  test('should complete 3 full rounds with default 2 players and cumulative scoring', async ({ page }) => {
+  test('should complete 3 full rounds with default 2 players and cumulative scoring', async ({
+    page,
+  }) => {
     // 1. Navigate to players page
     await page.goto('/players')
     await expect(page).toHaveURL(/\/players/)
@@ -138,7 +140,7 @@ test.describe('Multiple Rounds Flow', () => {
     const completeRound = async (roundNumber: number) => {
       // Verify round indicator shows correct round
       const roundText = page.locator('.round-text')
-      if (await roundText.count() > 0) {
+      if ((await roundText.count()) > 0) {
         await expect(roundText).toBeVisible()
       }
 

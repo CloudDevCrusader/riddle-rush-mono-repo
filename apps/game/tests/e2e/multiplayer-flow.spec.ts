@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Multi-Player Game Flow', () => {
-  test('complete multi-player game flow: players → round-start → game → results → leaderboard → next round', async ({ page }) => {
+  test('complete multi-player game flow: players → round-start → game → results → leaderboard → next round', async ({
+    page,
+  }) => {
     // 1. Navigate to players page
     await page.goto('/players')
     await expect(page).toHaveURL(/\/players/)

@@ -7,9 +7,15 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {}
   return {
     getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => { store[key] = value }),
-    removeItem: vi.fn((key: string) => { Reflect.deleteProperty(store, key) }),
-    clear: vi.fn(() => { store = {} }),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value
+    }),
+    removeItem: vi.fn((key: string) => {
+      Reflect.deleteProperty(store, key)
+    }),
+    clear: vi.fn(() => {
+      store = {}
+    }),
   }
 })()
 
@@ -88,10 +94,12 @@ describe('Settings Store', () => {
 
   describe('Load Settings', () => {
     it('loads settings from localStorage', () => {
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify({
-        debugMode: true,
-        soundEnabled: false,
-      }))
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify({
+          debugMode: true,
+          soundEnabled: false,
+        }),
+      )
 
       const store = useSettingsStore()
       store.loadSettings()
@@ -101,9 +109,11 @@ describe('Settings Store', () => {
     })
 
     it('uses defaults for missing keys', () => {
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify({
-        debugMode: true,
-      }))
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify({
+          debugMode: true,
+        }),
+      )
 
       const store = useSettingsStore()
       store.loadSettings()

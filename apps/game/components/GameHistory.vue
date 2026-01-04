@@ -85,7 +85,9 @@
                   class="player-score-row"
                   :class="{ winner: index === 0 && game.status === 'completed' }"
                 >
-                  <span class="player-rank">{{ index === 0 && game.status === 'completed' ? '👑' : `#${index + 1}` }}</span>
+                  <span class="player-rank">{{
+                    index === 0 && game.status === 'completed' ? '👑' : `#${index + 1}`
+                  }}</span>
                   <span class="player-name">{{ player.name }}</span>
                   <span class="player-points">{{ player.totalScore }} pts</span>
                 </div>
@@ -170,9 +172,9 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-           max(var(--spacing-md), env(safe-area-inset-right, 0px))
-           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-md), env(safe-area-inset-left, 0px));
+    max(var(--spacing-md), env(safe-area-inset-right, 0px))
+    max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .game-history-panel {
@@ -413,14 +415,17 @@ const getSortedPlayers = (game: GameSession): Player[] => {
 @media (max-width: 640px) {
   .game-history-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .game-history-panel {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -451,7 +456,10 @@ const getSortedPlayers = (game: GameSession): Player[] => {
 @media (max-width: 450px) and (min-height: 800px) {
   .game-history-panel {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 }
 </style>

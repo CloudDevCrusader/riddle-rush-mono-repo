@@ -4,7 +4,7 @@
  * Organized SCSS with variables, mixins, and modules
  */
 
-@use "sass:map";
+@use 'sass:map';
 
 // ============================================
 // VARIABLES
@@ -31,7 +31,7 @@ $colors: (
   'gray': #9bb6da,
   'gray-light': #d7e4f7,
   'light': #f7f9ff,
-  'white': #ffffff,
+  'white': #ffffff
 );
 
 // Background Gradients
@@ -47,8 +47,21 @@ $gradients: (
 
 // Typography
 $fonts: (
-  'primary': ('Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif),
-  'display': ('Baloo 2', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif),
+  'primary': (
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif,
+  ),
+  'display': (
+    'Baloo 2',
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif,
+  ),
 );
 
 $font-sizes: (
@@ -92,11 +105,21 @@ $radius: (
 
 // Shadows
 $shadows: (
-  'sm': (0 4px 8px rgba(0, 0, 0, 0.1)),
-  'md': (0 8px 18px rgba(0, 0, 0, 0.14)),
-  'lg': (0 14px 28px rgba(0, 0, 0, 0.18)),
-  'xl': (0 18px 38px rgba(0, 0, 0, 0.22)),
-  'inner': (inset 0 2px 6px rgba(0, 0, 0, 0.12)),
+  'sm': (
+    0 4px 8px rgba(0, 0, 0, 0.1),
+  ),
+  'md': (
+    0 8px 18px rgba(0, 0, 0, 0.14),
+  ),
+  'lg': (
+    0 14px 28px rgba(0, 0, 0, 0.18),
+  ),
+  'xl': (
+    0 18px 38px rgba(0, 0, 0, 0.22),
+  ),
+  'inner': (
+    inset 0 2px 6px rgba(0, 0, 0, 0.12),
+  ),
 );
 
 // Transitions
@@ -300,7 +323,9 @@ body {
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 12px 0 rgba(0, 0, 0, 0.18), var(--shadow-lg);
+  box-shadow:
+    0 12px 0 rgba(0, 0, 0, 0.18),
+    var(--shadow-lg);
   position: relative;
   overflow: hidden;
   color: var(--color-dark);
@@ -316,7 +341,9 @@ body {
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.35);
     transform: translate(-50%, -50%);
-    transition: width var(--transition-bounce), height var(--transition-bounce);
+    transition:
+      width var(--transition-bounce),
+      height var(--transition-bounce);
   }
 
   &:active::before {
@@ -335,11 +362,15 @@ body {
   &-primary {
     @include gradient('success');
     color: #1f4b0f;
-    box-shadow: 0 12px 0 #3a8c14, var(--shadow-lg);
+    box-shadow:
+      0 12px 0 #3a8c14,
+      var(--shadow-lg);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 0 #3a8c14, var(--shadow-xl);
+      box-shadow:
+        0 14px 0 #3a8c14,
+        var(--shadow-xl);
     }
 
     &:active {
@@ -350,7 +381,9 @@ body {
   &-secondary {
     @include gradient('secondary');
     color: #8b5408;
-    box-shadow: 0 12px 0 #c38d15, var(--shadow-lg);
+    box-shadow:
+      0 12px 0 #c38d15,
+      var(--shadow-lg);
   }
 
   &-outline {
@@ -387,7 +420,11 @@ body {
   }
 
   &-gradient {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 239, 194, 0.95) 100%);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 239, 194, 0.95) 100%
+    );
     backdrop-filter: blur(10px);
   }
 }
@@ -430,7 +467,8 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -439,7 +477,8 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -448,7 +487,8 @@ body {
 }
 
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {
@@ -496,8 +536,8 @@ body {
 
   button,
   a,
-  input[type="button"],
-  input[type="submit"] {
+  input[type='button'],
+  input[type='submit'] {
     @include touch-target;
   }
 
@@ -546,8 +586,8 @@ body {
   }
 
   .toast-container,
-  [class*="overlay"],
-  [class*="modal"] {
+  [class*='overlay'],
+  [class*='modal'] {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
   }

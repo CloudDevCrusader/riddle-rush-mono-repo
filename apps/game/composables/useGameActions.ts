@@ -112,7 +112,11 @@ export function useGameActions() {
   /**
    * Setup multiplayer game with players
    */
-  const setupMultiplayerGame = async (playerNames: string[], gameName?: string, customLetter?: string) => {
+  const setupMultiplayerGame = async (
+    playerNames: string[],
+    gameName?: string,
+    customLetter?: string,
+  ) => {
     try {
       await gameStore.setupPlayers(playerNames, gameName, customLetter)
       toast.success(t('game.multiplayer_setup', `Game started with ${playerNames.length} players!`))

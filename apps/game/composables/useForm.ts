@@ -15,9 +15,7 @@ export interface FieldConfig<T = unknown> {
   rules?: ValidationRule<T>[]
 }
 
-export function useForm<T extends Record<string, unknown>>(
-  fields: Record<keyof T, FieldConfig>,
-) {
+export function useForm<T extends Record<string, unknown>>(fields: Record<keyof T, FieldConfig>) {
   // Form state - use any for reactive to avoid type issues
   const values = reactive({} as any) as T
   const errors = reactive({} as Record<string, string>)
@@ -93,9 +91,7 @@ export function useForm<T extends Record<string, unknown>>(
   /**
    * Submit form
    */
-  const handleSubmit = async (
-    onSubmit: (values: T) => Promise<void> | void,
-  ): Promise<boolean> => {
+  const handleSubmit = async (onSubmit: (values: T) => Promise<void> | void): Promise<boolean> => {
     // Mark all fields as touched
     Object.keys(fields).forEach((key) => {
       ;(touched as any)[key] = true
@@ -200,10 +196,7 @@ export const validationRules = {
     message,
   }),
 
-  pattern: (
-    regex: RegExp,
-    message = 'Invalid format',
-  ): ValidationRule<string> => ({
+  pattern: (regex: RegExp, message = 'Invalid format'): ValidationRule<string> => ({
     validate: (value: string) => regex.test(value),
     message,
   }),
@@ -215,18 +208,12 @@ export const validationRules = {
     message,
   }),
 
-  min: (
-    minValue: number,
-    message = `Must be at least ${minValue}`,
-  ): ValidationRule<number> => ({
+  min: (minValue: number, message = `Must be at least ${minValue}`): ValidationRule<number> => ({
     validate: (value: number) => value >= minValue,
     message,
   }),
 
-  max: (
-    maxValue: number,
-    message = `Must be at most ${maxValue}`,
-  ): ValidationRule<number> => ({
+  max: (maxValue: number, message = `Must be at most ${maxValue}`): ValidationRule<number> => ({
     validate: (value: number) => value <= maxValue,
     message,
   }),

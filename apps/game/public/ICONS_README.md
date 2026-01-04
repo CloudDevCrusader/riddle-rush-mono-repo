@@ -4,6 +4,7 @@ To generate PWA icons from the SVG template:
 
 1. Use an online tool like https://realfavicongenerator.net/
 2. Or use ImageMagick:
+
    ```bash
    convert pwa-icon-template.svg -resize 192x192 pwa-192x192.png
    convert pwa-icon-template.svg -resize 512x512 pwa-512x512.png

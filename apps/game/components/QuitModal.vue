@@ -113,9 +113,9 @@ const handleNo = () => {
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-right, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-left, 0px));
+    max(var(--spacing-lg), env(safe-area-inset-right, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-left, 0px));
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -296,14 +296,17 @@ const handleNo = () => {
 @media (max-width: 640px) {
   .quit-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .quit-modal {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -351,7 +354,10 @@ const handleNo = () => {
 @media (max-width: 450px) and (min-height: 800px) {
   .quit-modal {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 
   .title-image {

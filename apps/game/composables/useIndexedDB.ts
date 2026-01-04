@@ -1,6 +1,11 @@
 import { openDB, type IDBPDatabase } from 'idb'
 import { useLogger } from './useLogger'
-import type { GameSession, GameStatistics, LeaderboardEntry, CategorySettings } from '@riddle-rush/types/game'
+import type {
+  GameSession,
+  GameStatistics,
+  LeaderboardEntry,
+  CategorySettings,
+} from '@riddle-rush/types/game'
 
 const DB_NAME = 'riddle-rush-db'
 const DB_VERSION = 2
@@ -102,14 +107,10 @@ export function useIndexedDB() {
   const getGameHistory = async (limit = 50): Promise<GameSession[]> => {
     try {
       const db = await getDB()
-      const index = db
-        .transaction(GAME_HISTORY_STORE)
-        .store.index('startTime')
+      const index = db.transaction(GAME_HISTORY_STORE).store.index('startTime')
 
       const sessions = await index.getAll()
-      return sessions
-        .sort((a, b) => b.startTime - a.startTime)
-        .slice(0, limit)
+      return sessions.sort((a, b) => b.startTime - a.startTime).slice(0, limit)
     }
     catch (error) {
       logger.error('Error getting game history:', error)
@@ -170,14 +171,10 @@ export function useIndexedDB() {
   const getLeaderboard = async (limit = 10): Promise<LeaderboardEntry[]> => {
     try {
       const db = await getDB()
-      const index = db
-        .transaction(LEADERBOARD_STORE)
-        .store.index('score')
+      const index = db.transaction(LEADERBOARD_STORE).store.index('score')
 
       const entries = await index.getAll()
-      return entries
-        .sort((a, b) => b.score - a.score)
-        .slice(0, limit)
+      return entries.sort((a, b) => b.score - a.score).slice(0, limit)
     }
     catch (error) {
       logger.error('Error getting leaderboard:', error)

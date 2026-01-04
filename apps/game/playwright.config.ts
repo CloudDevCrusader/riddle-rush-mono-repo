@@ -2,11 +2,11 @@ import { defineConfig, devices } from '@playwright/test'
 
 const isCI = !!process.env.CI
 // Allow testing against deployed sites via BASE_URL env var
-const baseURL =
-  process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000'
-const isDeployedTest =
-  (baseURL.startsWith('http://') || baseURL.startsWith('https://')) &&
-  !baseURL.includes('localhost')
+const baseURL
+  = process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000'
+const isDeployedTest
+  = (baseURL.startsWith('http://') || baseURL.startsWith('https://'))
+    && !baseURL.includes('localhost')
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -46,7 +46,7 @@ export default defineConfig({
   // Web server - only start for local tests
   ...(!isDeployedTest && {
     webServer: {
-      command: 'npm run preview',
+      command: 'pnpm run preview',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180000, // Increased to 3 minutes for slower builds

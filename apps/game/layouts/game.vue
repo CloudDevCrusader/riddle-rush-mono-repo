@@ -46,11 +46,7 @@ provide('setBackground', (src: string) => {
   backgroundImage.value = src
 })
 
-provide('setBackButton', (config: {
-  visible?: boolean
-  image?: string
-  onBack?: () => void
-}) => {
+provide('setBackButton', (config: { visible?: boolean, image?: string, onBack?: () => void }) => {
   if (config.visible !== undefined) showBackButton.value = config.visible
   if (config.image) backButtonImage.value = config.image
   if (config.onBack) onBackCallback.value = config.onBack

@@ -69,7 +69,7 @@ export const useSettingsStore = defineStore('settings', {
     },
 
     updateSetting<K extends keyof GameSettings>(key: K, value: GameSettings[K]) {
-      (this.$state as GameSettings)[key] = value
+      ;(this.$state as GameSettings)[key] = value
       this.saveSettings()
     },
 

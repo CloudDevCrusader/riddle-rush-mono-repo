@@ -7,7 +7,15 @@ import {
   SCORE_PER_CORRECT_ANSWER,
   DEFAULT_DISPLAYED_CATEGORIES,
 } from '@riddle-rush/shared/constants'
-import type { GameSession, GameAttempt, GameState, Category, BeforeInstallPromptEvent, Player, PlayerWithRank } from '@riddle-rush/types/game'
+import type {
+  GameSession,
+  GameAttempt,
+  GameState,
+  Category,
+  BeforeInstallPromptEvent,
+  Player,
+  PlayerWithRank,
+} from '@riddle-rush/types/game'
 
 const randomLetter = () => {
   if (!ALPHABET || ALPHABET.length === 0) {
@@ -43,10 +51,8 @@ export const useGameStore = defineStore('game', {
     canInstall: state => state.installPromptEvent !== null,
     currentCategory: state => state.currentSession?.category ?? null,
     currentLetter: state => state.currentSession?.letter ?? '',
-    displayedCategories: state =>
-      state.categories.slice(0, state.displayedCategoryCount),
-    hasMoreCategories: state =>
-      state.displayedCategoryCount < state.categories.length,
+    displayedCategories: state => state.categories.slice(0, state.displayedCategoryCount),
+    hasMoreCategories: state => state.displayedCategoryCount < state.categories.length,
     categoryEmoji: () => {
       const { resolve } = useCategoryEmoji()
       return (name?: string | null) => resolve(name)
@@ -145,10 +151,7 @@ export const useGameStore = defineStore('game', {
     },
 
     resetDisplayedCategories(count = 9) {
-      this.displayedCategoryCount = Math.min(
-        count,
-        this.categories.length || count,
-      )
+      this.displayedCategoryCount = Math.min(count, this.categories.length || count)
     },
 
     getCategoryById(categoryId: number): Category | null {
@@ -402,7 +405,12 @@ export const useGameStore = defineStore('game', {
     },
 
     // Multi-player actions
-    async setupPlayers(playerNames: string[], gameName?: string, customLetter?: string, customCategory?: Category) {
+    async setupPlayers(
+      playerNames: string[],
+      gameName?: string,
+      customLetter?: string,
+      customCategory?: Category,
+    ) {
       // Reset restoration flags when setting up new game
       this.sessionRestoredFromDB = false
       this.wasPaused = false

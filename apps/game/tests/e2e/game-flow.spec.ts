@@ -112,7 +112,7 @@ test.describe('Complete Game Flow', () => {
 
     // Add a new player
     const addBtn = page.locator('.add-btn')
-    if (await addBtn.count() > 0) {
+    if ((await addBtn.count()) > 0) {
       page.on('dialog', async (dialog) => {
         await dialog.accept('Player 2')
       })
@@ -138,7 +138,7 @@ test.describe('Complete Game Flow', () => {
 
     // Go back
     const backBtn = page.locator('.back-btn')
-    if (await backBtn.count() > 0) {
+    if ((await backBtn.count()) > 0) {
       await clickWithRetry(backBtn)
       await page.waitForTimeout(500)
     }
@@ -166,13 +166,13 @@ test.describe('Complete Game Flow', () => {
     const addBtn = firstItem.locator('.score-action-btn').first()
 
     // Get initial score
-    const initialScore = Number.parseInt(await getTextContent(playerScore) || '0')
+    const initialScore = Number.parseInt((await getTextContent(playerScore)) || '0')
 
     // Increase score
     await clickWithRetry(addBtn)
     await page.waitForTimeout(300)
 
-    const newScore = Number.parseInt(await getTextContent(playerScore) || '0')
+    const newScore = Number.parseInt((await getTextContent(playerScore)) || '0')
     expect(newScore).toBeGreaterThan(initialScore)
 
     // Navigate to leaderboard

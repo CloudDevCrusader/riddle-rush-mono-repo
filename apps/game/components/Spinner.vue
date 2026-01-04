@@ -12,14 +12,17 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  size?: 'sm' | 'md' | 'lg'
-  label?: string
-  overlay?: boolean
-}>(), {
-  size: 'md',
-  overlay: false,
-})
+withDefaults(
+  defineProps<{
+    size?: 'sm' | 'md' | 'lg'
+    label?: string
+    overlay?: boolean
+  }>(),
+  {
+    size: 'md',
+    overlay: false,
+  },
+)
 </script>
 
 <style scoped>

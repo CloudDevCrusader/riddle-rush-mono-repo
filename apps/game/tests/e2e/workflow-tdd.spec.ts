@@ -23,7 +23,9 @@ const submitAnswersForCurrentRound = async (page: import('@playwright/test').Pag
 }
 
 test.describe('Workflow TDD', () => {
-  test('happy path: menu -> players -> round-start -> game -> results -> leaderboard', async ({ page }) => {
+  test('happy path: menu -> players -> round-start -> game -> results -> leaderboard', async ({
+    page,
+  }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
     await waitForSplash(page)
@@ -56,7 +58,9 @@ test.describe('Workflow TDD', () => {
     await expect(page.getByTestId('leaderboard-list')).toBeVisible()
   })
 
-  test('multi-round: leaderboard OK starts next round with incremented round number', async ({ page }) => {
+  test('multi-round: leaderboard OK starts next round with incremented round number', async ({
+    page,
+  }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
     await waitForSplash(page)

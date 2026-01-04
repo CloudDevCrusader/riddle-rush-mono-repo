@@ -55,19 +55,22 @@ provide('setBackground', (src: string) => {
   backgroundImage.value = src
 })
 
-provide('setMenuButton', (config: {
-  visible?: boolean
-  image?: string
-}) => {
+provide('setMenuButton', (config: { visible?: boolean, image?: string }) => {
   if (config.visible !== undefined) showMenuButton.value = config.visible
   if (config.image) menuButtonImage.value = config.image
 })
 
 provide('menuState', {
   isOpen: readonly(isMenuOpen),
-  open: () => { isMenuOpen.value = true },
-  close: () => { isMenuOpen.value = false },
-  toggle: () => { isMenuOpen.value = !isMenuOpen.value },
+  open: () => {
+    isMenuOpen.value = true
+  },
+  close: () => {
+    isMenuOpen.value = false
+  },
+  toggle: () => {
+    isMenuOpen.value = !isMenuOpen.value
+  },
 })
 
 const toggleMenu = () => {

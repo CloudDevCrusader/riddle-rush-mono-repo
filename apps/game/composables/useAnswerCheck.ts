@@ -68,10 +68,7 @@ export function useAnswerCheck() {
 
   type OfflineAnswers = Record<string, Record<string, string[]>>
 
-  async function searchOffline(
-    category: string,
-    letter: string,
-  ): Promise<string[]> {
+  async function searchOffline(category: string, letter: string): Promise<string[]> {
     try {
       const offlineAnswers = await $fetch<OfflineAnswers>('/data/offlineAnswers.json')
       const categoryAnswers = offlineAnswers[category]
@@ -101,9 +98,7 @@ export function useAnswerCheck() {
       items = [...items, ...categoryItem.additionalData]
     }
 
-    const results = items.filter(e =>
-      e.toUpperCase().startsWith(letter.toUpperCase()),
-    )
+    const results = items.filter(e => e.toUpperCase().startsWith(letter.toUpperCase()))
 
     const found = results.includes(term)
     const other = results.filter(res => res !== term).slice(0, MAX_SUGGESTIONS)

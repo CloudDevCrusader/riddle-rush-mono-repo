@@ -4,7 +4,7 @@
     <div
       class="game-bg"
       :style="{ backgroundImage: `url(\`${baseUrl}assets/alphabets/BACKGROUND.png\`)` }"
-    />
+    ></div>
 
     <!-- Top Bar -->
     <header class="game-header">
@@ -15,7 +15,11 @@
         aria-label="Go back"
         @click="handleBack"
       >
-        <img :src="`${baseUrl}assets/alphabets/back.png`" alt="Back" class="back-icon" />
+        <img
+          :src="`${baseUrl}assets/alphabets/back.png`"
+          alt="Back"
+          class="back-icon"
+        />
       </button>
 
       <!-- Round Indicator -->
@@ -39,8 +43,18 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <rect x="6" y="4" width="4" height="16" />
-          <rect x="14" y="4" width="4" height="16" />
+          <rect
+            x="6"
+            y="4"
+            width="4"
+            height="16"
+          />
+          <rect
+            x="14"
+            y="4"
+            width="4"
+            height="16"
+          />
         </svg>
       </button>
     </header>
@@ -54,7 +68,9 @@
           alt="Category"
           class="category-label-image"
         />
-        <div class="category-label">CATEGORY</div>
+        <div class="category-label">
+          CATEGORY
+        </div>
         <div class="category-name">
           {{ currentCategory?.name?.toUpperCase() || 'LOADING...' }}
         </div>
@@ -62,7 +78,10 @@
 
       <!-- Large Letter Display -->
       <div class="letter-display">
-        <span class="letter-value" :data-letter="currentLetter ? currentLetter.toUpperCase() : 'A'">
+        <span
+          class="letter-value"
+          :data-letter="currentLetter ? currentLetter.toUpperCase() : 'A'"
+        >
           {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
         </span>
       </div>
@@ -76,7 +95,10 @@
           <span class="turn-label">{{ $t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <form class="answer-form" @submit.prevent="submitAnswer">
+        <form
+          class="answer-form"
+          @submit.prevent="submitAnswer"
+        >
           <input
             v-model="playerAnswer"
             type="text"
@@ -87,14 +109,21 @@
             maxlength="50"
             @input="sanitizeInput"
           />
-          <button type="submit" class="submit-answer-btn" :disabled="!playerAnswer.trim()">
+          <button
+            type="submit"
+            class="submit-answer-btn"
+            :disabled="!playerAnswer.trim()"
+          >
             {{ $t('game.submit', 'Submit') }}
           </button>
         </form>
       </div>
 
       <!-- All Players Submitted Message -->
-      <div v-if="allPlayersSubmitted" class="all-submitted-message">
+      <div
+        v-if="allPlayersSubmitted"
+        class="all-submitted-message"
+      >
         <p>{{ $t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
@@ -124,7 +153,11 @@
         class="next-btn btn-primary tap-highlight no-select"
         @click="handleNext"
       >
-        <img :src="`${baseUrl}assets/alphabets/next.png`" alt="Next" class="next-icon" />
+        <img
+          :src="`${baseUrl}assets/alphabets/next.png`"
+          alt="Next"
+          class="next-icon"
+        />
         <span class="next-text">NEXT</span>
       </button>
     </div>
@@ -161,7 +194,8 @@ const goHome = () => {
 const handleBack = () => {
   if (gameStore.hasActiveSession) {
     showQuitModal.value = true
-  } else {
+  }
+  else {
     goHome()
   }
 }
@@ -189,16 +223,17 @@ const submitAnswer = async () => {
       const result = await checkAnswer(
         currentCategory.value?.searchWord || '',
         currentLetter.value,
-        playerAnswer.value.trim()
+        playerAnswer.value.trim(),
       )
 
       if (!result.found) {
         toast.error(
-          t('game.invalid_answer', 'This answer is not valid for the current category and letter')
+          t('game.invalid_answer', 'This answer is not valid for the current category and letter'),
         )
         return
       }
-    } catch (error) {
+    }
+    catch (error) {
       const logger = useLogger()
       logger.error('Error validating answer:', error)
       // Allow submission if validation fails due to error
@@ -214,7 +249,8 @@ const submitAnswer = async () => {
     if (allPlayersSubmitted.value) {
       toast.info(t('game.all_submitted', 'All players have submitted!'))
     }
-  } catch (error) {
+  }
+  catch (error) {
     const logger = useLogger()
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))

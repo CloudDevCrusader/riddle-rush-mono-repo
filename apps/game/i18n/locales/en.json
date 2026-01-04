@@ -194,6 +194,21 @@
   "language": {
     "title": "LANGUAGE"
   },
+  "about": {
+    "title": "ABOUT",
+    "creators": "Created by Tobias Wirl and Markus Wagner",
+    "how_it_works": {
+      "title": "How It Works",
+      "description": "Riddle Rush is a word guessing game that uses Wikipedia categories via PetScan API. Players guess terms from a selected category that start with a specific letter."
+    },
+    "pwa": {
+      "title": "Progressive Web App",
+      "description": "This game is built as a Progressive Web App (PWA) with full offline support. You can install it on your device and play without an internet connection."
+    },
+    "technologies": {
+      "title": "Technologies Used"
+    }
+  },
   "results": {
     "your_score": "Your Score",
     "next": "Next",

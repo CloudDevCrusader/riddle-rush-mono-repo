@@ -80,9 +80,7 @@ const emit = defineEmits<{
   'close': []
 }>()
 
-const modalClasses = computed(() => [
-  `modal-container--${props.size}`,
-])
+const modalClasses = computed(() => [`modal-container--${props.size}`])
 
 const close = () => {
   if (!props.persistent) {
@@ -113,14 +111,17 @@ onUnmounted(() => {
 })
 
 // Lock body scroll when modal is open
-watch(() => props.modelValue, (isOpen) => {
-  if (isOpen) {
-    document.body.style.overflow = 'hidden'
-  }
-  else {
-    document.body.style.overflow = ''
-  }
-})
+watch(
+  () => props.modelValue,
+  (isOpen) => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    }
+    else {
+      document.body.style.overflow = ''
+    }
+  },
+)
 </script>
 
 <style scoped>

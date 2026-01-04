@@ -68,7 +68,7 @@ test.describe('About Page', () => {
     await expect(techList).toBeVisible()
 
     // Check for specific technologies
-    const nuxt = page.getByText(/Nuxt 3/i)
+    const nuxt = page.getByText(/Nuxt 4/i)
     await expect(nuxt).toBeVisible()
 
     const vue = page.getByText(/Vue 3/i)

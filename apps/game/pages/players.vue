@@ -169,10 +169,7 @@ const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
 
 const maxPlayers = MAX_PLAYERS
-const players = ref([
-  { name: 'Player 1' },
-  { name: 'Player 2' },
-])
+const players = ref([{ name: 'Player 1' }, { name: 'Player 2' }])
 const showPlayerInput = ref(false)
 const newPlayerName = ref('')
 const playerNameInput = ref<HTMLInputElement | null>(null)
@@ -202,16 +199,25 @@ const isValidPlayerName = (name: string): { valid: boolean, error?: string } => 
   }
 
   if (trimmed.length < 1) {
-    return { valid: false, error: t('players.name_too_short', 'Player name must be at least 1 character') }
+    return {
+      valid: false,
+      error: t('players.name_too_short', 'Player name must be at least 1 character'),
+    }
   }
 
   if (trimmed.length > 20) {
-    return { valid: false, error: t('players.name_too_long', 'Player name must be 20 characters or less') }
+    return {
+      valid: false,
+      error: t('players.name_too_long', 'Player name must be 20 characters or less'),
+    }
   }
 
   // Check for duplicate names
   if (players.value.some(p => p.name.toLowerCase() === trimmed.toLowerCase())) {
-    return { valid: false, error: t('players.duplicate_name', 'A player with this name already exists') }
+    return {
+      valid: false,
+      error: t('players.duplicate_name', 'A player with this name already exists'),
+    }
   }
 
   return { valid: true }

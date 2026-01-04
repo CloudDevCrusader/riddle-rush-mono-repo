@@ -135,9 +135,9 @@ defineEmits<{
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-           max(var(--spacing-md), env(safe-area-inset-right, 0px))
-           max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-md), env(safe-area-inset-left, 0px));
+    max(var(--spacing-md), env(safe-area-inset-right, 0px))
+    max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-md), env(safe-area-inset-left, 0px));
 }
 
 .player-leaderboard-panel {
@@ -224,20 +224,27 @@ defineEmits<{
 }
 
 .player-row.winner {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  border-color: #FFD700;
-  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  border-color: #ffd700;
+  box-shadow:
+    0 8px 24px rgba(255, 215, 0, 0.4),
+    0 0 40px rgba(255, 215, 0, 0.3);
   transform: scale3d(1.02, 1.02, 1);
   animation: winnerPulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   will-change: box-shadow;
 }
 
 @keyframes winnerPulse {
-  0%, 100% {
-    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.3);
+  0%,
+  100% {
+    box-shadow:
+      0 8px 24px rgba(255, 215, 0, 0.4),
+      0 0 40px rgba(255, 215, 0, 0.3);
   }
   50% {
-    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.6), 0 0 50px rgba(255, 215, 0, 0.5);
+    box-shadow:
+      0 8px 32px rgba(255, 215, 0, 0.6),
+      0 0 50px rgba(255, 215, 0, 0.5);
   }
 }
 
@@ -270,7 +277,8 @@ defineEmits<{
 }
 
 @keyframes crownBounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate3d(0, 0, 0) rotate(-10deg);
   }
   50% {
@@ -402,14 +410,17 @@ defineEmits<{
 @media (max-width: 640px) {
   .player-leaderboard-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .player-leaderboard-panel {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -453,7 +464,10 @@ defineEmits<{
 @media (max-width: 450px) and (min-height: 800px) {
   .player-leaderboard-panel {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 
   .player-row {

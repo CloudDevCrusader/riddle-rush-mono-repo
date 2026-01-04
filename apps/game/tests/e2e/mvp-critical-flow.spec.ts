@@ -24,7 +24,9 @@ import {
  * @critical - These tests are marked as critical and run in CI/CD verify stage
  */
 test.describe('MVP Critical Flow @critical', () => {
-  test('should complete full game flow: menu → players → round-start → game → results → leaderboard → next round', async ({ page }) => {
+  test('should complete full game flow: menu → players → round-start → game → results → leaderboard → next round', async ({
+    page,
+  }) => {
     // Step 1: Start at menu
     await navigateTo(page, '/')
     await waitForSplashScreen(page)

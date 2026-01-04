@@ -12,7 +12,9 @@ commands:
           name: "Enable corepack and prepare pnpm"
           command: |
             corepack enable
-            corepack prepare pnpm@10.27.0 --activate
+            # Get pnpm version from package.json or use default
+            PNPM_VERSION=$(node -p "require('./package.json').packageManager?.match(/pnpm@(.+)/)?.[1] || '10.27.0'")
+            corepack prepare "pnpm@${PNPM_VERSION}" --activate
             pnpm --version
 
   install-dependencies:

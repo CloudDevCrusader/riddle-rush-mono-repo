@@ -11,12 +11,7 @@ export function usePageSwipe(options?: {
 }) {
   const pageElement = ref<HTMLElement | null>(null)
 
-  const {
-    isSwiping,
-    direction,
-    lengthX,
-    lengthY,
-  } = useSwipe(pageElement, {
+  const { isSwiping, direction, lengthX, lengthY } = useSwipe(pageElement, {
     threshold: options?.threshold ?? 50,
     onSwipeEnd: (e, dir) => {
       // Call appropriate callback based on swipe direction
