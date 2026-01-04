@@ -162,6 +162,9 @@ jobs:
     description: 'Run unit tests for game app'
     docker:
       - image: *custom-image
+        auth:
+          username: $GITLAB_REGISTRY_USER
+          password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
       - setup-pnpm
@@ -217,6 +220,9 @@ jobs:
     description: 'Build game app for production'
     docker:
       - image: *custom-image
+        auth:
+          username: $GITLAB_REGISTRY_USER
+          password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
       - setup-pnpm
@@ -234,6 +240,9 @@ jobs:
     description: 'Build documentation site'
     docker:
       - image: *custom-image
+        auth:
+          username: $GITLAB_REGISTRY_USER
+          password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
       - setup-pnpm
@@ -260,6 +269,9 @@ jobs:
     description: 'Deploy to AWS development environment'
     docker:
       - image: *custom-image
+        auth:
+          username: $GITLAB_REGISTRY_USER
+          password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
       - setup-pnpm
@@ -284,6 +296,9 @@ jobs:
     description: 'Deploy to AWS production environment'
     docker:
       - image: *custom-image
+        auth:
+          username: $GITLAB_REGISTRY_USER
+          password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
       - setup-pnpm

@@ -60,11 +60,7 @@
       "Bash(export AWS_CLOUDFRONT_ID=ERCX6EFGWWFUV)",
       "Bash(./aws-deploy.sh:*)",
       "mcp__plugin_playwright_playwright__browser_run_code",
-      "mcp__MCP_DOCKER__mcp-find",
       "Bash(docker mcp:*)",
-      "mcp__MCP_DOCKER__mcp-remove",
-      "mcp__MCP_DOCKER__mcp-add",
-      "mcp__MCP_DOCKER__mcp-config-set",
       "Bash(echo:*)",
       "Bash(mv:*)",
       "Bash(xargs:*)",
@@ -168,13 +164,17 @@
       "Bash(for file in \"COIN BAR\" \"add back\" \"Group 10\" \"scroll bar\" \"Shape 2\" \"Group 8\")",
       "Bash(do echo \"Checking: $file\")",
       "Bash(timeout 180 pnpm exec playwright test:*)",
-      "Bash(timeout 300 ./scripts/e2e-test.sh:*)"
+      "Bash(timeout 300 ./scripts/e2e-test.sh:*)",
+      "Bash(circleci config validate:*)",
+      "Bash(circleci project:*)",
+      "Bash(circleci help:*)",
+      "Bash(circleci pipeline list:*)",
+      "Bash(circleci open:*)",
+      "Bash(pnpm -C apps/game run test:unit:*)",
+      "Bash(docker:*)",
+      "Bash(./build-docker-image.sh:*)"
     ]
   },
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "MCP_DOCKER"
-  ],
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true
   }
