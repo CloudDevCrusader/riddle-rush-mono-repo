@@ -167,7 +167,6 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
-      - setup-pnpm
       - install-dependencies
       - run:
           name: 'Run unit tests'
@@ -225,7 +224,6 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
-      - setup-pnpm
       - install-dependencies
       - run:
           name: 'Build game app'
@@ -245,7 +243,6 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
-      - setup-pnpm
       - install-dependencies
       - run:
           name: 'Build documentation site'
@@ -274,7 +271,6 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
-      - setup-pnpm
       - install-dependencies
       # AWS CLI and Terraform are pre-installed in custom image
       - run:
@@ -301,7 +297,6 @@ jobs:
           password: $GITLAB_REGISTRY_TOKEN
     steps:
       - checkout
-      - setup-pnpm
       - install-dependencies
       # AWS CLI and Terraform are pre-installed in custom image
       - run:
