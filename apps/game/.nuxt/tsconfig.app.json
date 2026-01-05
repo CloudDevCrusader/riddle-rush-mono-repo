@@ -144,7 +144,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/d0cc0e74-f787-4fe4-9a4a-483021984dce.json"
+        "./manifest/meta/dev"
       ],
       "#components": [
         "./components"
@@ -251,7 +251,7 @@
     "../../../node_modules/.pnpm/@nuxt+telemetry@2.6.6_magicast@0.5.1/node_modules/dist/runtime/server",
     "../../../node_modules/.pnpm/@nuxt+telemetry@2.6.6_magicast@0.5.1/node_modules/*.*",
     "../../../node_modules/.pnpm/@nuxt+telemetry@2.6.6_magicast@0.5.1/node_modules/dist/*.*",
-    "../.output",
+    "dev",
     "../server"
   ]
 }

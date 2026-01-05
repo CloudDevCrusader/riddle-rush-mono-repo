@@ -35,6 +35,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      baseUrl: process.env.BASE_URL || '',
       environment: process.env.NODE_ENV || 'development',
       appVersion: process.env.npm_package_version || '1.0.0',
       cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',

@@ -107,7 +107,11 @@ export const useGameStore = defineStore('game', {
       this.categoriesLoading = true
 
       try {
-        const categories = await $fetch<Category[]>('/data/categories.json')
+        const response = await fetch('/data/categories.json')
+        if (!response.ok) {
+          throw new Error(`Failed to load categories: ${response.status} ${response.statusText}`)
+        }
+        const categories = await response.json() as Category[]
 
         if (!categories || categories.length === 0) {
           throw new Error('No categories found in data file')

@@ -14,13 +14,13 @@
         <img :src="`${baseUrl}assets/splash/LOADING_.png`" alt="Loading" class="loading-text" />
         <div class="loading-bar-wrapper">
           <img
-            :src="`${baseUrl}assets/splash/loading%20down.png`"
+            :src="`${baseUrl}assets/splash/loading-down.png`"
             alt="Loading bar background"
             class="loading-bar-bg-img"
           />
           <div class="loading-bar-track">
             <img
-              :src="`${baseUrl}assets/splash/loading%20top.png`"
+              :src="`${baseUrl}assets/splash/loading-top.png`"
               alt="Loading bar fill"
               class="loading-bar-fill-img"
               :style="{ clipPath: `inset(0 ${100 - progress}% 0 0)` }"
@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
+const baseUrl = config.public.baseUrl || ''
 
 const visible = ref(true)
 const progress = ref(0)

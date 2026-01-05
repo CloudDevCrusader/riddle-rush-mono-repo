@@ -58,3 +58,4 @@ export { useSettingsStore, GameSettings } from '../stores/settings';
 export { defineStore, acceptHMRUpdate, usePinia, storeToRefs } from '../../../node_modules/.pnpm/@pinia+nuxt@0.11.3_magicast@0.5.1_pinia@3.0.4_typescript@5.9.3_vue@3.5.26_typescript@5.9.3__/node_modules/@pinia/nuxt/dist/runtime/composables';
 export { useI18n } from 'vue-i18n';
 export { usePWA, useTransparentPwaIcon, useMaskablePwaIcon, useFaviconPwaIcon, useApplePwaIcon, useAppleSplashScreenPwaIcon } from '../../../node_modules/.pnpm/@vite-pwa+nuxt@1.1.0_magicast@0.5.1_vite@7.3.0_@types+node@22.19.3_jiti@2.6.1_lightning_a6cf3e46f361344bc55e4b8c3efa0bd6/node_modules/@vite-pwa/nuxt/dist/runtime/composables/index';
+export { useNuxtDevTools } from '../../../node_modules/.pnpm/@nuxt+devtools@3.1.1_vite@7.3.0_@types+node@22.19.3_jiti@2.6.1_lightningcss@1.30.2_sass_4fb9fdb843d509ca82064c77a1855668/node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
