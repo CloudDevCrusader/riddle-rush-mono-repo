@@ -2,16 +2,67 @@
 # ===========================================
 # Deploy Production Environment to AWS
 # ===========================================
-# Usage: ./scripts/deploy-prod.sh [version]
+# Usage: ./scripts/deploy-prod.sh [options] [version]
 # Example: ./scripts/deploy-prod.sh 1.2.0
+#         ./scripts/deploy-prod.sh --skip-checks 1.2.0
+#         ./scripts/deploy-prod.sh --dry-run 1.2.0
 #
 # This script deploys the production environment to AWS S3 + CloudFront.
 # It loads AWS configuration from Terraform outputs or environment variables.
 # Optional: Provide a version number to create a git tag.
 #
+# Options:
+#   --skip-checks    Skip pre-deployment checks (lint, typecheck, tests)
+#   --dry-run        Perform all checks but don't actually deploy
+#   --help           Show this help message
+#
 # Note: Infrastructure must be deployed separately using terraform-plan.sh and terraform-apply.sh
 
 set -e
+set -o pipefail
+
+# Parse command line arguments
+SKIP_CHECKS=false
+DRY_RUN=false
+VERSION=""
+
+for arg in "$@"; do
+    case "$arg" in
+        --skip-checks)
+            SKIP_CHECKS=true
+            ;;
+        --dry-run)
+            DRY_RUN=true
+            ;;
+        --help)
+            echo "Usage: $0 [options] [version]"
+            echo "Options:"
+            echo "  --skip-checks    Skip pre-deployment checks"
+            echo "  --dry-run        Perform all checks but don't actually deploy"
+            echo "  --help           Show this help message"
+            exit 0
+            ;;
+        *)
+            # Assume it's a version number
+            if [ -z "$VERSION" ] && [[ "$arg" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                VERSION="$arg"
+            else
+                echo "Unknown option: $arg"
+                exit 1
+            fi
+            ;;
+    esac
+done
+
+# Export flags
+if [ "$SKIP_CHECKS" = true ]; then
+    export SKIP_PRE_DEPLOYMENT_CHECKS=true
+fi
+
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}🔍 DRY RUN MODE: All checks will be performed but deployment will be skipped${NC}"
+    export DRY_RUN=true
+fi
 
 # Get script directory and source common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,14 +70,11 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 source "$SCRIPT_DIR/lib/deploy-common.sh"
 
 ENVIRONMENT="production"
-VERSION=""
 
-# Parse arguments
-for arg in "$@"; do
-    if [ -z "$VERSION" ] && [[ "$arg" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        VERSION="$arg"
-    fi
-done
+# Version is already parsed above, no need to parse again
+if [ -n "$VERSION" ]; then
+    echo -e "\n${BLUE}🏷️  Version: v$VERSION${NC}"
+fi
 
 echo -e "${BLUE}🚀 Deploying to PRODUCTION environment (AWS)${NC}"
 echo "=========================================="

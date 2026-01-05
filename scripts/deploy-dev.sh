@@ -2,15 +2,47 @@
 # ===========================================
 # Deploy Development Environment to AWS
 # ===========================================
-# Usage: ./scripts/deploy-dev.sh
+# Usage: ./scripts/deploy-dev.sh [options]
 # Example: ./scripts/deploy-dev.sh
+#         ./scripts/deploy-dev.sh --skip-checks
 #
 # This script deploys the development environment to AWS S3 + CloudFront.
 # It loads AWS configuration from Terraform outputs or environment variables.
 #
+# Options:
+#   --skip-checks    Skip pre-deployment checks (lint, typecheck, tests)
+#   --help           Show this help message
+#
 # Note: Infrastructure must be deployed separately using terraform-plan.sh and terraform-apply.sh
 
 set -e
+set -o pipefail
+
+# Parse command line arguments
+SKIP_CHECKS=false
+for arg in "$@"; do
+    case "$arg" in
+        --skip-checks)
+            SKIP_CHECKS=true
+            ;;
+        --help)
+            echo "Usage: $0 [options]"
+            echo "Options:"
+            echo "  --skip-checks    Skip pre-deployment checks"
+            echo "  --help           Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            exit 1
+            ;;
+    esac
+done
+
+# Export skip checks flag
+if [ "$SKIP_CHECKS" = true ]; then
+    export SKIP_PRE_DEPLOYMENT_CHECKS=true
+fi
 
 # Get script directory and source common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

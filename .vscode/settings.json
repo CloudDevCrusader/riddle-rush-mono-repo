@@ -1,151 +1,151 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        ".yoyo": true
-    },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    ".yoyo": true
+  },
 
-    // Nuxt & Vue Configuration
-    "nuxt.isNuxtApp": false,
-    "vue.server.hybridMode": true,
-    "volar.tsconfig": ".nuxt/tsconfig.app.json",
-    "volar.takeOverMode.enabled": false,
+  // Nuxt & Vue Configuration
+  "nuxt.isNuxtApp": false,
+  "vue.server.hybridMode": true,
+  "volar.tsconfig": ".nuxt/tsconfig.app.json",
+  "volar.takeOverMode.enabled": false,
 
-    // TypeScript Configuration
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "typescript.suggest.autoImports": true,
-    "typescript.updateImportsOnFileMove.enabled": "always",
-    "typescript.preferences.importModuleSpecifier": "shortest",
-    "typescript.preferences.includePackageJsonAutoImports": "on",
-    "typescript.suggest.paths": true,
+  // TypeScript Configuration
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.paths": true,
 
-    // JavaScript Configuration
-    "javascript.suggest.autoImports": true,
-    "javascript.updateImportsOnFileMove.enabled": "always",
+  // JavaScript Configuration
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
 
-    // Debugging Configuration
-    "debug.javascript.autoAttachFilter": "smart",
-    "debug.javascript.unmapMissingSources": true,
-    "debug.javascript.debugByLinkOptions": "always",
-    "debug.internalConsoleOptions": "neverOpen",
-    "debug.openDebug": "openOnDebugBreak",
-    "debug.showBreakpointsInOverviewRuler": true,
-    "debug.toolBarLocation": "docked",
+  // Debugging Configuration
+  "debug.javascript.autoAttachFilter": "smart",
+  "debug.javascript.unmapMissingSources": true,
+  "debug.javascript.debugByLinkOptions": "always",
+  "debug.internalConsoleOptions": "neverOpen",
+  "debug.openDebug": "openOnDebugBreak",
+  "debug.showBreakpointsInOverviewRuler": true,
+  "debug.toolBarLocation": "docked",
 
-    // Source Maps for Debugging
-    "debug.javascript.sourceMaps": true,
-    "debug.javascript.breakOnConditionalError": true,
+  // Source Maps for Debugging
+  "debug.javascript.sourceMaps": true,
+  "debug.javascript.breakOnConditionalError": true,
 
-    // ESLint Configuration
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-    },
-    "eslint.validate": [
-        "javascript",
-        "typescript",
-        "vue"
-    ],
-    "eslint.workingDirectories": [
-        {
-            "mode": "auto"
-        }
-    ],
-
-    // Formatters
-    "[vue]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[json]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[jsonc]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-
-    // Editor Enhancement
-    "editor.formatOnSave": true,
-    "editor.bracketPairColorization.enabled": true,
-    "editor.guides.bracketPairs": true,
-    "editor.inlineSuggest.enabled": true,
-    "editor.suggest.preview": true,
-    "editor.quickSuggestions": {
-        "strings": true
-    },
-
-    // File Associations
-    "files.associations": {
-        "*.css": "css",
-        "*.scss": "scss",
-        "*.vue": "vue",
-        "turbo.json": "jsonc"
-    },
-
-    // SCSS/CSS Configuration
-    "[scss]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[css]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "scss.lint.unknownAtRules": "ignore",
-
-    // Path Intellisense
-    "path-intellisense.autoSlashAfterDirectory": true,
-    "path-intellisense.extensionOnImport": true,
-
-    // Prettier Configuration (align with .prettierrc)
-    "prettier.semi": false,
-    "prettier.singleQuote": true,
-    "prettier.tabWidth": 2,
-    "prettier.trailingComma": "es5",
-    "prettier.printWidth": 100,
-    "prettier.bracketSpacing": true,
-    "prettier.arrowParens": "always",
-    "prettier.endOfLine": "lf",
-    "prettier.vueIndentScriptAndStyle": false,
-
-    // SonarLint Configuration
-    "sonarlint.rules": {
-        "typescript:S125": {
-            "level": "off"
-        },
-        "typescript:S1186": {
-            "level": "off"
-        }
-    },
-
-    // Cursor IDE Specific
-    "cursor.cpp.disabledLanguages": [],
-    "cursor.chat.model": "claude-3.5-sonnet",
-    // Turbo & Monorepo Support
-    "search.exclude": {
-        "**/node_modules": true,
-        "**/.nuxt": true,
-        "**/.output": true,
-        "**/dist": true,
-        "**/.vite": true,
-        "**/.turbo": true,
-        "**/turbo-*.log": true
-    },
-    "files.watcherExclude": {
-        "**/.git/objects/**": true,
-        "**/.git/subtree-cache/**": true,
-        "**/node_modules/**": true,
-        "**/.nuxt/**": true,
-        "**/.output/**": true,
-        "**/dist/**": true,
-        "**/.vite/**": true,
-        "**/.turbo/**": true,
-        "**/turbo-*.log": true
+  // ESLint Configuration
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "typescript", "vue"],
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
     }
+  ],
+
+  // Formatters
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Editor Enhancement
+  "editor.formatOnSave": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.preview": true,
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+
+  // File Associations
+  "files.associations": {
+    "*.css": "css",
+    "*.scss": "scss",
+    "*.vue": "vue",
+    "turbo.json": "jsonc"
+  },
+
+  // SCSS/CSS Configuration
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "scss.lint.unknownAtRules": "ignore",
+
+  // Path Intellisense
+  "path-intellisense.autoSlashAfterDirectory": true,
+  "path-intellisense.extensionOnImport": true,
+
+  // Prettier Configuration (align with .prettierrc)
+  "prettier.semi": false,
+  "prettier.singleQuote": true,
+  "prettier.tabWidth": 2,
+  "prettier.trailingComma": "es5",
+  "prettier.printWidth": 100,
+  "prettier.bracketSpacing": true,
+  "prettier.arrowParens": "always",
+  "prettier.endOfLine": "lf",
+  "prettier.vueIndentScriptAndStyle": false,
+
+  // SonarLint Configuration
+  "sonarlint.rules": {
+    "typescript:S125": {
+      "level": "off"
+    },
+    "typescript:S1186": {
+      "level": "off"
+    }
+  },
+
+  // Cursor IDE Specific
+  "cursor.cpp.disabledLanguages": [],
+  "cursor.chat.model": "claude-3.5-sonnet",
+  // Turbo & Monorepo Support
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.nuxt": true,
+    "**/.output": true,
+    "**/dist": true,
+    "**/.vite": true,
+    "**/.turbo": true,
+    "**/turbo-*.log": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.nuxt/**": true,
+    "**/.output/**": true,
+    "**/dist/**": true,
+    "**/.vite/**": true,
+    "**/.turbo/**": true,
+    "**/turbo-*.log": true
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "djdiox",
+    "projectKey": "djdiox_guess-game-nuxt-pwa"
+  }
 }

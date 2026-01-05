@@ -52,6 +52,11 @@ S3_BUCKET="${AWS_S3_BUCKET:-riddle-rush-pwa}"
 CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID:-}"
 AWS_REGION="${AWS_REGION:-eu-central-1}"
 BUILD_DIR="apps/game/.output/public"
+DRY_RUN="${DRY_RUN:-false}"
+
+# Set deployment timestamp
+DEPLOYMENT_TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
+DEPLOYMENT_ID="deploy-${ENVIRONMENT}-${DEPLOYMENT_TIMESTAMP}"
 
 echo -e "${BLUE}🚀 Starting AWS deployment for ${ENVIRONMENT}...${NC}"
 echo "======================================="
@@ -193,43 +198,49 @@ fi
 # Upload to S3 with optimized caching
 echo -e "\n☁️  Uploading to S3..."
 
-# Upload static assets with long-term caching (1 year)
-echo -e "  Uploading static assets (CSS, JS, images)..."
-aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
-    --delete \
-    --cache-control "public, max-age=31536000, immutable" \
-    --exclude "*.html" \
-    --exclude "sw.js" \
-    --exclude "workbox-*.js" \
-    --exclude "manifest.json" \
-    --exclude "*.xml" \
-    --exclude "*.txt"
+if [ "$DRY_RUN" = "true" ]; then
+    echo -e "${YELLOW}🔍 DRY RUN: Skipping actual S3 upload${NC}"
+    echo -e "  Would upload ${FILE_COUNT} files to s3://${S3_BUCKET}"
+    echo -e "  Total size: ${TOTAL_SIZE}"
+else
+    # Upload static assets with long-term caching (1 year)
+    echo -e "  Uploading static assets (CSS, JS, images)..."
+    aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
+        --delete \
+        --cache-control "public, max-age=31536000, immutable" \
+        --exclude "*.html" \
+        --exclude "sw.js" \
+        --exclude "workbox-*.js" \
+        --exclude "manifest.json" \
+        --exclude "*.xml" \
+        --exclude "*.txt"
 
-# Upload HTML files and service worker with no-cache
-echo -e "  Uploading HTML files and service worker..."
-aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
-    --cache-control "public, max-age=0, must-revalidate" \
-    --exclude "*" \
-    --include "*.html" \
-    --content-type "text/html; charset=utf-8"
+    # Upload HTML files and service worker with no-cache
+    echo -e "  Uploading HTML files and service worker..."
+    aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
+        --cache-control "public, max-age=0, must-revalidate" \
+        --exclude "*" \
+        --include "*.html" \
+        --content-type "text/html; charset=utf-8"
 
-# Upload service worker files with no-cache
-aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
-    --cache-control "public, max-age=0, must-revalidate" \
-    --exclude "*" \
-    --include "sw.js" \
-    --include "workbox-*.js" \
-    --content-type "application/javascript; charset=utf-8"
+    # Upload service worker files with no-cache
+    aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
+        --cache-control "public, max-age=0, must-revalidate" \
+        --exclude "*" \
+        --include "sw.js" \
+        --include "workbox-*.js" \
+        --content-type "application/javascript; charset=utf-8"
 
-# Upload manifest and other special files
-aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
-    --cache-control "public, max-age=86400" \
-    --exclude "*" \
-    --include "manifest.json" \
-    --include "*.xml" \
-    --include "robots.txt"
+    # Upload manifest and other special files
+    aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" \
+        --cache-control "public, max-age=86400" \
+        --exclude "*" \
+        --include "manifest.json" \
+        --include "*.xml" \
+        --include "robots.txt"
 
-echo -e "${GREEN}✓ Files uploaded to S3${NC}"
+    echo -e "${GREEN}✓ Files uploaded to S3${NC}"
+fi
 
 # Get upload stats
 TOTAL_SIZE=$(du -sh "$BUILD_DIR" | cut -f1)
@@ -251,7 +262,7 @@ if [ -n "$CLOUDFRONT_ID" ]; then
         sleep 10
     fi
     
-    echo -e "\n🔄 Invalidating CloudFront cache..."
+    echo -e "\n� Invalidating CloudFront cache..."
     INVALIDATION_ID=$(aws cloudfront create-invalidation \
         --distribution-id "$CLOUDFRONT_ID" \
         --paths "/*" \
