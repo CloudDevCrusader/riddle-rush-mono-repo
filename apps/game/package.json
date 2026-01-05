@@ -27,7 +27,14 @@
     "android:run": "npx cap run android",
     "android:build": "pnpm android:sync && npx cap copy android && npx cap sync android",
     "capacitor:sync": "pnpm build && npx cap sync",
-    "capacitor:copy": "npx cap copy"
+    "capacitor:copy": "npx cap copy",
+    "dev:debug": "nuxt dev --debug",
+    "dev:mobile": "nuxt dev --host 0.0.0.0",
+    "dev:https": "nuxt dev --https",
+    "dev:mobile-https": "nuxt dev --https --host 0.0.0.0",
+    "build:debug": "nuxt build --debug",
+    "generate:debug": "nuxt generate --debug",
+    "preview:https": "nuxt preview --https"
   },
   "dependencies": {
     "@capacitor/app": "^8.0.0",

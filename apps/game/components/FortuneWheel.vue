@@ -82,18 +82,22 @@ const angleStep = computed(() => 360 / props.items.length)
 
 // Default color palette - soft blues matching game aesthetic
 const defaultColors = [
-  '#6BA8D8',
-  '#5B9DC9',
-  '#4A92BA',
-  '#6BB5D8',
-  '#5BAAC9',
-  '#4A9FBA',
-  '#6BC2D8',
-  '#5BB7C9',
-  '#4AACBA',
-  '#75BBE0',
-  '#65B0D1',
-  '#55A5C2',
+  '#FF6B6B', // Soft red
+  '#4ECDC4', // Teal
+  '#45B7D1', // Sky blue
+  '#96CEB4', // Mint green
+  '#FFEAA7', // Cream
+  '#DDA0DD', // Light purple
+  '#98D8C8', // Sea green
+  '#F7DC6F', // Light yellow
+  '#BB8FCE', // Lavender
+  '#85C1E2', // Light blue
+  '#F8C471', // Peach
+  '#82E0AA', // Light green
+  '#D2B4DE', // Mauve
+  '#85C1E2', // Blue
+  '#F8C471', // Orange
+  '#82E0AA', // Green
 ]
 
 const getSegmentStyle = (index: number) => {
@@ -112,10 +116,31 @@ const getSegmentStyle = (index: number) => {
 
 const spinWheel = (targetRotation: number) => {
   isSpinning.value = true
-  wheelRotation.value = targetRotation
-  setTimeout(() => {
-    isSpinning.value = false
-  }, 1500)
+
+  // Use requestAnimationFrame for smoother animation
+  const startTime = performance.now()
+  const duration = 1800 // 1.8 seconds for more dramatic spin
+  const startRotation = wheelRotation.value
+  const rotationDiff = targetRotation - startRotation
+
+  const animate = (currentTime: number) => {
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+
+    // Ease-out animation for more natural deceleration
+    const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+    wheelRotation.value = startRotation + rotationDiff * easedProgress
+
+    if (progress < 1) {
+      requestAnimationFrame(animate)
+    } else {
+      isSpinning.value = false
+      wheelRotation.value = targetRotation // Ensure exact final position
+    }
+  }
+
+  requestAnimationFrame(animate)
 }
 
 const selectItem = (item: T, index: number) => {
@@ -165,7 +190,7 @@ const spinRandom = () => {
       emit('update:modelValue', randomItem)
       emit('spin-complete', randomItem)
     }
-  }, 1500)
+  }, 1800)
 
   return randomItem
 }
@@ -222,21 +247,34 @@ watch(
   }
 }
 
-/* Fortune Wheel */
+/* Fortune Wheel - Enhanced 3D effect */
 .fortune-wheel {
   position: relative;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  transition: transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: transform 1.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: transform;
+  transform-style: preserve-3d;
+  perspective: 1000px;
   box-shadow:
     0 0 40px rgba(255, 215, 0, 0.4),
     0 8px 30px rgba(0, 0, 0, 0.4),
-    inset 0 0 60px rgba(255, 255, 255, 0.1);
-  will-change: transform;
+    inset 0 0 60px rgba(255, 255, 255, 0.1),
+    0 0 0 8px rgba(255, 255, 255, 0.1) inset;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(255, 255, 255, 0.1) 0deg,
+    rgba(255, 255, 255, 0.3) 360deg
+  );
 }
 
-/* Wheel Segments */
+/* Add 3D effect when spinning */
+.fortune-wheel:active {
+  transform: translateZ(10px);
+}
+
+/* Wheel Segments - Enhanced */
 .wheel-segment {
   position: absolute;
   width: 100%;
@@ -248,17 +286,38 @@ watch(
   cursor: pointer;
   transition:
     filter 0.3s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
   clip-path: polygon(
     50% 50%,
     50% 0%,
     calc(50% + 50% * sin(var(--angle, 30deg))) calc(50% - 50% * cos(var(--angle, 30deg)))
   );
-  /* 3D button effect */
+  /* Enhanced 3D button effect */
   box-shadow:
-    inset 0 2px 4px rgba(255, 255, 255, 0.4),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-    0 2px 6px rgba(0, 0, 0, 0.3);
+    inset 0 2px 6px rgba(255, 255, 255, 0.5),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.3),
+    0 3px 8px rgba(0, 0, 0, 0.4);
+  /* Add subtle gradient overlay */
+  position: relative;
+  overflow: hidden;
+}
+
+.wheel-segment::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  opacity: 0.8;
+  pointer-events: none;
 }
 
 .wheel-segment:hover {

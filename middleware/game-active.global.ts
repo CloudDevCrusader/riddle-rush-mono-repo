@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
   // Pages that require an active game session
   // Note: /alphabet is NOT protected - players select letter BEFORE creating session
-  const protectedPages = ['/game', '/categories']
+  const protectedPages = ['/game']
 
   // Check if current route requires active game
   const requiresActiveGame = protectedPages.some((page) => to.path.startsWith(page))

@@ -1,17 +1,28 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    "**/.env.*local"
-  ],
+  "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "public/**",
+        "locales/**",
+        "nuxt.config.ts",
+        "tsconfig.json",
+        "package.json",
+        "../../packages/*/src/**",
+        "../../packages/*/package.json"
+      ],
       "outputs": [".nuxt/**", ".output/**", "dist/**"],
       "env": [
         "NODE_ENV",
         "BASE_URL",
         "GOOGLE_ANALYTICS_ID",
-        "APP_VERSION"
+        "APP_VERSION",
+        "NUXT_PUBLIC_CLOUDFRONT_DOMAIN",
+        "NUXT_PUBLIC_WEBSITE_URL",
+        "AWS_REGION"
       ]
     },
     "dev": {
@@ -19,39 +30,44 @@
       "persistent": true
     },
     "generate": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
+      "inputs": ["src/**", "public/**", "locales/**", "nuxt.config.ts"],
       "outputs": [".output/**", "dist/**"]
     },
     "lint": {
+      "inputs": ["src/**", "**/*.ts", "**/*.vue", "**/*.js", ".eslintrc.json", "eslint.config.mjs"],
       "outputs": [".eslintcache"],
       "cache": true
     },
     "lint:fix": {
-      "outputs": [".eslintcache"],
+      "inputs": ["src/**", "**/*.ts", "**/*.vue", "**/*.js"],
       "cache": false
     },
     "typecheck": {
-      "dependsOn": ["^build"],
+      "inputs": ["src/**", "**/*.ts", "**/*.vue", "tsconfig.json"],
       "outputs": []
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
+      "inputs": ["src/**", "tests/**", "**/*.test.ts", "**/*.spec.ts"],
       "outputs": ["coverage/**"],
       "env": ["NODE_ENV"]
     },
     "test:unit": {
-      "dependsOn": ["^build"],
+      "inputs": ["src/**", "tests/unit/**", "**/*.test.ts"],
       "outputs": ["coverage/**"]
     },
     "test:e2e": {
-      "dependsOn": ["^build"],
+      "inputs": ["src/**", "tests/e2e/**", "**/*.spec.ts", "playwright.config.ts"],
       "outputs": ["test-results/**", "playwright-report/**"],
       "cache": false
     },
     "format": {
+      "inputs": ["src/**", "**/*.ts", "**/*.vue", "**/*.scss", "**/*.css", "**/*.json", "**/*.md"],
       "outputs": []
     },
     "format:check": {
+      "inputs": ["src/**", "**/*.ts", "**/*.vue", "**/*.scss", "**/*.css", "**/*.json", "**/*.md"],
       "outputs": []
     },
     "clean": {

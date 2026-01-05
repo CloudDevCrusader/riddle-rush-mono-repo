@@ -1,7 +1,7 @@
 <template>
   <div class="game-page">
     <!-- Background -->
-    <div class="game-bg"></div>
+    <div class="game-bg" />
 
     <!-- Top Bar -->
     <header class="game-header">
@@ -11,18 +11,12 @@
         class="back-btn tap-highlight no-select"
         @click="handleBack"
       >
-        <img
-          src="/assets/alphabets/back.png"
-          alt="Back"
-          class="back-icon"
-        />
+        <img src="/assets/alphabets/back.png" alt="Back" class="back-icon" />
       </button>
 
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <span class="round-text">
-          ROUND {{ formattedRound }}
-        </span>
+        <span class="round-text"> ROUND {{ formattedRound }} </span>
       </div>
 
       <!-- Pause Button -->
@@ -41,18 +35,8 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <rect
-            x="6"
-            y="4"
-            width="4"
-            height="16"
-          />
-          <rect
-            x="14"
-            y="4"
-            width="4"
-            height="16"
-          />
+          <rect x="6" y="4" width="4" height="16" />
+          <rect x="14" y="4" width="4" height="16" />
         </svg>
       </button>
     </header>
@@ -66,9 +50,7 @@
           alt="Category"
           class="category-label-image"
         />
-        <div class="category-label">
-          CATEGORY
-        </div>
+        <div class="category-label">CATEGORY</div>
         <div class="category-name">
           {{ currentCategory?.name?.toUpperCase() || 'LOADING...' }}
         </div>
@@ -90,10 +72,7 @@
           <span class="turn-label">{{ $t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <form
-          class="answer-form"
-          @submit.prevent="submitAnswer"
-        >
+        <form class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-model="playerAnswer"
             type="text"
@@ -103,22 +82,16 @@
             autocapitalize="words"
             maxlength="50"
             @input="sanitizeInput"
+            @keyup.enter="submitAnswer"
           />
-          <button
-            type="submit"
-            class="submit-answer-btn"
-            :disabled="!playerAnswer.trim()"
-          >
+          <button type="submit" class="submit-answer-btn" :disabled="false">
             {{ $t('game.submit', 'Submit') }}
           </button>
         </form>
       </div>
 
       <!-- All Players Submitted Message -->
-      <div
-        v-if="allPlayersSubmitted"
-        class="all-submitted-message"
-      >
+      <div v-if="allPlayersSubmitted" class="all-submitted-message">
         <p>{{ $t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
@@ -136,7 +109,7 @@
     <LazyQuitModal
       v-if="showQuitModal"
       :visible="showQuitModal"
-      @confirm="showQuitModal = false"
+      @confirm="handleQuitConfirmed"
       @cancel="showQuitModal = false"
     />
 
@@ -148,11 +121,7 @@
         class="next-btn btn-primary tap-highlight no-select"
         @click="handleNext"
       >
-        <img
-          src="/assets/alphabets/next.png"
-          alt="Next"
-          class="next-icon"
-        />
+        <img src="/assets/alphabets/next.png" alt="Next" class="next-icon" />
         <span class="next-text">NEXT</span>
       </button>
     </div>
@@ -189,10 +158,14 @@ const goHome = () => {
 const handleBack = () => {
   if (gameStore.hasActiveSession) {
     showQuitModal.value = true
-  }
-  else {
+  } else {
     goHome()
   }
+}
+
+const handleQuitConfirmed = () => {
+  showQuitModal.value = false
+  goHome()
 }
 
 // Sanitize input to prevent XSS and limit special characters
@@ -207,21 +180,28 @@ const sanitizeInput = () => {
 
 const submitAnswer = async () => {
   const player = currentPlayerTurn.value
-  if (!player || !playerAnswer.value.trim()) {
+  if (!player) {
     return
   }
 
   try {
-    await gameStore.submitPlayerAnswer(player.id, playerAnswer.value.trim())
-    toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
+    // Allow empty answers (player can skip their turn)
+    const answer = playerAnswer.value.trim() || ''
+    await gameStore.submitPlayerAnswer(player.id, answer)
+
+    if (answer) {
+      toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
+    } else {
+      toast.info(t('game.answer_skipped', `${player.name} skipped their turn`))
+    }
+
     playerAnswer.value = ''
 
     // If all players submitted, show message
     if (allPlayersSubmitted.value) {
       toast.info(t('game.all_submitted', 'All players have submitted!'))
     }
-  }
-  catch (error) {
+  } catch (error) {
     const logger = useLogger()
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))
@@ -264,11 +244,12 @@ onMounted(async () => {
 })
 
 useHead({
-  title: () => `${t('app.title')} - ${t('game.title', 'Game')}`,
+  title: 'Riddle Rush - Game',
   meta: [
     {
       name: 'description',
-      content: () => t('app.description'),
+      content:
+        'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
     },
   ],
 })
@@ -321,7 +302,9 @@ useHead({
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), var(--shadow-lg);
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-lg);
   position: relative;
   overflow: hidden;
 }
@@ -339,7 +322,9 @@ useHead({
 
 .back-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2), var(--shadow-md);
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-md);
 }
 
 .back-icon {
@@ -381,7 +366,9 @@ useHead({
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), var(--shadow-lg);
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-lg);
   color: var(--color-white);
   position: relative;
   overflow: hidden;
@@ -400,7 +387,9 @@ useHead({
 
 .pause-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2), var(--shadow-md);
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-md);
 }
 
 .pause-btn svg {

@@ -1,0 +1,131 @@
+{
+  "name": "Local Development Configuration",
+  "description": "Enhanced local development settings for Riddle Rush",
+  "scripts": {
+    "dev": {
+      "description": "Standard development mode",
+      "command": "pnpm dev",
+      "port": 3000,
+      "host": "localhost"
+    },
+    "dev:debug": {
+      "description": "Development with debug logging",
+      "command": "pnpm dev --debug",
+      "port": 3000,
+      "host": "localhost"
+    },
+    "dev:mobile": {
+      "description": "Development for mobile testing (accessible on network)",
+      "command": "pnpm dev --host 0.0.0.0",
+      "port": 3000,
+      "host": "0.0.0.0"
+    },
+    "dev:https": {
+      "description": "Development with HTTPS for PWA testing",
+      "command": "pnpm dev --https",
+      "port": 3000,
+      "host": "localhost",
+      "https": true
+    },
+    "dev:mobile-https": {
+      "description": "Development with HTTPS and network access",
+      "command": "pnpm dev --https --host 0.0.0.0",
+      "port": 3000,
+      "host": "0.0.0.0",
+      "https": true
+    },
+    "build:debug": {
+      "description": "Build with debug information",
+      "command": "pnpm build --debug"
+    },
+    "generate:debug": {
+      "description": "Generate static site with debug information",
+      "command": "pnpm generate --debug"
+    },
+    "preview:https": {
+      "description": "Preview build with HTTPS",
+      "command": "pnpm preview --https",
+      "port": 3000,
+      "https": true
+    }
+  },
+  "commonIssues": {
+    "portInUse": "Port 3000 is already in use. Try: lsof -i :3000 (Mac/Linux) or netstat -ano | findstr :3000 (Windows)",
+    "missingDependencies": "Run: pnpm install",
+    "buildFailed": "Try: rm -rf .nuxt .output && pnpm install && pnpm dev",
+    "hotReloadNotWorking": "Try: pnpm dev --clear"
+  },
+  "mobileTesting": {
+    "iOS": {
+      "description": "Test on iPhone/iPad",
+      "steps": [
+        "Connect device to same WiFi as computer",
+        "Run: pnpm dev:mobile",
+        "On device, open Safari and go to: http://[your-computer-ip]:3000",
+        "Add to Home Screen for PWA testing"
+      ]
+    },
+    "Android": {
+      "description": "Test on Android device",
+      "steps": [
+        "Connect device to same WiFi as computer",
+        "Run: pnpm dev:mobile",
+        "On device, open Chrome and go to: http://[your-computer-ip]:3000",
+        "Use 'Add to Home screen' for PWA testing"
+      ]
+    }
+  },
+  "pwaTesting": {
+    "serviceWorker": {
+      "description": "Test Service Worker functionality",
+      "steps": [
+        "Run: pnpm dev:https (HTTPS required for Service Worker)",
+        "Open Chrome DevTools > Application > Service Workers",
+        "Check that service worker is registered and activated",
+        "Test offline functionality by checking 'Offline' checkbox"
+      ]
+    },
+    "installation": {
+      "description": "Test PWA installation",
+      "steps": [
+        "Run: pnpm dev:https",
+        "Open Chrome and navigate to https://localhost:3000",
+        "Look for install prompt or use Chrome menu > Install",
+        "Check that app launches from desktop/home screen"
+      ]
+    }
+  },
+  "debugging": {
+    "vueDevtools": {
+      "description": "Vue DevTools setup",
+      "installation": "Install Vue DevTools extension for Chrome/Firefox"
+    },
+    "networkDebugging": {
+      "description": "Debug network requests",
+      "tools": ["Chrome DevTools > Network tab", "Fiddler/Charles Proxy for advanced debugging"]
+    },
+    "performance": {
+      "description": "Performance debugging",
+      "tools": ["Chrome DevTools > Performance tab", "Lighthouse audits", "WebPageTest"]
+    }
+  },
+  "environmentVariables": {
+    "development": {
+      "BASE_URL": "/",
+      "NODE_ENV": "development",
+      "DEBUG": "riddle-rush:*"
+    },
+    "testing": {
+      "BASE_URL": "/",
+      "NODE_ENV": "test",
+      "CI": "true"
+    }
+  },
+  "tips": [
+    "Use pnpm dev:debug for detailed logging",
+    "Clear cache with: rm -rf .nuxt .output",
+    "For mobile testing, use your local IP address",
+    "Test PWA features with HTTPS enabled",
+    "Use Chrome's Device Toolbar for responsive testing"
+  ]
+}

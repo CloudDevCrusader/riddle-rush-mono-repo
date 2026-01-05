@@ -136,6 +136,22 @@ resource "aws_cloudfront_distribution" "website" {
     max_ttl     = 31536000   # 1 year
   }
 
+  # HTML files - short cache for dynamic content
+  ordered_cache_behavior {
+    path_pattern           = "*.html"
+    target_origin_id       = "S3Origin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    compress               = true
+
+    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+
+    min_ttl     = 0
+    default_ttl = 300      # 5 minutes
+    max_ttl     = 3600     # 1 hour
+  }
+
   # Service Worker - no cache
   ordered_cache_behavior {
     path_pattern           = "sw.js"

@@ -5,6 +5,7 @@
  */
 export function useGameState() {
   const gameStore = useGameStore()
+  const settingsStore = useSettingsStore()
 
   // Common computeds from game store
   const currentCategory = computed(() => gameStore.currentCategory)
@@ -20,6 +21,7 @@ export function useGameState() {
 
   return {
     gameStore,
+    settingsStore,
     currentCategory,
     currentLetter,
     currentRound,

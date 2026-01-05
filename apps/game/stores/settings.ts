@@ -11,6 +11,7 @@ export interface GameSettings {
   musicEnabled: boolean
   musicVolume: number
   offlineMode: boolean
+  language: string
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -23,6 +24,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   musicEnabled: true,
   musicVolume: 75,
   offlineMode: false,
+  language: 'de',
 }
 
 const STORAGE_KEY = 'game-settings'
@@ -31,9 +33,9 @@ export const useSettingsStore = defineStore('settings', {
   state: (): GameSettings => ({ ...DEFAULT_SETTINGS }),
 
   getters: {
-    isDebugMode: state => state.debugMode,
-    isLeaderboardEnabled: state => state.leaderboardEnabled,
-    shouldShowLeaderboard: state => state.leaderboardEnabled && state.showLeaderboardAfterRound,
+    isDebugMode: (state) => state.debugMode,
+    isLeaderboardEnabled: (state) => state.leaderboardEnabled,
+    shouldShowLeaderboard: (state) => state.leaderboardEnabled && state.showLeaderboardAfterRound,
   },
 
   actions: {
@@ -46,8 +48,7 @@ export const useSettingsStore = defineStore('settings', {
           const parsed = JSON.parse(stored)
           Object.assign(this, { ...DEFAULT_SETTINGS, ...parsed })
         }
-      }
-      catch (e) {
+      } catch (e) {
         const logger = useLogger()
         logger.warn('Failed to load settings:', e)
       }
@@ -58,15 +59,14 @@ export const useSettingsStore = defineStore('settings', {
 
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.$state))
-      }
-      catch (e) {
+      } catch (e) {
         const logger = useLogger()
         logger.warn('Failed to save settings:', e)
       }
     },
 
     updateSetting<K extends keyof GameSettings>(key: K, value: GameSettings[K]) {
-      (this.$state as GameSettings)[key] = value
+      ;(this.$state as GameSettings)[key] = value
       this.saveSettings()
     },
 
@@ -93,6 +93,15 @@ export const useSettingsStore = defineStore('settings', {
     resetToDefaults() {
       Object.assign(this, DEFAULT_SETTINGS)
       this.saveSettings()
+    },
+
+    setLanguage(lang: string) {
+      this.language = lang
+      this.saveSettings()
+    },
+
+    getLanguage() {
+      return this.language
     },
   },
 })

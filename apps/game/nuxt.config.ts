@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { getDevPlugins, getBuildPlugins, getOptimizeDeps } from '@riddle-rush/config/vite'
+import {
+  getDevPlugins,
+  getBuildPlugins,
+  getOptimizeDeps,
+  getBuildConfig,
+} from '@riddle-rush/config/vite'
 
 export default defineNuxtConfig({
   modules: [
@@ -10,6 +15,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/eslint',
   ],
+
+  plugins: ['~/plugins/i18n-init.client.ts'],
   ssr: false,
 
   // Auto-import configuration
@@ -99,16 +106,24 @@ export default defineNuxtConfig({
 
   experimental: {
     typedPages: true,
+    payloadExtraction: true,
+    renderJsonPayloads: true,
+    viewTransition: true,
   },
   compatibilityDate: '2025-07-15',
 
   nitro: {
     compressPublicAssets: true,
     minify: true,
+    prerender: {
+      crawlLinks: true,
+      routes: ['/'],
+    },
   },
 
   // Workspace packages - use Vite alias for proper resolution
   vite: {
+    ...getBuildConfig(),
     resolve: {
       alias: {
         '@riddle-rush/shared': new URL('../../packages/shared/src', import.meta.url).pathname,
