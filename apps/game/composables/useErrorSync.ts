@@ -2,7 +2,6 @@
  * Error Synchronization Utility
  * Syncs error logs to CloudWatch and other services
  */
-/* eslint-disable no-console */
 
 import { openDB } from 'idb'
 
@@ -93,7 +92,6 @@ export const useErrorSync = () => {
 
   // Export for testing
   if (process.env.NODE_ENV === 'test') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(useErrorSync as any).formatError = formatError
   }
 

@@ -1,25 +1,22 @@
 <template>
-  <div
-    class="spinner"
-    :class="[`spinner--${size}`, { 'spinner--overlay': overlay }]"
-  >
-    <div class="spinner__circle"></div>
-    <span
-      v-if="label"
-      class="spinner__label"
-    >{{ label }}</span>
+  <div class="spinner" :class="[`spinner--${size}`, { 'spinner--overlay': overlay }]">
+    <div class="spinner__circle" />
+    <span v-if="label" class="spinner__label">{{ label }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  size?: 'sm' | 'md' | 'lg'
-  label?: string
-  overlay?: boolean
-}>(), {
-  size: 'md',
-  overlay: false,
-})
+withDefaults(
+  defineProps<{
+    size?: 'sm' | 'md' | 'lg'
+    label?: string
+    overlay?: boolean
+  }>(),
+  {
+    size: 'md',
+    overlay: false,
+  }
+)
 </script>
 
 <style scoped>

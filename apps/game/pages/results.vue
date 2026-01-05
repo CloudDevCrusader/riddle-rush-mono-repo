@@ -1,42 +1,24 @@
 <template>
   <div class="results-page">
     <!-- Background Image -->
-    <img
-      :src="`${baseUrl}assets/scoring/BACKGROUND.png`"
-      alt="Background"
-      class="page-bg"
-    />
+    <img :src="`${baseUrl}assets/scoring/BACKGROUND.png`" alt="Background" class="page-bg" />
 
     <!-- Back Button -->
-    <button
-      class="back-btn tap-highlight no-select"
-      @click="goBack"
-    >
-      <img
-        :src="`${baseUrl}assets/scoring/back.png`"
-        alt="Back"
-      />
+    <button class="back-btn tap-highlight no-select" @click="goBack">
+      <img :src="`${baseUrl}assets/scoring/back.png`" alt="Back" />
     </button>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Title -->
       <div class="title-container animate-fade-in">
-        <img
-          :src="`${baseUrl}assets/scoring/scoring.png`"
-          alt="Scoring"
-          class="title-image"
-        />
+        <img :src="`${baseUrl}assets/scoring/scoring.png`" alt="Scoring" class="title-image" />
       </div>
 
       <!-- Scores List Container -->
       <div class="scores-list-container animate-scale-in">
         <div class="scores-list">
-          <div
-            v-for="(player, index) in playerScores"
-            :key="index"
-            class="score-item"
-          >
+          <div v-for="(player, index) in playerScores" :key="index" class="score-item">
             <img
               :src="`${baseUrl}assets/scoring/Shape 2.png`"
               alt="Score slot"
@@ -60,20 +42,14 @@
                 :aria-label="`Increase score for ${player.name}`"
                 @click="increaseScore(index)"
               >
-                <img
-                  :src="`${baseUrl}assets/scoring/add.png`"
-                  alt="Add"
-                />
+                <img :src="`${baseUrl}assets/scoring/add.png`" alt="Add" />
               </button>
               <button
                 class="score-action-btn tap-highlight no-select"
                 :aria-label="`Decrease score for ${player.name}`"
                 @click="decreaseScore(index)"
               >
-                <img
-                  :src="`${baseUrl}assets/scoring/minus.png`"
-                  alt="Minus"
-                />
+                <img :src="`${baseUrl}assets/scoring/minus.png`" alt="Minus" />
               </button>
             </div>
           </div>
@@ -102,10 +78,7 @@
           aria-label="Go back to game"
           @click="goToPrevious"
         >
-          <img
-            :src="`${baseUrl}assets/scoring/back-1.png`"
-            alt="Back"
-          />
+          <img :src="`${baseUrl}assets/scoring/back-1.png`" alt="Back" />
         </button>
 
         <!-- Next Button -->
@@ -116,10 +89,7 @@
           aria-label="Continue to leaderboard"
           @click="goToLeaderboard"
         >
-          <img
-            :src="`${baseUrl}assets/scoring/next.png`"
-            alt="Next"
-          />
+          <img :src="`${baseUrl}assets/scoring/next.png`" alt="Next" />
         </button>
       </div>
     </div>
@@ -138,12 +108,12 @@ const isLoading = ref(false)
 
 // Local state for scores (will be saved on navigation)
 const playerScores = ref(
-  players.value.map(p => ({
+  players.value.map((p) => ({
     id: p.id,
     name: p.name,
     answer: p.currentRoundAnswer || '',
     score: p.currentRoundScore,
-  })),
+  }))
 )
 
 const audio = useAudio()
@@ -190,8 +160,7 @@ const goToLeaderboard = async () => {
     setTimeout(() => {
       navigateToLeaderboard()
     }, NAVIGATION_DELAY_MS)
-  }
-  catch (error) {
+  } catch (error) {
     const logger = useLogger()
     logger.error('Error saving scores:', error)
     toast.error(t('results.error_saving', 'Failed to save scores. Please try again.'))

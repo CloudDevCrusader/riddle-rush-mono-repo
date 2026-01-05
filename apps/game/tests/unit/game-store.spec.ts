@@ -39,7 +39,7 @@ describe('Game Store', () => {
     setActivePinia(pinia)
     // Force reset all stores
     // @ts-expect-error: Accessing internal Pinia API for test cleanup
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     pinia._s.forEach((store: any) => store.$reset())
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
@@ -230,7 +230,7 @@ describe('Game Store', () => {
       const store = useGameStore()
       await store.startNewGame()
       expect(store.currentSession?.category).toBeDefined()
-      expect(mockCategories.some(cat => cat.id === store.currentSession?.category.id)).toBe(true)
+      expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
     })
 
     it('hasActiveSession becomes true', async () => {
@@ -484,7 +484,7 @@ describe('Game Store', () => {
       await store.fetchCategories()
       await store.resumeOrStartNewGame()
       expect(store.currentSession?.category).toBeDefined()
-      expect(mockCategories.some(cat => cat.id === store.currentSession?.category.id)).toBe(true)
+      expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
     })
   })
 
@@ -562,7 +562,7 @@ describe('Game Store', () => {
       it('players getter returns all players', () => {
         const store = useGameStore()
         expect(store.players).toHaveLength(3)
-        expect(store.players.map(p => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
+        expect(store.players.map((p) => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
       })
 
       it('currentPlayerTurn returns first unsubmitted player', () => {
@@ -655,7 +655,7 @@ describe('Game Store', () => {
         await store.submitPlayerAnswer('invalid-id', 'Answer')
 
         // Should not throw error
-        expect(store.players.every(p => !p.hasSubmitted)).toBe(true)
+        expect(store.players.every((p) => !p.hasSubmitted)).toBe(true)
       })
     })
 
@@ -811,7 +811,7 @@ describe('Game Store', () => {
         await store.startNextRound()
 
         expect(store.players).toHaveLength(2)
-        expect(store.players.map(p => p.name)).toEqual(['Alice', 'Bob'])
+        expect(store.players.map((p) => p.name)).toEqual(['Alice', 'Bob'])
       })
     })
 

@@ -1,15 +1,7 @@
 <template>
-  <button
-    :class="buttonClasses"
-    :type="type"
-    :disabled="disabled || loading"
-    @click="handleClick"
-  >
-    <span
-      v-if="loading"
-      class="button-spinner"
-    ></span>
-    <slot v-else></slot>
+  <button :class="buttonClasses" :type="type" :disabled="disabled || loading" @click="handleClick">
+    <span v-if="loading" class="button-spinner" />
+    <slot v-else />
   </button>
 </template>
 

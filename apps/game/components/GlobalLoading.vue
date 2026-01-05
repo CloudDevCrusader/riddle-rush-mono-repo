@@ -1,25 +1,14 @@
 <template>
   <transition name="fade">
-    <div
-      v-if="isLoading"
-      class="global-loading-overlay"
-    >
+    <div v-if="isLoading" class="global-loading-overlay">
       <div class="loading-spinner">
-        <div class="spinner-circle"></div>
-        <div class="spinner-text">
-          Loading...
-        </div>
+        <div class="spinner-circle" />
+        <div class="spinner-text">Loading...</div>
       </div>
 
       <!-- Optional progress bar for longer operations -->
-      <div
-        v-if="showProgress"
-        class="progress-bar"
-      >
-        <div
-          class="progress-fill"
-          :style="{ width: `${progress}%` }"
-        ></div>
+      <div v-if="showProgress" class="progress-bar">
+        <div class="progress-fill" :style="{ width: `${progress}%` }" />
       </div>
     </div>
   </transition>

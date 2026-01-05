@@ -2,7 +2,7 @@
  * Composable for managing modal state
  * Provides reusable modal logic with Vue 3 Composition API
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export function useModal(initialState = false) {
   const isOpen = ref(initialState)
   const data = ref<any>(null)
@@ -25,8 +25,7 @@ export function useModal(initialState = false) {
   const toggle = () => {
     if (isOpen.value) {
       close()
-    }
-    else {
+    } else {
       open()
     }
   }
@@ -45,7 +44,7 @@ export function useModal(initialState = false) {
  */
 export function useModals<T extends string>(modalNames: T[]) {
   const modals = reactive<Record<T, ReturnType<typeof useModal>>>(
-    {} as Record<T, ReturnType<typeof useModal>>,
+    {} as Record<T, ReturnType<typeof useModal>>
   )
 
   modalNames.forEach((name) => {

@@ -1,27 +1,13 @@
 <template>
   <Transition name="pause-fade">
-    <div
-      v-if="visible"
-      class="pause-overlay"
-      @click.self="handleResume"
-    >
+    <div v-if="visible" class="pause-overlay" @click.self="handleResume">
       <div class="pause-modal">
         <!-- Background Image -->
-        <img
-          :src="`${baseUrl}assets/paused/BACKGROUND.png`"
-          alt="Background"
-          class="pause-bg"
-        />
+        <img :src="`${baseUrl}assets/paused/BACKGROUND.png`" alt="Background" class="pause-bg" />
 
         <!-- Back Button -->
-        <button
-          class="back-btn tap-highlight no-select"
-          @click="handleResume"
-        >
-          <img
-            :src="`${baseUrl}assets/paused/back.png`"
-            alt="Back"
-          />
+        <button class="back-btn tap-highlight no-select" @click="handleResume">
+          <img :src="`${baseUrl}assets/paused/back.png`" alt="Back" />
         </button>
 
         <!-- Title -->
@@ -45,36 +31,18 @@
         <!-- Action Buttons -->
         <div class="actions-container">
           <!-- Resume Button -->
-          <button
-            class="action-btn resume-btn tap-highlight no-select"
-            @click="handleResume"
-          >
-            <img
-              :src="`${baseUrl}assets/paused/Resume.png`"
-              alt="Resume"
-            />
+          <button class="action-btn resume-btn tap-highlight no-select" @click="handleResume">
+            <img :src="`${baseUrl}assets/paused/Resume.png`" alt="Resume" />
           </button>
 
           <!-- Restart Button -->
-          <button
-            class="action-btn restart-btn tap-highlight no-select"
-            @click="handleRestart"
-          >
-            <img
-              :src="`${baseUrl}assets/paused/Restart.png`"
-              alt="Restart"
-            />
+          <button class="action-btn restart-btn tap-highlight no-select" @click="handleRestart">
+            <img :src="`${baseUrl}assets/paused/Restart.png`" alt="Restart" />
           </button>
 
           <!-- Home Button -->
-          <button
-            class="action-btn home-btn tap-highlight no-select"
-            @click="handleHome"
-          >
-            <img
-              :src="`${baseUrl}assets/paused/Home.png`"
-              alt="Home"
-            />
+          <button class="action-btn home-btn tap-highlight no-select" @click="handleHome">
+            <img :src="`${baseUrl}assets/paused/Home.png`" alt="Home" />
           </button>
         </div>
       </div>
@@ -130,9 +98,9 @@ const handleHome = async () => {
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-right, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-left, 0px));
+    max(var(--spacing-lg), env(safe-area-inset-right, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-left, 0px));
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -280,14 +248,17 @@ const handleHome = async () => {
 @media (max-width: 640px) {
   .pause-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .pause-modal {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -333,7 +304,10 @@ const handleHome = async () => {
 @media (max-width: 450px) and (min-height: 800px) {
   .pause-modal {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 
   .title-image {

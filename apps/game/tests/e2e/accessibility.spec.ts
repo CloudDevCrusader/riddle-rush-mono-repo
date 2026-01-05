@@ -55,7 +55,6 @@ test.describe('Accessibility', () => {
 
       // It's okay if some inputs don't have labels, but we log it
       if (!hasAccessibleName) {
-        // eslint-disable-next-line no-console
         console.log('Input might benefit from accessible label')
       }
     }

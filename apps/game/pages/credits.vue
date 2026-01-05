@@ -1,53 +1,35 @@
 <template>
   <div class="credits-page">
     <!-- Background Image -->
-    <img
-      :src="`${baseUrl}assets/credits/BACKGROUND.png`"
-      alt="Background"
-      class="page-bg"
-    />
+    <img :src="`${baseUrl}assets/credits/BACKGROUND.png`" alt="Background" class="page-bg" />
 
     <!-- Back Button -->
-    <button
-      class="back-btn tap-highlight no-select"
-      @click="goBack"
-    >
-      <img
-        :src="`${baseUrl}assets/credits/back.png`"
-        alt="Back"
-      />
+    <button class="back-btn tap-highlight no-select" @click="goBack">
+      <img :src="`${baseUrl}assets/credits/back.png`" alt="Back" />
     </button>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Title -->
       <div class="title-container animate-fade-in">
-        <img
-          :src="`${baseUrl}assets/credits/CREDITS.png`"
-          alt="CREDITS"
-          class="title-image"
-        />
+        <img :src="`${baseUrl}assets/credits/CREDITS.png`" alt="CREDITS" class="title-image" />
       </div>
 
       <!-- Credits Panel -->
       <div class="credits-panel animate-scale-in">
         <!-- Game Design -->
         <div class="credit-section">
-          <h2 class="section-heading">
-            Game Design
-          </h2>
+          <h2 class="section-heading">Game Design</h2>
           <div class="credit-box">
             <span class="credit-name">Tobi</span>
-            <span class="credit-divider"></span>
+            <span class="credit-divider" />
             <span class="credit-name">Sophia</span>
           </div>
         </div>
 
         <!-- Programming -->
         <div class="credit-section">
-          <h2 class="section-heading">
-            Programming
-          </h2>
+          <h2 class="section-heading">Programming</h2>
           <div class="credit-box">
             <span class="credit-name">Markus</span>
           </div>
@@ -55,9 +37,7 @@
 
         <!-- Art -->
         <div class="credit-section">
-          <h2 class="section-heading">
-            Art
-          </h2>
+          <h2 class="section-heading">Art</h2>
           <div class="credit-box">
             <span class="credit-name">Sarmad Ali</span>
           </div>
@@ -65,14 +45,8 @@
       </div>
 
       <!-- OK Button -->
-      <button
-        class="ok-btn tap-highlight no-select animate-slide-up"
-        @click="goBack"
-      >
-        <img
-          :src="`${baseUrl}assets/credits/ok.png`"
-          alt="OK"
-        />
+      <button class="ok-btn tap-highlight no-select animate-slide-up" @click="goBack">
+        <img :src="`${baseUrl}assets/credits/ok.png`" alt="OK" />
       </button>
     </div>
   </div>

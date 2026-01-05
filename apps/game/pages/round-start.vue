@@ -1,19 +1,13 @@
 <template>
   <div class="round-start-page">
     <!-- Background Image -->
-    <img
-      :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
-      alt="Background"
-      class="page-bg"
-    />
+    <img :src="`${baseUrl}assets/alphabets/BACKGROUND.png`" alt="Background" class="page-bg" />
 
     <!-- Top Bar -->
     <div class="top-bar">
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <div class="round-text">
-          {{ $t('game.round', 'Round') }} {{ currentRoundNumber }}
-        </div>
+        <div class="round-text">{{ $t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
       </div>
     </div>
 
@@ -21,10 +15,7 @@
     <div class="container">
       <!-- Dual Wheels Phase -->
       <transition name="wheel-fade">
-        <div
-          v-if="!wheelsComplete"
-          class="wheels-container"
-        >
+        <div v-if="!wheelsComplete" class="wheels-container">
           <div class="wheel-wrapper">
             <div class="wheel-label">
               {{ $t('common.category', 'Category') }}
@@ -61,10 +52,7 @@
 
       <!-- Selected Values Display Phase -->
       <transition name="results-fade">
-        <div
-          v-if="wheelsComplete && !startingGame"
-          class="results-display"
-        >
+        <div v-if="wheelsComplete && !startingGame" class="results-display">
           <div class="result-item animate-scale-in">
             <div class="result-label">
               {{ $t('common.category', 'Category') }}
@@ -75,14 +63,9 @@
             </div>
           </div>
 
-          <div class="divider">
-            ×
-          </div>
+          <div class="divider">×</div>
 
-          <div
-            class="result-item animate-scale-in"
-            style="animation-delay: 0.2s"
-          >
+          <div class="result-item animate-scale-in" style="animation-delay: 0.2s">
             <div class="result-label">
               {{ $t('common.letter', 'Letter') }}
             </div>
@@ -94,10 +77,7 @@
       </transition>
 
       <!-- Loading indicator -->
-      <div
-        v-if="startingGame"
-        class="loading-container"
-      >
+      <div v-if="startingGame" class="loading-container">
         <Spinner />
         <p class="loading-text">
           {{ $t('home.starting_game', 'Starting game...') }}
@@ -146,23 +126,19 @@ const categoryIconMap: Record<string, string> = {
 }
 
 const selectedCategoryIcon = computed(() => {
-  if (!selectedCategory.value)
-    return '📦'
+  if (!selectedCategory.value) return '📦'
   return getCategoryIcon(selectedCategory.value)
 })
 
 const selectedCategoryName = computed(() => {
-  if (!selectedCategory.value)
-    return ''
+  if (!selectedCategory.value) return ''
   return t(`categories.${selectedCategory.value.searchWord}`, selectedCategory.value.name)
 })
 
 const currentRoundNumber = computed(() => {
   // If there's an active session, show next round number
   // Otherwise show round 1
-  return gameStore.currentSession
-    ? (gameStore.currentSession.currentRound + 1)
-    : 1
+  return gameStore.currentSession ? gameStore.currentSession.currentRound + 1 : 1
 })
 
 onMounted(async () => {
@@ -212,8 +188,7 @@ const checkBothComplete = () => {
 }
 
 const startGame = async () => {
-  if (!selectedCategory.value || !selectedLetter.value)
-    return
+  if (!selectedCategory.value || !selectedLetter.value) return
 
   startingGame.value = true
 
@@ -224,14 +199,17 @@ const startGame = async () => {
     if (isNextRound) {
       // This is a next round - update the existing session
       await gameStore.startNextRound(selectedCategory.value, selectedLetter.value)
-    }
-    else {
+    } else {
       // This is initial setup - create new session with players
-      const playerNames = gameStore.pendingPlayerNames.length > 0
-        ? gameStore.pendingPlayerNames
-        : ['Player 1'] // Fallback
+      const playerNames =
+        gameStore.pendingPlayerNames.length > 0 ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
 
-      await gameStore.setupPlayers(playerNames, undefined, selectedLetter.value, selectedCategory.value)
+      await gameStore.setupPlayers(
+        playerNames,
+        undefined,
+        selectedLetter.value,
+        selectedCategory.value
+      )
 
       // Clear pending state
       gameStore.pendingPlayerNames = []
@@ -240,8 +218,7 @@ const startGame = async () => {
 
     // Navigate to game
     await goToGame()
-  }
-  catch (error) {
+  } catch (error) {
     const logger = useLogger()
     logger.error('Failed to start game:', error)
     startingGame.value = false
@@ -297,8 +274,9 @@ useHead({
   border-radius: var(--radius-xl);
   padding: var(--spacing-md) var(--spacing-xl);
   border: 2px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3),
-              inset 0 0 20px rgba(255, 215, 0, 0.1);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 215, 0, 0.1);
 }
 
 .round-text {
@@ -306,8 +284,9 @@ useHead({
   font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-2xl));
   font-weight: var(--font-weight-black);
   color: var(--color-white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5),
-               0 0 20px rgba(255, 215, 0, 0.6);
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.6);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -349,8 +328,9 @@ useHead({
   font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-2xl));
   font-weight: var(--font-weight-black);
   color: var(--color-white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5),
-               0 0 20px rgba(255, 215, 0, 0.4);
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.4);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -375,8 +355,9 @@ useHead({
   backdrop-filter: blur(10px);
   border-radius: var(--radius-xl);
   padding: clamp(var(--spacing-xl), 4vw, var(--spacing-3xl));
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-              inset 0 0 40px rgba(255, 215, 0, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 0 40px rgba(255, 215, 0, 0.1);
   border: 2px solid rgba(255, 215, 0, 0.3);
 }
 
@@ -406,13 +387,14 @@ useHead({
   font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-3xl));
   font-weight: var(--font-weight-black);
   color: var(--color-white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5),
-               0 0 30px rgba(255, 215, 0, 0.6);
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 215, 0, 0.6);
 }
 
 .result-letter {
   font-size: clamp(64px, 10vw, 96px);
-  background: linear-gradient(135deg, #FFD700, #FFA500);
+  background: linear-gradient(135deg, #ffd700, #ffa500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

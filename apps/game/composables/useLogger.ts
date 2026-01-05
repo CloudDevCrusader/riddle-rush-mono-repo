@@ -2,7 +2,7 @@
  * Structured logging utility for the game application
  * Provides consistent logging with levels and context
  */
-/* eslint-disable no-console */
+
 export const useLogger = () => {
   // Import runtime config dynamically to avoid issues in test environment
   const runtimeConfig =

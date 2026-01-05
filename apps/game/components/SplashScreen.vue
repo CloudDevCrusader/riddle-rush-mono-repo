@@ -1,32 +1,17 @@
 <template>
   <transition name="fade-out">
-    <div
-      v-if="visible"
-      class="splash-screen"
-    >
+    <div v-if="visible" class="splash-screen">
       <!-- Background Image -->
-      <img
-        :src="`${baseUrl}assets/splash/background.png`"
-        alt="Background"
-        class="splash-bg"
-      />
+      <img :src="`${baseUrl}assets/splash/background.png`" alt="Background" class="splash-bg" />
 
       <!-- Logo -->
       <div class="logo-container animate-fade-in">
-        <img
-          :src="`${baseUrl}assets/splash/LOGO.png`"
-          alt="Logo"
-          class="logo-image"
-        />
+        <img :src="`${baseUrl}assets/splash/LOGO.png`" alt="Logo" class="logo-image" />
       </div>
 
       <!-- Loading Bar -->
       <div class="loading-container animate-slide-up">
-        <img
-          :src="`${baseUrl}assets/splash/LOADING_.png`"
-          alt="Loading"
-          class="loading-text"
-        />
+        <img :src="`${baseUrl}assets/splash/LOADING_.png`" alt="Loading" class="loading-text" />
         <div class="loading-bar-wrapper">
           <img
             :src="`${baseUrl}assets/splash/loading%20down.png`"
@@ -42,9 +27,7 @@
             />
           </div>
         </div>
-        <div class="loading-percentage">
-          {{ Math.round(progress) }}%
-        </div>
+        <div class="loading-percentage">{{ Math.round(progress) }}%</div>
       </div>
     </div>
   </transition>

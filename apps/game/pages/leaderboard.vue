@@ -1,22 +1,11 @@
 <template>
   <div class="leaderboard-page">
     <!-- Background Image -->
-    <img
-      :src="`${baseUrl}assets/leaderboard/BACKGROUND.png`"
-      alt="Background"
-      class="page-bg"
-    />
+    <img :src="`${baseUrl}assets/leaderboard/BACKGROUND.png`" alt="Background" class="page-bg" />
 
     <!-- Back Button - Only show if game is not completed -->
-    <button
-      v-if="!isGameCompleted"
-      class="back-btn tap-highlight no-select"
-      @click="goBack"
-    >
-      <img
-        :src="`${baseUrl}assets/leaderboard/back.png`"
-        alt="Back"
-      />
+    <button v-if="!isGameCompleted" class="back-btn tap-highlight no-select" @click="goBack">
+      <img :src="`${baseUrl}assets/leaderboard/back.png`" alt="Back" />
     </button>
 
     <!-- Main Container -->
@@ -57,10 +46,7 @@
                 alt="Rank"
                 class="rank-image"
               />
-              <span
-                v-if="index >= 5"
-                class="rank-number"
-              >{{ index + 1 }}</span>
+              <span v-if="index >= 5" class="rank-number">{{ index + 1 }}</span>
             </div>
 
             <!-- Player Info -->
@@ -85,11 +71,7 @@
 
             <!-- Score -->
             <div class="score-display">
-              <img
-                :src="`${baseUrl}assets/leaderboard/500.png`"
-                alt="Score"
-                class="score-icon"
-              />
+              <img :src="`${baseUrl}assets/leaderboard/500.png`" alt="Score" class="score-icon" />
               <span class="score-value">{{ entry.totalScore }}</span>
             </div>
 
@@ -118,24 +100,15 @@
       </div>
 
       <!-- Game Complete Message (if game is completed) -->
-      <div
-        v-if="isGameCompleted"
-        class="game-complete-message animate-fade-in"
-      >
+      <div v-if="isGameCompleted" class="game-complete-message animate-fade-in">
         <p class="complete-text">
           {{ $t('leaderboard.game_complete', 'Game Complete!') }}
         </p>
       </div>
 
       <!-- OK Button -->
-      <button
-        class="ok-btn tap-highlight no-select animate-slide-up"
-        @click="handleOk"
-      >
-        <img
-          :src="`${baseUrl}assets/leaderboard/ok.png`"
-          alt="OK"
-        />
+      <button class="ok-btn tap-highlight no-select animate-slide-up" @click="handleOk">
+        <img :src="`${baseUrl}assets/leaderboard/ok.png`" alt="OK" />
       </button>
     </div>
   </div>
@@ -155,8 +128,7 @@ const handleOk = async () => {
     // Leaderboard is the final screen - end game and return to home
     await gameStore.endGame()
     goHome()
-  }
-  else {
+  } else {
     // Continue to next round
     goToRoundStart()
   }
@@ -168,7 +140,7 @@ const getAvatarUrl = (entry: { avatar?: string }) => {
 }
 
 // Change avatar for a player
-const changeAvatar = (entry: { id: string, name: string }) => {
+const changeAvatar = (entry: { id: string; name: string }) => {
   // Create a hidden file input
   const input = document.createElement('input')
   input.type = 'file'
@@ -203,8 +175,7 @@ const changeAvatar = (entry: { id: string, name: string }) => {
         }
       }
       reader.readAsDataURL(file)
-    }
-    catch (error) {
+    } catch (error) {
       const logger = useLogger()
       logger.error('Error updating avatar:', error)
       toast.error(t('leaderboard.avatar_error', 'Failed to update avatar. Please try again.'))
@@ -513,7 +484,8 @@ useHead({
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }

@@ -1,28 +1,15 @@
 <template>
   <div class="settings-page">
     <!-- Background Image -->
-    <img
-      :src="`${baseUrl}assets/settings/BACKGROUND.png`"
-      alt="Background"
-      class="page-bg"
-    />
+    <img :src="`${baseUrl}assets/settings/BACKGROUND.png`" alt="Background" class="page-bg" />
 
     <!-- Back Button -->
-    <button
-      class="back-btn tap-highlight no-select"
-      @click="goBack"
-    >
-      <img
-        :src="`${baseUrl}assets/settings/back.png`"
-        alt="Back"
-      />
+    <button class="back-btn tap-highlight no-select" @click="goBack">
+      <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" />
     </button>
 
     <!-- Settings Modal (Lazy Loaded) -->
-    <LazySettingsModal
-      v-if="showSettings"
-      v-model="showSettings"
-    />
+    <LazySettingsModal v-if="showSettings" v-model="showSettings" />
   </div>
 </template>
 

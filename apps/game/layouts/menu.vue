@@ -1,38 +1,21 @@
 <template>
   <div class="menu-layout">
     <!-- Background Image -->
-    <img
-      v-if="backgroundImage"
-      :src="backgroundImage"
-      alt="Background"
-      class="page-bg"
-    />
+    <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
 
     <!-- Main Content Container -->
     <div class="container">
-      <slot></slot>
+      <slot />
     </div>
 
     <!-- Menu Toggle Button (bottom right) -->
-    <button
-      v-if="showMenuButton"
-      class="menu-icon-btn tap-highlight no-select"
-      @click="toggleMenu"
-    >
-      <img
-        :src="menuButtonImage"
-        alt="Menu"
-        class="menu-icon"
-      />
+    <button v-if="showMenuButton" class="menu-icon-btn tap-highlight no-select" @click="toggleMenu">
+      <img :src="menuButtonImage" alt="Menu" class="menu-icon" />
     </button>
 
     <!-- Menu Panel Slot -->
     <transition name="menu-fade">
-      <slot
-        v-if="isMenuOpen"
-        name="menu"
-        :close-menu="closeMenu"
-      ></slot>
+      <slot v-if="isMenuOpen" name="menu" :close-menu="closeMenu" />
     </transition>
   </div>
 </template>
@@ -55,19 +38,22 @@ provide('setBackground', (src: string) => {
   backgroundImage.value = src
 })
 
-provide('setMenuButton', (config: {
-  visible?: boolean
-  image?: string
-}) => {
+provide('setMenuButton', (config: { visible?: boolean; image?: string }) => {
   if (config.visible !== undefined) showMenuButton.value = config.visible
   if (config.image) menuButtonImage.value = config.image
 })
 
 provide('menuState', {
   isOpen: readonly(isMenuOpen),
-  open: () => { isMenuOpen.value = true },
-  close: () => { isMenuOpen.value = false },
-  toggle: () => { isMenuOpen.value = !isMenuOpen.value },
+  open: () => {
+    isMenuOpen.value = true
+  },
+  close: () => {
+    isMenuOpen.value = false
+  },
+  toggle: () => {
+    isMenuOpen.value = !isMenuOpen.value
+  },
 })
 
 const toggleMenu = () => {

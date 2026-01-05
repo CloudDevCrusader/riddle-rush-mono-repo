@@ -1,36 +1,18 @@
 <template>
   <Transition name="quit-fade">
-    <div
-      v-if="visible"
-      class="quit-overlay"
-      @click.self="handleNo"
-    >
+    <div v-if="visible" class="quit-overlay" @click.self="handleNo">
       <div class="quit-modal">
         <!-- Background Image -->
-        <img
-          :src="`${baseUrl}assets/quit/BACKGROUND.png`"
-          alt="Background"
-          class="quit-bg"
-        />
+        <img :src="`${baseUrl}assets/quit/BACKGROUND.png`" alt="Background" class="quit-bg" />
 
         <!-- Back Button -->
-        <button
-          class="back-btn tap-highlight no-select"
-          @click="handleNo"
-        >
-          <img
-            :src="`${baseUrl}assets/quit/back.png`"
-            alt="Back"
-          />
+        <button class="back-btn tap-highlight no-select" @click="handleNo">
+          <img :src="`${baseUrl}assets/quit/back.png`" alt="Back" />
         </button>
 
         <!-- Title -->
         <div class="title-container">
-          <img
-            :src="`${baseUrl}assets/quit/QUIT GAME.png`"
-            alt="Quit Game"
-            class="title-image"
-          />
+          <img :src="`${baseUrl}assets/quit/QUIT GAME.png`" alt="Quit Game" class="title-image" />
         </div>
 
         <!-- Message -->
@@ -45,25 +27,13 @@
         <!-- Action Buttons -->
         <div class="actions-container">
           <!-- Yes Button -->
-          <button
-            class="action-btn yes-btn tap-highlight no-select"
-            @click="handleYes"
-          >
-            <img
-              :src="`${baseUrl}assets/quit/yes.png`"
-              alt="Yes"
-            />
+          <button class="action-btn yes-btn tap-highlight no-select" @click="handleYes">
+            <img :src="`${baseUrl}assets/quit/yes.png`" alt="Yes" />
           </button>
 
           <!-- No Button -->
-          <button
-            class="action-btn no-btn tap-highlight no-select"
-            @click="handleNo"
-          >
-            <img
-              :src="`${baseUrl}assets/quit/no.png`"
-              alt="No"
-            />
+          <button class="action-btn no-btn tap-highlight no-select" @click="handleNo">
+            <img :src="`${baseUrl}assets/quit/no.png`" alt="No" />
           </button>
         </div>
       </div>
@@ -113,9 +83,9 @@ const handleNo = () => {
   align-items: center;
   justify-content: center;
   padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-right, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
-           max(var(--spacing-lg), env(safe-area-inset-left, 0px));
+    max(var(--spacing-lg), env(safe-area-inset-right, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    max(var(--spacing-lg), env(safe-area-inset-left, 0px));
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -259,14 +229,17 @@ const handleNo = () => {
 @media (max-width: 640px) {
   .quit-overlay {
     padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-             max(var(--spacing-md), env(safe-area-inset-right, 0px))
-             max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-             max(var(--spacing-md), env(safe-area-inset-left, 0px));
+      max(var(--spacing-md), env(safe-area-inset-right, 0px))
+      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-md), env(safe-area-inset-left, 0px));
   }
 
   .quit-modal {
     max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) - max(var(--spacing-md), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
+    );
     width: 100%;
     box-sizing: border-box;
   }
@@ -314,7 +287,10 @@ const handleNo = () => {
 @media (max-width: 450px) and (min-height: 800px) {
   .quit-modal {
     max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) - max(var(--spacing-lg), env(safe-area-inset-bottom, 0px)));
+    max-height: calc(
+      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
+        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
+    );
   }
 
   .title-image {

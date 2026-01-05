@@ -1,28 +1,16 @@
 <template>
   <div class="game-layout">
     <!-- Background Image -->
-    <img
-      v-if="backgroundImage"
-      :src="backgroundImage"
-      alt="Background"
-      class="page-bg"
-    />
+    <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
 
     <!-- Back Button -->
-    <button
-      v-if="showBackButton"
-      class="back-btn tap-highlight no-select"
-      @click="handleBack"
-    >
-      <img
-        :src="backButtonImage"
-        alt="Back"
-      />
+    <button v-if="showBackButton" class="back-btn tap-highlight no-select" @click="handleBack">
+      <img :src="backButtonImage" alt="Back" />
     </button>
 
     <!-- Main Content Container -->
     <div class="container">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -46,11 +34,7 @@ provide('setBackground', (src: string) => {
   backgroundImage.value = src
 })
 
-provide('setBackButton', (config: {
-  visible?: boolean
-  image?: string
-  onBack?: () => void
-}) => {
+provide('setBackButton', (config: { visible?: boolean; image?: string; onBack?: () => void }) => {
   if (config.visible !== undefined) showBackButton.value = config.visible
   if (config.image) backButtonImage.value = config.image
   if (config.onBack) onBackCallback.value = config.onBack
@@ -60,8 +44,7 @@ provide('setBackButton', (config: {
 const handleBack = () => {
   if (onBackCallback.value) {
     onBackCallback.value()
-  }
-  else {
+  } else {
     router.back()
   }
 }

@@ -1,16 +1,11 @@
 <template>
   <div class="layout-container">
     <!-- Background Image (if provided by page) -->
-    <img
-      v-if="backgroundImage"
-      :src="backgroundImage"
-      alt="Background"
-      class="page-bg"
-    />
+    <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
 
     <!-- Main Content -->
     <div class="page-content">
-      <slot></slot>
+      <slot />
     </div>
 
     <!-- Global Loading Overlay -->
