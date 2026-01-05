@@ -1,19 +1,12 @@
 <template>
   <Teleport to="body">
     <Transition name="overlay-fade">
-      <div
-        v-if="showDevOverlay.value"
-        class="storyboard-overlay"
-      >
+      <div v-if="showDevOverlay" class="storyboard-overlay">
         <div class="overlay-panel">
           <!-- Header -->
           <div class="overlay-header">
             <h3>📊 Storyboard Dev Tools</h3>
-            <button
-              class="close-btn"
-              aria-label="Close overlay"
-              @click="toggleDevOverlay"
-            >
+            <button class="close-btn" aria-label="Close overlay" @click="toggleDevOverlay">
               ✕
             </button>
           </div>
@@ -28,7 +21,7 @@
               </div>
               <div class="stat-item">
                 <span class="stat-label">Transitions:</span>
-                <span class="stat-value">{{ flow.value.totalTransitions }}</span>
+                <span class="stat-value">{{ flow.totalTransitions }}</span>
               </div>
               <div class="stat-item">
                 <span class="stat-label">Avg Time/State:</span>
@@ -44,23 +37,15 @@
           <!-- Current State -->
           <div class="overlay-section">
             <h4>Current State</h4>
-            <div
-              v-if="flow.value.currentState"
-              class="current-state"
-            >
+            <div v-if="flow.currentState" class="current-state">
               <div class="state-badge">
-                {{ flow.value.currentState.name }}
+                {{ flow.currentState.name }}
               </div>
               <div class="state-path">
-                {{ flow.value.currentState.path }}
+                {{ flow.currentState.path }}
               </div>
             </div>
-            <div
-              v-else
-              class="no-state"
-            >
-              No state recorded yet
-            </div>
+            <div v-else class="no-state">No state recorded yet</div>
           </div>
 
           <!-- Flow Visualization -->
@@ -72,22 +57,19 @@
                 :key="stateId"
                 class="flow-step"
                 :class="{
-                  visited: hasVisitedState(stateId),
-                  current: flow.value.currentState?.id === stateId,
+                  visited: hasVisitedState(stateId as WorkflowStateId),
+                  current: flow.currentState?.id === stateId,
                 }"
               >
                 <div class="step-indicator">
-                  <span v-if="hasVisitedState(stateId)">✓</span>
+                  <span v-if="hasVisitedState(stateId as WorkflowStateId)">✓</span>
                   <span v-else>○</span>
                 </div>
                 <div class="step-name">
-                  {{ getStateName(stateId) }}
+                  {{ getStateName(stateId as WorkflowStateId) }}
                 </div>
-                <div
-                  v-if="hasVisitedState(stateId)"
-                  class="step-count"
-                >
-                  {{ getStateVisitCount(stateId) }}x
+                <div v-if="hasVisitedState(stateId as WorkflowStateId)" class="step-count">
+                  {{ getStateVisitCount(stateId as WorkflowStateId) }}x
                 </div>
               </div>
             </div>
@@ -96,13 +78,8 @@
           <!-- History -->
           <div class="overlay-section">
             <div class="section-header">
-              <h4>History (Last {{ Math.min(10, flow.value.history.length) }})</h4>
-              <button
-                class="action-btn"
-                @click="clearHistory"
-              >
-                Clear
-              </button>
+              <h4>History (Last {{ Math.min(10, flow.history.length) }})</h4>
+              <button class="action-btn" @click="clearHistory">Clear</button>
             </div>
             <div class="history-list">
               <div
@@ -110,16 +87,11 @@
                 :key="`${state.id}-${state.timestamp}`"
                 class="history-item"
               >
-                <span class="history-index">#{{ flow.value.history.length - index }}</span>
+                <span class="history-index">#{{ flow.history.length - index }}</span>
                 <span class="history-name">{{ state.name }}</span>
                 <span class="history-time">{{ formatTime(state.timestamp) }}</span>
               </div>
-              <div
-                v-if="flow.value.history.length === 0"
-                class="no-history"
-              >
-                No history yet
-              </div>
+              <div v-if="flow.history.length === 0" class="no-history">No history yet</div>
             </div>
           </div>
 
@@ -127,24 +99,9 @@
           <div class="overlay-section">
             <h4>Actions</h4>
             <div class="actions-grid">
-              <button
-                class="action-btn"
-                @click="exportFlow"
-              >
-                📥 Export Flow
-              </button>
-              <button
-                class="action-btn"
-                @click="copyToClipboard"
-              >
-                📋 Copy Data
-              </button>
-              <button
-                class="action-btn danger"
-                @click="handleReset"
-              >
-                🔄 Reset Flow
-              </button>
+              <button class="action-btn" @click="exportFlow">📥 Export Flow</button>
+              <button class="action-btn" @click="copyToClipboard">📋 Copy Data</button>
+              <button class="action-btn danger" @click="handleReset">🔄 Reset Flow</button>
             </div>
           </div>
 
@@ -206,9 +163,8 @@ const formatTime = (timestamp: number): string => {
 // Get state name by ID
 const getStateName = (stateId: WorkflowStateId): string => {
   const state = Object.values(WORKFLOW_STATES).find(
-    (s): s is { id: string, name: string, path: string } =>
-      typeof s === 'object' && s.id === stateId,
-  )
+    (s: any) => typeof s === 'object' && s?.id === stateId
+  ) as any
   return state?.name || stateId
 }
 
@@ -232,8 +188,7 @@ const exportFlow = () => {
     link.click()
     URL.revokeObjectURL(url)
     toastStore.success('Flow exported')
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Export error:', error)
     toastStore.error('Failed to export flow')
   }
@@ -245,8 +200,7 @@ const copyToClipboard = async () => {
     const dataStr = JSON.stringify(flow.value, null, 2)
     await navigator.clipboard.writeText(dataStr)
     toastStore.success('Flow data copied to clipboard')
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Copy error:', error)
     toastStore.error('Failed to copy to clipboard')
   }

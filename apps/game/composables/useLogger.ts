@@ -1,25 +1,28 @@
 /**
- * Enhanced Logger utility with error synchronization
- * Supports development logging and production error tracking
+ * Structured logging utility for the game application
+ * Provides consistent logging with levels and context
  */
+/* eslint-disable no-console */
 export const useLogger = () => {
   // Import runtime config dynamically to avoid issues in test environment
-  const runtimeConfig = typeof useRuntimeConfig !== 'undefined'
-    ? useRuntimeConfig()
-    : {
-        public: {
-          environment: process.env.NODE_ENV || 'development',
-          appVersion: process.env.APP_VERSION || '1.0.0',
-          debugErrorSync: false,
-        },
-      }
+  const runtimeConfig =
+    typeof useRuntimeConfig !== 'undefined'
+      ? useRuntimeConfig()
+      : {
+          public: {
+            environment: process.env.NODE_ENV || 'development',
+            appVersion: process.env.APP_VERSION || '1.0.0',
+            debugErrorSync: false,
+          },
+        }
 
   // Import error sync dynamically
-  const { syncErrorLog } = typeof useErrorSync !== 'undefined'
-    ? useErrorSync()
-    : {
-        syncErrorLog: async () => {},
-      }
+  const { syncErrorLog } =
+    typeof useErrorSync !== 'undefined'
+      ? useErrorSync()
+      : {
+          syncErrorLog: async () => {},
+        }
 
   const isProduction = process.env.NODE_ENV === 'production'
   const isDevelopment = process.env.NODE_ENV === 'development'

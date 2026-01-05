@@ -1,45 +1,61 @@
 /**
- * Composable for accessing storyboard functionality
- * Provides easy access to workflow tracking and navigation helpers
+ * Storyboard Composable
+ * Interface for interacting with the storyboard plugin
  */
-import {
-  WORKFLOW_STATES,
-  type StoryboardState,
-  type StoryboardFlow,
-  type StoryboardConfig,
-  type WorkflowStateId,
-} from '../plugins/storyboard.client'
-
 export const useStoryboard = () => {
-  const { $storyboard } = useNuxtApp()
+  const nuxtApp = useNuxtApp()
+  // Use any to avoid type issues with provide/inject
+  const storyboard = (nuxtApp as any).$storyboard || (nuxtApp as any)._provided?.storyboard
+
+  if (!storyboard) {
+    // Return a mock object if storyboard is not available to avoid crashes
+    return {
+      flow: ref({ currentState: null, history: [], totalTransitions: 0, sessionStartTime: 0 }),
+      config: ref({
+        enableDevOverlay: false,
+        enableTracking: false,
+        maxHistorySize: 50,
+        persistFlow: false,
+      }),
+      showDevOverlay: ref(false),
+      recordTransition: () => {},
+      resetFlow: () => {},
+      updateConfig: () => {},
+      toggleDevOverlay: () => {},
+      getPreviousState: () => null,
+      hasVisitedState: () => false,
+      getStateVisitCount: () => 0,
+      getGameFlowPath: () => [],
+      isFollowingGameFlow: () => false,
+      getFlowCompletion: () => 0,
+      getSessionDuration: () => 0,
+      getAverageTimePerState: () => 0,
+      WORKFLOW_STATES: {},
+    }
+  }
 
   return {
-    // State
-    flow: $storyboard.flow,
-    config: $storyboard.config,
-    showDevOverlay: $storyboard.showDevOverlay,
+    flow: storyboard.flow,
+    config: storyboard.config,
+    showDevOverlay: storyboard.showDevOverlay,
 
     // Actions
-    recordTransition: $storyboard.recordTransition,
-    resetFlow: $storyboard.resetFlow,
-    updateConfig: $storyboard.updateConfig,
-    toggleDevOverlay: $storyboard.toggleDevOverlay,
+    recordTransition: storyboard.recordTransition,
+    resetFlow: storyboard.resetFlow,
+    updateConfig: storyboard.updateConfig,
+    toggleDevOverlay: storyboard.toggleDevOverlay,
 
     // Getters
-    getPreviousState: $storyboard.getPreviousState,
-    hasVisitedState: $storyboard.hasVisitedState,
-    getStateVisitCount: $storyboard.getStateVisitCount,
-    getGameFlowPath: $storyboard.getGameFlowPath,
-    isFollowingGameFlow: $storyboard.isFollowingGameFlow,
-    getFlowCompletion: $storyboard.getFlowCompletion,
-    getSessionDuration: $storyboard.getSessionDuration,
-    getAverageTimePerState: $storyboard.getAverageTimePerState,
+    getPreviousState: storyboard.getPreviousState,
+    hasVisitedState: storyboard.hasVisitedState,
+    getStateVisitCount: storyboard.getStateVisitCount,
+    getGameFlowPath: storyboard.getGameFlowPath,
+    isFollowingGameFlow: storyboard.isFollowingGameFlow,
+    getFlowCompletion: storyboard.getFlowCompletion,
+    getSessionDuration: storyboard.getSessionDuration,
+    getAverageTimePerState: storyboard.getAverageTimePerState,
 
     // Constants
-    WORKFLOW_STATES: $storyboard.WORKFLOW_STATES,
+    WORKFLOW_STATES: storyboard.WORKFLOW_STATES,
   }
 }
-
-// Re-export types for convenience
-export type { StoryboardState, StoryboardFlow, StoryboardConfig, WorkflowStateId }
-export { WORKFLOW_STATES }

@@ -2,6 +2,9 @@
  * Error Synchronization Utility
  * Syncs error logs to CloudWatch and other services
  */
+/* eslint-disable no-console */
+
+import { openDB } from 'idb'
 
 interface ErrorLog {
   level: 'error' | 'warning' | 'info'
@@ -17,17 +20,18 @@ interface ErrorLog {
 
 export const useErrorSync = () => {
   // Import runtime config dynamically to avoid issues in test environment
-  const runtimeConfig = typeof useRuntimeConfig !== 'undefined'
-    ? useRuntimeConfig()
-    : {
-        public: {
-          environment: process.env.NODE_ENV || 'development',
-          appVersion: process.env.APP_VERSION || '1.0.0',
-          cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
-          cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
-          debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
-        },
-      }
+  const runtimeConfig =
+    typeof useRuntimeConfig !== 'undefined'
+      ? useRuntimeConfig()
+      : {
+          public: {
+            environment: process.env.NODE_ENV || 'development',
+            appVersion: process.env.APP_VERSION || '1.0.0',
+            cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
+            cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
+            debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
+          },
+        }
 
   const isProduction = process.env.NODE_ENV === 'production'
 
@@ -38,7 +42,7 @@ export const useErrorSync = () => {
     level: 'error' | 'warning' | 'info',
     message: string,
     error?: unknown,
-    context: Record<string, unknown> = {},
+    context: Record<string, unknown> = {}
   ) => {
     try {
       // Only sync in production or if explicitly enabled
@@ -65,8 +69,7 @@ export const useErrorSync = () => {
       if (navigator.onLine) {
         await syncErrorsToCloudWatch()
       }
-    }
-    catch (syncError) {
+    } catch (syncError) {
       console.error('Failed to sync error log:', syncError)
       // If syncing fails, we'll rely on the offline queue
     }
@@ -81,7 +84,7 @@ export const useErrorSync = () => {
         name: error.name,
         message: error.message,
         stack: error.stack,
-        // @ts-ignore - cause property may not exist in all Error types
+        // @ts-expect-error - cause property may not exist in all Error types
         cause: error.cause,
       })
     }
@@ -90,6 +93,7 @@ export const useErrorSync = () => {
 
   // Export for testing
   if (process.env.NODE_ENV === 'test') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(useErrorSync as any).formatError = formatError
   }
 
@@ -98,31 +102,26 @@ export const useErrorSync = () => {
    */
   const storeErrorLocally = async (errorLog: ErrorLog) => {
     try {
-      const { useIndexedDB } = await import('./useIndexedDB')
-      const indexedDB = useIndexedDB()
-      // @ts-ignore - openDB function exists but may not be typed
-      const db = await indexedDB.openDB('ErrorLogs', 1, (db: any) => {
-        if (!db.objectStoreNames.contains('errors')) {
-          db.createObjectStore('errors', { keyPath: 'timestamp' })
-        }
+      const db = await openDB('ErrorLogs', 1, {
+        upgrade(db) {
+          if (!db.objectStoreNames.contains('errors')) {
+            db.createObjectStore('errors', { keyPath: 'timestamp' })
+          }
+        },
       })
 
-      // @ts-ignore - transaction function exists but may not be typed
       const tx = db.transaction('errors', 'readwrite')
-      // @ts-ignore - objectStore function exists but may not be typed
-      const store = tx.objectStore('errors')
+      const store = tx.store
       await store.put(errorLog)
       await tx.done
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Failed to store error locally:', error)
       // Fallback to localStorage if IndexedDB fails
       try {
         const existingErrors = JSON.parse(localStorage.getItem('errorLogsQueue') || '[]')
         existingErrors.push(errorLog)
         localStorage.setItem('errorLogsQueue', JSON.stringify(existingErrors))
-      }
-      catch (fallbackError) {
+      } catch (fallbackError) {
         console.error('Failed to store error in localStorage:', fallbackError)
       }
     }
@@ -138,29 +137,18 @@ export const useErrorSync = () => {
 
       // Try IndexedDB first
       try {
-        const { useIndexedDB } = await import('./useIndexedDB')
-        const indexedDB = useIndexedDB()
-        // @ts-ignore - openDB function exists but may not be typed
-        const db = await indexedDB.openDB('ErrorLogs', 1)
-        // @ts-ignore - transaction function exists but may not be typed
+        const db = await openDB('ErrorLogs', 1)
         const tx = db.transaction('errors', 'readwrite')
-        // @ts-ignore - objectStore function exists but may not be typed
-        const store = tx.objectStore('errors')
+        const store = tx.store
         const allErrors = await store.getAll()
-        await tx.done
 
         if (allErrors.length > 0) {
           errorsToSync = allErrors
           // Clear the store after reading
-          // @ts-ignore - transaction function exists but may not be typed
           const clearTx = db.transaction('errors', 'readwrite')
-          // @ts-ignore - objectStore function exists but may not be typed
-          const clearStore = clearTx.objectStore('errors')
-          await clearStore.clear()
-          await clearTx.done
+          await clearTx.store.clear()
         }
-      }
-      catch (indexedDBError) {
+      } catch (indexedDBError) {
         console.warn('IndexedDB not available, trying localStorage:', indexedDBError)
         // Fallback to localStorage
         const storedErrors = localStorage.getItem('errorLogsQueue')
@@ -175,8 +163,9 @@ export const useErrorSync = () => {
       }
 
       // Send to CloudWatch via API Gateway
-      const cloudWatchEndpoint = runtimeConfig.public.cloudWatchEndpoint
-        || 'https://your-api-gateway.execute-api.region.amazonaws.com/prod/logs'
+      const cloudWatchEndpoint =
+        runtimeConfig.public.cloudWatchEndpoint ||
+        'https://your-api-gateway.execute-api.region.amazonaws.com/prod/logs'
 
       const response = await fetch(cloudWatchEndpoint, {
         method: 'POST',
@@ -197,8 +186,7 @@ export const useErrorSync = () => {
       }
 
       console.log(`Successfully synced ${errorsToSync.length} error logs to CloudWatch`)
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Failed to sync errors to CloudWatch:', error)
       // Errors will remain in storage and be retried later
     }

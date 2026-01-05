@@ -2,10 +2,9 @@
  * Error Sync Plugin
  * Initializes global error handling and synchronization
  */
-import { defineNuxtPlugin } from '#imports'
+import type { Pinia } from 'pinia'
 
 export default defineNuxtPlugin((nuxtApp: any) => {
-  const runtimeConfig = useRuntimeConfig()
   const { syncErrorLog, setupPeriodicSync } = useErrorSync()
 
   // Setup periodic sync
@@ -13,7 +12,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
 
   // Global error handler
   if (import.meta.client) {
-    window.addEventListener('error', (event: any) => {
+    window.addEventListener('error', (event: ErrorEvent) => {
       syncErrorLog('error', 'Unhandled error', event.error, {
         type: 'global_error',
         filename: event.filename,
@@ -22,37 +21,37 @@ export default defineNuxtPlugin((nuxtApp: any) => {
       })
     })
 
-    window.addEventListener('unhandledrejection', (event: any) => {
+    window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
       syncErrorLog('error', 'Unhandled promise rejection', event.reason, {
         type: 'unhandled_rejection',
       })
     })
 
     // Vue error handler
-    nuxtApp.vueApp.config.errorHandler = (error: any, instance: any, info: any) => {
+    nuxtApp.vueApp.config.errorHandler = (error: unknown, instance: any, info: string) => {
       syncErrorLog('error', 'Vue component error', error, {
         type: 'vue_error',
         component: instance?.$options?.name || 'unknown',
-        info: info,
+        info,
       })
     }
 
     // Pinia error handler
-    const pinia = nuxtApp.$pinia
+    const pinia = nuxtApp.$pinia as Pinia
     if (pinia) {
-      pinia.use(({ store }: any) => {
+      pinia.use(({ store }: { store: any }) => {
         store.$onAction((action: any) => {
           const after = action.after
-          action.after = (result: any) => {
+          action.after = (result: unknown) => {
             after?.(result)
           }
-          const error = action.onError
-          action.onError = (error: any) => {
-            syncErrorLog('error', `Pinia action error: ${action.name}`, error, {
+          const onError = action.onError
+          action.onError = (err: unknown) => {
+            syncErrorLog('error', `Pinia action error: ${action.name}`, err, {
               type: 'pinia_error',
               store: store.$id,
             })
-            error?.(error)
+            onError?.(err)
           }
         })
       })
@@ -64,29 +63,3 @@ export default defineNuxtPlugin((nuxtApp: any) => {
     syncErrorLog,
   })
 })
-
-declare module '#app' {
-  interface NuxtApp {
-    $errorSync: {
-      syncErrorLog: (
-        level: 'error' | 'warning' | 'info',
-        message: string,
-        error?: unknown,
-        context?: Record<string, unknown>,
-      ) => Promise<void>
-    }
-  }
-}
-
-declare module 'vue' {
-  interface ComponentCustomProperties {
-    $errorSync: {
-      syncErrorLog: (
-        level: 'error' | 'warning' | 'info',
-        message: string,
-        error?: unknown,
-        context?: Record<string, unknown>,
-      ) => Promise<void>
-    }
-  }
-}

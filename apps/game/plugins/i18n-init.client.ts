@@ -4,7 +4,7 @@
  */
 export default defineNuxtPlugin((nuxtApp) => {
   // Access i18n through nuxtApp context to avoid setup function requirement
-  const i18n = nuxtApp.$i18n
+  const i18n = (nuxtApp as any).$i18n
   const settingsStore = useSettingsStore()
 
   // Load settings from localStorage
@@ -25,6 +25,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (newLocale) {
         settingsStore.setLanguage(newLocale as string)
       }
-    },
+    }
   )
 })

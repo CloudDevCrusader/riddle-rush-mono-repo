@@ -46,7 +46,6 @@ export const WORKFLOW_STATES = {
 export type WorkflowStateId = (typeof WORKFLOW_STATES)[keyof typeof WORKFLOW_STATES]['id']
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const route = useRoute()
   const router = useRouter() as Router
 
   // Configuration
@@ -72,17 +71,19 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Load persisted flow from localStorage
    */
   const loadPersistedFlow = (): StoryboardFlow | null => {
-    if (!config.value.persistFlow) return null
+    if (!config.value.persistFlow) {
+      return null
+    }
 
     try {
       const stored = localStorage.getItem(STORYBOARD_STORAGE_KEY)
-      if (!stored) return null
+      if (!stored) {
+        return null
+      }
 
       const parsed = JSON.parse(stored)
       return parsed as StoryboardFlow
-    }
-    catch (error) {
-      console.warn('[Storyboard] Failed to load persisted flow:', error)
+    } catch {
       return null
     }
   }
@@ -91,13 +92,14 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Persist flow to localStorage
    */
   const persistFlow = () => {
-    if (!config.value.persistFlow) return
+    if (!config.value.persistFlow) {
+      return
+    }
 
     try {
       localStorage.setItem(STORYBOARD_STORAGE_KEY, JSON.stringify(flow.value))
-    }
-    catch (error) {
-      console.warn('[Storyboard] Failed to persist flow:', error)
+    } catch {
+      // Silent fail - not critical
     }
   }
 
@@ -105,20 +107,21 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Find workflow state by path
    */
   const findStateByPath = (
-    path: string,
+    path: string
   ): (typeof WORKFLOW_STATES)[keyof typeof WORKFLOW_STATES] | null => {
-    return Object.values(WORKFLOW_STATES).find(state => state.path === path) || null
+    return Object.values(WORKFLOW_STATES).find((state) => state.path === path) || null
   }
 
   /**
    * Record a state transition
    */
   const recordTransition = (stateId: WorkflowStateId, metadata?: Record<string, unknown>): void => {
-    if (!config.value.enableTracking) return
+    if (!config.value.enableTracking) {
+      return
+    }
 
-    const workflowState = Object.values(WORKFLOW_STATES).find(s => s.id === stateId)
+    const workflowState = Object.values(WORKFLOW_STATES).find((s) => s.id === stateId)
     if (!workflowState) {
-      console.warn(`[Storyboard] Unknown state ID: ${stateId}`)
       return
     }
 
@@ -142,6 +145,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     persistFlow()
 
     // Emit event for tracking/analytics
+    // @ts-expect-error - nuxt hooks type issue
     nuxtApp.callHook('storyboard:transition', state)
   }
 
@@ -149,7 +153,9 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Get the previous state in history
    */
   const getPreviousState = (): StoryboardState | null => {
-    if (flow.value.history.length < 2) return null
+    if (flow.value.history.length < 2) {
+      return null
+    }
     return flow.value.history[flow.value.history.length - 2] || null
   }
 
@@ -157,14 +163,14 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Check if user has visited a specific state
    */
   const hasVisitedState = (stateId: WorkflowStateId): boolean => {
-    return flow.value.history.some(state => state.id === stateId)
+    return flow.value.history.some((state) => state.id === stateId)
   }
 
   /**
    * Get state visit count
    */
   const getStateVisitCount = (stateId: WorkflowStateId): number => {
-    return flow.value.history.filter(state => state.id === stateId).length
+    return flow.value.history.filter((state) => state.id === stateId).length
   }
 
   /**
@@ -185,7 +191,7 @@ export default defineNuxtPlugin((nuxtApp) => {
    */
   const isFollowingGameFlow = (): boolean => {
     const gameFlow = getGameFlowPath()
-    const recentHistory = flow.value.history.slice(-gameFlow.length).map(s => s.id)
+    const recentHistory = flow.value.history.slice(-gameFlow.length).map((s) => s.id)
 
     return gameFlow.every((stateId, index) => recentHistory[index] === stateId)
   }
@@ -195,8 +201,8 @@ export default defineNuxtPlugin((nuxtApp) => {
    */
   const getFlowCompletion = (): number => {
     const gameFlow = getGameFlowPath()
-    const visitedStates = new Set(flow.value.history.map(s => s.id))
-    const completedStates = gameFlow.filter(stateId => visitedStates.has(stateId))
+    const visitedStates = new Set(flow.value.history.map((s) => s.id))
+    const completedStates = gameFlow.filter((stateId) => visitedStates.has(stateId))
 
     return Math.round((completedStates.length / gameFlow.length) * 100)
   }
@@ -212,6 +218,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       sessionStartTime: Date.now(),
     }
     persistFlow()
+    // @ts-expect-error - nuxt hooks type issue
     nuxtApp.callHook('storyboard:reset')
   }
 
@@ -219,7 +226,9 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Toggle dev overlay
    */
   const toggleDevOverlay = () => {
-    if (!config.value.enableDevOverlay) return
+    if (!config.value.enableDevOverlay) {
+      return
+    }
     showDevOverlay.value = !showDevOverlay.value
   }
 
@@ -241,7 +250,9 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Get average time per state
    */
   const getAverageTimePerState = (): number => {
-    if (flow.value.history.length < 2) return 0
+    if (flow.value.history.length < 2) {
+      return 0
+    }
 
     const durations: number[] = []
     for (let i = 1; i < flow.value.history.length; i++) {
@@ -325,50 +336,3 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
   }
 })
-
-// Type augmentation
-declare module 'nuxt/app' {
-  interface NuxtApp {
-    $storyboard: {
-      flow: Readonly<Ref<StoryboardFlow>>
-      config: Readonly<Ref<StoryboardConfig>>
-      showDevOverlay: Readonly<Ref<boolean>>
-      recordTransition: (stateId: WorkflowStateId, metadata?: Record<string, unknown>) => void
-      resetFlow: () => void
-      updateConfig: (config: Partial<StoryboardConfig>) => void
-      toggleDevOverlay: () => void
-      getPreviousState: () => StoryboardState | null
-      hasVisitedState: (stateId: WorkflowStateId) => boolean
-      getStateVisitCount: (stateId: WorkflowStateId) => number
-      getGameFlowPath: () => string[]
-      isFollowingGameFlow: () => boolean
-      getFlowCompletion: () => number
-      getSessionDuration: () => number
-      getAverageTimePerState: () => number
-      WORKFLOW_STATES: typeof WORKFLOW_STATES
-    }
-  }
-}
-
-declare module 'vue' {
-  interface ComponentCustomProperties {
-    $storyboard: {
-      flow: Readonly<Ref<StoryboardFlow>>
-      config: Readonly<Ref<StoryboardConfig>>
-      showDevOverlay: Readonly<Ref<boolean>>
-      recordTransition: (stateId: WorkflowStateId, metadata?: Record<string, unknown>) => void
-      resetFlow: () => void
-      updateConfig: (config: Partial<StoryboardConfig>) => void
-      toggleDevOverlay: () => void
-      getPreviousState: () => StoryboardState | null
-      hasVisitedState: (stateId: WorkflowStateId) => boolean
-      getStateVisitCount: (stateId: WorkflowStateId) => number
-      getGameFlowPath: () => string[]
-      isFollowingGameFlow: () => boolean
-      getFlowCompletion: () => number
-      getSessionDuration: () => number
-      getAverageTimePerState: () => number
-      WORKFLOW_STATES: typeof WORKFLOW_STATES
-    }
-  }
-}

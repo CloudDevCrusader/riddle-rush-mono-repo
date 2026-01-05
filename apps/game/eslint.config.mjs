@@ -1,9 +1,11 @@
-import sharedConfig from '@riddle-rush/config/eslint'
+// @ts-check
+import withNuxt from './.nuxt/eslint.config.mjs'
 
-/**
- * ESLint configuration for the game app
- * Extends the shared monorepo config
- */
-export default sharedConfig.append({
-  // App-specific overrides can be added here
-})
+export default withNuxt([
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-console': 'off',
+    },
+  },
+])

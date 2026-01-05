@@ -1,35 +1,18 @@
 <template>
-  <div
-    ref="pageElement"
-    class="players-page"
-  >
+  <div ref="pageElement" class="players-page">
     <!-- Background Image -->
-    <img
-      :src="`${baseUrl}assets/players/BACKGROUND.png`"
-      alt="Background"
-      class="page-bg"
-    />
+    <img :src="`${baseUrl}assets/players/BACKGROUND.png`" alt="Background" class="page-bg" />
 
     <!-- Back Button -->
-    <button
-      class="back-btn tap-highlight no-select"
-      @click="goBack"
-    >
-      <img
-        :src="`${baseUrl}assets/players/back.png`"
-        alt="Back"
-      />
+    <button class="back-btn tap-highlight no-select" @click="goBack">
+      <img :src="`${baseUrl}assets/players/back.png`" alt="Back" />
     </button>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Title -->
       <div class="title-container animate-fade-in">
-        <img
-          :src="`${baseUrl}assets/players/players.png`"
-          alt="Players"
-          class="title-image"
-        />
+        <img :src="`${baseUrl}assets/players/players.png`" alt="Players" class="title-image" />
         <img
           :src="`${baseUrl}assets/players/top.png`"
           alt="Top decoration"
@@ -40,25 +23,15 @@
       <!-- Players List -->
       <div class="players-list-container animate-scale-in">
         <div class="players-list">
-          <div
-            v-for="(player, index) in players"
-            :key="index"
-            class="player-item"
-          >
+          <div v-for="(player, index) in players" :key="index" class="player-item">
             <img
               :src="`${baseUrl}assets/players/Group 10.png`"
               alt="Player slot"
               class="player-slot-bg"
             />
             <span class="player-name">{{ player.name }}</span>
-            <button
-              class="remove-player-btn tap-highlight no-select"
-              @click="removePlayer(index)"
-            >
-              <img
-                :src="`${baseUrl}assets/players/minus.png`"
-                alt="Remove"
-              />
+            <button class="remove-player-btn tap-highlight no-select" @click="removePlayer(index)">
+              <img :src="`${baseUrl}assets/players/minus.png`" alt="Remove" />
             </button>
           </div>
 
@@ -93,10 +66,7 @@
       </div>
 
       <!-- Add Player Input (Mobile-Friendly) -->
-      <div
-        v-if="showPlayerInput"
-        class="player-input-container animate-scale-in"
-      >
+      <div v-if="showPlayerInput" class="player-input-container animate-scale-in">
         <input
           ref="playerNameInput"
           v-model="newPlayerName"
@@ -109,16 +79,10 @@
           @input="sanitizePlayerName"
         />
         <div class="input-buttons">
-          <button
-            class="input-btn confirm-btn tap-highlight no-select"
-            @click="confirmAddPlayer"
-          >
+          <button class="input-btn confirm-btn tap-highlight no-select" @click="confirmAddPlayer">
             ✓
           </button>
-          <button
-            class="input-btn cancel-btn tap-highlight no-select"
-            @click="cancelAddPlayer"
-          >
+          <button class="input-btn cancel-btn tap-highlight no-select" @click="cancelAddPlayer">
             ✕
           </button>
         </div>
@@ -132,16 +96,8 @@
           class="action-btn add-btn tap-highlight no-select"
           @click="showAddPlayerInput"
         >
-          <img
-            :src="`${baseUrl}assets/players/add back.png`"
-            alt="Add button bg"
-            class="btn-bg"
-          />
-          <img
-            :src="`${baseUrl}assets/players/add.png`"
-            alt="Add"
-            class="btn-icon"
-          />
+          <img :src="`${baseUrl}assets/players/add back.png`" alt="Add button bg" class="btn-bg" />
+          <img :src="`${baseUrl}assets/players/add.png`" alt="Add" class="btn-icon" />
         </button>
 
         <!-- Start Button -->
@@ -151,10 +107,7 @@
           :class="{ disabled: players.length === 0 }"
           @click="startGame"
         >
-          <img
-            :src="`${baseUrl}assets/players/start.png`"
-            alt="Start"
-          />
+          <img :src="`${baseUrl}assets/players/start.png`" alt="Start" />
         </button>
       </div>
     </div>
@@ -191,7 +144,7 @@ const showAddPlayerInput = () => {
 }
 
 // Validate player name
-const isValidPlayerName = (name: string): { valid: boolean, error?: string } => {
+const isValidPlayerName = (name: string): { valid: boolean; error?: string } => {
   const trimmed = name.trim()
 
   if (!trimmed) {
@@ -214,7 +167,7 @@ const isValidPlayerName = (name: string): { valid: boolean, error?: string } => 
 
   // Check for duplicate names - but allow the default "Player X" names
   const isDefaultName = trimmed.match(/^Player \d+$/i)
-  if (!isDefaultName && players.value.some(p => p.name.toLowerCase() === trimmed.toLowerCase())) {
+  if (!isDefaultName && players.value.some((p) => p.name.toLowerCase() === trimmed.toLowerCase())) {
     return {
       valid: false,
       error: t('players.duplicate_name', 'A player with this name already exists'),
@@ -283,30 +236,29 @@ const startGame = async () => {
   }
 
   try {
-    const playerNames = players.value.map(p => p.name)
+    const playerNames = players.value.map((p) => p.name)
     // Store player names temporarily, will setup game after both wheels spin
     gameStore.pendingPlayerNames = playerNames
 
     // Enhanced toast with random motivational messages
     const motivationalMessages = [
       t('players.ready', `${players.value.length} players ready!`),
-      t('players.lets_start', 'Let\'s start the show! 🎉'),
+      t('players.lets_start', "Let's start the show! 🎉"),
       t('players.good_luck', 'Good luck everyone! 🍀'),
       t('players.may_the_best_win', 'May the best win! 🏆'),
       t('players.game_on', 'Game on! 🎮'),
-      t('players.lets_play', 'Let\'s play! 😃'),
+      t('players.lets_play', "Let's play! 😃"),
       t('players.showtime', 'Showtime! ⭐'),
       t('players.ready_set_go', 'Ready, set, go! 🚀'),
     ]
 
-    const randomMessage
-      = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]
-    toast.success(randomMessage)
+    const randomMessage =
+      motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]
+    toast.success(randomMessage as string)
 
     // Navigate to round start (dual wheel spin)
     goToRoundStart()
-  }
-  catch (error) {
+  } catch (error) {
     const logger = useLogger()
     logger.error('Error starting game:', error)
     toast.error(t('players.error_start', 'Failed to start game. Please try again.'))
