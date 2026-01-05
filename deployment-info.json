@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-01-02T13:00:48Z",
-  "environment": "production",
-  "bucket": "riddlerush",
-  "region": "us-east-1",
-  "cloudfrontId": "ERCX6EFGWWFUV",
+  "timestamp": "2026-01-05T11:55:01Z",
+  "environment": "development",
+  "bucket": "riddle-rush-pwa-dev-720377205549",
+  "region": "eu-central-1",
+  "cloudfrontId": "E1ELWV312P4UJ8",
   "deployedBy": "arn:aws:iam::720377205549:root",
-  "buildSize": "19M",
-  "fileCount": 293
+  "buildSize": "11M",
+  "fileCount": 207
 }

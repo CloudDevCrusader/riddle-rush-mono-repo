@@ -15,7 +15,7 @@ dist
 dist/
 distros
 distros/
-**/dist/
+y**/dist/
 playwright-report/
 **/playwright-report/
 test-results/
@@ -24,7 +24,7 @@ test-results/
 .cache/
 **/.cache/
 .turbo/
-
+apps/game/.output
 # Logs
 npm-debug.log*
 yarn-debug.log*

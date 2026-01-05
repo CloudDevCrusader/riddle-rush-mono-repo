@@ -1,1 +1,0 @@
-import{r as o}from"./ZWM7LZrB.js";function v(){const n=o(!1),e=o(0),a=o(0),s=o(!1);return{isLoading:n,progress:a,showProgress:s,showLoading:()=>{e.value++,n.value=!0,a.value=0,s.value=!1},hideLoading:()=>{e.value--,e.value<=0&&(e.value=0,n.value=!1,a.value=0,s.value=!1)},setProgress:u=>{a.value=Math.min(100,Math.max(0,u)),s.value=!0}}}export{v as u};

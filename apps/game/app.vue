@@ -1,18 +1,9 @@
 <template>
-  <div
-    id="app"
-    class="app-container"
-  >
-    <SplashScreen
-      v-if="showSplash"
-      @complete="onSplashComplete"
-    />
+  <div id="app" class="app-container">
+    <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
     <NuxtLayout v-show="!showSplash">
-      <Transition
-        name="page"
-        mode="out-in"
-      >
-        <NuxtPage :key="route.path" />
+      <Transition name="page" mode="out-in">
+        <NuxtPage :key="routeKey" />
       </Transition>
     </NuxtLayout>
     <Toast />
@@ -27,6 +18,12 @@ import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 const route = useRoute()
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
+
+// Force route update by using route component name and query
+const routeKey = computed(() => {
+  // Combine route name and timestamp to force component remount
+  return `${route.name || route.path}-${gameStore.currentSession?.id || ''}`
+})
 
 const showSplash = ref(true)
 
