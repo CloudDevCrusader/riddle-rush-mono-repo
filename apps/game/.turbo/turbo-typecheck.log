@@ -1,7 +1,6 @@
 
-
 > @riddle-rush/game@1.0.0 typecheck /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game
 > bash scripts/typecheck.sh
 
-[90m│[39m
-[32m◆[39m  Types generated in [36m.nuxt[39m.
+│
+◆  Types generated in .nuxt.

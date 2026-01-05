@@ -22,7 +22,7 @@ const settingsStore = useSettingsStore()
 // Force route update by using route component name and query
 const routeKey = computed(() => {
   // Combine route name and timestamp to force component remount
-  return `${route.name || route.path}-${gameStore.currentSession?.id || ''}`
+  return `${String(route.name) || route.path}-${gameStore.currentSession?.id || ''}`
 })
 
 const showSplash = ref(true)
