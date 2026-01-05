@@ -1,0 +1,40 @@
+{
+  "name": "Riddle Rush Nuxt PWA",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,type=bind"
+  ],
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "vue.volar",
+    "octref.vetur",
+    "unifiedjs.vscode-mdx",
+    "github.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "ms-vscode.vscode-node-azure-pack"
+  ],
+  "remoteUser": "node",
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "20"
+    }
+  },
+  "forwardPorts": [3000, 24678, 8100, 8080],
+  "postCreateCommand": "pnpm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "vue.volar",
+        "octref.vetur",
+        "unifiedjs.vscode-mdx"
+      ]
+    }
+  }
+}

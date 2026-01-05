@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     baseURL: '/docs/',
   },
 
+  // @ts-expect-error - content module config not fully typed in Nuxt 4
   content: {
     sources: {
       docs: {

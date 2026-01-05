@@ -46,26 +46,28 @@ API_SECRET=             # Server-side only
 ```
 
 Access in code via `useRuntimeConfig()`:
+
 ```typescript
 const config = useRuntimeConfig()
 console.log(config.public.appVersion)
 ```
 
 ## Scripts
-|| Command | Description |
-|---------|-------------|
-| `pnpm run dev` | Start development server |
-| `pnpm run build` | Build for production (SSR) |
-| `pnpm run generate` | Generate static site |
-| `pnpm run preview` | Preview production build |
-| `pnpm run test:unit` | Run unit tests |
+
+|                               | Command                      | Description |
+| ----------------------------- | ---------------------------- | ----------- |
+| `pnpm run dev`                | Start development server     |
+| `pnpm run build`              | Build for production (SSR)   |
+| `pnpm run generate`           | Generate static site         |
+| `pnpm run preview`            | Preview production build     |
+| `pnpm run test:unit`          | Run unit tests               |
 | `pnpm run test:unit:coverage` | Run unit tests with coverage |
-| `pnpm run test:e2e` | Run E2E tests |
-| `pnpm run lint` | Check for linting errors |
-| `pnpm run lint:fix` | Fix linting errors |
-| `pnpm run format` | Format code with Prettier |
-| `pnpm run typecheck` | Run TypeScript type checking |
-| `npm run typecheck` | Run TypeScript type checking |
+| `pnpm run test:e2e`           | Run E2E tests                |
+| `pnpm run lint`               | Check for linting errors     |
+| `pnpm run lint:fix`           | Fix linting errors           |
+| `pnpm run format`             | Format code with Prettier    |
+| `pnpm run typecheck`          | Run TypeScript type checking |
+| `npm run typecheck`           | Run TypeScript type checking |
 
 ## Git Hooks
 
@@ -73,6 +75,22 @@ Husky is configured for monorepo-style git hooks:
 
 - **pre-commit**: Runs `lint-staged` (ESLint + Prettier auto-fix)
 - **pre-push**: Runs `typecheck` and `test:unit`
+
+## Dev Container Support
+
+This project includes a Dev Container configuration for consistent development environments:
+
+- **VS Code Remote-Containers**: Open the project in a container with all dependencies pre-installed
+- **GitHub Codespaces**: Cloud-based development environment
+- **Pre-configured**: Node.js 20, pnpm, Turbo, and all required tools
+
+To use:
+
+1. Open in VS Code
+2. Click the green "Remote Window" icon in the bottom-left
+3. Select "Reopen in Container"
+
+See `.devcontainer/README.md` for more details.
 
 ## GitLab CI/CD Pipeline
 
@@ -89,6 +107,7 @@ E2E tests use the official Playwright Docker image for headless browser testing.
 
 ```
 riddle-rush-nuxt-pwa/
+├── .devcontainer/         # Dev Container configuration
 ├── app/                    # Nuxt app directory
 │   ├── app.vue            # Root component
 │   ├── assets/            # CSS and static assets
@@ -120,6 +139,7 @@ riddle-rush-nuxt-pwa/
 ## Debug Mode
 
 Press `Ctrl+Shift+D` to toggle the debug panel showing:
+
 - Current game state
 - Network/PWA status
 - Settings configuration
