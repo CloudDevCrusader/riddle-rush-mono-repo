@@ -1,4 +1,5 @@
 
-> @riddle-rush/types@1.0.0 typecheck /home/cloudcrusader/projects/guess-game-nuxt-pwa/packages/types
+
+> @riddle-rush/types@1.0.0 typecheck /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/packages/types
 > tsc --noEmit
 

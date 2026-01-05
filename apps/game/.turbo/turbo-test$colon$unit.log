@@ -2,5 +2,15 @@
 > @riddle-rush/game@1.0.0 test:unit /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game
 > vitest run
 
-JUNIT report written to /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/junit.xml
- ELIFECYCLE  Command failed with exit code 1.
+
+ RUN  v2.1.9 /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game
+
+ ✓ |unit| tests/unit/use-toast.spec.ts (23 tests) 15ms
+ ✓ |unit| tests/unit/settings-store.spec.ts (22 tests) 16ms
+ ✓ |unit| tests/unit/game-store.spec.ts (99 tests | 7 skipped) 62ms
+
+ Test Files  3 passed (3)
+      Tests  137 passed | 7 skipped (144)
+   Start at  12:46:38
+   Duration  621ms (transform 144ms, setup 0ms, collect 419ms, tests 94ms, environment 503ms, prepare 159ms)
+
