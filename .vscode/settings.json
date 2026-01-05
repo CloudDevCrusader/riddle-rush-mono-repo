@@ -147,5 +147,7 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "djdiox",
     "projectKey": "djdiox_guess-game-nuxt-pwa"
-  }
+  },
+  "circleci.persistedProjectSelection": ["circleci/NqFyu74yrheUgS5wD3ERxe/fhprrcv6zHAooUq6UK155"],
+  "circleci.filters.branchFilter": "allBranches"
 }

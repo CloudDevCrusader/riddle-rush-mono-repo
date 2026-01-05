@@ -1,0 +1,55 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - img "Background" [ref=e5]
+    - img "Logo" [ref=e7]
+    - generic [ref=e8]:
+      - img "Loading" [ref=e9]
+      - generic [ref=e10]:
+        - img "Loading bar background" [ref=e11]
+        - img "Loading bar fill" [ref=e13]
+      - generic [ref=e14]: 18%
+  - generic [ref=e17]:
+    - img "Background" [ref=e18]
+    - button "Back" [ref=e19] [cursor=pointer]:
+      - img "Back" [ref=e20]
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - img "Players" [ref=e23]
+        - img "Top decoration" [ref=e24]
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - img "Player slot" [ref=e28]
+            - generic [ref=e29]: Player 1
+            - button "Remove" [ref=e30] [cursor=pointer]:
+              - img "Remove" [ref=e31]
+          - generic [ref=e32]:
+            - img "Player slot" [ref=e33]
+            - generic [ref=e34]: Player 2
+            - button "Remove" [ref=e35] [cursor=pointer]:
+              - img "Remove" [ref=e36]
+          - generic [ref=e37]:
+            - img "Empty slot" [ref=e38]
+            - generic [ref=e39]: Empty Slot
+          - generic [ref=e40]:
+            - img "Empty slot" [ref=e41]
+            - generic [ref=e42]: Empty Slot
+          - generic [ref=e43]:
+            - img "Empty slot" [ref=e44]
+            - generic [ref=e45]: Empty Slot
+          - generic [ref=e46]:
+            - img "Empty slot" [ref=e47]
+            - generic [ref=e48]: Empty Slot
+        - generic [ref=e49]:
+          - img "Scroll bar" [ref=e50]
+          - img "Scroll handle" [ref=e51]
+      - generic [ref=e52]:
+        - button "Add button bg Add" [ref=e53] [cursor=pointer]:
+          - img "Add button bg" [ref=e54]
+          - img "Add" [ref=e55]
+        - button "Start" [ref=e56] [cursor=pointer]:
+          - img "Start" [ref=e57]
+```

@@ -243,9 +243,9 @@
             {
                 "Id": "E1ELWV312P4UJ8",
                 "ARN": "arn:aws:cloudfront::720377205549:distribution/E1ELWV312P4UJ8",
-                "ETag": "E228JP8NLYSIZM",
+                "ETag": "E1HIV11GWP5E2P",
                 "Status": "Deployed",
-                "LastModifiedTime": "2026-01-04T21:00:54.429000+00:00",
+                "LastModifiedTime": "2026-01-05T05:14:14.235000+00:00",
                 "DomainName": "damnyy5niqrrd.cloudfront.net",
                 "Aliases": {
                     "Quantity": 0

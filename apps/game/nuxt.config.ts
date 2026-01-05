@@ -52,6 +52,9 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ['pinia', '@vueuse/core'],
     },
+    build: {
+      minify: process.env.NODE_ENV === 'production' ? 'esbuild' : false,
+    },
   },
 
   typescript: {
@@ -71,13 +74,11 @@ export default defineNuxtConfig({
   },
 
   i18n: {
-    langDir: 'i18n',
+    langDir: 'locales',
     defaultLocale: 'en',
     locales: [
       { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
-      { code: 'es', iso: 'es-ES', file: 'es.json', name: 'Español' },
       { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
-      { code: 'fr', iso: 'fr-FR', file: 'fr.json', name: 'Français' },
     ],
     strategy: 'no_prefix',
   },
@@ -96,7 +97,18 @@ export default defineNuxtConfig({
     },
     workbox: {
       navigateFallback: '/',
+      navigateFallbackAllowlist: [/^\/(?!api\/)/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^\/$/,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'start-url',
+            networkTimeoutSeconds: 3,
+          },
+        },
+      ],
     },
     devOptions: {
       enabled: true,

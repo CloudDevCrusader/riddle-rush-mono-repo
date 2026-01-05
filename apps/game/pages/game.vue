@@ -681,28 +681,119 @@ useHead({
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .game-header {
     padding: var(--spacing-md);
   }
 
   .back-btn,
   .pause-btn {
-    width: 56px;
-    height: 56px;
+    width: clamp(50px, 12vw, 64px);
+    height: clamp(50px, 12vw, 64px);
+    border: 3px solid #ffaa00;
   }
 
   .back-icon {
-    width: 28px;
-    height: 28px;
+    width: clamp(24px, 6vw, 32px);
+    height: clamp(24px, 6vw, 32px);
+  }
+
+  .round-text {
+    font-size: clamp(1.2rem, 3vw, 2rem);
   }
 
   .category-panel {
     padding: var(--spacing-lg) var(--spacing-xl);
+    max-width: calc(100% - var(--spacing-md) * 2);
+  }
+
+  .category-name {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .letter-display {
+    max-width: calc(100% - var(--spacing-md) * 2);
+  }
+
+  .letter-value {
+    font-size: clamp(6rem, 18vw, 15rem);
+  }
+
+  .answer-input-section {
+    max-width: calc(100% - var(--spacing-md) * 2);
   }
 
   .game-container {
     gap: var(--spacing-2xl);
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .bottom-nav {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .next-btn {
+    min-width: 160px;
+    padding: var(--spacing-md) var(--spacing-2xl);
+  }
+
+  .next-text {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .game-header {
+    padding: var(--spacing-sm);
+  }
+
+  .back-btn,
+  .pause-btn {
+    width: clamp(44px, 11vw, 56px);
+    height: clamp(44px, 11vw, 56px);
+    border: 2px solid #ffaa00;
+  }
+
+  .round-text {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+  }
+
+  .category-panel {
+    padding: var(--spacing-md) var(--spacing-lg);
+    max-width: calc(100% - var(--spacing-sm) * 2);
+  }
+
+  .category-name {
+    font-size: clamp(1.3rem, 3.5vw, 2rem);
+  }
+
+  .letter-value {
+    font-size: clamp(5rem, 16vw, 10rem);
+  }
+
+  .answer-input-section {
+    max-width: calc(100% - var(--spacing-sm) * 2);
+    padding: var(--spacing-md);
+  }
+
+  .answer-input {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    padding: var(--spacing-md);
+  }
+
+  .game-container {
+    gap: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .bottom-nav {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .next-btn {
+    min-width: 140px;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
   }
 }
 </style>

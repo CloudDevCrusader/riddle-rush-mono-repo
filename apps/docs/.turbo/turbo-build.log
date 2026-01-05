@@ -1,0 +1,48 @@
+
+> @riddle-rush/docs@1.0.0 build /home/cloudcrusader/projects/guess-game-nuxt-pwa/apps/docs
+> nuxt build
+
+[90m┌[39m  Building Nuxt for production...
+[90m│[39m
+[34m●[39m  Nuxt 4.2.2 (with Nitro 2.12.9, Vite 5.4.21 and Vue 3.5.26)
+[warn] [@nuxt/content] No content configuration found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/docs/getting-started/installation
+[error] Could not locate the bindings file. Tried:
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/Debug/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/Release/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/out/Debug/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/Debug/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/out/Release/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/Release/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/default/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/compiled/24.12.0/linux/x64/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/addon-build/release/install-root/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/addon-build/debug/install-root/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/addon-build/default/install-root/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/lib/binding/node-v137-linux-x64/better_sqlite3.node
+  at bindings (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/bindings@1.5.0/node_modules/bindings/bindings.js:126:9)
+  at new Database (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/lib/database.js:48:64)
+  at getDB (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/db0@0.3.4_better-sqlite3@11.10.0/node_modules/db0/dist/connectors/better-sqlite3.mjs:17:9)
+  at Object.exec (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/db0@0.3.4_better-sqlite3@11.10.0/node_modules/db0/dist/connectors/better-sqlite3.mjs:24:18)
+  at getLocalDatabase (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/@nuxt+content@3.10.0_better-sqlite3@11.10.0_magicast@0.5.1/node_modules/@nuxt/content/dist/module.mjs:342:16)
+  at async processCollectionItems (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/@nuxt+content@3.10.0_better-sqlite3@11.10.0_magicast@0.5.1/node_modules/@nuxt/content/dist/module.mjs:3149:14)
+  at async /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/@nuxt+content@3.10.0_better-sqlite3@11.10.0_magicast@0.5.1/node_modules/@nuxt/content/dist/module.mjs:3123:20
+  at async initNuxt (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/nuxt@4.2.2_@parcel+watcher@2.5.1_@types+node@22.19.3_@vercel+functions@3.3.4_@aws-sdk+c_bbea73942a1d8f91fd6fa5d0e3bb16ad/node_modules/nuxt/dist/index.mjs:5390:3)
+  at async loadNuxt (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/nuxt@4.2.2_@parcel+watcher@2.5.1_@types+node@22.19.3_@vercel+functions@3.3.4_@aws-sdk+c_bbea73942a1d8f91fd6fa5d0e3bb16ad/node_modules/nuxt/dist/index.mjs:5589:5)
+  at async Module.loadNuxt (/home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/@nuxt+kit@4.2.2_magicast@0.5.1/node_modules/@nuxt/kit/dist/index.mjs:1012:16) 
+
+[error] Could not locate the bindings file. Tried:
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/Debug/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/Release/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/out/Debug/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/Debug/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/out/Release/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/Release/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/build/default/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/compiled/24.12.0/linux/x64/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/addon-build/release/install-root/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/addon-build/debug/install-root/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/addon-build/default/install-root/better_sqlite3.node
+ → /home/cloudcrusader/projects/guess-game-nuxt-pwa/node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3/lib/binding/node-v137-linux-x64/better_sqlite3.node
+ ELIFECYCLE  Command failed with exit code 1.

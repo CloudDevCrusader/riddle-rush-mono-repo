@@ -381,7 +381,7 @@ onMounted(() => {
   }
 
   .title-image {
-    width: clamp(180px, 50vw, 240px);
+    width: clamp(160px, 45vw, 240px);
   }
 
   .control-icon-wrapper {
@@ -401,9 +401,64 @@ onMounted(() => {
     margin: 0 var(--spacing-md) var(--spacing-md);
   }
 
+  .control-label {
+    font-size: clamp(1rem, 2.2vw, 1.5rem);
+  }
+
   .back-btn img {
     width: clamp(36px, 8vw, 48px);
     min-width: 36px;
+  }
+}
+
+/* Very small screens (< 360px) */
+@media (max-width: 360px) {
+  .settings-overlay {
+    padding: max(var(--spacing-sm), env(safe-area-inset-top, 0px))
+      max(var(--spacing-sm), env(safe-area-inset-right, 0px))
+      max(var(--spacing-sm), env(safe-area-inset-bottom, 0px))
+      max(var(--spacing-sm), env(safe-area-inset-left, 0px));
+  }
+
+  .settings-card {
+    max-width: calc(100vw - max(var(--spacing-sm), env(safe-area-inset-right, 0px)) * 2);
+  }
+
+  .back-btn {
+    top: max(var(--spacing-sm), env(safe-area-inset-top, 0px));
+    left: max(var(--spacing-sm), env(safe-area-inset-left, 0px));
+  }
+
+  .title-image {
+    width: clamp(140px, 42vw, 180px);
+  }
+
+  .control-icon-wrapper {
+    width: clamp(48px, 11vw, 60px);
+    height: clamp(48px, 11vw, 60px);
+  }
+
+  .control-icon {
+    width: clamp(32px, 7vw, 40px);
+    height: clamp(32px, 7vw, 40px);
+  }
+
+  .settings-panel {
+    padding: var(--spacing-md);
+    margin: 0 var(--spacing-sm) var(--spacing-sm);
+  }
+
+  .control-item {
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .control-label {
+    font-size: clamp(0.95rem, 2vw, 1.3rem);
+  }
+
+  .back-btn img {
+    width: clamp(32px, 7vw, 40px);
   }
 }
 
@@ -418,22 +473,22 @@ onMounted(() => {
   }
 
   .title-image {
-    width: clamp(200px, 55vw, 260px);
+    width: clamp(180px, 50vw, 240px);
   }
 
   .control-icon-wrapper {
-    width: clamp(60px, 13vw, 75px);
-    height: clamp(60px, 13vw, 75px);
+    width: clamp(56px, 12vw, 70px);
+    height: clamp(56px, 12vw, 70px);
   }
 
   .control-icon {
-    width: clamp(38px, 9vw, 50px);
-    height: clamp(38px, 9vw, 50px);
+    width: clamp(36px, 8vw, 48px);
+    height: clamp(36px, 8vw, 48px);
   }
 
   .settings-panel {
-    padding: var(--spacing-xl);
-    margin: 0 var(--spacing-lg) var(--spacing-lg);
+    padding: var(--spacing-lg);
+    margin: 0 var(--spacing-md) var(--spacing-md);
   }
 }
 </style>

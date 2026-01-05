@@ -1,0 +1,29 @@
+
+
+> @riddle-rush/game@1.0.0 test:unit /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90m/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game[39m
+
+[?25l [90m·[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+[?25l[2K[1A[2K[G [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+ [90m·[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+[?25l[2K[1A[2K[1A[2K[G [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+[?25l[?25l[?25l[?25l[?25l[2K[1A[2K[1A[2K[G [90m·[39m [35m|unit|[39m [2mtests/unit/[22mgame-store[2m.spec.ts[22m[2m (99)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+[?25l[?25l[?25l[?25l[2K[1A[2K[1A[2K[1A[2K[G [32m✓[39m [35m|unit|[39m [2mtests/unit/[22mgame-store[2m.spec.ts[22m[2m (99)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+[2K[1A[2K[1A[2K[1A[2K[G [32m✓[39m [35m|unit|[39m [2mtests/unit/[22mgame-store[2m.spec.ts[22m[2m (99)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m137 passed[39m[22m[2m | [22m[33m7 skipped[39m[90m (144)[39m
+[2m   Start at [22m 08:14:02
+[2m   Duration [22m 784ms[2m (transform 168ms, setup 0ms, collect 428ms, tests 110ms, environment 608ms, prepare 215ms)[22m
+
+[?25h[?25h

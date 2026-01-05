@@ -328,8 +328,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     WORKFLOW_STATES,
   }
 
-  nuxtApp.provide('storyboard', storyboard)
-
   return {
     provide: {
       storyboard,

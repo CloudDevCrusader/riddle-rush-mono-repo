@@ -501,13 +501,21 @@ useHead({
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-md);
+  }
+
   .back-btn img {
-    width: 40px;
+    width: clamp(40px, 5vw, 50px);
   }
 
   .title-image {
-    width: 200px;
+    width: clamp(150px, 35vw, 300px);
+  }
+
+  .scores-list-container {
+    max-width: calc(100% - var(--spacing-md) * 2);
   }
 
   .scores-list {
@@ -519,14 +527,80 @@ useHead({
     padding: var(--spacing-sm) var(--spacing-md);
   }
 
-  .back-large-btn img,
-  .next-btn img {
-    width: 140px;
+  .player-avatar {
+    width: clamp(36px, 5vw, 45px);
   }
 
-  .add-score-btn {
-    width: 70px;
-    height: 70px;
+  .player-name {
+    font-size: clamp(var(--font-size-sm), 1.8vw, var(--font-size-base));
+  }
+
+  .action-buttons {
+    width: 100%;
+    max-width: 400px;
+    gap: var(--spacing-md);
+  }
+
+  .back-large-btn img,
+  .next-btn img {
+    width: clamp(120px, 30vw, 200px);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-xl) var(--spacing-sm);
+    gap: var(--spacing-lg);
+  }
+
+  .title-image {
+    width: clamp(120px, 30vw, 180px);
+  }
+
+  .scores-list {
+    max-height: 300px;
+  }
+
+  .score-item {
+    min-height: 60px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .player-info {
+    gap: var(--spacing-sm);
+  }
+
+  .player-avatar {
+    width: clamp(32px, 4vw, 40px);
+  }
+
+  .player-name {
+    font-size: clamp(var(--font-size-xs), 1.5vw, var(--font-size-sm));
+  }
+
+  .player-answer {
+    font-size: clamp(var(--font-size-xs), 1.2vw, var(--font-size-sm));
+  }
+
+  .player-score {
+    font-size: clamp(var(--font-size-xl), 2.5vw, var(--font-size-2xl));
+    min-width: 60px;
+  }
+
+  .score-action-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .back-large-btn img,
+  .next-btn img {
+    width: clamp(100px, 25vw, 140px);
   }
 }
 </style>

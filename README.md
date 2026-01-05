@@ -1,151 +1,62 @@
-# Guess Game - Nuxt 4 PWA
+# Orb Template
 
-A fully-featured Progressive Web App (PWA) built with Nuxt 4, featuring offline support, IndexedDB storage, comprehensive testing, and analytics.
+<!---
+[![CircleCI Build Status](https://circleci.com/gh/<organization>/<project-name>.svg?style=shield "CircleCI Build Status")](https://circleci.com/gh/<organization>/<project-name>) [![CircleCI Orb Version](https://badges.circleci.com/orbs/<namespace>/<orb-name>.svg)](https://circleci.com/developer/orbs/orb/<namespace>/<orb-name>) [![GitHub License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/<organization>/<project-name>/master/LICENSE) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/orbs)
 
-## Features
+--->
 
-- **PWA** - Installable, offline-capable with service worker and smart caching
-- **Nuxt 4** - Latest Vue 3 framework with auto-imports
-- **Pinia** - Modern state management with persistence
-- **IndexedDB** - Local data persistence with `idb` wrapper
-- **Server API Routes** - Integrated REST API
-- **TypeScript** - Full type safety with strict mode
-- **Testing** - Unit tests (Vitest) + E2E tests (Playwright) + Chaos tests
-- **ESLint + Prettier** - Code quality with auto-fix on commit
-- **Husky** - Git hooks for pre-commit linting and pre-push testing
-- **GitLab CI/CD** - Automated lint, test, build, deploy pipeline
-- **i18n** - Internationalization support (German)
-- **Debug Mode** - Press `Ctrl+Shift+D` to toggle debug panel
+A project template for Orbs.
 
-## Quick Start
+This repository is designed to be automatically ingested and modified by the CircleCI CLI's `orb init` command.
 
-```bash
-# Install dependencies
-pnpm install
+_**Edit this area to include a custom title and description.**_
 
-# Copy environment file
-cp .env.example .env
+---
 
-# Run development server
-pnpm run dev
+## Resources
 
-# Build for production
-pnpm run generate
+[CircleCI Orb Registry Page](https://circleci.com/developer/orbs/orb/<namespace>/<orb-name>) - The official registry page of this orb for all versions, executors, commands, and jobs described.
+
+[CircleCI Orb Docs](https://circleci.com/docs/orb-intro/#section=configuration) - Docs for using, creating, and publishing CircleCI Orbs.
+
+### How to Contribute
+
+We welcome [issues](https://github.com/<organization>/<project-name>/issues) to and [pull requests](https://github.com/<organization>/<project-name>/pulls) against this repository!
+
+### How to Publish An Update
+1. Merge pull requests with desired changes to the main branch.
+    - For the best experience, squash-and-merge and use [Conventional Commit Messages](https://conventionalcommits.org/).
+2. Find the current version of the orb.
+    - You can run `circleci orb info <namespace>/<orb-name> | grep "Latest"` to see the current version.
+3. Create a [new Release](https://github.com/<organization>/<project-name>/releases/new) on GitHub.
+    - Click "Choose a tag" and _create_ a new [semantically versioned](http://semver.org/) tag. (ex: v1.0.0)
+      - We will have an opportunity to change this before we publish if needed after the next step.
+4.  Click _"+ Auto-generate release notes"_.
+    - This will create a summary of all of the merged pull requests since the previous release.
+    - If you have used _[Conventional Commit Messages](https://conventionalcommits.org/)_ it will be easy to determine what types of changes were made, allowing you to ensure the correct version tag is being published.
+5. Now ensure the version tag selected is semantically accurate based on the changes included.
+6. Click _"Publish Release"_.
+    - This will push a new tag and trigger your publishing pipeline on CircleCI.
+
+### Development Orbs
+
+Prerequisites:
+
+- An initial sevmer deployment must be performed in order for Development orbs to be published and seen in the [Orb Registry](https://circleci.com/developer/orbs).
+
+A [Development orb](https://circleci.com/docs/orb-concepts/#development-orbs) can be created to help with rapid development or testing. To create a Development orb, change the `orb-tools/publish` job in `test-deploy.yml` to be the following:
+
+```yaml
+- orb-tools/publish:
+    orb_name: <namespace>/<orb-name>
+    vcs_type: << pipeline.project.type >>
+    pub_type: dev
+    # Ensure this job requires all test jobs and the pack job.
+    requires:
+      - orb-tools/pack
+      - command-test
+    context: <publishing-context>
+    filters: *filters
 ```
 
-## Environment Variables
-
-Copy `.env.example` to `.env` and configure:
-
-```bash
-NODE_ENV=development
-APP_VERSION=1.0.0
-BASE_URL=/
-GOOGLE_ANALYTICS_ID=    # Optional
-API_SECRET=             # Server-side only
-```
-
-Access in code via `useRuntimeConfig()`:
-
-```typescript
-const config = useRuntimeConfig()
-console.log(config.public.appVersion)
-```
-
-## Scripts
-
-|                               | Command                      | Description |
-| ----------------------------- | ---------------------------- | ----------- |
-| `pnpm run dev`                | Start development server     |
-| `pnpm run build`              | Build for production (SSR)   |
-| `pnpm run generate`           | Generate static site         |
-| `pnpm run preview`            | Preview production build     |
-| `pnpm run test:unit`          | Run unit tests               |
-| `pnpm run test:unit:coverage` | Run unit tests with coverage |
-| `pnpm run test:e2e`           | Run E2E tests                |
-| `pnpm run lint`               | Check for linting errors     |
-| `pnpm run lint:fix`           | Fix linting errors           |
-| `pnpm run format`             | Format code with Prettier    |
-| `pnpm run typecheck`          | Run TypeScript type checking |
-| `npm run typecheck`           | Run TypeScript type checking |
-
-## Git Hooks
-
-Husky is configured for monorepo-style git hooks:
-
-- **pre-commit**: Runs `lint-staged` (ESLint + Prettier auto-fix)
-- **pre-push**: Runs `typecheck` and `test:unit`
-
-## Dev Container Support
-
-This project includes a Dev Container configuration for consistent development environments:
-
-- **VS Code Remote-Containers**: Open the project in a container with all dependencies pre-installed
-- **GitHub Codespaces**: Cloud-based development environment
-- **Pre-configured**: Node.js 20, pnpm, Turbo, and all required tools
-
-To use:
-
-1. Open in VS Code
-2. Click the green "Remote Window" icon in the bottom-left
-3. Select "Reopen in Container"
-
-See `.devcontainer/README.md` for more details.
-
-## GitLab CI/CD Pipeline
-
-The pipeline runs on `main`, `master`, and merge requests:
-
-1. **Lint Stage**: ESLint + Prettier checks, TypeScript type checking
-2. **Test Stage**: Unit tests with coverage, E2E tests (headless Playwright)
-3. **Build Stage**: Generate static site
-4. **Deploy Stage**: Deploy to GitLab Pages
-
-E2E tests use the official Playwright Docker image for headless browser testing.
-
-## Project Structure
-
-```
-riddle-rush-nuxt-pwa/
-├── .devcontainer/         # Dev Container configuration
-├── app/                    # Nuxt app directory
-│   ├── app.vue            # Root component
-│   ├── assets/            # CSS and static assets
-│   └── locales/           # i18n translation files
-├── components/            # Vue components
-│   ├── DebugPanel.vue     # Debug overlay (Ctrl+Shift+D)
-│   ├── FeedbackWidget.vue # User feedback component
-│   ├── Leaderboard.vue    # Score leaderboard
-│   └── Spinner.vue        # Loading indicator
-├── composables/           # Vue composables
-├── layouts/               # Nuxt layouts
-├── pages/                 # Nuxt pages (file-based routing)
-├── server/                # Nitro server
-│   ├── api/              # API routes
-│   └── utils/            # Server utilities
-├── stores/                # Pinia stores
-│   ├── game.ts           # Game state management
-│   └── settings.ts       # User settings
-├── tests/
-│   ├── unit/             # Vitest unit tests
-│   ├── e2e/              # Playwright E2E tests
-│   └── utils/            # Test utilities
-├── types/                 # TypeScript types
-├── .husky/               # Git hooks
-├── nuxt.config.ts        # Nuxt configuration
-└── vitest.config.ts      # Vitest configuration
-```
-
-## Debug Mode
-
-Press `Ctrl+Shift+D` to toggle the debug panel showing:
-
-- Current game state
-- Network/PWA status
-- Settings configuration
-- Statistics
-- Export debug info as JSON
-
-## Credits
-
-Created by Tobias Wirl & Markus Wagner
+The job output will contain a link to the Development orb Registry page. The parameters `enable_pr_comment` and `github_token` can be set to add the relevant publishing information onto a pull request. Please refer to the [orb-tools/publish](https://circleci.com/developer/orbs/orb/circleci/orb-tools#jobs-publish) documentation for more information and options.

@@ -1,0 +1,101 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e6]:
+  - img "Background" [ref=e7]
+  - generic [ref=e10]: Runde 1
+  - generic [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]: Kategorie
+      - generic [ref=e15]:
+        - generic [ref=e17]: ▼
+        - generic:
+          - generic:
+            - generic: 🎯
+    - generic [ref=e19]:
+      - generic [ref=e20]: Buchstabe
+      - generic [ref=e21]:
+        - generic [ref=e23]: ▼
+        - generic [ref=e24]:
+          - button "A" [ref=e25] [cursor=pointer]:
+            - generic:
+              - generic: A
+          - button "B" [ref=e26] [cursor=pointer]:
+            - generic:
+              - generic: B
+          - button "C" [ref=e27] [cursor=pointer]:
+            - generic:
+              - generic: C
+          - button "D" [ref=e28] [cursor=pointer]:
+            - generic:
+              - generic: D
+          - button "E" [ref=e29] [cursor=pointer]:
+            - generic:
+              - generic: E
+          - button "F" [ref=e30] [cursor=pointer]:
+            - generic:
+              - generic: F
+          - button "G" [ref=e31] [cursor=pointer]:
+            - generic:
+              - generic: G
+          - button "H" [ref=e32] [cursor=pointer]:
+            - generic:
+              - generic: H
+          - button "I" [ref=e33] [cursor=pointer]:
+            - generic:
+              - generic: I
+          - button "J" [ref=e34] [cursor=pointer]:
+            - generic:
+              - generic: J
+          - button "K" [ref=e35] [cursor=pointer]:
+            - generic:
+              - generic: K
+          - button "L" [ref=e36] [cursor=pointer]:
+            - generic:
+              - generic: L
+          - button "M" [ref=e37] [cursor=pointer]:
+            - generic:
+              - generic: M
+          - button "N" [ref=e38] [cursor=pointer]:
+            - generic:
+              - generic: "N"
+          - button "O" [ref=e39] [cursor=pointer]:
+            - generic:
+              - generic: O
+          - button "P" [ref=e40] [cursor=pointer]:
+            - generic:
+              - generic: P
+          - button "Q" [ref=e41] [cursor=pointer]:
+            - generic:
+              - generic: Q
+          - button "R" [ref=e42] [cursor=pointer]:
+            - generic:
+              - generic: R
+          - button "S" [ref=e43] [cursor=pointer]:
+            - generic:
+              - generic: S
+          - button "T" [ref=e44] [cursor=pointer]:
+            - generic:
+              - generic: T
+          - button "U" [ref=e45] [cursor=pointer]:
+            - generic:
+              - generic: U
+          - button "V" [ref=e46] [cursor=pointer]:
+            - generic:
+              - generic: V
+          - button "W" [ref=e47] [cursor=pointer]:
+            - generic:
+              - generic: W
+          - button "X" [ref=e48] [cursor=pointer]:
+            - generic:
+              - generic: X
+          - button "Y" [ref=e49] [cursor=pointer]:
+            - generic:
+              - generic: "Y"
+          - button "Z" [ref=e50] [cursor=pointer]:
+            - generic:
+              - generic: Z
+        - generic:
+          - generic:
+            - generic: 🎯
+```

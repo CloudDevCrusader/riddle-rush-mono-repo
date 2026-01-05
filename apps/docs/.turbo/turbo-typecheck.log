@@ -1,0 +1,5 @@
+
+> @riddle-rush/docs@1.0.0 typecheck /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/docs
+> nuxt typecheck
+
+[warn] [@nuxt/content] No content configuration found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/docs/getting-started/installation

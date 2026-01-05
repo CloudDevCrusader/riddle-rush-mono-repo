@@ -1,0 +1,1 @@
+import{u as n,M as u,n as c,L as a}from"./Cp2SN3y2.js";function m(){const o=n(),{t:s}=u(),t=c().public.baseUrl,e=a();return{router:o,t:s,baseUrl:t,toast:e,goHome:()=>o.push("/"),goBack:()=>o.back()}}export{m as u};

@@ -658,17 +658,21 @@ useHead({
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-md);
+  }
+
   .back-btn img {
-    width: 40px;
+    width: clamp(40px, 5vw, 50px);
   }
 
   .title-image {
-    width: 200px;
+    width: clamp(150px, 35vw, 300px);
   }
 
   .top-decoration {
-    width: 150px;
+    width: clamp(120px, 20vw, 250px);
   }
 
   .players-list {
@@ -680,13 +684,50 @@ useHead({
     padding: var(--spacing-sm) var(--spacing-md);
   }
 
-  .add-btn {
-    width: 80px;
-    height: 80px;
+  .action-buttons {
+    width: 100%;
+    max-width: 400px;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-xl) var(--spacing-sm);
+    gap: var(--spacing-lg);
   }
 
-  .start-btn img {
-    width: 200px;
+  .title-image {
+    width: clamp(120px, 30vw, 180px);
+  }
+
+  .top-decoration {
+    width: clamp(90px, 15vw, 120px);
+  }
+
+  .player-item {
+    min-height: 55px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .player-name {
+    font-size: clamp(var(--font-size-base), 2vw, var(--font-size-lg));
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .action-btn {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .action-btn img {
+    width: 80%;
+    max-height: 50px;
   }
 }
 </style>

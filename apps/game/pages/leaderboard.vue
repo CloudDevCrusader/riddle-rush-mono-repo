@@ -540,17 +540,25 @@ useHead({
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-md);
+  }
+
   .back-btn img {
-    width: 40px;
+    width: clamp(40px, 5vw, 50px);
   }
 
   .title-image {
-    width: 200px;
+    width: clamp(150px, 30vw, 280px);
   }
 
   .ranking-image {
-    width: 180px;
+    width: clamp(140px, 25vw, 240px);
+  }
+
+  .leaderboard-list-container {
+    max-width: calc(100% - var(--spacing-md) * 2);
   }
 
   .leaderboard-list {
@@ -560,10 +568,124 @@ useHead({
   .leaderboard-item {
     min-height: 60px;
     padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .rank-badge {
+    width: clamp(36px, 5vw, 48px);
+    height: clamp(36px, 5vw, 48px);
+  }
+
+  .player-avatar {
+    width: clamp(36px, 5vw, 45px);
+  }
+
+  .player-name {
+    font-size: clamp(var(--font-size-sm), 1.8vw, var(--font-size-base));
+  }
+
+  .score-value {
+    font-size: clamp(var(--font-size-lg), 2vw, var(--font-size-xl));
+    min-width: 60px;
   }
 
   .ok-btn img {
-    width: 150px;
+    width: clamp(120px, 30vw, 200px);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-xl) var(--spacing-sm);
+    gap: var(--spacing-lg);
+  }
+
+  .back-btn img {
+    width: clamp(36px, 4vw, 45px);
+  }
+
+  .title-image {
+    width: clamp(120px, 28vw, 180px);
+  }
+
+  .ranking-image {
+    width: clamp(100px, 22vw, 150px);
+  }
+
+  .leaderboard-list-container {
+    max-width: calc(100% - var(--spacing-sm) * 2);
+  }
+
+  .leaderboard-list {
+    max-height: 300px;
+    padding: var(--spacing-sm);
+  }
+
+  .leaderboard-item {
+    min-height: 55px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+
+  .rank-badge {
+    width: clamp(32px, 4vw, 40px);
+    height: clamp(32px, 4vw, 40px);
+  }
+
+  .rank-number {
+    font-size: clamp(var(--font-size-sm), 2vw, var(--font-size-base));
+  }
+
+  .player-info {
+    gap: var(--spacing-xs);
+  }
+
+  .avatar-container {
+    min-width: 40px;
+  }
+
+  .player-avatar {
+    width: clamp(32px, 4vw, 40px);
+  }
+
+  .avatar-change-btn {
+    width: 16px;
+    height: 16px;
+    bottom: -4px;
+    right: -4px;
+  }
+
+  .avatar-change-icon {
+    font-size: 10px;
+  }
+
+  .player-name {
+    font-size: clamp(var(--font-size-xs), 1.5vw, var(--font-size-sm));
+  }
+
+  .score-icon {
+    width: clamp(18px, 2.5vw, 24px);
+  }
+
+  .score-value {
+    font-size: clamp(var(--font-size-lg), 1.8vw, var(--font-size-xl));
+    min-width: 50px;
+  }
+
+  .item-decoration {
+    width: clamp(24px, 3vw, 32px);
+  }
+
+  .ok-btn img {
+    width: clamp(100px, 25vw, 140px);
+  }
+
+  .game-complete-message {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .complete-text {
+    font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-2xl));
   }
 }
 </style>
