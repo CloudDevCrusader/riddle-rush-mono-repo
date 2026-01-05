@@ -15,7 +15,6 @@ export default defineConfig({
     environment: 'happy-dom',
     include: ['tests/unit/**/*.{test,spec}.ts'],
     exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
-    reporters: [['junit', { outputFile: './junit.xml' }]],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'junit'],
