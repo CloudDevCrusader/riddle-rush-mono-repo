@@ -1,13 +1,23 @@
 <template>
-  <div id="app" class="app-container">
-    <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
+  <div
+    id="app"
+    class="app-container"
+  >
+    <SplashScreen
+      v-if="showSplash"
+      @complete="onSplashComplete"
+    />
     <NuxtLayout v-show="!showSplash">
-      <Transition name="page" mode="out-in">
+      <Transition
+        name="page"
+        mode="out-in"
+      >
         <NuxtPage :key="route.path" />
       </Transition>
     </NuxtLayout>
     <Toast />
     <DebugPanel v-show="!showSplash" />
+    <StoryboardDevOverlay />
   </div>
 </template>
 

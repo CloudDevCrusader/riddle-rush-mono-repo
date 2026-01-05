@@ -57,3 +57,60 @@ output "terraform_state_info" {
   }
 }
 
+output "cloudfront_alarms_topic_arn" {
+  description = "ARN of the SNS topic for CloudFront alarms"
+  value       = aws_sns_topic.cloudfront_alarms.arn
+}
+
+output "cloudwatch_dashboard_url" {
+  description = "URL of the CloudWatch dashboard for monitoring"
+  value       = "https://console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.cloudfront_monitoring.dashboard_name}"
+}
+
+output "lambda_edge_function_arn" {
+  description = "ARN of the Lambda@Edge function for cache control"
+  value       = aws_lambda_function.cache_control.qualified_arn
+}
+
+output "cloudfront_function_arn" {
+  description = "ARN of the CloudFront function for request rewriting"
+  value       = aws_cloudfront_function.request_rewrite.arn
+}
+
+output "waf_arn" {
+  description = "ARN of the WAF for CloudFront distribution"
+  value       = aws_wafv2_web_acl.cloudfront_waf.arn
+}
+
+output "health_check_id" {
+  description = "ID of the Route53 health check for CloudFront"
+  value       = aws_route53_health_check.cloudfront.id
+}
+
+output "s3_acceleration_domain_name" {
+  description = "S3 transfer acceleration domain name"
+  value       = "${aws_s3_bucket.website.bucket}.s3-accelerate.amazonaws.com"
+}
+
+# CloudWatch Error Logs API outputs
+output "error_logs_api_endpoint" {
+  description = "Endpoint for error logs API"
+  value       = "${aws_api_gateway_deployment.error_logs.invoke_url}logs"
+}
+
+output "error_logs_api_key" {
+  description = "API key for error logs API"
+  value       = aws_api_gateway_api_key.error_logs.value
+  sensitive   = true
+}
+
+output "cloudwatch_log_group_name" {
+  description = "CloudWatch log group name for error logs"
+  value       = aws_cloudwatch_log_group.error_logs.name
+}
+
+output "error_logs_dashboard_url" {
+  description = "URL of the CloudWatch dashboard for error logs"
+  value       = "https://console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.error_logs.dashboard_name}"
+}
+

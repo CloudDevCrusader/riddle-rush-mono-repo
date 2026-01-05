@@ -2,11 +2,16 @@
   <div class="wheel-container">
     <!-- Wheel Pointer/Arrow -->
     <div class="wheel-pointer">
-      <div class="pointer-arrow">▼</div>
+      <div class="pointer-arrow">
+        ▼
+      </div>
     </div>
 
     <!-- Rotating Wheel -->
-    <div class="fortune-wheel" :style="{ transform: `rotate(${wheelRotation}deg)` }">
+    <div
+      class="fortune-wheel"
+      :style="{ transform: `rotate(${wheelRotation}deg)` }"
+    >
       <!-- Segments -->
       <button
         v-for="(item, index) in items"
@@ -38,12 +43,18 @@
 
     <!-- Center Circle -->
     <div class="wheel-center">
-      <div class="center-glow" />
+      <div class="center-glow"></div>
       <div class="center-circle">
-        <span v-if="selectedItem && getItemIcon(selectedItem as T)" class="selected-icon">
+        <span
+          v-if="selectedItem && getItemIcon(selectedItem as T)"
+          class="selected-icon"
+        >
           {{ getItemIcon(selectedItem as T) }}
         </span>
-        <span v-else class="center-icon">{{ centerIcon }}</span>
+        <span
+          v-else
+          class="center-icon"
+        >{{ centerIcon }}</span>
       </div>
     </div>
   </div>
@@ -107,9 +118,9 @@ const getSegmentStyle = (index: number) => {
     : defaultColors[index % defaultColors.length]
 
   return {
-    transform: `rotate(${angle}deg)`,
-    transformOrigin: '50% 50%',
-    background: color,
+    'transform': `rotate(${angle}deg)`,
+    'transformOrigin': '50% 50%',
+    'background': color,
     '--segment-color': color,
   }
 }
@@ -134,7 +145,8 @@ const spinWheel = (targetRotation: number) => {
 
     if (progress < 1) {
       requestAnimationFrame(animate)
-    } else {
+    }
+    else {
       isSpinning.value = false
       wheelRotation.value = targetRotation // Ensure exact final position
     }
@@ -205,7 +217,7 @@ watch(
   () => props.modelValue,
   (newValue) => {
     selectedItem.value = newValue
-  }
+  },
 )
 </script>
 

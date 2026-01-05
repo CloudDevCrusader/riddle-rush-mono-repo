@@ -1,18 +1,32 @@
 <template>
   <div class="language-page">
     <!-- Background Image -->
-    <img :src="`${baseUrl}assets/language/BACKGROUND.png`" alt="Background" class="page-bg" />
+    <img
+      :src="`${baseUrl}assets/language/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
+    />
 
     <!-- Back Button -->
-    <button class="back-btn tap-highlight no-select" @click="goBack">
-      <img :src="`${baseUrl}assets/language/back.png`" alt="Back" />
+    <button
+      class="back-btn tap-highlight no-select"
+      @click="goBack"
+    >
+      <img
+        :src="`${baseUrl}assets/language/back.png`"
+        alt="Back"
+      />
     </button>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Title -->
       <div class="title-container animate-fade-in">
-        <img :src="`${baseUrl}assets/language/LANGUAGE.png`" alt="Language" class="title-image" />
+        <img
+          :src="`${baseUrl}assets/language/LANGUAGE.png`"
+          alt="Language"
+          class="title-image"
+        />
       </div>
 
       <!-- Language Card -->
@@ -37,8 +51,14 @@
               class="button-bg"
             />
             <span class="language-name">ENGLISH</span>
-            <div v-if="currentLocale === 'en'" class="check-mark">
-              <img :src="`${baseUrl}assets/language/mark.png`" alt="Selected" />
+            <div
+              v-if="currentLocale === 'en'"
+              class="check-mark"
+            >
+              <img
+                :src="`${baseUrl}assets/language/mark.png`"
+                alt="Selected"
+              />
             </div>
           </button>
 
@@ -61,16 +81,28 @@
               class="button-bg"
             />
             <span class="language-name">GERMAN</span>
-            <div v-if="currentLocale === 'de'" class="check-mark">
-              <img :src="`${baseUrl}assets/language/mark.png`" alt="Selected" />
+            <div
+              v-if="currentLocale === 'de'"
+              class="check-mark"
+            >
+              <img
+                :src="`${baseUrl}assets/language/mark.png`"
+                alt="Selected"
+              />
             </div>
           </button>
         </div>
       </div>
 
       <!-- OK Button -->
-      <button class="ok-btn tap-highlight no-select animate-slide-up" @click="confirmSelection">
-        <img :src="`${baseUrl}assets/language/OK.png`" alt="OK" />
+      <button
+        class="ok-btn tap-highlight no-select animate-slide-up"
+        @click="confirmSelection"
+      >
+        <img
+          :src="`${baseUrl}assets/language/OK.png`"
+          alt="OK"
+        />
       </button>
     </div>
   </div>

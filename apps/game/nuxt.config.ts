@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
 
-  plugins: ['~/plugins/i18n-init.client.ts'],
+  plugins: ['~/plugins/i18n-init.client.ts', '~/plugins/error-sync.client.ts'],
   ssr: false,
 
   // Auto-import configuration
@@ -29,6 +29,18 @@ export default defineNuxtConfig({
       path: '~/components/Base',
       prefix: 'Base',
       pathPrefix: false,
+    },
+  ],
+
+  // Component configuration (removed lazy loading as it's not supported in current Nuxt version)
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+    {
+      path: '~/components/Base',
+      prefix: 'Base',
     },
   ],
 
@@ -101,6 +113,17 @@ export default defineNuxtConfig({
         process.env.NUXT_PUBLIC_CLOUDFRONT_DOMAIN || process.env.CLOUDFRONT_DOMAIN || '',
       websiteUrl: process.env.NUXT_PUBLIC_WEBSITE_URL || process.env.WEBSITE_URL || '',
       awsRegion: process.env.AWS_REGION || 'eu-central-1',
+      // CloudWatch configuration
+      cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
+      cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
+      debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
+      // Amplify configuration (optional)
+      amplifyConfig: {
+        region: process.env.AWS_REGION || 'eu-central-1',
+        userPoolId: process.env.COGNITO_USER_POOL_ID || '',
+        userPoolWebClientId: process.env.COGNITO_USER_POOL_WEB_CLIENT_ID || '',
+        identityPoolId: process.env.COGNITO_IDENTITY_POOL_ID || '',
+      },
     },
   },
 

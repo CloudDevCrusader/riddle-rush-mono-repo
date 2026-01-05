@@ -16,13 +16,14 @@ export function useNavigation() {
       // Simulate loading for better UX on fast transitions
       if (simulateLoading) {
         setProgress(30)
-        await new Promise((resolve) => setTimeout(resolve, 300))
+        await new Promise(resolve => setTimeout(resolve, 300))
         setProgress(70)
-        await new Promise((resolve) => setTimeout(resolve, 200))
+        await new Promise(resolve => setTimeout(resolve, 200))
       }
 
       await router.push(route)
-    } finally {
+    }
+    finally {
       hideLoading()
     }
   }

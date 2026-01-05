@@ -1,7 +1,7 @@
 <template>
   <div class="game-page">
     <!-- Background -->
-    <div class="game-bg" />
+    <div class="game-bg"></div>
 
     <!-- Top Bar -->
     <header class="game-header">
@@ -11,7 +11,11 @@
         class="back-btn tap-highlight no-select"
         @click="handleBack"
       >
-        <img src="/assets/alphabets/back.png" alt="Back" class="back-icon" />
+        <img
+          src="/assets/alphabets/back.png"
+          alt="Back"
+          class="back-icon"
+        />
       </button>
 
       <!-- Round Indicator -->
@@ -35,8 +39,18 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <rect x="6" y="4" width="4" height="16" />
-          <rect x="14" y="4" width="4" height="16" />
+          <rect
+            x="6"
+            y="4"
+            width="4"
+            height="16"
+          />
+          <rect
+            x="14"
+            y="4"
+            width="4"
+            height="16"
+          />
         </svg>
       </button>
     </header>
@@ -50,7 +64,9 @@
           alt="Category"
           class="category-label-image"
         />
-        <div class="category-label">CATEGORY</div>
+        <div class="category-label">
+          CATEGORY
+        </div>
         <div class="category-name">
           {{ currentCategory?.name?.toUpperCase() || 'LOADING...' }}
         </div>
@@ -72,7 +88,10 @@
           <span class="turn-label">{{ $t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <form class="answer-form" @submit.prevent="submitAnswer">
+        <form
+          class="answer-form"
+          @submit.prevent="submitAnswer"
+        >
           <input
             v-model="playerAnswer"
             type="text"
@@ -84,14 +103,21 @@
             @input="sanitizeInput"
             @keyup.enter="submitAnswer"
           />
-          <button type="submit" class="submit-answer-btn" :disabled="false">
+          <button
+            type="submit"
+            class="submit-answer-btn"
+            :disabled="false"
+          >
             {{ $t('game.submit', 'Submit') }}
           </button>
         </form>
       </div>
 
       <!-- All Players Submitted Message -->
-      <div v-if="allPlayersSubmitted" class="all-submitted-message">
+      <div
+        v-if="allPlayersSubmitted"
+        class="all-submitted-message"
+      >
         <p>{{ $t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
@@ -121,7 +147,11 @@
         class="next-btn btn-primary tap-highlight no-select"
         @click="handleNext"
       >
-        <img src="/assets/alphabets/next.png" alt="Next" class="next-icon" />
+        <img
+          src="/assets/alphabets/next.png"
+          alt="Next"
+          class="next-icon"
+        />
         <span class="next-text">NEXT</span>
       </button>
     </div>
@@ -158,7 +188,8 @@ const goHome = () => {
 const handleBack = () => {
   if (gameStore.hasActiveSession) {
     showQuitModal.value = true
-  } else {
+  }
+  else {
     goHome()
   }
 }
@@ -191,7 +222,8 @@ const submitAnswer = async () => {
 
     if (answer) {
       toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
-    } else {
+    }
+    else {
       toast.info(t('game.answer_skipped', `${player.name} skipped their turn`))
     }
 
@@ -201,7 +233,8 @@ const submitAnswer = async () => {
     if (allPlayersSubmitted.value) {
       toast.info(t('game.all_submitted', 'All players have submitted!'))
     }
-  } catch (error) {
+  }
+  catch (error) {
     const logger = useLogger()
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))

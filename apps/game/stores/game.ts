@@ -42,30 +42,30 @@ export const useGameStore = defineStore('game', {
   }),
 
   getters: {
-    hasActiveSession: (state) => state.currentSession !== null,
-    currentScore: (state) => state.currentSession?.score ?? 0, // Legacy support
-    currentAttempts: (state) => state.currentSession?.attempts ?? [], // Legacy support
-    canInstall: (state) => state.installPromptEvent !== null,
-    currentCategory: (state) => state.currentSession?.category ?? null,
-    currentLetter: (state) => state.currentSession?.letter ?? '',
-    displayedCategories: (state) => state.categories.slice(0, state.displayedCategoryCount),
-    hasMoreCategories: (state) => state.displayedCategoryCount < state.categories.length,
+    hasActiveSession: state => state.currentSession !== null,
+    currentScore: state => state.currentSession?.score ?? 0, // Legacy support
+    currentAttempts: state => state.currentSession?.attempts ?? [], // Legacy support
+    canInstall: state => state.installPromptEvent !== null,
+    currentCategory: state => state.currentSession?.category ?? null,
+    currentLetter: state => state.currentSession?.letter ?? '',
+    displayedCategories: state => state.categories.slice(0, state.displayedCategoryCount),
+    hasMoreCategories: state => state.displayedCategoryCount < state.categories.length,
     categoryEmoji: () => {
       const { resolve } = useCategoryEmoji()
       return (name?: string | null) => resolve(name)
     },
 
     // Multi-player getters
-    players: (state) => state.currentSession?.players ?? [],
-    currentRound: (state) => state.currentSession?.currentRound ?? 0,
+    players: state => state.currentSession?.players ?? [],
+    currentRound: state => state.currentSession?.currentRound ?? 0,
     allPlayersSubmitted: (state) => {
       const players = state.currentSession?.players ?? []
       if (players.length === 0) return false
-      return players.every((p) => p.hasSubmitted)
+      return players.every(p => p.hasSubmitted)
     },
     currentPlayerTurn: (state) => {
       const players = state.currentSession?.players ?? []
-      return players.find((p) => !p.hasSubmitted) ?? null
+      return players.find(p => !p.hasSubmitted) ?? null
     },
     leaderboard: (state): PlayerWithRank[] => {
       const players = state.currentSession?.players ?? []
@@ -80,8 +80,8 @@ export const useGameStore = defineStore('game', {
         isWinner: isGameCompleted && index === 0 && topScore > 0,
       }))
     },
-    isGameCompleted: (state) => state.currentSession?.status === 'completed',
-    gameStatus: (state) => state.currentSession?.status ?? 'active',
+    isGameCompleted: state => state.currentSession?.status === 'completed',
+    gameStatus: state => state.currentSession?.status ?? 'active',
   },
 
   actions: {
@@ -96,7 +96,7 @@ export const useGameStore = defineStore('game', {
         // Poll until loading is complete (max 10 seconds)
         const maxAttempts = 100
         for (let i = 0; i < maxAttempts; i++) {
-          await new Promise((resolve) => setTimeout(resolve, 100))
+          await new Promise(resolve => setTimeout(resolve, 100))
           if (!this.categoriesLoading) {
             return this.categories
           }
@@ -118,7 +118,8 @@ export const useGameStore = defineStore('game', {
         this.categoryLoadError = null
 
         return categories
-      } catch (error) {
+      }
+      catch (error) {
         const logger = useLogger()
         const errorMessage = error instanceof Error ? error.message : 'Failed to load categories'
         this.categoryLoadError = errorMessage
@@ -131,7 +132,8 @@ export const useGameStore = defineStore('game', {
         }
 
         throw new Error(errorMessage)
-      } finally {
+      }
+      finally {
         this.categoriesLoading = false
       }
     },
@@ -141,7 +143,7 @@ export const useGameStore = defineStore('game', {
 
       this.displayedCategoryCount = Math.min(
         this.displayedCategoryCount + step,
-        this.categories.length
+        this.categories.length,
       )
     },
 
@@ -189,7 +191,8 @@ export const useGameStore = defineStore('game', {
       if (hasPlayers) {
         // Multi-player: start new round
         return this.startNextRound()
-      } else {
+      }
+      else {
         // Legacy single-player mode
         const session: GameSession = {
           id: crypto.randomUUID(),
@@ -313,7 +316,8 @@ export const useGameStore = defineStore('game', {
         if (history) {
           this.history = history
         }
-      } catch (error) {
+      }
+      catch (error) {
         const logger = useLogger()
         logger.error('Error loading from IndexedDB:', error)
         // Continue without persisted data
@@ -326,7 +330,8 @@ export const useGameStore = defineStore('game', {
       try {
         const { saveGameSession } = useIndexedDB()
         await saveGameSession(this.currentSession)
-      } catch (error) {
+      }
+      catch (error) {
         const logger = useLogger()
         logger.error('Error saving session to IndexedDB:', error)
         // Don't throw - allow game to continue even if save fails
@@ -337,7 +342,8 @@ export const useGameStore = defineStore('game', {
       try {
         const { saveGameHistory } = useIndexedDB()
         await saveGameHistory(this.history)
-      } catch (error) {
+      }
+      catch (error) {
         const logger = useLogger()
         logger.error('Error saving history to IndexedDB:', error)
         // Don't throw - allow game to continue even if save fails
@@ -353,7 +359,7 @@ export const useGameStore = defineStore('game', {
       playerNames: string[],
       gameName?: string,
       customLetter?: string,
-      customCategory?: Category
+      customCategory?: Category,
     ) {
       await this.fetchCategories()
 
@@ -394,7 +400,7 @@ export const useGameStore = defineStore('game', {
     async submitPlayerAnswer(playerId: string, answer: string) {
       if (!this.currentSession) return
 
-      const player = this.currentSession.players.find((p) => p.id === playerId)
+      const player = this.currentSession.players.find(p => p.id === playerId)
       if (!player) return
 
       player.currentRoundAnswer = answer
@@ -406,7 +412,7 @@ export const useGameStore = defineStore('game', {
     async assignPlayerScore(playerId: string, points: number) {
       if (!this.currentSession) return
 
-      const player = this.currentSession.players.find((p) => p.id === playerId)
+      const player = this.currentSession.players.find(p => p.id === playerId)
       if (!player) return
 
       player.currentRoundScore = points
@@ -418,7 +424,7 @@ export const useGameStore = defineStore('game', {
     async updatePlayerAvatar(playerId: string, avatarUrl: string) {
       if (!this.currentSession) return
 
-      const player = this.currentSession.players.find((p) => p.id === playerId)
+      const player = this.currentSession.players.find(p => p.id === playerId)
       if (!player) return
 
       player.avatar = avatarUrl
@@ -434,7 +440,7 @@ export const useGameStore = defineStore('game', {
         category: this.currentSession.category.name,
         letter: this.currentSession.letter,
         timestamp: Date.now(),
-        playerResults: this.currentSession.players.map((p) => ({
+        playerResults: this.currentSession.players.map(p => ({
           playerId: p.id,
           playerName: p.name,
           answer: p.currentRoundAnswer || '',
@@ -485,7 +491,7 @@ export const useGameStore = defineStore('game', {
 
     getPlayerById(playerId: string): Player | null {
       if (!this.currentSession) return null
-      return this.currentSession.players.find((p) => p.id === playerId) ?? null
+      return this.currentSession.players.find(p => p.id === playerId) ?? null
     },
   },
 })

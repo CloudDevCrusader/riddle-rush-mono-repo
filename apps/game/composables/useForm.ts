@@ -107,10 +107,12 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
     try {
       await onSubmit(values as T)
       return true
-    } catch {
+    }
+    catch {
       // Form errors are handled by the caller
       return false
-    } finally {
+    }
+    finally {
       isSubmitting.value = false
     }
   }
@@ -179,7 +181,7 @@ export const validationRules = {
 
   minLength: (
     length: number,
-    message = `Must be at least ${length} characters`
+    message = `Must be at least ${length} characters`,
   ): ValidationRule<string> => ({
     validate: (value: string) => value.length >= length,
     message,
@@ -187,7 +189,7 @@ export const validationRules = {
 
   maxLength: (
     length: number,
-    message = `Must be at most ${length} characters`
+    message = `Must be at most ${length} characters`,
   ): ValidationRule<string> => ({
     validate: (value: string) => value.length <= length,
     message,

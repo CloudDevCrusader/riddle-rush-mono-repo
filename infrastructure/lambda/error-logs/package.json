@@ -1,0 +1,12 @@
+{
+  "name": "error-logs-handler",
+  "version": "1.0.0",
+  "description": "Lambda function for processing error logs and sending to CloudWatch",
+  "main": "index.js",
+  "scripts": {
+    "build": "zip -r ../../error-logs-handler.zip ."
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1235.0"
+  }
+}

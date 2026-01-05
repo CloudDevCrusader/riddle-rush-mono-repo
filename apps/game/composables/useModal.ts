@@ -25,7 +25,8 @@ export function useModal(initialState = false) {
   const toggle = () => {
     if (isOpen.value) {
       close()
-    } else {
+    }
+    else {
       open()
     }
   }
@@ -44,7 +45,7 @@ export function useModal(initialState = false) {
  */
 export function useModals<T extends string>(modalNames: T[]) {
   const modals = reactive<Record<T, ReturnType<typeof useModal>>>(
-    {} as Record<T, ReturnType<typeof useModal>>
+    {} as Record<T, ReturnType<typeof useModal>>,
   )
 
   modalNames.forEach((name) => {

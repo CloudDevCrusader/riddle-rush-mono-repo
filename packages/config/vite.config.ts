@@ -40,9 +40,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         inspect({
           enabled: true,
           build: false,
-        })
+        }),
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
 
@@ -53,9 +54,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         VueDevTools({
           enabled: true,
           componentInspector: true,
-        })
+        }),
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
 
@@ -71,9 +73,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
           open: false,
           gzipSize: true,
           brotliSize: true,
-        }) as Plugin
+        }) as Plugin,
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
   }
@@ -97,9 +100,63 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         gzipSize: true,
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
-      }) as Plugin
+      }) as Plugin,
     )
-  } catch {
+  }
+  catch {
+    // Plugin not installed, skip
+  }
+
+  try {
+    // Add compression plugin for better PWA performance
+    const viteCompression = require('vite-plugin-compression').default
+    plugins.push(
+      viteCompression({
+        algorithm: 'brotliCompress',
+        ext: '.br',
+        threshold: 10240, // Only compress files larger than 10KB
+        deleteOriginFile: false,
+      }),
+    )
+  }
+  catch {
+    // Plugin not installed, skip
+  }
+
+  try {
+    // Add lazy loading for images
+    const viteImagemin = require('vite-plugin-imagemin').default
+    plugins.push(
+      viteImagemin({
+        gifsicle: {
+          optimizationLevel: 7,
+          interlaced: false,
+        },
+        optipng: {
+          optimizationLevel: 7,
+        },
+        mozjpeg: {
+          quality: 20,
+        },
+        pngquant: {
+          quality: [0.8, 0.9],
+          speed: 4,
+        },
+        svgo: {
+          plugins: [
+            {
+              name: 'removeViewBox',
+            },
+            {
+              name: 'removeEmptyAttrs',
+              active: false,
+            },
+          ],
+        },
+      }),
+    )
+  }
+  catch {
     // Plugin not installed, skip
   }
 
@@ -129,7 +186,7 @@ export function getBuildConfig() {
       // Source maps only in development
       sourcemap: process.env.NODE_ENV !== 'production',
       // Minification options
-      minify: 'terser',
+      minify: true,
       terserOptions: {
         compress: {
           drop_console: process.env.NODE_ENV === 'production',
@@ -140,6 +197,29 @@ export function getBuildConfig() {
           comments: false,
         },
       },
+      // Code splitting and lazy loading
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Create separate chunks for large libraries
+            vue: ['vue', 'pinia', '@vueuse/core'],
+            // Group game-related dependencies
+            game: [
+              '@riddle-rush/shared',
+              '@riddle-rush/types',
+              'idb',
+            ],
+            // Group utility libraries
+            utils: ['lodash', 'date-fns'],
+          },
+        },
+      },
+      // Enable CSS code splitting
+      cssCodeSplit: true,
+      // Better chunk naming for debugging
+      chunkFileNames: 'assets/[name]-[hash].js',
+      assetFileNames: 'assets/[name]-[hash].[ext]',
+      entryFileNames: 'assets/[name]-[hash].js',
     },
   }
 }

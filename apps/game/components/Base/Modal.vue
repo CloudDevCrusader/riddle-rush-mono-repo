@@ -1,7 +1,11 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click.self="handleOverlayClick">
+      <div
+        v-if="modelValue"
+        class="modal-overlay"
+        @click.self="handleOverlayClick"
+      >
         <div
           class="modal-container"
           :class="modalClasses"
@@ -21,9 +25,15 @@
           </button>
 
           <!-- Header -->
-          <div v-if="title || $slots.header" class="modal-header">
+          <div
+            v-if="title || $slots.header"
+            class="modal-header"
+          >
             <slot name="header">
-              <h2 id="modal-title" class="modal-title">
+              <h2
+                id="modal-title"
+                class="modal-title"
+              >
                 {{ title }}
               </h2>
             </slot>
@@ -31,12 +41,15 @@
 
           <!-- Body -->
           <div class="modal-body">
-            <slot />
+            <slot></slot>
           </div>
 
           <!-- Footer -->
-          <div v-if="$slots.footer" class="modal-footer">
-            <slot name="footer" />
+          <div
+            v-if="$slots.footer"
+            class="modal-footer"
+          >
+            <slot name="footer"></slot>
           </div>
         </div>
       </div>
@@ -64,7 +77,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  close: []
+  'close': []
 }>()
 
 const modalClasses = computed(() => [`modal-container--${props.size}`])
@@ -103,10 +116,11 @@ watch(
   (isOpen: boolean) => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
-    } else {
+    }
+    else {
       document.body.style.overflow = ''
     }
-  }
+  },
 )
 </script>
 

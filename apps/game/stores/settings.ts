@@ -33,9 +33,9 @@ export const useSettingsStore = defineStore('settings', {
   state: (): GameSettings => ({ ...DEFAULT_SETTINGS }),
 
   getters: {
-    isDebugMode: (state) => state.debugMode,
-    isLeaderboardEnabled: (state) => state.leaderboardEnabled,
-    shouldShowLeaderboard: (state) => state.leaderboardEnabled && state.showLeaderboardAfterRound,
+    isDebugMode: state => state.debugMode,
+    isLeaderboardEnabled: state => state.leaderboardEnabled,
+    shouldShowLeaderboard: state => state.leaderboardEnabled && state.showLeaderboardAfterRound,
   },
 
   actions: {
@@ -48,7 +48,8 @@ export const useSettingsStore = defineStore('settings', {
           const parsed = JSON.parse(stored)
           Object.assign(this, { ...DEFAULT_SETTINGS, ...parsed })
         }
-      } catch (e) {
+      }
+      catch (e) {
         const logger = useLogger()
         logger.warn('Failed to load settings:', e)
       }
@@ -59,7 +60,8 @@ export const useSettingsStore = defineStore('settings', {
 
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.$state))
-      } catch (e) {
+      }
+      catch (e) {
         const logger = useLogger()
         logger.warn('Failed to save settings:', e)
       }

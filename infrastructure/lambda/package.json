@@ -1,0 +1,12 @@
+{
+  "name": "cache-control-lambda",
+  "version": "1.0.0",
+  "description": "Lambda@Edge function for enhanced caching control",
+  "main": "cache-control.js",
+  "scripts": {
+    "build": "zip -r ../cache-control.zip ."
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1235.0"
+  }
+}

@@ -25,6 +25,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (newLocale) {
         settingsStore.setLanguage(newLocale as string)
       }
-    }
+    },
   )
 })

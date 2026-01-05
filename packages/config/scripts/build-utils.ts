@@ -98,10 +98,10 @@ export function getWorkspacePackages(workspaceRoot?: string): string[] {
  */
 export function isCI(): boolean {
   return !!(
-    process.env.CI ||
-    process.env.GITLAB_CI ||
-    process.env.GITHUB_ACTIONS ||
-    process.env.CIRCLECI
+    process.env.CI
+    || process.env.GITLAB_CI
+    || process.env.GITHUB_ACTIONS
+    || process.env.CIRCLECI
   )
 }
 

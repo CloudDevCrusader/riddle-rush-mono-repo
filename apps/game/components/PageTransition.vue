@@ -1,6 +1,9 @@
 <template>
-  <Transition name="page" mode="out-in">
-    <slot />
+  <Transition
+    name="page"
+    mode="out-in"
+  >
+    <slot></slot>
   </Transition>
 </template>
 

@@ -24,21 +24,21 @@ export function useAnswerCheck() {
   async function searchPetScan(category: string): Promise<string[]> {
     try {
       const params = new URLSearchParams({
-        max_sitelink_count: PETSCAN_MAX_SITELINK_COUNT,
-        categories: category,
-        project: PETSCAN_PROJECT,
-        language: PETSCAN_LANGUAGE,
-        cb_labels_yes_l: '1',
+        'max_sitelink_count': PETSCAN_MAX_SITELINK_COUNT,
+        'categories': category,
+        'project': PETSCAN_PROJECT,
+        'language': PETSCAN_LANGUAGE,
+        'cb_labels_yes_l': '1',
         'edits[flagged]': 'both',
         'edits[bots]': 'both',
-        search_max_results: PETSCAN_MAX_RESULTS,
-        cb_labels_any_l: '1',
-        cb_labels_no_l: '1',
-        format: 'json',
-        interface_language: PETSCAN_LANGUAGE,
+        'search_max_results': PETSCAN_MAX_RESULTS,
+        'cb_labels_any_l': '1',
+        'cb_labels_no_l': '1',
+        'format': 'json',
+        'interface_language': PETSCAN_LANGUAGE,
         'edits[anons]': 'both',
         'ns[0]': '1',
-        doit: '',
+        'doit': '',
       })
 
       const url = `https://petscan.wmflabs.org/?${params.toString()}`
@@ -59,7 +59,8 @@ export function useAnswerCheck() {
       return results
         .map((e: { title: string }) => e.title.split('_')[0])
         .filter((e): e is string => !!e && e !== category)
-    } catch (error) {
+    }
+    catch (error) {
       logger.error('Error fetching from PetScan:', error)
       return []
     }
@@ -78,7 +79,8 @@ export function useAnswerCheck() {
       }
 
       return categoryAnswers[letter.toLowerCase()] || []
-    } catch (error) {
+    }
+    catch (error) {
       logger.error('Error loading offline answers:', error)
       return []
     }
@@ -88,7 +90,7 @@ export function useAnswerCheck() {
     list: string[],
     letter: string,
     term: string,
-    categoryItem: Category
+    categoryItem: Category,
   ): PetScanResult {
     let items = list
 
@@ -97,15 +99,15 @@ export function useAnswerCheck() {
       const additionalItems = Array.isArray(categoryItem.additionalData)
         ? categoryItem.additionalData
         : Object.values(categoryItem.additionalData).filter(
-            (v): v is string => typeof v === 'string'
+            (v): v is string => typeof v === 'string',
           )
       items = [...items, ...additionalItems]
     }
 
-    const results = items.filter((e) => e.toUpperCase().startsWith(letter.toUpperCase()))
+    const results = items.filter(e => e.toUpperCase().startsWith(letter.toUpperCase()))
 
     const found = results.includes(term)
-    const other = results.filter((res) => res !== term).slice(0, MAX_SUGGESTIONS)
+    const other = results.filter(res => res !== term).slice(0, MAX_SUGGESTIONS)
 
     return { found, other }
   }
@@ -127,10 +129,10 @@ export function useAnswerCheck() {
   async function checkAnswer(
     searchWord: string,
     letter: string,
-    term: string
+    term: string,
   ): Promise<CheckAnswerResponse> {
     const categories = await getCategories()
-    const currentCategory = categories.find((e) => e.searchWord === searchWord)
+    const currentCategory = categories.find(e => e.searchWord === searchWord)
 
     if (!currentCategory) {
       throw new Error(`Category not found: ${searchWord}`)

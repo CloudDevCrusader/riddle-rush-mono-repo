@@ -14,7 +14,11 @@
         <div class="toast-message">
           {{ toast.message }}
         </div>
-        <button class="toast-close" aria-label="Close" @click.stop="removeToast(toast.id)">
+        <button
+          class="toast-close"
+          aria-label="Close"
+          @click.stop="removeToast(toast.id)"
+        >
           ✕
         </button>
       </div>

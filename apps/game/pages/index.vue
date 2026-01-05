@@ -1,24 +1,39 @@
 <template>
   <div class="menu-page">
     <!-- Background Image -->
-    <img :src="`${baseUrl}assets/main-menu/BACKGROUND.png`" alt="Background" class="page-bg" />
+    <img
+      :src="`${baseUrl}assets/main-menu/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
+    />
 
     <!-- Main Container -->
     <div class="container">
       <!-- Logo -->
       <div class="logo-container animate-fade-in">
-        <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" class="logo-image" />
+        <img
+          :src="`${baseUrl}assets/main-menu/LOGO.png`"
+          alt="Logo"
+          class="logo-image"
+        />
       </div>
 
       <!-- Menu Buttons -->
-      <div v-show="!showMenu" class="menu-buttons animate-slide-up">
+      <div
+        v-show="!showMenu"
+        class="menu-buttons animate-slide-up"
+      >
         <!-- Play Button -->
         <button
           class="menu-btn play-btn tap-highlight no-select"
           aria-label="Play Game"
           @click="handlePlay"
         >
-          <img :src="`${baseUrl}assets/main-menu/PLAY.png`" alt="Play" class="btn-image" />
+          <img
+            :src="`${baseUrl}assets/main-menu/PLAY.png`"
+            alt="Play"
+            class="btn-image"
+          />
           <img
             :src="`${baseUrl}assets/main-menu/PLAY-1.png`"
             alt="Play hover"
@@ -27,8 +42,15 @@
         </button>
 
         <!-- Options Button -->
-        <button class="menu-btn options-btn tap-highlight no-select" @click="wrappedGoToSettings">
-          <img :src="`${baseUrl}assets/main-menu/OPTIONS.png`" alt="Options" class="btn-image" />
+        <button
+          class="menu-btn options-btn tap-highlight no-select"
+          @click="wrappedGoToSettings"
+        >
+          <img
+            :src="`${baseUrl}assets/main-menu/OPTIONS.png`"
+            alt="Options"
+            class="btn-image"
+          />
           <img
             :src="`${baseUrl}assets/main-menu/OPTION.png`"
             alt="Options hover"
@@ -37,8 +59,15 @@
         </button>
 
         <!-- Credits Button -->
-        <button class="menu-btn credits-btn tap-highlight no-select" @click="wrappedGoToCredits">
-          <img :src="`${baseUrl}assets/main-menu/CREDITS.png`" alt="Credits" class="btn-image" />
+        <button
+          class="menu-btn credits-btn tap-highlight no-select"
+          @click="wrappedGoToCredits"
+        >
+          <img
+            :src="`${baseUrl}assets/main-menu/CREDITS.png`"
+            alt="Credits"
+            class="btn-image"
+          />
           <img
             :src="`${baseUrl}assets/main-menu/CREDITS-1.png`"
             alt="Credits hover"
@@ -49,7 +78,10 @@
 
       <!-- Menu Panel (when toggled) -->
       <transition name="menu-fade">
-        <div v-if="showMenu" class="menu-panel animate-scale-in">
+        <div
+          v-if="showMenu"
+          class="menu-panel animate-scale-in"
+        >
           <button
             class="menu-item tap-highlight no-select"
             aria-label="Play Game"
@@ -87,8 +119,15 @@
     </div>
 
     <!-- Menu Toggle Button (bottom right) -->
-    <button class="menu-icon-btn tap-highlight no-select" @click="toggleMenu">
-      <img :src="`${baseUrl}assets/main-menu/MENU.png`" alt="Menu" class="menu-icon" />
+    <button
+      class="menu-icon-btn tap-highlight no-select"
+      @click="toggleMenu"
+    >
+      <img
+        :src="`${baseUrl}assets/main-menu/MENU.png`"
+        alt="Menu"
+        class="menu-icon"
+      />
     </button>
   </div>
 </template>
