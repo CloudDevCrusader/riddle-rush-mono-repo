@@ -23,6 +23,7 @@ test-results/
 .output/
 .cache/
 **/.cache/
+.turbo/
 
 # Logs
 npm-debug.log*
