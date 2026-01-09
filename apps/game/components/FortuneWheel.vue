@@ -111,6 +111,7 @@ const getSegmentStyle = (index: number) => {
     transformOrigin: '50% 50%',
     background: color,
     '--segment-color': color,
+    '--angle': `${angleStep.value}deg`,
   }
 }
 

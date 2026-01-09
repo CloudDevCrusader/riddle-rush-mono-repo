@@ -106,10 +106,27 @@
         </p>
       </div>
 
-      <!-- OK Button -->
-      <button class="ok-btn tap-highlight no-select animate-slide-up" @click="handleOk">
-        <img :src="`${baseUrl}assets/leaderboard/ok.png`" alt="OK" />
-      </button>
+      <!-- Action Buttons -->
+      <div class="action-buttons animate-slide-up">
+        <!-- Finish Button (Home) -->
+        <button
+          class="finish-btn tap-highlight no-select"
+          :title="$t('leaderboard.finish_game', 'Finish Game')"
+          @click="handleFinish"
+        >
+          <img :src="`${baseUrl}assets/leaderboard/ok.png`" alt="Finish" />
+        </button>
+
+        <!-- Next Round Button (only if game not completed) -->
+        <button
+          v-if="!isGameCompleted"
+          class="next-round-btn tap-highlight no-select"
+          :title="$t('leaderboard.next_round', 'Play Next Round')"
+          @click="handleNextRound"
+        >
+          <img :src="`${baseUrl}assets/scoring/next.png`" alt="Next Round" />
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -119,19 +136,19 @@ const { baseUrl, toast, t } = usePageSetup()
 const { goHome, goToRoundStart } = useNavigation()
 const { gameStore, leaderboard: leaderboardEntries, isGameCompleted } = useGameState()
 
-const goBack = () => {
-  goHome()
+const goBack = async () => {
+  await goHome()
 }
 
-const handleOk = async () => {
-  if (isGameCompleted.value) {
-    // Leaderboard is the final screen - end game and return to home
-    await gameStore.endGame()
-    goHome()
-  } else {
-    // Continue to next round
-    goToRoundStart()
-  }
+const handleFinish = async () => {
+  // End game and return to home
+  await gameStore.endGame()
+  await goHome()
+}
+
+const handleNextRound = async () => {
+  // Continue to next round
+  await goToRoundStart()
 }
 
 // Get avatar URL - use custom avatar if available, otherwise default
@@ -448,7 +465,16 @@ useHead({
   margin-top: var(--spacing-lg);
 }
 
-.ok-btn {
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.finish-btn,
+.next-round-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -456,13 +482,15 @@ useHead({
   transition: transform var(--transition-base);
 }
 
-.ok-btn img {
-  width: clamp(150px, 25vw, 200px);
+.finish-btn img,
+.next-round-btn img {
+  width: clamp(120px, 20vw, 160px);
   height: auto;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
-.ok-btn:active {
+.finish-btn:active,
+.next-round-btn:active {
   transform: scale(0.95);
 }
 
@@ -589,8 +617,9 @@ useHead({
     min-width: 60px;
   }
 
-  .ok-btn img {
-    width: clamp(120px, 30vw, 200px);
+  .finish-btn img,
+  .next-round-btn img {
+    width: clamp(100px, 20vw, 150px);
   }
 }
 
@@ -676,8 +705,9 @@ useHead({
     width: clamp(24px, 3vw, 32px);
   }
 
-  .ok-btn img {
-    width: clamp(100px, 25vw, 140px);
+  .finish-btn img,
+  .next-round-btn img {
+    width: clamp(80px, 20vw, 120px);
   }
 
   .game-complete-message {

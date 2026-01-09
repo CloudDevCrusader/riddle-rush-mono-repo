@@ -394,9 +394,12 @@ export const useGameStore = defineStore('game', {
     async submitPlayerAnswer(playerId: string, answer: string) {
       if (!this.currentSession) return
 
-      const player = this.currentSession.players.find((p) => p.id === playerId)
-      if (!player) return
+      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      if (playerIndex === -1) return
 
+      // Update player using index to ensure reactivity
+      const player = this.currentSession.players[playerIndex]
+      if (!player) return
       player.currentRoundAnswer = answer
       player.hasSubmitted = true
 
@@ -406,9 +409,12 @@ export const useGameStore = defineStore('game', {
     async assignPlayerScore(playerId: string, points: number) {
       if (!this.currentSession) return
 
-      const player = this.currentSession.players.find((p) => p.id === playerId)
-      if (!player) return
+      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      if (playerIndex === -1) return
 
+      // Update player using index to ensure reactivity
+      const player = this.currentSession.players[playerIndex]
+      if (!player) return
       player.currentRoundScore = points
       player.totalScore += points
 
@@ -418,9 +424,12 @@ export const useGameStore = defineStore('game', {
     async updatePlayerAvatar(playerId: string, avatarUrl: string) {
       if (!this.currentSession) return
 
-      const player = this.currentSession.players.find((p) => p.id === playerId)
-      if (!player) return
+      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      if (playerIndex === -1) return
 
+      // Update player using index to ensure reactivity
+      const player = this.currentSession.players[playerIndex]
+      if (!player) return
       player.avatar = avatarUrl
 
       await this.saveSessionToDB()

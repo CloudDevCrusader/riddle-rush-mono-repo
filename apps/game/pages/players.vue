@@ -265,8 +265,16 @@ const startGame = async () => {
   }
 }
 
-const goBack = () => {
-  navigateBack()
+const goBack = async () => {
+  //  const router = useRouter()
+  // Try to go back, but fallback to home if there's no history
+  if (window.history.length > 1) {
+    navigateBack()
+  } else {
+    // Fallback to home if no history available
+    const { goHome } = useNavigation()
+    await goHome()
+  }
 }
 
 // Mobile swipe gesture: swipe right to go back

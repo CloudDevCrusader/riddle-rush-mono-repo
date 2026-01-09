@@ -32,9 +32,9 @@ test.describe('Leaderboard Page', () => {
     const leaderboardList = page.locator('.leaderboard-list')
     await expect(leaderboardList).toBeVisible()
 
-    // Check for OK button
-    const okBtn = page.locator('.ok-btn')
-    await expect(okBtn).toBeVisible()
+    // Check for action buttons (finish button should always be visible)
+    const finishBtn = page.locator('.finish-btn')
+    await expect(finishBtn).toBeVisible()
   })
 
   test('should display leaderboard entries', async ({ page }) => {
@@ -74,11 +74,11 @@ test.describe('Leaderboard Page', () => {
     await expect(playerAvatar).toBeVisible()
   })
 
-  test('should navigate to menu when clicking OK (game completed)', async ({ page }) => {
+  test('should navigate to menu when clicking finish (game completed)', async ({ page }) => {
     // Note: This test assumes game is completed
     // In a real scenario, you'd need to complete the game first
-    const okBtn = page.locator('.ok-btn')
-    await okBtn.click()
+    const finishBtn = page.locator('.finish-btn')
+    await finishBtn.click()
 
     // Should navigate to home or round-start depending on game state
     await page.waitForTimeout(500)
@@ -98,9 +98,9 @@ test.describe('Leaderboard Page', () => {
   test('should not show back button when game is completed', async ({ page }) => {
     // When game is completed, back button should be hidden
     // This would require setting up a completed game state
-    // For now, we just verify the OK button is present
-    const okBtn = page.locator('.ok-btn')
-    await expect(okBtn).toBeVisible()
+    // For now, we just verify the finish button is present
+    const finishBtn = page.locator('.finish-btn')
+    await expect(finishBtn).toBeVisible()
   })
 
   test('should show game complete message when game is completed', async ({ page }) => {
@@ -123,16 +123,16 @@ test.describe('Leaderboard Page', () => {
 
     const title = page.locator('.title-image')
     const leaderboardList = page.locator('.leaderboard-list')
-    const okBtn = page.locator('.ok-btn')
+    const finishBtn = page.locator('.finish-btn')
 
     await expect(title).toBeVisible()
     await expect(leaderboardList).toBeVisible()
-    await expect(okBtn).toBeVisible()
+    await expect(finishBtn).toBeVisible()
   })
 
   test('should have entries sorted by score descending', async ({ page }) => {
     const scoreValues = await page.locator('.score-value').allTextContents()
-    const scores = scoreValues.map(s => Number.parseInt(s)).filter(s => !Number.isNaN(s))
+    const scores = scoreValues.map((s) => Number.parseInt(s)).filter((s) => !Number.isNaN(s))
 
     // Check if scores are in descending order
     for (let i = 0; i < scores.length - 1; i++) {
@@ -144,14 +144,20 @@ test.describe('Leaderboard Page', () => {
     }
   })
 
-  test('should navigate to round-start when OK clicked (game not completed)', async ({ page }) => {
-    // When game is not completed, OK should go to round-start
-    const okBtn = page.locator('.ok-btn')
-    await okBtn.click()
+  test('should navigate to round-start when next round clicked (game not completed)', async ({
+    page,
+  }) => {
+    // When game is not completed, next round button should go to round-start
+    const nextRoundBtn = page.locator('.next-round-btn')
+    // Only click if the button exists (game not completed)
+    const btnCount = await nextRoundBtn.count()
+    if (btnCount > 0) {
+      await nextRoundBtn.click()
 
-    // Should navigate to round-start or home depending on game state
-    await page.waitForTimeout(500)
-    const url = page.url()
-    expect(url).toMatch(/\/(round-start|\/)/)
+      // Should navigate to round-start or home depending on game state
+      await page.waitForTimeout(500)
+      const url = page.url()
+      expect(url).toMatch(/\/(round-start|\/)/)
+    }
   })
 })

@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Multi-Player Game Flow', () => {
-  test('complete multi-player game flow: players → round-start → game → results → leaderboard → next round', async ({ page }) => {
+  test('complete multi-player game flow: players → round-start → game → results → leaderboard → next round', async ({
+    page,
+  }) => {
     // 1. Navigate to players page
     await page.goto('/players')
     await expect(page).toHaveURL(/\/players/)
@@ -138,10 +140,10 @@ test.describe('Multi-Player Game Flow', () => {
     await expect(thirdPlace).toContainText('Bob')
     await expect(thirdPlace).toContainText('10')
 
-    // 13. Start next round (OK button navigates to round-start when game not completed)
-    const okBtn = page.locator('.ok-btn')
-    await expect(okBtn).toBeVisible()
-    await okBtn.click()
+    // 13. Start next round (next-round button navigates to round-start when game not completed)
+    const nextRoundBtn = page.locator('.next-round-btn')
+    await expect(nextRoundBtn).toBeVisible()
+    await nextRoundBtn.click()
     await expect(page).toHaveURL(/\/round-start/)
     await page.waitForTimeout(2000)
 
@@ -294,7 +296,7 @@ test.describe('Multi-Player Game Flow', () => {
     await page.waitForTimeout(500)
     await expect(page).toHaveURL(/\/leaderboard/)
 
-    await page.locator('.ok-btn').click()
+    await page.locator('.next-round-btn').click()
     await page.waitForTimeout(2000)
     await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
     await page.waitForTimeout(500)
@@ -365,7 +367,7 @@ test.describe('Multi-Player Game Flow', () => {
     await expect(leaderboardItems.nth(1)).toContainText('30')
 
     // Round 2
-    await page.locator('.ok-btn').click()
+    await page.locator('.next-round-btn').click()
     await page.waitForTimeout(2000)
 
     await expect(page).toHaveURL(/\/game/, { timeout: 10000 })

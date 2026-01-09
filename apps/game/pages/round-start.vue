@@ -149,11 +149,11 @@ onMounted(async () => {
   // Select up to 12 categories for the wheel
   displayCategories.value = allCategories.slice(0, 12)
 
-  // Auto-spin both wheels after a short delay
+  // Auto-spin both wheels immediately (will complete within 5 seconds)
   setTimeout(() => {
     categoryWheelRef.value?.spinRandom()
     letterWheelRef.value?.spinRandom()
-  }, 500)
+  }, 100)
 })
 
 const getCategoryIcon = (category: Category): string => {
