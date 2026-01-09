@@ -1,17 +1,41 @@
 
+
 > @riddle-rush/game@1.0.0 test:unit /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game
 > vitest run
 
 
- RUN  v2.1.9 /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90m/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game[39m
 
- ✓ |unit| tests/unit/settings-store.spec.ts (22 tests) 22ms
- ✓ |unit| tests/unit/use-toast.spec.ts (23 tests) 15ms
- ✓ |unit| tests/unit/reactivity-improvements.spec.ts (13 tests) 18ms
- ✓ |unit| tests/unit/game-store.spec.ts (99 tests | 7 skipped) 65ms
+(node:24083) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+[?25l [90m·[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+(node:24084) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+[?25l[2K[1A[2K[G [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+(node:24086) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+[?25l[2K[1A[2K[G [90m·[39m [35m|unit|[39m [2mtests/unit/[22mreactivity-improvements[2m.spec.ts[22m[2m (13)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+[?25l[2K[1A[2K[1A[2K[G [90m·[39m [35m|unit|[39m [2mtests/unit/[22mgame-store[2m.spec.ts[22m[2m (99)[22m
+ [90m·[39m [35m|unit|[39m [2mtests/unit/[22mreactivity-improvements[2m.spec.ts[22m[2m (13)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+ [90m·[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+[?25l[2K[1A[2K[1A[2K[1A[2K[1A[2K[G [90m·[39m [35m|unit|[39m [2mtests/unit/[22mgame-store[2m.spec.ts[22m[2m (99)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22mreactivity-improvements[2m.spec.ts[22m[2m (13)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+[?25l[?25l[?25l[2K[1A[2K[1A[2K[1A[2K[1A[2K[G [32m✓[39m [35m|unit|[39m [2mtests/unit/[22mgame-store[2m.spec.ts[22m[2m (99)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22mreactivity-improvements[2m.spec.ts[22m[2m (13)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+[2K[1A[2K[1A[2K[1A[2K[1A[2K[G [32m✓[39m [35m|unit|[39m [2mtests/unit/[22mgame-store[2m.spec.ts[22m[2m (99)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22mreactivity-improvements[2m.spec.ts[22m[2m (13)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22msettings-store[2m.spec.ts[22m[2m (22)[22m
+ [32m✓[39m [35m|unit|[39m [2mtests/unit/[22muse-toast[2m.spec.ts[22m[2m (23)[22m
 
- Test Files  4 passed (4)
-      Tests  150 passed | 7 skipped (157)
-   Start at  13:50:59
-   Duration  667ms (transform 170ms, setup 0ms, collect 613ms, tests 120ms, environment 753ms, prepare 232ms)
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m150 passed[39m[22m[2m | [22m[33m7 skipped[39m[90m (157)[39m
+[2m   Start at [22m 16:31:15
+[2m   Duration [22m 953ms[2m (transform 162ms, setup 0ms, collect 440ms, tests 122ms, environment 881ms, prepare 284ms)[22m
 
+[?25h[?25h

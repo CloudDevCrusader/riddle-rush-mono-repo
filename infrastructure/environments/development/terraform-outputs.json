@@ -22,17 +22,17 @@
   "cloudfront_domain_name": {
     "sensitive": false,
     "type": "string",
-    "value": "dvd66jaack4ue.cloudfront.net"
+    "value": "damnyy5niqrrd.cloudfront.net"
   },
   "deploy_command": {
     "sensitive": false,
     "type": "string",
-    "value": "AWS_S3_BUCKET=riddle-rush-pwa-dev-720377205549 AWS_CLOUDFRONT_ID=E2ILVGUF522S4M AWS_REGION=eu-central-1 ./aws-deploy.sh development"
+    "value": "AWS_S3_BUCKET=riddle-rush-pwa-dev-720377205549 AWS_CLOUDFRONT_ID=E1ELWV312P4UJ8 AWS_REGION=eu-central-1 ./aws-deploy.sh development"
   },
   "dev_url": {
     "sensitive": false,
     "type": "string",
-    "value": "https://dvd66jaack4ue.cloudfront.net"
+    "value": "https://damnyy5niqrrd.cloudfront.net"
   },
   "hosted_zone_id": {
     "sensitive": false,
@@ -42,6 +42,6 @@
   "website_url": {
     "sensitive": false,
     "type": "string",
-    "value": "https://dvd66jaack4ue.cloudfront.net"
+    "value": "https://damnyy5niqrrd.cloudfront.net"
   }
 }
