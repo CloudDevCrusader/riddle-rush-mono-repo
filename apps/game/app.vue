@@ -37,9 +37,9 @@ onMounted(async () => {
 
   // Set the saved language preference
   const savedLanguage = settingsStore.getLanguage()
-  if (savedLanguage) {
+  if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
     try {
-      await setLocale(savedLanguage)
+      await setLocale(savedLanguage as 'de' | 'en')
     } catch (error) {
       console.error('Failed to set saved language:', error)
     }
