@@ -117,7 +117,7 @@
 <script setup lang="ts">
 import { MAX_PLAYERS } from '@riddle-rush/shared/constants'
 
-const { baseUrl, toast, t, goBack: navigateBack } = usePageSetup()
+const { baseUrl, toast, t, goBack } = usePageSetup()
 const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
 
@@ -265,18 +265,6 @@ const startGame = async () => {
   }
 }
 
-const goBack = async () => {
-  //  const router = useRouter()
-  // Try to go back, but fallback to home if there's no history
-  if (window.history.length > 1) {
-    navigateBack()
-  } else {
-    // Fallback to home if no history available
-    const { goHome } = useNavigation()
-    await goHome()
-  }
-}
-
 // Mobile swipe gesture: swipe right to go back
 const { pageElement } = usePageSwipe({
   onSwipeRight: () => {
@@ -349,7 +337,7 @@ useHead({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-md);
+  padding: var(--spacing-3xl) var(--spacing-xl);
   gap: var(--spacing-2xl);
 }
 
@@ -371,6 +359,7 @@ useHead({
 .top-decoration {
   width: clamp(150px, 25vw, 250px);
   height: auto;
+  pointer-events: none;
 }
 
 /* Players List Container */
@@ -668,7 +657,7 @@ useHead({
 /* Responsive */
 @media (max-width: 768px) {
   .container {
-    padding: var(--spacing-2xl) var(--spacing-md);
+    padding: var(--spacing-2xl) var(--spacing-xl);
   }
 
   .back-btn img {
@@ -680,7 +669,7 @@ useHead({
   }
 
   .top-decoration {
-    width: clamp(120px, 20vw, 250px);
+    width: clamp(100px, 18vw, 200px);
   }
 
   .players-list {
@@ -693,24 +682,24 @@ useHead({
   }
 
   .action-buttons {
-    width: 100%;
+    width: calc(100% - 2rem);
     max-width: 400px;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: var(--spacing-xl) var(--spacing-sm);
+    padding: var(--spacing-xl) var(--spacing-lg);
     gap: var(--spacing-lg);
   }
 
   .title-image {
-    width: clamp(120px, 30vw, 180px);
+    width: clamp(140px, 32vw, 200px);
   }
 
   .top-decoration {
-    width: clamp(90px, 15vw, 120px);
+    display: none;
   }
 
   .player-item {
@@ -724,18 +713,55 @@ useHead({
   }
 
   .action-buttons {
-    flex-direction: column;
-    gap: var(--spacing-sm);
+    width: calc(100% - 2rem);
+    max-width: 350px;
+    flex-direction: row;
+    gap: var(--spacing-md);
+    justify-content: center;
   }
 
-  .action-btn {
+  .add-btn {
+    width: clamp(70px, 15vw, 90px);
+    height: clamp(70px, 15vw, 90px);
+    flex-shrink: 0;
+  }
+
+  .start-btn {
+    flex: 1;
+    max-width: 220px;
+  }
+
+  .start-btn img {
     width: 100%;
-    min-height: 50px;
+    height: auto;
+    max-width: 220px;
+  }
+}
+
+/* Pixel 7 specific (390px - 480px) */
+@media (min-width: 390px) and (max-width: 480px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    gap: var(--spacing-xl);
   }
 
-  .action-btn img {
-    width: 80%;
-    max-height: 50px;
+  .title-image {
+    width: clamp(160px, 35vw, 220px);
+  }
+
+  .action-buttons {
+    width: calc(100% - 3rem);
+    max-width: 360px;
+    gap: var(--spacing-lg);
+  }
+
+  .add-btn {
+    width: clamp(75px, 16vw, 95px);
+    height: clamp(75px, 16vw, 95px);
+  }
+
+  .start-btn img {
+    max-width: 240px;
   }
 }
 </style>

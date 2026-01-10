@@ -170,7 +170,7 @@ useHead({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-md);
+  padding: var(--spacing-3xl) var(--spacing-xl);
   gap: var(--spacing-3xl);
 }
 
@@ -364,7 +364,7 @@ useHead({
 
 @media (max-width: 768px) {
   .container {
-    padding: var(--spacing-2xl) var(--spacing-md);
+    padding: var(--spacing-2xl) var(--spacing-xl);
     gap: var(--spacing-2xl);
   }
 
@@ -373,7 +373,8 @@ useHead({
   }
 
   .menu-buttons {
-    max-width: 100%;
+    width: calc(100% - 2rem);
+    max-width: 400px;
     gap: var(--spacing-md);
   }
 
@@ -400,7 +401,7 @@ useHead({
 
 @media (max-width: 480px) {
   .container {
-    padding: var(--spacing-xl) var(--spacing-sm);
+    padding: var(--spacing-xl) var(--spacing-lg);
     gap: var(--spacing-xl);
   }
 
@@ -410,7 +411,8 @@ useHead({
   }
 
   .menu-buttons {
-    width: 100%;
+    width: calc(100% - 2rem);
+    max-width: 350px;
     gap: var(--spacing-sm);
   }
 
@@ -447,6 +449,24 @@ useHead({
 
   .menu-item span:first-child {
     font-size: clamp(16px, 3.5vw, 20px);
+  }
+}
+
+/* Pixel 7 / Pixel 7 Pro (412px - 480px width) */
+@media (min-width: 390px) and (max-width: 480px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    gap: var(--spacing-2xl);
+  }
+
+  .menu-buttons {
+    width: calc(100% - 3rem);
+    max-width: 360px;
+    gap: var(--spacing-md);
+  }
+
+  .logo-image {
+    width: clamp(180px, 38vw, 280px);
   }
 }
 </style>

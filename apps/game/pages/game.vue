@@ -226,8 +226,10 @@ const handleRestart = () => {
 
 // Handle ESC key to pause
 onMounted(async () => {
-  // Ensure game is initialized
-  await gameActions.resumeOrStartGame()
+  // Ensure game is initialized (without showing notification since we just came from round-start)
+  if (!gameStore.hasActiveSession) {
+    await gameActions.resumeOrStartGame()
+  }
 
   // Add ESC key listener for pause
   const handleKeyDown = (e: KeyboardEvent) => {

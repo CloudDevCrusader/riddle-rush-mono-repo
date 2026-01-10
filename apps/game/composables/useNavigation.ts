@@ -16,15 +16,24 @@ export function useNavigation() {
       // Simulate loading for better UX on fast transitions
       if (simulateLoading) {
         setProgress(30)
-        await new Promise(resolve => setTimeout(resolve, 300))
+        await new Promise((resolve) => setTimeout(resolve, 300))
         setProgress(70)
-        await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise((resolve) => setTimeout(resolve, 200))
       }
 
       await router.push(route)
-    }
-    finally {
+    } finally {
       hideLoading()
+    }
+  }
+
+  const goBack = () => {
+    // Check if there's history to go back to
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      // Fallback to home if no history available
+      navigateWithLoading(ROUTES.HOME, true)
     }
   }
 
@@ -38,6 +47,6 @@ export function useNavigation() {
     goToSettings: () => navigateWithLoading(ROUTES.SETTINGS, true),
     goToLanguage: () => navigateWithLoading(ROUTES.LANGUAGE, true),
     goToCredits: () => navigateWithLoading(ROUTES.CREDITS, true),
-    goBack: () => router.back(),
+    goBack,
   }
 }

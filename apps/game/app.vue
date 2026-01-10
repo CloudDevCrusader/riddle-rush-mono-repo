@@ -2,9 +2,7 @@
   <div id="app" class="app-container">
     <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
     <NuxtLayout v-show="!showSplash">
-      <Transition name="page" mode="out-in">
-        <NuxtPage :key="routeKey" />
-      </Transition>
+      <NuxtPage :key="routeKey" />
     </NuxtLayout>
     <Toast />
     <DebugPanel v-show="!showSplash" />
@@ -18,11 +16,12 @@ import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 const route = useRoute()
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
+const { setLocale } = useI18n()
 
-// Force route update by using route component name and query
+// Force route update by using full route path
 const routeKey = computed(() => {
-  // Combine route name and timestamp to force component remount
-  return `${String(route.name) || route.path}-${gameStore.currentSession?.id || ''}`
+  // Use full path to ensure component remounts on route changes
+  return route.fullPath
 })
 
 const showSplash = ref(true)
@@ -31,10 +30,20 @@ const onSplashComplete = () => {
   showSplash.value = false
 }
 
-onMounted(() => {
+onMounted(async () => {
   // Load persisted state
   gameStore.loadFromDB()
   settingsStore.loadSettings()
+
+  // Set the saved language preference
+  const savedLanguage = settingsStore.getLanguage()
+  if (savedLanguage) {
+    try {
+      await setLocale(savedLanguage)
+    } catch (error) {
+      console.error('Failed to set saved language:', error)
+    }
+  }
 
   // Monitor online status
   window.addEventListener('online', () => gameStore.setOnlineStatus(true))
@@ -86,21 +95,12 @@ useHead({
 /* Page Transition Animations - Mobile Optimized */
 .page-enter-active,
 .page-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: absolute;
-  width: 100%;
-  top: 0;
-  left: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.page-enter-from {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
+.page-enter-from,
 .page-leave-to {
   opacity: 0;
-  transform: translateX(-20px);
 }
 
 /* Reduce motion for accessibility */
@@ -108,27 +108,6 @@ useHead({
   .page-enter-active,
   .page-leave-active {
     transition: opacity 0.15s ease;
-  }
-
-  .page-enter-from,
-  .page-leave-to {
-    transform: none;
-  }
-}
-
-/* Mobile-first: Ensure smooth transitions on touch devices */
-@media (max-width: 640px) {
-  .page-enter-active,
-  .page-leave-active {
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .page-enter-from {
-    transform: translateX(15px);
-  }
-
-  .page-leave-to {
-    transform: translateX(-15px);
   }
 }
 </style>

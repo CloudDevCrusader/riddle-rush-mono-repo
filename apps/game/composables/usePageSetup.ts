@@ -40,7 +40,15 @@ export function usePageSetup() {
 
   // Common navigation helpers
   const goHome = () => router.push('/')
-  const goBack = () => router.back()
+  const goBack = () => {
+    // Check if there's history to go back to
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      // Fallback to home if no history available
+      router.push('/')
+    }
+  }
 
   return {
     router,

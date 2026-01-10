@@ -1,6 +1,6 @@
 <template>
   <Transition name="fade">
-    <div v-if="modelValue" class="settings-overlay" @click="closeModal">
+    <div v-if="modelValue" class="settings-overlay" @click="handleOverlayClick">
       <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
@@ -96,14 +96,22 @@ const router = useRouter()
 const soundVolume = ref(settingsStore.soundVolume)
 const musicVolume = ref(settingsStore.musicVolume)
 
-const closeModal = () => {
-  emit('update:modelValue', false)
-  // If on settings page, navigate back
-  if (window.location.pathname === '/settings') {
-    setTimeout(() => {
-      router.push('/')
-    }, 300)
+const handleOverlayClick = (event: MouseEvent) => {
+  // Only close if clicking directly on overlay (not on card content)
+  if ((event.target as HTMLElement).classList.contains('settings-overlay')) {
+    closeModal()
   }
+}
+
+const closeModal = () => {
+  console.log('SettingsModal closeModal called')
+  emit('update:modelValue', false)
+
+  // Force navigation immediately as a backup
+  setTimeout(() => {
+    console.log('Force navigating home from modal')
+    router.push('/')
+  }, 100)
 }
 
 const updateSoundVolume = () => {
@@ -116,11 +124,26 @@ const updateMusicVolume = () => {
   settingsStore.updateSetting('musicEnabled', musicVolume.value > 0)
 }
 
+// Handle escape key
+const handleEscape = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    closeModal()
+  }
+}
+
 // Load settings on mount
 onMounted(() => {
   settingsStore.loadSettings()
   soundVolume.value = settingsStore.soundVolume
   musicVolume.value = settingsStore.musicVolume
+
+  // Add escape key listener
+  window.addEventListener('keydown', handleEscape)
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscape)
 })
 </script>
 
@@ -136,7 +159,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: max(var(--spacing-lg), env(safe-area-inset-top, 0px))
     max(var(--spacing-lg), env(safe-area-inset-right, 0px))
     max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
@@ -146,7 +169,7 @@ onMounted(() => {
 .settings-card {
   position: relative;
   max-width: 600px;
-  width: 100%;
+  width: calc(100% - 2rem);
   max-height: 90vh;
   overflow: hidden;
   border-radius: var(--radius-xl);
@@ -359,19 +382,13 @@ onMounted(() => {
 /* Responsive - Optimized for Pixel 7 Pro */
 @media (max-width: 640px) {
   .settings-overlay {
-    padding: max(var(--spacing-md), env(safe-area-inset-top, 0px))
-      max(var(--spacing-md), env(safe-area-inset-right, 0px))
-      max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-      max(var(--spacing-md), env(safe-area-inset-left, 0px));
+    padding: var(--spacing-lg);
   }
 
   .settings-card {
-    max-width: calc(100vw - max(var(--spacing-md), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(
-      100vh - max(var(--spacing-md), env(safe-area-inset-top, 0px)) -
-        max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
-    );
-    width: 100%;
+    width: calc(100% - 3rem);
+    max-width: calc(100vw - 3rem);
+    max-height: calc(100vh - 3rem);
     box-sizing: border-box;
   }
 
@@ -414,14 +431,12 @@ onMounted(() => {
 /* Very small screens (< 360px) */
 @media (max-width: 360px) {
   .settings-overlay {
-    padding: max(var(--spacing-sm), env(safe-area-inset-top, 0px))
-      max(var(--spacing-sm), env(safe-area-inset-right, 0px))
-      max(var(--spacing-sm), env(safe-area-inset-bottom, 0px))
-      max(var(--spacing-sm), env(safe-area-inset-left, 0px));
+    padding: var(--spacing-md);
   }
 
   .settings-card {
-    max-width: calc(100vw - max(var(--spacing-sm), env(safe-area-inset-right, 0px)) * 2);
+    width: calc(100% - 2rem);
+    max-width: calc(100vw - 2rem);
   }
 
   .back-btn {
@@ -464,12 +479,14 @@ onMounted(() => {
 
 /* Pixel 7 Pro specific (412px width, tall screen) */
 @media (max-width: 450px) and (min-height: 800px) {
+  .settings-overlay {
+    padding: var(--spacing-xl);
+  }
+
   .settings-card {
-    max-width: calc(100vw - max(var(--spacing-lg), env(safe-area-inset-right, 0px)) * 2);
-    max-height: calc(
-      100vh - max(var(--spacing-lg), env(safe-area-inset-top, 0px)) -
-        max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
-    );
+    width: calc(100% - 3rem);
+    max-width: calc(100vw - 3rem);
+    max-height: calc(100vh - 4rem);
   }
 
   .title-image {

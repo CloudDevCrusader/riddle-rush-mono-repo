@@ -90,9 +90,23 @@ const selectLanguage = (lang: LocaleCode) => {
 }
 
 const confirmSelection = async () => {
-  await setLocale(currentLocale.value as LocaleCode)
-  settingsStore.setLanguage(currentLocale.value as LocaleCode)
-  goHome()
+  try {
+    // Save language preference first
+    settingsStore.setLanguage(currentLocale.value as LocaleCode)
+
+    // Set the locale
+    await setLocale(currentLocale.value as LocaleCode)
+
+    // Force page reload to ensure all translations update
+    // This is the most reliable way to handle language switching in SPAs
+    if (typeof window !== 'undefined') {
+      window.location.reload()
+    }
+  } catch (error) {
+    console.error('Failed to change language:', error)
+    // Fallback: navigate home without reload
+    goHome()
+  }
 }
 
 useHead({

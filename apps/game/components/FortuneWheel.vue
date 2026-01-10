@@ -435,10 +435,17 @@ watch(
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .wheel-container {
+    width: min(80vw, 80vh, 360px);
+    height: min(80vw, 80vh, 360px);
+  }
+}
+
 @media (max-width: 640px) {
   .wheel-container {
-    width: min(90vw, 90vh, 360px);
-    height: min(90vw, 90vh, 360px);
+    width: min(75vw, 75vh, 320px);
+    height: min(75vw, 75vh, 320px);
   }
 
   .segment-icon {
@@ -457,6 +464,53 @@ watch(
   .selected-icon,
   .center-icon {
     font-size: clamp(28px, 6vw, 40px);
+  }
+}
+
+@media (max-width: 480px) {
+  .wheel-container {
+    width: min(70vw, 70vh, 280px);
+    height: min(70vw, 70vh, 280px);
+  }
+
+  .segment-icon {
+    font-size: clamp(18px, 4.5vw, 24px);
+  }
+
+  .segment-text {
+    font-size: clamp(8px, 2vw, 11px);
+    max-width: 60px;
+  }
+
+  .center-circle {
+    width: clamp(60px, 14vw, 90px);
+    height: clamp(60px, 14vw, 90px);
+  }
+
+  .selected-icon,
+  .center-icon {
+    font-size: clamp(24px, 5vw, 36px);
+  }
+
+  .pointer-arrow {
+    font-size: clamp(32px, 7vw, 48px);
+  }
+}
+
+/* Pixel 7 Pro specific (412px width) */
+@media (min-width: 390px) and (max-width: 480px) {
+  .wheel-container {
+    width: min(72vw, 72vh, 300px);
+    height: min(72vw, 72vh, 300px);
+  }
+
+  .segment-icon {
+    font-size: clamp(20px, 4.8vw, 26px);
+  }
+
+  .segment-text {
+    font-size: clamp(9px, 2.1vw, 12px);
+    max-width: 70px;
   }
 }
 </style>

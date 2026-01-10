@@ -301,7 +301,7 @@ useHead({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(var(--spacing-xl), 8vh, var(--spacing-3xl)) var(--spacing-md);
+  padding: clamp(var(--spacing-xl), 8vh, var(--spacing-3xl)) var(--spacing-xl);
 }
 
 /* Dual Wheels Container */
@@ -463,17 +463,22 @@ useHead({
   }
 }
 
-/* Responsive - Keep wheels horizontal on mobile with scroll */
+/* Responsive - Stack wheels vertically on mobile */
 @media (max-width: 768px) {
+  .container {
+    padding: clamp(var(--spacing-xl), 6vh, var(--spacing-2xl)) var(--spacing-lg);
+  }
+
   .wheels-container {
-    gap: var(--spacing-lg);
-    overflow-x: auto;
-    padding: 0 var(--spacing-md);
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+    width: 100%;
+    max-width: 500px;
   }
 
   .wheel-wrapper {
-    min-width: 280px;
-    max-width: 320px;
+    width: 100%;
+    max-width: 380px;
   }
 
   .wheel-label {
@@ -483,6 +488,7 @@ useHead({
   .results-display {
     flex-direction: column;
     gap: var(--spacing-xl);
+    width: calc(100% - 2rem);
   }
 
   .result-item {
@@ -500,12 +506,51 @@ useHead({
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: clamp(var(--spacing-lg), 5vh, var(--spacing-xl)) var(--spacing-lg);
+  }
+
+  .wheels-container {
+    gap: var(--spacing-xl);
+    max-width: 100%;
+  }
+
+  .wheel-wrapper {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .results-display {
+    width: calc(100% - 2rem);
+  }
+
   .result-text {
     font-size: clamp(var(--font-size-xl), 5vw, var(--font-size-2xl));
   }
 
   .result-letter {
     font-size: clamp(48px, 12vw, 72px);
+  }
+}
+
+/* Pixel 7 Pro specific (412px width, tall screen) */
+@media (min-width: 390px) and (max-width: 480px) {
+  .container {
+    padding: clamp(var(--spacing-xl), 6vh, var(--spacing-2xl)) var(--spacing-lg);
+  }
+
+  .wheels-container {
+    gap: var(--spacing-xl);
+    max-width: 100%;
+  }
+
+  .wheel-wrapper {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .results-display {
+    width: calc(100% - 2rem);
   }
 }
 
