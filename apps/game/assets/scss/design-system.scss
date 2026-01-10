@@ -4,7 +4,7 @@
  * Organized SCSS with variables, mixins, and modules
  */
 
-@use "sass:map";
+@use 'sass:map';
 
 // ============================================
 // VARIABLES
@@ -31,7 +31,7 @@ $colors: (
   'gray': #9bb6da,
   'gray-light': #d7e4f7,
   'light': #f7f9ff,
-  'white': #ffffff,
+  'white': #ffffff
 );
 
 // Background Gradients
@@ -47,8 +47,21 @@ $gradients: (
 
 // Typography
 $fonts: (
-  'primary': ('Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif),
-  'display': ('Baloo 2', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif),
+  'primary': (
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif,
+  ),
+  'display': (
+    'Baloo 2',
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif,
+  ),
 );
 
 $font-sizes: (
@@ -92,11 +105,21 @@ $radius: (
 
 // Shadows
 $shadows: (
-  'sm': (0 4px 8px rgba(0, 0, 0, 0.1)),
-  'md': (0 8px 18px rgba(0, 0, 0, 0.14)),
-  'lg': (0 14px 28px rgba(0, 0, 0, 0.18)),
-  'xl': (0 18px 38px rgba(0, 0, 0, 0.22)),
-  'inner': (inset 0 2px 6px rgba(0, 0, 0, 0.12)),
+  'sm': (
+    0 4px 8px rgba(0, 0, 0, 0.1),
+  ),
+  'md': (
+    0 8px 18px rgba(0, 0, 0, 0.14),
+  ),
+  'lg': (
+    0 14px 28px rgba(0, 0, 0, 0.18),
+  ),
+  'xl': (
+    0 18px 38px rgba(0, 0, 0, 0.22),
+  ),
+  'inner': (
+    inset 0 2px 6px rgba(0, 0, 0, 0.12),
+  ),
 );
 
 // Transitions
@@ -283,6 +306,93 @@ body {
 }
 
 // ============================================
+// GRID & FLEXBOX UTILITIES
+// ============================================
+
+// Responsive Grid
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+
+  // Mobile-first: 1 column
+  grid-template-columns: 1fr;
+
+  &-cols-2 {
+    @media (min-width: 480px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &-cols-3 {
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &-cols-4 {
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &-auto {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Gap variations
+  &-gap-sm {
+    gap: var(--spacing-sm);
+  }
+
+  &-gap-lg {
+    gap: var(--spacing-lg);
+  }
+
+  &-gap-xl {
+    gap: var(--spacing-xl);
+  }
+}
+
+// Flexbox Utilities
+.flex {
+  display: flex;
+
+  &-col {
+    flex-direction: column;
+  }
+
+  &-wrap {
+    flex-wrap: wrap;
+  }
+
+  &-center {
+    align-items: center;
+    justify-content: center;
+  }
+
+  &-between {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-gap-sm {
+    gap: var(--spacing-sm);
+  }
+
+  &-gap-md {
+    gap: var(--spacing-md);
+  }
+
+  &-gap-lg {
+    gap: var(--spacing-lg);
+  }
+}
+
+// ============================================
 // COMPONENT STYLES
 // ============================================
 
@@ -300,7 +410,9 @@ body {
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 12px 0 rgba(0, 0, 0, 0.18), var(--shadow-lg);
+  box-shadow:
+    0 12px 0 rgba(0, 0, 0, 0.18),
+    var(--shadow-lg);
   position: relative;
   overflow: hidden;
   color: var(--color-dark);
@@ -316,7 +428,9 @@ body {
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.35);
     transform: translate(-50%, -50%);
-    transition: width var(--transition-bounce), height var(--transition-bounce);
+    transition:
+      width var(--transition-bounce),
+      height var(--transition-bounce);
   }
 
   &:active::before {
@@ -335,11 +449,15 @@ body {
   &-primary {
     @include gradient('success');
     color: #1f4b0f;
-    box-shadow: 0 12px 0 #3a8c14, var(--shadow-lg);
+    box-shadow:
+      0 12px 0 #3a8c14,
+      var(--shadow-lg);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 0 #3a8c14, var(--shadow-xl);
+      box-shadow:
+        0 14px 0 #3a8c14,
+        var(--shadow-xl);
     }
 
     &:active {
@@ -350,7 +468,9 @@ body {
   &-secondary {
     @include gradient('secondary');
     color: #8b5408;
-    box-shadow: 0 12px 0 #c38d15, var(--shadow-lg);
+    box-shadow:
+      0 12px 0 #c38d15,
+      var(--shadow-lg);
   }
 
   &-outline {
@@ -387,7 +507,11 @@ body {
   }
 
   &-gradient {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 239, 194, 0.95) 100%);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 239, 194, 0.95) 100%
+    );
     backdrop-filter: blur(10px);
   }
 }
@@ -430,7 +554,8 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -439,7 +564,8 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -448,7 +574,8 @@ body {
 }
 
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {
@@ -496,8 +623,8 @@ body {
 
   button,
   a,
-  input[type="button"],
-  input[type="submit"] {
+  input[type='button'],
+  input[type='submit'] {
     @include touch-target;
   }
 
@@ -508,6 +635,69 @@ body {
 
   * {
     -webkit-overflow-scrolling: touch;
+  }
+}
+
+// ============================================
+// SMALL MOBILE OPTIMIZATION (< 480px)
+// ============================================
+
+@media (max-width: 479px) {
+  :root {
+    --spacing-sm: clamp(0.5rem, 1.5vw, 0.75rem);
+    --spacing-md: clamp(0.75rem, 2vw, 1rem);
+    --spacing-lg: clamp(1rem, 2.5vw, 1.25rem);
+  }
+
+  body {
+    font-size: clamp(0.92rem, 2.5vw, 1rem);
+  }
+
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: clamp(0.9rem, 2.4vw, 1rem);
+    min-height: 50px;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================
+// TABLET LANDSCAPE OPTIMIZATION
+// ============================================
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  :root {
+    --spacing-lg: clamp(0.9rem, 2vw, 1.2rem);
+    --spacing-xl: clamp(1.1rem, 2.5vw, 1.4rem);
+  }
+
+  body {
+    line-height: 1.4;
+  }
+
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    min-height: 44px;
+  }
+}
+
+// ============================================
+// SAFE AREA PADDING FOR NOTCHES
+// ============================================
+
+@media (max-width: 768px) {
+  body {
+    padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+    padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+    padding-top: max(var(--spacing-md), env(safe-area-inset-top));
   }
 }
 
@@ -546,8 +736,8 @@ body {
   }
 
   .toast-container,
-  [class*="overlay"],
-  [class*="modal"] {
+  [class*='overlay'],
+  [class*='modal'] {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
   }

@@ -58,7 +58,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
     "syncpack": "^13.0.0",
-    "turbo": "^2.3.3",
+    "turbo": "^2.7.3",
     "typescript": "^5.5.3"
   },
   "engines": {
