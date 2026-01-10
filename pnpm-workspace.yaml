@@ -3,4 +3,10 @@ packages:
   - packages/*
 
 ignoredBuiltDependencies:
+  - '@parcel/watcher'
   - better-sqlite3
+  - sharp
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - esbuild

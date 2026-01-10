@@ -40,10 +40,9 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         inspect({
           enabled: true,
           build: false,
-        }),
+        })
       )
-    }
-    catch {
+    } catch {
       // Plugin not installed, skip
     }
 
@@ -54,10 +53,9 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         VueDevTools({
           enabled: true,
           componentInspector: true,
-        }),
+        })
       )
-    }
-    catch {
+    } catch {
       // Plugin not installed, skip
     }
 
@@ -73,10 +71,9 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
           open: false,
           gzipSize: true,
           brotliSize: true,
-        }) as Plugin,
+        }) as Plugin
       )
-    }
-    catch {
+    } catch {
       // Plugin not installed, skip
     }
   }
@@ -100,10 +97,9 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         gzipSize: true,
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
-      }) as Plugin,
+      }) as Plugin
     )
-  }
-  catch {
+  } catch {
     // Plugin not installed, skip
   }
 
@@ -116,10 +112,9 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         ext: '.br',
         threshold: 10240, // Only compress files larger than 10KB
         deleteOriginFile: false,
-      }),
+      })
     )
-  }
-  catch {
+  } catch {
     // Plugin not installed, skip
   }
 
@@ -153,10 +148,9 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
             },
           ],
         },
-      }),
+      })
     )
-  }
-  catch {
+  } catch {
     // Plugin not installed, skip
   }
 
@@ -204,11 +198,7 @@ export function getBuildConfig() {
             // Create separate chunks for large libraries
             vue: ['vue', 'pinia', '@vueuse/core'],
             // Group game-related dependencies
-            game: [
-              '@riddle-rush/shared',
-              '@riddle-rush/types',
-              'idb',
-            ],
+            game: ['@riddle-rush/shared', '@riddle-rush/types', 'idb'],
             // Group utility libraries
             utils: ['lodash', 'date-fns'],
           },
@@ -222,4 +212,12 @@ export function getBuildConfig() {
       entryFileNames: 'assets/[name]-[hash].js',
     },
   }
+}
+
+/**
+ * Default export for IDE compatibility
+ * This file is primarily a utility module, but IDEs may try to load it as a Vite config
+ */
+export default {
+  // Empty config - this file is used for utility functions, not as an actual Vite config
 }

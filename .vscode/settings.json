@@ -123,6 +123,21 @@
   // Cursor IDE Specific
   "cursor.cpp.disabledLanguages": [],
   "cursor.chat.model": "claude-3.5-sonnet",
+
+  // Vitest Configuration (for monorepo)
+  // Force IDE to use regular config file (workspace configs not well supported by extension)
+  // Workspace config (vitest.workspace.ts) is for CLI usage only
+  "vitest.configPath": "./apps/game/vitest.config.ts",
+  "vitest.include": ["apps/game/tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+  "vitest.exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/tests/e2e/**",
+    "packages/config/vite.config.ts"
+  ],
+
   // Turbo & Monorepo Support
   "search.exclude": {
     "**/node_modules": true,
@@ -142,7 +157,8 @@
     "**/dist/**": true,
     "**/.vite/**": true,
     "**/.turbo/**": true,
-    "**/turbo-*.log": true
+    "**/turbo-*.log": true,
+    "**/vitest.workspace.ts": true
   },
   "sonarlint.connectedMode.project": {
     "connectionId": "djdiox",
