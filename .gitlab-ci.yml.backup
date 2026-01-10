@@ -39,14 +39,8 @@ stages:
 
 # Simplified before_script - dependencies may be pre-installed in custom image
 before_script:
-  # Conditionally enable corepack only if not already available
-  - |
-    if ! command -v pnpm &> /dev/null; then
-      echo "pnpm not found, enabling corepack..."
-      corepack enable && corepack prepare pnpm@10.27.0 --activate
-    else
-      echo "pnpm already available, skipping corepack setup"
-    fi
+  - corepack enable
+  - corepack prepare pnpm@10.27.0 --activate
   # Only install if node_modules is missing or outdated
   - |
     if [ ! -d "node_modules" ] || [ ! -f "node_modules/.modules.yaml" ]; then
@@ -115,6 +109,7 @@ test:e2e:local:
   stage: test
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
+    - corepack enable && corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
     - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
   artifacts:
@@ -173,6 +168,7 @@ build:docs:
   stage: build
   image: node:20
   before_script:
+    - corepack enable && corepack prepare pnpm@10.27.0 --activate
   script:
     - pnpm install --frozen-lockfile
     - cd apps/docs
@@ -239,6 +235,8 @@ deploy:aws:
   image: node:20
   before_script:
     - apt-get update && apt-get install -y awscli
+    - corepack enable
+    - corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
   script:
     - echo "Deploying to AWS S3 + CloudFront..."
@@ -273,6 +271,7 @@ verify:e2e:aws:
   stage: verify
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
+    - corepack enable && corepack prepare pnpm@10.27.0 --activate
     - pnpm install --frozen-lockfile
     - |
       if [ -n "$AWS_CLOUDFRONT_DOMAIN" ]; then
