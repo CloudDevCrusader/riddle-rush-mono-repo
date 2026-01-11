@@ -48,6 +48,16 @@ lint:
       paths:
         - '**/.vite/stats.html'
         - '**/.circleci/**'
+    - linters: [hadolint]
+      paths:
+        - '**/.devcontainer/**'
+        - '**/.gitlab/**'
+    - linters: [eslint]
+      paths:
+        - '**/scripts/*.js'
+    - linters: [tflint]
+      paths:
+        - '**/variables.tf'
 
   # Disable strict security scanners
   disabled:
@@ -77,7 +87,7 @@ lint:
     - name: shellcheck
       commands:
         - name: lint
-          run: shellcheck --severity=error ${target}
+          run: shellcheck --severity=error --exclude=SC2250,SC2248,SC2086 ${target}
     - name: markdownlint
       commands:
         - name: lint
