@@ -41,7 +41,7 @@ check_aws_credentials
 TERRAFORM_DIR="${PROJECT_ROOT}/infrastructure/environments/${ENVIRONMENT}"
 
 if [[ ! -d "${TERRAFORM_DIR}" ]]; then
-	echo -e "${RED}❌ Terraform directory not found${ $TERRAFORM_D}IR${NC}"
+	echo -e "${RED}❌ Terraform directory not found: ${TERRAFORM_DIR}${NC}"
 	exit 1
 fi
 
@@ -51,7 +51,7 @@ terraform_init "${TERRAFORM_DIR}"
 # Run terraform plan
 echo -e "\n${BLUE}📋 Running Terraform plan...${NC}"
 cd "${TERRAFORM_DIR}" || {
-	echo -e "${RED}❌ Cannot cd to Terraform directory${ $TERRAFORM_D}IR${NC}"
+	echo -e "${RED}❌ Cannot cd to Terraform directory: ${TERRAFORM_DIR}${NC}"
 	exit 1
 }
 
