@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('Round Start Page (replaces alphabet selection)', () => {
+test.describe('Round Start Page', () => {
   test.beforeEach(async ({ page }) => {
     // Set up game state first
     await page.goto('/players')
