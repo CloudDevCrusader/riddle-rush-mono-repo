@@ -47,7 +47,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     // Expose performance utils globally in development
     if (import.meta.client) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       ;(window as any).__performance__ = {
         mark,
         measure,

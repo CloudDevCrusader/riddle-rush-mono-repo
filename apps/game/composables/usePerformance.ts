@@ -197,7 +197,7 @@ export const usePerformance = () => {
    */
   const logReport = () => {
     const allMetrics = getAllMetrics()
-    /* eslint-disable no-console */
+     
     console.group('📊 Performance Report')
 
     Object.entries(allMetrics).forEach(([name, metric]) => {
@@ -223,7 +223,7 @@ export const usePerformance = () => {
     }
 
     console.groupEnd()
-    /* eslint-enable no-console */
+     
   }
 
   /**
@@ -232,7 +232,7 @@ export const usePerformance = () => {
   const getMemoryUsage = () => {
     if (typeof window === 'undefined') return null
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const memory = (performance as any).memory
     if (!memory) return null
 
