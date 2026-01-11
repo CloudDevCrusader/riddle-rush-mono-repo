@@ -25,6 +25,7 @@ test-results/
 **/.cache/
 .turbo/
 apps/game/.output
+packages/config/.turbo/
 # Logs
 npm-debug.log*
 yarn-debug.log*
