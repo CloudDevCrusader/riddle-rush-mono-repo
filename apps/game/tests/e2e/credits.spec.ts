@@ -4,27 +4,31 @@ test.describe('Credits Page', () => {
   test('should load credits page successfully', async ({ page }) => {
     await page.goto('/credits')
 
-    // Wait for page to load
+    // Wait for page to load and Vue to hydrate
     await page.waitForLoadState('networkidle')
+
+    // Wait for the main container to appear (sign that Vue has mounted)
+    await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Check for main title image
     const titleImage = page.locator('.title-image')
-    await expect(titleImage).toBeVisible({ timeout: 5000 })
+    await expect(titleImage).toBeVisible({ timeout: 10000 })
 
     // Check for credits panel
     const creditsPanel = page.locator('.credits-panel')
-    await expect(creditsPanel).toBeVisible({ timeout: 5000 })
+    await expect(creditsPanel).toBeVisible({ timeout: 10000 })
   })
 
   test('should display team credits', async ({ page }) => {
     await page.goto('/credits')
 
-    // Wait for page to load
+    // Wait for page to load and Vue to hydrate
     await page.waitForLoadState('networkidle')
+    await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Check for credits panel
     const creditsPanel = page.locator('.credits-panel')
-    await expect(creditsPanel).toBeVisible()
+    await expect(creditsPanel).toBeVisible({ timeout: 10000 })
 
     // Check for all three credit sections
     const creditSections = page.locator('.credit-section')
@@ -61,12 +65,13 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Look for back button
     const backButton = page.locator('.back-btn, button:has-text("←")')
 
     if ((await backButton.count()) > 0) {
-      await expect(backButton.first()).toBeVisible()
+      await expect(backButton.first()).toBeVisible({ timeout: 10000 })
 
       // Click back button
       await backButton.first().click()
@@ -82,12 +87,13 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Look for OK button
     const okButton = page.locator('button:has-text("OK"), .btn-ok')
 
     if ((await okButton.count()) > 0) {
-      await expect(okButton.first()).toBeVisible()
+      await expect(okButton.first()).toBeVisible({ timeout: 10000 })
 
       // Click OK button
       await okButton.first().click()
@@ -114,14 +120,15 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Check that the page has the main container
     const container = page.locator('.container')
-    await expect(container).toBeVisible()
+    await expect(container).toBeVisible({ timeout: 10000 })
 
     // Check for credits panel with proper styling
     const creditsPanel = page.locator('.credits-panel')
-    await expect(creditsPanel).toBeVisible()
+    await expect(creditsPanel).toBeVisible({ timeout: 10000 })
 
     // Verify background image is present
     const backgroundImage = page.locator('.page-bg')

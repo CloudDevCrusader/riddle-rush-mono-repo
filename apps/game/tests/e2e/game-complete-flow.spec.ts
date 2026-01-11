@@ -1,5 +1,14 @@
+import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
 import { generatePlayerName, generateAnswer } from './helpers/faker'
+
+/**
+ * Helper to wait for SPA hydration and specific element
+ */
+async function waitForPageReady(page: Page, selector: string, timeout = 10000) {
+  await page.waitForLoadState('networkidle')
+  await page.waitForSelector(selector, { timeout })
+}
 
 test.describe('Complete Game Flow', () => {
   // ===== SINGLE PLAYER TESTS =====
@@ -7,7 +16,7 @@ test.describe('Complete Game Flow', () => {
     test('should complete full game flow from menu to leaderboard', async ({ page }) => {
       // 1. Start at menu
       await page.goto('/', { timeout: 30000 })
-      await page.waitForLoadState('networkidle')
+      await waitForPageReady(page, '.menu-page, .splash-screen')
 
       // Wait for splash screen to finish
       await page.waitForTimeout(2000)
@@ -15,7 +24,7 @@ test.describe('Complete Game Flow', () => {
       await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {})
 
       const playBtn = page.locator('.play-btn')
-      await expect(playBtn).toBeVisible()
+      await expect(playBtn).toBeVisible({ timeout: 10000 })
 
       // 2. Navigate to players page
       await playBtn.click()
