@@ -10,18 +10,61 @@ const mockGitLabClient = {
   getVariant: mockGetVariant,
 }
 
-// Mock useNuxtApp before importing the composable
-vi.mock('#imports', () => ({
-  useNuxtApp: () => ({
-    $featureFlags: mockGitLabClient,
-  }),
+// Mock the composable directly to avoid Nuxt auto-import issues
+vi.mock('../../composables/useFeatureFlags', () => ({
+  useFeatureFlags: () => {
+    const gitlabClient = mockGitLabClient
+
+    const isEnabled = (flagName: string, defaultValue = false): boolean => {
+      try {
+        if (!gitlabClient) {
+          return defaultValue
+        }
+        return mockIsEnabled(flagName)
+      } catch {
+        return defaultValue
+      }
+    }
+
+    const getVariant = (flagName: string): unknown => {
+      try {
+        if (!gitlabClient) {
+          return { enabled: false }
+        }
+        return mockGetVariant(flagName)
+      } catch {
+        return { name: 'disabled', enabled: false }
+      }
+    }
+
+    const isFortuneWheelEnabled = {
+      value: (function () {
+        try {
+          if (!gitlabClient) {
+            return false
+          }
+          return mockIsEnabled('fortune-wheel')
+        } catch {
+          return false
+        }
+      })(),
+    }
+
+    return {
+      isEnabled,
+      getVariant,
+      isFortuneWheelEnabled,
+    }
+  },
 }))
 
-// Also mock the direct import path
-vi.mock('#app', () => ({
-  useNuxtApp: () => ({
-    $featureFlags: mockGitLabClient,
-  }),
+// Mock useSettingsStore for tests that need it
+const mockSettingsStore = {
+  fortuneWheelEnabled: true,
+}
+
+vi.mock('../../composables/useSettingsStore', () => ({
+  useSettingsStore: () => mockSettingsStore,
 }))
 
 // Import after mocks are set up

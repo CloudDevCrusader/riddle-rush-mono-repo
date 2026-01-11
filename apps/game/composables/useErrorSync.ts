@@ -83,7 +83,6 @@ export const useErrorSync = () => {
         name: error.name,
         message: error.message,
         stack: error.stack,
-        // @ts-expect-error - cause property may not exist in all Error types
         cause: error.cause,
       })
     }
