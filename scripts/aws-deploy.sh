@@ -139,7 +139,7 @@ if [[ ! -d "${BUILD_DIR}" ]] || [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS}" ]]; then
 fi
 
 if [[ ! -d "${BUILD_DIR}" ]]; then
-	echo -e "${RED}❌ Build directory not found${ $BUILD_D}IR${NC}"
+	echo -e "${RED}❌ Build directory not found: ${BUILD_DIR}${NC}"
 	exit 1
 fi
 
@@ -149,7 +149,7 @@ echo -e "  Files generated: ${FILE_COUNT}"
 
 # Ensure S3 bucket exists (Terraform should have created it, but check anyway)
 echo -e "\n🪣 Checking S3 bucket: ${S3_BUCKET}..."
-if ! aws s3 ls "s3://${S3_BUCKET}" 2>&1 >/dev/null; then
+if ! aws s3 ls "s3://${S3_BUCKET}" >/dev/null 2>&1; then
 	echo -e "${YELLOW}⚠️  Bucket doesn't exist. Creating...${NC}"
 	echo -e "${YELLOW}   Note: This should be managed by Terraform. Consider running terraform apply.${NC}"
 
@@ -252,7 +252,7 @@ if [[ -n "${CLOUDFRONT_ID}" ]]; then
 	echo -e "\n⏳ Waiting for CloudFront distribution to be ready before invalidation..."
 	sleep 5
 
-	# Check if distribution is ready (optional check, won't fail if it times out)
+	# Check if distribution is ready (optional check, will not fail if it times out)
 	status=$(aws cloudfront get-distribution --id "${CLOUDFRONT_ID}" \
 		--query 'Distribution.Status' --output text 2>/dev/null || echo "")
 

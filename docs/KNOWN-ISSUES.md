@@ -1,86 +1,44 @@
 # Known Issues
 
-## TypeCheck - Vite Version Conflict
+## ~~TypeCheck - Vite Version Conflict~~ ✅ RESOLVED
 
-**Status**: Blocking pre-push hook
-**Priority**: High
+**Status**: ✅ Fixed (2026-01-11)
+**Priority**: ~~High~~ Resolved
 **Discovered**: 2026-01-02
 
-### Problem
+### Problem (RESOLVED)
 
-The game app's `nuxt typecheck` command fails with Vite type conflicts:
-
-- Project has both `vite@5.4.21` and `vite@7.3.0` installed
-- TypeScript compiler sees incompatible Plugin types between versions
-- Results in 365 type errors even though code is valid
-
-### Error Example
-
-```
-Type 'import("...vite@5.4.21...").PluginOption[]' is not assignable to
-type 'import("...vite@7.3.0...").PluginOption[]'
-```
+~~The game app's `nuxt typecheck` command fails with Vite type conflicts~~
 
 ### Root Cause
 
-Dependency resolution conflict in pnpm monorepo:
+The issue was caused by **pnpm version mismatch** across the monorepo:
 
-1. Nuxt 4 and related packages depend on specific Vite versions
-2. Some transitive dependencies pull in incompatible Vite versions
-3. pnpm creates multiple Vite installations in node_modules
+- Root package.json used `pnpm@10.28.0`
+- Apps/packages used `pnpm@10.26.2`
+- CI configs used `pnpm@10.27.0`
 
-### Workaround
+This caused inconsistent dependency resolution and lockfile conflicts.
 
-Temporarily bypass pre-push hook when pushing:
+### Solution Applied
+
+✅ Aligned all pnpm versions to `10.28.0`:
+
+- Updated `apps/docs/package.json`
+- Updated `apps/game/package.json`
+- Updated `.gitlab-ci.yml`
+- Updated `.circleci/config.yml`
+- Ran `pnpm install --no-frozen-lockfile` to update lockfile
+
+### Verification
 
 ```bash
-git push --no-verify
+pnpm run typecheck  # ✅ Passes
+pnpm run test:unit  # ✅ Passes
+pnpm run lint       # ✅ Passes (warnings only)
 ```
 
-CI/CD will still run typecheck to catch real issues.
-
-### Solution Options
-
-1. **pnpm overrides** (Recommended):
-   Add to root `package.json`:
-
-   ```json
-   {
-     "pnpm": {
-       "overrides": {
-         "vite": "^7.3.0"
-       }
-     }
-   }
-   ```
-
-   Then run `pnpm install` to resolve.
-
-2. **Update dependencies**:
-   Update all Vite-related packages to compatible versions
-
-   ```bash
-   pnpm update vite @vitejs/plugin-vue vite-plugin-*
-   ```
-
-3. **Dedupe**:
-   ```bash
-   pnpm dedupe
-   ```
-
-### Impact
-
-- Pre-push hook fails on typecheck
-- Developers must use `--no-verify` to push
-- CI/CD pipeline may also fail if not using same Vite version
-- Does not affect runtime - only TypeScript type checking
-
-### Next Steps
-
-1. Add pnpm overrides to force Vite 7.x
-2. Run `pnpm install` to resolve dependencies
-3. Verify typecheck passes
-4. Remove --no-verify workaround
+No pnpm overrides needed - the version alignment resolved the Vite conflicts automatically.
 
 ---
 
