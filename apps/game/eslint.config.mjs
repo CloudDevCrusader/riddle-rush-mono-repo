@@ -3,7 +3,12 @@ import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt([
   {
-    ignores: ['playwright-report/**', 'playwright-report-simple/**', 'test-results/**'],
+    ignores: [
+      'playwright-report/**',
+      'playwright-report-simple/**',
+      'test-results/**',
+      '.features-gen/**',
+    ],
   },
   {
     rules: {

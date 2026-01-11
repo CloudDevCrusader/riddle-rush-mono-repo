@@ -13,7 +13,8 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxt/image',
-    'nuxt-security',
+    // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
+    ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
   ],
   ssr: false,
 
