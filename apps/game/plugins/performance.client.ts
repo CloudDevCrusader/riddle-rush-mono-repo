@@ -47,7 +47,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     // Expose performance utils globally in development
     if (import.meta.client) {
-       
       ;(window as any).__performance__ = {
         mark,
         measure,

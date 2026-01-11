@@ -147,7 +147,7 @@ export const useWebSocket = () => {
   const logPerformance = (
     metricName: string,
     duration: number,
-    metadata: Record<string, unknown> = {},
+    metadata: Record<string, unknown> = {}
   ) => {
     if (!socket.value?.connected) {
       console.warn('Cannot log performance: not connected')
