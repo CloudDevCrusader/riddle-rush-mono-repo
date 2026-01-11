@@ -3,6 +3,7 @@ import { useIndexedDB } from '../composables/useIndexedDB'
 import { useStatistics } from '../composables/useStatistics'
 import { useLogger } from '../composables/useLogger'
 import { useCategoryEmoji } from '../composables/useCategoryEmoji'
+import { useLodash } from '../composables/useLodash'
 import {
   ALPHABET,
   SCORE_PER_CORRECT_ANSWER,
@@ -24,6 +25,22 @@ const randomLetter = () => {
   }
   const index = Math.floor(Math.random() * ALPHABET.length)
   return ALPHABET.charAt(index).toLowerCase()
+}
+
+// Async utility functions that use lodash
+const getRandomCategoryAsync = async (categories: Category[]): Promise<Category | null> => {
+  if (!categories.length) return null
+
+  const { shuffle } = useLodash()
+  const shuffleFunc = await shuffle
+  const shuffled = shuffleFunc(categories)
+  return shuffled[0] ?? null
+}
+
+const cloneSessionForHistory = async (session: GameSession): Promise<GameSession> => {
+  const { cloneDeep } = useLodash()
+  const cloneDeepFunc = await cloneDeep
+  return cloneDeepFunc(session)
 }
 
 export const useGameStore = defineStore('game', {
@@ -67,8 +84,9 @@ export const useGameStore = defineStore('game', {
       const players = state.currentSession?.players ?? []
       return players.find((p) => !p.hasSubmitted) ?? null
     },
-    leaderboard: (state): PlayerWithRank[] => {
+    leaderboard(state): PlayerWithRank[] {
       const players = state.currentSession?.players ?? []
+
       const sorted = [...players].sort((a, b) => b.totalScore - a.totalScore)
 
       const isGameCompleted = state.currentSession?.status === 'completed'
@@ -175,7 +193,7 @@ export const useGameStore = defineStore('game', {
     async startNewGame() {
       await this.fetchCategories()
 
-      const category = this.getRandomCategory()
+      const category = await getRandomCategoryAsync(this.categories)
 
       if (!category) {
         throw new Error('Unable to start game without categories')
@@ -240,7 +258,7 @@ export const useGameStore = defineStore('game', {
       if (!this.currentSession) return
 
       this.currentSession.endTime = Date.now()
-      this.history.push({ ...this.currentSession })
+      this.history.push(await cloneSessionForHistory(this.currentSession))
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
@@ -375,7 +393,7 @@ export const useGameStore = defineStore('game', {
     ) {
       await this.fetchCategories()
 
-      const category = customCategory || this.getRandomCategory()
+      const category = customCategory || (await getRandomCategoryAsync(this.categories))
       if (!category) {
         throw new Error('Unable to start game without categories')
       }
@@ -477,7 +495,7 @@ export const useGameStore = defineStore('game', {
       if (!this.currentSession) return
 
       // Use provided category and letter, or pick random ones
-      const selectedCategory = category || this.getRandomCategory()
+      const selectedCategory = category || (await getRandomCategoryAsync(this.categories))
       if (!selectedCategory) {
         throw new Error('Unable to start round without categories')
       }

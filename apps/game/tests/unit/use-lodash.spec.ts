@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const { useLodash } = await import('../../composables/useLodash')
+const { useLodash, useLodashSync } = await import('../../composables/useLodash')
 
 describe('useLodash', () => {
   let lodash: ReturnType<typeof useLodash>
@@ -12,7 +12,8 @@ describe('useLodash', () => {
   describe('debounce and throttle', () => {
     it('should debounce function calls', async () => {
       const fn = vi.fn()
-      const debounced = lodash.debounce(fn, 100)
+      const debounceModule = await lodash.debounce
+      const debounced = debounceModule(fn, 100)
 
       debounced()
       debounced()
@@ -26,7 +27,8 @@ describe('useLodash', () => {
 
     it('should throttle function calls', async () => {
       const fn = vi.fn()
-      const throttled = lodash.throttle(fn, 100)
+      const throttleModule = await lodash.throttle
+      const throttled = throttleModule(fn, 100)
 
       throttled()
       throttled()
@@ -44,9 +46,10 @@ describe('useLodash', () => {
 
   describe('array utilities', () => {
     describe('shuffle', () => {
-      it('should randomize array order', () => {
+      it('should randomize array order', async () => {
         const arr = [1, 2, 3, 4, 5]
-        const shuffled = lodash.shuffle(arr)
+        const shuffleModule = await lodash.shuffle
+        const shuffled = shuffleModule(arr)
 
         expect(shuffled).toHaveLength(5)
         expect(shuffled).toEqual(expect.arrayContaining(arr))
@@ -54,30 +57,34 @@ describe('useLodash', () => {
         expect(arr).toEqual([1, 2, 3, 4, 5])
       })
 
-      it('should handle empty arrays', () => {
-        const result = lodash.shuffle([])
+      it('should handle empty arrays', async () => {
+        const shuffleModule = await lodash.shuffle
+        const result = shuffleModule([])
         expect(result).toEqual([])
       })
     })
 
     describe('sample', () => {
-      it('should return random item from array', () => {
+      it('should return random item from array', async () => {
         const arr = [1, 2, 3, 4, 5]
-        const item = lodash.sample(arr)
+        const sampleModule = await lodash.sample
+        const item = sampleModule(arr)
 
         expect(arr).toContain(item)
       })
 
-      it('should return undefined for empty array', () => {
-        const result = lodash.sample([])
+      it('should return undefined for empty array', async () => {
+        const sampleModule = await lodash.sample
+        const result = sampleModule([])
         expect(result).toBeUndefined()
       })
     })
 
     describe('sampleSize', () => {
-      it('should return N random items', () => {
+      it('should return N random items', async () => {
         const arr = [1, 2, 3, 4, 5]
-        const items = lodash.sampleSize(arr, 3)
+        const sampleSizeModule = await lodash.sampleSize
+        const items = sampleSizeModule(arr, 3)
 
         expect(items).toHaveLength(3)
         items.forEach((item) => {
@@ -85,65 +92,72 @@ describe('useLodash', () => {
         })
       })
 
-      it('should handle size larger than array', () => {
+      it('should handle size larger than array', async () => {
         const arr = [1, 2, 3]
-        const items = lodash.sampleSize(arr, 10)
+        const sampleSizeModule = await lodash.sampleSize
+        const items = sampleSizeModule(arr, 10)
 
         expect(items).toHaveLength(3)
       })
     })
 
     describe('uniq', () => {
-      it('should remove duplicate values', () => {
+      it('should remove duplicate values', async () => {
         const arr = [1, 2, 2, 3, 3, 3, 4]
-        const result = lodash.uniq(arr)
+        const uniqModule = await lodash.uniq
+        const result = uniqModule(arr)
 
         expect(result).toEqual([1, 2, 3, 4])
       })
 
-      it('should handle empty arrays', () => {
-        expect(lodash.uniq([])).toEqual([])
+      it('should handle empty arrays', async () => {
+        const uniqModule = await lodash.uniq
+        expect(uniqModule([])).toEqual([])
       })
     })
 
     describe('uniqBy', () => {
-      it('should remove duplicates by property', () => {
+      it('should remove duplicates by property', async () => {
         const arr = [
           { id: 1, name: 'a' },
           { id: 2, name: 'b' },
           { id: 1, name: 'c' },
         ]
-        const result = lodash.uniqBy(arr, 'id')
+        const uniqByModule = await lodash.uniqBy
+        const result = uniqByModule(arr, 'id')
 
         expect(result).toHaveLength(2)
         expect(result[0]!.id).toBe(1)
         expect(result[1]!.id).toBe(2)
       })
 
-      it('should work with function iteratee', () => {
+      it('should work with function iteratee', async () => {
         const arr = [1.2, 1.5, 2.1, 2.8]
-        const result = lodash.uniqBy(arr, Math.floor)
+        const uniqByModule = await lodash.uniqBy
+        const result = uniqByModule(arr, Math.floor)
 
         expect(result).toEqual([1.2, 2.1])
       })
     })
 
     describe('groupBy', () => {
-      it('should group items by property', () => {
+      it('should group items by property', async () => {
         const arr = [
           { type: 'fruit', name: 'apple' },
           { type: 'fruit', name: 'banana' },
           { type: 'vegetable', name: 'carrot' },
         ]
-        const result = lodash.groupBy(arr, 'type')
+        const groupByModule = await lodash.groupBy
+        const result = groupByModule(arr, 'type')
 
         expect(result.fruit).toHaveLength(2)
         expect(result.vegetable).toHaveLength(1)
       })
 
-      it('should work with function iteratee', () => {
+      it('should work with function iteratee', async () => {
         const arr = [1.2, 1.8, 2.1, 2.9]
-        const result = lodash.groupBy(arr, Math.floor)
+        const groupByModule = await lodash.groupBy
+        const result = groupByModule(arr, Math.floor)
 
         expect(result['1']).toEqual([1.2, 1.8])
         expect(result['2']).toEqual([2.1, 2.9])
@@ -151,26 +165,28 @@ describe('useLodash', () => {
     })
 
     describe('orderBy', () => {
-      it('should sort by single property', () => {
+      it('should sort by single property', async () => {
         const arr = [
           { name: 'charlie', age: 30 },
           { name: 'alice', age: 25 },
           { name: 'bob', age: 35 },
         ]
-        const result = lodash.orderBy(arr, ['name'], ['asc'])
+        const orderByModule = await lodash.orderBy
+        const result = orderByModule(arr, ['name'], ['asc'])
 
         expect(result[0]!.name).toBe('alice')
         expect(result[1]!.name).toBe('bob')
         expect(result[2]!.name).toBe('charlie')
       })
 
-      it('should sort by multiple properties', () => {
+      it('should sort by multiple properties', async () => {
         const arr = [
           { name: 'alice', age: 30 },
           { name: 'bob', age: 25 },
           { name: 'alice', age: 25 },
         ]
-        const result = lodash.orderBy(arr, ['name', 'age'], ['asc', 'desc'])
+        const orderByModule = await lodash.orderBy
+        const result = orderByModule(arr, ['name', 'age'], ['asc', 'desc'])
 
         expect(result[0]!.name).toBe('alice')
         expect(result[0]!.age).toBe(30)
@@ -180,16 +196,18 @@ describe('useLodash', () => {
     })
 
     describe('chunk', () => {
-      it('should split array into chunks', () => {
+      it('should split array into chunks', async () => {
         const arr = [1, 2, 3, 4, 5, 6, 7]
-        const result = lodash.chunk(arr, 3)
+        const chunkModule = await lodash.chunk
+        const result = chunkModule(arr, 3)
 
         expect(result).toEqual([[1, 2, 3], [4, 5, 6], [7]])
       })
 
-      it('should handle exact divisions', () => {
+      it('should handle exact divisions', async () => {
         const arr = [1, 2, 3, 4]
-        const result = lodash.chunk(arr, 2)
+        const chunkModule = await lodash.chunk
+        const result = chunkModule(arr, 2)
 
         expect(result).toEqual([
           [1, 2],
@@ -199,16 +217,18 @@ describe('useLodash', () => {
     })
 
     describe('flatten', () => {
-      it('should flatten nested arrays one level', () => {
+      it('should flatten nested arrays one level', async () => {
         const arr = [1, [2, 3], [4, [5, 6]]]
-        const result = lodash.flatten(arr)
+        const flattenModule = await lodash.flatten
+        const result = flattenModule(arr)
 
         expect(result).toEqual([1, 2, 3, 4, [5, 6]])
       })
 
-      it('should handle already flat arrays', () => {
+      it('should handle already flat arrays', async () => {
         const arr = [1, 2, 3]
-        const result = lodash.flatten(arr)
+        const flattenModule = await lodash.flatten
+        const result = flattenModule(arr)
 
         expect(result).toEqual([1, 2, 3])
       })
@@ -217,18 +237,20 @@ describe('useLodash', () => {
 
   describe('object utilities', () => {
     describe('cloneDeep', () => {
-      it('should deep clone objects', () => {
+      it('should deep clone objects', async () => {
         const obj = { a: 1, b: { c: 2 } }
-        const clone = lodash.cloneDeep(obj)
+        const cloneDeepModule = await lodash.cloneDeep
+        const clone = cloneDeepModule(obj)
 
         expect(clone).toEqual(obj)
         expect(clone).not.toBe(obj)
         expect(clone.b).not.toBe(obj.b)
       })
 
-      it('should clone arrays', () => {
+      it('should clone arrays', async () => {
         const arr = [1, [2, 3]]
-        const clone = lodash.cloneDeep(arr)
+        const cloneDeepModule = await lodash.cloneDeep
+        const clone = cloneDeepModule(arr)
 
         expect(clone).toEqual(arr)
         expect(clone).not.toBe(arr)
@@ -237,114 +259,129 @@ describe('useLodash', () => {
     })
 
     describe('isEqual', () => {
-      it('should compare objects deeply', () => {
+      it('should compare objects deeply', async () => {
         const obj1 = { a: 1, b: { c: 2 } }
         const obj2 = { a: 1, b: { c: 2 } }
         const obj3 = { a: 1, b: { c: 3 } }
+        const isEqualModule = await lodash.isEqual
 
-        expect(lodash.isEqual(obj1, obj2)).toBe(true)
-        expect(lodash.isEqual(obj1, obj3)).toBe(false)
+        expect(isEqualModule(obj1, obj2)).toBe(true)
+        expect(isEqualModule(obj1, obj3)).toBe(false)
       })
 
-      it('should compare arrays', () => {
-        expect(lodash.isEqual([1, 2, 3], [1, 2, 3])).toBe(true)
-        expect(lodash.isEqual([1, 2, 3], [1, 2, 4])).toBe(false)
+      it('should compare arrays', async () => {
+        const isEqualModule = await lodash.isEqual
+        expect(isEqualModule([1, 2, 3], [1, 2, 3])).toBe(true)
+        expect(isEqualModule([1, 2, 3], [1, 2, 4])).toBe(false)
       })
     })
 
     describe('isEmpty', () => {
-      it('should check if value is empty', () => {
-        expect(lodash.isEmpty({})).toBe(true)
-        expect(lodash.isEmpty([])).toBe(true)
-        expect(lodash.isEmpty('')).toBe(true)
-        expect(lodash.isEmpty({ a: 1 })).toBe(false)
-        expect(lodash.isEmpty([1])).toBe(false)
-        expect(lodash.isEmpty('hello')).toBe(false)
+      it('should check if value is empty', async () => {
+        const isEmptyModule = await lodash.isEmpty
+        expect(isEmptyModule({})).toBe(true)
+        expect(isEmptyModule([])).toBe(true)
+        expect(isEmptyModule('')).toBe(true)
+        expect(isEmptyModule({ a: 1 })).toBe(false)
+        expect(isEmptyModule([1])).toBe(false)
+        expect(isEmptyModule('hello')).toBe(false)
       })
 
-      it('should handle null and undefined', () => {
-        expect(lodash.isEmpty(null)).toBe(true)
-        expect(lodash.isEmpty(undefined)).toBe(true)
+      it('should handle null and undefined', async () => {
+        const isEmptyModule = await lodash.isEmpty
+        expect(isEmptyModule(null)).toBe(true)
+        expect(isEmptyModule(undefined)).toBe(true)
       })
     })
 
     describe('get', () => {
-      it('should safely access nested properties', () => {
+      it('should safely access nested properties', async () => {
         const obj = { a: { b: { c: 42 } } }
+        const getModule = await lodash.get
 
-        expect(lodash.get(obj, 'a.b.c')).toBe(42)
-        expect(lodash.get(obj, 'a.b.d')).toBeUndefined()
-        expect(lodash.get(obj, 'a.b.d', 'default')).toBe('default')
+        expect(getModule(obj, 'a.b.c')).toBe(42)
+        expect(getModule(obj, 'a.b.d')).toBeUndefined()
+        expect(getModule(obj, 'a.b.d', 'default')).toBe('default')
       })
 
-      it('should handle array paths', () => {
+      it('should handle array paths', async () => {
         const obj = { a: [{ b: 1 }, { b: 2 }] }
+        const getModule = await lodash.get
 
-        expect(lodash.get(obj, 'a[0].b')).toBe(1)
-        expect(lodash.get(obj, 'a[1].b')).toBe(2)
+        expect(getModule(obj, 'a[0].b')).toBe(1)
+        expect(getModule(obj, 'a[1].b')).toBe(2)
       })
     })
 
     describe('set', () => {
-      it('should set nested properties', () => {
+      it('should set nested properties', async () => {
         const obj = { a: { b: 1 } }
-        lodash.set(obj, 'a.b', 2)
+        const setModule = await lodash.set
+        setModule(obj, 'a.b', 2)
 
         expect(obj.a.b).toBe(2)
       })
 
-      it('should create missing paths', () => {
+      it('should create missing paths', async () => {
         const obj = {}
-        lodash.set(obj, 'a.b.c', 42)
+        const setModule = await lodash.set
+        setModule(obj, 'a.b.c', 42)
 
-        expect(lodash.get(obj, 'a.b.c')).toBe(42)
+        const getModule = await lodash.get
+        expect(getModule(obj, 'a.b.c')).toBe(42)
       })
     })
 
     describe('has', () => {
-      it('should check if property exists', () => {
+      it('should check if property exists', async () => {
         const obj = { a: { b: { c: 1 } } }
+        const hasModule = await lodash.has
 
-        expect(lodash.has(obj, 'a.b.c')).toBe(true)
-        expect(lodash.has(obj, 'a.b.d')).toBe(false)
-        expect(lodash.has(obj, 'a.x.y')).toBe(false)
+        expect(hasModule(obj, 'a.b.c')).toBe(true)
+        expect(hasModule(obj, 'a.b.d')).toBe(false)
+        expect(hasModule(obj, 'a.x.y')).toBe(false)
       })
 
-      it('should work with array indices', () => {
+      it('should work with array indices', async () => {
         const obj = { a: [1, 2, 3] }
+        const hasModule = await lodash.has
 
-        expect(lodash.has(obj, 'a[0]')).toBe(true)
-        expect(lodash.has(obj, 'a[5]')).toBe(false)
+        expect(hasModule(obj, 'a[0]')).toBe(true)
+        expect(hasModule(obj, 'a[5]')).toBe(false)
       })
     })
 
     describe('omit', () => {
-      it('should remove specified properties', () => {
+      it('should remove specified properties', async () => {
         const obj = { a: 1, b: 2, c: 3 }
-        const result = lodash.omit(obj, ['a', 'c'])
+        const omitModule = await lodash.omit
+        const result = omitModule(obj, ['a', 'c'])
 
         expect(result).toEqual({ b: 2 })
       })
 
-      it('should not modify original object', () => {
+      it('should not modify original object', async () => {
         const obj = { a: 1, b: 2 }
-        lodash.omit(obj, ['a'])
+        const omitModule = await lodash.omit
+        omitModule(obj, ['a'])
 
         expect(obj).toEqual({ a: 1, b: 2 })
       })
     })
 
     describe('pick', () => {
-      it('should select specified properties', () => {
+      it('should select specified properties', async () => {
         const obj = { a: 1, b: 2, c: 3 }
-        const result = lodash.pick(obj, ['a', 'c'])
+        const pickModule = await lodash.pick
+        const result = pickModule(obj, ['a', 'c'])
 
         expect(result).toEqual({ a: 1, c: 3 })
       })
 
-      it('should handle non-existent properties', () => {
+      it('should handle non-existent properties', async () => {
         const obj = { a: 1, b: 2 }
-        const result = lodash.pick(obj, ['a', 'c'])
+        const pickModule = await lodash.pick
+        const result = pickModule(obj, ['a', 'c'])
 
         expect(result).toEqual({ a: 1 })
       })
@@ -374,16 +411,73 @@ describe('useLodash', () => {
       expect(lodash).toHaveProperty('pick')
     })
 
-    it('should expose functions', () => {
-      expect(typeof lodash.debounce).toBe('function')
-      expect(typeof lodash.shuffle).toBe('function')
-      expect(typeof lodash.cloneDeep).toBe('function')
-      expect(typeof lodash.get).toBe('function')
+    it('should expose getters that return promises', () => {
+      expect(typeof lodash.debounce).toBe('object') // Getter returns object
+      expect(typeof lodash.shuffle).toBe('object')
+      expect(typeof lodash.cloneDeep).toBe('object')
+      expect(typeof lodash.get).toBe('object')
+    })
+
+    it('should resolve to actual functions', async () => {
+      const debounceFunc = await lodash.debounce
+      const shuffleFunc = await lodash.shuffle
+      const cloneDeepFunc = await lodash.cloneDeep
+      const getFunc = await lodash.get
+
+      expect(typeof debounceFunc).toBe('function')
+      expect(typeof shuffleFunc).toBe('function')
+      expect(typeof cloneDeepFunc).toBe('function')
+      expect(typeof getFunc).toBe('function')
+    })
+  })
+
+  describe('synchronous utilities', () => {
+    let syncLodash: ReturnType<typeof useLodashSync>
+
+    beforeEach(() => {
+      syncLodash = useLodashSync()
+    })
+
+    describe('isEmpty', () => {
+      it('should check if value is empty', () => {
+        expect(syncLodash.isEmpty({})).toBe(true)
+        expect(syncLodash.isEmpty([])).toBe(true)
+        expect(syncLodash.isEmpty('')).toBe(true)
+        expect(syncLodash.isEmpty(null)).toBe(true)
+        expect(syncLodash.isEmpty(undefined)).toBe(true)
+        expect(syncLodash.isEmpty({ a: 1 })).toBe(false)
+        expect(syncLodash.isEmpty([1])).toBe(false)
+        expect(syncLodash.isEmpty('hello')).toBe(false)
+      })
+    })
+
+    describe('clone', () => {
+      it('should clone simple objects', () => {
+        const obj = { a: 1, b: 2 }
+        const clone = syncLodash.clone(obj)
+
+        expect(clone).toEqual(obj)
+        expect(clone).not.toBe(obj)
+      })
+
+      it('should clone arrays', () => {
+        const arr = [1, 2, 3]
+        const clone = syncLodash.clone(arr)
+
+        expect(clone).toEqual(arr)
+        expect(clone).not.toBe(arr)
+      })
+
+      it('should handle primitive values', () => {
+        expect(syncLodash.clone(42)).toBe(42)
+        expect(syncLodash.clone('hello')).toBe('hello')
+        expect(syncLodash.clone(null)).toBe(null)
+      })
     })
   })
 
   describe('real-world scenarios', () => {
-    it('should handle game state management', () => {
+    it('should handle game state management', async () => {
       const gameState = {
         players: [
           { id: 1, name: 'Alice', score: 100 },
@@ -397,43 +491,51 @@ describe('useLodash', () => {
       }
 
       // Clone state for undo functionality
-      const backup = lodash.cloneDeep(gameState)
+      const cloneDeepModule = await lodash.cloneDeep
+      const backup = cloneDeepModule(gameState)
       expect(backup).toEqual(gameState)
       expect(backup).not.toBe(gameState)
 
       // Sort players by score
-      const sorted = lodash.orderBy(gameState.players, ['score'], ['desc'])
+      const orderByModule = await lodash.orderBy
+      const sorted = orderByModule(gameState.players, ['score'], ['desc'])
       expect(sorted[0]!.name).toBe('Bob')
 
       // Get top 2 players
-      const topPlayers = lodash.sampleSize(sorted, 2)
+      const sampleSizeModule = await lodash.sampleSize
+      const topPlayers = sampleSizeModule(sorted, 2)
       expect(topPlayers).toHaveLength(2)
 
       // Check if setting exists
-      expect(lodash.has(gameState, 'settings.sound')).toBe(true)
+      const hasModule = await lodash.has
+      expect(hasModule(gameState, 'settings.sound')).toBe(true)
 
       // Get setting with default
-      expect(lodash.get(gameState, 'settings.volume', 50)).toBe(50)
+      const getModule = await lodash.get
+      expect(getModule(gameState, 'settings.volume', 50)).toBe(50)
     })
 
-    it('should handle array operations for game logic', () => {
+    it('should handle array operations for game logic', async () => {
       const categories = ['Animals', 'Cities', 'Food', 'Sports', 'Movies']
 
       // Shuffle categories
-      const shuffled = lodash.shuffle(categories)
+      const shuffleModule = await lodash.shuffle
+      const shuffled = shuffleModule(categories)
       expect(shuffled).toHaveLength(5)
 
       // Pick random category
-      const random = lodash.sample(categories)
+      const sampleModule = await lodash.sample
+      const random = sampleModule(categories)
       expect(categories).toContain(random)
 
       // Split into rounds
-      const rounds = lodash.chunk(categories, 2)
+      const chunkModule = await lodash.chunk
+      const rounds = chunkModule(categories, 2)
       expect(rounds).toHaveLength(3)
       expect(rounds[2]).toHaveLength(1)
     })
 
-    it('should manage player answers efficiently', () => {
+    it('should manage player answers efficiently', async () => {
       const answers = [
         { player: 'Alice', answer: 'Apple', points: 10 },
         { player: 'Bob', answer: 'Banana', points: 10 },
@@ -442,16 +544,19 @@ describe('useLodash', () => {
       ]
 
       // Group by player
-      const byPlayer = lodash.groupBy(answers, 'player')
+      const groupByModule = await lodash.groupBy
+      const byPlayer = groupByModule(answers, 'player')
       expect(byPlayer.Alice).toHaveLength(2)
       expect(byPlayer.Bob).toHaveLength(2)
 
       // Remove duplicate players
-      const uniquePlayers = lodash.uniqBy(answers, 'player')
+      const uniqByModule = await lodash.uniqBy
+      const uniquePlayers = uniqByModule(answers, 'player')
       expect(uniquePlayers).toHaveLength(2)
 
       // Pick only relevant fields
-      const simplified = answers.map((a) => lodash.pick(a, ['answer', 'points']))
+      const pickModule = await lodash.pick
+      const simplified = answers.map((a) => pickModule(a, ['answer', 'points']))
       expect(simplified[0]).toEqual({ answer: 'Apple', points: 10 })
     })
   })

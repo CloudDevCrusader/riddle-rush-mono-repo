@@ -25,6 +25,7 @@ Manages game sessions, categories, scores, and attempts.
 
 - Automatically saves to IndexedDB after mutations
 - Restores session on app reload
+- Uses lodash `cloneDeep` to snapshot completed sessions before storing history
 
 ### Settings Store (`stores/settings.ts`)
 
@@ -61,3 +62,4 @@ User Action → Component → Store Action → Service → IndexedDB
 2. **Save after mutations** - Call `save*ToDB()` methods
 3. **Handle errors** - Wrap IndexedDB operations in try-catch
 4. **Type safety** - Use TypeScript types for all state
+5. **Snapshot history** - Deep-clone sessions before pushing to history to avoid mutation

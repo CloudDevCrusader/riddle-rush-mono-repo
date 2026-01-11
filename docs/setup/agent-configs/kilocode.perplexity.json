@@ -1,0 +1,8 @@
+{
+  "provider": "perplexity",
+  "baseUrl": "https://api.perplexity.ai",
+  "model": "sonar-pro",
+  "apiKeyEnv": "PERPLEXITY_API_KEY",
+  "timeoutMs": 60000,
+  "maxTokens": 4096
+}

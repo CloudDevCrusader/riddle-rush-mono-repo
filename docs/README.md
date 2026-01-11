@@ -14,6 +14,7 @@ Welcome to the Riddle Rush documentation. This guide will help you understand th
 
 - [Environment Setup](../MONOREPO_ENVIRONMENT_GUIDE.md) - Environment variables guide
 - [Terraform Setup](setup/TERRAFORM-SETUP.md) - Infrastructure as Code setup
+- [AI Agent Setup](setup/AGENT-SETUP.md) - Agent setup and config templates
 - [GitLab Feature Flags](GITLAB_FEATURE_FLAGS.md) - Feature flag configuration
 - [Plugins Configuration](PLUGINS.md) - Vite and Nuxt plugins guide
 

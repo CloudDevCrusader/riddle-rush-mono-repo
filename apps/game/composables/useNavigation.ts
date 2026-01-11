@@ -1,5 +1,7 @@
 import { ROUTES, getGameRoute, getResultsRoute } from '@riddle-rush/shared/routes'
 import { useLoading } from './useLoading'
+import { useLodash } from './useLodash'
+import type { DebouncedFunc } from './useLodash'
 
 /**
  * Navigation composable
@@ -8,6 +10,10 @@ import { useLoading } from './useLoading'
 export function useNavigation() {
   const router = useRouter()
   const { showLoading, hideLoading, setProgress } = useLoading()
+  const { debounce } = useLodash()
+  let debouncedNavigate: DebouncedFunc<(route: string, simulateLoading?: boolean) => void> | null =
+    null
+  let debounceInit: Promise<void> | null = null
 
   const navigateWithLoading = async (route: string, simulateLoading = false) => {
     try {
@@ -27,28 +33,58 @@ export function useNavigation() {
     }
   }
 
+  const initDebouncedNavigate = async () => {
+    if (debouncedNavigate) return
+    if (!debounceInit) {
+      debounceInit = debounce.then((debounceFunc) => {
+        debouncedNavigate = debounceFunc(
+          (route: string, simulateLoading = false) => {
+            void navigateWithLoading(route, simulateLoading)
+          },
+          200,
+          { leading: true, trailing: false }
+        )
+      })
+    }
+    await debounceInit
+  }
+
+  const queueNavigation = async (route: string, simulateLoading = false) => {
+    try {
+      await initDebouncedNavigate()
+      if (debouncedNavigate) {
+        debouncedNavigate(route, simulateLoading)
+        return
+      }
+    } catch {
+      // Fall back to direct navigation when debounce is unavailable.
+    }
+
+    await navigateWithLoading(route, simulateLoading)
+  }
+
   const goBack = () => {
     // Check if there's history to go back to
     if (window.history.length > 1) {
       router.back()
     } else {
       // Fallback to home if no history available
-      navigateWithLoading(ROUTES.HOME, true)
+      void queueNavigation(ROUTES.HOME, true)
     }
   }
 
   return {
-    goHome: () => navigateWithLoading(ROUTES.HOME, true),
-    goToPlayers: () => navigateWithLoading(ROUTES.PLAYERS, true),
-    goToRoundStart: () => navigateWithLoading(ROUTES.ROUND_START, true),
+    goHome: () => queueNavigation(ROUTES.HOME, true),
+    goToPlayers: () => queueNavigation(ROUTES.PLAYERS, true),
+    goToRoundStart: () => queueNavigation(ROUTES.ROUND_START, true),
     goToGame: (gameId?: string) =>
-      navigateWithLoading(gameId ? getGameRoute(gameId) : ROUTES.GAME, true),
+      queueNavigation(gameId ? getGameRoute(gameId) : ROUTES.GAME, true),
     goToResults: (gameId?: string) =>
-      navigateWithLoading(gameId ? getResultsRoute(gameId) : ROUTES.RESULTS, true),
-    goToLeaderboard: () => navigateWithLoading(ROUTES.LEADERBOARD, true),
-    goToSettings: () => navigateWithLoading(ROUTES.SETTINGS, true),
-    goToLanguage: () => navigateWithLoading(ROUTES.LANGUAGE, true),
-    goToCredits: () => navigateWithLoading(ROUTES.CREDITS, true),
+      queueNavigation(gameId ? getResultsRoute(gameId) : ROUTES.RESULTS, true),
+    goToLeaderboard: () => queueNavigation(ROUTES.LEADERBOARD, true),
+    goToSettings: () => queueNavigation(ROUTES.SETTINGS, true),
+    goToLanguage: () => queueNavigation(ROUTES.LANGUAGE, true),
+    goToCredits: () => queueNavigation(ROUTES.CREDITS, true),
     goBack,
   }
 }

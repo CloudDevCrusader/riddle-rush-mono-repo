@@ -66,6 +66,7 @@ Reactive logic and utilities:
 - `useGameState` - Game state management
 - `useAudio` - Sound effects
 - `useAnalytics` - Tracking
+- `useNavigation` - Debounced route helpers with loading states
 
 ### Services Layer
 
