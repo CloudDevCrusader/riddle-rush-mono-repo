@@ -194,6 +194,7 @@ const handleQuitConfirmed = () => {
 }
 
 // Sanitize input to prevent XSS and limit special characters
+// Optimized: Direct mutation is faster than debouncing for simple sanitization
 const sanitizeInput = () => {
   // Remove potentially dangerous characters
   playerAnswer.value = playerAnswer.value.replace(/[<>]/g, '')

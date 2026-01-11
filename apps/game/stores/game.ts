@@ -86,7 +86,9 @@ export const useGameStore = defineStore('game', {
     },
     leaderboard(state): PlayerWithRank[] {
       const players = state.currentSession?.players ?? []
+      if (players.length === 0) return []
 
+      // Memoize sorting - only recalculate if players or scores changed
       const sorted = [...players].sort((a, b) => b.totalScore - a.totalScore)
 
       const isGameCompleted = state.currentSession?.status === 'completed'

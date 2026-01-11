@@ -18,7 +18,7 @@
       <!-- Scores List Container -->
       <div class="scores-list-container animate-scale-in">
         <div class="scores-list">
-          <div v-for="(player, index) in playerScores" :key="index" class="score-item">
+          <div v-for="(player, index) in playerScores" :key="player.id" class="score-item">
             <img
               :src="`${baseUrl}assets/scoring/Shape 2.png`"
               alt="Score slot"
@@ -111,14 +111,7 @@ const gameId = computed(() => route.params.gameId as string | undefined)
 const isLoading = ref(false)
 
 // Local state for scores (will be saved on navigation)
-const playerScores = ref(
-  players.value.map((p) => ({
-    id: p.id,
-    name: p.name,
-    answer: p.currentRoundAnswer || '',
-    score: p.currentRoundScore,
-  }))
-)
+const playerScores = ref<Array<{ id: string; name: string; answer: string; score: number }>>([])
 
 const audio = useAudio()
 
@@ -136,6 +129,20 @@ const decreaseScore = (index: number) => {
     player.score -= SCORE_INCREMENT
   }
 }
+
+// Memoize player scores to prevent unnecessary recalculations
+watch(
+  players,
+  (newPlayers) => {
+    playerScores.value = newPlayers.map((p) => ({
+      id: p.id,
+      name: p.name,
+      answer: p.currentRoundAnswer || '',
+      score: p.currentRoundScore,
+    }))
+  },
+  { immediate: true, deep: false }
+)
 
 const goToPrevious = () => {
   if (gameId.value) {

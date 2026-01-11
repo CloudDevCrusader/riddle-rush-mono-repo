@@ -134,6 +134,9 @@ export default defineNuxtConfig({
               if (id.includes('@nuxtjs/i18n')) {
                 return 'vendor-i18n'
               }
+              if (id.includes('idb')) {
+                return 'vendor-idb'
+              }
               return 'vendor'
             }
           },
@@ -201,14 +204,12 @@ export default defineNuxtConfig({
     // Explicitly use sharp for image processing
     sharp: {
       enabled: true,
-      // Optional: specify sharp options
-      // format: ['webp', 'avif'],
-      // quality: 80,
-      // progressive: true,
-      // withoutEnlargement: true,
     },
     providers: {
-      ipx: {},
+      ipx: {
+        // Enable lazy loading by default
+        lazy: true,
+      },
     },
     presets: {
       avatar: {
@@ -216,12 +217,13 @@ export default defineNuxtConfig({
           format: 'webp',
           width: 100,
           height: 100,
+          quality: 80,
         },
       },
       background: {
         modifiers: {
           format: 'webp',
-          quality: 80,
+          quality: 75,
         },
       },
       thumbnail: {
@@ -229,6 +231,22 @@ export default defineNuxtConfig({
           format: 'webp',
           width: 200,
           quality: 75,
+        },
+      },
+      // New optimized presets
+      icon: {
+        modifiers: {
+          format: 'webp',
+          width: 64,
+          height: 64,
+          quality: 85,
+        },
+      },
+      hero: {
+        modifiers: {
+          format: 'webp',
+          quality: 80,
+          width: 1200,
         },
       },
     },
@@ -307,6 +325,10 @@ export default defineNuxtConfig({
       navigateFallback: '/',
       navigateFallbackAllowlist: [/^\/(?!api\/)/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
+      // Performance: Optimize cache strategies
+      cleanupOutdatedCaches: true,
+      skipWaiting: true,
+      clientsClaim: true,
       runtimeCaching: [
         {
           urlPattern: /^\/$/,

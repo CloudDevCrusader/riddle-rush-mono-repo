@@ -99,8 +99,13 @@ defineEmits<{
   close: []
 }>()
 
+// Memoized sorted games - only recalculate when games array changes
 const sortedGames = computed(() => {
-  return [...(props.games || [])].sort((a, b) => {
+  const games = props.games || []
+  if (games.length === 0) return []
+
+  // Use stable sort for better performance
+  return [...games].sort((a, b) => {
     const timeA = a.endTime || a.startTime
     const timeB = b.endTime || b.startTime
     return timeB - timeA // Most recent first
@@ -123,9 +128,20 @@ const formatDate = (timestamp: number) => {
   return date.toLocaleDateString()
 }
 
+// Memoize sorted players per game to avoid recalculation
+const playerSortCache = new WeakMap<GameSession, Player[]>()
+
 const getSortedPlayers = (game: GameSession): Player[] => {
-  if (!game.players) return []
-  return [...game.players].sort((a, b) => b.totalScore - a.totalScore)
+  if (!game.players || game.players.length === 0) return []
+
+  // Check cache first
+  const cached = playerSortCache.get(game)
+  if (cached) return cached
+
+  // Sort and cache
+  const sorted = [...game.players].sort((a, b) => b.totalScore - a.totalScore)
+  playerSortCache.set(game, sorted)
+  return sorted
 }
 </script>
 

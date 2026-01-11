@@ -23,7 +23,11 @@
       <!-- Players List -->
       <div class="players-list-container animate-scale-in">
         <div class="players-list">
-          <div v-for="(player, index) in players" :key="index" class="player-item">
+          <div
+            v-for="(player, index) in players"
+            :key="`player-${index}-${player.name}`"
+            class="player-item"
+          >
             <img
               :src="`${baseUrl}assets/players/Group 10.png`"
               alt="Player slot"
@@ -122,7 +126,8 @@ const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
 
 const maxPlayers = MAX_PLAYERS
-const players = ref([{ name: 'Player 1' }, { name: 'Player 2' }])
+// Use shallowRef for better performance with large arrays
+const players = shallowRef([{ name: 'Player 1' }, { name: 'Player 2' }])
 const showPlayerInput = ref(false)
 const newPlayerName = ref('')
 const playerNameInput = ref<HTMLInputElement | null>(null)
@@ -177,7 +182,7 @@ const isValidPlayerName = (name: string): { valid: boolean; error?: string } => 
   return { valid: true }
 }
 
-// Sanitize player name input
+// Sanitize player name input (optimized - no debounce needed for simple sanitization)
 const sanitizePlayerName = () => {
   // Remove potentially dangerous characters
   newPlayerName.value = newPlayerName.value.replace(/[<>]/g, '')
