@@ -1,5 +1,10 @@
 <template>
   <div class="layout-container">
+    <!-- Connection Status Indicator -->
+    <div class="connection-indicator">
+      <ConnectionStatus />
+    </div>
+
     <!-- Background Image (if provided by page) -->
     <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
 
@@ -60,5 +65,33 @@ provide('setBackground', (src: string) => {
   z-index: 2;
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+.connection-indicator {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.connection-indicator:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .connection-indicator {
+    background: rgba(31, 41, 55, 0.9);
+  }
+
+  .connection-indicator:hover {
+    background: rgba(31, 41, 55, 1);
+  }
 }
 </style>
