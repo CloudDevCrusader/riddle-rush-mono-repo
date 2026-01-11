@@ -194,3 +194,64 @@ test.describe('Language Selection Page', () => {
     }
   })
 })
+
+test.describe('Language Switching Behavior', () => {
+  test.use({ locale: 'en-US' })
+
+  test('uses browser language by default and persists selection', async ({ page }) => {
+    await page.addInitScript(() => localStorage.removeItem('game-settings'))
+    await page.goto('/', { waitUntil: 'networkidle' })
+
+    await page.locator('.options-btn').click()
+
+    const languageItem = page.locator('.menu-item').filter({ hasText: 'Language' })
+    const settingsItem = page.locator('.menu-item').filter({ hasText: 'Settings' })
+    await expect(languageItem).toBeVisible()
+    await expect(settingsItem).toBeVisible()
+
+    await languageItem.click()
+    await page.waitForLoadState('networkidle')
+
+    const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
+    await germanOption.click()
+
+    const okButton = page.locator('.ok-btn, button.ok-btn').first()
+    await expect(okButton).toBeVisible({ timeout: 5000 })
+
+    await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
+
+    await page.goto('/', { waitUntil: 'networkidle' })
+
+    await page.locator('.options-btn').click()
+    await expect(page.locator('.menu-item').filter({ hasText: 'Sprache' })).toBeVisible()
+    await expect(page.locator('.menu-item').filter({ hasText: 'Einstellungen' })).toBeVisible()
+  })
+
+  test('respects ?lang query and preserves it when selecting a different locale', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => localStorage.removeItem('game-settings'))
+    await page.goto('/?lang=de', { waitUntil: 'networkidle' })
+
+    await page.locator('.options-btn').click()
+    const germanMenuItem = page.locator('.menu-item').filter({ hasText: 'Sprache' })
+    await expect(germanMenuItem).toBeVisible()
+
+    await germanMenuItem.click()
+    await page.waitForLoadState('networkidle')
+
+    const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    await englishOption.click()
+
+    const okButton = page.locator('.ok-btn, button.ok-btn').first()
+    await expect(okButton).toBeVisible({ timeout: 5000 })
+
+    await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
+
+    await page.waitForLoadState('networkidle')
+    expect(page.url()).toContain('lang=en')
+
+    await page.locator('.options-btn').click()
+    await expect(page.locator('.menu-item').filter({ hasText: 'Language' })).toBeVisible()
+  })
+})

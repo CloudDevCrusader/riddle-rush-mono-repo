@@ -103,13 +103,20 @@ export const useSettingsStore = defineStore('settings', {
       this.saveSettings()
     },
 
-    setLanguage(lang: string) {
+    setLanguage(lang: string, persist = true) {
       this.language = lang
-      this.saveSettings()
+      if (persist) {
+        this.saveSettings()
+      }
     },
 
     getLanguage() {
       return this.language
+    },
+
+    hasStoredSettings() {
+      if (typeof window === 'undefined') return false
+      return localStorage.getItem(STORAGE_KEY) !== null
     },
   },
 })

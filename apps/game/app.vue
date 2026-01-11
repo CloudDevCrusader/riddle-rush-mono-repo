@@ -36,12 +36,14 @@ onMounted(async () => {
   settingsStore.loadSettings()
 
   // Set the saved language preference
-  const savedLanguage = settingsStore.getLanguage()
-  if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
-    try {
-      await setLocale(savedLanguage as 'de' | 'en')
-    } catch (error) {
-      console.error('Failed to set saved language:', error)
+  if (settingsStore.hasStoredSettings()) {
+    const savedLanguage = settingsStore.getLanguage()
+    if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
+      try {
+        await setLocale(savedLanguage as 'de' | 'en')
+      } catch (error) {
+        console.error('Failed to set saved language:', error)
+      }
     }
   }
 

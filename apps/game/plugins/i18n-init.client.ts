@@ -6,25 +6,78 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Access i18n through nuxtApp context to avoid setup function requirement
   const i18n = (nuxtApp as any).$i18n
   const settingsStore = useSettingsStore()
+  const route = useRoute()
 
-  // Load settings from localStorage
-  settingsStore.loadSettings()
+  const supportedLocales = new Set(['de', 'en'])
 
-  // Check if stored language differs from current locale
-  const storedLanguage = settingsStore.getLanguage()
+  const resolveBrowserLocale = () => {
+    if (typeof navigator === 'undefined') return null
 
-  if (storedLanguage && storedLanguage !== i18n.locale.value) {
-    // Set the stored language as the current locale
-    i18n.setLocale(storedLanguage)
+    const candidates = [...(navigator.languages ?? []), navigator.language].filter(
+      (locale): locale is string => Boolean(locale)
+    )
+
+    for (const locale of candidates) {
+      const normalized = locale.toLowerCase().split('-')[0]
+      if (normalized && supportedLocales.has(normalized)) {
+        return normalized
+      }
+    }
+
+    return null
   }
 
-  // Watch for locale changes and update settings
+  const resolveRouteLocale = () => {
+    const rawLang = route.query.lang
+    const langCandidate = Array.isArray(rawLang) ? rawLang[0] : rawLang
+    if (!langCandidate) return null
+
+    const normalized = langCandidate.toString().toLowerCase().split('-')[0]
+    if (normalized && supportedLocales.has(normalized)) {
+      return normalized
+    }
+
+    return null
+  }
+
+  // Load settings from localStorage
+  const hasStoredSettings = settingsStore.hasStoredSettings()
+  settingsStore.loadSettings()
+  const storedLanguage = settingsStore.getLanguage()
+
+  let skipLocalePersistence = false
+
+  const setInitialLocale = (locale: string, options?: { fromRoute?: boolean }) => {
+    if (!locale || locale === i18n.locale.value) return
+
+    if (options?.fromRoute) {
+      skipLocalePersistence = true
+    }
+
+    i18n.setLocale(locale)
+  }
+
+  const routeLocale = resolveRouteLocale()
+
+  if (routeLocale) {
+    setInitialLocale(routeLocale, { fromRoute: true })
+  } else if (hasStoredSettings && storedLanguage) {
+    setInitialLocale(storedLanguage)
+  } else {
+    const browserLocale = resolveBrowserLocale()
+    const fallbackLocale = browserLocale ?? (i18n.locale.value as string)
+    setInitialLocale(fallbackLocale)
+  }
+
+  // Watch for locale changes and update settings (persist only when a preference was stored)
   watch(
     () => i18n.locale.value,
     (newLocale) => {
-      if (newLocale) {
-        settingsStore.setLanguage(newLocale as string)
-      }
+      if (!newLocale) return
+
+      const persist = settingsStore.hasStoredSettings() && !skipLocalePersistence
+      settingsStore.setLanguage(newLocale as string, persist)
+      skipLocalePersistence = false
     }
   )
 })

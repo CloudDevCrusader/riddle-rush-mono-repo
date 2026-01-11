@@ -18,7 +18,9 @@
     "ok": "OK",
     "next": "NEXT",
     "category": "Category",
-    "letter": "Letter"
+    "letter": "Letter",
+    "continue": "Continue",
+    "finish": "Finish Game"
   },
   "home": {
     "offline_badge": "Play Offline",
@@ -85,7 +87,8 @@
     "incorrect_answer": "Wrong answer",
     "no_active_session": "Please start a game first",
     "error_submitting": "Failed to submit answer",
-    "wait_for_players": "Please wait for all players to submit"
+    "wait_for_players": "Please wait for all players to submit",
+    "error_loading": "Failed to load game session"
   },
   "players": {
     "title": "Players",
@@ -177,7 +180,9 @@
     "invalid_image": "Please select a valid image file",
     "image_too_large": "Image must be smaller than 2MB",
     "avatar_updated": "Avatar updated successfully!",
-    "avatar_error": "Failed to update avatar. Please try again."
+    "avatar_error": "Failed to update avatar. Please try again.",
+    "finish_game": "Finish Game",
+    "next_round": "Play Next Round"
   },
   "settings": {
     "title": "Settings",
@@ -209,5 +214,15 @@
     "home": "Home",
     "scores_saved": "Scores saved successfully!",
     "error_saving": "Failed to save scores. Please try again."
+  },
+  "history": {
+    "title": "Game History",
+    "no_games": "No games played yet",
+    "game": "Game",
+    "category": "Category",
+    "letter": "Letter",
+    "rounds": "Rounds",
+    "score": "Score",
+    "attempts": "attempts"
   }
 }

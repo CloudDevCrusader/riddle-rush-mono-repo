@@ -77,9 +77,10 @@
 </template>
 
 <script setup lang="ts">
-const { baseUrl, goHome, goBack } = usePageSetup()
+const { baseUrl, goHome, goBack, router } = usePageSetup()
 const { locale, setLocale } = useI18n()
 const { settingsStore } = useGameState()
+const route = useRoute()
 
 const currentLocale = ref(locale.value)
 
@@ -97,6 +98,8 @@ const confirmSelection = async () => {
     // Set the locale
     await setLocale(currentLocale.value as LocaleCode)
 
+    await updateLanguageQuery(currentLocale.value as LocaleCode)
+
     // Force page reload to ensure all translations update
     // This is the most reliable way to handle language switching in SPAs
     if (typeof window !== 'undefined') {
@@ -107,6 +110,14 @@ const confirmSelection = async () => {
     // Fallback: navigate home without reload
     goHome()
   }
+}
+
+const updateLanguageQuery = async (lang: LocaleCode) => {
+  if (typeof window === 'undefined') return
+
+  const query = { ...route.query } as Record<string, string | string[] | undefined>
+  query.lang = lang
+  await router.replace({ query })
 }
 
 useHead({

@@ -18,7 +18,9 @@
     "ok": "OK",
     "next": "WEITER",
     "category": "Kategorie",
-    "letter": "Buchstabe"
+    "letter": "Buchstabe",
+    "continue": "Weiter",
+    "finish": "Spiel beenden"
   },
   "home": {
     "offline_badge": "Offline spielbar",
@@ -85,7 +87,8 @@
     "incorrect_answer": "Falsch",
     "no_active_session": "Bitte starte zuerst ein Spiel",
     "error_submitting": "Fehler beim Einreichen der Antwort",
-    "wait_for_players": "Bitte warte, bis alle Spieler geantwortet haben"
+    "wait_for_players": "Bitte warte, bis alle Spieler geantwortet haben",
+    "error_loading": "Fehler beim Laden der Spielsitzung"
   },
   "players": {
     "title": "Spieler",
@@ -177,7 +180,9 @@
     "invalid_image": "Bitte wähle eine gültige Bilddatei",
     "image_too_large": "Bild muss kleiner als 2MB sein",
     "avatar_updated": "Avatar erfolgreich aktualisiert!",
-    "avatar_error": "Fehler beim Aktualisieren des Avatars. Bitte versuche es erneut."
+    "avatar_error": "Fehler beim Aktualisieren des Avatars. Bitte versuche es erneut.",
+    "finish_game": "Spiel beenden",
+    "next_round": "Nächste Runde spielen"
   },
   "settings": {
     "title": "Einstellungen",
@@ -209,5 +214,15 @@
     "home": "Startseite",
     "scores_saved": "Punktestände erfolgreich gespeichert!",
     "error_saving": "Fehler beim Speichern der Punktestände. Bitte versuche es erneut."
+  },
+  "history": {
+    "title": "Spielverlauf",
+    "no_games": "Noch keine Spiele gespielt",
+    "game": "Spiel",
+    "category": "Kategorie",
+    "letter": "Buchstabe",
+    "rounds": "Runden",
+    "score": "Punkte",
+    "attempts": "Versuche"
   }
 }

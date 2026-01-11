@@ -27,7 +27,7 @@
         </button>
 
         <!-- Options Button -->
-        <button class="menu-btn options-btn tap-highlight no-select" @click="wrappedGoToSettings">
+        <button class="menu-btn options-btn tap-highlight no-select" @click="toggleMenu">
           <img :src="`${baseUrl}assets/main-menu/OPTIONS.png`" alt="Options" class="btn-image" />
           <img
             :src="`${baseUrl}assets/main-menu/OPTION.png`"
@@ -52,14 +52,6 @@
         <div v-if="showMenu" class="menu-panel animate-scale-in">
           <button
             class="menu-item tap-highlight no-select"
-            aria-label="Play Game"
-            @click="handlePlay"
-          >
-            <span>🎮</span>
-            <span>{{ $t('menu.play', 'Play') }}</span>
-          </button>
-          <button
-            class="menu-item tap-highlight no-select"
             aria-label="Change Language"
             @click="wrappedGoToLanguage"
           >
@@ -74,22 +66,9 @@
             <span>⚙️</span>
             <span>{{ $t('menu.settings', 'Settings') }}</span>
           </button>
-          <button
-            class="menu-item tap-highlight no-select"
-            aria-label="View Credits"
-            @click="wrappedGoToCredits"
-          >
-            <span>📖</span>
-            <span>{{ $t('menu.credits', 'Credits') }}</span>
-          </button>
         </div>
       </transition>
     </div>
-
-    <!-- Menu Toggle Button (bottom right) -->
-    <button class="menu-icon-btn tap-highlight no-select" @click="toggleMenu">
-      <img :src="`${baseUrl}assets/main-menu/MENU.png`" alt="Menu" class="menu-icon" />
-    </button>
   </div>
 </template>
 
@@ -235,28 +214,6 @@ useHead({
   opacity: 1;
 }
 
-.menu-icon-btn {
-  position: absolute;
-  bottom: var(--spacing-xl);
-  right: var(--spacing-xl);
-  z-index: 3;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.menu-icon-btn:active {
-  transform: scale(0.95);
-}
-
-.menu-icon {
-  width: clamp(50px, 6vw, 70px);
-  height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
 .menu-panel {
   background: rgba(255, 255, 255, 0.95);
   border: 4px solid #ffaa00;
@@ -378,10 +335,6 @@ useHead({
     gap: var(--spacing-md);
   }
 
-  .menu-icon {
-    width: clamp(44px, 6vw, 60px);
-  }
-
   .menu-panel {
     width: 100%;
     max-width: 350px;
@@ -418,15 +371,6 @@ useHead({
 
   .menu-btn {
     width: 100%;
-  }
-
-  .menu-icon-btn {
-    bottom: var(--spacing-md);
-    right: var(--spacing-md);
-  }
-
-  .menu-icon {
-    width: clamp(40px, 5vw, 50px);
   }
 
   .menu-panel {

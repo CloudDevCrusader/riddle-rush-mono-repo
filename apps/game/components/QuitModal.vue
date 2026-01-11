@@ -133,7 +133,7 @@ const handleNo = () => {
 .back-btn {
   position: absolute;
   top: var(--spacing-xl);
-  left: var(--spacing-xl);
+  right: var(--spacing-xl);
   z-index: 3;
   background: none;
   border: none;
@@ -204,6 +204,10 @@ const handleNo = () => {
   width: 100%;
   height: auto;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+}
+
+.no-btn img {
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3)) grayscale(0.6) brightness(1.05);
 }
 
 .action-btn:hover {
