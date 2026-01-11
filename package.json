@@ -3,16 +3,16 @@
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
   "version": "1.0.0",
   "devDependencies": {
-    "@changesets/cli": "^2.27.9",
-    "@pnpm/filter-workspace-packages": "^1.0.0",
-    "@types/node": "^22.10.5",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@changesets/cli": "^2.29.8",
+    "@pnpm/filter-workspace-packages": "^1.2.7",
+    "@types/node": "^22.19.5",
+    "@vitest/coverage-v8": "^2.1.9",
     "husky": "^9.1.7",
-    "lint-staged": "^15.2.11",
-    "syncpack": "^13.0.0",
+    "lint-staged": "^15.5.2",
+    "syncpack": "^13.0.4",
     "turbo": "^2.7.3",
     "typescript": "^5.9.3",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": ">=20.0.0",
@@ -71,6 +71,7 @@
     "agent:help": "bash scripts/agent-commands.sh",
     "agent:check": "pnpm run workspace:check",
     "agent:fix": "pnpm run workspace:fix",
+    "maintain": "pnpm update && pnpm run syncpack:fix && pnpm run workspace:check",
     "validate:locales": "node scripts/validate-locales.mjs"
   },
   "type": "module"

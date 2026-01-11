@@ -29,7 +29,7 @@ provider "aws" {
       Project     = var.project_name
       Environment = "production"
       ManagedBy   = "Terraform"
-      Optimized   = "EdgeCaching"
+      Optimized   = "BlueGreen"
     }
   }
 }
@@ -40,51 +40,44 @@ data "aws_caller_identity" "current" {}
 # Data source to get current AWS region
 data "aws_region" "current" {}
 
-# Use the S3 module
-module "s3_website" {
-  source = "../../modules/s3-website"
+# Use Blue-Green deployment module
+module "blue_green" {
+  source = "../../modules/blue-green-deployment"
   
-  bucket_name                     = var.bucket_name != "" ? var.bucket_name : "${var.project_name}-prod-${data.aws_caller_identity.current.account_id}"
-  environment                     = "production"
-  enable_acceleration             = true  # Enable for production
-  versioning_enabled              = true
-  noncurrent_version_expiration_days = 30
-}
-
-# Use the Enhanced CloudFront module
-module "cloudfront_enhanced" {
-  source = "../../modules/cloudfront-enhanced"
-  
-  bucket_regional_domain_name = module.s3_website.bucket_regional_domain_name
-  bucket_arn                  = module.s3_website.bucket_arn
-  environment                 = "production"
-  
-  # Domain is optional - can be added later
-  domain_name                 = var.domain_name
-  certificate_arn             = var.certificate_arn
-  
-  price_class                 = var.cloudfront_price_class
-  default_cache_ttl           = 31536000 # 1 year for production
-  html_cache_ttl              = 60       # 1 minute at edge
+  project_name    = var.project_name
+  environment     = "production"
+  aws_region      = var.aws_region
+  domain_name     = var.domain_name
+  certificate_arn = var.certificate_arn
+  price_class     = var.cloudfront_price_class
+  use_green       = var.use_green  # Default: false (uses blue)
 }
 
 # Outputs
-output "bucket_name" {
-  value = module.s3_website.bucket_id
+output "blue_bucket_name" {
+  value = module.blue_green.blue_bucket_name
+}
+
+output "green_bucket_name" {
+  value = module.blue_green.green_bucket_name
+}
+
+output "active_bucket_name" {
+  value = module.blue_green.active_bucket_name
 }
 
 output "cloudfront_distribution_id" {
-  value = module.cloudfront_enhanced.distribution_id
+  value = module.blue_green.cloudfront_distribution_id
 }
 
 output "cloudfront_domain_name" {
-  value = module.cloudfront_enhanced.distribution_domain_name
+  value = module.blue_green.cloudfront_domain_name
 }
 
-output "s3_bucket_arn" {
-  value = module.s3_website.bucket_arn
+output "switch_to_green_command" {
+  value = module.blue_green.switch_to_green_command
 }
 
-output "cloudfront_arn" {
-  value = module.cloudfront_enhanced.distribution_arn
+output "switch_to_blue_command" {
+  value = module.blue_green.switch_to_blue_command
 }

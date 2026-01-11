@@ -39,3 +39,9 @@ variable "cloudfront_price_class" {
   }
 }
 
+variable "use_green" {
+  description = "Use green bucket (true) or blue bucket (false) for blue-green deployment"
+  type        = bool
+  default     = false
+}
+

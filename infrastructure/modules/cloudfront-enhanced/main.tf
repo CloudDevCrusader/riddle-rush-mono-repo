@@ -295,11 +295,7 @@ resource "aws_cloudfront_distribution" "website" {
   }
 
   # Enable origin failover for resilience
-  origin_group {
-    primary_origin     = "S3Origin"
-    failover_origin    = "S3Origin" # Can add backup origin if needed
-    failover_status_codes = [403, 404, 500, 502, 503, 504]
-  }
+  # origin_group configuration removed - needs proper setup with multiple origins
 
   tags = {
     Name        = "${var.environment}-distribution-enhanced"

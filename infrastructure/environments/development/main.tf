@@ -1,5 +1,5 @@
 # Development Environment
-# Enhanced development infrastructure with optional domain
+# Blue-Green deployment with zero downtime
 
 terraform {
   required_version = ">= 1.5.0"
@@ -29,62 +29,49 @@ provider "aws" {
       Project     = var.project_name
       Environment = "development"
       ManagedBy   = "Terraform"
-      Optimized   = "EdgeCaching"
+      Optimized   = "BlueGreen"
     }
   }
 }
 
-# Data source to get current AWS account ID
-data "aws_caller_identity" "current" {}
-
-# Data source to get current AWS region
-data "aws_region" "current" {}
-
-# Use the S3 module
-module "s3_website" {
-  source = "../../modules/s3-website"
+# Use Blue-Green deployment module
+module "blue_green" {
+  source = "../../modules/blue-green-deployment"
   
-  bucket_name                     = var.bucket_name != "" ? var.bucket_name : "${var.project_name}-dev-${data.aws_caller_identity.current.account_id}"
-  environment                     = "development"
-  enable_acceleration             = false
-  versioning_enabled              = true
-  noncurrent_version_expiration_days = 7
-}
-
-# Use the Enhanced CloudFront module
-module "cloudfront_enhanced" {
-  source = "../../modules/cloudfront-enhanced"
-  
-  bucket_regional_domain_name = module.s3_website.bucket_regional_domain_name
-  bucket_arn                  = module.s3_website.bucket_arn
-  environment                 = "development"
-  
-  # Domain is optional - leave empty for development
-  domain_name                 = var.domain_name
-  certificate_arn             = var.certificate_arn
-  
-  price_class                 = var.cloudfront_price_class
-  default_cache_ttl           = 3600  # 1 hour for dev
-  html_cache_ttl              = 60    # 1 minute for dev
+  project_name    = var.project_name
+  environment     = "development"
+  aws_region      = var.aws_region
+  domain_name     = var.domain_name
+  certificate_arn = var.certificate_arn
+  price_class     = var.cloudfront_price_class
+  use_green       = var.use_green  # Default: false (uses blue)
 }
 
 # Outputs
-output "bucket_name" {
-  value = module.s3_website.bucket_id
+output "blue_bucket_name" {
+  value = module.blue_green.blue_bucket_name
+}
+
+output "green_bucket_name" {
+  value = module.blue_green.green_bucket_name
+}
+
+output "active_bucket_name" {
+  value = module.blue_green.active_bucket_name
 }
 
 output "cloudfront_distribution_id" {
-  value = module.cloudfront_enhanced.distribution_id
+  value = module.blue_green.cloudfront_distribution_id
 }
 
 output "cloudfront_domain_name" {
-  value = module.cloudfront_enhanced.distribution_domain_name
+  value = module.blue_green.cloudfront_domain_name
 }
 
-output "s3_bucket_arn" {
-  value = module.s3_website.bucket_arn
+output "switch_to_green_command" {
+  value = module.blue_green.switch_to_green_command
 }
 
-output "cloudfront_arn" {
-  value = module.cloudfront_enhanced.distribution_arn
+output "switch_to_blue_command" {
+  value = module.blue_green.switch_to_blue_command
 }
