@@ -43,16 +43,18 @@ test.describe('Offline Functionality', () => {
     const offlineIndicatorByText = page.getByText(/offline/i)
 
     // If any offline indicator exists, check it's visible
-    const count = await offlineIndicatorByTestId.count()
-      + await offlineIndicatorByClass.count()
-      + await offlineIndicatorByText.count()
+    const count =
+      (await offlineIndicatorByTestId.count()) +
+      (await offlineIndicatorByClass.count()) +
+      (await offlineIndicatorByText.count())
 
     if (count > 0) {
-      const firstVisible = await offlineIndicatorByTestId.count() > 0
-        ? offlineIndicatorByTestId.first()
-        : await offlineIndicatorByClass.count() > 0
-          ? offlineIndicatorByClass.first()
-          : offlineIndicatorByText.first()
+      const firstVisible =
+        (await offlineIndicatorByTestId.count()) > 0
+          ? offlineIndicatorByTestId.first()
+          : (await offlineIndicatorByClass.count()) > 0
+            ? offlineIndicatorByClass.first()
+            : offlineIndicatorByText.first()
 
       await expect(firstVisible).toBeVisible({ timeout: 2000 })
     }

@@ -1,12 +1,16 @@
 /**
  * Analytics composable for tracking events
- * Uses Google Analytics 4 via nuxt-gtag module
+ * Uses Google Analytics 4 via custom gtag plugin
  */
 export const useAnalytics = () => {
-  // nuxt-gtag is disabled, so we'll use a no-op implementation
-  const gtag = (..._args: unknown[]) => {
-    // No-op when gtag is not available
-  }
+  const nuxtApp = useNuxtApp()
+  const config = useRuntimeConfig()
+
+  const isEnabled = computed(() => {
+    return config.public.environment === 'production' && !!config.public.gtagId
+  })
+
+  const gtag = nuxtApp.$gtag as ((...args: any[]) => void) | undefined
 
   /**
    * Track a custom event
@@ -14,8 +18,7 @@ export const useAnalytics = () => {
    * @param params - Additional parameters for the event
    */
   const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
-    if (import.meta.client) {
-      // Track with Google Analytics
+    if (import.meta.client && isEnabled.value && gtag) {
       gtag('event', eventName, params)
     }
   }
@@ -26,8 +29,7 @@ export const useAnalytics = () => {
    * @param pageTitle - Title of the page
    */
   const trackPageView = (pagePath: string, pageTitle?: string) => {
-    if (import.meta.client) {
-      // Track with Google Analytics
+    if (import.meta.client && isEnabled.value && gtag) {
       gtag('event', 'page_view', {
         page_path: pagePath,
         page_title: pageTitle,
@@ -64,6 +66,7 @@ export const useAnalytics = () => {
   }
 
   return {
+    isEnabled,
     trackEvent,
     trackPageView,
     trackGameEvent,

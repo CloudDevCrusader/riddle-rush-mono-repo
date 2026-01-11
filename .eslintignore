@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnpm/
+
+# Build outputs
+dist/
+build/
+*.min.js
+.nuxt/
+.output/
+.vite/
+
+# Cache
+.eslintcache
+.turbo/
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+junit.xml
+playwright-report/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Generated files
+*.generated.*
+.nuxt.d.ts
+eslint-typegen.d.ts
+
+# Archives
+*.zip
+*.tar
+*.tar.gz

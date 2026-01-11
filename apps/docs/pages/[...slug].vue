@@ -68,7 +68,7 @@
 
 .docs-nav a:hover,
 .docs-nav a.router-link-active {
-  background: var(--color-primary, #FF6B35);
+  background: var(--color-primary, #ff6b35);
   color: white;
 }
 

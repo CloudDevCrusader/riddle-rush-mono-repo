@@ -18,6 +18,7 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   enabled:
+    - dotenv-linter@3.3.0
     - actionlint@1.7.10
     - checkov@3.2.497
     - eslint@9.39.2
@@ -27,7 +28,7 @@ lint:
     - osv-scanner@2.3.1
     - oxipng@10.0.0
     - prettier@3.7.4
-    - renovate@42.71.0
+    - renovate@42.76.5
     - shellcheck@0.11.0
     - shfmt@3.6.0
     - stylelint@16.26.1

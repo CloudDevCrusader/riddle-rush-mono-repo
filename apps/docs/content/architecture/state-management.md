@@ -14,6 +14,7 @@ Riddle Rush uses Pinia for state management with IndexedDB persistence.
 Manages game sessions, categories, scores, and attempts.
 
 **Key State:**
+
 - Current game session
 - Player list
 - Current category and letter
@@ -21,6 +22,7 @@ Manages game sessions, categories, scores, and attempts.
 - Game history
 
 **Persistence:**
+
 - Automatically saves to IndexedDB after mutations
 - Restores session on app reload
 
@@ -29,6 +31,7 @@ Manages game sessions, categories, scores, and attempts.
 User preferences and configuration.
 
 **Key State:**
+
 - Language preference
 - Audio settings
 - Category filters
@@ -58,4 +61,3 @@ User Action → Component → Store Action → Service → IndexedDB
 2. **Save after mutations** - Call `save*ToDB()` methods
 3. **Handle errors** - Wrap IndexedDB operations in try-catch
 4. **Type safety** - Use TypeScript types for all state
-

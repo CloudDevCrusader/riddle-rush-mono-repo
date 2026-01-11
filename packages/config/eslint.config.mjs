@@ -25,13 +25,16 @@ export default createConfigForNuxt({
       // Vue specific rules
       'vue/multi-word-component-names': 'off',
       'vue/no-multiple-template-root': 'off',
-      'vue/html-self-closing': ['warn', {
-        html: {
-          void: 'always',
-          normal: 'never',
-          component: 'always',
+      'vue/html-self-closing': [
+        'warn',
+        {
+          html: {
+            void: 'always',
+            normal: 'never',
+            component: 'always',
+          },
         },
-      }],
+      ],
 
       // General rules
       'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',

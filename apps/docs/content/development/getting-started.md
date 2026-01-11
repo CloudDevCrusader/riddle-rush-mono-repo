@@ -62,4 +62,3 @@ pnpm run lint         # Linting
 - [Development Patterns](/docs/development/patterns)
 - [Composables Guide](/docs/development/composables)
 - [Component Development](/docs/development/components)
-

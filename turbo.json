@@ -36,11 +36,12 @@
     },
     "lint": {
       "inputs": ["src/**", "**/*.ts", "**/*.vue", "**/*.js", ".eslintrc.json", "eslint.config.mjs"],
-      "outputs": [".eslintcache"],
+      "outputs": [],
       "cache": true
     },
     "lint:fix": {
       "inputs": ["src/**", "**/*.ts", "**/*.vue", "**/*.js"],
+      "outputs": [],
       "cache": false
     },
     "typecheck": {

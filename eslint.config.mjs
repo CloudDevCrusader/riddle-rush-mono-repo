@@ -3,15 +3,7 @@ import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
 export default createConfigForNuxt({
   features: {
     tooling: true,
-    stylistic: {
-      semi: false,
-      quotes: 'single',
-      indent: 2,
-      commaDangle: 'always-multiline',
-      braceStyle: '1tbs',
-      arrowParens: true,
-      quoteProps: 'as-needed',
-    },
+    stylistic: true,
   },
 })
   .append({
@@ -25,6 +17,10 @@ export default createConfigForNuxt({
       'prefer-const': 'error',
       'no-var': 'error',
       eqeqeq: ['error', 'always', { null: 'ignore' }],
+      '@stylistic/semi': ['error', 'never'],
+      '@stylistic/quotes': ['error', 'single'],
+      '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      '@stylistic/brace-style': ['error', '1tbs'],
     },
   })
   .append({

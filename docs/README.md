@@ -1,66 +1,58 @@
-# Documentation
+# Riddle Rush Documentation
 
-This directory contains all documentation-related files for Riddle Rush.
+Welcome to the Riddle Rush documentation. This guide will help you understand the project structure, setup, and development workflow.
 
-## Structure
+## 📚 Documentation Index
 
-```
-docs/
-├── content/          # Markdown documentation files (Nuxt Content)
-│   ├── intro.md
-│   ├── design/
-│   ├── architecture/
-│   ├── development/
-│   └── infrastructure/
-├── components/       # Documentation-specific components
-├── assets/           # Documentation assets (images, etc.)
-└── layouts/         # Documentation layouts (if needed)
+### Getting Started
 
-# Note: Documentation pages are in pages/docs/ (at project root)
-# This is because Nuxt requires pages/ to be at the root level
-```
+- [Quick Start Guide](QUICK-START-ENHANCED.md) - Get up and running quickly
+- [Development Guide](DEVELOPMENT.md) - Development workflow and best practices
+- [Testing Guide](TESTING-GUIDE.md) - How to write and run tests
 
-## Key Points
+### Setup & Configuration
 
-- **Content**: All markdown files are in `docs/content/`
-- **Pages**: Documentation pages are in `pages/docs/` (at project root)
-- **Components**: Doc-specific components can go in `docs/components/`
-- **Assets**: Doc images/assets go in `docs/assets/`
+- [Environment Setup](../MONOREPO_ENVIRONMENT_GUIDE.md) - Environment variables guide
+- [Terraform Setup](setup/TERRAFORM-SETUP.md) - Infrastructure as Code setup
+- [GitLab Feature Flags](GITLAB_FEATURE_FLAGS.md) - Feature flag configuration
+- [Plugins Configuration](PLUGINS.md) - Vite and Nuxt plugins guide
 
-## Adding Documentation
+### Development
 
-1. Create markdown file in `docs/content/`
-2. Add frontmatter:
-   ```markdown
-   ---
-   title: Page Title
-   description: Page description
-   ---
-   ```
-3. File structure = URL structure
-   - `docs/content/design/colors.md` → `/docs/design/colors`
+- [Code Structure](STRUCTURE.md) - Project organization
+- [Testing](TESTING.md) - Testing strategy and guidelines
+- [Dependency Management](DEPENDENCY-MANAGEMENT.md) - Managing dependencies
+- [Known Issues](KNOWN-ISSUES.md) - Current limitations and workarounds
 
-## Development
+### Deployment
 
-```bash
-# Start dev server (includes docs)
-pnpm run dev
+- [AWS Deployment](deployment/AWS-DEPLOYMENT.md) - Deploy to AWS
+- [Docker Deployment](deployment/DOCKER-DEPLOYMENT.md) - Containerized deployment
+- [GitLab Pages](deployment/GITLAB-PAGES-DEPLOYMENT.md) - Deploy to GitLab Pages
 
-# Visit: http://localhost:3000/docs
-```
+### Architecture
 
-## Building
+- [Monorepo Structure](MONOREPO.md) - Monorepo architecture
+- [Infrastructure](INFRASTRUCTURE-SUMMARY.md) - Infrastructure overview
+- [Design System](DESIGN.md) - UI/UX design guidelines
 
-Documentation is included when running:
+### Workflow & Reports
 
-```bash
-pnpm run generate
-```
+- [Workflow System Report](WORKFLOW_SYSTEM_REPORT.md) - Complete workflow analysis
+- [Project History](PROJECT-HISTORY.md) - Development timeline
+- [Code Analysis](CODE-ANALYSIS-REPORT.md) - Code quality metrics
 
-## Features
+### Archive
 
-- **Nuxt Content** - Markdown-based content management
-- **Auto-routing** - Routes generated from file structure
-- **Syntax highlighting** - Code blocks with themes
-- **Table of contents** - Auto-generated from headings
-- **Component support** - Use Vue components in markdown
+Historical documents and summaries are stored in [archive/](archive/) for reference.
+
+## 🚀 Quick Links
+
+- [Main README](../README.md) - Project overview
+- [Agent Workflow Guide](../AGENTS.md) - For AI agents working on this project
+
+## 🆘 Need Help?
+
+- Check [Known Issues](KNOWN-ISSUES.md) for common problems
+- Review [Testing Guide](TESTING-GUIDE.md) for test-related issues
+- See [Development Guide](DEVELOPMENT.md) for workflow questions

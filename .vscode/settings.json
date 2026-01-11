@@ -9,10 +9,28 @@
   },
 
   // Nuxt & Vue Configuration
-  "nuxt.isNuxtApp": false,
+  "nuxt.isNuxtApp": true,
   "vue.server.hybridMode": true,
   "volar.tsconfig": ".nuxt/tsconfig.app.json",
   "volar.takeOverMode.enabled": false,
+
+  // Monorepo Workspace Detection
+  "workspace.trust.enabled": true,
+  "workspace.workspaceFile": "monorepo.code-workspace",
+  "workspace.workspaceFolders": [
+    {
+      "path": "apps/game",
+      "name": "🎮 Game App"
+    },
+    {
+      "path": "apps/docs",
+      "name": "📚 Documentation"
+    },
+    {
+      "path": "packages",
+      "name": "📦 Packages"
+    }
+  ],
 
   // TypeScript Configuration
   "typescript.tsdk": "node_modules/typescript/lib",
@@ -22,6 +40,24 @@
   "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.preferences.includePackageJsonAutoImports": "on",
   "typescript.suggest.paths": true,
+
+  // Monorepo Environment Variables
+  "dotenv.envFile": {
+    "apps/game": "${workspaceFolder}/apps/game/.env",
+    "apps/docs": "${workspaceFolder}/apps/docs/.env",
+    "packages/*": "${workspaceFolder}/.env.monorepo"
+  },
+  "dotenv.envFiles": [
+    "${workspaceFolder}/.env.monorepo",
+    "${workspaceFolder}/.env",
+    "${workspaceFolder}/.env.local"
+  ],
+  "dotenv.allowEmptyValues": true,
+  "dotenv.resolvePaths": true,
+  "dotenv.variables": {
+    "WORKSPACE_ROOT": "${workspaceFolder}",
+    "WORKSPACE_PACKAGE": "${workspaceFolderBasename}"
+  },
 
   // JavaScript Configuration
   "javascript.suggest.autoImports": true,

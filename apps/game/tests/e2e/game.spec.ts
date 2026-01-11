@@ -50,7 +50,7 @@ test.describe('Game Flow', () => {
 
     // Wait for game loading spinner to disappear
     const spinner = page.locator('.spinner--overlay, [data-testid="loading-spinner"]')
-    if (await spinner.count() > 0) {
+    if ((await spinner.count()) > 0) {
       await spinner.waitFor({ state: 'hidden', timeout: 10000 })
     }
 
@@ -62,7 +62,7 @@ test.describe('Game Flow', () => {
     ]
 
     for (const element of gameElements) {
-      if (await element.count() > 0) {
+      if ((await element.count()) > 0) {
         await expect(element.first()).toBeVisible({ timeout: 5000 })
       }
     }
@@ -75,9 +75,13 @@ test.describe('Game Flow', () => {
     await page.waitForLoadState('networkidle')
 
     // Find input field
-    const input = page.locator('[data-testid="game-input"], input[type="text"], input[placeholder*="Begriff" i], input[placeholder*="answer" i]').first()
+    const input = page
+      .locator(
+        '[data-testid="game-input"], input[type="text"], input[placeholder*="Begriff" i], input[placeholder*="answer" i]'
+      )
+      .first()
 
-    if (await input.count() > 0) {
+    if ((await input.count()) > 0) {
       await expect(input).toBeVisible({ timeout: 5000 })
 
       // Type a test answer
@@ -99,16 +103,18 @@ test.describe('Game Flow', () => {
     const scoreByText = page.getByText(/Punktzahl|Score/i)
 
     // Check if any score display exists
-    const hasScore = await scoreByTestId.count() > 0
-      || await scoreByClass.count() > 0
-      || await scoreByText.count() > 0
+    const hasScore =
+      (await scoreByTestId.count()) > 0 ||
+      (await scoreByClass.count()) > 0 ||
+      (await scoreByText.count()) > 0
 
     if (hasScore) {
-      const scoreDisplay = await scoreByTestId.count() > 0
-        ? scoreByTestId.first()
-        : await scoreByClass.count() > 0
-          ? scoreByClass.first()
-          : scoreByText.first()
+      const scoreDisplay =
+        (await scoreByTestId.count()) > 0
+          ? scoreByTestId.first()
+          : (await scoreByClass.count()) > 0
+            ? scoreByClass.first()
+            : scoreByText.first()
 
       await expect(scoreDisplay).toBeVisible({ timeout: 5000 })
     }
@@ -120,9 +126,13 @@ test.describe('Game Flow', () => {
     await page.waitForLoadState('networkidle')
 
     // Look for back button
-    const backButton = page.locator('[data-testid="back-button"], button:has-text("Zurück"), button:has-text("Back"), a[href="/"], .back-btn').first()
+    const backButton = page
+      .locator(
+        '[data-testid="back-button"], button:has-text("Zurück"), button:has-text("Back"), a[href="/"], .back-btn'
+      )
+      .first()
 
-    if (await backButton.count() > 0) {
+    if ((await backButton.count()) > 0) {
       // Check if button is visible (may be hidden on mobile)
       const isVisible = await backButton.isVisible().catch(() => false)
 

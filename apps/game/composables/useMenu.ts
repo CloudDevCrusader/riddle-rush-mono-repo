@@ -25,9 +25,12 @@ export function useMenu() {
 
   // Close menu on route change
   const route = useRoute()
-  watch(() => route.path, () => {
-    close()
-  })
+  watch(
+    () => route.path,
+    () => {
+      close()
+    }
+  )
 
   return {
     isOpen: readonly(isOpen),

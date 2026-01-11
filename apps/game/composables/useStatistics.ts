@@ -2,7 +2,8 @@ import type { GameSession, GameStatistics, LeaderboardEntry } from '@riddle-rush
 import { useIndexedDB } from './useIndexedDB'
 
 export function useStatistics() {
-  const { getStatistics, saveStatistics, initializeStatistics, saveLeaderboardEntry } = useIndexedDB()
+  const { getStatistics, saveStatistics, initializeStatistics, saveLeaderboardEntry } =
+    useIndexedDB()
 
   const updateStatistics = async (session: GameSession) => {
     if (!session.endTime) return
@@ -53,8 +54,7 @@ export function useStatistics() {
       if (stats.streakCurrent > stats.streakBest) {
         stats.streakBest = stats.streakCurrent
       }
-    }
-    else {
+    } else {
       stats.streakCurrent = 0
     }
 
@@ -92,7 +92,13 @@ export function useStatistics() {
 
   const getBadges = async () => {
     const stats = await getStats()
-    const badges: Array<{ id: string, name: string, emoji: string, description: string, unlocked: boolean }> = []
+    const badges: Array<{
+      id: string
+      name: string
+      emoji: string
+      description: string
+      unlocked: boolean
+    }> = []
 
     // Funny badges
     badges.push({

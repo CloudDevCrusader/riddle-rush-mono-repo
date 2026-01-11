@@ -3,7 +3,9 @@
  * Handles baseURL and asset organization
  */
 export function useAssets() {
-  const { public: { baseUrl } } = useRuntimeConfig()
+  const {
+    public: { baseUrl },
+  } = useRuntimeConfig()
 
   /**
    * Get asset path with baseURL prefix

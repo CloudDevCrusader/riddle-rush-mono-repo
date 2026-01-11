@@ -46,29 +46,38 @@ Riddle Rush follows a layered architecture pattern with clear separation of conc
 ## Architecture Layers
 
 ### Pages Layer
+
 File-based routing with Nuxt. Each page handles its own UI logic.
 
 ### Layouts Layer
+
 Common page structures (default, game, menu).
 
 ### Components Layer
+
 - **Base Components**: Reusable UI building blocks
 - **Feature Components**: Game-specific components
 
 ### Composables Layer
+
 Reactive logic and utilities:
+
 - `useIndexedDB` - Database operations
 - `useGameState` - Game state management
 - `useAudio` - Sound effects
 - `useAnalytics` - Tracking
 
 ### Services Layer
+
 Pure business logic functions:
+
 - `GameService` - Game rules and calculations
 - `StorageService` - Data persistence abstraction
 
 ### Stores Layer
+
 Pinia stores for global state:
+
 - `game` store - Current game session
 - `settings` store - User preferences
 
@@ -86,4 +95,3 @@ Pinia stores for global state:
 - [State Management](/docs/architecture/state-management)
 - [Data Persistence](/docs/architecture/data-persistence)
 - [PWA Implementation](/docs/architecture/pwa)
-

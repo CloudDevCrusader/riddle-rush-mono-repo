@@ -5,7 +5,9 @@ export function useAudio() {
 
   const initAudioContext = () => {
     if (!audioContext && typeof window !== 'undefined') {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       audioContext = new AudioContextClass()
     }
     return audioContext
@@ -15,7 +17,7 @@ export function useAudio() {
     frequency: number,
     duration: number,
     type: OscillatorType = 'sine',
-    volume: number = 0.3,
+    volume: number = 0.3
   ) => {
     const ctx = initAudioContext()
     if (!ctx) return
@@ -45,7 +47,7 @@ export function useAudio() {
       { freq: 523.25, delay: 0, duration: 0.25, vol: 0.25 }, // C5
       { freq: 659.25, delay: 50, duration: 0.25, vol: 0.25 }, // E5
       { freq: 783.99, delay: 100, duration: 0.35, vol: 0.3 }, // G5
-      { freq: 1046.50, delay: 150, duration: 0.2, vol: 0.2 }, // C6 (octave)
+      { freq: 1046.5, delay: 150, duration: 0.2, vol: 0.2 }, // C6 (octave)
     ]
 
     frequencies.forEach(({ freq, delay, duration, vol }) => {
@@ -58,7 +60,7 @@ export function useAudio() {
 
     // Add a sparkle effect at the end
     setTimeout(() => {
-      playTone(1046.50, 0.1, 'triangle', 0.15) // High sparkle
+      playTone(1046.5, 0.1, 'triangle', 0.15) // High sparkle
       setTimeout(() => {
         playTone(1318.51, 0.1, 'triangle', 0.1) // Even higher sparkle
       }, 50)
@@ -137,7 +139,7 @@ export function useAudio() {
     const notes = [
       { freq: 261.63, delay: 0, duration: 0.12, vol: 0.2 }, // C4
       { freq: 329.63, delay: 60, duration: 0.12, vol: 0.2 }, // E4
-      { freq: 392.00, delay: 120, duration: 0.12, vol: 0.2 }, // G4
+      { freq: 392.0, delay: 120, duration: 0.12, vol: 0.2 }, // G4
       { freq: 523.25, delay: 180, duration: 0.2, vol: 0.25 }, // C5
     ]
 
@@ -166,7 +168,7 @@ export function useAudio() {
     if (!ctx) return
 
     const notes = [
-      { freq: 392.00, delay: 0, duration: 0.15, vol: 0.2 }, // G4
+      { freq: 392.0, delay: 0, duration: 0.15, vol: 0.2 }, // G4
       { freq: 493.88, delay: 80, duration: 0.15, vol: 0.2 }, // B4
       { freq: 523.25, delay: 160, duration: 0.15, vol: 0.2 }, // C5
       { freq: 659.25, delay: 240, duration: 0.2, vol: 0.25 }, // E5

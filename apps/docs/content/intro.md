@@ -23,15 +23,19 @@ Riddle Rush is an offline-first, multi-player word guessing game where players c
 This documentation is organized into several key sections:
 
 ### 🎨 [Design](/docs/design)
+
 Complete design system, color palette, typography, and UI components.
 
 ### 🏗️ [Architecture](/docs/architecture)
+
 System architecture, state management, data persistence, and PWA implementation.
 
 ### 💻 [Development](/docs/development)
+
 Getting started guide, development patterns, composables, and components.
 
 ### ☁️ [Infrastructure](/docs/infrastructure)
+
 Terraform infrastructure, AWS deployment, and CI/CD setup.
 
 ## Quick Links
@@ -52,4 +56,3 @@ If you're new to the project, start with:
 
 **Last Updated**: 2026-01-02  
 **Version**: 1.0.0
-

@@ -8,7 +8,9 @@ test.describe('Language Selection Page', () => {
     await expect(page).toHaveTitle(/Language Selection|Sprachauswahl|Riddle Rush/i)
 
     // Check for main title image (title is an image, not text)
-    const titleImage = page.locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]').first()
+    const titleImage = page
+      .locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]')
+      .first()
     await expect(titleImage).toBeVisible({ timeout: 5000 })
   })
 
@@ -116,7 +118,7 @@ test.describe('Language Selection Page', () => {
     // Look for OK button (OK button contains an image, not text)
     const okButton = page.locator('.ok-btn, button.ok-btn')
 
-    if (await okButton.count() > 0) {
+    if ((await okButton.count()) > 0) {
       await expect(okButton.first()).toBeVisible()
 
       // Click OK button
@@ -163,7 +165,7 @@ test.describe('Language Selection Page', () => {
     expect(await flagContainers.count()).toBe(2)
 
     // Check that flags are visible
-    for (let i = 0; i < await flagContainers.count(); i++) {
+    for (let i = 0; i < (await flagContainers.count()); i++) {
       const flagContainer = flagContainers.nth(i)
       await expect(flagContainer).toBeVisible()
     }
@@ -180,13 +182,13 @@ test.describe('Language Selection Page', () => {
 
     // Check for language card
     const languageCard = page.locator('.language-card')
-    if (await languageCard.count() > 0) {
+    if ((await languageCard.count()) > 0) {
       await expect(languageCard).toBeVisible()
     }
 
     // Check for background pattern
     const bgPattern = page.locator('.bg-pattern')
-    if (await bgPattern.count() > 0) {
+    if ((await bgPattern.count()) > 0) {
       // Background pattern exists
       expect(await bgPattern.count()).toBeGreaterThan(0)
     }

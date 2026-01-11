@@ -1,5 +1,6 @@
 version: 2.1
 setup: true
+
 orbs:
   orb-tools: circleci/orb-tools@12.3
   shellcheck: circleci/shellcheck@3.2
@@ -27,3 +28,102 @@ workflows:
           orb_name: <orb-name>
           requires: [orb-tools/lint, orb-tools/pack, orb-tools/review, shellcheck/check]
           filters: *filters
+
+  # Add a new workflow for flaky test detection using Trunk CLI
+  flaky-test-detection:
+    jobs:
+      - install-trunk-cli
+      - run-tests-with-trunk:
+          requires:
+            - install-trunk-cli
+      - detect-flaky-tests:
+          requires:
+            - run-tests-with-trunk
+
+jobs:
+  install-trunk-cli:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: Install Trunk CLI
+          command: |
+            curl -fsSLO --retry 3 https://trunk.io/releases/trunk && chmod +x ./trunk
+            ./trunk --version
+      - persist_to_workspace:
+          root: .
+          paths:
+            - trunk
+
+  run-tests-with-trunk:
+    docker:
+      - image: cimg/node:current
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Setup corepack and install dependencies
+          command: |
+            # Conditionally enable corepack only if not already available
+            if ! command -v pnpm &> /dev/null; then
+              echo "pnpm not found, enabling corepack..."
+              corepack enable && corepack prepare pnpm@10.27.0 --activate
+            else
+              echo "pnpm already available, skipping corepack setup"
+            fi
+
+            # Only install if node_modules is missing or outdated
+            if [ ! -d "node_modules" ] || [ ! -f "node_modules/.modules.yaml" ]; then
+              echo "Installing dependencies..."
+              pnpm install --frozen-lockfile
+            else
+              echo "Using cached dependencies"
+              # Ensure lockfile is in sync
+              pnpm install --frozen-lockfile --prefer-offline
+            fi
+      - run:
+          name: Run tests with JUnit reporting for Trunk
+          command: |
+            chmod +x scripts/run-tests-with-trunk.sh
+            ./scripts/run-tests-with-trunk.sh
+      - store_test_results:
+          path: apps/game/test-results
+      - store_artifacts:
+          path: apps/game/test-results
+
+  detect-flaky-tests:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Detect flaky tests using Trunk CLI
+          command: |
+            # Check if Trunk CLI is available
+            if [ ! -f "./trunk" ]; then
+              echo "❌ Trunk CLI not found, installing..."
+              curl -fsSLO --retry 3 https://trunk.io/releases/trunk && chmod +x ./trunk
+            fi
+
+            # Check if test results exist
+            if [ ! -d "apps/game/test-results" ] || [ -z "$(ls -A apps/game/test-results/*.xml 2>/dev/null)" ]; then
+              echo "❌ No test results found in apps/game/test-results/"
+              exit 1
+            fi
+
+            # Check if TRUNK_API_TOKEN is set
+            if [ -z "${TRUNK_API_TOKEN}" ]; then
+              echo "❌ TRUNK_API_TOKEN environment variable is not set"
+              exit 1
+            fi
+
+            # Upload test results to Trunk for flaky test analysis
+            echo "🔍 Uploading test results to Trunk for flaky test analysis..."
+            ./trunk flakytests upload --junit-paths "apps/game/test-results/*.xml" --org-url-slug cloudcrusaders --token "${TRUNK_API_TOKEN}"
+
+            echo "✅ Flaky test detection completed successfully"
+          no_output_timeout: 10m

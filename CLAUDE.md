@@ -2,6 +2,58 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 🚨 IMPORTANT: Agent Workflow (NEW - January 2026)
+
+**Before making ANY changes, read this:**
+
+1. **Read [AGENTS.md](AGENTS.md)** - Complete workflow guide for AI agents
+2. **After EVERY change, run:** `pnpm run workspace:check`
+3. **Commit frequently** (every 10-20 minutes) with Conventional Commits
+4. **Quick help:** `pnpm run agent:help`
+
+### Required Workflow
+
+```bash
+# 1. Make changes (small, focused)
+# 2. Validate IMMEDIATELY
+pnpm run workspace:check  # TypeScript + ESLint + Syncpack
+
+# 3. Commit right away (don't wait!)
+git add .
+git commit -m "feat: description"  # Conventional Commits enforced by hooks
+
+# 4. Continue with next change
+```
+
+### Git Hooks (Automatic)
+
+- ✅ Pre-commit: TypeScript validation, lint-staged, secret scanning
+- ✅ Commit-msg: Conventional Commits format enforced
+- ✅ Pre-push: Final validation
+
+### Commit Format (Required)
+
+```
+feat:     New feature
+fix:      Bug fix
+docs:     Documentation
+refactor: Code restructuring
+test:     Test changes
+chore:    Maintenance
+perf:     Performance
+style:    Formatting
+```
+
+### Agent Commands
+
+```bash
+pnpm run agent:help   # Show command reference
+pnpm run agent:check  # Run all quality checks
+pnpm run agent:fix    # Auto-fix all issues
+```
+
+---
+
 ## Project Overview
 
 This is a **Nuxt 4 Progressive Web App (PWA)** - "Riddle Rush" - a word guessing game where players guess terms from Wikipedia categories starting with a specific letter. The app works offline, stores data locally using IndexedDB, and is deployed to GitLab Pages with multiple environments.
@@ -48,15 +100,25 @@ pnpm run test:e2e:staging     # Test staging site
 pnpm run test:e2e:dev         # Test dev site
 ```
 
-### Code Quality
+### Code Quality (REQUIRED before commit)
 
 ```bash
-pnpm run typecheck    # TypeScript type checking
-pnpm run lint         # ESLint check
-pnpm run lint:fix     # Auto-fix linting issues
-pnpm run format       # Format with Prettier
-pnpm run format:check # Check formatting
+# Run ALL checks (recommended)
+pnpm run workspace:check  # Syncpack + TypeScript + ESLint
+
+# Or run individually:
+pnpm run typecheck        # TypeScript type checking
+pnpm run lint             # ESLint check
+pnpm run lint:fix         # Auto-fix linting issues
+pnpm run format           # Format with Prettier
+pnpm run format:check     # Check formatting
+
+# Agent helpers
+pnpm run agent:check      # Same as workspace:check
+pnpm run agent:fix        # Auto-fix everything
 ```
+
+**Note:** Git hooks automatically run these checks before commit!
 
 ### Deployment
 
@@ -561,3 +623,55 @@ See `infrastructure/README.md` and `docs/TERRAFORM-SETUP.md` for detailed setup 
 1. Run `pnpm run test:e2e:ui` for interactive mode
 2. Or `pnpm run test:e2e:headed` to see browser
 3. Check `test-results/` for screenshots and traces
+
+## 📚 Documentation Structure (Updated January 2026)
+
+### Root Level
+
+- **[README.md](README.md)** - Project overview and quick start
+- **[AGENTS.md](AGENTS.md)** - Complete agent workflow guide (START HERE for AI agents)
+- **[CLAUDE.md](CLAUDE.md)** - This file (Claude Code specific)
+
+### docs/ Directory
+
+- **[docs/README.md](docs/README.md)** - Documentation index
+- **[docs/PLUGINS.md](docs/PLUGINS.md)** - Vite/Nuxt plugin configuration
+- **[docs/WORKFLOW_SYSTEM_REPORT.md](docs/WORKFLOW_SYSTEM_REPORT.md)** - Complete workflow analysis
+- **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** - Development guide
+- **[docs/TESTING-GUIDE.md](docs/TESTING-GUIDE.md)** - Testing strategy
+- **[docs/setup/](docs/setup/)** - Setup and configuration guides
+- **[docs/deployment/](docs/deployment/)** - Deployment documentation
+- **[docs/archive/](docs/archive/)** - Historical documents
+
+## 🔄 Workflow Summary for Claude Code
+
+1. **Read AGENTS.md first** - Complete workflow documentation
+2. **Make small changes** - One logical change at a time
+3. **Validate immediately** - `pnpm run workspace:check`
+4. **Commit frequently** - Every 10-20 minutes with conventional format
+5. **Use git hooks** - They automatically validate your commits
+
+### Example Session
+
+```bash
+# Start work
+pnpm install
+pnpm run workspace:check  # Verify baseline
+
+# Make change #1
+# Edit: composables/useColorMode.ts
+pnpm run workspace:check
+git add composables/useColorMode.ts
+git commit -m "feat: add color mode toggle"
+
+# Make change #2
+# Edit: components/ColorModeButton.vue
+pnpm run workspace:check
+git add components/ColorModeButton.vue
+git commit -m "feat: add color mode button component"
+
+# Push
+git push
+```
+
+**Remember:** Git hooks will automatically run TypeScript checks, linting, and validate your commit message!

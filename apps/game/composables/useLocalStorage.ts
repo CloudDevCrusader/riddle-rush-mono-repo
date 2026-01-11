@@ -13,8 +13,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
     try {
       const item = localStorage.getItem(key)
       return item ? JSON.parse(item) : defaultValue
-    }
-    catch (e) {
+    } catch (e) {
       logger.warn(`Failed to load from localStorage (${key}):`, e)
       return defaultValue
     }
@@ -25,8 +24,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
 
     try {
       localStorage.setItem(key, JSON.stringify(value))
-    }
-    catch (e) {
+    } catch (e) {
       logger.warn(`Failed to save to localStorage (${key}):`, e)
     }
   }

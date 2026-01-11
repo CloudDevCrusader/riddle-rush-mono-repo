@@ -125,8 +125,8 @@ export const createCategory = (overrides: Partial<Category> = {}): Category => {
       additionalData = { examples: ['Soccer', 'Basketball', 'Tennis'] }
       break
     default:
-      name = overrides.name ?? template
-      searchWord = overrides.searchWord ?? template.replace(/\s+/g, '_').toLowerCase()
+      name = overrides.name ?? template ?? 'default'
+      searchWord = overrides.searchWord ?? template?.replace(/\s+/g, '_').toLowerCase() ?? 'default'
       additionalData = {}
   }
 

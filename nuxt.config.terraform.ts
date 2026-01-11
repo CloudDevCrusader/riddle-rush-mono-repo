@@ -67,7 +67,7 @@ export function getTerraformOutputsFromEnv(): TerraformOutputs {
  * Export Terraform outputs to a JSON file
  * Run this after terraform apply to update outputs
  */
-export function exportTerraformOutputs(environment: string = 'prod'): void {
+export function exportTerraformOutputs(environment: string = 'development'): void {
   try {
     const outputDir = join(process.cwd(), `infrastructure/environments/${environment}`)
     const outputs = execSync(`cd ${outputDir} && terraform output -json`, { encoding: 'utf-8' })

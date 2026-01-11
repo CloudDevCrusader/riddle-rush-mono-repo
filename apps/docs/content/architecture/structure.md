@@ -41,4 +41,3 @@ riddle-rush-nuxt-pwa/
 - `tsconfig.json` - TypeScript configuration
 - `playwright.config.ts` - E2E test configuration
 - `vitest.config.ts` - Unit test configuration
-

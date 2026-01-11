@@ -180,7 +180,7 @@ describe('useForm', () => {
         },
         email: {
           initialValue: '',
-          rules: [validationRules.email()],
+          rules: [validationRules.email() as any],
         },
       })
 
@@ -195,7 +195,7 @@ describe('useForm', () => {
         },
         email: {
           initialValue: 'alice@example.com',
-          rules: [validationRules.email()],
+          rules: [validationRules.email() as any],
         },
       })
 
@@ -210,7 +210,7 @@ describe('useForm', () => {
         },
         email: {
           initialValue: 'invalid',
-          rules: [validationRules.email()],
+          rules: [validationRules.email() as any],
         },
       })
 

@@ -67,15 +67,15 @@ describe('Test Factories with Faker', () => {
     const players = createPlayerList(3)
 
     expect(players).toHaveLength(3)
-    expect(players[0].name).toBe('Player 1')
-    expect(players[1].name).toBe('Player 2')
-    expect(players[2].name).toBe('Player 3')
+    expect(players[0]?.name).toBe('Player 1')
+    expect(players[1]?.name).toBe('Player 2')
+    expect(players[2]?.name).toBe('Player 3')
 
     // Each player should have realistic data
     players.forEach((player) => {
       expect(player).toHaveProperty('id')
       expect(player).toHaveProperty('name')
-      expect(player.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
+      expect(player?.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
     })
   })
 

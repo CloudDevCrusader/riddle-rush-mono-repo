@@ -51,7 +51,7 @@ test.describe('Credits Page', () => {
     // Look for back button
     const backButton = page.locator('.back-btn, button:has-text("←")')
 
-    if (await backButton.count() > 0) {
+    if ((await backButton.count()) > 0) {
       await expect(backButton.first()).toBeVisible()
 
       // Click back button
@@ -72,7 +72,7 @@ test.describe('Credits Page', () => {
     // Look for OK button
     const okButton = page.locator('button:has-text("OK"), .btn-ok')
 
-    if (await okButton.count() > 0) {
+    if ((await okButton.count()) > 0) {
       await expect(okButton.first()).toBeVisible()
 
       // Click OK button
@@ -107,7 +107,7 @@ test.describe('Credits Page', () => {
 
     // Check for credits card
     const creditsCard = page.locator('.credits-card')
-    if (await creditsCard.count() > 0) {
+    if ((await creditsCard.count()) > 0) {
       await expect(creditsCard).toBeVisible()
     }
   })

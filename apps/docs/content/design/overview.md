@@ -10,6 +10,7 @@ Riddle Rush features a modern, vibrant design system optimized for touch interac
 ## Design Philosophy
 
 The design emphasizes:
+
 - **Touch-first**: Minimum 44px touch targets, large tap areas
 - **Vibrant colors**: Orange primary, teal secondary with gradient backgrounds
 - **Clear hierarchy**: Typography scale and spacing system
@@ -21,16 +22,19 @@ The design emphasizes:
 ### Color Palette
 
 **Primary Colors:**
+
 - Primary Orange: `#FF6B35`
 - Primary Light: `#FF8C61`
 - Primary Dark: `#E65528`
 
 **Secondary Colors:**
+
 - Secondary Teal: `#4ECDC4`
 - Secondary Light: `#7DD3CB`
 - Secondary Dark: `#3AAFA9`
 
 **Background Gradients:**
+
 - Main Background: Purple gradient (`#667eea` → `#764ba2`)
 - Warm Background: Pink gradient (`#f093fb` → `#f5576c`)
 - Cool Background: Blue gradient (`#4facfe` → `#00f2fe`)
@@ -44,6 +48,7 @@ The design emphasizes:
 ### Spacing System
 
 8px grid-based spacing:
+
 - XS: 4px
 - SM: 8px
 - MD: 16px
@@ -55,6 +60,7 @@ The design emphasizes:
 ## Design Assets
 
 All design assets are located in `docs/gfx/` organized by screen:
+
 - Splash screen
 - Main menu
 - Players
@@ -68,4 +74,3 @@ All design assets are located in `docs/gfx/` organized by screen:
 - [Typography System](/docs/design/typography)
 - [Component Design](/docs/design/components)
 - [Game Workflow](/docs/design/workflow)
-

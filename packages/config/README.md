@@ -14,12 +14,12 @@ Shared configuration package for the Riddle Rush monorepo.
 ### Vite Configuration
 
 ```typescript
-import { 
-  getWorkspaceAliases, 
-  getDevPlugins, 
-  getBuildPlugins, 
-  getOptimizeDeps, 
-  getBuildConfig 
+import {
+  getWorkspaceAliases,
+  getDevPlugins,
+  getBuildPlugins,
+  getOptimizeDeps,
+  getBuildConfig,
 } from '@riddle-rush/config/vite'
 
 // In nuxt.config.ts or vite.config.ts
@@ -28,9 +28,7 @@ export default defineNuxtConfig({
     resolve: {
       alias: getWorkspaceAliases(),
     },
-    plugins: [
-      ...getDevPlugins({ isDev: true }),
-    ],
+    plugins: [...getDevPlugins({ isDev: true })],
     optimizeDeps: getOptimizeDeps(),
     build: getBuildConfig().build,
   },
@@ -57,6 +55,7 @@ The shared Prettier config is automatically used when Prettier is run from the r
 ### Available Functions
 
 **Vite:**
+
 - `getWorkspaceAliases(workspaceRoot?)` - Returns workspace package aliases for Vite
 - `getDevPlugins(options?)` - Returns development-only Vite plugins (inspect, vue-devtools, checker, visualizer)
 - `getBuildPlugins(options?)` - Returns production build plugins (visualizer)
@@ -64,6 +63,7 @@ The shared Prettier config is automatically used when Prettier is run from the r
 - `getBuildConfig()` - Returns shared build configuration
 
 **Build Utilities:**
+
 - `getWorkspaceRoot()` - Find workspace root directory
 - `packageExists(packageName)` - Check if a package exists
 - `runInPackage(packageName, command)` - Run commands in specific packages

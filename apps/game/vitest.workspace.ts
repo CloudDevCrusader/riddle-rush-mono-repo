@@ -1,12 +1,11 @@
 import { defineWorkspace, defineProject } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
-import type { PluginOption } from 'vite'
 
 export default defineWorkspace([
   // Unit tests - run in happy-dom environment
   defineProject({
-    plugins: [vue() as PluginOption],
+    plugins: [vue() as any],
     resolve: {
       alias: {
         '~': fileURLToPath(new URL('./', import.meta.url)),

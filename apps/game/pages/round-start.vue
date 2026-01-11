@@ -94,7 +94,7 @@
 import type { Category } from '@riddle-rush/types/game'
 import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
-const { baseUrl, t } = usePageSetup()
+const { baseUrl, toast, t } = usePageSetup()
 const { goToGame } = useNavigation()
 const { gameStore } = useGameState()
 const { isFortuneWheelEnabled } = useFeatureFlags()
@@ -156,8 +156,8 @@ onMounted(async () => {
     const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
     const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
 
-    selectedCategory.value = randomCategory
-    selectedLetter.value = randomLetter
+    selectedCategory.value = randomCategory ?? null
+    selectedLetter.value = randomLetter ?? null
 
     // Start game immediately
     await startGame()

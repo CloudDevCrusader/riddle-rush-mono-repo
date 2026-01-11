@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "🔍 Running pre-commit checks..."
+echo "🤖 Running pre-commit checks for agent workflow..."
 
 # Check for secrets
 if [ -f "scripts/check-secrets.sh" ]; then
@@ -14,4 +14,13 @@ fi
 echo "📝 Running lint-staged..."
 pnpm lint-staged || exit 1
 
-echo "✅ Pre-commit checks passed!"
+# Run typecheck (quick validation)
+echo "🔍 Running TypeScript checks..."
+pnpm run typecheck || {
+  echo "❌ TypeScript errors found. Please fix before committing."
+  echo "   Run: pnpm run typecheck"
+  exit 1
+}
+
+echo "✅ Pre-commit checks passed! Ready to commit."
+
