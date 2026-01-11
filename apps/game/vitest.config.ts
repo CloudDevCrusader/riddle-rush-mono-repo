@@ -20,6 +20,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
+    setupFiles: ['tests/unit/setup.ts'],
     include: ['tests/unit/**/*.{test,spec}.ts'],
     exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
     coverage: {

@@ -45,15 +45,13 @@ export function useModal(initialState = false) {
  * Composable for managing multiple modals
  */
 export function useModals<T extends string>(modalNames: T[]) {
-  const modals = reactive<Record<T, ReturnType<typeof useModal>>>(
-    {} as Record<T, ReturnType<typeof useModal>>
-  )
-
+  // Create initial object with all modal properties
+  const initialModals: Record<string, ReturnType<typeof useModal>> = {}
   modalNames.forEach((name) => {
-    // TypeScript can't guarantee T is a key, but we know it is from the function signature
-
-    ;(modals as any)[name] = useModal()
+    initialModals[name] = useModal()
   })
+
+  const modals = reactive<Record<T, ReturnType<typeof useModal>>>(initialModals as any)
 
   const openModal = (name: T, data?: any) => {
     // TypeScript can't guarantee T is a key, but we know it is from initialization

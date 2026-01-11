@@ -63,6 +63,9 @@
     "typecheck": "turbo run typecheck",
     "workspace:check": "pnpm syncpack:check && pnpm typecheck && pnpm lint",
     "workspace:fix": "pnpm syncpack:fix && pnpm lint:fix && pnpm format",
+    "trunk:check": "./trunk check --all",
+    "trunk:fmt": "./trunk fmt",
+    "trunk:flaky-tests": "./trunk flakytests",
     "agent:help": "bash scripts/agent-commands.sh",
     "agent:check": "pnpm run workspace:check",
     "agent:fix": "pnpm run workspace:fix"
