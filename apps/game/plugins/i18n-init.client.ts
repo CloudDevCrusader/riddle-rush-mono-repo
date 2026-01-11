@@ -4,7 +4,7 @@
  */
 export default defineNuxtPlugin((nuxtApp) => {
   // Access i18n through nuxtApp context to avoid setup function requirement
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const i18n = (nuxtApp as any).$i18n
   const settingsStore = useSettingsStore()
 
@@ -29,7 +29,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const resolveRouteLocale = () => {
     // Safely get route - it might not be ready yet during plugin initialization
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const router = nuxtApp.$router as any
     const route = router?.currentRoute?.value
     if (!route) return null

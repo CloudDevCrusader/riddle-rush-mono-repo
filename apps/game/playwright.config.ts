@@ -48,7 +48,7 @@ export default defineConfig({
   // Web server - only start for local tests
   ...(!isDeployedTest && {
     webServer: {
-      command: 'node .output/server/index.mjs',
+      command: 'DISABLE_SECURITY=true node .output/server/index.mjs',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 300000, // Increase timeout to 5 minutes
