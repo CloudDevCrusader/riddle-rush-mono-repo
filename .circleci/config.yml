@@ -90,14 +90,28 @@ jobs:
             fi
 
             # Check if test results exist
-            if [ ! -d "apps/game/test-results" ] || [ -z "$(ls -A apps/game/test-results/*.xml 2>/dev/null)" ]; then
-              echo "❌ No test results found in apps/game/test-results/"
+            echo "🔍 Checking for test results..."
+            if [ ! -d "apps/game/test-results" ]; then
+              echo "❌ Test results directory not found: apps/game/test-results/"
+              echo "Available directories:"
+              ls -la apps/game/ || echo "Game directory not found"
               exit 1
             fi
+
+            if [ -z "$(ls -A apps/game/test-results/*.xml 2>/dev/null)" ]; then
+              echo "❌ No XML test results found in apps/game/test-results/"
+              echo "Available files in test-results/:"
+              ls -la apps/game/test-results/ || echo "Directory is empty"
+              exit 1
+            fi
+
+            echo "✅ Found test results:"
+            ls -la apps/game/test-results/*.xml
 
             # Check if TRUNK_API_TOKEN is set
             if [ -z "${TRUNK_API_TOKEN}" ]; then
               echo "❌ TRUNK_API_TOKEN environment variable is not set"
+              echo "Please set this environment variable in CircleCI project settings"
               exit 1
             fi
 
