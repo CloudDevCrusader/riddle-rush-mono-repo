@@ -1,9 +1,8 @@
 import { Server } from 'socket.io'
-import type { NitroApp } from 'nitropack'
 
 let io: Server | null = null
 
-export default defineNitroPlugin((nitroApp: NitroApp) => {
+export default defineNitroPlugin((nitroApp) => {
   if (io) return
 
   // Initialize Socket.IO server
@@ -80,7 +79,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
   })
 
   // Attach Socket.IO to Nitro app
-  nitroApp.hooks.hook('request', (event) => {
+  nitroApp.hooks.hook('request', (event: any) => {
     event.context.$io = io
   })
 
