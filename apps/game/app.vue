@@ -24,7 +24,12 @@ const routeKey = computed(() => {
   return route.fullPath
 })
 
-const showSplash = ref(true)
+// Disable splash screen in E2E tests
+const isE2E =
+  process.env.NODE_ENV === 'test' ||
+  (typeof window !== 'undefined' &&
+    (window as Window & { playwrightTest?: boolean }).playwrightTest)
+const showSplash = ref(!isE2E)
 
 const onSplashComplete = () => {
   showSplash.value = false
