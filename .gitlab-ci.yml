@@ -62,7 +62,7 @@ before_script:
 test:
   stage: test
   script:
-    - chmod +x scripts/ci-test.sh && ./scripts/ci-test.sh
+    - sh ./scripts/ci-test.sh
   rules:
     # Always run on tags (for AWS deployment)
     - if: $CI_COMMIT_TAG
@@ -111,12 +111,12 @@ sonarcloud-check:
 
 # E2E tests - local build (manual, optional) - only when game changes
 # Note: This job tests local build, not deployed sites
-test:e2e:local:
+test:e2e:
   stage: test
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   script:
     - pnpm install --frozen-lockfile
-    - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
+    - sh ./scripts/ci-e2e.sh
   artifacts:
     when: always
     paths:
@@ -172,7 +172,7 @@ build:
 build:docs:
   stage: build
   image: node:20
-  before_script:
+  before_script: ''
   script:
     - pnpm install --frozen-lockfile
     - cd apps/docs
@@ -283,7 +283,7 @@ verify:e2e:aws:
     - echo 'Testing AWS deployment at:' $BASE_URL
     - echo 'Waiting 60 seconds for CloudFront invalidation to propagate...'
     - sleep 60
-    - chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
+    - sudo chmod +x scripts/ci-e2e.sh && ./scripts/ci-e2e.sh
   needs:
     - deploy:aws
   artifacts:

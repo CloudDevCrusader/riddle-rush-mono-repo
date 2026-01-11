@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "nuxt-ui": {
+      "source": "npx https://ui.nuxt.com/mcp",
+      "tools": ["*"],
+      "description": "Nuxt UI component documentation and examples"
+    },
+    "playwright": {
+      "source": "npx -y @executeautomation/playwright-mcp-server",
+      "tools": ["*"],
+      "description": "Browser automation for E2E testing and debugging"
+    },
+    "aws-docs": {
+      "source": "uvx mcp-server-aws-docs",
+      "tools": ["*"],
+      "description": "AWS documentation search and reference (S3, CloudFront, etc.)"
+    },
+    "docker": {
+      "source": "npx -y @docker/mcp-server-docker",
+      "tools": ["*"],
+      "description": "Docker Hub search and container management for CI/CD"
+    },
+    "context7": {
+      "source": "npx -y context7-mcp",
+      "tools": ["*"],
+      "description": "Library documentation (Vue, Nuxt, Vite, TypeScript, etc.)"
+    },
+    "git": {
+      "source": "npx -y @modelcontextprotocol/server-git",
+      "tools": ["*"],
+      "description": "Git operations and repository management"
+    },
+    "gitlab": {
+      "source": "npx -y @modelcontextprotocol/server-gitlab",
+      "env": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_PERSONAL_ACCESS_TOKEN}",
+        "GITLAB_API_URL": "https://gitlab.com/api/v4"
+      },
+      "tools": ["*"],
+      "description": "GitLab API for CI/CD pipeline management and MRs"
+    },
+    "filesystem": {
+      "source": "npx -y @modelcontextprotocol/server-filesystem /home/cloudcrusader/projects/riddle-rush-mono-repo",
+      "tools": ["*"],
+      "description": "Safe filesystem operations within project directory"
+    }
+  }
+}

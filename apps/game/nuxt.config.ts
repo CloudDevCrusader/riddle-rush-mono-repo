@@ -1,6 +1,19 @@
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 
+// Disable minification when building for localhost (e.g., local E2E) to keep bundles debuggable
+const isLocalhostBuild = [
+  process.env.BASE_URL,
+  process.env.NUXT_PUBLIC_BASE_URL,
+  process.env.PLAYWRIGHT_TEST_BASE_URL,
+  process.env.HOST,
+  process.env.NUXT_HOST,
+]
+  .filter(Boolean)
+  .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
+
+const shouldMinify = process.env.NODE_ENV === 'production' && !isLocalhostBuild ? 'esbuild' : false
+
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
@@ -16,7 +29,7 @@ export default defineNuxtConfig({
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
   ],
-  ssr: true, // Enable SSR for better SEO and faster first paint
+  ssr: false, // Client-only SPA (IndexedDB and PWA require client-side rendering)
 
   components: [
     {
@@ -133,7 +146,7 @@ export default defineNuxtConfig({
       commonjsOptions: {
         transformMixedEsModules: true, // Help handle circular dependencies
       },
-      minify: process.env.DISABLE_SECURITY === 'true' ? false : 'esbuild', // Disable minification for E2E tests
+      minify: shouldMinify, // Keep minification off for localhost builds (helps Playwright debugging)
       rollupOptions: {
         output: {
           manualChunks: (id) => {

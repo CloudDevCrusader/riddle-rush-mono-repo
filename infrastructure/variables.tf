@@ -68,6 +68,19 @@ variable "tags" {
   default     = {}
 }
 
+# IAM variables
+variable "create_additional_admin" {
+  description = "Create an additional admin user"
+  type        = bool
+  default     = false
+}
+
+variable "additional_admin_username" {
+  description = "Username for the additional admin user"
+  type        = string
+  default     = "admin2"
+}
+
 # SSR Lambda variables
 variable "enable_ssr_lambda" {
   description = "Enable SSR deployment using AWS Lambda"
