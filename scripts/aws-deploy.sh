@@ -48,6 +48,51 @@ fi
 
 # Configuration
 ENVIRONMENT="${1:-production}"
+
+# Map short environment names to full folder names
+case "${ENVIRONMENT}" in
+dev)
+	ENVIRONMENT="development"
+	;;
+prod | production)
+	ENVIRONMENT="production"
+	;;
+staging)
+	ENVIRONMENT="staging"
+	;;
+esac
+
+# Load CloudFront ID from Terraform outputs for the specific environment
+# This ensures we use the correct distribution ID for the environment being deployed
+# Priority: terraform-outputs.json > .env.terraform > terraform output > existing env var
+INFRA_DIR="${PROJECT_ROOT}/infrastructure/environments/${ENVIRONMENT}"
+ENV_CLOUDFRONT_ID=""
+if [[ -d "${INFRA_DIR}" ]]; then
+	# Try to load from terraform-outputs.json first (most reliable)
+	if [[ -f "${INFRA_DIR}/terraform-outputs.json" ]] && command -v jq &>/dev/null; then
+		ENV_CLOUDFRONT_ID=$(jq -r '.cloudfront_distribution_id.value // empty' "${INFRA_DIR}/terraform-outputs.json" 2>/dev/null || echo "")
+	fi
+	
+	# Fallback to .env.terraform file if JSON didn't work
+	if [[ -z "${ENV_CLOUDFRONT_ID}" ]] && [[ -f "${INFRA_DIR}/.env.terraform" ]]; then
+		# Source the file temporarily to get the value
+		ENV_CLOUDFRONT_ID=$(grep "^AWS_CLOUDFRONT_ID=" "${INFRA_DIR}/.env.terraform" 2>/dev/null | cut -d'=' -f2 | tr -d '"' || echo "")
+	fi
+	
+	# Final fallback: query Terraform directly
+	if [[ -z "${ENV_CLOUDFRONT_ID}" ]] && command -v terraform &>/dev/null && [[ -d "${INFRA_DIR}/.terraform" ]]; then
+		cd "${INFRA_DIR}"
+		ENV_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+		cd - >/dev/null
+	fi
+	
+	# Use environment-specific CloudFront ID if found, otherwise keep existing value
+	if [[ -n "${ENV_CLOUDFRONT_ID}" ]]; then
+		export AWS_CLOUDFRONT_ID="${ENV_CLOUDFRONT_ID}"
+		echo -e "${BLUE}📋 Loaded CloudFront ID for ${ENVIRONMENT}: ${ENV_CLOUDFRONT_ID}${NC}"
+	fi
+fi
+
 S3_BUCKET="${AWS_S3_BUCKET:-riddle-rush-pwa}"
 CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID-}"
 AWS_REGION="${AWS_REGION:-eu-central-1}"
