@@ -4,12 +4,16 @@ test.describe('Credits Page', () => {
   test('should load credits page successfully', async ({ page }) => {
     await page.goto('/credits')
 
-    // Check page title
-    await expect(page).toHaveTitle(/Riddle Rush - Credits/i)
+    // Wait for page to load
+    await page.waitForLoadState('networkidle')
 
-    // Check for main title
-    const title = page.getByText(/CREDITS/i)
-    await expect(title).toBeVisible({ timeout: 5000 })
+    // Check for main title image
+    const titleImage = page.locator('.title-image')
+    await expect(titleImage).toBeVisible({ timeout: 5000 })
+
+    // Check for credits panel
+    const creditsPanel = page.locator('.credits-panel')
+    await expect(creditsPanel).toBeVisible({ timeout: 5000 })
   })
 
   test('should display team credits', async ({ page }) => {
@@ -18,28 +22,38 @@ test.describe('Credits Page', () => {
     // Wait for page to load
     await page.waitForLoadState('networkidle')
 
-    // Check for Game Design section
-    const gameDesignHeading = page.getByText(/Game Design/i)
+    // Check for credits panel
+    const creditsPanel = page.locator('.credits-panel')
+    await expect(creditsPanel).toBeVisible()
+
+    // Check for all three credit sections
+    const creditSections = page.locator('.credit-section')
+    await expect(creditSections).toHaveCount(3)
+
+    // Check for Game Design section heading
+    const gameDesignHeading = page.locator('.section-heading').filter({ hasText: /Game Design/i })
     await expect(gameDesignHeading).toBeVisible()
 
-    // Check for team members
-    const tobi = page.getByText(/Tobi/i)
-    const sophia = page.getByText(/sophia/i)
+    // Check for team members (Tobi and Sophia)
+    const tobi = page.locator('.credit-name').filter({ hasText: /^Tobi$/i })
+    const sophia = page.locator('.credit-name').filter({ hasText: /^Sophia$/i })
     await expect(tobi).toBeVisible()
     await expect(sophia).toBeVisible()
 
-    // Check for Programming section
-    const programmingHeading = page.getByText(/Programming/i)
+    // Check for Programming section heading
+    const programmingHeading = page.locator('.section-heading').filter({ hasText: /Programming/i })
     await expect(programmingHeading).toBeVisible()
 
-    const markus = page.getByText(/Markus/i)
+    // Check for Markus
+    const markus = page.locator('.credit-name').filter({ hasText: /^Markus$/i })
     await expect(markus).toBeVisible()
 
-    // Check for Art section
-    const artHeading = page.getByText(/Art/i)
+    // Check for Art section heading
+    const artHeading = page.locator('.section-heading').filter({ hasText: /Art/i })
     await expect(artHeading).toBeVisible()
 
-    const sarmad = page.getByText(/sarmad Ali/i)
+    // Check for Sarmad Ali
+    const sarmad = page.locator('.credit-name').filter({ hasText: /Sarmad Ali/i })
     await expect(sarmad).toBeVisible()
   })
 
@@ -101,14 +115,16 @@ test.describe('Credits Page', () => {
 
     await page.waitForLoadState('networkidle')
 
-    // Check that the page has content
-    const body = page.locator('body')
-    await expect(body).toBeVisible()
+    // Check that the page has the main container
+    const container = page.locator('.container')
+    await expect(container).toBeVisible()
 
-    // Check for credits card
-    const creditsCard = page.locator('.credits-card')
-    if ((await creditsCard.count()) > 0) {
-      await expect(creditsCard).toBeVisible()
-    }
+    // Check for credits panel with proper styling
+    const creditsPanel = page.locator('.credits-panel')
+    await expect(creditsPanel).toBeVisible()
+
+    // Verify background image is present
+    const backgroundImage = page.locator('.page-bg')
+    await expect(backgroundImage).toBeVisible()
   })
 })

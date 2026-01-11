@@ -21,7 +21,7 @@
   "main": "./index.ts",
   "peerDependencies": {
     "rollup-plugin-visualizer": "^5.12.0",
-    "vite-plugin-checker": "^0.8.0",
+    "vite-plugin-checker": "^0.12.0",
     "vite-plugin-inspect": "^11.3.3",
     "vite-plugin-vue-devtools": "^7.0.0",
     "vue-tsc": "^2.0.0"

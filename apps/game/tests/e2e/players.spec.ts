@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { generatePlayerName } from './helpers/faker'
 
 test.describe('Players Management Page', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,9 +51,10 @@ test.describe('Players Management Page', () => {
     const countBefore = await playerItemsBefore.count()
 
     // Mock the prompt to return a player name
+    const playerName = generatePlayerName()
     page.on('dialog', async (dialog) => {
       expect(dialog.type()).toBe('prompt')
-      await dialog.accept('Test Player')
+      await dialog.accept(playerName)
     })
 
     await addBtn.click()

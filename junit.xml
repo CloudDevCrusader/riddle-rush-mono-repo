@@ -1,2 +1,40 @@
-<testsuites id="" name="" tests="0" failures="0" skipped="0" errors="0" time="0.657282">
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="305.586042">
+<testsuite name="credits.spec.ts" timestamp="2026-01-11T12:07:36.873Z" hostname="mobile-chrome" tests="1" failures="1" skipped="0" time="304.046" errors="0">
+<testcase name="Credits Page › should load credits page successfully" classname="credits.spec.ts" time="304.046">
+<failure message="credits.spec.ts:4:3 should load credits page successfully" type="FAILURE">
+<![CDATA[  [mobile-chrome] › credits.spec.ts:4:3 › Credits Page › should load credits page successfully ─────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.title-image')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.title-image')
+
+
+      10 |     // Check for main title image
+      11 |     const titleImage = page.locator('.title-image')
+    > 12 |     await expect(titleImage).toBeVisible({ timeout: 5000 })
+         |                              ^
+      13 |
+      14 |     // Check for credits panel
+      15 |     const creditsPanel = page.locator('.credits-panel')
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/e2e/credits.spec.ts:12:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/credits-Credits-Page-should-load-credits-page-successfully-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/credits-Credits-Page-should-load-credits-page-successfully-mobile-chrome/test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
 </testsuites>

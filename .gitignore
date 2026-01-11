@@ -48,3 +48,6 @@ apps/docs/.output/*.log
 # TypeScript build info
 *.tsbuildinfo
 **/tsconfig.tsbuildinfo
+
+# Test results
+junit.xml
