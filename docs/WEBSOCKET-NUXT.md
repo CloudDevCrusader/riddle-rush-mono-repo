@@ -5,13 +5,14 @@ Real-time WebSocket connection using Socket.IO integrated directly into the Nuxt
 ## Features
 
 - ✅ Built-in Socket.IO server in Nuxt
-- ✅ Auto-connect on app mount
+- ✅ Auto-connect on app mount (when feature flag is enabled)
 - ✅ Real-time connection status indicator (green/red/amber)
 - ✅ Automatic reconnection with exponential backoff
 - ✅ Connection monitoring with ping/pong
 - ✅ Performance metric logging
 - ✅ Leaderboard updates
 - ✅ User statistics retrieval
+- ✅ Feature flag to enable/disable WebSocket functionality
 
 ## Architecture
 
@@ -43,9 +44,38 @@ Already installed! The following packages are included:
 
 ## Usage
 
-### 1. Connection Status Indicator
+### 1. Enabling WebSocket Feature
 
-The connection status is automatically shown in the top-right corner of the default layout.
+**By default, WebSocket is disabled.** You can enable it in two ways:
+
+#### Option A: Local Settings (for development/testing)
+
+```typescript
+// In your component or page
+const settingsStore = useSettingsStore()
+settingsStore.toggleWebSocket() // Toggle on/off
+
+// Or set directly
+settingsStore.updateSetting('websocketEnabled', true)
+```
+
+#### Option B: GitLab Feature Flags (for production)
+
+1. Configure GitLab Feature Flags in your environment
+2. Create a feature flag named `websocket`
+3. Enable/disable the flag to control WebSocket for all users
+
+The feature flag system checks GitLab first, then falls back to local settings.
+
+```typescript
+// Check if WebSocket is enabled
+const { isWebSocketEnabled } = useFeatureFlags()
+console.log(isWebSocketEnabled.value) // true or false
+```
+
+### 2. Connection Status Indicator
+
+The connection status is automatically shown in the top-right corner of the default layout **when the feature is enabled**.
 
 **Status Colors:**
 - 🟢 **Green** - Connected  
@@ -53,7 +83,7 @@ The connection status is automatically shown in the top-right corner of the defa
 - 🔴 **Red** - Disconnected/Error  
 - ⚫ **Gray** - Offline
 
-### 2. Using the WebSocket Composable
+### 3. Using the WebSocket Composable
 
 ```vue
 <script setup lang="ts">
