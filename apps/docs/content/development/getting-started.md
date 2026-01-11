@@ -52,7 +52,8 @@ pnpm run dev
 pnpm run dev          # Development server
 pnpm run build        # Production build
 pnpm run generate     # Static site generation (includes docs)
-pnpm run test         # Run tests
+pnpm run test         # Run tests once
+pnpm run test:watch   # Watch tests
 pnpm run typecheck    # Type checking
 pnpm run lint         # Linting
 ```
