@@ -1,7 +1,7 @@
 <template>
   <div class="layout-container">
     <!-- Connection Status Indicator -->
-    <div class="connection-indicator">
+    <div v-if="isWebSocketEnabled" class="connection-indicator">
       <ConnectionStatus />
     </div>
 
@@ -23,6 +23,8 @@
  * Default Layout
  * Provides basic page structure with optional background image
  */
+
+const { isWebSocketEnabled } = useFeatureFlags()
 
 // Accept background image from page
 const backgroundImage = ref<string | null>(null)

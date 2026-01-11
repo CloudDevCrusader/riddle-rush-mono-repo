@@ -18,6 +18,9 @@ export function useFeatureFlags() {
       if (flagName === 'fortune-wheel') {
         return settingsStore.fortuneWheelEnabled
       }
+      if (flagName === 'websocket') {
+        return settingsStore.websocketEnabled
+      }
       return defaultValue
     }
 
@@ -62,9 +65,25 @@ export function useFeatureFlags() {
     return settingsStore.fortuneWheelEnabled
   })
 
+  /**
+   * Check if WebSocket feature is enabled
+   */
+  const isWebSocketEnabled = computed(() => {
+    // First check GitLab Feature Flags
+    if (gitlabClient) {
+      const gitlabEnabled = isEnabled('websocket', false)
+      if (gitlabEnabled) return true
+    }
+
+    // Fallback to local settings
+    const settingsStore = useSettingsStore()
+    return settingsStore.websocketEnabled
+  })
+
   return {
     isEnabled,
     getVariant,
     isFortuneWheelEnabled,
+    isWebSocketEnabled,
   }
 }
