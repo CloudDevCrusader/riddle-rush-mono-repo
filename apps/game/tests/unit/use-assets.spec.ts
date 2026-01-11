@@ -118,12 +118,8 @@ describe('useAssets', () => {
     it('should handle different settings asset filenames', () => {
       const assets = useAssets()
 
-      expect(assets.getSettingsAsset('slider.png')).toBe(
-        '/test-base/assets/settings/slider.png'
-      )
-      expect(assets.getSettingsAsset('toggle.svg')).toBe(
-        '/test-base/assets/settings/toggle.svg'
-      )
+      expect(assets.getSettingsAsset('slider.png')).toBe('/test-base/assets/settings/slider.png')
+      expect(assets.getSettingsAsset('toggle.svg')).toBe('/test-base/assets/settings/toggle.svg')
     })
   })
 
@@ -191,7 +187,11 @@ describe('useAssets', () => {
     it('should preload multiple images successfully', async () => {
       const assets = useAssets()
 
-      const mockImages: Array<{ src: string; onload: (() => void) | null; onerror: ((error: Error) => void) | null }> = []
+      const mockImages: Array<{
+        src: string
+        onload: (() => void) | null
+        onerror: ((error: Error) => void) | null
+      }> = []
       global.Image = vi.fn(() => {
         const img = {
           src: '',
@@ -210,15 +210,19 @@ describe('useAssets', () => {
 
       await expect(promise).resolves.toBeUndefined()
       expect(mockImages).toHaveLength(3)
-      expect(mockImages[0].src).toBe('/image1.png')
-      expect(mockImages[1].src).toBe('/image2.png')
-      expect(mockImages[2].src).toBe('/image3.png')
+      expect(mockImages[0]!.src).toBe('/image1.png')
+      expect(mockImages[1]!.src).toBe('/image2.png')
+      expect(mockImages[2]!.src).toBe('/image3.png')
     })
 
     it('should reject if any image fails to load', async () => {
       const assets = useAssets()
 
-      const mockImages: Array<{ src: string; onload: (() => void) | null; onerror: ((error: Error) => void) | null }> = []
+      const mockImages: Array<{
+        src: string
+        onload: (() => void) | null
+        onerror: ((error: Error) => void) | null
+      }> = []
       global.Image = vi.fn(() => {
         const img = {
           src: '',
@@ -233,10 +237,10 @@ describe('useAssets', () => {
       const promise = assets.preloadImages(paths)
 
       // Simulate first two loading, third failing
-      mockImages[0].onload?.()
-      mockImages[1].onload?.()
+      mockImages[0]!.onload?.()
+      mockImages[1]!.onload?.()
       const error = new Error('Load failed')
-      mockImages[2].onerror?.(error)
+      mockImages[2]!.onerror?.(error)
 
       await expect(promise).rejects.toThrow('Load failed')
     })
