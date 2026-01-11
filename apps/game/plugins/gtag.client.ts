@@ -5,27 +5,29 @@
  * Only loads in production when GTAG_ID is configured.
  */
 
-export default defineNuxtPlugin(() => {
-  const config = useRuntimeConfig()
-  const router = useRouter()
+export default defineNuxtPlugin({
+  name: 'gtag',
+  setup: (nuxtApp) => {
+    const config = useRuntimeConfig()
+    const router = nuxtApp.$router as ReturnType<typeof useRouter>
 
-  // Only enable in production with valid GTAG_ID
-  const gtagId = config.public.gtagId || ''
-  const isProduction = config.public.environment === 'production'
+    // Only enable in production with valid GTAG_ID
+    const gtagId = config.public.gtagId || ''
+    const isProduction = config.public.environment === 'production'
 
-  if (!isProduction || !gtagId || typeof window === 'undefined') {
-    return
-  }
+    if (!isProduction || !gtagId || typeof window === 'undefined') {
+      return
+    }
 
-  // Load GA4 script
-  useHead({
-    script: [
-      {
-        src: `https://www.googletagmanager.com/gtag/js?id=${gtagId}`,
-        async: true,
-      },
-      {
-        innerHTML: `
+    // Load GA4 script
+    useHead({
+      script: [
+        {
+          src: `https://www.googletagmanager.com/gtag/js?id=${gtagId}`,
+          async: true,
+        },
+        {
+          innerHTML: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -34,28 +36,29 @@ export default defineNuxtPlugin(() => {
             cookie_flags: 'SameSite=None;Secure',
           });
         `,
-        type: 'text/javascript',
-      },
-    ],
-  })
+          type: 'text/javascript',
+        },
+      ],
+    })
 
-  // Track page views on route change
-  router.afterEach((to) => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      ;(window as any).gtag('config', gtagId, {
-        page_path: to.fullPath,
-      })
+    // Track page views on route change
+    router.afterEach((to) => {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        ;(window as any).gtag('config', gtagId, {
+          page_path: to.fullPath,
+        })
+      }
+    })
+
+    // Provide gtag helper
+    return {
+      provide: {
+        gtag: (...args: any[]) => {
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            ;(window as any).gtag(...args)
+          }
+        },
+      },
     }
-  })
-
-  // Provide gtag helper
-  return {
-    provide: {
-      gtag: (...args: any[]) => {
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          ;(window as any).gtag(...args)
-        }
-      },
-    },
-  }
+  },
 })

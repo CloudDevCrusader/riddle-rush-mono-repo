@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
   ],
-  ssr: false,
+  ssr: false, // Keep SPA mode but with security disabled for tests
 
   components: [
     {
@@ -100,6 +100,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
 
   vite: {
+    resolve: {
+      preserveSymlinks: false, // Keep default behavior
+    },
     plugins: [
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
@@ -119,7 +122,10 @@ export default defineNuxtConfig({
       },
     },
     build: {
-      minify: process.env.NODE_ENV === 'production' ? 'esbuild' : false,
+      commonjsOptions: {
+        transformMixedEsModules: true, // Help handle circular dependencies
+      },
+      minify: process.env.DISABLE_SECURITY === 'true' ? false : 'esbuild', // Disable minification for E2E tests
       rollupOptions: {
         output: {
           manualChunks: (id) => {

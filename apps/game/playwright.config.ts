@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { defineBddConfig } from 'playwright-bdd'
 
 const isCI = !!process.env.CI
 // Allow testing against deployed sites via BASE_URL env var
@@ -8,8 +9,15 @@ const isDeployedTest =
   (baseURL.startsWith('http://') || baseURL.startsWith('https://')) &&
   !baseURL.includes('localhost')
 
+// BDD configuration
+const testDir = defineBddConfig({
+  features: 'tests/features/**/*.feature',
+  steps: 'tests/steps/**/*.ts',
+  outputDir: '.features-gen',
+})
+
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir,
   fullyParallel: true,
   forbidOnly: isCI,
   retries: 0,
