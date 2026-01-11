@@ -1,12 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// Mock useRuntimeConfig
+// Create a mock for useRuntimeConfig BEFORE any modules import it
+const mockUseRuntimeConfig = vi.fn(() => ({
+  public: {
+    baseUrl: '/test-base/',
+  },
+}))
+
+// Make useRuntimeConfig globally available for auto-import in the composable
+;(globalThis as any).useRuntimeConfig = mockUseRuntimeConfig
+
+// Mock useRuntimeConfig from #app
 vi.mock('#app', () => ({
-  useRuntimeConfig: () => ({
-    public: {
-      baseUrl: '/test-base/',
-    },
-  }),
+  useRuntimeConfig: mockUseRuntimeConfig,
 }))
 
 const { useAssets } = await import('../../composables/useAssets')

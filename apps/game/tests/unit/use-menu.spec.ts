@@ -1,9 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { ref, watch, readonly } from 'vue'
 
-// Mock useRoute
+// Make ref, watch, and readonly globally available for the composable
+;(globalThis as any).ref = ref
+;(globalThis as any).watch = watch
+;(globalThis as any).readonly = readonly
+
+// Create mock for useRoute
 const mockRoute = { path: '/' }
+const mockUseRoute = vi.fn(() => mockRoute)
+
+// Make useRoute globally available
+;(globalThis as any).useRoute = mockUseRoute
+
+// Mock vue-router
 vi.mock('vue-router', () => ({
-  useRoute: () => mockRoute,
+  useRoute: mockUseRoute,
 }))
 
 const { useMenu } = await import('../../composables/useMenu')

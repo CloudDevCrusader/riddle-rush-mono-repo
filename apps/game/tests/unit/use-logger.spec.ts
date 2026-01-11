@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
+// Set NODE_ENV to development for logger tests
+process.env.NODE_ENV = 'development'
+
 // Mock console methods
 const consoleSpy = {
   log: vi.spyOn(console, 'log'),
@@ -11,21 +14,31 @@ const consoleSpy = {
 
 // Mock useErrorSync
 const mockSyncErrorLog = vi.fn()
-vi.mock('../../composables/useErrorSync', () => ({
-  useErrorSync: () => ({
-    syncErrorLog: mockSyncErrorLog,
-  }),
+const mockUseErrorSync = vi.fn(() => ({
+  syncErrorLog: mockSyncErrorLog,
 }))
 
-// Mock useRuntimeConfig
+// Make useErrorSync globally available
+;(globalThis as any).useErrorSync = mockUseErrorSync
+
+vi.mock('../../composables/useErrorSync', () => ({
+  useErrorSync: mockUseErrorSync,
+}))
+
+// Mock useRuntimeConfig  BEFORE importing composable
+const mockUseRuntimeConfig = vi.fn(() => ({
+  public: {
+    environment: 'test',
+    appVersion: '1.0.0-test',
+    debugErrorSync: false,
+  },
+}))
+
+// Make useRuntimeConfig globally available
+;(globalThis as any).useRuntimeConfig = mockUseRuntimeConfig
+
 vi.mock('#app', () => ({
-  useRuntimeConfig: () => ({
-    public: {
-      environment: 'test',
-      appVersion: '1.0.0-test',
-      debugErrorSync: false,
-    },
-  }),
+  useRuntimeConfig: mockUseRuntimeConfig,
 }))
 
 const { useLogger } = await import('../../composables/useLogger')
@@ -33,15 +46,10 @@ const { useLogger } = await import('../../composables/useLogger')
 describe('useLogger', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    consoleSpy.log.mockImplementation(() => {})
-    consoleSpy.warn.mockImplementation(() => {})
-    consoleSpy.error.mockImplementation(() => {})
-    consoleSpy.debug.mockImplementation(() => {})
-    consoleSpy.info.mockImplementation(() => {})
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    // Don't restore mocks during the test suite
   })
 
   describe('log', () => {

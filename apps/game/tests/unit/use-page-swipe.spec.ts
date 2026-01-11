@@ -1,12 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { ref } from 'vue'
 
-// Mock useSwipe from @vueuse/core
-const mockUseSwipe = vi.fn()
+// Create a mock for useSwipe BEFORE any modules import it
+const mockUseSwipeFn = vi.fn()
+
+// Ensure ref and useSwipe are globally available for the composable
+;(globalThis as any).ref = ref
+;(globalThis as any).useSwipe = mockUseSwipeFn
+
+// Mock useSwipe from @vueuse/core BEFORE importing the composable
 vi.mock('@vueuse/core', () => ({
-  useSwipe: mockUseSwipe,
+  useSwipe: mockUseSwipeFn,
 }))
 
+// Import after mocking to ensure mocks are applied
 const { usePageSwipe } = await import('../../composables/usePageSwipe')
+const mockUseSwipe = mockUseSwipeFn
 
 describe('usePageSwipe', () => {
   beforeEach(() => {
@@ -64,10 +73,10 @@ describe('usePageSwipe', () => {
       mockUseSwipe.mockImplementation((el, options) => {
         swipeEndCallback = options.onSwipeEnd
         return {
-          isSwiping: ref(false),
-          direction: ref('left'),
-          lengthX: ref(100),
-          lengthY: ref(0),
+          isSwiping: { value: false },
+          direction: { value: 'left' },
+          lengthX: { value: 100 },
+          lengthY: { value: 0 },
         }
       })
 
@@ -86,10 +95,10 @@ describe('usePageSwipe', () => {
       mockUseSwipe.mockImplementation((el, options) => {
         swipeEndCallback = options.onSwipeEnd
         return {
-          isSwiping: ref(false),
-          direction: ref('right'),
-          lengthX: ref(-100),
-          lengthY: ref(0),
+          isSwiping: { value: false },
+          direction: { value: 'right' },
+          lengthX: { value: -100 },
+          lengthY: { value: 0 },
         }
       })
 
@@ -107,10 +116,10 @@ describe('usePageSwipe', () => {
       mockUseSwipe.mockImplementation((el, options) => {
         swipeEndCallback = options.onSwipeEnd
         return {
-          isSwiping: ref(false),
-          direction: ref('up'),
-          lengthX: ref(0),
-          lengthY: ref(100),
+          isSwiping: { value: false },
+          direction: { value: 'up' },
+          lengthX: { value: 0 },
+          lengthY: { value: 100 },
         }
       })
 
@@ -128,10 +137,10 @@ describe('usePageSwipe', () => {
       mockUseSwipe.mockImplementation((el, options) => {
         swipeEndCallback = options.onSwipeEnd
         return {
-          isSwiping: ref(false),
-          direction: ref('down'),
-          lengthX: ref(0),
-          lengthY: ref(-100),
+          isSwiping: { value: false },
+          direction: { value: 'down' },
+          lengthX: { value: 0 },
+          lengthY: { value: -100 },
         }
       })
 
@@ -150,10 +159,10 @@ describe('usePageSwipe', () => {
       mockUseSwipe.mockImplementation((el, options) => {
         swipeEndCallback = options.onSwipeEnd
         return {
-          isSwiping: ref(false),
-          direction: ref('up'),
-          lengthX: ref(0),
-          lengthY: ref(100),
+          isSwiping: { value: false },
+          direction: { value: 'up' },
+          lengthX: { value: 0 },
+          lengthY: { value: 100 },
         }
       })
 
@@ -171,10 +180,10 @@ describe('usePageSwipe', () => {
       mockUseSwipe.mockImplementation((el, options) => {
         swipeEndCallback = options.onSwipeEnd
         return {
-          isSwiping: ref(false),
-          direction: ref('left'),
-          lengthX: ref(100),
-          lengthY: ref(0),
+          isSwiping: { value: false },
+          direction: { value: 'left' },
+          lengthX: { value: 100 },
+          lengthY: { value: 0 },
         }
       })
 
@@ -198,9 +207,9 @@ describe('usePageSwipe', () => {
       const mockIsSwiping = { value: true }
       mockUseSwipe.mockReturnValue({
         isSwiping: mockIsSwiping,
-        direction: ref('none'),
-        lengthX: ref(0),
-        lengthY: ref(0),
+        direction: { value: 'none' },
+        lengthX: { value: 0 },
+        lengthY: { value: 0 },
       })
 
       const result = usePageSwipe()
@@ -211,10 +220,10 @@ describe('usePageSwipe', () => {
     it('should return direction from useSwipe', () => {
       const mockDirection = { value: 'left' }
       mockUseSwipe.mockReturnValue({
-        isSwiping: ref(false),
+        isSwiping: { value: false },
         direction: mockDirection,
-        lengthX: ref(100),
-        lengthY: ref(0),
+        lengthX: { value: 100 },
+        lengthY: { value: 0 },
       })
 
       const result = usePageSwipe()
@@ -225,10 +234,10 @@ describe('usePageSwipe', () => {
     it('should return lengthX from useSwipe', () => {
       const mockLengthX = { value: 150 }
       mockUseSwipe.mockReturnValue({
-        isSwiping: ref(false),
-        direction: ref('left'),
+        isSwiping: { value: false },
+        direction: { value: 'left' },
         lengthX: mockLengthX,
-        lengthY: ref(0),
+        lengthY: { value: 0 },
       })
 
       const result = usePageSwipe()
@@ -239,9 +248,9 @@ describe('usePageSwipe', () => {
     it('should return lengthY from useSwipe', () => {
       const mockLengthY = { value: 200 }
       mockUseSwipe.mockReturnValue({
-        isSwiping: ref(false),
-        direction: ref('up'),
-        lengthX: ref(0),
+        isSwiping: { value: false },
+        direction: { value: 'up' },
+        lengthX: { value: 0 },
         lengthY: mockLengthY,
       })
 
@@ -265,10 +274,10 @@ describe('usePageSwipe', () => {
       mockUseSwipe.mockImplementation((el, options) => {
         swipeEndCallback = options.onSwipeEnd
         return {
-          isSwiping: ref(false),
-          direction: ref('none'),
-          lengthX: ref(0),
-          lengthY: ref(0),
+          isSwiping: { value: false },
+          direction: { value: 'none' },
+          lengthX: { value: 0 },
+          lengthY: { value: 0 },
         }
       })
 

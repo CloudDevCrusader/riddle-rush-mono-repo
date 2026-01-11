@@ -186,6 +186,54 @@ export default defineNuxtConfig({
     },
   },
 
+  // Image optimization
+  image: {
+    quality: 85,
+    format: ['webp', 'avif', 'png'],
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      xxl: 1536,
+    },
+    // Explicitly use sharp for image processing
+    sharp: {
+      enabled: true,
+      // Optional: specify sharp options
+      // format: ['webp', 'avif'],
+      // quality: 80,
+      // progressive: true,
+      // withoutEnlargement: true,
+    },
+    providers: {
+      ipx: {},
+    },
+    presets: {
+      avatar: {
+        modifiers: {
+          format: 'webp',
+          width: 100,
+          height: 100,
+        },
+      },
+      background: {
+        modifiers: {
+          format: 'webp',
+          quality: 80,
+        },
+      },
+      thumbnail: {
+        modifiers: {
+          format: 'webp',
+          width: 200,
+          quality: 75,
+        },
+      },
+    },
+  },
+
   // Motion animation defaults
   motion: {
     directives: {
@@ -313,45 +361,6 @@ export default defineNuxtConfig({
     devOptions: {
       enabled: true,
       type: 'module',
-    },
-  },
-
-  // Image optimization
-  image: {
-    quality: 85,
-    format: ['webp', 'avif', 'png'],
-    screens: {
-      xs: 320,
-      sm: 640,
-      md: 768,
-      lg: 1024,
-      xl: 1280,
-      xxl: 1536,
-    },
-    providers: {
-      ipx: {},
-    },
-    presets: {
-      avatar: {
-        modifiers: {
-          format: 'webp',
-          width: 100,
-          height: 100,
-        },
-      },
-      background: {
-        modifiers: {
-          format: 'webp',
-          quality: 80,
-        },
-      },
-      thumbnail: {
-        modifiers: {
-          format: 'webp',
-          width: 200,
-          quality: 75,
-        },
-      },
     },
   },
 
