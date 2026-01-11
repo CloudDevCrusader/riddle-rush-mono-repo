@@ -72,6 +72,10 @@ jobs:
           path: apps/game/test-results
       - store_artifacts:
           path: apps/game/test-results
+      - persist_to_workspace:
+          root: .
+          paths:
+            - apps/game/test-results
 
   detect-flaky-tests:
     docker:
@@ -89,13 +93,21 @@ jobs:
               curl -fsSLO --retry 3 https://trunk.io/releases/trunk && chmod +x ./trunk
             fi
 
-            # Check if test results exist
-            echo "🔍 Checking for test results..."
+            # Check if test results exist from workspace
+            echo "🔍 Checking for test results from workspace..."
             if [ ! -d "apps/game/test-results" ]; then
               echo "❌ Test results directory not found: apps/game/test-results/"
-              echo "Available directories:"
-              ls -la apps/game/ || echo "Game directory not found"
-              exit 1
+              echo "Checking workspace root for test results..."
+              if [ -d "test-results" ]; then
+                echo "✅ Found test results in root directory, moving to expected location..."
+                mkdir -p apps/game/
+                mv test-results apps/game/
+              else
+                echo "❌ No test results found in workspace"
+                echo "Available directories at root:"
+                ls -la
+                exit 1
+              fi
             fi
 
             if [ -z "$(ls -A apps/game/test-results/*.xml 2>/dev/null)" ]; then
