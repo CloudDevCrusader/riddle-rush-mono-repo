@@ -68,3 +68,23 @@ variable "tags" {
   default     = {}
 }
 
+# SSR Lambda variables
+variable "enable_ssr_lambda" {
+  description = "Enable SSR deployment using AWS Lambda"
+  type        = bool
+  default     = false
+}
+
+variable "ssr_domain_name" {
+  description = "Custom domain for SSR endpoint (optional)"
+  type        = string
+  default     = ""
+}
+
+variable "ssr_certificate_arn" {
+  description = "ACM certificate ARN for SSR custom domain"
+  type        = string
+  default     = ""
+}
+
+

@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
   ],
-  ssr: false, // Keep SPA mode but with security disabled for tests
+  ssr: true, // Enable SSR for better SEO and faster first paint
 
   components: [
     {
@@ -98,6 +98,13 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   compatibilityDate: '2024-11-01',
+
+  // Nitro configuration for SSR deployment
+  nitro: {
+    preset: process.env.NITRO_PRESET || 'node-server',
+    serveStatic: true,
+    compressPublicAssets: true,
+  },
 
   vite: {
     resolve: {
