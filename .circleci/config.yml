@@ -49,7 +49,7 @@ jobs:
             # Conditionally enable corepack only if not already available
             if ! command -v pnpm &> /dev/null; then
               echo "pnpm not found, enabling corepack..."
-              corepack enable && corepack prepare pnpm@10.27.0 --activate
+              corepack enable && corepack prepare pnpm@10.28.0 --activate
             else
               echo "pnpm already available, skipping corepack setup"
             fi

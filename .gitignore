@@ -44,3 +44,7 @@ apps/docs/.output/
 apps/game/.output/
 apps/docs/.output/*.log
 **/.turbo/**
+
+# TypeScript build info
+*.tsbuildinfo
+**/tsconfig.tsbuildinfo
