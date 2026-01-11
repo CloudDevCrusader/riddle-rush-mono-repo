@@ -54,6 +54,35 @@ This directory contains scripts for deploying the Riddle Rush application to AWS
   ./scripts/deploy-infrastructure.sh production
   ```
 
+## Quality & Testing Scripts
+
+### Lint & Style Checks
+
+- **`check-lint-style.sh`** - Comprehensive linting and style checks
+
+  ```bash
+  # Check game app (default)
+  ./scripts/check-lint-style.sh
+
+  # Check all packages
+  ./scripts/check-lint-style.sh --all
+
+  # Auto-fix issues
+  ./scripts/check-lint-style.sh --fix
+
+  # Check specific package
+  ./scripts/check-lint-style.sh --scope shared
+  ```
+
+### Flaky Test Detection
+
+- **`upload-flaky-tests.sh`** - Upload test results to Trunk for flaky test detection
+
+  ```bash
+  # Upload test results (auto-detects test files)
+  ./scripts/upload-flaky-tests.sh
+  ```
+
 ## Workflow Examples
 
 **For AI Agents:** See [Agent Workflow Guide](docs/development/AGENT-WORKFLOW.md) for detailed development workflow.
