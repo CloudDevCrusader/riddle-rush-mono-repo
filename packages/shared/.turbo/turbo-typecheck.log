@@ -1,4 +1,5 @@
 
-> @riddle-rush/shared@1.0.0 typecheck /home/runner/work/riddle-rush-mono-repo/riddle-rush-mono-repo/packages/shared
+
+> @riddle-rush/shared@1.0.0 typecheck /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/packages/shared
 > tsc --noEmit
 

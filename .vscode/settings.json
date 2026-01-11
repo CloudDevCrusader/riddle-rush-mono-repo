@@ -9,7 +9,7 @@
   },
 
   // Nuxt & Vue Configuration
-  "nuxt.isNuxtApp": true,
+  "nuxt.isNuxtApp": false,
   "vue.server.hybridMode": true,
   "volar.tsconfig": ".nuxt/tsconfig.app.json",
   "volar.takeOverMode.enabled": false,
