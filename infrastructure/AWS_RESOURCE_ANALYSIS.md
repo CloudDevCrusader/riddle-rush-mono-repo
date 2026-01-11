@@ -13,7 +13,7 @@
 | ID             | Domain                       | Comment     | Status    |
 | -------------- | ---------------------------- | ----------- | --------- |
 | E2BNQ588XTOCIA | d6senybmuc7sp.cloudfront.net | Production  | ✅ Active |
-| E1ELWV312P4UJ8 | damnyy5niqrrd.cloudfront.net | Development | ✅ Active |
+| EXXXXXXXXXXXXX | dxxxxxxxxxx.cloudfront.net | Development | ✅ Active |
 
 **Analysis**: Both CloudFront distributions are correctly configured and active. No changes needed.
 
@@ -24,8 +24,8 @@
 | Bucket Name                         | Creation Date | Status    | CloudFront Connection     |
 | ----------------------------------- | ------------- | --------- | ------------------------- |
 | `riddle-rush-pwa`                   | 2026-01-05    | ⚠️ Legacy | ❌ None                   |
-| `riddle-rush-pwa-dev-720377205549`  | 2026-01-04    | ✅ Active | ✅ Development CloudFront |
-| `riddle-rush-pwa-prod-720377205549` | 2026-01-04    | ✅ Active | ✅ Production CloudFront  |
+| `riddle-rush-pwa-dev-XXXXXXXXXXXX`  | 2026-01-04    | ✅ Active | ✅ Development CloudFront |
+| `riddle-rush-pwa-prod-XXXXXXXXXXXX` | 2026-01-04    | ✅ Active | ✅ Production CloudFront  |
 
 #### Infrastructure Buckets
 
@@ -75,7 +75,7 @@
 
 ### Essential Infrastructure
 
-- ✅ `riddle-rush-pwa-dev-720377205549` - Development bucket (connected to dev CloudFront)
+- ✅ `riddle-rush-pwa-dev-XXXXXXXXXXXX` - Development bucket (connected to dev CloudFront)
 - ✅ `riddle-rush-pwa-prod-720377205549` - Production bucket (connected to prod CloudFront)
 - ✅ `riddle-rush-terraform-state-dev` - Terraform state management
 - ✅ `riddle-rush-terraform-state-prod` - Terraform state management
@@ -84,7 +84,7 @@
 ### Active Services
 
 - ✅ Production CloudFront (E2BNQ588XTOCIA)
-- ✅ Development CloudFront (E1ELWV312P4UJ8)
+- ✅ Development CloudFront (EXXXXXXXXXXXXX)
 
 ## ❌ Resources to Remove
 
@@ -176,7 +176,7 @@ After cleanup, verify:
 ```bash
 # Check CloudFront distributions still work
 aws cloudfront get-distribution --id E2BNQ588XTOCIA --query "Distribution.DistributionConfig.Enabled"
-aws cloudfront get-distribution --id E1ELWV312P4UJ8 --query "Distribution.DistributionConfig.Enabled"
+aws cloudfront get-distribution --id EXXXXXXXXXXXXX --query "Distribution.DistributionConfig.Enabled"
 
 # Check remaining buckets
 aws s3api list-buckets
