@@ -175,7 +175,7 @@ resource "aws_cloudfront_cache_policy" "static_assets" {
 resource "aws_cloudfront_cache_policy" "html_content" {
   name        = "${var.project_name}-html-content-cache-policy"
   comment     = "Cache policy for HTML content with shorter TTL"
-  default_ttl = 300 # 5 minutes
+  default_ttl = 300  # 5 minutes
   max_ttl     = 3600 # 1 hour
   min_ttl     = 0
 
@@ -204,14 +204,14 @@ resource "aws_cloudfront_response_headers_policy" "security_headers" {
   security_headers_config {
     content_security_policy {
       content_security_policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.google-analytics.com https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com; frame-src 'self' https://*.google-analytics.com https://*.googletagmanager.com; object-src 'none'; base-uri 'self'; form-action 'self';"
-      override = true
+      override                = true
     }
 
     strict_transport_security {
       access_control_max_age_sec = 63072000
-      include_subdomains        = true
-      preload                   = true
-      override                  = true
+      include_subdomains         = true
+      preload                    = true
+      override                   = true
     }
 
     xss_protection {
@@ -394,8 +394,8 @@ resource "aws_cloudfront_distribution" "website" {
     cache_policy_id = aws_cloudfront_cache_policy.static_assets.id
 
     min_ttl     = 0
-    default_ttl = 86400      # 1 day
-    max_ttl     = 31536000   # 1 year
+    default_ttl = 86400    # 1 day
+    max_ttl     = 31536000 # 1 year
 
     # Response headers policy for security
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security_headers.id
@@ -426,8 +426,8 @@ resource "aws_cloudfront_distribution" "website" {
     cache_policy_id = aws_cloudfront_cache_policy.html_content.id
 
     min_ttl     = 0
-    default_ttl = 300      # 5 minutes
-    max_ttl     = 3600     # 1 hour
+    default_ttl = 300  # 5 minutes
+    max_ttl     = 3600 # 1 hour
 
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security_headers.id
   }
@@ -480,24 +480,24 @@ resource "aws_cloudfront_distribution" "website" {
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
 
     min_ttl     = 0
-    default_ttl = 3600      # 1 hour
-    max_ttl     = 86400     # 1 day
+    default_ttl = 3600  # 1 hour
+    max_ttl     = 86400 # 1 day
 
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security_headers.id
   }
 
   # Custom error responses for SPA routing
   custom_error_response {
-    error_code         = 404
-    response_code      = 200
-    response_page_path = "/404.html"
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/404.html"
     error_caching_min_ttl = 300
   }
 
   custom_error_response {
-    error_code         = 403
-    response_code      = 200
-    response_page_path = "/index.html"
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
     error_caching_min_ttl = 300
   }
 

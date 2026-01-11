@@ -180,7 +180,7 @@ resource "aws_cloudfront_distribution" "website" {
     cache_policy_id = aws_cloudfront_cache_policy.html_edge_optimized.id
 
     min_ttl     = 0
-    default_ttl = 60 # 1 minute at edge
+    default_ttl = 60  # 1 minute at edge
     max_ttl     = 300 # 5 minutes max
   }
 
@@ -212,7 +212,7 @@ resource "aws_cloudfront_distribution" "website" {
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
 
     min_ttl     = 0
-    default_ttl = 60 # 1 minute
+    default_ttl = 60  # 1 minute
     max_ttl     = 300 # 5 minutes
   }
 
@@ -228,7 +228,7 @@ resource "aws_cloudfront_distribution" "website" {
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
 
     min_ttl     = 0
-    default_ttl = 300 # 5 minutes
+    default_ttl = 300  # 5 minutes
     max_ttl     = 1800 # 30 minutes
   }
 
@@ -250,16 +250,16 @@ resource "aws_cloudfront_distribution" "website" {
 
   # Custom error responses for SPA routing - Edge optimized
   custom_error_response {
-    error_code         = 404
-    response_code      = 200
-    response_page_path = "/404.html"
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/404.html"
     error_caching_min_ttl = 10 # Faster error recovery
   }
 
   custom_error_response {
-    error_code         = 403
-    response_code      = 200
-    response_page_path = "/index.html"
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
     error_caching_min_ttl = 10 # Faster error recovery
   }
 
@@ -277,7 +277,7 @@ resource "aws_cloudfront_distribution" "website" {
     for_each = var.certificate_arn == "" ? [1] : []
     content {
       cloudfront_default_certificate = true
-      minimum_protocol_version = "TLSv1.2_2021"
+      minimum_protocol_version       = "TLSv1.2_2021"
     }
   }
 

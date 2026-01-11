@@ -18,9 +18,9 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "terraform-state"
-      ManagedBy   = "Terraform"
-      Purpose     = "Terraform State Storage"
+      Project   = "terraform-state"
+      ManagedBy = "Terraform"
+      Purpose   = "Terraform State Storage"
     }
   }
 }
@@ -65,7 +65,7 @@ resource "aws_s3_bucket_public_access_block" "terraform_state" {
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
-  restrict_public_buckets  = true
+  restrict_public_buckets = true
 }
 
 # S3 Bucket Lifecycle Configuration
@@ -84,9 +84,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "terraform_state" {
 
 # DynamoDB Table for State Locking
 resource "aws_dynamodb_table" "terraform_state_lock" {
-  name           = var.dynamodb_table_name != "" ? var.dynamodb_table_name : "terraform-state-lock"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "LockID"
+  name         = var.dynamodb_table_name != "" ? var.dynamodb_table_name : "terraform-state-lock"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
 
   attribute {
     name = "LockID"

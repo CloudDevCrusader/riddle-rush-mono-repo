@@ -114,3 +114,62 @@ output "error_logs_dashboard_url" {
   value       = "https://console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.error_logs.dashboard_name}"
 }
 
+
+# WebSocket Outputs
+output "websocket_api_id" {
+  description = "WebSocket API Gateway ID"
+  value       = aws_apigatewayv2_api.websocket.id
+}
+
+output "websocket_api_endpoint" {
+  description = "WebSocket API Gateway Endpoint"
+  value       = aws_apigatewayv2_api.websocket.api_endpoint
+}
+
+output "websocket_url" {
+  description = "WebSocket Connection URL"
+  value       = aws_apigatewayv2_stage.websocket.invoke_url
+}
+
+# DynamoDB Outputs
+output "users_table_name" {
+  description = "Users DynamoDB Table Name"
+  value       = aws_dynamodb_table.users.name
+}
+
+output "leaderboard_table_name" {
+  description = "Leaderboard DynamoDB Table Name"
+  value       = aws_dynamodb_table.leaderboard.name
+}
+
+output "performance_table_name" {
+  description = "Performance Metrics DynamoDB Table Name"
+  value       = aws_dynamodb_table.performance_metrics.name
+}
+
+output "websocket_connections_table_name" {
+  description = "WebSocket Connections Table Name"
+  value       = aws_dynamodb_table.websocket_connections.name
+}
+
+# Lambda Outputs
+output "websocket_connect_function_name" {
+  description = "WebSocket Connect Lambda Function Name"
+  value       = aws_lambda_function.websocket_connect.function_name
+}
+
+output "websocket_message_function_name" {
+  description = "WebSocket Message Lambda Function Name"
+  value       = aws_lambda_function.websocket_message.function_name
+}
+
+# Dashboard Output
+output "performance_dashboard_name" {
+  description = "Performance CloudWatch Dashboard Name"
+  value       = aws_cloudwatch_dashboard.main.dashboard_name
+}
+
+output "performance_dashboard_url" {
+  description = "Performance CloudWatch Dashboard URL"
+  value       = "https://console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.main.dashboard_name}"
+}

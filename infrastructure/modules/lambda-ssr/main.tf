@@ -31,12 +31,12 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
 resource "aws_lambda_function" "ssr" {
   filename         = var.lambda_zip_path
   function_name    = "${var.project_name}-${var.environment}-ssr"
-  role            = aws_iam_role.lambda.arn
-  handler         = "index.handler"
+  role             = aws_iam_role.lambda.arn
+  handler          = "index.handler"
   source_code_hash = filebase64sha256(var.lambda_zip_path)
-  runtime         = var.lambda_runtime
-  memory_size     = var.lambda_memory
-  timeout         = var.lambda_timeout
+  runtime          = var.lambda_runtime
+  memory_size      = var.lambda_memory
+  timeout          = var.lambda_timeout
 
   environment {
     variables = {
@@ -101,10 +101,10 @@ resource "aws_apigatewayv2_api" "ssr" {
 
 # API Gateway Integration with Lambda
 resource "aws_apigatewayv2_integration" "ssr" {
-  api_id             = aws_apigatewayv2_api.ssr.id
-  integration_type   = "AWS_PROXY"
-  integration_uri    = aws_lambda_function.ssr.invoke_arn
-  integration_method = "POST"
+  api_id                 = aws_apigatewayv2_api.ssr.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.ssr.invoke_arn
+  integration_method     = "POST"
   payload_format_version = "2.0"
 }
 
@@ -124,14 +124,14 @@ resource "aws_apigatewayv2_stage" "default" {
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway.arn
     format = jsonencode({
-      requestId      = "$context.requestId"
-      ip             = "$context.identity.sourceIp"
-      requestTime    = "$context.requestTime"
-      httpMethod     = "$context.httpMethod"
-      routeKey       = "$context.routeKey"
-      status         = "$context.status"
-      protocol       = "$context.protocol"
-      responseLength = "$context.responseLength"
+      requestId               = "$context.requestId"
+      ip                      = "$context.identity.sourceIp"
+      requestTime             = "$context.requestTime"
+      httpMethod              = "$context.httpMethod"
+      routeKey                = "$context.routeKey"
+      status                  = "$context.status"
+      protocol                = "$context.protocol"
+      responseLength          = "$context.responseLength"
       integrationErrorMessage = "$context.integrationErrorMessage"
     })
   }
