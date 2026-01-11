@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 # Configuration
 BUCKETS_TO_REMOVE=(
   "riddle-rush-pwa"                          # Legacy production bucket
-  "riddle-rush-pwa-lambda-deployments-720377205549"  # Empty lambda deployments bucket
+  "riddle-rush-pwa-lambda-deployments-XXXXXXXXXXXX"  # Empty lambda deployments bucket
 )
 
 # Check if AWS CLI is available
