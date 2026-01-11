@@ -11,7 +11,15 @@
         class="back-btn tap-highlight no-select"
         @click="handleBack"
       >
-        <img src="/assets/alphabets/back.png" alt="Back" class="back-icon" />
+        <NuxtImg
+          src="/assets/alphabets/back.png"
+          alt="Back"
+          class="back-icon"
+          format="webp"
+          quality="85"
+          preset="thumbnail"
+          loading="eager"
+        />
       </button>
 
       <!-- Round Indicator -->
@@ -45,10 +53,14 @@
     <div class="game-container">
       <!-- Category Panel -->
       <div class="category-panel">
-        <img
+        <NuxtImg
           :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
           alt="Category"
           class="category-label-image"
+          format="webp"
+          quality="85"
+          preset="thumbnail"
+          loading="lazy"
         />
         <div class="category-label">CATEGORY</div>
         <div class="category-name">
@@ -121,7 +133,15 @@
         class="next-btn btn-primary tap-highlight no-select"
         @click="handleNext"
       >
-        <img src="/assets/alphabets/next.png" alt="Next" class="next-icon" />
+        <NuxtImg
+          src="/assets/alphabets/next.png"
+          alt="Next"
+          class="next-icon"
+          format="webp"
+          quality="85"
+          preset="thumbnail"
+          loading="lazy"
+        />
         <span class="next-text">NEXT</span>
       </button>
     </div>
@@ -296,7 +316,8 @@ useHead({
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/assets/alphabets/BACKGROUND.png');
+  /* Background image optimized via Nuxt Image in template */
+  /* background-image: url('/assets/alphabets/BACKGROUND.png'); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

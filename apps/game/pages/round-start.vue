@@ -1,7 +1,16 @@
 <template>
   <div class="round-start-page">
     <!-- Background Image -->
-    <img :src="`${baseUrl}assets/alphabets/BACKGROUND.png`" alt="Background" class="page-bg" />
+    <NuxtImg
+      :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
+      format="webp"
+      quality="80"
+      preset="background"
+      loading="eager"
+      preload
+    />
 
     <!-- Top Bar -->
     <div class="top-bar">

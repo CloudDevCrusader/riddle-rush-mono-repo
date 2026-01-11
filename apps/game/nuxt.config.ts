@@ -1,4 +1,5 @@
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
+import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 
 export default defineNuxtConfig({
   modules: [
@@ -11,6 +12,7 @@ export default defineNuxtConfig({
     '@nuxtjs/fontaine',
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
+    '@nuxt/image',
     'nuxt-security',
   ],
   ssr: false,
@@ -99,21 +101,47 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       // Inspector already enabled via devtools
+      // Note: Build plugins are conditionally loaded in shared config
+      ...(process.env.NODE_ENV === 'production'
+        ? (getBuildPlugins({ isDev: false }) as any)
+        : (getDevPlugins({ isDev: true }) as any)),
     ],
     optimizeDeps: {
       include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
       exclude: ['vue-demi'],
+      esbuildOptions: {
+        // Ensure lodash-es is tree-shaken properly
+        treeShaking: true,
+      },
     },
     build: {
       minify: process.env.NODE_ENV === 'production' ? 'esbuild' : false,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-vue': ['vue', 'pinia'],
-            'vendor-vueuse': ['@vueuse/core', '@vueuse/motion'],
-            'vendor-lodash': ['lodash-es'],
-            'vendor-i18n': ['@nuxtjs/i18n'],
+          manualChunks: (id) => {
+            // Better lodash tree-shaking - group all lodash functions together
+            if (id.includes('lodash-es')) {
+              return 'vendor-lodash'
+            }
+            // Other vendor chunks
+            if (id.includes('node_modules')) {
+              if (id.includes('vue') || id.includes('pinia')) {
+                return 'vendor-vue'
+              }
+              if (id.includes('@vueuse')) {
+                return 'vendor-vueuse'
+              }
+              if (id.includes('@nuxtjs/i18n')) {
+                return 'vendor-i18n'
+              }
+              return 'vendor'
+            }
           },
+        },
+        treeshake: {
+          moduleSideEffects: false,
+          propertyReadSideEffects: false,
+          tryCatchDeoptimization: false,
         },
       },
       chunkSizeWarningLimit: 1000, // Increase warning limit for chunks
@@ -285,6 +313,45 @@ export default defineNuxtConfig({
     devOptions: {
       enabled: true,
       type: 'module',
+    },
+  },
+
+  // Image optimization
+  image: {
+    quality: 85,
+    format: ['webp', 'avif', 'png'],
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      xxl: 1536,
+    },
+    providers: {
+      ipx: {},
+    },
+    presets: {
+      avatar: {
+        modifiers: {
+          format: 'webp',
+          width: 100,
+          height: 100,
+        },
+      },
+      background: {
+        modifiers: {
+          format: 'webp',
+          quality: 80,
+        },
+      },
+      thumbnail: {
+        modifiers: {
+          format: 'webp',
+          width: 200,
+          quality: 75,
+        },
+      },
     },
   },
 

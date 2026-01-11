@@ -1,6 +1,12 @@
 // Test setup file to ensure Vue reactivity system is properly initialized
 import { createApp } from 'vue'
 import { beforeEach, afterEach } from 'vitest'
+import * as VueExports from 'vue'
+import * as VueRouterExports from 'vue-router'
+import * as PiniaExports from 'pinia'
+
+// Make Vue, VueRouter, and Pinia exports globally available
+Object.assign(globalThis, VueExports, VueRouterExports, PiniaExports)
 
 // Ensure Vue reactivity system is properly initialized before each test
 beforeEach(() => {

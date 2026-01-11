@@ -6,7 +6,7 @@
     "@changesets/cli": "^2.27.9",
     "@pnpm/filter-workspace-packages": "^1.0.0",
     "@types/node": "^22.10.5",
-    "@vitest/coverage-v8": "^1.6.1",
+    "@vitest/coverage-v8": "^2.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
     "syncpack": "^13.0.0",

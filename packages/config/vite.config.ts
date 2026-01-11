@@ -40,9 +40,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         inspect({
           enabled: true,
           build: false,
-        })
+        }),
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
 
@@ -53,9 +54,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         VueDevTools({
           enabled: true,
           componentInspector: true,
-        })
+        }),
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
 
@@ -71,9 +73,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
           open: false,
           gzipSize: true,
           brotliSize: true,
-        }) as Plugin
+        }) as Plugin,
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
   }
@@ -97,9 +100,10 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         gzipSize: true,
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
-      }) as Plugin
+      }) as Plugin,
     )
-  } catch {
+  }
+  catch {
     // Plugin not installed, skip
   }
 
@@ -112,46 +116,87 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         ext: '.br',
         threshold: 10240, // Only compress files larger than 10KB
         deleteOriginFile: false,
-      })
+      }),
     )
-  } catch {
+  }
+  catch {
     // Plugin not installed, skip
   }
 
   try {
-    // Add lazy loading for images
-    const viteImagemin = require('vite-plugin-imagemin').default
+    // Add image optimization using modern Sharp-based plugin
+    const { imagemin } = require('@vheemstra/vite-plugin-imagemin')
     plugins.push(
-      viteImagemin({
-        gifsicle: {
-          optimizationLevel: 7,
-          interlaced: false,
+      imagemin({
+        // PNG optimization - high quality compression
+        png: {
+          quality: 85,
+          compressionLevel: 9,
         },
-        optipng: {
-          optimizationLevel: 7,
+        // JPEG optimization - good quality with smaller size
+        jpeg: {
+          quality: 85,
+          mozjpeg: true,
         },
-        mozjpeg: {
-          quality: 20,
+        // WebP conversion for better compression
+        webp: {
+          quality: 85,
         },
-        pngquant: {
-          quality: [0.8, 0.9],
-          speed: 4,
-        },
-        svgo: {
+        // SVG optimization
+        svg: {
+          multipass: true,
           plugins: [
             {
-              name: 'removeViewBox',
-            },
-            {
-              name: 'removeEmptyAttrs',
-              active: false,
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeViewBox: false,
+                  cleanupIds: false,
+                },
+              },
             },
           ],
         },
-      })
+      }),
     )
-  } catch {
-    // Plugin not installed, skip
+  }
+  catch {
+    // Fallback to old plugin if new one not available
+    try {
+      const viteImagemin = require('vite-plugin-imagemin').default
+      plugins.push(
+        viteImagemin({
+          gifsicle: {
+            optimizationLevel: 7,
+            interlaced: false,
+          },
+          optipng: {
+            optimizationLevel: 7,
+          },
+          mozjpeg: {
+            quality: 85, // Increased from 20 for better quality
+          },
+          pngquant: {
+            quality: [0.8, 0.9],
+            speed: 4,
+          },
+          svgo: {
+            plugins: [
+              {
+                name: 'removeViewBox',
+              },
+              {
+                name: 'removeEmptyAttrs',
+                active: false,
+              },
+            ],
+          },
+        }),
+      )
+    }
+    catch {
+      // Plugin not installed, skip
+    }
   }
 
   return plugins

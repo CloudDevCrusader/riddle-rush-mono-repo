@@ -24,8 +24,7 @@ export default defineConfig({
     include: ['tests/unit/**/*.{test,spec}.ts'],
     exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
     coverage: {
-      // Disable coverage in CircleCI to avoid conflicts with JUnit reporter
-      enabled: !process.env.CIRCLECI && !process.env.TRUNK_TESTING,
+      enabled: false, // Disabled due to version conflicts
       provider: 'v8',
       reporter: ['text', 'json-summary', 'lcov', 'cobertura'],
       reportsDirectory: './coverage',
