@@ -49,7 +49,7 @@ resource "aws_lambda_function" "error_logs_handler" {
 
   environment {
     variables = {
-      LOG_GROUP_NAME = aws_cloudwatch_log_group.error_logs.name
+      LOG_GROUP_NAME = "/aws/lambda/${var.project_name}-error-logs-handler"
       ENVIRONMENT    = var.environment
       APP_NAME       = var.project_name
     }

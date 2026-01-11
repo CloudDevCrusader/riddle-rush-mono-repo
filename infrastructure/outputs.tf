@@ -93,21 +93,7 @@ output "s3_acceleration_domain_name" {
 }
 
 # CloudWatch Error Logs API outputs
-output "error_logs_api_endpoint" {
-  description = "Endpoint for error logs API"
-  value       = "${aws_api_gateway_deployment.error_logs.invoke_url}logs"
-}
 
-output "error_logs_api_key" {
-  description = "API key for error logs API"
-  value       = aws_api_gateway_api_key.error_logs.value
-  sensitive   = true
-}
-
-output "cloudwatch_log_group_name" {
-  description = "CloudWatch log group name for error logs"
-  value       = aws_cloudwatch_log_group.error_logs.name
-}
 
 output "error_logs_dashboard_url" {
   description = "URL of the CloudWatch dashboard for error logs"

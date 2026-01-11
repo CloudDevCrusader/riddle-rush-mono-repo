@@ -11,9 +11,9 @@ PATTERNS=(
 
 	# AWS
 	'AKIA[0-9A-Z]{16}'
-	# Match AWS secret access key assignments with actual values (not variable references)
-	# Excludes lines where value starts with $ (variable reference)
-	'aws[_-]?secret[_-]?access[_-]?key\s*[=:]\s*[^$][^=]{15,}'
+	# Match AWS secret access key assignments with actual values (not variable references or placeholders)
+	# Excludes lines where value starts with $ (variable reference) or < (placeholder like <YOUR_SECRET_KEY>)
+	'aws[_-]?secret[_-]?access[_-]?key\s*[=:]\s*[^$<][^=]{15,}'
 
 	# Private keys
 	'-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----'
@@ -64,11 +64,17 @@ check_file() {
 	# Skip if file doesn't exist
 	[[ -f ${file} ]] || return 0
 
+	# Placeholder patterns to ignore (obvious fake credentials)
+	local placeholder_patterns='<YOUR_|YOUR_.*_HERE|REPLACE_ME|CHANGE_ME|EXAMPLE_'
+
 	for pattern in "${PATTERNS[@]}"; do
-		if grep -qiE "${pattern}" "${file}" 2>/dev/null; then
+		# Get matching lines and filter out placeholders in one go
+		matches=$(grep -niE "${pattern}" "${file}" 2>/dev/null | grep -viE "${placeholder_patterns}")
+		
+		if [[ -n ${matches} ]]; then
 			echo -e "${RED}BLOCKED${NC}: Potential secret found in ${file}"
 			echo "Pattern: ${pattern}"
-			grep -niE "${pattern}" "${file}" 2>/dev/null | head -3
+			echo "${matches}" | head -3
 			return 1
 		fi
 	done

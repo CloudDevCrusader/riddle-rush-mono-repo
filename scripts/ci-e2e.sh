@@ -11,6 +11,8 @@ if [[ -n "${BASE_URL}" ]]; then
 	pnpm exec playwright test
 else
 	echo "Running E2E tests against local build"
+	# Hint Nuxt build to skip minification for localhost test runs
+	export PLAYWRIGHT_TEST_BASE_URL="${PLAYWRIGHT_TEST_BASE_URL:-http://localhost:3000}"
 	pnpm run generate
 	pnpm exec playwright test
 fi
