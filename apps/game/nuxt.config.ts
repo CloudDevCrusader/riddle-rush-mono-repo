@@ -103,8 +103,8 @@ export default defineNuxtConfig({
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
       ...(process.env.NODE_ENV === 'production'
-        ? (getBuildPlugins({ isDev: false }) as any)
-        : (getDevPlugins({ isDev: true }) as any)),
+        ? (getBuildPlugins({ isDev: false }) as unknown as Plugin[])
+        : (getDevPlugins({ isDev: true }) as unknown as Plugin[])),
     ],
     optimizeDeps: {
       include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
@@ -112,6 +112,9 @@ export default defineNuxtConfig({
       esbuildOptions: {
         // Ensure lodash-es is tree-shaken properly
         treeShaking: true,
+        // Enable more aggressive optimizations
+        legalComments: 'none',
+        target: 'es2020',
       },
     },
     build: {
@@ -137,6 +140,9 @@ export default defineNuxtConfig({
               if (id.includes('idb')) {
                 return 'vendor-idb'
               }
+              if (id.includes('@capacitor')) {
+                return 'vendor-capacitor'
+              }
               return 'vendor'
             }
           },
@@ -145,9 +151,15 @@ export default defineNuxtConfig({
           moduleSideEffects: false,
           propertyReadSideEffects: false,
           tryCatchDeoptimization: false,
+          // More aggressive tree shaking
+          unknownGlobalSideEffects: false,
         },
       },
       chunkSizeWarningLimit: 1000, // Increase warning limit for chunks
+      // Enable CSS code splitting for better performance
+      cssCodeSplit: true,
+      // Enable sourcemap in development only
+      sourcemap: process.env.NODE_ENV !== 'production',
     },
   },
 

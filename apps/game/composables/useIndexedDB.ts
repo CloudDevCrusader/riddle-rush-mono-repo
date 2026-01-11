@@ -17,11 +17,17 @@ const LEADERBOARD_STORE = 'leaderboard'
 const SETTINGS_STORE = 'settings'
 
 let dbInstance: IDBPDatabase | null = null
+let dbPromise: Promise<IDBPDatabase> | null = null
 
 async function getDB() {
+  // Return cached instance if available
   if (dbInstance) return dbInstance
 
-  dbInstance = await openDB(DB_NAME, DB_VERSION, {
+  // Return existing promise if DB is being opened
+  if (dbPromise) return dbPromise
+
+  // Create new promise to open DB
+  dbPromise = openDB(DB_NAME, DB_VERSION, {
     upgrade(db, _oldVersion) {
       // Create object stores if they don't exist
       if (!db.objectStoreNames.contains(GAME_SESSION_STORE)) {
@@ -52,7 +58,14 @@ async function getDB() {
     },
   })
 
-  return dbInstance
+  try {
+    dbInstance = await dbPromise
+    dbPromise = null // Clear promise cache
+    return dbInstance
+  } catch (error) {
+    dbPromise = null // Clear promise cache on error
+    throw error
+  }
 }
 
 export function useIndexedDB() {
@@ -61,21 +74,28 @@ export function useIndexedDB() {
   const saveGameSession = async (session: GameSession) => {
     try {
       const db = await getDB()
-      // Serialize the session to ensure it's compatible with IndexedDB
-      const serialized = JSON.parse(JSON.stringify(session))
+
+      // Only serialize if the session is not already a plain object
+      const serialized =
+        session && typeof session === 'object' ? JSON.parse(JSON.stringify(session)) : session
+
+      // Use transaction for atomic operations
+      const tx = db.transaction([GAME_SESSION_STORE, GAME_SESSIONS_BY_ID_STORE], 'readwrite')
 
       // Save as current session
-      await db.put(GAME_SESSION_STORE, serialized, 'current')
+      await tx.objectStore(GAME_SESSION_STORE).put(serialized, 'current')
 
-      // Also save by ID for direct access
+      // Also save by ID for direct access if ID exists
       if (session.id) {
         try {
-          await db.put(GAME_SESSIONS_BY_ID_STORE, serialized)
+          await tx.objectStore(GAME_SESSIONS_BY_ID_STORE).put(serialized)
         } catch (idSaveError) {
           logger.warn('Failed to save session by ID (non-critical):', idSaveError)
           // Continue even if ID storage fails
         }
       }
+
+      await tx.done
     } catch (error) {
       logger.error('Error saving game session:', error)
       throw error // Re-throw to ensure calling code knows about the failure
@@ -133,8 +153,16 @@ export function useIndexedDB() {
       const db = await getDB()
       const index = db.transaction(GAME_HISTORY_STORE).store.index('startTime')
 
-      const sessions = await index.getAll()
-      return sessions.sort((a, b) => b.startTime - a.startTime).slice(0, limit)
+      // Use cursor for better performance with large datasets
+      const sessions: GameSession[] = []
+      let cursor = await index.openCursor(null, 'prev') // Start from end (newest first)
+
+      while (cursor && sessions.length < limit) {
+        sessions.push(cursor.value)
+        cursor = await cursor.continue()
+      }
+
+      return sessions
     } catch (error) {
       logger.error('Error getting game history:', error)
       return []
@@ -193,8 +221,16 @@ export function useIndexedDB() {
       const db = await getDB()
       const index = db.transaction(LEADERBOARD_STORE).store.index('score')
 
-      const entries = await index.getAll()
-      return entries.sort((a, b) => b.score - a.score).slice(0, limit)
+      // Use cursor for better performance with large datasets
+      const entries: LeaderboardEntry[] = []
+      let cursor = await index.openCursor(null, 'prev') // Start from highest scores
+
+      while (cursor && entries.length < limit) {
+        entries.push(cursor.value)
+        cursor = await cursor.continue()
+      }
+
+      return entries
     } catch (error) {
       logger.error('Error getting leaderboard:', error)
       return []

@@ -92,5 +92,41 @@ export const useLodashSync = () => {
       if (typeof value === 'object' && value !== null) return { ...value }
       return value
     },
+
+    // Lightweight shuffle implementation for small arrays
+    shuffle: <T>(array: T[]): T[] => {
+      if (!Array.isArray(array)) return []
+      const result = [...array]
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        const temp = result[i] as T
+        result[i] = result[j] as T
+        result[j] = temp as T
+      }
+      return result
+    },
+
+    // Lightweight sample implementation
+    sample: <T>(array: T[]): T => {
+      if (!Array.isArray(array) || array.length === 0)
+        throw new Error('Cannot sample from empty array')
+      return array[Math.floor(Math.random() * array.length)] as T
+    },
+
+    // Lightweight sampleSize implementation
+    sampleSize: <T>(array: T[], size: number = 1): T[] => {
+      if (!Array.isArray(array) || array.length === 0) return []
+      const result: T[] = []
+      const copy = [...array]
+      const take = Math.min(size, copy.length)
+
+      for (let i = 0; i < take; i++) {
+        const randomIndex = Math.floor(Math.random() * copy.length)
+        result.push(copy[randomIndex] as T)
+        copy.splice(randomIndex, 1)
+      }
+
+      return result
+    },
   }
 }
