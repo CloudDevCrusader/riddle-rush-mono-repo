@@ -70,7 +70,8 @@
     "trunk:flaky-tests": "./trunk flakytests",
     "agent:help": "bash scripts/agent-commands.sh",
     "agent:check": "pnpm run workspace:check",
-    "agent:fix": "pnpm run workspace:fix"
+    "agent:fix": "pnpm run workspace:fix",
+    "validate:locales": "node scripts/validate-locales.mjs"
   },
   "type": "module"
 }
