@@ -1,8 +1,8 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="7.179748000000001">
-<testsuite name="debug.spec.ts" timestamp="2026-01-11T12:26:44.136Z" hostname="mobile-chrome" tests="1" failures="0" skipped="0" time="5.746" errors="0">
-<testcase name="debug page load" classname="debug.spec.ts" time="5.746">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="7.034158000000001">
+<testsuite name="debug.spec.ts" timestamp="2026-01-11T12:32:59.922Z" hostname="mobile-chrome" tests="1" failures="0" skipped="0" time="5.796" errors="0">
+<testcase name="debug page load" classname="debug.spec.ts" time="5.796">
 <system-out>
-<![CDATA[PAGE ERROR: Cannot access 'nc' before initialization
+<![CDATA[PAGE ERROR: Cannot access 'NuxtPluginIndicator' before initialization
 
 === #__nuxt innerHTML length: [33m0[39m
 === Page contains .credits-page: [33mfalse[39m
