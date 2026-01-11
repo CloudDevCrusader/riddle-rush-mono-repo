@@ -421,7 +421,6 @@ export default defineNuxtConfig({
 
   // Security headers
   security: {
-    enabled: process.env.NODE_ENV === 'production', // Disable in dev/test for Playwright
     nonce: false, // Disable nonces for Playwright compatibility
     headers: {
       crossOriginEmbedderPolicy:

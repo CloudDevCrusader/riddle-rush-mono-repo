@@ -1,11 +1,18 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="7.034158000000001">
-<testsuite name="debug.spec.ts" timestamp="2026-01-11T12:32:59.922Z" hostname="mobile-chrome" tests="1" failures="0" skipped="0" time="5.796" errors="0">
-<testcase name="debug page load" classname="debug.spec.ts" time="5.796">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="9.333766">
+<testsuite name="_debug.spec.ts" timestamp="2026-01-11T12:41:38.687Z" hostname="mobile-chrome" tests="1" failures="0" skipped="0" time="8.695" errors="0">
+<testcase name="debug page load" classname="_debug.spec.ts" time="8.695">
 <system-out>
-<![CDATA[PAGE ERROR: Cannot access 'NuxtPluginIndicator' before initialization
+<![CDATA[BROWSER: Refused to apply style from 'http://localhost:3000/_nuxt/entry.B09iqDwq.css' because its MIME type ('application/json') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
+BROWSER: Refused to apply style from 'http://localhost:3000/_nuxt/vendor-vue.4hl-qMDa.css' because its MIME type ('application/json') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
+BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
+BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
+BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
+BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
 
 === #__nuxt innerHTML length: [33m0[39m
 === Page contains .credits-page: [33mfalse[39m
+
+[[ATTACHMENT|apps/game/test-results/_debug-debug-page-load-mobile-chrome/trace.zip]]
 ]]>
 </system-out>
 </testcase>
