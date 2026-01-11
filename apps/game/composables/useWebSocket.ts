@@ -48,7 +48,7 @@ export const useWebSocket = () => {
     connectionError.value = null
 
     try {
-      const socketUrl = process.dev ? 'http://localhost:3000' : window.location.origin
+      const socketUrl = import.meta.dev ? 'http://localhost:3000' : window.location.origin
 
       socket.value = io(socketUrl, {
         query: { userId: userId.value },
