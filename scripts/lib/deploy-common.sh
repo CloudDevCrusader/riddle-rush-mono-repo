@@ -53,7 +53,7 @@ terraform_init() {
 	if [[ ! -d "${terraform_dir}/.terraform" ]]; then
 		echo -e "${BLUE}Initializing Terraform...${NC}"
 		cd "${terraform_dir}" || {
-			echo -e "${RED}❌ Cannot cd to Terraform directory${ $terraform_d}ir${NC}"
+			echo -e "${RED}❌ Cannot cd to Terraform directory ${terraform_dir}${NC}"
 			exit 1
 		}
 		terraform init || {
@@ -76,13 +76,13 @@ terraform_plan_and_apply() {
 	fi
 
 	if ! command -v terraform &>/dev/null || [[ ! -d "${terraform_dir}" ]]; then
-		echo -e "\n${YELLOW}⚠️  Terraform not available or directory not fou${d: $terraform}_dir${NC}"
+		echo -e "\n${YELLOW}⚠️  Terraform not available or directory not found: ${terraform_dir}${NC}"
 		return 1
 	fi
 
 	echo -e "\n🏗️  Managing infrastructure with Terraform..."
 	cd "${terraform_dir}" || {
-		echo -e "${RED}❌ Cannot cd to Terraform directory${ $terraform_d}ir${NC}"
+		echo -e "${RED}❌ Cannot cd to Terraform directory ${terraform_dir}${NC}"
 		exit 1
 	}
 
@@ -175,7 +175,7 @@ load_terraform_outputs() {
 	fi
 
 	cd "${terraform_dir}" || {
-		echo -e "${RED}❌ Cannot cd to Terraform directory${ $terraform_d}ir${NC}"
+		echo -e "${RED}❌ Cannot cd to Terraform directory ${terraform_dir}${NC}"
 		return 1
 	}
 
@@ -401,7 +401,7 @@ check_git_branch() {
 	local current_branch=$(git rev-parse --abbrev-ref HEAD)
 
 	if [[ ! " ${allowed_branches} " =~ " ${current_branch} " ]]; then
-		echo -e "${YELLOW}⚠️  Warning: You are ${n '$current_br}anch' branch${NC}"
+		echo -e "${YELLOW}⚠️  Warning: You are on '${current_branch}' branch${NC}"
 		echo -e "${YELLOW}   Expected branches: ${allowed_branches}${NC}"
 		read -p "Continue anyway? (y/N) " -n 1 -r
 		echo
@@ -418,7 +418,7 @@ create_version_tag() {
 		return 0
 	fi
 
-	echo -e "\n${BLUE}🏷️  Creating version t${g: v$ve}rsion${NC}"
+	echo -e "\n${BLUE}🏷️  Creating version tag: v${version}${NC}"
 
 	# Update package.json version
 	pnpm version "${version}" --no-git-tag-version
@@ -440,5 +440,5 @@ push_version_tag() {
 
 	echo -e "\n${BLUE}📤 Pushing version tag to remote...${NC}"
 	git push origin "v${version}" || echo -e "${YELLOW}⚠️  Failed to push tag (may already exist)${NC}"
-	echo -e "${GREEN}✓ Tag${v$versi}on pushed${NC}"
+	echo -e "${GREEN}✓ Tag ${version} pushed${NC}"
 }
