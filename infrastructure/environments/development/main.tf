@@ -37,14 +37,14 @@ provider "aws" {
 # Use Blue-Green deployment module
 module "blue_green" {
   source = "../../modules/blue-green-deployment"
-  
+
   project_name    = var.project_name
   environment     = "development"
   aws_region      = var.aws_region
   domain_name     = var.domain_name
   certificate_arn = var.certificate_arn
   price_class     = var.cloudfront_price_class
-  use_green       = var.use_green  # Default: false (uses blue)
+  use_green       = var.use_green # Default: false (uses blue)
 }
 
 # Outputs

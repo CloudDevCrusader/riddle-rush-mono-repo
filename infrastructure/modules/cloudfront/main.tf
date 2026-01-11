@@ -173,22 +173,22 @@ resource "aws_cloudfront_distribution" "website" {
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
 
     min_ttl     = 0
-    default_ttl = 3600 # 1 hour
+    default_ttl = 3600  # 1 hour
     max_ttl     = 86400 # 1 day
   }
 
   # Custom error responses for SPA routing
   custom_error_response {
-    error_code         = 404
-    response_code      = 200
-    response_page_path = "/404.html"
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/404.html"
     error_caching_min_ttl = 300
   }
 
   custom_error_response {
-    error_code         = 403
-    response_code      = 200
-    response_page_path = "/index.html"
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
     error_caching_min_ttl = 300
   }
 

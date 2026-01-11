@@ -31,29 +31,29 @@ data "aws_region" "current" {}
 # Use the S3 module
 module "s3_website" {
   source = "../../modules/s3-website"
-  
-  bucket_name                     = "riddle-rush-prod-${data.aws_caller_identity.current.account_id}"
-  environment                     = "production"
-  enable_acceleration             = true  # Enable for production
-  versioning_enabled              = true
+
+  bucket_name                        = "riddle-rush-prod-${data.aws_caller_identity.current.account_id}"
+  environment                        = "production"
+  enable_acceleration                = true # Enable for production
+  versioning_enabled                 = true
   noncurrent_version_expiration_days = 30
 }
 
 # Use the Enhanced CloudFront module
 module "cloudfront_enhanced" {
   source = "../../modules/cloudfront-enhanced"
-  
+
   bucket_regional_domain_name = module.s3_website.bucket_regional_domain_name
   bucket_arn                  = module.s3_website.bucket_arn
   environment                 = "production"
-  
+
   # Domain is optional - can be added later
-  domain_name                 = "" # Optional: "your-domain.com"
-  certificate_arn             = "" # Optional: ACM certificate ARN
-  
-  price_class                 = "PriceClass_100" # Can use PriceClass_200 for global
-  default_cache_ttl           = 31536000 # 1 year for production
-  html_cache_ttl              = 60       # 1 minute at edge
+  domain_name     = "" # Optional: "your-domain.com"
+  certificate_arn = "" # Optional: ACM certificate ARN
+
+  price_class       = "PriceClass_100" # Can use PriceClass_200 for global
+  default_cache_ttl = 31536000         # 1 year for production
+  html_cache_ttl    = 60               # 1 minute at edge
 }
 
 # Outputs

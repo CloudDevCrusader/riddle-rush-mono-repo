@@ -19,10 +19,10 @@ resource "aws_api_gateway_resource" "logs" {
 
 # API Gateway Method
 resource "aws_api_gateway_method" "logs_post" {
-  rest_api_id   = aws_api_gateway_rest_api.error_logs.id
-  resource_id   = aws_api_gateway_resource.logs.id
-  http_method   = "POST"
-  authorization = "NONE"
+  rest_api_id      = aws_api_gateway_rest_api.error_logs.id
+  resource_id      = aws_api_gateway_resource.logs.id
+  http_method      = "POST"
+  authorization    = "NONE"
   api_key_required = true
 }
 
@@ -49,9 +49,9 @@ resource "aws_lambda_function" "error_logs_handler" {
 
   environment {
     variables = {
-      LOG_GROUP_NAME  = aws_cloudwatch_log_group.error_logs.name
-      ENVIRONMENT     = var.environment
-      APP_NAME        = var.project_name
+      LOG_GROUP_NAME = aws_cloudwatch_log_group.error_logs.name
+      ENVIRONMENT    = var.environment
+      APP_NAME       = var.project_name
     }
   }
 }
@@ -128,8 +128,8 @@ resource "aws_api_gateway_api_key" "error_logs" {
 
 # API Gateway Usage Plan
 resource "aws_api_gateway_usage_plan" "error_logs" {
-  name         = "${var.project_name}-error-logs-usage-plan"
-  description  = "Usage plan for error logs API"
+  name        = "${var.project_name}-error-logs-usage-plan"
+  description = "Usage plan for error logs API"
   api_stages {
     api_id = aws_api_gateway_rest_api.error_logs.id
     stage  = aws_api_gateway_deployment.error_logs.stage_name
@@ -162,71 +162,71 @@ resource "aws_cloudwatch_dashboard" "error_logs" {
   dashboard_body = jsonencode({
     widgets = [
       {
-        type = "metric"
-        x = 0
-        y = 0
-        width = 12
+        type   = "metric"
+        x      = 0
+        y      = 0
+        width  = 12
         height = 6
         properties = {
           metrics = [
             ["AWS/ApiGateway", "Count", "ApiName", aws_api_gateway_rest_api.error_logs.name, "Stage", var.environment, "Resource", "logs", "Method", "POST"]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "Error Log API Requests"
-          period = 300
-          stat = "Sum"
+          title   = "Error Log API Requests"
+          period  = 300
+          stat    = "Sum"
         }
       },
       {
-        type = "metric"
-        x = 12
-        y = 0
-        width = 12
+        type   = "metric"
+        x      = 12
+        y      = 0
+        width  = 12
         height = 6
         properties = {
           metrics = [
             ["AWS/ApiGateway", "Latency", "ApiName", aws_api_gateway_rest_api.error_logs.name, "Stage", var.environment, "Resource", "logs", "Method", "POST"]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "Error Log API Latency"
-          period = 300
-          stat = "Average"
+          title   = "Error Log API Latency"
+          period  = 300
+          stat    = "Average"
         }
       },
       {
-        type = "metric"
-        x = 0
-        y = 6
-        width = 12
+        type   = "metric"
+        x      = 0
+        y      = 6
+        width  = 12
         height = 6
         properties = {
           metrics = [
             ["AWS/ApiGateway", "5XXError", "ApiName", aws_api_gateway_rest_api.error_logs.name, "Stage", var.environment, "Resource", "logs", "Method", "POST"]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "Error Log API 5XX Errors"
-          period = 300
-          stat = "Sum"
+          title   = "Error Log API 5XX Errors"
+          period  = 300
+          stat    = "Sum"
         }
       },
       {
-        type = "metric"
-        x = 12
-        y = 6
-        width = 12
+        type   = "metric"
+        x      = 12
+        y      = 6
+        width  = 12
         height = 6
         properties = {
           metrics = [
             ["AWS/Lambda", "Errors", "FunctionName", aws_lambda_function.error_logs_handler.function_name]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "Lambda Error Processing Errors"
-          period = 300
-          stat = "Sum"
+          title   = "Lambda Error Processing Errors"
+          period  = 300
+          stat    = "Sum"
         }
       }
     ]

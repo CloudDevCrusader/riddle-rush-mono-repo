@@ -89,10 +89,10 @@ resource "aws_cloudwatch_dashboard" "cloudfront_monitoring" {
   dashboard_body = jsonencode({
     widgets = [
       {
-        type = "metric"
-        x = 0
-        y = 0
-        width = 12
+        type   = "metric"
+        x      = 0
+        y      = 0
+        width  = 12
         height = 6
         properties = {
           metrics = [
@@ -100,63 +100,63 @@ resource "aws_cloudwatch_dashboard" "cloudfront_monitoring" {
             [".", "BytesDownloaded", ".", ".", ".", "."],
             [".", "BytesUploaded", ".", ".", ".", "."]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "CloudFront Traffic"
-          period = 300
-          stat = "Sum"
+          title   = "CloudFront Traffic"
+          period  = 300
+          stat    = "Sum"
         }
       },
       {
-        type = "metric"
-        x = 12
-        y = 0
-        width = 12
+        type   = "metric"
+        x      = 12
+        y      = 0
+        width  = 12
         height = 6
         properties = {
           metrics = [
             ["AWS/CloudFront", "4xxErrorRate", "DistributionId", aws_cloudfront_distribution.website.id, "Region", "Global"],
             [".", "5xxErrorRate", ".", ".", ".", "."]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "CloudFront Error Rates"
-          period = 300
-          stat = "Average"
+          title   = "CloudFront Error Rates"
+          period  = 300
+          stat    = "Average"
         }
       },
       {
-        type = "metric"
-        x = 0
-        y = 6
-        width = 12
+        type   = "metric"
+        x      = 0
+        y      = 6
+        width  = 12
         height = 6
         properties = {
           metrics = [
             ["AWS/CloudFront", "TotalErrorRate", "DistributionId", aws_cloudfront_distribution.website.id, "Region", "Global"]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "CloudFront Total Error Rate"
-          period = 60
-          stat = "Average"
+          title   = "CloudFront Total Error Rate"
+          period  = 60
+          stat    = "Average"
         }
       },
       {
-        type = "metric"
-        x = 12
-        y = 6
-        width = 12
+        type   = "metric"
+        x      = 12
+        y      = 6
+        width  = 12
         height = 6
         properties = {
           metrics = [
             ["AWS/CloudFront", "CacheHitRate", "DistributionId", aws_cloudfront_distribution.website.id, "Region", "Global"]
           ]
-          view = "timeSeries"
+          view    = "timeSeries"
           stacked = false
-          title = "CloudFront Cache Hit Rate"
-          period = 300
-          stat = "Average"
+          title   = "CloudFront Cache Hit Rate"
+          period  = 300
+          stat    = "Average"
         }
       }
     ]
@@ -178,7 +178,7 @@ resource "aws_cloudwatch_metric_alarm" "s3_bucket_size" {
   ok_actions          = [aws_sns_topic.cloudfront_alarms.arn]
 
   dimensions = {
-    BucketName = aws_s3_bucket.website.id
+    BucketName  = aws_s3_bucket.website.id
     StorageType = "StandardStorage"
   }
 }

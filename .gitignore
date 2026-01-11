@@ -51,3 +51,7 @@ apps/docs/.output/*.log
 
 # Test results
 junit.xml
+
+# WebSocket Lambda deployment packages
+infrastructure/lambda/websocket/*.zip
+infrastructure/lambda/websocket/*/node_modules
