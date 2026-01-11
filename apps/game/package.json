@@ -57,7 +57,7 @@
     "vitest": "^2.1.8",
     "vue-tsc": "^2.0.0"
   },
-  "packageManager": "pnpm@10.26.2",
+  "packageManager": "pnpm@10.28.0",
   "private": true,
   "scripts": {
     "android:build": "pnpm android:sync && npx cap copy android && npx cap sync android",
