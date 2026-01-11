@@ -18,6 +18,10 @@ distros/
 y**/dist/
 playwright-report/
 **/playwright-report/
+
+# Trunk CLI cache
+.trunk-cache/
+**/.trunk-cache/
 test-results/
 **/test-results/
 .output/
