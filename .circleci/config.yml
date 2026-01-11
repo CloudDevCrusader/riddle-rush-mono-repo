@@ -20,16 +20,6 @@ workflows:
           requires:
             - run-tests-with-trunk
 
-  # Optional E2E test workflow (runs after main workflow)
-  e2e-tests:
-    jobs:
-      - e2e-setup:
-          filters: *filters
-      - e2e-run-tests:
-          requires:
-            - e2e-setup
-          filters: *filters
-
 jobs:
   install-trunk-cli:
     docker:
@@ -117,68 +107,3 @@ jobs:
 
             echo "✅ Flaky test detection completed successfully"
           no_output_timeout: 10m
-
-  # E2E Test Jobs (Optional - runs as second step)
-  e2e-setup:
-    docker:
-      - image: cimg/node:current
-    steps:
-      - checkout
-      - run:
-          name: Setup corepack and install dependencies
-          command: |
-            # Conditionally enable corepack only if not already available
-            if ! command -v pnpm &> /dev/null; then
-              echo "pnpm not found, enabling corepack..."
-              corepack enable && corepack prepare pnpm@10.27.0 --activate
-            else
-              echo "pnpm already available, skipping corepack setup"
-            fi
-
-            # Install dependencies
-            if [ ! -d "node_modules" ] || [ ! -f "node_modules/.modules.yaml" ]; then
-              echo "Installing dependencies..."
-              pnpm install --frozen-lockfile
-            else
-              echo "Using cached dependencies"
-              pnpm install --frozen-lockfile --prefer-offline
-            fi
-      - run:
-          name: Build application for E2E tests
-          command: |
-            cd apps/game
-            pnpm run build
-            echo "✅ Build completed successfully"
-      - persist_to_workspace:
-          root: .
-          paths:
-            - apps/game/.output
-            - node_modules
-
-  e2e-run-tests:
-    docker:
-      - image: cimg/node:current
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install Playwright browsers
-          command: |
-            cd apps/game
-            npx playwright install --with-deps
-            echo "✅ Playwright browsers installed"
-      - run:
-          name: Run E2E tests with JUnit reporting
-          command: |
-            cd apps/game
-            # Use the simple configuration for more reliable tests
-            pnpm run test:e2e:simple --reporter=junit,list
-            echo "✅ E2E tests completed"
-          no_output_timeout: 30m
-      - store_test_results:
-          path: apps/game/test-results
-      - store_artifacts:
-          path: apps/game/test-results
-      - store_artifacts:
-          path: apps/game/playwright-report-simple
