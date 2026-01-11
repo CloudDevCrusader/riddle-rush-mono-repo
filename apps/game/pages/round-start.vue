@@ -13,9 +13,9 @@
 
     <!-- Main Container -->
     <div class="container">
-      <!-- Dual Wheels Phase -->
+      <!-- Dual Wheels Phase (only shown if feature is enabled) -->
       <transition name="wheel-fade">
-        <div v-if="!wheelsComplete" class="wheels-container">
+        <div v-if="isFortuneWheelEnabled && !wheelsComplete" class="wheels-container">
           <div class="wheel-wrapper">
             <div class="wheel-label">
               {{ $t('common.category', 'Category') }}
@@ -50,9 +50,12 @@
         </div>
       </transition>
 
-      <!-- Selected Values Display Phase -->
+      <!-- Selected Values Display Phase (only shown if fortune wheel was used) -->
       <transition name="results-fade">
-        <div v-if="wheelsComplete && !startingGame" class="results-display">
+        <div
+          v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
+          class="results-display"
+        >
           <div class="result-item animate-scale-in">
             <div class="result-label">
               {{ $t('common.category', 'Category') }}
@@ -94,6 +97,7 @@ import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/s
 const { baseUrl, t } = usePageSetup()
 const { goToGame } = useNavigation()
 const { gameStore } = useGameState()
+const { isFortuneWheelEnabled } = useFeatureFlags()
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const selectedCategory = ref<Category | null>(null)
@@ -101,6 +105,11 @@ const selectedLetter = ref<string | null>(null)
 const displayCategories = ref<Category[]>([])
 const categoryWheelRef = ref()
 const letterWheelRef = ref()
+
+const categorySpinComplete = ref(false)
+const letterSpinComplete = ref(false)
+const wheelsComplete = ref(false)
+const startingGame = ref(false)
 
 const categorySpinComplete = ref(false)
 const letterSpinComplete = ref(false)
@@ -145,6 +154,20 @@ onMounted(async () => {
   // Fetch all categories
   await gameStore.fetchCategories()
   const allCategories = gameStore.categories
+
+  // If fortune wheel is disabled, skip directly to game
+  if (!isFortuneWheelEnabled.value) {
+    // Select random category and letter
+    const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
+    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
+
+    selectedCategory.value = randomCategory
+    selectedLetter.value = randomLetter
+
+    // Start game immediately
+    await startGame()
+    return
+  }
 
   // Select up to 12 categories for the wheel
   displayCategories.value = allCategories.slice(0, 12)
@@ -216,12 +239,22 @@ const startGame = async () => {
       gameStore.selectedLetter = null
     }
 
-    // Navigate to game
-    await goToGame()
+    // Navigate to game with game ID
+    const gameId = gameStore.currentSession?.id
+    if (gameId) {
+      await goToGame(gameId)
+    } else {
+      await goToGame()
+    }
+
+    // CRITICAL: Ensure spinner is turned off on success
+    startingGame.value = false
   } catch (error) {
     const logger = useLogger()
     logger.error('Failed to start game:', error)
     startingGame.value = false
+    // Show error to user
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
   }
 }
 

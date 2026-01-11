@@ -8,8 +8,9 @@ import type {
 } from '@riddle-rush/types/game'
 
 const DB_NAME = 'riddle-rush-db'
-const DB_VERSION = 2
+const DB_VERSION = 3
 const GAME_SESSION_STORE = 'gameSession'
+const GAME_SESSIONS_BY_ID_STORE = 'gameSessionsById'
 const GAME_HISTORY_STORE = 'gameHistory'
 const STATISTICS_STORE = 'statistics'
 const LEADERBOARD_STORE = 'leaderboard'
@@ -25,6 +26,9 @@ async function getDB() {
       // Create object stores if they don't exist
       if (!db.objectStoreNames.contains(GAME_SESSION_STORE)) {
         db.createObjectStore(GAME_SESSION_STORE)
+      }
+      if (!db.objectStoreNames.contains(GAME_SESSIONS_BY_ID_STORE)) {
+        db.createObjectStore(GAME_SESSIONS_BY_ID_STORE, { keyPath: 'id' })
       }
       if (!db.objectStoreNames.contains(GAME_HISTORY_STORE)) {
         const historyStore = db.createObjectStore(GAME_HISTORY_STORE, {
@@ -59,10 +63,22 @@ export function useIndexedDB() {
       const db = await getDB()
       // Serialize the session to ensure it's compatible with IndexedDB
       const serialized = JSON.parse(JSON.stringify(session))
+
+      // Save as current session
       await db.put(GAME_SESSION_STORE, serialized, 'current')
-    }
-    catch (error) {
+
+      // Also save by ID for direct access
+      if (session.id) {
+        try {
+          await db.put(GAME_SESSIONS_BY_ID_STORE, serialized)
+        } catch (idSaveError) {
+          logger.warn('Failed to save session by ID (non-critical):', idSaveError)
+          // Continue even if ID storage fails
+        }
+      }
+    } catch (error) {
       logger.error('Error saving game session:', error)
+      throw error // Re-throw to ensure calling code knows about the failure
     }
   }
 
@@ -71,9 +87,19 @@ export function useIndexedDB() {
       const db = await getDB()
       const session = await db.get(GAME_SESSION_STORE, 'current')
       return session || null
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error getting game session:', error)
+      return null
+    }
+  }
+
+  const getGameSessionById = async (sessionId: string): Promise<GameSession | null> => {
+    try {
+      const db = await getDB()
+      const session = await db.get(GAME_SESSIONS_BY_ID_STORE, sessionId)
+      return session || null
+    } catch (error) {
+      logger.error('Error getting game session by ID:', error)
       return null
     }
   }
@@ -82,8 +108,7 @@ export function useIndexedDB() {
     try {
       const db = await getDB()
       await db.delete(GAME_SESSION_STORE, 'current')
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error clearing game session:', error)
     }
   }
@@ -98,8 +123,7 @@ export function useIndexedDB() {
       }
 
       await tx.done
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error saving game history:', error)
     }
   }
@@ -111,8 +135,7 @@ export function useIndexedDB() {
 
       const sessions = await index.getAll()
       return sessions.sort((a, b) => b.startTime - a.startTime).slice(0, limit)
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error getting game history:', error)
       return []
     }
@@ -122,8 +145,7 @@ export function useIndexedDB() {
     try {
       const db = await getDB()
       await db.clear(GAME_HISTORY_STORE)
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error clearing game history:', error)
     }
   }
@@ -133,8 +155,7 @@ export function useIndexedDB() {
       const db = await getDB()
       const stats = await db.get(STATISTICS_STORE, 'current')
       return stats || null
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error getting statistics:', error)
       return null
     }
@@ -144,8 +165,7 @@ export function useIndexedDB() {
     try {
       const db = await getDB()
       await db.put(STATISTICS_STORE, stats, 'current')
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error saving statistics:', error)
     }
   }
@@ -175,8 +195,7 @@ export function useIndexedDB() {
 
       const entries = await index.getAll()
       return entries.sort((a, b) => b.score - a.score).slice(0, limit)
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error getting leaderboard:', error)
       return []
     }
@@ -186,8 +205,7 @@ export function useIndexedDB() {
     try {
       const db = await getDB()
       await db.put(LEADERBOARD_STORE, entry)
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error saving leaderboard entry:', error)
     }
   }
@@ -197,8 +215,7 @@ export function useIndexedDB() {
       const db = await getDB()
       const settings = await db.get(SETTINGS_STORE, 'current')
       return settings || null
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error getting settings:', error)
       return null
     }
@@ -208,8 +225,7 @@ export function useIndexedDB() {
     try {
       const db = await getDB()
       await db.put(SETTINGS_STORE, settings, 'current')
-    }
-    catch (error) {
+    } catch (error) {
       logger.error('Error saving settings:', error)
     }
   }
@@ -226,6 +242,7 @@ export function useIndexedDB() {
   return {
     saveGameSession,
     getGameSession,
+    getGameSessionById,
     clearGameSession,
     saveGameHistory,
     getGameHistory,

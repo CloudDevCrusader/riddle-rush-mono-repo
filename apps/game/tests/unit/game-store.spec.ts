@@ -11,10 +11,13 @@ const mockSaveGameHistory = vi.fn().mockResolvedValue(undefined)
 const mockGetGameHistory = vi.fn().mockResolvedValue([])
 const mockUpdateStatistics = vi.fn().mockResolvedValue(undefined)
 
+const mockGetGameSessionById = vi.fn().mockResolvedValue(null)
+
 vi.mock('~/composables/useIndexedDB', () => ({
   useIndexedDB: () => ({
     saveGameSession: mockSaveGameSession,
     getGameSession: mockGetGameSession,
+    getGameSessionById: mockGetGameSessionById,
     saveGameHistory: mockSaveGameHistory,
     getGameHistory: mockGetGameHistory,
   }),
@@ -46,6 +49,7 @@ describe('Game Store', () => {
     fetchMock.mockClear()
     mockGetGameSession.mockResolvedValue(null)
     mockGetGameHistory.mockResolvedValue([])
+    mockGetGameSessionById.mockResolvedValue(null)
   })
 
   afterEach(() => {
@@ -896,6 +900,99 @@ describe('Game Store', () => {
         expect(store.players).toHaveLength(0)
         expect(store.currentSession).toBeDefined()
       })
+    })
+  })
+
+  describe('Load Session By ID', () => {
+    beforeEach(() => {
+      vi.clearAllMocks()
+      // Mock is already defined at the top level
+      mockGetGameSessionById.mockResolvedValue(null)
+    })
+
+    it('should load session by ID', async () => {
+      const store = useGameStore()
+      const mockSession = {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        category: mockCategories[0],
+        startTime: Date.now(),
+        endTime: null,
+        currentLetter: 'A',
+        answer: '',
+        timeSpent: 0,
+        players: [],
+        currentPlayerIndex: 0,
+        rounds: [],
+        currentRoundIndex: 0,
+      }
+
+      mockGetGameSessionById.mockResolvedValue(mockSession)
+
+      const result = await store.loadSessionById(mockSession.id)
+
+      expect(mockGetGameSessionById).toHaveBeenCalledWith(mockSession.id)
+      expect(result).toEqual(mockSession)
+      expect(store.currentSession).toEqual(mockSession)
+    })
+
+    it('should throw error when session not found', async () => {
+      const store = useGameStore()
+      const gameId = 'non-existent-id'
+
+      mockGetGameSessionById.mockResolvedValue(null)
+
+      await expect(store.loadSessionById(gameId)).rejects.toThrow('Failed to load game session')
+    })
+
+    it('should handle IndexedDB errors', async () => {
+      const store = useGameStore()
+      const gameId = '123e4567-e89b-12d3-a456-426614174000'
+
+      mockGetGameSessionById.mockRejectedValue(new Error('Database error'))
+
+      await expect(store.loadSessionById(gameId)).rejects.toThrow('Failed to load game session')
+    })
+
+    it('should load session with UUID format', async () => {
+      const store = useGameStore()
+      const uuidGameId = '550e8400-e29b-41d4-a716-446655440000'
+      const mockSession = {
+        id: uuidGameId,
+        category: mockCategories[1],
+        startTime: Date.now(),
+        endTime: null,
+        currentLetter: 'B',
+        answer: '',
+        timeSpent: 0,
+        players: [
+          { name: 'Alice', currentAnswer: '', roundScores: [], totalScore: 0 },
+          { name: 'Bob', currentAnswer: '', roundScores: [], totalScore: 0 },
+        ],
+        currentPlayerIndex: 0,
+        rounds: [],
+        currentRoundIndex: 0,
+      }
+
+      mockGetGameSessionById.mockResolvedValue(mockSession)
+
+      const result = await store.loadSessionById(uuidGameId)
+
+      expect(result.id).toBe(uuidGameId)
+      expect(result.players).toHaveLength(2)
+    })
+
+    it('should throw descriptive error with session ID', async () => {
+      const store = useGameStore()
+      const gameId = 'test-game-123'
+
+      mockGetGameSessionById.mockResolvedValue(null)
+
+      try {
+        await store.loadSessionById(gameId)
+        expect.fail('Should have thrown an error')
+      } catch (error: any) {
+        expect(error.message).toContain('Failed to load game session')
+      }
     })
   })
 })
