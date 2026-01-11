@@ -189,10 +189,10 @@ export default defineNuxtConfig({
     },
   },
 
-  // Image optimization
+  // Image optimization - Enhanced for better performance
   image: {
-    quality: 85,
-    format: ['webp', 'avif', 'png'],
+    quality: 80, // Reduced from 85 for better compression
+    format: ['webp', 'avif'],
     screens: {
       xs: 320,
       sm: 640,
@@ -204,11 +204,22 @@ export default defineNuxtConfig({
     // Explicitly use sharp for image processing
     sharp: {
       enabled: true,
+      // Advanced sharp options for better compression
+      quality: 80,
+      progressive: true,
+      withoutEnlargement: true,
+      withoutReduction: false,
     },
     providers: {
       ipx: {
         // Enable lazy loading by default
         lazy: true,
+        // Add loading="lazy" attribute
+        loading: 'lazy',
+        // Enable responsive images
+        responsive: true,
+        // Use modern formats
+        format: ['webp', 'avif'],
       },
     },
     presets: {
@@ -217,20 +228,20 @@ export default defineNuxtConfig({
           format: 'webp',
           width: 100,
           height: 100,
-          quality: 80,
+          quality: 75, // Reduced for better performance
         },
       },
       background: {
         modifiers: {
           format: 'webp',
-          quality: 75,
+          quality: 70, // Reduced for better performance
         },
       },
       thumbnail: {
         modifiers: {
           format: 'webp',
           width: 200,
-          quality: 75,
+          quality: 70, // Reduced for better performance
         },
       },
       // New optimized presets
@@ -239,14 +250,24 @@ export default defineNuxtConfig({
           format: 'webp',
           width: 64,
           height: 64,
-          quality: 85,
+          quality: 80, // Reduced for better performance
         },
       },
       hero: {
         modifiers: {
           format: 'webp',
-          quality: 80,
+          quality: 75, // Reduced for better performance
           width: 1200,
+        },
+      },
+      // New: Low quality image placeholder (LQIP) preset
+      lqip: {
+        modifiers: {
+          format: 'webp',
+          quality: 20,
+          width: 20,
+          height: 20,
+          blur: 5,
         },
       },
     },
