@@ -197,7 +197,7 @@ export const usePerformance = () => {
    */
   const logReport = () => {
     const allMetrics = getAllMetrics()
-     
+
     console.group('📊 Performance Report')
 
     Object.entries(allMetrics).forEach(([name, metric]) => {
@@ -223,7 +223,6 @@ export const usePerformance = () => {
     }
 
     console.groupEnd()
-     
   }
 
   /**
@@ -232,7 +231,6 @@ export const usePerformance = () => {
   const getMemoryUsage = () => {
     if (typeof window === 'undefined') return null
 
-     
     const memory = (performance as any).memory
     if (!memory) return null
 

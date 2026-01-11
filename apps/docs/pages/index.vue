@@ -5,38 +5,23 @@
       <p>Complete guide to design, architecture, development, and infrastructure</p>
     </div>
     <div class="docs-grid">
-      <NuxtLink
-        to="/docs/intro"
-        class="docs-card"
-      >
+      <NuxtLink to="/docs/intro" class="docs-card">
         <h2>Introduction</h2>
         <p>Get started with Riddle Rush</p>
       </NuxtLink>
-      <NuxtLink
-        to="/docs/design/overview"
-        class="docs-card"
-      >
+      <NuxtLink to="/docs/design/overview" class="docs-card">
         <h2>Design</h2>
         <p>Design system, colors, typography</p>
       </NuxtLink>
-      <NuxtLink
-        to="/docs/architecture/overview"
-        class="docs-card"
-      >
+      <NuxtLink to="/docs/architecture/overview" class="docs-card">
         <h2>Architecture</h2>
         <p>System design and patterns</p>
       </NuxtLink>
-      <NuxtLink
-        to="/docs/development/getting-started"
-        class="docs-card"
-      >
+      <NuxtLink to="/docs/development/getting-started" class="docs-card">
         <h2>Development</h2>
         <p>Development guide and patterns</p>
       </NuxtLink>
-      <NuxtLink
-        to="/docs/infrastructure/overview"
-        class="docs-card"
-      >
+      <NuxtLink to="/docs/infrastructure/overview" class="docs-card">
         <h2>Infrastructure</h2>
         <p>Terraform and AWS setup</p>
       </NuxtLink>

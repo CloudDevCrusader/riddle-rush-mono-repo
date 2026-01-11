@@ -29,13 +29,13 @@
       <div class="controls-card">
         <h2>Controls</h2>
         <div class="button-group">
-          <button @click="handleConnect" :disabled="isConnected" class="btn btn-primary">
+          <button :disabled="isConnected" class="btn btn-primary" @click="handleConnect">
             Connect
           </button>
-          <button @click="handleDisconnect" :disabled="!isConnected" class="btn btn-danger">
+          <button :disabled="!isConnected" class="btn btn-danger" @click="handleDisconnect">
             Disconnect
           </button>
-          <button @click="handlePing" :disabled="!isConnected" class="btn btn-secondary">
+          <button :disabled="!isConnected" class="btn btn-secondary" @click="handlePing">
             Ping Server
           </button>
         </div>
@@ -44,21 +44,13 @@
       <div class="actions-card">
         <h2>Actions</h2>
         <div class="action-buttons">
-          <button
-            @click="testPerformanceLog"
-            :disabled="!isConnected"
-            class="btn btn-info"
-          >
+          <button :disabled="!isConnected" class="btn btn-info" @click="testPerformanceLog">
             📊 Log Performance
           </button>
-          <button
-            @click="testLeaderboardUpdate"
-            :disabled="!isConnected"
-            class="btn btn-success"
-          >
+          <button :disabled="!isConnected" class="btn btn-success" @click="testLeaderboardUpdate">
             🏆 Update Leaderboard
           </button>
-          <button @click="testGetStats" :disabled="!isConnected" class="btn btn-warning">
+          <button :disabled="!isConnected" class="btn btn-warning" @click="testGetStats">
             📈 Get User Stats
           </button>
         </div>
@@ -66,13 +58,13 @@
 
       <div class="logs-card">
         <h2>Activity Log</h2>
-        <div class="logs" ref="logsContainer">
+        <div ref="logsContainer" class="logs">
           <div v-for="(log, index) in logs" :key="index" class="log-entry" :class="log.type">
             <span class="timestamp">{{ formatTime(log.timestamp) }}</span>
             <span class="message">{{ log.message }}</span>
           </div>
         </div>
-        <button @click="clearLogs" class="btn btn-sm">Clear Logs</button>
+        <button class="btn btn-sm" @click="clearLogs">Clear Logs</button>
       </div>
     </div>
   </div>
