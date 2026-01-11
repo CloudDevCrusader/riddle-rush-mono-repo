@@ -1,18 +1,18 @@
 <template>
   <div class="credits-page">
     <!-- Background Image -->
-    <img :src="`${baseUrl}assets/credits/BACKGROUND.png`" alt="Background" class="page-bg" />
+    <img :src="`${baseUrl}assets/main-menu/BACKGROUND.png`" alt="Background" class="page-bg" />
 
     <!-- Back Button -->
     <button class="back-btn tap-highlight no-select" @click="goBack">
-      <img :src="`${baseUrl}assets/credits/back.png`" alt="Back" />
+      <img :src="`${baseUrl}assets/language/back.png`" alt="Back" />
     </button>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Title -->
       <div class="title-container animate-fade-in">
-        <img :src="`${baseUrl}assets/credits/CREDITS.png`" alt="CREDITS" class="title-image" />
+        <img :src="`${baseUrl}assets/main-menu/CREDITS.png`" alt="CREDITS" class="title-image" />
       </div>
 
       <!-- Credits Panel -->
@@ -46,7 +46,7 @@
 
       <!-- OK Button -->
       <button class="ok-btn tap-highlight no-select animate-slide-up" @click="goBack">
-        <img :src="`${baseUrl}assets/credits/ok.png`" alt="OK" />
+        <img :src="`${baseUrl}assets/leaderboard/ok.png`" alt="OK" />
       </button>
     </div>
   </div>
