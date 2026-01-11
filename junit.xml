@@ -1,18 +1,271 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="9.333766">
-<testsuite name="_debug.spec.ts" timestamp="2026-01-11T12:41:38.687Z" hostname="mobile-chrome" tests="1" failures="0" skipped="0" time="8.695" errors="0">
-<testcase name="debug page load" classname="_debug.spec.ts" time="8.695">
+<testsuites id="" name="" tests="7" failures="7" skipped="0" errors="0" time="72.40598200000001">
+<testsuite name="tests/features/credits.feature.spec.js" timestamp="2026-01-11T13:13:29.380Z" hostname="mobile-chrome" tests="4" failures="4" skipped="0" time="141.798" errors="0">
+<testcase name="Credits Page › Credits page loads successfully" classname="tests/features/credits.feature.spec.js" time="10.827">
+<failure message="credits.feature.spec.js:6:3 Credits page loads successfully" type="FAILURE">
+<![CDATA[  [mobile-chrome] › tests/features/credits.feature.spec.js:6:3 › Credits Page › Credits page loads successfully › Then I should see ".title-image" 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.title-image')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.title-image')
+
+
+       at ../tests/steps/common.steps.ts:18
+
+      16 | // Visibility checks
+      17 | Then('I should see {string}', async ({ page }, selector: string) => {
+    > 18 |   await expect(page.locator(selector)).toBeVisible({ timeout: 10000 })
+         |                                        ^
+      19 | })
+      20 |
+      21 | Then('I should not see {string}', async ({ page }, selector: string) => {
+        at Object.<anonymous> (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/steps/common.steps.ts:18:40)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+        at BddStepInvoker.invoke (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/.features-gen/tests/features/credits.feature.spec.js:8:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/tests-features-credits.fea-1234c-its-page-loads-successfully-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
 <system-out>
-<![CDATA[BROWSER: Refused to apply style from 'http://localhost:3000/_nuxt/entry.B09iqDwq.css' because its MIME type ('application/json') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
-BROWSER: Refused to apply style from 'http://localhost:3000/_nuxt/vendor-vue.4hl-qMDa.css' because its MIME type ('application/json') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
-BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
-BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
-BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
-BROWSER: Failed to load resource: the server responded with a status of 500 (Server Error)
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/tests-features-credits.fea-1234c-its-page-loads-successfully-mobile-chrome/test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Credits Page › Display team credits" classname="tests/features/credits.feature.spec.js" time="10.844">
+<failure message="credits.feature.spec.js:12:3 Display team credits" type="FAILURE">
+<![CDATA[  [mobile-chrome] › tests/features/credits.feature.spec.js:12:3 › Credits Page › Display team credits › Then I should see ".credits-panel" 
 
-=== #__nuxt innerHTML length: [33m0[39m
-=== Page contains .credits-page: [33mfalse[39m
+    Error: expect(locator).toBeVisible() failed
 
-[[ATTACHMENT|apps/game/test-results/_debug-debug-page-load-mobile-chrome/trace.zip]]
+    Locator: locator('.credits-panel')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.credits-panel')
+
+
+       at ../tests/steps/common.steps.ts:18
+
+      16 | // Visibility checks
+      17 | Then('I should see {string}', async ({ page }, selector: string) => {
+    > 18 |   await expect(page.locator(selector)).toBeVisible({ timeout: 10000 })
+         |                                        ^
+      19 | })
+      20 |
+      21 | Then('I should not see {string}', async ({ page }, selector: string) => {
+        at Object.<anonymous> (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/steps/common.steps.ts:18:40)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+        at BddStepInvoker.invoke (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/.features-gen/tests/features/credits.feature.spec.js:14:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/tests-features-credits.fea-47151-s-Page-Display-team-credits-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/tests-features-credits.fea-47151-s-Page-Display-team-credits-mobile-chrome/test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Credits Page › Back button navigation" classname="tests/features/credits.feature.spec.js" time="60.066">
+<failure message="credits.feature.spec.js:21:3 Back button navigation" type="FAILURE">
+<![CDATA[  [mobile-chrome] › tests/features/credits.feature.spec.js:21:3 › Credits Page › Back button navigation › When I click ".back-btn" 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.back-btn')
+
+
+       at ../tests/steps/common.steps.ts:40
+
+      38 | // Click actions
+      39 | When('I click {string}', async ({ page }, selector: string) => {
+    > 40 |   await page.locator(selector).click()
+         |                                ^
+      41 |   await page.waitForTimeout(500)
+      42 | })
+      43 |
+        at Object.<anonymous> (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/steps/common.steps.ts:40:32)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+        at BddStepInvoker.invoke (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/.features-gen/tests/features/credits.feature.spec.js:23:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/tests-features-credits.fea-5e915-Page-Back-button-navigation-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/tests-features-credits.fea-5e915-Page-Back-button-navigation-mobile-chrome/test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Credits Page › OK button navigation" classname="tests/features/credits.feature.spec.js" time="60.061">
+<failure message="credits.feature.spec.js:27:3 OK button navigation" type="FAILURE">
+<![CDATA[  [mobile-chrome] › tests/features/credits.feature.spec.js:27:3 › Credits Page › OK button navigation › When I click ".ok-btn" 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.ok-btn')
+
+
+       at ../tests/steps/common.steps.ts:40
+
+      38 | // Click actions
+      39 | When('I click {string}', async ({ page }, selector: string) => {
+    > 40 |   await page.locator(selector).click()
+         |                                ^
+      41 |   await page.waitForTimeout(500)
+      42 | })
+      43 |
+        at Object.<anonymous> (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/steps/common.steps.ts:40:32)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+        at BddStepInvoker.invoke (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/.features-gen/tests/features/credits.feature.spec.js:29:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/tests-features-credits.fea-0e8f7-s-Page-OK-button-navigation-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/tests-features-credits.fea-0e8f7-s-Page-OK-button-navigation-mobile-chrome/test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests/features/game-flow.feature.spec.js" timestamp="2026-01-11T13:13:29.380Z" hostname="mobile-chrome" tests="3" failures="3" skipped="0" time="130.957" errors="0">
+<testcase name="Game Flow › Navigate to players page" classname="tests/features/game-flow.feature.spec.js" time="60.066">
+<failure message="game-flow.feature.spec.js:6:3 Navigate to players page" type="FAILURE">
+<![CDATA[  [mobile-chrome] › tests/features/game-flow.feature.spec.js:6:3 › Game Flow › Navigate to players page › When I click ".play-btn" 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.play-btn')
+
+
+       at ../tests/steps/common.steps.ts:40
+
+      38 | // Click actions
+      39 | When('I click {string}', async ({ page }, selector: string) => {
+    > 40 |   await page.locator(selector).click()
+         |                                ^
+      41 |   await page.waitForTimeout(500)
+      42 | })
+      43 |
+        at Object.<anonymous> (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/steps/common.steps.ts:40:32)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+        at BddStepInvoker.invoke (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/.features-gen/tests/features/game-flow.feature.spec.js:8:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/tests-features-game-flow.f-41c40-ow-Navigate-to-players-page-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/tests-features-game-flow.f-41c40-ow-Navigate-to-players-page-mobile-chrome/test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Game Flow › Single player game elements" classname="tests/features/game-flow.feature.spec.js" time="10.829">
+<failure message="game-flow.feature.spec.js:12:3 Single player game elements" type="FAILURE">
+<![CDATA[  [mobile-chrome] › tests/features/game-flow.feature.spec.js:12:3 › Game Flow › Single player game elements › Then I should see ".riddle-display, .question" 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.riddle-display, .question')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.riddle-display, .question')
+
+
+       at ../tests/steps/common.steps.ts:18
+
+      16 | // Visibility checks
+      17 | Then('I should see {string}', async ({ page }, selector: string) => {
+    > 18 |   await expect(page.locator(selector)).toBeVisible({ timeout: 10000 })
+         |                                        ^
+      19 | })
+      20 |
+      21 | Then('I should not see {string}', async ({ page }, selector: string) => {
+        at Object.<anonymous> (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/steps/common.steps.ts:18:40)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+        at BddStepInvoker.invoke (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/.features-gen/tests/features/game-flow.feature.spec.js:14:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/tests-features-game-flow.f-855bb-Single-player-game-elements-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/tests-features-game-flow.f-855bb-Single-player-game-elements-mobile-chrome/test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Game Flow › Type answer in game" classname="tests/features/game-flow.feature.spec.js" time="60.062">
+<failure message="game-flow.feature.spec.js:18:3 Type answer in game" type="FAILURE">
+<![CDATA[  [mobile-chrome] › tests/features/game-flow.feature.spec.js:18:3 › Game Flow › Type answer in game › When I type "Berlin" into "input[type='text'], .answer-input" 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[type=\'text\'], .answer-input')
+
+
+       at ../tests/steps/common.steps.ts:55
+
+      53 | // Input actions
+      54 | When('I type {string} into {string}', async ({ page }, text: string, selector: string) => {
+    > 55 |   await page.locator(selector).fill(text)
+         |                                ^
+      56 | })
+      57 |
+      58 | Then(
+        at Object.<anonymous> (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/tests/steps/common.steps.ts:55:32)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+        at BddStepInvoker.invoke (/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/node_modules/.pnpm/playwright-bdd@8.4.2_@playwright+test@1.57.0/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+        at /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/apps/game/.features-gen/tests/features/game-flow.feature.spec.js:20:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/tests-features-game-flow.f-052d3-me-Flow-Type-answer-in-game-mobile-chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/tests-features-game-flow.f-052d3-me-Flow-Type-answer-in-game-mobile-chrome/test-failed-1.png]]
 ]]>
 </system-out>
 </testcase>
