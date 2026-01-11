@@ -8,7 +8,7 @@
 
 ## 📊 Current CloudFront Configuration Analysis
 
-### Current Setup (Production: E2BNQ588XTOCIA)
+### Current Setup (Production: EXXXXXXXXXXXXX)
 
 **Strengths:**
 
@@ -280,7 +280,7 @@ ordered_cache_behavior {
 1. **Cache Hit Ratio**
 
    ```bash
-   aws cloudfront get-distribution --id E2BNQ588XTOCIA --query "Distribution.DistributionConfig"
+   aws cloudfront get-distribution --id EXXXXXXXXXXXXX --query "Distribution.DistributionConfig"
    ```
 
    **Target**: >90% for static assets, >70% for HTML

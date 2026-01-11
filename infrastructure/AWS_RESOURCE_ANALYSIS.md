@@ -12,7 +12,7 @@
 
 | ID             | Domain                       | Comment     | Status    |
 | -------------- | ---------------------------- | ----------- | --------- |
-| E2BNQ588XTOCIA | d6senybmuc7sp.cloudfront.net | Production  | ✅ Active |
+| EXXXXXXXXXXXXX | dxxxxxxxxxx.cloudfront.net | Production  | ✅ Active |
 | EXXXXXXXXXXXXX | dxxxxxxxxxx.cloudfront.net | Development | ✅ Active |
 
 **Analysis**: Both CloudFront distributions are correctly configured and active. No changes needed.
@@ -38,7 +38,7 @@
 
 | Bucket Name                                       | Purpose            | Status              |
 | ------------------------------------------------- | ------------------ | ------------------- |
-| `riddle-rush-pwa-lambda-deployments-720377205549` | Lambda deployments | ❌ Empty, unused    |
+| `riddle-rush-pwa-lambda-deployments-XXXXXXXXXXXX` | Lambda deployments | ❌ Empty, unused    |
 | `riddlerush-docs`                                 | Documentation      | ⚠️ Different naming |
 
 ## 🎯 Issues Identified
@@ -55,7 +55,7 @@
 
 ### 2. Empty Lambda Deployments Bucket
 
-**Bucket**: `riddle-rush-pwa-lambda-deployments-720377205549`
+**Bucket**: `riddle-rush-pwa-lambda-deployments-XXXXXXXXXXXX`
 
 - **Created**: 2026-01-03
 - **Status**: Completely empty (0 objects)
@@ -76,14 +76,14 @@
 ### Essential Infrastructure
 
 - ✅ `riddle-rush-pwa-dev-XXXXXXXXXXXX` - Development bucket (connected to dev CloudFront)
-- ✅ `riddle-rush-pwa-prod-720377205549` - Production bucket (connected to prod CloudFront)
+- ✅ `riddle-rush-pwa-prod-XXXXXXXXXXXX` - Production bucket (connected to prod CloudFront)
 - ✅ `riddle-rush-terraform-state-dev` - Terraform state management
 - ✅ `riddle-rush-terraform-state-prod` - Terraform state management
 - ✅ `riddlerush-docs` - Documentation files
 
 ### Active Services
 
-- ✅ Production CloudFront (E2BNQ588XTOCIA)
+- ✅ Production CloudFront (EXXXXXXXXXXXXX)
 - ✅ Development CloudFront (EXXXXXXXXXXXXX)
 
 ## ❌ Resources to Remove
@@ -95,7 +95,7 @@
    - **Risk**: Low (not connected to any service)
    - **Savings**: ~$0.23/month (S3 storage costs)
 
-2. **`riddle-rush-pwa-lambda-deployments-720377205549`** - Empty lambda bucket
+2. **`riddle-rush-pwa-lambda-deployments-XXXXXXXXXXXX`** - Empty lambda bucket
    - **Size**: 0 objects
    - **Risk**: None (completely empty)
    - **Savings**: Minimal (but reduces complexity)
@@ -128,7 +128,7 @@ _Note: Actual savings may vary based on usage patterns_
    aws s3 rm s3://riddle-rush-pwa --recursive
 
    # Empty the lambda deployments bucket (already empty)
-   aws s3 rm s3://riddle-rush-pwa-lambda-deployments-720377205549 --recursive
+   aws s3 rm s3://riddle-rush-pwa-lambda-deployments-XXXXXXXXXXXX --recursive
    ```
 
 3. **Remove Buckets**
@@ -138,7 +138,7 @@ _Note: Actual savings may vary based on usage patterns_
    aws s3api delete-bucket --bucket riddle-rush-pwa
 
    # Remove lambda deployments bucket
-   aws s3api delete-bucket --bucket riddle-rush-pwa-lambda-deployments-720377205549
+   aws s3api delete-bucket --bucket riddle-rush-pwa-lambda-deployments-XXXXXXXXXXXX
    ```
 
 4. **Verify Cleanup**
@@ -175,7 +175,7 @@ After cleanup, verify:
 
 ```bash
 # Check CloudFront distributions still work
-aws cloudfront get-distribution --id E2BNQ588XTOCIA --query "Distribution.DistributionConfig.Enabled"
+aws cloudfront get-distribution --id EXXXXXXXXXXXXX --query "Distribution.DistributionConfig.Enabled"
 aws cloudfront get-distribution --id EXXXXXXXXXXXXX --query "Distribution.DistributionConfig.Enabled"
 
 # Check remaining buckets
@@ -220,7 +220,7 @@ After:
 ### Immediate Actions
 
 1. ✅ **Remove `riddle-rush-pwa`** - Legacy bucket not in use
-2. ✅ **Remove `riddle-rush-pwa-lambda-deployments-720377205549`** - Empty, unused bucket
+2. ✅ **Remove `riddle-rush-pwa-lambda-deployments-XXXXXXXXXXXX`** - Empty, unused bucket
 
 ### Future Improvements
 
