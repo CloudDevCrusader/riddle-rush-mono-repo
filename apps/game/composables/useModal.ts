@@ -1,15 +1,14 @@
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 
 /**
  * Composable for managing modal state
  * Provides reusable modal logic with Vue 3 Composition API
  */
-
-export function useModal(initialState = false) {
+export function useModal<T = any>(initialState = false) {
   const isOpen = ref(initialState)
-  const data = ref<any>(null)
+  const data = ref<T | null>(null)
 
-  const open = (modalData?: any) => {
+  const open = (modalData?: T) => {
     isOpen.value = true
     if (modalData !== undefined) {
       data.value = modalData
@@ -45,38 +44,36 @@ export function useModal(initialState = false) {
  * Composable for managing multiple modals
  */
 export function useModals<T extends string>(modalNames: T[]) {
-  // Create initial object with all modal properties
-  const initialModals: Record<string, ReturnType<typeof useModal>> = {}
+  // Create a simple object to store modals with proper typing
+  const modals = {} as Record<T, ReturnType<typeof useModal>>
+
+  // Initialize all modals
   modalNames.forEach((name) => {
-    initialModals[name] = useModal()
+    modals[name] = useModal()
   })
 
-  const modals = reactive<Record<T, ReturnType<typeof useModal>>>(initialModals as any)
-
-  const openModal = (name: T, data?: any) => {
-    // TypeScript can't guarantee T is a key, but we know it is from initialization
-
-    ;(modals as any)[name].open(data)
+  const openModal = <D = any>(name: T, data?: D) => {
+    if (modals[name]) {
+      modals[name].open(data)
+    }
   }
 
   const closeModal = (name: T) => {
-    // TypeScript can't guarantee T is a key, but we know it is from initialization
-
-    ;(modals as any)[name].close()
+    if (modals[name]) {
+      modals[name].close()
+    }
   }
 
   const closeAll = () => {
     modalNames.forEach((name) => {
-      // TypeScript can't guarantee T is a key, but we know it is from initialization
-
-      ;(modals as any)[name].close()
+      if (modals[name]) {
+        modals[name].close()
+      }
     })
   }
 
   return {
-    // TypeScript can't represent the complex union type, so we use a type assertion
-
-    modals: modals as any,
+    modals,
     openModal,
     closeModal,
     closeAll,
