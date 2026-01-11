@@ -1,4 +1,4 @@
-import { ROUTES } from '@riddle-rush/shared/routes'
+import { ROUTES, getGameRoute, getResultsRoute } from '@riddle-rush/shared/routes'
 import { useLoading } from './useLoading'
 
 /**
@@ -41,8 +41,10 @@ export function useNavigation() {
     goHome: () => navigateWithLoading(ROUTES.HOME, true),
     goToPlayers: () => navigateWithLoading(ROUTES.PLAYERS, true),
     goToRoundStart: () => navigateWithLoading(ROUTES.ROUND_START, true),
-    goToGame: () => navigateWithLoading(ROUTES.GAME, true),
-    goToResults: () => navigateWithLoading(ROUTES.RESULTS, true),
+    goToGame: (gameId?: string) =>
+      navigateWithLoading(gameId ? getGameRoute(gameId) : ROUTES.GAME, true),
+    goToResults: (gameId?: string) =>
+      navigateWithLoading(gameId ? getResultsRoute(gameId) : ROUTES.RESULTS, true),
     goToLeaderboard: () => navigateWithLoading(ROUTES.LEADERBOARD, true),
     goToSettings: () => navigateWithLoading(ROUTES.SETTINGS, true),
     goToLanguage: () => navigateWithLoading(ROUTES.LANGUAGE, true),

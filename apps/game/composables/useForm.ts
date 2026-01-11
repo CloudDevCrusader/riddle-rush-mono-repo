@@ -1,3 +1,5 @@
+import { ref, reactive, readonly, computed } from 'vue'
+
 /**
  * Composable for form handling with Vue 3 Composition API
  * Provides validation, submission, and error handling
@@ -14,16 +16,16 @@ export interface FieldConfig<T = unknown> {
 }
 
 export function useForm<T extends Record<string, unknown>>(fields: Record<keyof T, FieldConfig>) {
-  // Form state - use any for reactive to avoid type issues
-  const values = reactive({} as any) as T
-  const errors = reactive({} as Record<string, string>)
-  const touched = reactive({} as Record<string, boolean>)
+  // Form state with proper typing
+  const values = reactive({} as T)
+  const errors = reactive({} as Record<keyof T, string>)
+  const touched = reactive({} as Record<keyof T, boolean>)
   const isSubmitting = ref(false)
 
   // Initialize values
   Object.keys(fields).forEach((key) => {
-    ;(values as any)[key] = fields[key as keyof T].initialValue
-    ;(touched as any)[key] = false
+    values[key as keyof T] = fields[key as keyof T].initialValue
+    touched[key as keyof T] = false
   })
 
   /**
@@ -31,7 +33,7 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
    */
   const validateField = (fieldName: keyof T): boolean => {
     const field = fields[fieldName]
-    const value = (values as any)[fieldName]
+    const value = values[fieldName]
 
     if (!field.rules || field.rules.length === 0) {
       return true
@@ -45,7 +47,7 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
     }
 
     // Use undefined instead of delete to avoid dynamic delete
-    errors[fieldName as string] = undefined as any
+    errors[fieldName as keyof T] = undefined
     return true
   }
 
@@ -69,11 +71,11 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
    * Handle field change
    */
   const handleChange = (fieldName: keyof T, value: unknown) => {
-    ;(values as any)[fieldName] = value
-    ;(touched as any)[fieldName] = true
+    values[fieldName] = value as T[keyof T]
+    touched[fieldName] = true
 
     // Validate on change if already touched
-    if ((touched as any)[fieldName]) {
+    if (touched[fieldName]) {
       validateField(fieldName)
     }
   }
@@ -82,7 +84,7 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
    * Handle field blur
    */
   const handleBlur = (fieldName: keyof T) => {
-    ;(touched as any)[fieldName] = true
+    touched[fieldName] = true
     validateField(fieldName)
   }
 
@@ -92,7 +94,7 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
   const handleSubmit = async (onSubmit: (values: T) => Promise<void> | void): Promise<boolean> => {
     // Mark all fields as touched
     Object.keys(fields).forEach((key) => {
-      ;(touched as any)[key] = true
+      touched[key as keyof T] = true
     })
 
     // Validate all fields
@@ -119,9 +121,9 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
   const reset = () => {
     Object.keys(fields).forEach((key) => {
       const fieldKey = key as keyof T
-      ;(values as any)[fieldKey] = fields[fieldKey].initialValue
-      ;(touched as any)[fieldKey] = false
-      errors[fieldKey as string] = undefined as any
+      values[fieldKey] = fields[fieldKey].initialValue
+      touched[fieldKey] = false
+      errors[fieldKey as keyof T] = undefined
     })
     isSubmitting.value = false
   }
@@ -130,14 +132,14 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
    * Set field value programmatically
    */
   const setValue = (fieldName: keyof T, value: unknown) => {
-    ;(values as any)[fieldName] = value
+    values[fieldName] = value as T[keyof T]
   }
 
   /**
    * Set field error programmatically
    */
   const setError = (fieldName: keyof T, message: string) => {
-    errors[fieldName as string] = message
+    errors[fieldName] = message
   }
 
   // Computed properties

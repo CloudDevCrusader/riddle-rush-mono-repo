@@ -1,9 +1,16 @@
 import { defineConfig } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    AutoImport({
+      imports: ['vue', 'vue-router', 'pinia'],
+      dts: false,
+    }),
+  ],
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./', import.meta.url)),

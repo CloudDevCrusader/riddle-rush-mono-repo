@@ -102,6 +102,10 @@ import { SCORE_INCREMENT, NAVIGATION_DELAY_MS } from '@riddle-rush/shared/consta
 const { baseUrl, toast, t, goBack } = usePageSetup()
 const { goToGame, goToLeaderboard: navigateToLeaderboard } = useNavigation()
 const { gameStore, players } = useGameState()
+const route = useRoute()
+
+// Handle game ID from route parameter
+const gameId = computed(() => route.params.gameId as string | undefined)
 
 // Loading state for save operation
 const isLoading = ref(false)
@@ -134,7 +138,11 @@ const decreaseScore = (index: number) => {
 }
 
 const goToPrevious = () => {
-  goToGame()
+  if (gameId.value) {
+    goToGame(gameId.value)
+  } else {
+    goToGame()
+  }
 }
 
 const goToLeaderboard = async () => {

@@ -180,7 +180,7 @@ export function getBuildConfig() {
       // Source maps only in development
       sourcemap: process.env.NODE_ENV !== 'production',
       // Minification options
-      minify: true,
+      minify: process.env.NODE_ENV !== 'production',
       terserOptions: {
         compress: {
           drop_console: process.env.NODE_ENV === 'production',

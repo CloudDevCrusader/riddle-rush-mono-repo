@@ -2,21 +2,3 @@
 > @riddle-rush/config@1.0.0 lint /home/cloudcrusader/projects/riddle-rush-nuxt-pwa/packages/config
 > eslint .
 
-
-/home/cloudcrusader/projects/riddle-rush-nuxt-pwa/packages/config/vite.config.ts
-   43:11  error  Missing trailing comma                                                @stylistic/comma-dangle
-   45:5   error  Closing curly brace appears on the same line as the subsequent block  @stylistic/brace-style
-   56:11  error  Missing trailing comma                                                @stylistic/comma-dangle
-   58:5   error  Closing curly brace appears on the same line as the subsequent block  @stylistic/brace-style
-   74:21  error  Missing trailing comma                                                @stylistic/comma-dangle
-   76:5   error  Closing curly brace appears on the same line as the subsequent block  @stylistic/brace-style
-  100:19  error  Missing trailing comma                                                @stylistic/comma-dangle
-  102:3   error  Closing curly brace appears on the same line as the subsequent block  @stylistic/brace-style
-  115:9   error  Missing trailing comma                                                @stylistic/comma-dangle
-  117:3   error  Closing curly brace appears on the same line as the subsequent block  @stylistic/brace-style
-  151:9   error  Missing trailing comma                                                @stylistic/comma-dangle
-  153:3   error  Closing curly brace appears on the same line as the subsequent block  @stylistic/brace-style
-
-✖ 12 problems (12 errors, 0 warnings)
-  12 errors and 0 warnings potentially fixable with the `--fix` option.
-

@@ -344,6 +344,24 @@ export const useGameStore = defineStore('game', {
       }
     },
 
+    async loadSessionById(sessionId: string) {
+      try {
+        const { getGameSessionById } = useIndexedDB()
+        const session = await getGameSessionById(sessionId)
+
+        if (!session) {
+          throw new Error(`Game session with ID ${sessionId} not found`)
+        }
+
+        this.currentSession = session
+        return session
+      } catch (error) {
+        const logger = useLogger()
+        logger.error('Error loading game session by ID:', error)
+        throw new Error('Failed to load game session')
+      }
+    },
+
     clearSession() {
       this.currentSession = null
     },

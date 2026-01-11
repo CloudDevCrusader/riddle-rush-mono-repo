@@ -111,11 +111,6 @@ const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
 
-const categorySpinComplete = ref(false)
-const letterSpinComplete = ref(false)
-const wheelsComplete = ref(false)
-const startingGame = ref(false)
-
 const categoryIconMap: Record<string, string> = {
   female_name: '👩',
   male_name: '👨',

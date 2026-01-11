@@ -91,11 +91,11 @@ describe('Test Factories with Faker', () => {
     const session = createGameSession()
 
     expect(session.gameName).toBeDefined()
-    expect(session.gameName.length).toBeGreaterThan(0)
+    expect(session.gameName?.length).toBeGreaterThan(0)
     expect(typeof session.gameName).toBe('string')
 
     // Game name should be two words
-    const words = session.gameName.split(' ')
+    const words = session.gameName?.split(' ') ?? []
     expect(words.length).toBe(2)
   })
 })

@@ -12,6 +12,7 @@ export interface GameSettings {
   musicVolume: number
   offlineMode: boolean
   language: string
+  fortuneWheelEnabled: boolean
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -25,6 +26,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   musicVolume: 75,
   offlineMode: false,
   language: 'de',
+  fortuneWheelEnabled: false,
 }
 
 const STORAGE_KEY = 'game-settings'
@@ -33,9 +35,10 @@ export const useSettingsStore = defineStore('settings', {
   state: (): GameSettings => ({ ...DEFAULT_SETTINGS }),
 
   getters: {
-    isDebugMode: state => state.debugMode,
-    isLeaderboardEnabled: state => state.leaderboardEnabled,
-    shouldShowLeaderboard: state => state.leaderboardEnabled && state.showLeaderboardAfterRound,
+    isDebugMode: (state) => state.debugMode,
+    isLeaderboardEnabled: (state) => state.leaderboardEnabled,
+    shouldShowLeaderboard: (state) => state.leaderboardEnabled && state.showLeaderboardAfterRound,
+    isFortuneWheelEnabled: (state) => state.fortuneWheelEnabled,
   },
 
   actions: {
@@ -48,8 +51,7 @@ export const useSettingsStore = defineStore('settings', {
           const parsed = JSON.parse(stored)
           Object.assign(this, { ...DEFAULT_SETTINGS, ...parsed })
         }
-      }
-      catch (e) {
+      } catch (e) {
         const logger = useLogger()
         logger.warn('Failed to load settings:', e)
       }
@@ -60,8 +62,7 @@ export const useSettingsStore = defineStore('settings', {
 
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.$state))
-      }
-      catch (e) {
+      } catch (e) {
         const logger = useLogger()
         logger.warn('Failed to save settings:', e)
       }
@@ -84,6 +85,11 @@ export const useSettingsStore = defineStore('settings', {
 
     toggleSound() {
       this.soundEnabled = !this.soundEnabled
+      this.saveSettings()
+    },
+
+    toggleFortuneWheel() {
+      this.fortuneWheelEnabled = !this.fortuneWheelEnabled
       this.saveSettings()
     },
 

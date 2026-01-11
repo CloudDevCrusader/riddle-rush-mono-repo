@@ -1,3 +1,5 @@
+import { ref, reactive } from 'vue'
+
 /**
  * Composable for managing modal state
  * Provides reusable modal logic with Vue 3 Composition API
@@ -31,8 +33,8 @@ export function useModal(initialState = false) {
   }
 
   return {
-    isOpen: readonly(isOpen),
-    data: readonly(data),
+    isOpen,
+    data,
     open,
     close,
     toggle,
@@ -76,7 +78,7 @@ export function useModals<T extends string>(modalNames: T[]) {
   return {
     // TypeScript can't represent the complex union type, so we use a type assertion
 
-    modals: readonly(modals) as any,
+    modals: modals as any,
     openModal,
     closeModal,
     closeAll,

@@ -140,7 +140,12 @@ const {
   currentPlayerTurn,
   allPlayersSubmitted,
 } = useGameState()
+const logger = useLogger()
 const gameActions = useGameActions()
+const route = useRoute()
+
+// Handle game ID from route parameter
+const gameId = computed(() => route.params.gameId as string | undefined)
 
 const playerAnswer = ref('')
 const showPauseModal = ref(false)
@@ -214,7 +219,14 @@ const handleNext = async () => {
     toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
     return
   }
-  goToResults()
+
+  // Navigate to results with game ID
+  const currentGameId = gameStore.currentSession?.id
+  if (currentGameId) {
+    goToResults(currentGameId)
+  } else {
+    goToResults()
+  }
 }
 
 const handleRestart = () => {
@@ -226,8 +238,18 @@ const handleRestart = () => {
 
 // Handle ESC key to pause
 onMounted(async () => {
-  // Ensure game is initialized (without showing notification since we just came from round-start)
-  if (!gameStore.hasActiveSession) {
+  // Load game session based on route parameter
+  if (gameId.value) {
+    try {
+      await gameStore.loadSessionById(gameId.value)
+    } catch (error) {
+      logger.error('Failed to load game session:', error)
+      toast.error(t('game.error_loading', 'Failed to load game session'))
+      // Fallback to starting a new game
+      await gameActions.resumeOrStartGame()
+    }
+  } else if (!gameStore.hasActiveSession) {
+    // No game ID in route and no active session - start new game
     await gameActions.resumeOrStartGame()
   }
 

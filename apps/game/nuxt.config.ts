@@ -41,6 +41,8 @@ export default defineNuxtConfig({
       cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
       cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
       debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
+      gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
+      gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
     },
   },
 

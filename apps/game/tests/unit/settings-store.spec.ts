@@ -7,9 +7,15 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {}
   return {
     getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => { store[key] = value }),
-    removeItem: vi.fn((key: string) => { Reflect.deleteProperty(store, key) }),
-    clear: vi.fn(() => { store = {} }),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value
+    }),
+    removeItem: vi.fn((key: string) => {
+      Reflect.deleteProperty(store, key)
+    }),
+    clear: vi.fn(() => {
+      store = {}
+    }),
   }
 })()
 
@@ -56,6 +62,11 @@ describe('Settings Store', () => {
       const store = useSettingsStore()
       expect(store.offlineMode).toBe(false)
     })
+
+    it('has fortune wheel disabled by default', () => {
+      const store = useSettingsStore()
+      expect(store.fortuneWheelEnabled).toBe(false)
+    })
   })
 
   describe('Getters', () => {
@@ -84,14 +95,23 @@ describe('Settings Store', () => {
       store.showLeaderboardAfterRound = false
       expect(store.shouldShowLeaderboard).toBe(false)
     })
+
+    it('isFortuneWheelEnabled returns fortuneWheelEnabled state', () => {
+      const store = useSettingsStore()
+      expect(store.isFortuneWheelEnabled).toBe(false)
+      store.fortuneWheelEnabled = true
+      expect(store.isFortuneWheelEnabled).toBe(true)
+    })
   })
 
   describe('Load Settings', () => {
     it('loads settings from localStorage', () => {
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify({
-        debugMode: true,
-        soundEnabled: false,
-      }))
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify({
+          debugMode: true,
+          soundEnabled: false,
+        })
+      )
 
       const store = useSettingsStore()
       store.loadSettings()
@@ -101,9 +121,11 @@ describe('Settings Store', () => {
     })
 
     it('uses defaults for missing keys', () => {
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify({
-        debugMode: true,
-      }))
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify({
+          debugMode: true,
+        })
+      )
 
       const store = useSettingsStore()
       store.loadSettings()
@@ -136,7 +158,7 @@ describe('Settings Store', () => {
 
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'game-settings',
-        expect.stringContaining('"debugMode":true'),
+        expect.stringContaining('"debugMode":true')
       )
     })
   })
@@ -185,6 +207,15 @@ describe('Settings Store', () => {
       expect(store.offlineMode).toBe(true)
       store.setOfflineMode(false)
       expect(store.offlineMode).toBe(false)
+    })
+
+    it('toggleFortuneWheel flips state', () => {
+      const store = useSettingsStore()
+      expect(store.fortuneWheelEnabled).toBe(false)
+      store.toggleFortuneWheel()
+      expect(store.fortuneWheelEnabled).toBe(true)
+      store.toggleFortuneWheel()
+      expect(store.fortuneWheelEnabled).toBe(false)
     })
   })
 

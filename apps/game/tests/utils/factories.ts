@@ -61,7 +61,7 @@ export const createCategory = (overrides: Partial<Category> = {}): Category => {
   const letter = overrides.letter ?? randomLetter()
 
   // Generate realistic category data based on template
-  let name, searchWord, additionalData
+  let name: string, searchWord: string, additionalData: Record<string, unknown>
 
   switch (template) {
     case 'Female Name':
@@ -127,6 +127,7 @@ export const createCategory = (overrides: Partial<Category> = {}): Category => {
     default:
       name = overrides.name ?? template
       searchWord = overrides.searchWord ?? template.replace(/\s+/g, '_').toLowerCase()
+      additionalData = {}
   }
 
   return {
