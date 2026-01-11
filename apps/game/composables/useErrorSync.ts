@@ -79,12 +79,18 @@ export const useErrorSync = () => {
    */
   const formatError = (error: unknown): string => {
     if (error instanceof Error) {
-      return JSON.stringify({
+      const errorData = {
         name: error.name,
         message: error.message,
         stack: error.stack,
-        cause: error.cause,
-      })
+      }
+
+      // Add cause property if it exists (ES2022+ feature)
+      if ('cause' in error) {
+        ;(errorData as any).cause = error.cause
+      }
+
+      return JSON.stringify(errorData)
     }
     return String(error)
   }

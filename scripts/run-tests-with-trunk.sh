@@ -11,6 +11,9 @@ cd apps/game || exit 1
 # Ensure test results directory exists
 mkdir -p test-results
 
+# Set environment variable to disable coverage and avoid conflicts with JUnit reporter
+export TRUNK_TESTING=true
+
 # Run unit tests with JUnit reporter
 echo "🧪 Running unit tests..."
 pnpm run test:unit -- --reporter=junit --outputFile=test-results/unit-test-results.xml
