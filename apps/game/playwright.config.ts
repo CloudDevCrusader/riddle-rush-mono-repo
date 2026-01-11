@@ -12,7 +12,7 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   forbidOnly: isCI,
-  retries: isCI ? 2 : 1,
+  retries: 0,
   workers: isCI ? 2 : undefined,
   timeout: 60000,
 
@@ -57,8 +57,28 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'mobile-chrome',
+      name: 'mobile-chrome-pixel5',
       use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'mobile-chrome-pixel7',
+      use: { ...devices['Pixel 7'] },
+    },
+    {
+      name: 'mobile-safari-iphone14',
+      use: { ...devices['iPhone 14'] },
+    },
+    {
+      name: 'mobile-safari-iphone14-pro',
+      use: { ...devices['iPhone 14 Pro'] },
+    },
+    {
+      name: 'mobile-chrome-galaxy',
+      use: { ...devices['Galaxy S9+'] },
+    },
+    {
+      name: 'tablet-ipad',
+      use: { ...devices['iPad Pro'] },
     },
   ],
 
