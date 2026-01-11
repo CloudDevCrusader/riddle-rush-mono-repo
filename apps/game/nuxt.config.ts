@@ -102,6 +102,7 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       preserveSymlinks: false, // Keep default behavior
+      dedupe: ['vue', '@nuxtjs/i18n'], // Deduplicate these modules to avoid circular deps
     },
     plugins: [
       // Inspector already enabled via devtools
