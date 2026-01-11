@@ -64,12 +64,7 @@ describe('useLogger', () => {
       const logger = useLogger()
       logger.log('Test', 'arg1', 'arg2', { data: 'test' })
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        '[LOG] Test',
-        'arg1',
-        'arg2',
-        { data: 'test' }
-      )
+      expect(consoleSpy.log).toHaveBeenCalledWith('[LOG] Test', 'arg1', 'arg2', { data: 'test' })
     })
   })
 

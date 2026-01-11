@@ -48,7 +48,7 @@ beforeEach(() => {
   // Create a minimal Vue app to ensure proper reactivity context
   const app = createApp({})
   app.unmount()
-  
+
   // Reset mocks
   vi.clearAllMocks()
 })

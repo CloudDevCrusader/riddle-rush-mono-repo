@@ -86,6 +86,7 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:simple": "playwright test --config=playwright.simple.config.ts",
     "test:unit": "vitest run",
     "test:unit:coverage": "vitest run --coverage",
     "typecheck": "bash scripts/typecheck.sh"

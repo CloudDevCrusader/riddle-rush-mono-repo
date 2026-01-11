@@ -1,7 +1,7 @@
 {
-  "extends": ["./.nuxt/tsconfig.json", "../../tsconfig.json"],
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "vitest/globals", "vite/client", "@pinia/nuxt", "@nuxtjs/i18n"],
     "skipLibCheck": true
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.vue", ".nuxt/**/*"],

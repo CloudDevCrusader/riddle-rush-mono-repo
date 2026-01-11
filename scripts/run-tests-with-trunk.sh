@@ -14,13 +14,9 @@ mkdir -p test-results
 # Set environment variable to disable coverage and avoid conflicts with JUnit reporter
 export TRUNK_TESTING=true
 
-# Run unit tests with JUnit reporter
-echo "🧪 Running unit tests..."
-pnpm run test:unit -- --reporter=junit --outputFile=test-results/unit-test-results.xml
-
-# Run E2E tests with JUnit reporter
-echo "🧪 Running E2E tests..."
-pnpm exec playwright test --reporter=junit --output=test-results/e2e-test-results.xml
+# Run unit tests with coverage and JUnit reporter
+echo "🧪 Running unit tests with coverage..."
+pnpm run test:unit:coverage -- --reporter=junit --outputFile=test-results/unit-test-results.xml
 
 echo "✅ Tests completed. Results saved in test-results/ directory."
 

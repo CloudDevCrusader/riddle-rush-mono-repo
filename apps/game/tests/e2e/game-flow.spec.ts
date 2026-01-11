@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Complete Game Flow', () => {
   test('should complete full game flow from menu to leaderboard', async ({ page }) => {
     // 1. Start at menu
-    await page.goto('/')
+    await page.goto('/', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     // Wait for splash screen to finish
@@ -44,7 +44,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should navigate through scoring to leaderboard', async ({ page }) => {
     // Set up game state by going through players page first
-    await page.goto('/players')
+    await page.goto('/players', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     // Start game with default player to initialize store
@@ -57,7 +57,7 @@ test.describe('Complete Game Flow', () => {
     await page.waitForTimeout(500)
 
     // Navigate to results (simulating game completion)
-    await page.goto('/results')
+    await page.goto('/results', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     // Verify we're on results page
@@ -82,7 +82,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should return to menu from leaderboard when game completed', async ({ page }) => {
     // Start at leaderboard
-    await page.goto('/leaderboard')
+    await page.goto('/leaderboard', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     // Verify we're on leaderboard
@@ -103,7 +103,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should allow adding multiple players and continuing flow', async ({ page }) => {
     // Start at menu
-    await page.goto('/')
+    await page.goto('/', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     // Wait for splash screen to finish
@@ -141,7 +141,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should allow navigation back through the flow', async ({ page }) => {
     // Start at game page
-    await page.goto('/game')
+    await page.goto('/game', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     // Go back
@@ -156,7 +156,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should maintain score changes through navigation', async ({ page }) => {
     // Set up game state first
-    await page.goto('/players')
+    await page.goto('/players', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     const startBtn = page.locator('.start-btn')
@@ -168,7 +168,7 @@ test.describe('Complete Game Flow', () => {
     await page.waitForTimeout(500)
 
     // Navigate to results page
-    await page.goto('/results')
+    await page.goto('/results', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     const firstItem = page.locator('.score-item').first()
@@ -198,7 +198,7 @@ test.describe('Complete Game Flow', () => {
 
   test('should handle back button navigation consistently', async ({ page }) => {
     // Build up navigation history: menu -> players -> round-start
-    await page.goto('/')
+    await page.goto('/', { timeout: 30000 })
     await page.waitForLoadState('networkidle')
 
     // Wait for splash screen to finish

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Players Management Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/players')
+    await page.goto('/players', { timeout: 30000 })
   })
 
   test('should display players page with all elements', async ({ page }) => {

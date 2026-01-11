@@ -34,10 +34,9 @@ graph TD
 
 ## Test Execution
 
-The `scripts/run-tests-with-trunk.sh` script runs both unit and E2E tests with JUnit reporting:
+The `scripts/run-tests-with-trunk.sh` script runs unit tests with coverage and JUnit reporting:
 
-- Unit tests: `pnpm run test:unit -- --reporter=junit`
-- E2E tests: `pnpm exec playwright test --reporter=junit`
+- Unit tests: `pnpm run test:unit:coverage -- --reporter=junit --outputFile=test-results/unit-test-results.xml`
 
 Test results are saved in `apps/game/test-results/` directory as XML files.
 

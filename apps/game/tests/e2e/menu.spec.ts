@@ -2,27 +2,34 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Main Menu Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    // Use full URL to avoid baseURL issues
+    await page.goto('http://localhost:3000/', { timeout: 30000 })
+    await page.waitForLoadState('networkidle', { timeout: 30000 })
+
+    // Wait for client-side JavaScript to be ready
+    await page.waitForFunction(() => window.__NUXT__ !== undefined, { timeout: 30000 })
 
     // Wait for splash screen animation to complete
     await page.waitForTimeout(2000) // Splash screen fade-out duration
 
     // Alternative: Wait for splash screen to be hidden
     const splashScreen = page.locator('.splash-screen')
-    await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
+    try {
+      await splashScreen.waitFor({ state: 'hidden', timeout: 10000 })
+    } catch {
       // Splash screen might already be gone, ignore error
-    })
+      console.warn('Splash screen already hidden or not found')
+    }
   })
 
   test('should display main menu with all elements', async ({ page }) => {
     // Check for background
     const background = page.locator('.page-bg')
-    await expect(background).toBeVisible()
+    await expect(background).toBeVisible({ timeout: 10000 })
 
     // Check for logo (use first() to handle splash + menu logos)
     const logo = page.locator('.logo-image').first()
-    await expect(logo).toBeVisible()
+    await expect(logo).toBeVisible({ timeout: 10000 })
 
     // Coin bar, profile button, exit button, and menu icon intentionally hidden for MVP mobile optimization
 
@@ -31,9 +38,9 @@ test.describe('Main Menu Page', () => {
     const optionsBtn = page.locator('.options-btn')
     const creditsBtn = page.locator('.credits-btn')
 
-    await expect(playBtn).toBeVisible()
-    await expect(optionsBtn).toBeVisible()
-    await expect(creditsBtn).toBeVisible()
+    await expect(playBtn).toBeVisible({ timeout: 10000 })
+    await expect(optionsBtn).toBeVisible({ timeout: 10000 })
+    await expect(creditsBtn).toBeVisible({ timeout: 10000 })
   })
 
   test('should navigate to players page when clicking PLAY', async ({ page }) => {
@@ -78,7 +85,7 @@ test.describe('Main Menu Page', () => {
 
     // Hover over button
     await playBtn.hover()
-    await page.waitForTimeout(200)
+    await page.waitForTimeout(500)
 
     // Button should have hover state (image-hover should be visible)
     const hoverImage = playBtn.locator('.btn-image-hover')

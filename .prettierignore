@@ -4,6 +4,7 @@ node_modules/
 dist/
 coverage/
 playwright-report/
+**/playwright-report-simple/
 test-results/
 *.min.js
 *.min.css

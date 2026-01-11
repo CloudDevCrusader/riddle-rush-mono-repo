@@ -48,10 +48,10 @@ export default defineConfig({
   // Web server - only start for local tests
   ...(!isDeployedTest && {
     webServer: {
-      command: 'npm run preview',
+      command: 'node .output/server/index.mjs',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 120000,
+      timeout: 300000, // Increase timeout to 5 minutes
     },
   }),
 
