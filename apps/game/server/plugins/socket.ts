@@ -33,7 +33,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
 
     // Handle performance log
     socket.on('logPerformance', (data) => {
-      console.log(`📊 Performance logged:`, data)
+      console.log('📊 Performance logged:', data)
 
       // Here you can send to CloudWatch or store in database
       // For now, just echo back
@@ -45,7 +45,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
 
     // Handle leaderboard update
     socket.on('updateLeaderboard', (data) => {
-      console.log(`🏆 Leaderboard update:`, data)
+      console.log('🏆 Leaderboard update:', data)
 
       // Broadcast to all clients
       io?.emit('leaderboardUpdated', data)
@@ -58,7 +58,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
 
     // Handle user stats request
     socket.on('getUserStats', (data) => {
-      console.log(`📈 User stats requested:`, data)
+      console.log('📈 User stats requested:', data)
 
       // Mock response - replace with actual database query
       socket.emit('userStats', {
@@ -81,7 +81,6 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
 
   // Attach Socket.IO to Nitro app
   nitroApp.hooks.hook('request', (event) => {
-    // @ts-expect-error - Adding custom property to context
     event.context.$io = io
   })
 
