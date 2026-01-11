@@ -7,6 +7,10 @@ const { Given, When, Then } = createBdd()
 Given('I navigate to {string}', async ({ page }, path: string) => {
   await page.goto(path)
   await page.waitForLoadState('networkidle')
+  // Wait for splash screen to disappear (takes ~3.3s)
+  await page.waitForSelector('.splash-screen', { state: 'hidden', timeout: 5000 }).catch(() => {
+    // Splash screen might not exist on all pages
+  })
 })
 
 // Visibility checks
