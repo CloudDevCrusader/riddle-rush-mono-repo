@@ -28,11 +28,20 @@ playwright-report/
 test-results/
 **/test-results/
 .output/
+**/.output/
 .cache/
 **/.cache/
 .turbo/
 apps/game/.output
 packages/config/.turbo/
+
+# Deployment and infrastructure files
+deployment-info.json
+**/terraform-outputs.json
+**/distros
+infrastructure/**/terraform-outputs.json
+infrastructure/**/distros
+
 # Environment files (exclude all except .example files)
 .env
 .env.*
