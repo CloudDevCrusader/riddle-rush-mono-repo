@@ -39,10 +39,12 @@ exports.handler = async (event) => {
 
     // Create log stream if it doesn't exist
     try {
-      await cloudwatch.createLogStream({
-        logGroupName,
-        logStreamName,
-      }).promise()
+      await cloudwatch
+        .createLogStream({
+          logGroupName,
+          logStreamName,
+        })
+        .promise()
     } catch (error) {
       // Ignore if log stream already exists
       if (error.code !== 'ResourceAlreadyExistsException') {
@@ -51,11 +53,13 @@ exports.handler = async (event) => {
     }
 
     // Send logs to CloudWatch
-    await cloudwatch.putLogEvents({
-      logGroupName,
-      logStreamName,
-      logEvents,
-    }).promise()
+    await cloudwatch
+      .putLogEvents({
+        logGroupName,
+        logStreamName,
+        logEvents,
+      })
+      .promise()
 
     // Also send metrics to CloudWatch
     await sendMetrics(logs, app, environment)

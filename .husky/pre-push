@@ -5,9 +5,9 @@ echo "🚀 Running pre-push checks..."
 
 # Check for secrets (double-check before push)
 if [ -f "scripts/check-secrets.sh" ]; then
-  echo "🔐 Scanning for secrets..."
-  chmod +x scripts/check-secrets.sh
-  ./scripts/check-secrets.sh || exit 1
+	echo "🔐 Scanning for secrets..."
+	chmod +x scripts/check-secrets.sh
+	./scripts/check-secrets.sh || exit 1
 fi
 
 # Run type check across all packages
@@ -21,8 +21,8 @@ pnpm test:unit || exit 1
 # Optional: Run syncpack check
 echo "📦 Checking dependency versions..."
 pnpm syncpack:check || {
-  echo "⚠️  Dependency version mismatches found. Run 'pnpm syncpack:fix' to fix."
-  exit 1
+	echo "⚠️  Dependency version mismatches found. Run 'pnpm syncpack:fix' to fix."
+	exit 1
 }
 
 echo "✅ Pre-push checks passed!"

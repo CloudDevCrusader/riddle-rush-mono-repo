@@ -5,10 +5,10 @@ echo "🚀 Migrating Environment Variables to Consolidated Setup"
 echo ""
 
 # Check if we're in the right directory
-if [ ! -f ".env.consolidated" ]; then
-    echo "❌ Error: .env.consolidated file not found"
-    echo "Please run this script from the project root directory"
-    exit 1
+if [[ ! -f ".env.consolidated" ]]; then
+	echo "❌ Error: .env.consolidated file not found"
+	echo "Please run this script from the project root directory"
+	exit 1
 fi
 
 echo "✅ Found .env.consolidated file"
@@ -18,15 +18,15 @@ echo ""
 echo "📦 Backing up existing environment files..."
 
 # Backup root .env if it exists
-if [ -f ".env" ]; then
-    cp ".env" ".env.backup-$(date +%Y%m%d-%H%M%S)"
-    echo "✅ Backed up root .env"
+if [[ -f ".env" ]]; then
+	cp ".env" ".env.backup-$(date +%Y%m%d-%H%M%S)"
+	echo "✅ Backed up root .env"
 fi
 
 # Backup apps/game/.env if it exists
-if [ -f "apps/game/.env" ]; then
-    cp "apps/game/.env" "apps/game/.env.backup-$(date +%Y%m%d-%H%M%S)"
-    echo "✅ Backed up apps/game/.env"
+if [[ -f "apps/game/.env" ]]; then
+	cp "apps/game/.env" "apps/game/.env.backup-$(date +%Y%m%d-%H%M%S)"
+	echo "✅ Backed up apps/game/.env"
 fi
 
 echo ""
@@ -67,16 +67,16 @@ echo "🔧 Checking Nuxt configuration..."
 
 # Check if nuxt.config.ts needs any updates
 if grep -q "process.env.BASE_URL" apps/game/nuxt.config.ts; then
-    echo "✅ Nuxt config already uses process.env variables"
+	echo "✅ Nuxt config already uses process.env variables"
 else
-    echo "⚠️  Nuxt config may need manual review for environment variables"
+	echo "⚠️  Nuxt config may need manual review for environment variables"
 fi
 
 echo ""
 echo "📝 Creating migration documentation..."
 
 # Create a migration guide
-cat > "ENV_MIGRATION_GUIDE.md" << 'EOF'
+cat >"ENV_MIGRATION_GUIDE.md" <<'EOF'
 # Environment Variable Migration Guide
 
 ## 🎯 Objective

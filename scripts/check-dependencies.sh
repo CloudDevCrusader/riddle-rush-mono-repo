@@ -16,9 +16,9 @@ echo -e "${BLUE}📦 Dependency Check & Update Tool${NC}"
 echo "========================================"
 
 # Check if npm-check-updates is installed
-if ! command -v ncu &> /dev/null; then
-    echo -e "${YELLOW}⚠️  npm-check-updates not found. Installing...${NC}"
-    npm install -g npm-check-updates
+if ! command -v ncu &>/dev/null; then
+	echo -e "${YELLOW}⚠️  npm-check-updates not found. Installing...${NC}"
+	npm install -g npm-check-updates
 fi
 
 echo -e "\n${BLUE}1. Checking for outdated dependencies...${NC}"
@@ -51,4 +51,3 @@ echo -e "  4. Test: ${YELLOW}pnpm run test:unit && pnpm run typecheck${NC}"
 echo -e "  5. Build: ${YELLOW}pnpm run generate${NC}"
 
 echo -e "\n${GREEN}✅ Dependency check complete${NC}"
-

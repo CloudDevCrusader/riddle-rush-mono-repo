@@ -14,9 +14,9 @@ echo -e "${BLUE}🔍 Finding Existing AWS Resources${NC}"
 echo "======================================"
 
 # Check AWS credentials
-if ! aws sts get-caller-identity &> /dev/null; then
-    echo -e "${RED}❌ AWS credentials not configured${NC}"
-    exit 1
+if ! aws sts get-caller-identity &>/dev/null; then
+	echo -e "${RED}❌ AWS credentials not configured${NC}"
+	exit 1
 fi
 
 echo -e "\n${BLUE}S3 Buckets (matching 'riddle-rush'):${NC}"
@@ -32,4 +32,3 @@ echo ""
 echo "Or manually:"
 echo "  terraform import aws_s3_bucket.website BUCKET_NAME"
 echo "  terraform import aws_cloudfront_distribution.website DISTRIBUTION_ID"
-

@@ -5,34 +5,33 @@ commit_msg=$(cat "$1")
 
 # Check minimum length
 if [ ${#commit_msg} -lt 10 ]; then
-  echo "❌ Commit message too short (minimum 10 characters)"
-  echo "   Provide a meaningful message describing your change"
-  exit 1
+	echo "❌ Commit message too short (minimum 10 characters)"
+	echo "   Provide a meaningful message describing your change"
+	exit 1
 fi
 
 # Enforce conventional commit format
-if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?:"; then
-  echo "❌ Commit message must follow Conventional Commits format"
-  echo ""
-  echo "Format: <type>(<scope>): <description>"
-  echo ""
-  echo "Types:"
-  echo "  feat:     New feature"
-  echo "  fix:      Bug fix"
-  echo "  docs:     Documentation"
-  echo "  refactor: Code restructuring"
-  echo "  test:     Test changes"
-  echo "  chore:    Maintenance"
-  echo "  perf:     Performance"
-  echo "  style:    Formatting"
-  echo ""
-  echo "Examples:"
-  echo "  feat: add color mode toggle"
-  echo "  fix: resolve type error in useForm"
-  echo "  docs: update agent workflow guide"
-  echo ""
-  exit 1
+if ! echo "${commit_msg}" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?:"; then
+	echo "❌ Commit message must follow Conventional Commits format"
+	echo ""
+	echo "Format: <type>(<scope>): <description>"
+	echo ""
+	echo "Types:"
+	echo "  feat:     New feature"
+	echo "  fix:      Bug fix"
+	echo "  docs:     Documentation"
+	echo "  refactor: Code restructuring"
+	echo "  test:     Test changes"
+	echo "  chore:    Maintenance"
+	echo "  perf:     Performance"
+	echo "  style:    Formatting"
+	echo ""
+	echo "Examples:"
+	echo "  feat: add color mode toggle"
+	echo "  fix: resolve type error in useForm"
+	echo "  docs: update agent workflow guide"
+	echo ""
+	exit 1
 fi
 
 echo "✅ Commit message format validated"
-

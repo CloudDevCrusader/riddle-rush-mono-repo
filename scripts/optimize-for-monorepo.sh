@@ -5,20 +5,20 @@ echo "🚀 Optimizing Environment for Monorepo Structure"
 echo ""
 
 # Check if we're in the right directory
-if [ ! -f "turbo.json" ]; then
-    echo "❌ Error: turbo.json not found"
-    echo "Please run this script from the project root directory"
-    exit 1
+if [[ ! -f "turbo.json" ]]; then
+	echo "❌ Error: turbo.json not found"
+	echo "Please run this script from the project root directory"
+	exit 1
 fi
 
 echo "✅ Found monorepo structure (turbo.json)"
 echo ""
 
 # Check if .env.monorepo exists
-if [ ! -f ".env.monorepo" ]; then
-    echo "❌ Error: .env.monorepo not found"
-    echo "Please ensure the monorepo environment file exists"
-    exit 1
+if [[ ! -f ".env.monorepo" ]]; then
+	echo "❌ Error: .env.monorepo not found"
+	echo "Please ensure the monorepo environment file exists"
+	exit 1
 fi
 
 echo "✅ Found .env.monorepo file"
@@ -28,28 +28,28 @@ echo ""
 echo "📦 Backing up existing environment files..."
 
 # Backup root .env if it exists
-if [ -f ".env" ]; then
-    cp ".env" ".env.monorepo-backup-$(date +%Y%m%d-%H%M%S)"
-    echo "✅ Backed up root .env"
+if [[ -f ".env" ]]; then
+	cp ".env" ".env.monorepo-backup-$(date +%Y%m%d-%H%M%S)"
+	echo "✅ Backed up root .env"
 fi
 
 # Backup apps/game/.env if it exists
-if [ -f "apps/game/.env" ]; then
-    cp "apps/game/.env" "apps/game/.env.monorepo-backup-$(date +%Y%m%d-%H%M%S)"
-    echo "✅ Backed up apps/game/.env"
+if [[ -f "apps/game/.env" ]]; then
+	cp "apps/game/.env" "apps/game/.env.monorepo-backup-$(date +%Y%m%d-%H%M%S)"
+	echo "✅ Backed up apps/game/.env"
 fi
 
 # Backup apps/docs/.env if it exists
-if [ -f "apps/docs/.env" ]; then
-    cp "apps/docs/.env" "apps/docs/.env.monorepo-backup-$(date +%Y%m%d-%H%M%S)"
-    echo "✅ Backed up apps/docs/.env"
+if [[ -f "apps/docs/.env" ]]; then
+	cp "apps/docs/.env" "apps/docs/.env.monorepo-backup-$(date +%Y%m%d-%H%M%S)"
+	echo "✅ Backed up apps/docs/.env"
 fi
 
 echo ""
 echo "🔄 Setting up monorepo-optimized environment..."
 
 # Create workspace-specific .env files that extend the monorepo config
-cat > "apps/game/.env" << 'GAME_ENV'
+cat >"apps/game/.env" <<'GAME_ENV'
 # ===========================================
 # GAME APP ENVIRONMENT CONFIGURATION
 # Extends monorepo configuration with game-specific settings
@@ -95,7 +95,7 @@ GAME_ENV
 echo "✅ Created monorepo-optimized apps/game/.env"
 
 # Create docs-specific .env file
-cat > "apps/docs/.env" << 'DOCS_ENV'
+cat >"apps/docs/.env" <<'DOCS_ENV'
 # ===========================================
 # DOCS APP ENVIRONMENT CONFIGURATION
 # Extends monorepo configuration with docs-specific settings
@@ -136,29 +136,29 @@ DOCS_ENV
 echo "✅ Created monorepo-optimized apps/docs/.env"
 
 # Update root .env to load monorepo config
-echo "" > ".env"
-echo "# ===========================================" >> ".env"
-echo "# MONOREPO ROOT ENVIRONMENT CONFIGURATION" >> ".env"
-echo "# Loads monorepo configuration and provides root-level overrides" >> ".env"
-echo "# ===========================================" >> ".env"
-echo "" >> ".env"
-echo "# Load monorepo configuration" >> ".env"
-echo "if [ -f \".env.monorepo\" ]; then" >> ".env"
-echo "  source .env.monorepo" >> ".env"
-echo "fi" >> ".env"
-echo "" >> ".env"
-echo "# ===========================================" >> ".env"
-echo "# ROOT-LEVEL OVERRIDES" >> ".env"
-echo "# ===========================================" >> ".env"
-echo "# Add root-specific environment variables here" >> ".env"
-echo "# These override monorepo defaults for root operations" >> ".env"
-echo "" >> ".env"
-echo "# Example: override for root-level scripts" >> ".env"
-echo "ROOT_SPECIFIC_VAR=${ROOT_SPECIFIC_VAR:-root_value}" >> ".env"
-echo "" >> ".env"
-echo "# ===========================================" >> ".env"
-echo "# MONOREPO ROOT ENVIRONMENT LOADED" >> ".env"
-echo "# ===========================================" >> ".env"
+echo "" >".env"
+echo "# ===========================================" >>".env"
+echo "# MONOREPO ROOT ENVIRONMENT CONFIGURATION" >>".env"
+echo "# Loads monorepo configuration and provides root-level overrides" >>".env"
+echo "# ===========================================" >>".env"
+echo "" >>".env"
+echo "# Load monorepo configuration" >>".env"
+echo 'if [ -f ".env.monorepo" ]; then' >>".env"
+echo "  source .env.monorepo" >>".env"
+echo "fi" >>".env"
+echo "" >>".env"
+echo "# ===========================================" >>".env"
+echo "# ROOT-LEVEL OVERRIDES" >>".env"
+echo "# ===========================================" >>".env"
+echo "# Add root-specific environment variables here" >>".env"
+echo "# These override monorepo defaults for root operations" >>".env"
+echo "" >>".env"
+echo "# Example: override for root-level scripts" >>".env"
+echo "ROOT_SPECIFIC_VAR=${ROOT_SPECIFIC_VAR:-root_value}" >>".env"
+echo "" >>".env"
+echo "# ===========================================" >>".env"
+echo "# MONOREPO ROOT ENVIRONMENT LOADED" >>".env"
+echo "# ===========================================" >>".env"
 
 echo "✅ Updated root .env to load monorepo configuration"
 
@@ -166,7 +166,7 @@ echo ""
 echo "📋 Creating monorepo environment guide..."
 
 # Create comprehensive monorepo environment guide
-cat > "MONOREPO_ENVIRONMENT_GUIDE.md" << 'MONOREPO_GUIDE'
+cat >"MONOREPO_ENVIRONMENT_GUIDE.md" <<'MONOREPO_GUIDE'
 # Monorepo Environment Configuration Guide
 
 ## 🎯 Objective

@@ -5,6 +5,7 @@
  */
 import type { Category, GameSession, Player } from '~/types/game'
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class GameService {
   /**
    * Generate a random letter from the alphabet
@@ -31,7 +32,7 @@ export class GameService {
     category: Category,
     letter: string,
     players: Player[],
-    gameName?: string,
+    gameName?: string
   ): GameSession {
     return {
       id: crypto.randomUUID(),
@@ -63,7 +64,10 @@ export class GameService {
   /**
    * Validate player name
    */
-  static validatePlayerName(name: string, existingPlayers: Player[]): {
+  static validatePlayerName(
+    name: string,
+    existingPlayers: Player[]
+  ): {
     valid: boolean
     error?: string
   } {
@@ -76,7 +80,7 @@ export class GameService {
     }
 
     const isDuplicate = existingPlayers.some(
-      (p) => p.name.toLowerCase() === name.trim().toLowerCase(),
+      (p) => p.name.toLowerCase() === name.trim().toLowerCase()
     )
 
     if (isDuplicate) {
@@ -144,8 +148,8 @@ export class GameService {
   static shuffle<T>(array: T[]): T[] {
     const shuffled = [...array]
     for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
     }
     return shuffled
   }
@@ -153,10 +157,7 @@ export class GameService {
   /**
    * Get random categories
    */
-  static getRandomCategories(
-    categories: Category[],
-    count: number,
-  ): Category[] {
+  static getRandomCategories(categories: Category[], count: number): Category[] {
     if (count >= categories.length) {
       return GameService.shuffle(categories)
     }
@@ -178,11 +179,7 @@ export class GameService {
   /**
    * Check if answers are similar (fuzzy match)
    */
-  static areSimilarAnswers(
-    answer1: string,
-    answer2: string,
-    threshold = 0.8,
-  ): boolean {
+  static areSimilarAnswers(answer1: string, answer2: string, threshold = 0.8): boolean {
     const norm1 = GameService.normalizeAnswer(answer1)
     const norm2 = GameService.normalizeAnswer(answer2)
 
@@ -218,7 +215,7 @@ export class GameService {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1,
+            matrix[i - 1][j] + 1
           )
         }
       }

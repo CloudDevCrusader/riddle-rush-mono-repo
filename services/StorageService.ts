@@ -3,6 +3,7 @@
  * Abstracts storage operations (IndexedDB, LocalStorage)
  * Provides fallback mechanisms and error handling
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class StorageService {
   private static readonly LOCAL_STORAGE_PREFIX = 'riddle_rush_'
 
@@ -16,7 +17,7 @@ export class StorageService {
       storage.setItem(test, test)
       storage.removeItem(test)
       return true
-    } catch (e) {
+    } catch {
       return false
     }
   }

@@ -23,17 +23,17 @@ echo -e "${BLUE}🔐 Setting up AWS IAM for GitLab CI Deployment${NC}"
 echo "=============================================="
 
 # Check if AWS CLI is installed
-if ! command -v aws &> /dev/null; then
-    echo -e "${RED}❌ AWS CLI is not installed. Please install it first.${NC}"
-    echo "Visit: https://aws.amazon.com/cli/"
-    exit 1
+if ! command -v aws &>/dev/null; then
+	echo -e "${RED}❌ AWS CLI is not installed. Please install it first.${NC}"
+	echo "Visit: https://aws.amazon.com/cli/"
+	exit 1
 fi
 
 # Check AWS credentials
 echo -e "\n🔑 Checking AWS credentials..."
-if ! aws sts get-caller-identity &> /dev/null; then
-    echo -e "${RED}❌ AWS credentials not configured. Please run 'aws configure'${NC}"
-    exit 1
+if ! aws sts get-caller-identity &>/dev/null; then
+	echo -e "${RED}❌ AWS credentials not configured. Please run 'aws configure'${NC}"
+	exit 1
 fi
 
 AWS_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
@@ -46,12 +46,12 @@ echo -e "\n📝 Creating IAM policy: ${IAM_POLICY_NAME}..."
 # Check if policy already exists
 EXISTING_POLICY_ARN=$(aws iam list-policies --scope Local --query "Policies[?PolicyName=='${IAM_POLICY_NAME}'].Arn" --output text 2>/dev/null || echo "")
 
-if [ -n "$EXISTING_POLICY_ARN" ]; then
-    echo -e "${YELLOW}⚠️  Policy already exists: ${EXISTING_POLICY_ARN}${NC}"
-    POLICY_ARN=$EXISTING_POLICY_ARN
+if [[ -n "${EXISTING_POLICY_ARN}" ]]; then
+	echo -e "${YELLOW}⚠️  Policy already exists: ${EXISTING_POLICY_ARN}${NC}"
+	POLICY_ARN=${EXISTING_POLICY_ARN}
 else
-    # Create policy document
-    cat > /tmp/iam-policy.json <<'EOF'
+	# Create policy document
+	cat >/tmp/iam-policy.json <<'EOF'
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -102,40 +102,40 @@ else
 }
 EOF
 
-    POLICY_ARN=$(aws iam create-policy \
-        --policy-name "${IAM_POLICY_NAME}" \
-        --policy-document file:///tmp/iam-policy.json \
-        --description "Policy for GitLab CI to deploy to S3 and invalidate CloudFront" \
-        --query 'Policy.Arn' \
-        --output text)
+	POLICY_ARN=$(aws iam create-policy \
+		--policy-name "${IAM_POLICY_NAME}" \
+		--policy-document file:///tmp/iam-policy.json \
+		--description "Policy for GitLab CI to deploy to S3 and invalidate CloudFront" \
+		--query 'Policy.Arn' \
+		--output text)
 
-    echo -e "${GREEN}✓ Policy created: ${POLICY_ARN}${NC}"
-    rm /tmp/iam-policy.json
+	echo -e "${GREEN}✓ Policy created: ${POLICY_ARN}${NC}"
+	rm /tmp/iam-policy.json
 fi
 
 # Create IAM user
 echo -e "\n👤 Creating IAM user: ${IAM_USER_NAME}..."
 
-if aws iam get-user --user-name "${IAM_USER_NAME}" &> /dev/null; then
-    echo -e "${YELLOW}⚠️  User already exists: ${IAM_USER_NAME}${NC}"
-    echo -e "${YELLOW}   Deleting existing access keys...${NC}"
+if aws iam get-user --user-name "${IAM_USER_NAME}" &>/dev/null; then
+	echo -e "${YELLOW}⚠️  User already exists: ${IAM_USER_NAME}${NC}"
+	echo -e "${YELLOW}   Deleting existing access keys...${NC}"
 
-    # Delete existing access keys
-    EXISTING_KEYS=$(aws iam list-access-keys --user-name "${IAM_USER_NAME}" --query 'AccessKeyMetadata[].AccessKeyId' --output text)
-    for key in $EXISTING_KEYS; do
-        aws iam delete-access-key --user-name "${IAM_USER_NAME}" --access-key-id "$key"
-        echo -e "${GREEN}   ✓ Deleted key: ${key}${NC}"
-    done
+	# Delete existing access keys
+	EXISTING_KEYS=$(aws iam list-access-keys --user-name "${IAM_USER_NAME}" --query 'AccessKeyMetadata[].AccessKeyId' --output text)
+	for key in ${EXISTING_KEYS}; do
+		aws iam delete-access-key --user-name "${IAM_USER_NAME}" --access-key-id "${key}"
+		echo -e "${GREEN}   ✓ Deleted key: ${key}${NC}"
+	done
 else
-    aws iam create-user --user-name "${IAM_USER_NAME}" > /dev/null
-    echo -e "${GREEN}✓ User created: ${IAM_USER_NAME}${NC}"
+	aws iam create-user --user-name "${IAM_USER_NAME}" >/dev/null
+	echo -e "${GREEN}✓ User created: ${IAM_USER_NAME}${NC}"
 fi
 
 # Attach policy to user
 echo -e "\n🔗 Attaching policy to user..."
 aws iam attach-user-policy \
-    --user-name "${IAM_USER_NAME}" \
-    --policy-arn "${POLICY_ARN}"
+	--user-name "${IAM_USER_NAME}" \
+	--policy-arn "${POLICY_ARN}"
 
 echo -e "${GREEN}✓ Policy attached${NC}"
 
@@ -143,8 +143,8 @@ echo -e "${GREEN}✓ Policy attached${NC}"
 echo -e "\n🔑 Creating access key..."
 ACCESS_KEY_OUTPUT=$(aws iam create-access-key --user-name "${IAM_USER_NAME}")
 
-ACCESS_KEY_ID=$(echo "$ACCESS_KEY_OUTPUT" | jq -r '.AccessKey.AccessKeyId')
-SECRET_ACCESS_KEY=$(echo "$ACCESS_KEY_OUTPUT" | jq -r '.AccessKey.SecretAccessKey')
+ACCESS_KEY_ID=$(echo "${ACCESS_KEY_OUTPUT}" | jq -r '.AccessKey.AccessKeyId')
+SECRET_ACCESS_KEY=$(echo "${ACCESS_KEY_OUTPUT}" | jq -r '.AccessKey.SecretAccessKey')
 
 # Display credentials
 echo -e "\n${GREEN}✅ Setup complete!${NC}"
@@ -175,7 +175,7 @@ echo -e "${RED}   They will not be shown again.${NC}"
 
 # Save to file (optional)
 echo -e "\n💾 Saving credentials to aws-credentials.txt (DO NOT commit this file)..."
-cat > aws-credentials.txt <<EOF
+cat >aws-credentials.txt <<EOF
 # AWS Credentials for GitLab CI Deployment
 # Generated: $(date)
 # DO NOT COMMIT THIS FILE TO GIT
@@ -192,9 +192,9 @@ echo -e "${GREEN}✓ Credentials saved to aws-credentials.txt${NC}"
 
 # Add to .gitignore
 if ! grep -q "aws-credentials.txt" .gitignore 2>/dev/null; then
-    echo -e "\n📝 Adding aws-credentials.txt to .gitignore..."
-    echo "aws-credentials.txt" >> .gitignore
-    echo -e "${GREEN}✓ Added to .gitignore${NC}"
+	echo -e "\n📝 Adding aws-credentials.txt to .gitignore..."
+	echo "aws-credentials.txt" >>.gitignore
+	echo -e "${GREEN}✓ Added to .gitignore${NC}"
 fi
 
 echo -e "\n${GREEN}🎉 IAM setup complete!${NC}"

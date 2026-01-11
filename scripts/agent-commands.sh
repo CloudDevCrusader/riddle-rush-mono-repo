@@ -20,15 +20,15 @@ echo ""
 
 # Function to print section
 print_section() {
-    echo -e "${GREEN}$1${NC}"
-    echo ""
+	echo -e "${GREEN}$1${NC}"
+	echo ""
 }
 
 # Function to print command
 print_cmd() {
-    echo -e "  ${YELLOW}$1${NC}"
-    echo -e "  └─ $2"
-    echo ""
+	echo -e "  ${YELLOW}$1${NC}"
+	echo -e "  └─ $2"
+	echo ""
 }
 
 # Quality Checks
@@ -50,7 +50,7 @@ print_cmd "pnpm run test:unit:coverage" "Generate coverage report"
 print_section "📝 Git Workflow"
 print_cmd "git status" "Check current status"
 print_cmd "git add ." "Stage all changes"
-print_cmd "git commit -m \"feat: message\"" "Commit with conventional format"
+print_cmd 'git commit -m "feat: message"' "Commit with conventional format"
 print_cmd "git push" "Push to remote"
 
 # Commit Types

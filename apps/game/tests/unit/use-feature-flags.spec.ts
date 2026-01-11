@@ -11,6 +11,13 @@ const mockGitLabClient = {
 }
 
 // Mock useNuxtApp before importing the composable
+vi.mock('#imports', () => ({
+  useNuxtApp: () => ({
+    $featureFlags: mockGitLabClient,
+  }),
+}))
+
+// Also mock the direct import path
 vi.mock('#app', () => ({
   useNuxtApp: () => ({
     $featureFlags: mockGitLabClient,

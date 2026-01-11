@@ -18,16 +18,16 @@ set -e
 ENVIRONMENT="${1:-production}"
 
 # Map short environment names to full folder names
-case "$ENVIRONMENT" in
-    dev)
-        ENVIRONMENT="development"
-        ;;
-    prod|production)
-        ENVIRONMENT="production"
-        ;;
-    staging)
-        ENVIRONMENT="staging"
-        ;;
+case "${ENVIRONMENT}" in
+dev)
+	ENVIRONMENT="development"
+	;;
+prod | production)
+	ENVIRONMENT="production"
+	;;
+staging)
+	ENVIRONMENT="staging"
+	;;
 esac
 
 # Colors
@@ -45,9 +45,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/get-terraform-outputs.sh" "${ENVIRONMENT}"
 
 # Check if outputs were retrieved
-if [ -z "$AWS_S3_BUCKET" ]; then
-    echo -e "${RED}❌ Failed to get Terraform outputs${NC}"
-    exit 1
+if [[ -z "${AWS_S3_BUCKET}" ]]; then
+	echo -e "${RED}❌ Failed to get Terraform outputs${NC}"
+	exit 1
 fi
 
 # Build the application
@@ -65,4 +65,3 @@ export AWS_REGION
 
 echo -e "\n${GREEN}✅ Deployment complete!${NC}"
 echo -e "${BLUE}Website URL: ${WEBSITE_URL}${NC}"
-
