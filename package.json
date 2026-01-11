@@ -11,7 +11,8 @@
     "lint-staged": "^15.2.11",
     "syncpack": "^13.0.0",
     "turbo": "^2.7.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": ">=20.0.0",
