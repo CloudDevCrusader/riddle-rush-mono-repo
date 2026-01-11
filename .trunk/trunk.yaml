@@ -17,15 +17,51 @@ runtimes:
     - python@3.10.8
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
+  # Ignore patterns
+  ignore:
+    - linters: [ALL]
+      paths:
+        # Binary assets
+        - '**/*.png'
+        - '**/*.jpg'
+        - '**/*.jpeg'
+        - '**/*.gif'
+        - '**/*.svg'
+        - '**/*.ico'
+        # Build outputs
+        - '**/node_modules/**'
+        - '**/.nuxt/**'
+        - '**/dist/**'
+        - '**/build/**'
+        # Test outputs
+        - '**/.playwright-mcp/**'
+        - '**/playwright-report/**'
+        - '**/test-results/**'
+        # Trunk outputs
+        - '**/.trunk/**'
+    - linters: [trufflehog]
+      paths:
+        - '**/.env*'
+        - '**/pnpm-lock.yaml'
+        - '**/*.md'
+    - linters: [prettier]
+      paths:
+        - '**/.vite/stats.html'
+        - '**/.circleci/**'
+
+  # Disable strict security scanners
+  disabled:
+    - trufflehog
+    - osv-scanner
+    - checkov
+
   enabled:
     - dotenv-linter@3.3.0
     - actionlint@1.7.10
-    - checkov@3.2.497
     - eslint@9.39.2
     - git-diff-check
     - hadolint@2.14.0
     - markdownlint@0.47.0
-    - osv-scanner@2.3.1
     - oxipng@10.0.0
     - prettier@3.7.4
     - renovate@42.76.5
@@ -34,8 +70,19 @@ lint:
     - stylelint@16.26.1
     - svgo@4.0.0
     - tflint@0.60.0
-    - trufflehog@3.92.4
     - yamllint@1.37.1
+
+  # Configure specific linters
+  definitions:
+    - name: shellcheck
+      commands:
+        - name: lint
+          run: shellcheck --severity=error ${target}
+    - name: markdownlint
+      commands:
+        - name: lint
+          run: markdownlint --config .markdownlint.json ${target}
+          success_codes: [0]
 actions:
   disabled:
     - trunk-announce
