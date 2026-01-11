@@ -1,4 +1,17 @@
+import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
+
+/**
+ * Helper to wait for splash screen to complete
+ */
+async function waitForSplashComplete(page: Page) {
+  await page.waitForTimeout(1000)
+  const splashScreen = page.locator('.splash-screen')
+  await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
+    // Splash might already be gone
+  })
+  await page.waitForTimeout(500) // Extra buffer for transitions
+}
 
 test.describe('Credits Page', () => {
   test('should load credits page successfully', async ({ page }) => {
@@ -6,6 +19,7 @@ test.describe('Credits Page', () => {
 
     // Wait for page to load and Vue to hydrate
     await page.waitForLoadState('networkidle')
+    await waitForSplashComplete(page)
 
     // Wait for the main container to appear (sign that Vue has mounted)
     await page.waitForSelector('.credits-page', { timeout: 10000 })
@@ -24,6 +38,7 @@ test.describe('Credits Page', () => {
 
     // Wait for page to load and Vue to hydrate
     await page.waitForLoadState('networkidle')
+    await waitForSplashComplete(page)
     await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Check for credits panel
@@ -65,6 +80,7 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await waitForSplashComplete(page)
     await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Look for back button
@@ -87,6 +103,7 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await waitForSplashComplete(page)
     await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Look for OK button
@@ -120,6 +137,7 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await waitForSplashComplete(page)
     await page.waitForSelector('.credits-page', { timeout: 10000 })
 
     // Check that the page has the main container
