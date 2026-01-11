@@ -57,20 +57,8 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'mobile-samsung',
-      use: { ...devices['Galaxy S9+'] }, // Samsung Internet is most popular in Germany
-    },
-    {
       name: 'mobile-chrome',
       use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 12'] },
-    },
-    {
-      name: 'tablet-ipad',
-      use: { ...devices['iPad Pro'] },
     },
   ],
 
