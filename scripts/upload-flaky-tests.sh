@@ -11,9 +11,16 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration
-TRUNK_ORG_SLUG="cloudcrusaders"
-TRUNK_TOKEN="QijOV1O5kAHDRCDNH687LIzRFhfSfpTJe02scwie"
+# Configuration - read from environment variables or use defaults
+TRUNK_ORG_SLUG="${TRUNK_ORG_SLUG:-cloudcrusaders}"
+TRUNK_TOKEN="${TRUNK_TOKEN:-}"
+
+# Check if token is set
+if [[ -z "$TRUNK_TOKEN" ]]; then
+    echo -e "${RED}❌ TRUNK_TOKEN environment variable is not set${NC}"
+    echo -e "   Please set TRUNK_TOKEN environment variable with your Trunk API token"
+    exit 1
+fi
 
 # Check if Trunk CLI is available
 check_trunk_cli() {

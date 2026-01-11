@@ -19,6 +19,9 @@ y**/dist/
 playwright-report/
 **/playwright-report/
 
+# Trunk configuration
+.trunk-config
+
 # Trunk CLI cache
 .trunk-cache/
 **/.trunk-cache/

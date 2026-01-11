@@ -79,9 +79,17 @@ This directory contains scripts for deploying the Riddle Rush application to AWS
 - **`upload-flaky-tests.sh`** - Upload test results to Trunk for flaky test detection
 
   ```bash
+  # Set Trunk token (required)
+  export TRUNK_TOKEN="your-trunk-api-token"
+
   # Upload test results (auto-detects test files)
   ./scripts/upload-flaky-tests.sh
+
+  # Or set token inline
+  TRUNK_TOKEN="your-trunk-api-token" ./scripts/upload-flaky-tests.sh
   ```
+
+  **Note:** The Trunk token should be kept secret. Use environment variables or CI/CD secrets.
 
 ## Workflow Examples
 
