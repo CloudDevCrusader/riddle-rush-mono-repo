@@ -72,6 +72,7 @@ pnpm run agent:fix        # Auto-fix all issues
 ## 📚 Documentation
 
 - **[Agent Workflow Guide](AGENTS.md)** - Complete workflow for AI agents (START HERE)
+- **[Agent Workflow Details](docs/development/AGENT-WORKFLOW.md)** - Detailed workflow with examples
 - **[Documentation Index](docs/README.md)** - Full documentation structure
 - **[Plugin Guide](docs/PLUGINS.md)** - Vite/Nuxt plugin configuration
 - **[Testing Guide](docs/TESTING-GUIDE.md)** - How to write and run tests

@@ -56,6 +56,8 @@ This directory contains scripts for deploying the Riddle Rush application to AWS
 
 ## Workflow Examples
 
+**For AI Agents:** See [Agent Workflow Guide](docs/development/AGENT-WORKFLOW.md) for detailed development workflow.
+
 ### Separate Terraform and Deployment
 
 1. **Plan infrastructure changes:**
