@@ -49,4 +49,9 @@
     "path-intellisense.extensionOnImport": true,
     "cursor.cpp.disabledLanguages": [],
   },
+  "extensions": {
+    "recommendations": [
+      "msjsdiag.debugger-for-chrome"
+    ]
+  },
 }

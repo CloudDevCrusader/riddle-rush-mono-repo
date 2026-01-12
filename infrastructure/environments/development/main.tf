@@ -43,6 +43,7 @@ module "blue_green" {
   environment     = "development"
   aws_region      = var.aws_region
   domain_name     = var.domain_name
+  domain_names    = length(var.domain_names) > 0 ? var.domain_names : (var.domain_name != "" ? [var.domain_name] : [])
   certificate_arn = var.certificate_arn
   price_class     = var.cloudfront_price_class
   use_green       = var.use_green # Default: false (uses blue)

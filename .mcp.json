@@ -12,11 +12,6 @@
     "nuxt-ui": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://ui.nuxt.com/mcp"]
-    },
-    "nx-mcp": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["nx", "mcp"]
     }
   }
 }

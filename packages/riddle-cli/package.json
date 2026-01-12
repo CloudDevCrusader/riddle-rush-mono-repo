@@ -1,0 +1,67 @@
+{
+  "name": "@riddle-rush/cli",
+  "version": "1.0.0",
+  "description": "Riddle Rush CLI - Agent workflow and project management",
+  "keywords": [
+    "oclif",
+    "riddle",
+    "cli"
+  ],
+  "homepage": "https://github.com/djdiox/riddle-rush-nuxt-pwa",
+  "license": "MIT",
+  "author": "Riddle Rush Team",
+  "type": "module",
+  "exports": "./lib/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "riddle": "./bin/run.js"
+  },
+  "files": [
+    "/bin",
+    "/dist",
+    "/oclif.manifest.json"
+  ],
+  "dependencies": {
+    "@oclif/core": "^4",
+    "@oclif/plugin-help": "^6",
+    "@oclif/plugin-plugins": "^5"
+  },
+  "devDependencies": {
+    "@oclif/prettier-config": "^0.2.1",
+    "@oclif/test": "^4",
+    "@types/chai": "^5",
+    "@types/mocha": "^10",
+    "@types/node": "^22",
+    "chai": "^5",
+    "eslint": "^9",
+    "eslint-config-oclif": "^6",
+    "eslint-config-oclif-typescript": "^3",
+    "mocha": "^10",
+    "oclif": "^4",
+    "shx": "^0.3.4",
+    "ts-node": "^10",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "oclif": {
+    "bin": "riddle",
+    "dirname": "riddle",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "topicSeparator": ":"
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "pnpm run lint",
+    "prepack": "oclif manifest && oclif readme",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif readme && git add README.md"
+  },
+  "packageManager": "pnpm@10.26.2"
+}

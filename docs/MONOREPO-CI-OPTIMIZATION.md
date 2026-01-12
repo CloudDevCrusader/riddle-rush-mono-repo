@@ -346,7 +346,7 @@ rules:
 - [ ] Parallel job execution for independent apps
 - [ ] Cache dependencies per app (not just globally)
 - [ ] Dynamic pipeline generation based on changes
-- [ ] Turbo/Nx integration for even smarter caching
+- [ ] Turbo integration for even smarter caching
 
 ## References
 

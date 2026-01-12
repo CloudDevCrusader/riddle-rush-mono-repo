@@ -40,5 +40,6 @@ export default createConfigForNuxt({
       'playwright-report/',
       'test-results/',
       '*.min.js',
+      'scripts/',
     ],
   })

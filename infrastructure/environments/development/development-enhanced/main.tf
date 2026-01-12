@@ -48,8 +48,9 @@ module "cloudfront_enhanced" {
   environment                 = "development"
 
   # Domain is optional - leave empty for development
-  domain_name     = "" # Optional: "dev.your-domain.com"
-  certificate_arn = "" # Optional: ACM certificate ARN
+  domain_name     = var.domain_name
+  domain_names    = var.domain_names
+  certificate_arn = var.certificate_arn
 
   price_class       = "PriceClass_100"
   default_cache_ttl = 3600 # 1 hour for dev

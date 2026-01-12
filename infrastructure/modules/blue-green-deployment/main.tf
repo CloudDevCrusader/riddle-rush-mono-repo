@@ -33,6 +33,7 @@ module "cloudfront" {
   bucket_arn                  = var.use_green ? module.s3_green.bucket_arn : module.s3_blue.bucket_arn
   environment                 = var.environment
   domain_name                 = var.domain_name
+  domain_names                 = length(var.domain_names) > 0 ? var.domain_names : (var.domain_name != "" ? [var.domain_name] : [])
   certificate_arn             = var.certificate_arn
   price_class                 = var.price_class
 }

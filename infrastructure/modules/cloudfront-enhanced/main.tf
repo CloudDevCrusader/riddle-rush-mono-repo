@@ -18,9 +18,15 @@ variable "environment" {
 }
 
 variable "domain_name" {
-  description = "Custom domain name for CloudFront"
+  description = "Custom domain name for CloudFront (deprecated, use domain_names)"
   type        = string
   default     = ""
+}
+
+variable "domain_names" {
+  description = "List of custom domain names for CloudFront"
+  type        = list(string)
+  default     = []
 }
 
 variable "certificate_arn" {
@@ -135,7 +141,8 @@ resource "aws_cloudfront_distribution" "website" {
   # Enable automatic compression optimization
   web_acl_id = "" # Can add WAF if needed
 
-  aliases = var.domain_name != "" ? [var.domain_name] : []
+  # Support both domain_name (backward compatibility) and domain_names
+  aliases = length(var.domain_names) > 0 ? var.domain_names : (var.domain_name != "" ? [var.domain_name] : [])
 
   origin {
     domain_name              = var.bucket_regional_domain_name

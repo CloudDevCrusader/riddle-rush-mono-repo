@@ -10,7 +10,6 @@ ignoredBuiltDependencies:
   - gifsicle
   - jpegtran-bin
   - mozjpeg
-  - nx
   - optipng-bin
   - pngquant-bin
   - sharp

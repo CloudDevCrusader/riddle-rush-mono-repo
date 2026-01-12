@@ -94,7 +94,6 @@ Configured in `.mcp.json` and `fastmcp.json`:
 6. **Git** - Git operations
 7. **GitLab** - CI/CD pipeline management
 8. **Filesystem** - Safe file operations
-9. **Nx** - Monorepo task orchestration
 
 ### Using MCP Servers
 
@@ -196,7 +195,6 @@ Update this README with tool usage instructions.
 Tools installed globally or used via npx:
 
 - **Turbo** - Monorepo build system (`pnpm run build`)
-- **Nx** - Task orchestration (`nx run <task>`)
 - **Changesets** - Version management (`pnpm changeset`)
 - **Syncpack** - Dependency synchronization (`pnpm syncpack:check`)
 
