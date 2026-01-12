@@ -1,10 +1,16 @@
 packages:
   - apps/*
   - packages/*
-
+  - tools/*
 ignoredBuiltDependencies:
   - '@parcel/watcher'
   - better-sqlite3
+  - cwebp-bin
+  - gifsicle
+  - jpegtran-bin
+  - mozjpeg
+  - optipng-bin
+  - pngquant-bin
   - sharp
   - unrs-resolver
 
