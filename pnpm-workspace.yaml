@@ -17,4 +17,6 @@ ignoredBuiltDependencies:
   - unrs-resolver
 
 onlyBuiltDependencies:
+  - '@nativescript/core'
+  - core-js-pure
   - esbuild

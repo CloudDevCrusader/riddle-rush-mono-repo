@@ -1,6 +1,41 @@
-# Deployment Scripts
+# Scripts Directory
 
-This directory contains scripts for deploying the Riddle Rush application to AWS.
+This directory contains automation scripts for the Riddle Rush monorepo.
+
+## 🎮 RiddleRush CLI (Recommended)
+
+We provide a unified CLI called `rush` that organizes all scripts into logical categories.
+
+### Quick Install
+
+```bash
+# Install the CLI
+./scripts/install-cli.sh
+
+# Activate (or restart terminal)
+source ~/.bashrc  # or ~/.zshrc
+
+# Start using
+rush                # Show help
+rush list           # List all commands
+rush agent validate # Run a command
+```
+
+### Why Use the CLI?
+
+✅ **Organized** - Scripts grouped by category (agent, aws, deploy, test, etc.)
+✅ **Discoverable** - Easy to find the right script with `rush help`
+✅ **Consistent** - Same interface for all operations
+✅ **Documented** - Built-in help for every command
+✅ **Fast** - Type less with short aliases
+
+See [CLI-GUIDE.md](CLI-GUIDE.md) for complete documentation.
+
+---
+
+## Direct Script Usage
+
+You can still run scripts directly if needed:
 
 ## Script Overview
 

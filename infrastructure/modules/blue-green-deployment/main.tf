@@ -58,6 +58,10 @@ output "cloudfront_domain_name" {
   value = module.cloudfront.distribution_domain_name
 }
 
+output "cloudfront_hosted_zone_id" {
+  value = module.cloudfront.distribution_hosted_zone_id
+}
+
 output "switch_to_green_command" {
   value = "terraform apply -var=use_green=true"
 }
