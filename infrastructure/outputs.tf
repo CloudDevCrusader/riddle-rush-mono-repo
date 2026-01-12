@@ -159,3 +159,14 @@ output "performance_dashboard_url" {
   description = "Performance CloudWatch Dashboard URL"
   value       = "https://console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.main.dashboard_name}"
 }
+
+# Route53 Outputs
+output "route53_zone_id" {
+  description = "Route53 Hosted Zone ID"
+  value       = aws_route53_zone.main.zone_id
+}
+
+output "route53_name_servers" {
+  description = "Route53 Name Servers"
+  value       = aws_route53_zone.main.name_servers
+}
