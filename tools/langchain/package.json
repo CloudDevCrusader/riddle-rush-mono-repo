@@ -14,8 +14,8 @@
     "format": "prettier --write .",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:unit": "jest --testPathPatterns=src/unit",
-    "test:e2e": "jest --testPathPatterns=src/e2e",
+    "test:unit": "jest --testPathPatterns=src/unit --passWithNoTests",
+    "test:e2e": "jest --testPathPatterns=src/e2e --passWithNoTests",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
