@@ -76,3 +76,52 @@ infrastructure/lambda/websocket/*/node_modules
 
 # YoYo AI version control directory
 .yoyo/
+
+# Python / pyenv
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+**/*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+**/.venv/
+venv/
+**/venv/
+ENV/
+env/
+**/ENV/
+**/env/
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+**/.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+**/.ruff_cache/
+.coverage
+**/.coverage
+.coverage.*
+**/.coverage.*
+htmlcov/
+**/htmlcov/
+.tox/
+**/.tox/
+.nox/
+**/.nox/
+.hypothesis/
+**/.hypothesis/
+*.cover
+.host/
+**/.host/
+# pyenv local overrides (keep .python-version tracked)
+.python-version.local
+**/.python-version.local

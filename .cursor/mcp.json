@@ -1,3 +1,59 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "riddle-rush-subagents": {
+      "command": "/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/python/run-mcp-server.sh",
+      "args": [],
+      "cwd": "/home/cloudcrusader/projects/riddle-rush-mono-repo",
+      "env": {},
+      "description": "Riddle Rush FastMCP subagents for AWS deployment, Terraform management, CI/CD workflows, testing automation, code quality checks, and documentation generation"
+    },
+    "nuxt-ui": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://ui.nuxt.com/mcp"],
+      "description": "Nuxt UI component documentation and examples"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"],
+      "description": "Browser automation for E2E testing and debugging"
+    },
+    "aws-docs": {
+      "command": "uvx",
+      "args": ["mcp-server-aws-docs"],
+      "description": "AWS documentation search and reference (S3, CloudFront, etc.)"
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "@docker/mcp-server-docker"],
+      "description": "Docker Hub search and container management for CI/CD"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "context7-mcp"],
+      "description": "Library documentation (Vue, Nuxt, Vite, TypeScript, etc.)"
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "description": "Git operations and repository management"
+    },
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "env": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_PERSONAL_ACCESS_TOKEN}",
+        "GITLAB_API_URL": "https://gitlab.com/api/v4"
+      },
+      "description": "GitLab API for CI/CD pipeline management and MRs"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/cloudcrusader/projects/riddle-rush-mono-repo"
+      ],
+      "description": "Safe filesystem operations within project directory"
+    }
+  }
 }

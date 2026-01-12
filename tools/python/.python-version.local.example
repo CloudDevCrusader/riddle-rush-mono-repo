@@ -1,0 +1,4 @@
+# Local Python version override
+# Copy this file to .python-version.local to override the project Python version
+# This file is git-ignored and allows developers to use different Python versions locally
+3.10
