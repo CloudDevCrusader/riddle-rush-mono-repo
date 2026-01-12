@@ -125,3 +125,8 @@ htmlcov/
 # pyenv local overrides (keep .python-version tracked)
 .python-version.local
 **/.python-version.local
+
+
+
+.nx/cache
+.nx/workspace-data

@@ -14,6 +14,7 @@ withDefaults(
   }>(),
   {
     size: 'md',
+    label: '',
     overlay: false,
   }
 )

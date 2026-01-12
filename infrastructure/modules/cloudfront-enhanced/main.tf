@@ -287,12 +287,12 @@ resource "aws_cloudfront_distribution" "website" {
     }
   }
 
-  # Enable logging for performance monitoring
-  logging_config {
-    include_cookies = false
-    bucket          = "" # Add logging bucket if needed
-    prefix          = "cloudfront-logs/"
-  }
+  # Logging disabled for now - can be enabled by adding a logging bucket parameter
+  # logging_config {
+  #   include_cookies = false
+  #   bucket          = var.logging_bucket_domain_name
+  #   prefix          = "cloudfront-logs/"
+  # }
 
   # Enable origin failover for resilience
   # origin_group configuration removed - needs proper setup with multiple origins
