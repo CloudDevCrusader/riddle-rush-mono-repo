@@ -68,6 +68,7 @@
     "typecheck": "turbo run typecheck",
     "workspace:check": "pnpm syncpack:check && pnpm typecheck && pnpm lint",
     "workspace:fix": "pnpm syncpack:fix && pnpm lint:fix && pnpm format",
+    "agent": "node scripts/agent-cli.js",
     "agent:help": "bash scripts/agent-commands.sh",
     "agent:status": "bash scripts/agent-status.sh",
     "agent:validate": "bash scripts/agent-validate.sh",
@@ -87,5 +88,14 @@
     "ai:agents": "cd tools/python && python main.py",
     "ai:tools": "python tools/ai-agents/agent-tools.py"
   },
-  "type": "module"
+  "type": "module",
+  "bin": {
+    "riddlerush": "./bin/run.js"
+  },
+  "oclif": {
+    "bin": "riddlerush",
+    "commands": "./dist/commands",
+    "dirname": "riddlerush",
+    "topicSeparator": " "
+  }
 }
