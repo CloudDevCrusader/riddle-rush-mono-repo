@@ -219,7 +219,7 @@ pnpm syncpack:fix
 
 ### Future Enhancements
 
-- [ ] Add `turbo` or `nx` for task orchestration
+- [ ] Add `turbo` for task orchestration
 - [ ] Add `dependabot` or `renovate` for dependency updates
 - [ ] Add `semantic-release` for automated releases
 - [ ] Add `commitlint` for commit message validation

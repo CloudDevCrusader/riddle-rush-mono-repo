@@ -17,9 +17,15 @@ variable "aws_region" {
 }
 
 variable "domain_name" {
-  description = "Custom domain name"
+  description = "Custom domain name (deprecated, use domain_names)"
   type        = string
   default     = ""
+}
+
+variable "domain_names" {
+  description = "List of custom domain names for CloudFront"
+  type        = list(string)
+  default     = []
 }
 
 variable "certificate_arn" {

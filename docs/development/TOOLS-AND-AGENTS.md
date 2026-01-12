@@ -29,7 +29,6 @@ The monorepo uses a comprehensive tooling ecosystem to support development, test
 ├─────────────────────────────────────────────────┤
 │  Development Tools                              │
 │  • Turbo (Build orchestration)                  │
-│  • Nx (Task execution)                          │
 │  • Trunk (Code quality)                         │
 │  • Python Tools (Automation)                    │
 │  ↓                                              │
@@ -51,11 +50,6 @@ Model Context Protocol (MCP) servers provide AI agents with specialized capabili
 ```json
 {
   "mcpServers": {
-    "nx-mcp": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["nx", "mcp"]
-    },
     "nuxt-ui": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://ui.nuxt.com/mcp"]
@@ -89,28 +83,7 @@ Model Context Protocol (MCP) servers provide AI agents with specialized capabili
 
 ### Available MCP Servers
 
-#### 1. **Nx MCP Server**
-
-Monorepo task orchestration and project management.
-
-**Capabilities:**
-
-- Execute Nx tasks (build, test, lint)
-- Query project graph
-- Analyze dependencies
-- Generate reports
-
-**Usage:**
-
-```bash
-# Via MCP
-nx run @riddle-rush/game:build
-
-# Direct
-pnpm run build
-```
-
-#### 2. **Nuxt UI MCP**
+#### 1. **Nuxt UI MCP**
 
 Nuxt UI component documentation and examples.
 
@@ -123,7 +96,7 @@ Nuxt UI component documentation and examples.
 
 **Access:** https://ui.nuxt.com/mcp
 
-#### 3. **Playwright MCP**
+#### 2. **Playwright MCP**
 
 Browser automation for E2E testing and debugging.
 
@@ -144,7 +117,7 @@ pnpm run test:e2e
 pnpm run test:e2e -- --debug tests/e2e/login.spec.ts
 ```
 
-#### 4. **AWS Documentation MCP**
+#### 3. **AWS Documentation MCP**
 
 AWS service documentation and reference.
 
@@ -163,7 +136,7 @@ AWS service documentation and reference.
 - DynamoDB (database)
 - API Gateway (APIs)
 
-#### 5. **Docker MCP**
+#### 4. **Docker MCP**
 
 Docker Hub search and container management.
 
@@ -184,7 +157,7 @@ pnpm run build:docker
 docker-compose up -d
 ```
 
-#### 6. **Context7 MCP**
+#### 5. **Context7 MCP**
 
 Library documentation for modern web development.
 
@@ -205,7 +178,7 @@ Library documentation for modern web development.
 - Check migration guides
 - View TypeScript types
 
-#### 7. **Git MCP**
+#### 6. **Git MCP**
 
 Git operations and repository management.
 
@@ -227,7 +200,7 @@ git add .
 git commit -m "feat: description"
 ```
 
-#### 8. **GitLab MCP**
+#### 7. **GitLab MCP**
 
 GitLab API for CI/CD pipeline management.
 
@@ -247,7 +220,7 @@ export GITLAB_PERSONAL_ACCESS_TOKEN="your-token"
 export GITLAB_API_URL="https://gitlab.com/api/v4"
 ```
 
-#### 9. **Filesystem MCP**
+#### 8. **Filesystem MCP**
 
 Safe filesystem operations within project directory.
 
@@ -331,25 +304,6 @@ pnpm run build --filter=@riddle-rush/game
 
 # Run task with caching
 turbo run typecheck --cache-dir=.turbo
-```
-
-### Nx
-
-Advanced monorepo task execution and dependency management.
-
-**Configuration:** `nx.json`
-
-**Common Commands:**
-
-```bash
-# Run task
-nx run @riddle-rush/game:build
-
-# Affected tasks
-nx affected:build
-
-# Project graph
-nx graph
 ```
 
 ### Trunk
@@ -518,7 +472,7 @@ cp fastmcp.json ~/.config/claude/
 pnpm run workspace:check
 
 # Test MCP servers
-npx nx mcp
+npx -y mcp-remote https://ui.nuxt.com/mcp
 
 # Verify tools
 pnpm run trunk:check
@@ -646,7 +600,7 @@ Update `scripts/agent-commands.sh` with new command.
 2. Install dependencies: `pip install -r tools/python/requirements.txt`
 3. Check Python version: `python --version` (should be >=3.9)
 
-### Nx/Turbo Task Failures
+### Turbo Task Failures
 
 **Issue:** Build/test tasks fail
 
@@ -654,8 +608,7 @@ Update `scripts/agent-commands.sh` with new command.
 
 1. Run baseline check: `pnpm run workspace:check`
 2. Clear build cache: `turbo daemon clean`
-3. Clear Nx cache: `nx reset`
-4. Check logs: `turbo run build --verbose`
+3. Check logs: `turbo run build --verbose`
 
 ---
 
@@ -720,7 +673,6 @@ pnpm run agent:fix             # Auto-fix issues
 | `.mcp.json`         | Primary MCP server configuration  |
 | `fastmcp.json`      | Extended MCP server configuration |
 | `turbo.json`        | Turbo build configuration         |
-| `nx.json`           | Nx task configuration             |
 | `.trunk/trunk.yaml` | Trunk tool configuration          |
 | `package.json`      | npm scripts and dependencies      |
 
