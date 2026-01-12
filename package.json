@@ -63,7 +63,7 @@
     "test:e2e": "turbo run test:e2e --filter=@riddle-rush/game",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
-    "workspace:check": "pnpm syncpack:check && pnpm typecheck && pnpm lint",
+    "workspace:check": "pnpm syncpack:check && pnpm typecheck && pnpm lint && pnpm python:check",
     "workspace:fix": "pnpm syncpack:fix && pnpm lint:fix && pnpm format",
     "trunk:check": "./trunk check --all",
     "trunk:fmt": "./trunk fmt",
@@ -72,7 +72,10 @@
     "agent:check": "pnpm run workspace:check",
     "agent:fix": "pnpm run workspace:fix",
     "maintain": "pnpm update && pnpm run syncpack:fix && pnpm run workspace:check",
-    "validate:locales": "node scripts/validate-locales.mjs"
+    "validate:locales": "node scripts/validate-locales.mjs",
+    "python:lint": "bash scripts/python-lint.sh",
+    "python:format": "bash scripts/python-format.sh",
+    "python:check": "pnpm run python:lint"
   },
   "type": "module"
 }
