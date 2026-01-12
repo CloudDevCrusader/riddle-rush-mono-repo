@@ -4,8 +4,8 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.0.0",
     "@types/node": "^22.19.5",
-    "eslint": "^9.18.0",
-    "prettier": "^3.4.2",
+    "eslint": "^9.39.2",
+    "prettier": "^3.7.4",
     "typescript": "^5.9.3"
   },
   "exports": {

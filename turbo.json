@@ -1,7 +1,45 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
+  "ui": "tui",
   "tasks": {
+    "//#workspace:check": {
+      "dependsOn": ["//#syncpack:check", "typecheck", "lint"],
+      "cache": false
+    },
+    "//#workspace:fix": {
+      "dependsOn": ["//#syncpack:fix", "lint:fix", "format"],
+      "cache": false
+    },
+    "//#syncpack:check": {
+      "cache": false
+    },
+    "//#syncpack:fix": {
+      "cache": false
+    },
+    "//#python:lint": {
+      "cache": false
+    },
+    "//#python:format": {
+      "cache": false
+    },
+    "//#python:check": {
+      "cache": false
+    },
+    "//#trunk:check": {
+      "cache": false
+    },
+    "//#trunk:fmt": {
+      "cache": false
+    },
+    "//#agent:check": {
+      "dependsOn": ["//#workspace:check"],
+      "cache": false
+    },
+    "//#agent:fix": {
+      "dependsOn": ["//#workspace:fix"],
+      "cache": false
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": [

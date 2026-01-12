@@ -2,6 +2,24 @@
 
 This document defines the standard workflow for AI agents working on this codebase to ensure code quality, regular commits, and smooth collaboration.
 
+## 🚀 Task Runner: Turbo
+
+This monorepo uses **Turbo** for task orchestration:
+
+- **Parallel execution** - Runs tasks across projects simultaneously
+- **Smart caching** - Skips unchanged tasks for faster builds
+- **Dependency management** - Runs tasks in correct order
+- **Remote caching** - Share cache across team (when enabled)
+
+**Key Commands:**
+
+```bash
+turbo run build                        # Build all projects
+turbo run typecheck lint               # Run multiple tasks
+turbo run test --filter=@riddle-rush/game  # Target specific project
+pnpm run workspace:check               # Full validation (uses Turbo)
+```
+
 ## 🎯 Core Principles
 
 1. **Make changes incrementally** - Small, focused commits are better than large dumps
@@ -40,7 +58,7 @@ pnpm run test:unit
 
 ### 3. After Each Logical Change
 
-**Run quality checks:**
+**Run quality checks (Turbo handles parallel execution):**
 
 ```bash
 # Quick check (< 30 seconds)
@@ -48,8 +66,11 @@ pnpm run typecheck
 pnpm run lint:fix
 pnpm run format
 
-# Full check (if time permits)
-pnpm run workspace:check
+# Full check (recommended - uses Turbo caching)
+pnpm run workspace:check  # Runs all checks in parallel
+
+# Or use Turbo directly for specific projects
+turbo run typecheck --filter=@riddle-rush/game
 ```
 
 ### 4. Commit Frequently
@@ -85,10 +106,16 @@ After **EVERY** significant change, agents MUST:
 ### 1. **Validate Changes**
 
 ```bash
+# Option 1: Full validation (recommended)
+pnpm run workspace:check  # Runs syncpack + typecheck + lint + python checks
+
+# Option 2: Quick validation
 pnpm run typecheck  # TypeScript errors?
 pnpm run lint:fix   # Auto-fix linting issues
 pnpm run format     # Format code
 ```
+
+**Note:** All commands use Turbo for caching and parallel execution.
 
 ### 2. **Verify Tests (if relevant)**
 
@@ -847,3 +874,17 @@ Before claiming a task is complete:
 **Remember:** Quality > Speed. Take time to verify each change!
 
 **Last Updated:** January 2026
+
+<!-- nx configuration start-->
+<!-- Leave the start & end comments to automatically receive updates. -->
+
+# General Guidelines for working with Nx
+
+- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- You have access to the Nx MCP server and its tools, use them to help the user
+- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
+- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
+- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
+- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
+
+<!-- nx configuration end-->

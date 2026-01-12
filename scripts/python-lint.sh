@@ -23,6 +23,6 @@ echo "🔍 Running Trunk check on Python files..."
 echo "Files: $PYTHON_FILES"
 
 # Run Trunk check on Python files
-./trunk check $PYTHON_FILES
+./tools/trunk check $PYTHON_FILES
 
 echo "✅ Python linting complete!"

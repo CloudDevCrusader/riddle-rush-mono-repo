@@ -23,6 +23,6 @@ echo "🔧 Running Trunk format on Python files..."
 echo "Files: $PYTHON_FILES"
 
 # Run Trunk format on Python files
-./trunk fmt $PYTHON_FILES
+./tools/trunk fmt $PYTHON_FILES
 
 echo "✅ Python formatting complete!"

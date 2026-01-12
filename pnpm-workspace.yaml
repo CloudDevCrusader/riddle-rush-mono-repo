@@ -2,6 +2,7 @@ packages:
   - apps/*
   - packages/*
   - tools/*
+
 ignoredBuiltDependencies:
   - '@parcel/watcher'
   - better-sqlite3
@@ -9,6 +10,7 @@ ignoredBuiltDependencies:
   - gifsicle
   - jpegtran-bin
   - mozjpeg
+  - nx
   - optipng-bin
   - pngquant-bin
   - sharp
