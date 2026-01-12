@@ -272,9 +272,9 @@ resource "aws_iam_user" "additional_admin" {
 
 # IAM User Policy for additional admin
 resource "aws_iam_user_policy" "additional_admin" {
-  count  = var.create_additional_admin ? 1 : 0
-  name   = "${var.project_name}-admin-policy"
-  user   = aws_iam_user.additional_admin[0].name
+  count = var.create_additional_admin ? 1 : 0
+  name  = "${var.project_name}-admin-policy"
+  user  = aws_iam_user.additional_admin[0].name
 
   policy = jsonencode({
     Version = "2012-10-17"
