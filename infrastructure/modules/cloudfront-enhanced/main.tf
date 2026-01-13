@@ -276,7 +276,7 @@ resource "aws_cloudfront_distribution" "website" {
     content {
       acm_certificate_arn      = var.certificate_arn
       ssl_support_method       = "sni-only"
-      minimum_protocol_version = "TLSv1.3_2021" # Most secure
+      minimum_protocol_version = "TLSv1.2_2021" # Most secure available
     }
   }
 

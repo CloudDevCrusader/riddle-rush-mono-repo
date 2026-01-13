@@ -22,8 +22,8 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.aws_region
-  profile = "riddlerush" # Use the AWS CLI profile
+  region = var.aws_region
+  # profile = "riddlerush" # Commented out - uses default AWS credentials
 
   default_tags {
     tags = {
