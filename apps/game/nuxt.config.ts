@@ -1,8 +1,10 @@
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 
-// Disable minification completely in development for better debugging
+// Disable minification for development and debug builds
+// Use DEBUG_BUILD=true to generate unminified production builds for debugging
 const isDev = process.env.NODE_ENV !== 'production'
+const isDebugBuild = process.env.DEBUG_BUILD === 'true'
 const isLocalhostBuild = [
   process.env.BASE_URL,
   process.env.NUXT_PUBLIC_BASE_URL,
@@ -13,7 +15,7 @@ const isLocalhostBuild = [
   .filter(Boolean)
   .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
 
-const shouldMinify = isDev || isLocalhostBuild ? false : 'esbuild'
+const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
 
 export default defineNuxtConfig({
   modules: [
@@ -108,6 +110,11 @@ export default defineNuxtConfig({
     },
   },
 
+  sourcemap: {
+    server: isDev || isDebugBuild,
+    client: isDev || isDebugBuild,
+  },
+
   future: {
     compatibilityVersion: 4,
   },
@@ -187,8 +194,8 @@ export default defineNuxtConfig({
       chunkSizeWarningLimit: 1000, // Increase warning limit for chunks
       // Enable CSS code splitting for better performance
       cssCodeSplit: true,
-      // Enable sourcemaps in development for debugging
-      sourcemap: isDev ? 'inline' : false,
+      // Enable sourcemaps in development and debug builds
+      sourcemap: isDev || isDebugBuild ? 'inline' : false,
     },
   },
 
