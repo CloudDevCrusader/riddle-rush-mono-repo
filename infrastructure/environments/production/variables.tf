@@ -44,10 +44,3 @@ variable "cloudfront_price_class" {
     error_message = "Price class must be one of: PriceClass_100, PriceClass_200, PriceClass_All"
   }
 }
-
-variable "use_green" {
-  description = "Use green bucket (true) or blue bucket (false) for blue-green deployment"
-  type        = bool
-  default     = false
-}
-

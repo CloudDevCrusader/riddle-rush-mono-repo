@@ -131,6 +131,11 @@ echo -e "  ${GREEN}✓ NODE_ENV=production${NC} (optimized build, no dev plugins
 echo -e "\n${BLUE}Using infrastructure:${NC}"
 echo -e "  ${GREEN}✓ S3 Bucket:${NC} ${AWS_S3_BUCKET}"
 echo -e "  ${GREEN}✓ Region:${NC} ${AWS_REGION}"
+TARGET_URL="https://riddlerush.de"
+if [[ "${ENVIRONMENT}" = "dev" ]] || [[ "${ENVIRONMENT}" = "development" ]]; then
+	TARGET_URL="https://dev.riddlerush.de"
+fi
+echo -e "  ${GREEN}✓ TargetURL:${NC} ${TARGET_URL}"
 if [[ -n "${AWS_CLOUDFRONT_ID}" ]]; then
 	echo -e "  ${GREEN}✓ CloudFront:${NC} ${AWS_CLOUDFRONT_ID}"
 fi
@@ -151,7 +156,7 @@ display_deployment_url "${ENVIRONMENT}" | head -n -1
 push_version_tag "${VERSION}"
 
 echo -e "\n${BLUE}💡 Tips:${NC}"
-echo -e "  - Run E2E tests: ${YELLOW}BASE_URL=https://your-domain.com pnpm run test:e2e${NC}"
+echo -e "  - Run E2E tests: ${YELLOW}BASE_URL=https://riddlerush.de pnpm run test:e2e${NC}"
 echo -e "  - Check CloudFront invalidation status in AWS Console"
 echo -e "  - Monitor deployment in AWS S3 Console"
 echo -e "  - Verify PWA installation and offline functionality"

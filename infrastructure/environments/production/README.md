@@ -37,20 +37,20 @@ If you have existing AWS resources (from CloudFormation or manual creation):
 2. **Import S3 bucket:**
 
    ```bash
-   terraform import aws_s3_bucket.website your-bucket-name
+   terraform import module.s3_website.aws_s3_bucket.website your-bucket-name
    ```
 
 3. **Import CloudFront:**
 
    ```bash
-   terraform import aws_cloudfront_distribution.website E1234567890ABC
+   terraform import module.cloudfront.aws_cloudfront_distribution.website E1234567890ABC
    ```
 
 4. **Import related resources:**
    ```bash
-   terraform import aws_s3_bucket_versioning.website your-bucket-name
-   terraform import aws_s3_bucket_public_access_block.website your-bucket-name
-   terraform import aws_s3_bucket_website_configuration.website your-bucket-name
+   terraform import module.s3_website.aws_s3_bucket_versioning.website your-bucket-name
+   terraform import module.s3_website.aws_s3_bucket_public_access_block.website your-bucket-name
+   terraform import module.s3_website.aws_s3_bucket_website_configuration.website your-bucket-name
    ```
 
 ### Option 3: Using terraformer

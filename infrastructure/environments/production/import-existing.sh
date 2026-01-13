@@ -36,8 +36,8 @@ if [[ -z "${BUCKET_NAME}" ]] && [[ -z "${CLOUDFRONT_ID}" ]]; then
 	echo -e "${YELLOW}⚠️  No resources specified${NC}"
 	echo ""
 	echo -e "${BLUE}To import manually, run:${NC}"
-	echo "  terraform import aws_s3_bucket.website your-bucket-name"
-	echo "  terraform import aws_cloudfront_distribution.website E1234567890ABC"
+	echo "  terraform import module.s3_website.aws_s3_bucket.website your-bucket-name"
+	echo "  terraform import module.cloudfront.aws_cloudfront_distribution.website E1234567890ABC"
 	echo ""
 	echo -e "${BLUE}Or find your resources:${NC}"
 	echo "  aws s3 ls | grep riddle-rush"
@@ -53,21 +53,21 @@ echo -e "\n${BLUE}Importing resources...${NC}"
 # Import S3 bucket if specified
 if [[ -n "${BUCKET_NAME}" ]]; then
 	echo -e "${GREEN}Importing S3 bucket: ${BUCKET_NAME}${NC}"
-	terraform import aws_s3_bucket.website "${BUCKET_NAME}" || {
+	terraform import module.s3_website.aws_s3_bucket.website "${BUCKET_NAME}" || {
 		echo -e "${YELLOW}⚠️  S3 bucket import failed. You may need to import manually${NC}"
 	}
 
 	# Import related resources
-	terraform import aws_s3_bucket_versioning.website "${BUCKET_NAME}" 2>/dev/null || true
-	terraform import aws_s3_bucket_public_access_block.website "${BUCKET_NAME}" 2>/dev/null || true
-	terraform import aws_s3_bucket_website_configuration.website "${BUCKET_NAME}" 2>/dev/null || true
-	terraform import aws_s3_bucket_lifecycle_configuration.website "${BUCKET_NAME}" 2>/dev/null || true
+	terraform import module.s3_website.aws_s3_bucket_versioning.website "${BUCKET_NAME}" 2>/dev/null || true
+	terraform import module.s3_website.aws_s3_bucket_public_access_block.website "${BUCKET_NAME}" 2>/dev/null || true
+	terraform import module.s3_website.aws_s3_bucket_website_configuration.website "${BUCKET_NAME}" 2>/dev/null || true
+	terraform import module.s3_website.aws_s3_bucket_lifecycle_configuration.website "${BUCKET_NAME}" 2>/dev/null || true
 fi
 
 # Import CloudFront distribution if specified
 if [[ -n "${CLOUDFRONT_ID}" ]]; then
 	echo -e "${GREEN}Importing CloudFront distribution: ${CLOUDFRONT_ID}${NC}"
-	terraform import aws_cloudfront_distribution.website "${CLOUDFRONT_ID}" || {
+	terraform import module.cloudfront.aws_cloudfront_distribution.website "${CLOUDFRONT_ID}" || {
 		echo -e "${YELLOW}⚠️  CloudFront import failed. You may need to import manually${NC}"
 	}
 

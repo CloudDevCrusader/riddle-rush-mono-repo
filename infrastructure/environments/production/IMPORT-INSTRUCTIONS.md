@@ -37,15 +37,15 @@ If you know your resource names:
 terraform init
 
 # Import S3 bucket
-terraform import aws_s3_bucket.website YOUR_BUCKET_NAME
+terraform import module.s3_website.aws_s3_bucket.website YOUR_BUCKET_NAME
 
 # Import CloudFront distribution
-terraform import aws_cloudfront_distribution.website E1234567890ABC
+terraform import module.cloudfront.aws_cloudfront_distribution.website E1234567890ABC
 
 # Import related S3 resources
-terraform import aws_s3_bucket_versioning.website YOUR_BUCKET_NAME
-terraform import aws_s3_bucket_public_access_block.website YOUR_BUCKET_NAME
-terraform import aws_s3_bucket_website_configuration.website YOUR_BUCKET_NAME
+terraform import module.s3_website.aws_s3_bucket_versioning.website YOUR_BUCKET_NAME
+terraform import module.s3_website.aws_s3_bucket_public_access_block.website YOUR_BUCKET_NAME
+terraform import module.s3_website.aws_s3_bucket_website_configuration.website YOUR_BUCKET_NAME
 ```
 
 ## Step 3: Verify Import

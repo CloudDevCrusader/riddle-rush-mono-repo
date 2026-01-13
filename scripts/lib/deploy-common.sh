@@ -209,9 +209,9 @@ wait_for_cloudfront_ready() {
 load_aws_config() {
 	local environment="$1"
 
-	# Map short environment names to full folder names
+	# Map short environment names to full folder names for Terraform directory
 	case "${environment}" in
-	dev)
+	dev | development)
 		environment="development"
 		;;
 	prod | production)
@@ -226,6 +226,7 @@ load_aws_config() {
 	local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 	local project_root="$(cd "${script_dir}/../.." && pwd)"
 	local terraform_dir="${project_root}/infrastructure/environments/${environment}"
+	# Use the mapped environment name (development, production, staging) for bucket name
 	local default_bucket="riddle-rush-pwa-${environment}"
 	local default_region="eu-central-1"
 
@@ -381,6 +382,15 @@ display_deployment_url() {
 			echo -e "\n${BLUE}🌐 ${env_capitalized} URL:${NC}"
 			echo -e "  ${GREEN}https://${cf_domain}${NC}"
 			echo "https://${cf_domain}"
+			local final_url=""
+			if [[ "${environment}" = "development" ]]; then
+				final_url="https://dev.riddlerush.de"
+			elif [[ "${environment}" = "production" ]]; then
+				final_url="https://riddlerush.de"
+			fi
+			if [[ -n "${final_url}" ]]; then
+				echo "Final URL (.de TLD, Route53): ${final_url}"
+			fi
 			return
 		fi
 	fi

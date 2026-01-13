@@ -67,13 +67,13 @@ pnpm run infra:dev:apply
 
 ## Environment Comparison
 
-| Feature     | Production               | Development             |
-| ----------- | ------------------------ | ----------------------- |
-| Bucket Name | `riddle-rush-pwa-prod-*` | `riddle-rush-pwa-dev-*` |
-| Cache TTL   | 1 day default            | 1 hour default          |
-| Lifecycle   | 30 days                  | 7 days                  |
-| Purpose     | Live production          | Development/testing     |
-| Import      | Yes (existing)           | No (new)                |
+| Feature     | Production                     | Development                     |
+| ----------- | ------------------------------ | ------------------------------- |
+| Bucket Name | `riddle-rush-pwa-production-*` | `riddle-rush-pwa-development-*` |
+| Cache TTL   | Aggressive assets, short HTML  | Aggressive assets, short HTML   |
+| Lifecycle   | 30 days                        | 7 days                          |
+| Purpose     | Live production                | Development/testing             |
+| Import      | Yes (existing)                 | No (new)                        |
 
 ## Workflow
 

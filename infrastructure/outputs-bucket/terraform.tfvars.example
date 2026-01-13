@@ -1,0 +1,6 @@
+# Terraform Outputs Bucket Variables
+# Copy this to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to version control
+
+aws_region  = "eu-central-1"
+bucket_name = "tf-outputs-riddlerush"

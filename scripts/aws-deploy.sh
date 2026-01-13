@@ -27,7 +27,7 @@
 # Optional environment variables:
 #   - SKIP_PRE_DEPLOYMENT_CHECKS (if set, skips lint/typecheck/tests)
 
-set -e
+set -euo pipefail
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -117,7 +117,7 @@ fi
 echo ""
 
 # Check AWS CLI (only if not called from deploy scripts)
-if [[ -z "${SKIP_AWS_CHECKS}" ]]; then
+if [[ -z "${SKIP_AWS_CHECKS-}" ]]; then
 	if ! command -v aws &>/dev/null; then
 		echo -e "${RED}❌ AWS CLI is not installed. Please install it first.${NC}"
 		echo "Visit: https://aws.amazon.com/cli/"
@@ -141,7 +141,7 @@ else
 fi
 
 # Pre-deployment checks (skip if already done by calling script)
-if [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS}" ]]; then
+if [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS-}" ]]; then
 	echo -e "\n🔍 Running pre-deployment checks..."
 
 	echo -e "\n📦 Installing dependencies..."
@@ -169,25 +169,24 @@ if [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS}" ]]; then
 fi
 
 # Build the application
-if [[ ! -d "${BUILD_DIR}" ]] || [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS}" ]]; then
-	echo -e "\n🏗️  Building application..."
-	# Use NODE_ENV if set, otherwise default to production
-	if [[ -z "${NODE_ENV}" ]]; then
-		export NODE_ENV=production
-	fi
-	
-	# For development environment, enable DEBUG_BUILD for unminified code
-	if [[ "${ENVIRONMENT}" == "development" ]]; then
-		export DEBUG_BUILD=true
-		echo -e "  ${BLUE}Building with DEBUG_BUILD=true (unminified, with sourcemaps)${NC}"
-	fi
-	
-	echo -e "  ${BLUE}Building with NODE_ENV=${NODE_ENV}${NC}"
-	(cd apps/game && BASE_URL=/ pnpm run generate)
+# Always build before deployment to ensure fresh build
+echo -e "\n🏗️  Building application..."
+# Use NODE_ENV if set, otherwise default to production
+if [[ -z "${NODE_ENV}" ]]; then
+	export NODE_ENV=production
+fi
 
-	if [[ -z "${CI}" ]]; then
-		echo -e "${GREEN}✓ Build completed${NC}"
-	fi
+# For development environment, enable DEBUG_BUILD for unminified code
+if [[ "${ENVIRONMENT}" == "development" ]]; then
+	export DEBUG_BUILD=true
+	echo -e "  ${BLUE}Building with DEBUG_BUILD=true (unminified, with sourcemaps)${NC}"
+fi
+
+echo -e "  ${BLUE}Building with NODE_ENV=${NODE_ENV}${NC}"
+(cd apps/game && BASE_URL=/ pnpm run generate)
+
+if [[ -z "${CI-}" ]]; then
+	echo -e "${GREEN}✓ Build completed${NC}"
 fi
 
 if [[ ! -d "${BUILD_DIR}" ]]; then
@@ -249,6 +248,7 @@ fi
 
 # Upload to S3 with optimized caching
 echo -e "\n☁️  Uploading to S3..."
+TOTAL_SIZE=$(du -sh "${BUILD_DIR}" | cut -f1)
 
 if [[ "${DRY_RUN}" = "true" ]]; then
 	echo -e "${YELLOW}🔍 DRY RUN: Skipping actual S3 upload${NC}"
@@ -294,8 +294,6 @@ else
 	echo -e "${GREEN}✓ Files uploaded to S3${NC}"
 fi
 
-# Get upload stats
-TOTAL_SIZE=$(du -sh "${BUILD_DIR}" | cut -f1)
 echo -e "  Total size: ${TOTAL_SIZE}"
 
 # Invalidate CloudFront cache if distribution ID is provided
@@ -314,7 +312,7 @@ if [[ -n "${CLOUDFRONT_ID}" ]]; then
 		sleep 10
 	fi
 
-	echo -e "\n� Invalidating CloudFront cache..."
+	echo -e "\nInvalidating CloudFront cache..."
 	INVALIDATION_ID=$(aws cloudfront create-invalidation \
 		--distribution-id "${CLOUDFRONT_ID}" \
 		--paths "/*" \

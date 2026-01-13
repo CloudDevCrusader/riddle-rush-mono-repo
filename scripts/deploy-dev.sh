@@ -116,7 +116,7 @@ echo -e "${GREEN}🎉 Development deployment complete!${NC}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 # Display deployment URL
-CURRENT_URL=$(display_deployment_url "${ENVIRONMENT}")
+CURRENT_URL=https://dev.riddlerush.de
 
 echo -e "\n${BLUE}💡 Tips:${NC}"
 echo -e "  - Run E2E tests: ${YELLOW}BASE_URL=${CURRENT_URL} pnpm run test:e2e${NC}"

@@ -474,18 +474,7 @@ Found 7 TODO comments in `tests/unit/game-store.spec.ts`:
              memory: 512M
    ```
 
-2. **Implement Blue-Green Deployment**
-
-   ```bash
-   # Add to deployment script
-   docker tag riddle-rush:latest riddle-rush:blue
-   docker run -d -p 8080:80 --name riddle-rush-green riddle-rush:latest
-   # Test green deployment
-   # Switch traffic to green
-   # Remove blue
-   ```
-
-3. **Add Container Scanning**
+2. **Add Container Scanning**
    ```bash
    pnpm add -D @snyk/cli
    docker scan riddle-rush:latest

@@ -5,7 +5,7 @@
 project_name = "riddle-rush-pwa"
 aws_region   = "eu-central-1"
 
-# Leave empty for auto-generated name (will be: riddle-rush-pwa-dev-ACCOUNT_ID)
+# Leave empty for auto-generated name (will be: riddle-rush-pwa-development-ACCOUNT_ID)
 bucket_name = ""
 
 # Development custom domain (optional)

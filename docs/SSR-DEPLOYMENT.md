@@ -436,16 +436,6 @@ node apps/game/.output/server/index.mjs
 
 ### Step 4: Deploy Gradually
 
-```hcl
-# Blue-Green deployment
-enable_ssr_lambda = true      # New SSR version
-active_environment = "blue"   # Keep SPA active
-
-# Test SSR URL
-# Switch when ready
-active_environment = "green"  # Switch to SSR
-```
-
 ## Next Steps
 
 - [ ] Set up CloudFront distribution

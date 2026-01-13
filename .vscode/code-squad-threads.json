@@ -1,0 +1,10 @@
+[
+  {
+    "threadId": "ea13a3cd-2c8e-494e-9764-585324d01e39",
+    "name": "deployment",
+    "terminalId": "240951",
+    "workingDir": "/home/markus/projects/riddle-rush-mono-repo",
+    "whitelistPatterns": [],
+    "createdAt": 1768334490987
+  }
+]

@@ -15,7 +15,7 @@ This directory manages the **new development infrastructure** (separate from pro
    ```hcl
    project_name = "riddle-rush-pwa"
    aws_region   = "eu-central-1"
-   # bucket_name will be auto-generated as: riddle-rush-pwa-dev-ACCOUNT_ID
+   # bucket_name will be auto-generated as: riddle-rush-pwa-development-ACCOUNT_ID
    ```
 
 3. **Initialize:**

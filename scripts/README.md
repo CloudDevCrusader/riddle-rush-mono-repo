@@ -49,9 +49,16 @@ You can still run scripts directly if needed:
   ```
 
 - **`terraform-apply.sh`** - Applies Terraform changes
+
   ```bash
   ./scripts/terraform-apply.sh production
   ./scripts/terraform-apply.sh production --auto-approve
+  ```
+
+- **`upload-terraform-outputs.sh`** - Upload Terraform outputs JSON to S3
+  ```bash
+  # After terraform apply
+  OUTPUTS_BUCKET=tf-outputs-riddlerush ./scripts/upload-terraform-outputs.sh
   ```
 
 ### Application Deployment

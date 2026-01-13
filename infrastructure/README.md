@@ -153,6 +153,20 @@ After deployment, outputs include:
 4. **Review**: Always run `terraform plan` before `apply`
 5. **Modules**: Use modules for reusable components
 
+## Troubleshooting
+
+### CloudFront AlreadyExists errors (OAC/Cache Policies)
+
+If Terraform fails with `AlreadyExists` for CloudFront Origin Access Control or Cache Policies,
+clean up the orphaned resources and retry:
+
+```bash
+./scripts/cleanup-cloudfront-leftovers.sh development
+```
+
+If a resource is still attached to a distribution, detach it first or delete the distribution
+before retrying.
+
 ## Migration from CloudFormation
 
 The Terraform configuration replicates the CloudFormation template:
