@@ -20,23 +20,6 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/i18n',
-    // Remove the SSR-only i18n plugin; this app is client-only (ssr: false)
-    function removeI18nSwitchLocalePathSsr(_options, nuxt) {
-      const removeSwitchLocalePathPlugin = <T extends Array<string | { src?: string }>>(
-        plugins: T | undefined
-      ): T =>
-        (plugins || []).filter((plugin) => {
-          const src =
-            typeof plugin === 'string' ? plugin : typeof plugin?.src === 'string' ? plugin.src : ''
-          return !src.includes('switch-locale-path-ssr')
-        }) as T
-
-      nuxt.options.plugins = removeSwitchLocalePathPlugin(nuxt.options.plugins)
-
-      nuxt.hook('app:resolve', (app) => {
-        app.plugins = removeSwitchLocalePathPlugin(app.plugins)
-      })
-    },
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
