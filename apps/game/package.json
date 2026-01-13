@@ -21,7 +21,7 @@
     "vue": "^3.5.26"
   },
   "devDependencies": {
-    "@capacitor/android": "^8.0.0",
+    "@capacitor/android": "^8.0.1",
     "@faker-js/faker": "^9.0.0",
     "@nuxt/eslint": "^1.0.0",
     "@nuxt/image": "^1.9.0",
@@ -31,7 +31,7 @@
     "@nuxtjs/fontaine": "^0.5.0",
     "@playwright/test": "^1.49.1",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.19.5",
+    "@types/node": "^22.19.6",
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitest/coverage-v8": "^3.0.0",
