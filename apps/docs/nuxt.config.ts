@@ -14,26 +14,27 @@ export default defineNuxtConfig({
     baseURL: process.env.BASE_URL || '/',
   },
 
-  // Content module configuration commented out due to Nuxt 4 type incompatibility
-  // Content module will use default configuration
-  // content: {
-  //   driver: 'fs',
-  //   sources: {
-  //     content: {
-  //       driver: 'fs',
-  //       prefix: '/docs',
-  //       base: './content',
-  //     },
-  //   },
-  //   markdown: {
-  //     toc: {
-  //       depth: 3,
-  //       searchDepth: 3,
-  //     },
-  //   },
-  //   highlight: {
-  //     theme: 'github-dark',
-  //     preload: ['typescript', 'vue', 'bash', 'json'],
-  //   },
-  // },
+  // @ts-expect-error - content module config not fully typed in Nuxt 4
+  content: {
+    experimental: {
+      sqliteConnector: 'native',
+    },
+    sources: {
+      content: {
+        driver: 'fs',
+        prefix: '/',
+        base: './content',
+      },
+    },
+    markdown: {
+      toc: {
+        depth: 3,
+        searchDepth: 3,
+      },
+    },
+    highlight: {
+      theme: 'github-dark',
+      preload: ['typescript', 'vue', 'bash', 'json'],
+    },
+  },
 })
