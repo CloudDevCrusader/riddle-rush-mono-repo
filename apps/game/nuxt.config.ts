@@ -394,6 +394,8 @@ export default defineNuxtConfig({
       navigateFallback: '/',
       navigateFallbackAllowlist: [/^\/(?!api\/)/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
+      // Allow larger files in debug/development builds (unminified code with sourcemaps)
+      maximumFileSizeToCacheInBytes: isDebugBuild || isDev ? 5 * 1024 * 1024 : 2 * 1024 * 1024,
       // Performance: Optimize cache strategies
       cleanupOutdatedCaches: true,
       skipWaiting: true,
