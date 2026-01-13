@@ -263,6 +263,8 @@ export default defineNuxtConfig({
       alwaysRedirect: false,
       fallbackLocale: 'de',
     },
+    // Disable the problematic SSR switch locale path plugin
+    skipSettingLocaleOnNavigate: true,
   },
 
   // Image optimization - Enhanced for better performance
