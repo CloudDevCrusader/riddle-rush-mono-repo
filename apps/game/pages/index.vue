@@ -8,6 +8,7 @@
       <!-- Logo -->
       <div class="logo-container animate-fade-in">
         <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" class="logo-image" />
+        <!-- Deploy test: 2026-01-13 17:09 UTC -->
       </div>
 
       <!-- Menu Buttons -->
