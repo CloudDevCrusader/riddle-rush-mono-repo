@@ -238,7 +238,8 @@ load_aws_config() {
 
 		# Try to use jq if available (most reliable)
 		if command -v jq &>/dev/null; then
-			export AWS_S3_BUCKET=$(jq -r '.bucket_name.value // empty' "${outputs_json}" 2>/dev/null || echo "")
+			# Try bucket_name first, then active_bucket_name, then blue_bucket_name (for blue-green deployments)
+			export AWS_S3_BUCKET=$(jq -r '.bucket_name.value // .active_bucket_name.value // .blue_bucket_name.value // empty' "${outputs_json}" 2>/dev/null || echo "")
 			export AWS_CLOUDFRONT_ID=$(jq -r '.cloudfront_distribution_id.value // empty' "${outputs_json}" 2>/dev/null || echo "")
 			# aws_region might not be in outputs, try to extract from deploy_command or use default
 			export AWS_REGION=$(jq -r '.aws_region.value // empty' "${outputs_json}" 2>/dev/null || echo "")
@@ -251,7 +252,14 @@ load_aws_config() {
 			fi
 		else
 			# Fallback: use grep/sed to extract values (less reliable but works without jq)
+			# Try bucket_name first, then active_bucket_name, then blue_bucket_name
 			export AWS_S3_BUCKET=$(grep -o '"bucket_name"[^}]*"value"[^"]*"[^"]*"' "${outputs_json}" | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1)
+			if [[ -z "${AWS_S3_BUCKET}" ]]; then
+				export AWS_S3_BUCKET=$(grep -o '"active_bucket_name"[^}]*"value"[^"]*"[^"]*"' "${outputs_json}" | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1)
+			fi
+			if [[ -z "${AWS_S3_BUCKET}" ]]; then
+				export AWS_S3_BUCKET=$(grep -o '"blue_bucket_name"[^}]*"value"[^"]*"[^"]*"' "${outputs_json}" | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1)
+			fi
 			export AWS_CLOUDFRONT_ID=$(grep -o '"cloudfront_distribution_id"[^}]*"value"[^"]*"[^"]*"' "${outputs_json}" | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1)
 			# Try to extract region from deploy_command
 			local deploy_cmd=$(grep -o '"deploy_command"[^}]*"value"[^"]*"[^"]*"' "${outputs_json}" | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1)

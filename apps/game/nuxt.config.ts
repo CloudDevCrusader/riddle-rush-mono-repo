@@ -32,8 +32,10 @@ function filterProblematicPlugins(app: any) {
           src.includes('locale-detector-ssr') ||
           src.includes('route-locale-detect') ||
           src.includes('ssg-detect') ||
+          (src.includes('preload') && src.includes('i18n')) || // i18n:plugin:preload also causes circular dependency
           src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
+          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect') ||
+          src.includes('@nuxtjs/i18n/runtime/plugins/preload')
 
         if (isProblematicPlugin) {
           // Only log in development to avoid cluttering production logs
