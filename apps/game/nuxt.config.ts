@@ -1,7 +1,8 @@
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 
-// Disable minification when building for localhost (e.g., local E2E) to keep bundles debuggable
+// Disable minification completely in development for better debugging
+const isDev = process.env.NODE_ENV !== 'production'
 const isLocalhostBuild = [
   process.env.BASE_URL,
   process.env.NUXT_PUBLIC_BASE_URL,
@@ -12,7 +13,7 @@ const isLocalhostBuild = [
   .filter(Boolean)
   .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
 
-const shouldMinify = process.env.NODE_ENV === 'production' && !isLocalhostBuild ? 'esbuild' : false
+const shouldMinify = isDev || isLocalhostBuild ? false : 'esbuild'
 
 export default defineNuxtConfig({
   modules: [
@@ -146,7 +147,7 @@ export default defineNuxtConfig({
       commonjsOptions: {
         transformMixedEsModules: true, // Help handle circular dependencies
       },
-      minify: shouldMinify, // Keep minification off for localhost builds (helps Playwright debugging)
+      minify: shouldMinify, // Disabled in dev mode for debugging
       rollupOptions: {
         output: {
           manualChunks: (id) => {
@@ -186,8 +187,8 @@ export default defineNuxtConfig({
       chunkSizeWarningLimit: 1000, // Increase warning limit for chunks
       // Enable CSS code splitting for better performance
       cssCodeSplit: true,
-      // Enable sourcemap in development only
-      sourcemap: process.env.NODE_ENV !== 'production',
+      // Enable sourcemaps in development for debugging
+      sourcemap: isDev ? 'inline' : false,
     },
   },
 
