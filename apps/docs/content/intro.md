@@ -22,19 +22,19 @@ Riddle Rush is an offline-first, multi-player word guessing game where players c
 
 This documentation is organized into several key sections:
 
-### 🎨 [Design](/docs/design)
+### 🎨 [Design](/design)
 
 Complete design system, color palette, typography, and UI components.
 
-### 🏗️ [Architecture](/docs/architecture)
+### 🏗️ [Architecture](/architecture)
 
 System architecture, state management, data persistence, and PWA implementation.
 
-### 💻 [Development](/docs/development)
+### 💻 [Development](/development)
 
 Getting started guide, development patterns, composables, and components.
 
-### ☁️ [Infrastructure](/docs/infrastructure)
+### ☁️ [Infrastructure](/infrastructure)
 
 Terraform infrastructure, AWS deployment, and CI/CD setup.
 
@@ -48,9 +48,9 @@ Terraform infrastructure, AWS deployment, and CI/CD setup.
 
 If you're new to the project, start with:
 
-1. [Development Guide](/docs/development/getting-started) - Set up your development environment
-2. [Architecture Overview](/docs/architecture/overview) - Understand the system design
-3. [Design System](/docs/design/overview) - Learn about the UI/UX design
+1. [Development Guide](/development/getting-started) - Set up your development environment
+2. [Architecture Overview](/architecture/overview) - Understand the system design
+3. [Design System](/design/overview) - Learn about the UI/UX design
 
 ---
 

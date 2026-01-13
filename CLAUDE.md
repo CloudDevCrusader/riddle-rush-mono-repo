@@ -322,7 +322,7 @@ This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt
 
 **Branch Strategy**:
 
-- `main` → production (`https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`)
+- `main` → production (`https://riddlerush.de`)
 - `staging` → staging environment (`/staging` path)
 - `development` → dev environment (`/dev` path)
 - `tags` → AWS deployment (S3 + CloudFront)

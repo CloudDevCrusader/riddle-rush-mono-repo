@@ -42,7 +42,7 @@
    - Copies output to `public/`
 3. `pages` job:
    - Deploys `public/` to GitLab Pages
-   - URL: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
+   - URL: `https://riddlerush.de`
 
 ### Game App Deployment Flow
 

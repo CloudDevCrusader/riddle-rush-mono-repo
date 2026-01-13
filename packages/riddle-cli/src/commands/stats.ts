@@ -116,16 +116,16 @@ export default class Stats extends Command {
     const details: Record<string, boolean> = {}
     const home = homedir()
 
-    details['opencode'] = existsSync(join(home, '.config/opencode/perplexity.json'))
-    details['kilocode'] = existsSync(join(home, '.config/kilocode/perplexity.json'))
+    details.opencode = existsSync(join(home, '.config/opencode/perplexity.json'))
+    details.kilocode = existsSync(join(home, '.config/kilocode/perplexity.json'))
     details['claude-code'] = existsSync(join(home, '.config/claude'))
-    details['copilot'] = this.checkCommand('gh auth status')
-    details['fastmcp'] = existsSync(join(home, '.config/claude/fastmcp.json'))
+    details.copilot = this.checkCommand('gh auth status')
+    details.fastmcp = existsSync(join(home, '.config/claude/fastmcp.json'))
     details['gemini-cli'] =
       existsSync(join(home, '.config/gemini-cli/mcp.json')) ||
       existsSync(join(home, '.config/gemini/mcp.json'))
     details['cursor-agent'] = existsSync(join(process.cwd(), '.cursor/mcp.json'))
-    details['codex'] = false
+    details.codex = false
     details['mistral-vibe'] = false
 
     const configured = Object.values(details).filter(Boolean).length

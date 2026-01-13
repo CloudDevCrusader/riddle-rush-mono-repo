@@ -44,7 +44,7 @@ pnpm run dev
 - `composables/` - Reusable composition functions
 - `stores/` - Pinia stores for state management
 - `public/` - Static assets
-- `content/docs/` - Documentation content
+- `content/` - Documentation content
 
 ## Key Commands
 
@@ -60,6 +60,6 @@ pnpm run lint         # Linting
 
 ## Next Steps
 
-- [Development Patterns](/docs/development/patterns)
-- [Composables Guide](/docs/development/composables)
-- [Component Development](/docs/development/components)
+- [Development Patterns](/development/patterns)
+- [Composables Guide](/development/composables)
+- [Component Development](/development/components)

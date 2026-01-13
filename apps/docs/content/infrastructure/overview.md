@@ -45,6 +45,6 @@ GitLab Pages now hosts the **documentation site** (this site).
 
 ## Next Steps
 
-- [Terraform Setup](/docs/infrastructure/terraform)
-- [AWS Deployment](/docs/infrastructure/deployment)
-- [AWS Configuration](/docs/infrastructure/aws)
+- [Terraform Setup](/infrastructure/terraform)
+- [AWS Deployment](/infrastructure/deployment)
+- [AWS Configuration](/infrastructure/aws)

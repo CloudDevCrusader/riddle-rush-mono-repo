@@ -10,8 +10,8 @@ aws_region   = "eu-central-1"
 bucket_name = ""
 
 # Optional: Custom domain
-# domain_name = "riddlerush.com"
+# domain_names = ["riddlerush.de"]
+# domain_name = "riddlerush.de" # Deprecated, use domain_names
 # certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/..."
 
 cloudfront_price_class = "PriceClass_100"
-

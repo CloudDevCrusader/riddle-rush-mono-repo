@@ -38,7 +38,7 @@
 
 - [ ] Docs build job creates `public/` directory
 - [ ] Pages job deploys `public/` to GitLab Pages
-- [ ] Accessible at: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
+- [ ] Accessible at: `https://riddlerush.de`
 
 ### AWS Deployment
 

@@ -82,7 +82,7 @@
     "generate:debug": "nuxt generate --debug",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "postinstall": "nuxt prepare && (test -f .nuxt/pwa-icons-plugin.ts && sed -i '1s/^//// @ts-nocheck\n/' .nuxt/pwa-icons-plugin.ts || true) && (npx sharp --version >/dev/null 2>&1 || echo 'Sharp binaries installed successfully') || true",
+    "postinstall": "nuxt prepare && (test -f .nuxt/pwa-icons-plugin.ts && sed -i '1s|^|// @ts-nocheck\\n|' .nuxt/pwa-icons-plugin.ts || true) && (npx sharp --version >/dev/null 2>&1 || echo 'Sharp binaries installed successfully') || true",
     "preview": "nuxt preview",
     "preview:https": "nuxt preview --https",
     "test": "vitest run",

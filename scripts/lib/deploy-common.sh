@@ -303,8 +303,21 @@ run_pre_deployment_checks() {
 	echo ""
 
 	echo -e "${BLUE}📦 Installing dependencies...${NC}"
-	corepack enable
-	corepack prepare pnpm@10.27.0 --activate
+	if command -v pnpm &>/dev/null; then
+		echo -e "${GREEN}✓ Using existing pnpm ($(pnpm --version))${NC}"
+	else
+		if command -v corepack &>/dev/null; then
+			echo -e "${YELLOW}⚠️  pnpm not found, preparing via Corepack...${NC}"
+			corepack prepare pnpm@10.27.0 --activate || {
+				echo -e "${RED}❌ Corepack failed to prepare pnpm. Please install pnpm manually.${NC}"
+				exit 1
+			}
+		else
+			echo -e "${RED}❌ pnpm not found and corepack is unavailable. Please install pnpm.${NC}"
+			exit 1
+		fi
+	fi
+
 	pnpm install --frozen-lockfile
 
 	echo -e "\n${BLUE}✅ Running linter...${NC}"

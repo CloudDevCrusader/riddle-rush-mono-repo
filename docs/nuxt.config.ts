@@ -6,7 +6,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   // Documentation-specific settings
   app: {
-    baseURL: '/docs/',
+    baseURL: '/',
   },
 
   // @ts-expect-error - content module config not fully typed in Nuxt 4
@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     sources: {
       docs: {
         driver: 'fs',
-        prefix: '/docs',
+        prefix: '/',
         base: './content',
       },
     },

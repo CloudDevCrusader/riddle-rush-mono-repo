@@ -13,8 +13,8 @@ The documentation is now generated using **Nuxt Content** - a native Nuxt module
 ## Structure
 
 ```
-content/docs/          # Documentation markdown files
-pages/docs/           # Documentation pages (routing)
+apps/docs/content/    # Documentation markdown files
+apps/docs/pages/      # Documentation pages (routing)
   ├── index.vue       # Docs home page
   └── [...slug].vue   # Dynamic route for all docs
 ```
@@ -25,7 +25,7 @@ pages/docs/           # Documentation pages (routing)
 # Start dev server (includes docs)
 pnpm run dev
 
-# Visit: http://localhost:3000/docs
+# Visit: http://localhost:3000/
 ```
 
 ## Building
@@ -34,20 +34,36 @@ pnpm run dev
 # Generate static site (includes docs)
 pnpm run generate
 
-# Docs will be at: .output/public/docs/
+# Docs will be at: .output/public/
 ```
 
 ## Deployment
 
-GitLab CI automatically:
+Docs are hosted at: `https://docs.riddlerush.de`
+
+### Local deployment (AWS S3 + CloudFront)
+
+```bash
+# Required env vars
+export DOCS_S3_BUCKET=your-docs-bucket
+# Optional (for cache invalidation)
+export DOCS_CLOUDFRONT_ID=your-cloudfront-id
+
+./scripts/deploy-docs.sh
+```
+
+Terraform stack for the docs site: `infrastructure/environments/docs`.
+
+### CI deployment (GitLab Pages)
+
+GitLab CI can still build docs for Pages:
 
 1. Builds the site with `pnpm run generate`
-2. Deploys to GitLab Pages
-3. Available at: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/docs`
+2. Deploys to GitLab Pages (if enabled)
 
 ## Adding Documentation
 
-1. Create markdown file in `content/docs/`
+1. Create markdown file in `apps/docs/content/`
 2. Add frontmatter:
    ```markdown
    ---
@@ -56,7 +72,7 @@ GitLab CI automatically:
    ---
    ```
 3. File structure = URL structure
-   - `content/docs/design/colors.md` → `/docs/design/colors`
+   - `apps/docs/content/design/colors.md` → `/design/colors`
 
 ## Features
 

@@ -86,7 +86,7 @@ APP_VERSION=${npm_package_version:-1.0.0}
 
 # Workspace-specific defaults
 GAME_BASE_URL=${GAME_BASE_URL:-/}
-DOCS_BASE_URL=${DOCS_BASE_URL:-/docs}
+DOCS_BASE_URL=${DOCS_BASE_URL:-/}
 
 # Turbo optimization
 TURBO_CACHE_DIR=${TURBO_CACHE_DIR:-.turbo/cache}
@@ -119,7 +119,7 @@ if [ -f "../../.env.monorepo" ]; then
 fi
 
 # Docs-specific overrides
-BASE_URL=${DOCS_BASE_URL:-/docs}
+BASE_URL=${DOCS_BASE_URL:-/}
 
 # Docs-specific variables
 DOCS_TITLE=${DOCS_TITLE:-Riddle Rush Documentation}

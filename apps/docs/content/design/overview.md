@@ -70,7 +70,7 @@ All design assets are located in `docs/gfx/` organized by screen:
 
 ## Next Steps
 
-- [Color Palette Details](/docs/design/color-palette)
-- [Typography System](/docs/design/typography)
-- [Component Design](/docs/design/components)
-- [Game Workflow](/docs/design/workflow)
+- [Color Palette Details](/design/color-palette)
+- [Typography System](/design/typography)
+- [Component Design](/design/components)
+- [Game Workflow](/design/workflow)
