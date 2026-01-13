@@ -1,5 +1,6 @@
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
+import { filterSsrPlugins } from './plugins/filter-ssr-plugins'
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -31,8 +32,11 @@ export default defineNuxtConfig({
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
   ],
-  ssr: false, // Client-only SPA (IndexedDB and PWA require client-side rendering)
+  // Client-only SPA (IndexedDB and PWA require client-side rendering)
 
+  // Explicitly disable problematic i18n plugins
+  plugins: [{ src: '~/plugins/00.init-plugin-system.client.ts', mode: 'client' }],
+  ssr: false,
   components: [
     {
       path: '~/components',
@@ -133,6 +137,8 @@ export default defineNuxtConfig({
       dedupe: ['vue', '@nuxtjs/i18n'], // Deduplicate these modules to avoid circular deps
     },
     plugins: [
+      // Filter out SSR plugins at build time (must be first)
+      filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
       ...(process.env.NODE_ENV === 'production'
@@ -156,6 +162,17 @@ export default defineNuxtConfig({
       },
       minify: shouldMinify, // Disabled in dev mode for debugging
       rollupOptions: {
+        // Better handling of circular dependencies
+        onwarn(warning, warn) {
+          // Suppress circular dependency warnings in production, but log them in debug
+          if (warning.code === 'CIRCULAR_DEPENDENCY') {
+            if (isDebugBuild || isDev) {
+              console.warn('Circular dependency detected:', warning.message)
+            }
+            return
+          }
+          warn(warning)
+        },
         output: {
           manualChunks: (id) => {
             // Better lodash tree-shaking - group all lodash functions together
@@ -219,6 +236,40 @@ export default defineNuxtConfig({
         console.warn('Development mode: Ensuring proper plugin initialization order')
       }
     },
+    // Filter out problematic i18n plugins that cause circular dependencies
+    'app:resolve': (app: any) => {
+      if (app.plugins && Array.isArray(app.plugins)) {
+        // Filter out problematic i18n plugins
+        const originalLength = app.plugins.length
+        app.plugins = app.plugins.filter((plugin: any) => {
+          const src = typeof plugin === 'string' ? plugin : plugin.src || plugin
+          if (src && typeof src === 'string') {
+            // Remove problematic plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
+            const isProblematicPlugin =
+              src.includes('switch-locale-path-ssr') ||
+              src.includes('i18n-ssr') ||
+              src.includes('locale-detector-ssr') ||
+              src.includes('route-locale-detect') || // This is the main culprit
+              src.includes('ssg-detect') ||
+              src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
+              src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
+
+            if (isProblematicPlugin) {
+              if (process.env.NODE_ENV === 'development') {
+                console.warn(`[nuxt.config] Filtering out problematic plugin: ${src}`)
+              }
+              return false
+            }
+          }
+          return true
+        })
+        if (process.env.NODE_ENV === 'development' && app.plugins.length < originalLength) {
+          console.log(
+            `[nuxt.config] Filtered ${originalLength - app.plugins.length} problematic plugin(s)`
+          )
+        }
+      }
+    },
   },
 
   eslint: {
@@ -240,15 +291,21 @@ export default defineNuxtConfig({
       { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
     ],
     strategy: 'no_prefix',
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'riddle-rush-i18n',
-      redirectOn: 'root',
-      alwaysRedirect: false,
-      fallbackLocale: 'de',
-    },
+    // Completely disable browser language detection - we handle it manually in i18n-init.client.ts
+    detectBrowserLanguage: false,
     // Disable the problematic SSR switch locale path plugin
     skipSettingLocaleOnNavigate: true,
+    // Completely disable SSR features for client-only app
+    differentDomains: false,
+    // Disable SSR-specific compilation
+    compilation: {
+      strictMessage: false,
+    },
+    // Try to disable SSR plugin loading by using custom locale detector
+    // This might prevent SSR plugins from being registered
+    experimental: {
+      localeDetector: undefined, // Disable SSR locale detector
+    },
   },
 
   // Image optimization - Enhanced for better performance
