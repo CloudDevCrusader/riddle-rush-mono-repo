@@ -17,6 +17,43 @@ const isLocalhostBuild = [
   .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
 
 const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
+
+// Helper function to filter out problematic i18n plugins
+function filterProblematicPlugins(app: any) {
+  if (app.plugins && Array.isArray(app.plugins)) {
+    const originalLength = app.plugins.length
+    app.plugins = app.plugins.filter((plugin: any) => {
+      const src = typeof plugin === 'string' ? plugin : plugin.src || plugin
+      if (src && typeof src === 'string') {
+        // Remove problematic plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
+        const isProblematicPlugin =
+          src.includes('switch-locale-path-ssr') ||
+          src.includes('i18n-ssr') ||
+          src.includes('locale-detector-ssr') ||
+          src.includes('route-locale-detect') ||
+          src.includes('ssg-detect') ||
+          src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
+          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
+
+        if (isProblematicPlugin) {
+          // Only log in development to avoid cluttering production logs
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`[nuxt.config] Filtering out problematic plugin: ${src}`)
+          }
+          return false
+        }
+      }
+      return true
+    })
+    // Only log in development
+    if (process.env.NODE_ENV === 'development' && app.plugins.length < originalLength) {
+      console.log(
+        `[nuxt.config] Filtered ${originalLength - app.plugins.length} problematic plugin(s)`
+      )
+    }
+  }
+}
+
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
@@ -236,38 +273,14 @@ export default defineNuxtConfig({
         console.warn('Development mode: Ensuring proper plugin initialization order')
       }
     },
-    // Filter out problematic i18n plugins that cause circular dependencies
+    // Filter out problematic i18n plugins - use multiple hooks to ensure it works
     'app:resolve': (app: any) => {
-      if (app.plugins && Array.isArray(app.plugins)) {
-        // Filter out problematic i18n plugins
-        const originalLength = app.plugins.length
-        app.plugins = app.plugins.filter((plugin: any) => {
-          const src = typeof plugin === 'string' ? plugin : plugin.src || plugin
-          if (src && typeof src === 'string') {
-            // Remove problematic plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
-            const isProblematicPlugin =
-              src.includes('switch-locale-path-ssr') ||
-              src.includes('i18n-ssr') ||
-              src.includes('locale-detector-ssr') ||
-              src.includes('route-locale-detect') || // This is the main culprit
-              src.includes('ssg-detect') ||
-              src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
-              src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
-
-            if (isProblematicPlugin) {
-              if (process.env.NODE_ENV === 'development') {
-                console.warn(`[nuxt.config] Filtering out problematic plugin: ${src}`)
-              }
-              return false
-            }
-          }
-          return true
-        })
-        if (process.env.NODE_ENV === 'development' && app.plugins.length < originalLength) {
-          console.log(
-            `[nuxt.config] Filtered ${originalLength - app.plugins.length} problematic plugin(s)`
-          )
-        }
+      filterProblematicPlugins(app)
+    },
+    'build:manifest': (manifest: any) => {
+      // Also filter at build manifest stage
+      if (manifest.app && manifest.app.plugins) {
+        filterProblematicPlugins(manifest.app)
       }
     },
   },
