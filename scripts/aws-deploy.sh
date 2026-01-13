@@ -175,6 +175,13 @@ if [[ ! -d "${BUILD_DIR}" ]] || [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS}" ]]; then
 	if [[ -z "${NODE_ENV}" ]]; then
 		export NODE_ENV=production
 	fi
+	
+	# For development environment, enable DEBUG_BUILD for unminified code
+	if [[ "${ENVIRONMENT}" == "development" ]]; then
+		export DEBUG_BUILD=true
+		echo -e "  ${BLUE}Building with DEBUG_BUILD=true (unminified, with sourcemaps)${NC}"
+	fi
+	
 	echo -e "  ${BLUE}Building with NODE_ENV=${NODE_ENV}${NC}"
 	(cd apps/game && BASE_URL=/ pnpm run generate)
 
