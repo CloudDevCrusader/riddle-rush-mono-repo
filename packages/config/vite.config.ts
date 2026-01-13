@@ -40,9 +40,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         inspect({
           enabled: true,
           build: false,
-        })
+        }),
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
 
@@ -53,9 +54,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
         VueDevTools({
           enabled: true,
           componentInspector: true,
-        })
+        }),
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
 
@@ -71,9 +73,10 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
           open: false,
           gzipSize: true,
           brotliSize: true,
-        }) as Plugin
+        }) as Plugin,
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
   }
@@ -97,9 +100,10 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         gzipSize: true,
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
-      }) as Plugin
+      }) as Plugin,
     )
-  } catch {
+  }
+  catch {
     // Plugin not installed, skip
   }
 
@@ -112,9 +116,10 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         ext: '.br',
         threshold: 10240, // Only compress files larger than 10KB
         deleteOriginFile: false,
-      })
+      }),
     )
-  } catch {
+  }
+  catch {
     // Plugin not installed, skip
   }
 
@@ -152,9 +157,10 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
             },
           ],
         },
-      })
+      }),
     )
-  } catch {
+  }
+  catch {
     // Fallback to old plugin if new one not available
     try {
       const viteImagemin = require('vite-plugin-imagemin').default
@@ -185,9 +191,10 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
               },
             ],
           },
-        })
+        }),
       )
-    } catch {
+    }
+    catch {
       // Plugin not installed, skip
     }
   }
