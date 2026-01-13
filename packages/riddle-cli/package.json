@@ -31,16 +31,16 @@
     "@oclif/test": "^4",
     "@types/chai": "^5",
     "@types/mocha": "^10",
-    "@types/node": "^22",
+    "@types/node": "^22.19.5",
     "chai": "^5",
-    "eslint": "^9",
+    "eslint": "^9.39.2",
     "eslint-config-oclif": "^6",
     "eslint-config-oclif-typescript": "^3",
     "mocha": "^10",
     "oclif": "^4",
     "shx": "^0.3.4",
     "ts-node": "^10",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=20.0.0"
