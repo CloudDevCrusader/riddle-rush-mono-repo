@@ -16,11 +16,27 @@ const isLocalhostBuild = [
   .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
 
 const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
-
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/i18n',
+    // Remove the SSR-only i18n plugin; this app is client-only (ssr: false)
+    function removeI18nSwitchLocalePathSsr(_options, nuxt) {
+      const removeSwitchLocalePathPlugin = <T extends Array<string | { src?: string }>>(
+        plugins: T | undefined
+      ): T =>
+        (plugins || []).filter((plugin) => {
+          const src =
+            typeof plugin === 'string' ? plugin : typeof plugin?.src === 'string' ? plugin.src : ''
+          return !src.includes('switch-locale-path-ssr')
+        }) as T
+
+      nuxt.options.plugins = removeSwitchLocalePathPlugin(nuxt.options.plugins)
+
+      nuxt.hook('app:resolve', (app) => {
+        app.plugins = removeSwitchLocalePathPlugin(app.plugins)
+      })
+    },
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
@@ -216,8 +232,7 @@ export default defineNuxtConfig({
       // This helps prevent "Cannot access 'NuxtPluginIndicator' before initialization" errors
       if (process.env.NODE_ENV === 'development') {
         // Log only in development mode for debugging
-        // eslint-disable-next-line no-console
-        console.log('Development mode: Ensuring proper plugin initialization order')
+        console.warn('Development mode: Ensuring proper plugin initialization order')
       }
     },
   },
