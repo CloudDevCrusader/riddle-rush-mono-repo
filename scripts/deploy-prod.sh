@@ -73,7 +73,7 @@ ENVIRONMENT="production"
 
 # Version is already parsed above, no need to parse again
 if [[ -n "${VERSION}" ]]; then
-	echo -e "\n${BLUE}🏷️  Versi$${${${${${${}}} v$VE}RSION${NC}"
+	echo -e "\n${BLUE}🏷️  Version: v${VERSION}${NC}"
 fi
 
 echo -e "${BLUE}🚀 Deploying to PRODUCTION environment (AWS)${NC}"
