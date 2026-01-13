@@ -9,7 +9,6 @@
       <div class="logo-container animate-fade-in">
         <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" class="logo-image" />
       </div>
-      <!-- 🚀 DEPLOYMENT TEST: 2026-01-13 17:12 UTC -->
 
       <!-- Menu Buttons -->
       <div v-show="!showMenu" class="menu-buttons animate-slide-up">
