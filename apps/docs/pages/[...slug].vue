@@ -2,26 +2,26 @@
   <div class="docs-container">
     <aside class="docs-sidebar">
       <nav class="docs-nav">
-        <NuxtLink to="/docs/intro">Introduction</NuxtLink>
+        <NuxtLink to="/intro">Introduction</NuxtLink>
         <div class="nav-section">
           <h3>Design</h3>
-          <NuxtLink to="/docs/design/overview">Overview</NuxtLink>
-          <NuxtLink to="/docs/design/color-palette">Color Palette</NuxtLink>
+          <NuxtLink to="/design/overview">Overview</NuxtLink>
+          <NuxtLink to="/design/color-palette">Color Palette</NuxtLink>
         </div>
         <div class="nav-section">
           <h3>Architecture</h3>
-          <NuxtLink to="/docs/architecture/overview">Overview</NuxtLink>
-          <NuxtLink to="/docs/architecture/structure">Structure</NuxtLink>
-          <NuxtLink to="/docs/architecture/state-management">State Management</NuxtLink>
+          <NuxtLink to="/architecture/overview">Overview</NuxtLink>
+          <NuxtLink to="/architecture/structure">Structure</NuxtLink>
+          <NuxtLink to="/architecture/state-management">State Management</NuxtLink>
         </div>
         <div class="nav-section">
           <h3>Development</h3>
-          <NuxtLink to="/docs/development/getting-started">Getting Started</NuxtLink>
+          <NuxtLink to="/development/getting-started">Getting Started</NuxtLink>
         </div>
         <div class="nav-section">
           <h3>Infrastructure</h3>
-          <NuxtLink to="/docs/infrastructure/overview">Overview</NuxtLink>
-          <NuxtLink to="/docs/infrastructure/terraform">Terraform</NuxtLink>
+          <NuxtLink to="/infrastructure/overview">Overview</NuxtLink>
+          <NuxtLink to="/infrastructure/terraform">Terraform</NuxtLink>
         </div>
       </nav>
     </aside>
@@ -32,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-// This page handles all /docs/* routes
-// Nuxt Content automatically generates routes from content/docs/
+// This page handles all docs routes
+// Nuxt Content automatically generates routes from content/
 </script>
 
 <style scoped>

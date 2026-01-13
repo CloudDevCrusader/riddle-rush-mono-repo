@@ -75,7 +75,7 @@
 
 1. `build:docs` - Builds from `apps/docs/`, creates `public/`
 2. `pages` - Deploys `public/` to GitLab Pages
-   **URL:** `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
+   **URL:** `https://riddlerush.de`
 
 ### AWS (Game App)
 

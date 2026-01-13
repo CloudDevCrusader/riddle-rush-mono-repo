@@ -90,7 +90,7 @@ npm run test:e2e:production
 ./scripts/e2e-deployed.sh production
 ```
 
-Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa
+Tests: https://riddlerush.de
 
 ### Test Staging Deployment
 
@@ -100,7 +100,7 @@ npm run test:e2e:staging
 ./scripts/e2e-deployed.sh staging
 ```
 
-Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/staging
+Tests: https://staging.riddlerush.de
 
 ### Test Development Deployment
 
@@ -110,7 +110,7 @@ npm run test:e2e:dev
 ./scripts/e2e-deployed.sh dev
 ```
 
-Tests: https://djdiox.gitlab.io/riddle-rush-nuxt-pwa/dev
+Tests: https://dev.riddlerush.de
 
 ### Custom URL
 

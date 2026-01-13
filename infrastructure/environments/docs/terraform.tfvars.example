@@ -1,0 +1,14 @@
+# Docs Environment Variables
+# Copy this to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to version control
+
+project_name = "riddle-rush-docs"
+aws_region   = "eu-central-1"
+
+# S3 bucket for docs
+bucket_name = "riddlerush-docs"
+
+# Docs domain (ACM cert will be requested in us-east-1 for CloudFront)
+domain_name = "docs.riddlerush.de"
+
+cloudfront_price_class = "PriceClass_100"

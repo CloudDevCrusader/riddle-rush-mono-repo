@@ -71,7 +71,7 @@ cd apps/docs && pnpm run generate
 2. CI will:
    - Build docs app (`build:docs` job)
    - Deploy to GitLab Pages (`pages` job)
-3. Access at: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
+3. Access at: `https://riddlerush.de/docs`
 
 ### Game App Deployment
 

@@ -41,7 +41,7 @@
 2. `build:docs` job builds from `apps/docs/`
 3. Output copied to `public/` directory
 4. `pages` job deploys `public/` to GitLab Pages
-5. Accessible at: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
+5. Accessible at: `https://riddlerush.de`
 
 ### Verification
 

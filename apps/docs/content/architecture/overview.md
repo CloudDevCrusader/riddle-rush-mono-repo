@@ -92,7 +92,7 @@ Pinia stores for global state:
 
 ## Next Steps
 
-- [Project Structure](/docs/architecture/structure)
-- [State Management](/docs/architecture/state-management)
-- [Data Persistence](/docs/architecture/data-persistence)
-- [PWA Implementation](/docs/architecture/pwa)
+- [Project Structure](/architecture/structure)
+- [State Management](/architecture/state-management)
+- [Data Persistence](/architecture/data-persistence)
+- [PWA Implementation](/architecture/pwa)

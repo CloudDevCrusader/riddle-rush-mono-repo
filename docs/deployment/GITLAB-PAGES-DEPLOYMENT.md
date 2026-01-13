@@ -1,10 +1,31 @@
-# GitLab Pages Deployment Configuration
+# Docs Deployment Configuration
 
 ## Overview
 
-The documentation site is deployed to GitLab Pages from the `public/` directory at the repository root.
+The documentation site is hosted at `https://docs.riddlerush.de`.
 
-## Deployment Flow
+Two deployment options are supported:
+
+- **Local deploy (AWS S3 + CloudFront)** using `scripts/deploy-docs.sh`
+- **GitLab Pages** (optional)
+
+## Local Deployment Flow (Recommended)
+
+```bash
+export DOCS_S3_BUCKET=your-docs-bucket
+export DOCS_CLOUDFRONT_ID=your-cloudfront-id # optional
+./scripts/deploy-docs.sh
+```
+
+This builds the docs app, syncs the output to S3, and optionally invalidates CloudFront.
+
+Terraform stack: `infrastructure/environments/docs`.
+
+## DNS Setup (docs.riddlerush.de)
+
+Point `docs.riddlerush.de` to the docs CloudFront distribution (recommended) or the S3 website endpoint.
+
+## GitLab Pages Deployment Flow (Optional)
 
 ### 1. Build Stage (`build:docs`)
 
@@ -21,7 +42,7 @@ The documentation site is deployed to GitLab Pages from the `public/` directory 
 ### 3. Deploy Stage (`pages` job)
 
 - **Artifact:** `public/`
-- **URL:** `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
+- **URL:** GitLab Pages URL (if enabled)
 
 ## Directory Structure
 

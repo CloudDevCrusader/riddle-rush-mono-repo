@@ -44,5 +44,5 @@ See `infrastructure/SETUP-STATE-BUCKET.md` for setup.
 
 ## Resources
 
-- [Terraform Setup Guide](/docs/infrastructure/terraform)
-- [Terraform + Nuxt Integration](/docs/infrastructure/deployment)
+- [Terraform Setup Guide](/infrastructure/terraform)
+- [Terraform + Nuxt Integration](/infrastructure/deployment)

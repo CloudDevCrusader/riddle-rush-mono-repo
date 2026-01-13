@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run E2E tests against deployed GitLab Pages site
+# Run E2E tests against deployed environments
 
 set -e
 
@@ -15,15 +15,13 @@ ENVIRONMENT=${1:-production}
 # Set base URL based on environment
 case ${ENVIRONMENT} in
 production)
-	# Note: GitLab Pages now hosts documentation, not the app
-	# Use AWS deployment URL instead
-	BASE_URL="${AWS_CLOUDFRONT_DOMAIN:-https://your-cloudfront-domain.cloudfront.net}"
+	BASE_URL="${AWS_CLOUDFRONT_DOMAIN:-https://riddlerush.de}"
 	;;
 staging)
-	BASE_URL="${AWS_CLOUDFRONT_DOMAIN_STAGING:-https://your-staging-domain.cloudfront.net}"
+	BASE_URL="${AWS_CLOUDFRONT_DOMAIN_STAGING:-https://staging.riddlerush.de}"
 	;;
 dev)
-	BASE_URL="${AWS_CLOUDFRONT_DOMAIN_DEV:-https://your-dev-domain.cloudfront.net}"
+	BASE_URL="${AWS_CLOUDFRONT_DOMAIN_DEV:-https://dev.riddlerush.de}"
 	;;
 *)
 	echo -e "${RED}Invalid environment: ${ENVIRONMENT}${NC}"

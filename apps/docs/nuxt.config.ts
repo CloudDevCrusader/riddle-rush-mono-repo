@@ -10,8 +10,8 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
 
   app: {
-    // GitLab Pages serves from repo root, so baseURL should be the repo path
-    baseURL: process.env.BASE_URL || (process.env.CI ? '/riddle-rush-nuxt-pwa/' : '/'),
+    // Docs are served from the domain root (e.g., https://docs.riddlerush.de/)
+    baseURL: process.env.BASE_URL || '/',
   },
 
   // Content module configuration commented out due to Nuxt 4 type incompatibility
