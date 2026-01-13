@@ -60,6 +60,7 @@ export default defineNuxtConfig({
           content:
             'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
         },
+        { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
       ],
@@ -400,6 +401,7 @@ export default defineNuxtConfig({
         { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
         { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
         { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+        { src: 'apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
       ],
       categories: ['games', 'entertainment'],
     },

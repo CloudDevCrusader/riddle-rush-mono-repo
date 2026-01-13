@@ -35,7 +35,11 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl || ''
+// Ensure base URL has trailing slash or is empty
+const baseUrl = computed(() => {
+  const url = config.public.baseUrl || ''
+  return url && !url.endsWith('/') ? `${url}/` : url
+})
 
 const visible = ref(true)
 const progress = ref(0)

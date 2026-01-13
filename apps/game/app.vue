@@ -1,12 +1,16 @@
 <template>
   <div id="app" class="app-container">
-    <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
-    <NuxtLayout v-show="!showSplash">
-      <NuxtPage :key="routeKey" />
-    </NuxtLayout>
-    <Toast />
-    <DebugPanel v-show="!showSplash" />
-    <StoryboardDevOverlay />
+    <Transition name="splash-fade" mode="out-in">
+      <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
+      <div v-else class="main-content">
+        <NuxtLayout>
+          <NuxtPage :key="routeKey" />
+        </NuxtLayout>
+        <Toast />
+        <DebugPanel />
+        <StoryboardDevOverlay />
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -79,6 +83,8 @@ useHead({
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap',
     },
+    { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+    { rel: 'apple-touch-startup-image', href: '/pwa-512x512.png' },
   ],
 })
 </script>
@@ -97,6 +103,22 @@ useHead({
   -webkit-overflow-scrolling: touch;
   /* Prevent layout shifts */
   contain: layout style paint;
+}
+
+/* Splash Screen Transition */
+.splash-fade-enter-active,
+.splash-fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.splash-fade-enter-from,
+.splash-fade-leave-to {
+  opacity: 0;
+}
+
+.main-content {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Page Transition Animations - Mobile Optimized */
