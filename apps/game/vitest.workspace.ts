@@ -16,6 +16,7 @@ export default defineWorkspace([
       name: 'unit',
       globals: true,
       environment: 'happy-dom',
+      pool: 'forks', // Use forks to avoid --localstorage-file warning with happy-dom
       include: ['tests/unit/**/*.{test,spec}.ts'],
       exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
     },
