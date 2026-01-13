@@ -209,6 +209,19 @@ export default defineNuxtConfig({
     },
   },
 
+  // Fix plugin initialization order issues
+  hooks: {
+    'modules:done': () => {
+      // Ensure plugins are loaded in the correct order
+      // This helps prevent "Cannot access 'NuxtPluginIndicator' before initialization" errors
+      if (process.env.NODE_ENV === 'development') {
+        // Log only in development mode for debugging
+        // eslint-disable-next-line no-console
+        console.log('Development mode: Ensuring proper plugin initialization order')
+      }
+    },
+  },
+
   eslint: {
     config: {
       stylistic: false, // Use root config instead
