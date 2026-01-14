@@ -58,8 +58,8 @@ function filterProblematicPlugins(app: any) {
 
 export default defineNuxtConfig({
   modules: [
-    '@pinia/nuxt',
-    '@nuxtjs/i18n',
+    '@pinia/nuxt', // Load Pinia first since stores are used everywhere
+    '@nuxtjs/i18n', // Load i18n early but after Pinia
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
@@ -139,6 +139,7 @@ export default defineNuxtConfig({
       ...((): Record<string, string> => {
         const terraform = getTerraformOutputsFromEnv()
         return {
+          cdnURL: process.env.CDN_URL || '',
           awsRegion: process.env.AWS_REGION || terraform.aws_region || 'eu-central-1',
           cloudfrontDomain: process.env.CLOUDFRONT_DOMAIN || terraform.cloudfront_domain_name || '',
           websiteUrl: process.env.WEBSITE_URL || terraform.website_url || '',
@@ -239,13 +240,6 @@ export default defineNuxtConfig({
             }
           },
         },
-        treeshake: {
-          moduleSideEffects: false,
-          propertyReadSideEffects: false,
-          tryCatchDeoptimization: false,
-          // More aggressive tree shaking
-          unknownGlobalSideEffects: false,
-        },
       },
       chunkSizeWarningLimit: 1000, // Increase warning limit for chunks
       // Enable CSS code splitting for better performance
@@ -315,11 +309,19 @@ export default defineNuxtConfig({
     // Disable SSR-specific compilation
     compilation: {
       strictMessage: false,
+      escapeHtml: false,
     },
     // Try to disable SSR plugin loading by using custom locale detector
     // This might prevent SSR plugins from being registered
     experimental: {
       localeDetector: undefined, // Disable SSR locale detector
+    },
+    // Bundle only client-side plugins
+    bundle: {
+      compositionOnly: true,
+      runtimeOnly: false,
+      fullInstall: false,
+      dropMessageCompiler: false,
     },
   },
 
