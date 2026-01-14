@@ -130,3 +130,6 @@ htmlcov/
 
 .nx/cache
 .nx/workspace-datatools/e2b/
+# Large binary files
+forgejo*
+**/forgejo-*
