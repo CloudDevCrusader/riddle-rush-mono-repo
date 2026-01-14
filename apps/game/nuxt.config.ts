@@ -1,6 +1,5 @@
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
-import { filterSsrPlugins } from './plugins/filter-ssr-plugins'
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -18,48 +17,9 @@ const isLocalhostBuild = [
 
 const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
 
-// Helper function to filter out problematic i18n plugins
-function filterProblematicPlugins(app: any) {
-  if (app.plugins && Array.isArray(app.plugins)) {
-    const originalLength = app.plugins.length
-    app.plugins = app.plugins.filter((plugin: any) => {
-      const src = typeof plugin === 'string' ? plugin : plugin.src || plugin
-      if (src && typeof src === 'string') {
-        // Remove problematic plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
-        const isProblematicPlugin =
-          src.includes('switch-locale-path-ssr') ||
-          src.includes('i18n-ssr') ||
-          src.includes('locale-detector-ssr') ||
-          src.includes('route-locale-detect') ||
-          src.includes('ssg-detect') ||
-          (src.includes('preload') && src.includes('i18n')) || // i18n:plugin:preload also causes circular dependency
-          src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/preload')
-
-        if (isProblematicPlugin) {
-          // Only log in development to avoid cluttering production logs
-          if (process.env.NODE_ENV === 'development') {
-            console.warn(`[nuxt.config] Filtering out problematic plugin: ${src}`)
-          }
-          return false
-        }
-      }
-      return true
-    })
-    // Only log in development
-    if (process.env.NODE_ENV === 'development' && app.plugins.length < originalLength) {
-      console.log(
-        `[nuxt.config] Filtered ${originalLength - app.plugins.length} problematic plugin(s)`
-      )
-    }
-  }
-}
-
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt', // Load Pinia first since stores are used everywhere
-    '@nuxtjs/i18n', // Load i18n early but after Pinia
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
@@ -72,9 +32,6 @@ export default defineNuxtConfig({
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
   ],
   // Client-only SPA (IndexedDB and PWA require client-side rendering)
-
-  // Explicitly disable problematic i18n plugins
-  plugins: [{ src: '~/plugins/00.init-plugin-system.client.ts', mode: 'client' }],
   ssr: false,
   components: [
     {
@@ -172,13 +129,13 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    logLevel: isDev || isDebugBuild ? 'info' : 'warn', // Verbose logging in dev/debug mode
+    clearScreen: false, // Keep logs visible
     resolve: {
       preserveSymlinks: false, // Keep default behavior
-      dedupe: ['vue', '@nuxtjs/i18n'], // Deduplicate these modules to avoid circular deps
+      dedupe: ['vue', 'vue-i18n'], // Deduplicate these modules
     },
     plugins: [
-      // Filter out SSR plugins at build time (must be first)
-      filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
       ...(process.env.NODE_ENV === 'production'
@@ -204,12 +161,32 @@ export default defineNuxtConfig({
       rollupOptions: {
         // Better handling of circular dependencies
         onwarn(warning, warn) {
-          // Suppress circular dependency warnings in production, but log them in debug
+          // Log all warnings for debugging
           if (warning.code === 'CIRCULAR_DEPENDENCY') {
-            if (isDebugBuild || isDev) {
-              console.warn('Circular dependency detected:', warning.message)
+            const isFromNodeModules =
+              warning.message?.includes('node_modules') ||
+              (warning.id && warning.id.includes('node_modules'))
+
+            if (isFromNodeModules) {
+              // Log but don't show as error (from third-party packages)
+              if (isDev || isDebugBuild) {
+                console.log(
+                  '[Rollup] Circular dependency (from node_modules, suppressed):',
+                  warning.message
+                )
+                if (warning.id) console.log('[Rollup] Module ID:', warning.id)
+              }
+              return
             }
+            // For circular dependencies in our own code, always warn
+            console.warn('[Rollup] Circular dependency (in app code):', warning.message)
+            if (warning.id) console.warn('[Rollup] Module ID:', warning.id)
+            warn(warning)
             return
+          }
+          // Log other warnings in debug/dev mode
+          if (isDev || isDebugBuild) {
+            console.log(`[Rollup] ${warning.code || 'WARNING'}:`, warning.message)
           }
           warn(warning)
         },
@@ -227,7 +204,7 @@ export default defineNuxtConfig({
               if (id.includes('@vueuse')) {
                 return 'vendor-vueuse'
               }
-              if (id.includes('@nuxtjs/i18n')) {
+              if (id.includes('vue-i18n')) {
                 return 'vendor-i18n'
               }
               if (id.includes('idb')) {
@@ -254,30 +231,8 @@ export default defineNuxtConfig({
     typeCheck: false,
     tsConfig: {
       compilerOptions: {
-        types: ['@pinia/nuxt', '@nuxtjs/i18n'],
+        types: ['@pinia/nuxt'],
       },
-    },
-  },
-
-  // Fix plugin initialization order issues
-  hooks: {
-    'modules:done': () => {
-      // Ensure plugins are loaded in the correct order
-      // This helps prevent "Cannot access 'NuxtPluginIndicator' before initialization" errors
-      if (process.env.NODE_ENV === 'development') {
-        // Log only in development mode for debugging
-        console.warn('Development mode: Ensuring proper plugin initialization order')
-      }
-    },
-    // Filter out problematic i18n plugins - use multiple hooks to ensure it works
-    'app:resolve': (app: any) => {
-      filterProblematicPlugins(app)
-    },
-    'build:manifest': (manifest: any) => {
-      // Also filter at build manifest stage
-      if (manifest.app && manifest.app.plugins) {
-        filterProblematicPlugins(manifest.app)
-      }
     },
   },
 
@@ -290,39 +245,6 @@ export default defineNuxtConfig({
   // Font optimization
   fontMetrics: {
     fonts: ['Inter', 'system-ui'],
-  },
-
-  i18n: {
-    langDir: 'locales',
-    defaultLocale: 'de',
-    locales: [
-      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
-      { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
-    ],
-    strategy: 'no_prefix',
-    // Completely disable browser language detection - we handle it manually in i18n-init.client.ts
-    detectBrowserLanguage: false,
-    // Disable the problematic SSR switch locale path plugin
-    skipSettingLocaleOnNavigate: true,
-    // Completely disable SSR features for client-only app
-    differentDomains: false,
-    // Disable SSR-specific compilation
-    compilation: {
-      strictMessage: false,
-      escapeHtml: false,
-    },
-    // Try to disable SSR plugin loading by using custom locale detector
-    // This might prevent SSR plugins from being registered
-    experimental: {
-      localeDetector: undefined, // Disable SSR locale detector
-    },
-    // Bundle only client-side plugins
-    bundle: {
-      compositionOnly: true,
-      runtimeOnly: false,
-      fullInstall: false,
-      dropMessageCompiler: false,
-    },
   },
 
   // Image optimization - Enhanced for better performance
