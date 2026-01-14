@@ -451,8 +451,15 @@ export const useGameStore = defineStore('game', {
       // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
+
+      // Calculate delta: difference between new score and current round score
+      const delta = points - player.currentRoundScore
+
+      // Update current round score to new value
       player.currentRoundScore = points
-      player.totalScore += points
+
+      // Add only the delta to total score to prevent duplicate additions
+      player.totalScore += delta
 
       await this.saveSessionToDB()
     },
