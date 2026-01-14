@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "project": {
+    "name": "riddle-rush",
+    "created": "2026-01-14T10:01:08.223234369+01:00"
+  },
+  "environments": {
+    "development": {
+      "name": "development",
+      "profile": "riddlerush"
+    }
+  }
+}

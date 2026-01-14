@@ -14,5 +14,21 @@
     "workingDir": "/home/markus/projects/riddle-rush-mono-repo",
     "whitelistPatterns": [],
     "createdAt": 1768341419972
+  },
+  {
+    "threadId": "0ddb653b-419b-46ca-9f7a-6a0e591e2937",
+    "name": "fix/gameplay",
+    "terminalId": "35199",
+    "workingDir": "/home/markus/projects/riddle-rush-mono-repo",
+    "whitelistPatterns": [],
+    "createdAt": 1768368190717
+  },
+  {
+    "threadId": "0314f924-7617-4e42-9ea5-887d547a22c9",
+    "name": "bring back awesomeness",
+    "terminalId": "229767",
+    "workingDir": "/home/markus/projects/riddle-rush-mono-repo",
+    "whitelistPatterns": [],
+    "createdAt": 1768381672085
   }
 ]
