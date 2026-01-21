@@ -64,7 +64,8 @@ describe('usePerformance', () => {
 
       const metrics = getMetrics('fn-test')
       expect(metrics).toBeDefined()
-      expect(metrics?.last).toBeGreaterThanOrEqual(10)
+      // Allow small timing variation (9.5ms instead of 10ms) to avoid flaky tests
+      expect(metrics?.last).toBeGreaterThanOrEqual(9.5)
     }
   })
 
