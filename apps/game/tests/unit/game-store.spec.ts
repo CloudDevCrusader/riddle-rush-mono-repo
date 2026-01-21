@@ -688,8 +688,10 @@ describe('Game Store', () => {
           await store.assignPlayerScore(alice.id, 50)
           expect(alice.totalScore).toBe(50)
 
+          // Delta-based score update: when updating from 50 to 30, delta = 30 - 50 = -20
+          // Total score: 50 + (-20) = 30
           await store.assignPlayerScore(alice.id, 30)
-          expect(alice.totalScore).toBe(80)
+          expect(alice.totalScore).toBe(30)
           expect(alice.currentRoundScore).toBe(30)
         }
       })

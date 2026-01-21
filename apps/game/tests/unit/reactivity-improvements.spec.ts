@@ -305,15 +305,17 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       // Verify initial order
       expect(store.leaderboard[0]!.name).toBe('Bob')
 
-      // Update scores
-      await store.assignPlayerScore(alice!.id, 200) // Now 250 total
-      await store.assignPlayerScore(bob!.id, 100) // Now 200 total
+      // Update scores using delta-based calculation
+      // Alice: delta = 200 - 50 = 150, total = 50 + 150 = 200
+      await store.assignPlayerScore(alice!.id, 200)
+      // Bob: delta = 100 - 100 = 0, total = 100 + 0 = 100
+      await store.assignPlayerScore(bob!.id, 100)
 
       // Verify order changed reactively
       expect(store.leaderboard[0]!.name).toBe('Alice')
-      expect(store.leaderboard[0]!.totalScore).toBe(250)
+      expect(store.leaderboard[0]!.totalScore).toBe(200)
       expect(store.leaderboard[1]!.name).toBe('Bob')
-      expect(store.leaderboard[1]!.totalScore).toBe(200)
+      expect(store.leaderboard[1]!.totalScore).toBe(100)
     })
 
     it('handles update of nonexistent player gracefully', async () => {
