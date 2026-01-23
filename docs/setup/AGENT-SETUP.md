@@ -5,6 +5,7 @@ Setup and configuration locations for AI agents used with the Riddle Rush monore
 ## Supported Agents
 
 - Claude Code
+- Codex
 - Cursor (IDE + Cursor Agent)
 - GitHub Copilot
 - Gemini CLI
@@ -17,13 +18,14 @@ Setup and configuration locations for AI agents used with the Riddle Rush monore
 | Agent          | Repo files                                                                                                           | Notes                                      |
 | -------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
 | Claude Code    | `CLAUDE.md`                                                                                                          | Primary instructions for Claude Code usage |
+| Codex          | `AGENTS.md`, `.mcp.json` (optional)                                                                                  | Workflow guidance plus MCP servers         |
 | Cursor         | `.cursorrules`, `.cursor/mcp.json`, `.cursor/mcp.json.example`, `.cursor/environment.json`, `.cursor/worktrees.json` | Cursor workspace and MCP settings          |
 | Cursor Agent   | `.cursor/mcp.json`                                                                                                   | MCP servers for agent tooling              |
 | GitHub Copilot | `AGENTS.md`                                                                                                          | Workflow guidance only                     |
 | Gemini CLI     | `.mcp.json` (optional)                                                                                               | MCP servers configuration (if supported)   |
 | OpenCode       | `.git/opencode`, `docs/setup/agent-configs/opencode.perplexity.json`                                                 | Git marker plus Perplexity template        |
 | Kilo Code      | `docs/setup/agent-configs/kilocode.perplexity.json`                                                                  | Perplexity template                        |
-| Mistral Vibe   | None                                                                                                                 | No repo config stored yet                  |
+| Mistral Vibe   | `.mcp.json` (optional)                                                                                               | Point MCP settings at the repo config      |
 
 ## Configuration Templates
 

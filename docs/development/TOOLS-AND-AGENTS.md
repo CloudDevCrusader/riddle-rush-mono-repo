@@ -96,7 +96,31 @@ Nuxt UI component documentation and examples.
 
 **Access:** https://ui.nuxt.com/mcp
 
-#### 2. **Playwright MCP**
+#### 2. **BrowserMCP**
+
+Browser automation and inspection via the BrowserMCP server.
+
+**Capabilities:**
+
+- Open and inspect pages
+- Capture screenshots
+- Extract page content
+
+**Package:** `@browsermcp/mcp`
+
+#### 3. **Nuxt MCP Toolkit**
+
+Nuxt MCP Toolkit for Nuxt documentation and tooling context.
+
+**Capabilities:**
+
+- Nuxt documentation lookup
+- Toolkit-specific guidance
+- API references
+
+**Access:** https://mcp-toolkit.nuxt.dev/mcp
+
+#### 4. **Playwright MCP**
 
 Browser automation for E2E testing and debugging.
 
@@ -117,7 +141,7 @@ pnpm run test:e2e
 pnpm run test:e2e -- --debug tests/e2e/login.spec.ts
 ```
 
-#### 3. **AWS Documentation MCP**
+#### 5. **AWS Documentation MCP**
 
 AWS service documentation and reference.
 
@@ -136,7 +160,7 @@ AWS service documentation and reference.
 - DynamoDB (database)
 - API Gateway (APIs)
 
-#### 4. **Docker MCP**
+#### 6. **Docker MCP**
 
 Docker Hub search and container management.
 
@@ -157,7 +181,7 @@ pnpm run build:docker
 docker-compose up -d
 ```
 
-#### 5. **Context7 MCP**
+#### 7. **Context7 MCP**
 
 Library documentation for modern web development.
 
@@ -178,7 +202,7 @@ Library documentation for modern web development.
 - Check migration guides
 - View TypeScript types
 
-#### 6. **Git MCP**
+#### 8. **Git MCP**
 
 Git operations and repository management.
 
@@ -200,7 +224,7 @@ git add .
 git commit -m "feat: description"
 ```
 
-#### 7. **GitLab MCP**
+#### 9. **GitLab MCP**
 
 GitLab API for CI/CD pipeline management.
 
