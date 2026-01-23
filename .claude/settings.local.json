@@ -1,0 +1,9 @@
+{
+  "enabledMcpjsonServers": [
+    "MCP_DOCKER",
+    "AWS_Documentation",
+    "nuxt-ui",
+    "nuxt"
+  ],
+  "enableAllProjectMcpServers": true
+}
