@@ -1,13 +1,11 @@
 {
   "mcpServers": {
-    "MCP_DOCKER": {
-      "command": "docker",
-      "args": ["mcp", "gateway", "run"]
-    },
-    "AWS_Documentation": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-aws-documentation"],
-      "env": {}
+    "riddle-rush-subagents": {
+      "command": "/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/python/run-mcp-server.sh",
+      "args": [],
+      "cwd": "/home/cloudcrusader/projects/riddle-rush-mono-repo",
+      "env": {},
+      "description": "Riddle Rush FastMCP subagents for AWS deployment, Terraform management, CI/CD workflows, testing automation, code quality checks, and documentation generation"
     },
     "nuxt-ui": {
       "command": "npx",
@@ -15,15 +13,52 @@
     },
     "nuxt": {
       "command": "npx",
-      "args": ["mcp-remote", "https://nuxt.com/mcp"]
+      "args": ["-y", "mcp-remote", "https://nuxt.com/mcp"]
+    },
+    "nuxt-mcp-toolkit": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp-toolkit.nuxt.dev/mcp"]
     },
     "browsermcp": {
       "command": "npx",
       "args": ["-y", "@browsermcp/mcp@latest"]
     },
-    "nuxt-mcp-toolkit": {
+    "playwright": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp-toolkit.nuxt.dev/mcp"]
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    },
+    "aws-docs": {
+      "command": "uvx",
+      "args": ["mcp-server-aws-docs"],
+      "env": {}
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "@docker/mcp-server-docker"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "context7-mcp"]
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"]
+    },
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "env": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_PERSONAL_ACCESS_TOKEN}",
+        "GITLAB_API_URL": "https://gitlab.com/api/v4"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/cloudcrusader/projects/riddle-rush-mono-repo"
+      ]
     }
   }
 }

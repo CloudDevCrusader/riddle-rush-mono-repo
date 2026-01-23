@@ -12,6 +12,11 @@
       "args": ["-y", "mcp-remote", "https://ui.nuxt.com/mcp"],
       "description": "Nuxt UI component documentation and examples"
     },
+    "nuxt": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://nuxt.com/mcp"],
+      "description": "Nuxt framework documentation and guides"
+    },
     "playwright": {
       "command": "npx",
       "args": ["-y", "@executeautomation/playwright-mcp-server"],
