@@ -18,6 +18,11 @@ RUN sudo apt-get update && sudo apt-get install -y git make python3 python3-pip 
     sudo apt-get clean -y && \
     sudo rm -rf /var/lib/apt/lists/*
 
+RUN npx -y playwright@1.58.0 install --with-deps
+RUN npx playwright install --with-deps chromium
+
+
+
 # Set up the non-root user
 RUN sudo chown -R node:node /workspace
 
