@@ -355,6 +355,14 @@ describe('Game Store', () => {
       expect(mockUpdateStatistics).toHaveBeenCalledTimes(1)
     })
 
+    it('does not throw if updateStatistics fails', async () => {
+      const store = useGameStore()
+      mockUpdateStatistics.mockRejectedValueOnce(new Error('stats failed'))
+
+      await expect(store.endGame()).resolves.toBeUndefined()
+      expect(store.currentSession).toBeNull()
+    })
+
     it.skip('sets endTime on session', async () => {
       // TODO: Fix timing race condition in CI
       const store = useGameStore()

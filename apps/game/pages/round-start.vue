@@ -26,6 +26,7 @@
       <transition name="wheel-fade">
         <div v-if="isFortuneWheelEnabled && !wheelsComplete" class="wheels-container">
           <div class="wheel-wrapper">
+            xxx
             <div class="wheel-label">
               {{ $t('common.category', 'Category') }}
             </div>

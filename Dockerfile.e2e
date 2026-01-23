@@ -1,0 +1,28 @@
+# Use official Playwright image with all browsers
+FROM mcr.microsoft.com/playwright:v1.49.1-noble
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm@10
+
+# Copy package files first for layer caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/game/package.json ./apps/game/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build the game
+RUN cd apps/game && pnpm build
+
+# Set environment
+ENV NODE_ENV=test
+ENV DISABLE_SECURITY=true
+ENV BASE_URL=http://localhost:3000
+
+# Default command runs e2e tests
+CMD ["pnpm", "--filter", "@riddle-rush/game", "test:e2e"]

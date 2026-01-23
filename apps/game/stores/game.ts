@@ -257,14 +257,20 @@ export const useGameStore = defineStore('game', {
     async endGame() {
       if (!this.currentSession) return
 
-      this.currentSession.endTime = Date.now()
-      this.history.push(cloneSessionForHistory(this.currentSession))
+      const session = this.currentSession
+      session.endTime = Date.now()
+      this.history.push(cloneSessionForHistory(session))
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
 
-      const { updateStatistics } = useStatistics()
-      await updateStatistics(this.currentSession)
+      try {
+        const { updateStatistics } = useStatistics()
+        await updateStatistics(session)
+      } catch (error) {
+        const logger = useLogger()
+        logger.error('Error updating statistics on endGame:', error)
+      }
 
       this.currentSession = null
     },
@@ -272,17 +278,24 @@ export const useGameStore = defineStore('game', {
     async completeGame() {
       if (!this.currentSession) return
 
-      this.currentSession.status = 'completed'
-      this.currentSession.endTime = Date.now()
+      const session = this.currentSession
+
+      session.status = 'completed'
+      session.endTime = Date.now()
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
 
-      const { updateStatistics } = useStatistics()
-      await updateStatistics(this.currentSession)
+      try {
+        const { updateStatistics } = useStatistics()
+        await updateStatistics(session)
+      } catch (error) {
+        const logger = useLogger()
+        logger.error('Error updating statistics on completeGame:', error)
+      }
 
       // Don't clear session - keep it so leaderboard can display winner
-      return this.currentSession
+      return session
     },
 
     async abandonGame() {
@@ -452,14 +465,13 @@ export const useGameStore = defineStore('game', {
       const player = this.currentSession.players[playerIndex]
       if (!player) return
 
-      // Calculate delta: difference between new score and current round score
-      const delta = points - player.currentRoundScore
+      // Only add to total score if the points are different from current round score
+      // This prevents duplicate additions when the same score is assigned multiple times
+      if (points !== player.currentRoundScore) {
+        player.totalScore += points
+      }
 
-      // Update current round score to new value
       player.currentRoundScore = points
-
-      // Add only the delta to total score to prevent duplicate additions
-      player.totalScore += delta
 
       await this.saveSessionToDB()
     },

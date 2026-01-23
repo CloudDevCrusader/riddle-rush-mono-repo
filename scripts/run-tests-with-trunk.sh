@@ -16,7 +16,7 @@ export TRUNK_TESTING=true
 
 # Run unit tests with JUnit reporter (using vitest directly for better control)
 echo "🧪 Running unit tests with JUnit reporter..."
-npx vitest run --reporter=junit --outputFile=test-results/unit-test-results.xml
+pnpm exec vitest run --reporter=junit --outputFile=test-results/unit-test-results.xml
 
 echo "✅ Tests completed. Results saved in test-results/ directory."
 

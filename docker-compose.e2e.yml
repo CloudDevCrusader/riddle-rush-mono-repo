@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Game server for e2e tests
+  game:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    command: node apps/game/.output/server/index.mjs
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=test
+      - DISABLE_SECURITY=true
+      - PORT=3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # E2E test runner
+  e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    depends_on:
+      game:
+        condition: service_healthy
+    environment:
+      - BASE_URL=http://game:3000
+      - CI=true
+      - WORKERS=4
+    volumes:
+      - ./apps/game/test-results:/app/apps/game/test-results
+      - ./apps/game/playwright-report:/app/apps/game/playwright-report
+    working_dir: /app/apps/game
+
+networks:
+  default:
+    name: riddle-rush-e2e

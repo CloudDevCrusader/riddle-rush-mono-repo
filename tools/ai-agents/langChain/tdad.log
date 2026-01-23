@@ -1,0 +1,11 @@
+
+================================================================================
+TDAD Session Started: 2026-01-21T21:38:34.044Z
+================================================================================
+[2026-01-21T21:38:34.075Z] [EXTENSION] 🚀 TDAD extension is now ACTIVATED! Version with comprehensive logging
+[2026-01-21T21:38:34.075Z] [EXTENSION] 📁 Log file location: /home/cloudcrusader/projects/riddle-rush-mono-repo/tools/ai-agents/langChain/tdad.log
+[2026-01-21T21:38:34.075Z] [EXTENSION] 📊 Workspace folders: None
+[2026-01-21T21:38:34.075Z] [EXTENSION] Creating WorkflowController...
+[2026-01-21T21:38:34.076Z] [EXTENSION] MVP: Using simple JSON storage (.tdad/workflows/workflow.json)
+[2026-01-21T21:38:34.076Z] [EXTENSION] TDAD Extension activated successfully
+[2026-01-21T21:38:34.076Z] [EXTENSION] Registering commands...

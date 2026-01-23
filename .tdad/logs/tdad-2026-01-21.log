@@ -1,0 +1,22 @@
+
+================================================================================
+TDAD Session Started: 2026-01-21T21:38:34.069Z
+================================================================================
+[2026-01-21T21:38:34.100Z] [EXTENSION] 🚀 TDAD extension is now ACTIVATED! Version with comprehensive logging
+[2026-01-21T21:38:34.100Z] [EXTENSION] 📁 Log file location: /home/cloudcrusader/projects/riddle-rush-mono-repo/.tdad/logs/tdad-2026-01-21.log
+[2026-01-21T21:38:34.100Z] [EXTENSION] 📊 Workspace folders: /home/cloudcrusader/projects/riddle-rush-mono-repo
+[2026-01-21T21:38:34.100Z] [EXTENSION] Creating WorkflowController...
+[2026-01-21T21:38:34.100Z] [EXTENSION] MVP: Using simple JSON storage (.tdad/workflows/workflow.json)
+[2026-01-21T21:38:34.100Z] [EXTENSION] TDAD Extension activated successfully
+[2026-01-21T21:38:34.100Z] [EXTENSION] Registering commands...
+[2026-01-21T21:38:34.116Z] [EXTENSION] TDAD structure already initialized
+[2026-01-21T21:38:34.116Z] [EXTENSION] Auto-opening TDAD Canvas...
+[2026-01-21T21:38:34.117Z] [CANVAS] Created directory: /home/cloudcrusader/projects/riddle-rush-mono-repo/.tdad/workflows
+[2026-01-21T21:38:34.117Z] [CANVAS] Sprint 13: Agent Orchestrator initialized
+[2026-01-21T21:38:34.118Z] [CANVAS] [AUTOPILOT DEBUG] Loading beta code from config: none
+[2026-01-21T21:38:34.118Z] [CANVAS] [AUTOPILOT DEBUG] Sending autopilot settings with loadNodes: no
+[2026-01-21T21:38:34.205Z] [CANVAS] WEBVIEW
+Data: Using stylesheets: index-CqP4kAre.css
+[2026-01-21T21:38:34.208Z] [CANVAS] MVP: Canvas initialized with simple JSON storage
+[2026-01-21T21:38:34.369Z] [CANVAS] [FitView] isLoading=true, nodes.length=0, folderId=null
+[2026-01-21T21:38:34.499Z] [CANVAS] [FitView] isLoading=false, nodes.length=0, folderId=null

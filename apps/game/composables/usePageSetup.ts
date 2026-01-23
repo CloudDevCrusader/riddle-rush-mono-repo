@@ -6,7 +6,19 @@ export function usePageSetup() {
   const router = useRouter()
   const { t } = useI18n()
   const config = useRuntimeConfig()
-  const baseUrl = (config.public as any).baseUrl || ''
+  const rawBaseUrl = (config.public as any).baseUrl || ''
+
+  const baseUrl = (() => {
+    const value = String(rawBaseUrl || '').trim()
+    if (!value) return '/'
+
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return value.endsWith('/') ? value : `${value}/`
+    }
+
+    const withLeadingSlash = value.startsWith('/') ? value : `/${value}`
+    return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`
+  })()
   const toast = useToast()
 
   // Helper function to resolve asset paths correctly
@@ -24,7 +36,7 @@ export function usePageSetup() {
     const cleanPath = path.startsWith('assets/') ? path.substring(7) : path
 
     // Handle local development (empty baseUrl or '/')
-    if (!baseUrl || (baseUrl as unknown) === '/' || (baseUrl as unknown) === '') {
+    if (!rawBaseUrl || (rawBaseUrl as unknown) === '/' || (rawBaseUrl as unknown) === '') {
       // For local development, assets are in public folder
       return `/${cleanPath}`
     }

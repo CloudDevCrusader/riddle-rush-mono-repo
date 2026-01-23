@@ -136,14 +136,25 @@ const { baseUrl, toast, t } = usePageSetup()
 const { goHome, goToRoundStart } = useNavigation()
 const { gameStore, leaderboard: leaderboardEntries, isGameCompleted } = useGameState()
 
+const isFinishing = ref(false)
+
 const goBack = async () => {
   await goHome()
 }
 
 const handleFinish = async () => {
-  // End game and return to home
-  await gameStore.endGame()
-  await goHome()
+  if (isFinishing.value) return
+
+  isFinishing.value = true
+  try {
+    await gameStore.endGame()
+    await goHome()
+  } catch (error) {
+    const logger = useLogger()
+    logger.error('Error finishing game:', error)
+    toast.error(t('leaderboard.finish_error', 'Failed to finish game. Please try again.'))
+    isFinishing.value = false
+  }
 }
 
 const handleNextRound = async () => {

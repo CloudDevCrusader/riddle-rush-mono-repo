@@ -1,12 +1,7 @@
 version: 2.1
-setup: true
 
 orbs:
   shellcheck: circleci/shellcheck@3.2
-
-filters: &filters
-  tags:
-    only: /.*/
 
 workflows:
   # Main workflow for flaky test detection using Trunk CLI

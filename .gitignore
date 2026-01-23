@@ -133,3 +133,5 @@ htmlcov/
 # Large binary files
 forgejo*
 **/forgejo-*
+
+.trigger
