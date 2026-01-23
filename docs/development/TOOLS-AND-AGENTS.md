@@ -45,18 +45,23 @@ Model Context Protocol (MCP) servers provide AI agents with specialized capabili
 
 ### Configuration Files
 
-**Primary Config:** `.mcp.json`
+**Primary Config (canonical list):** `.mcp.json`
 
 ```json
 {
   "mcpServers": {
+    "riddle-rush-subagents": {
+      "command": "/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/python/run-mcp-server.sh",
+      "args": [],
+      "cwd": "/home/cloudcrusader/projects/riddle-rush-mono-repo"
+    },
     "nuxt-ui": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://ui.nuxt.com/mcp"]
     },
-    "AWS_Documentation": {
+    "browsermcp": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-aws-documentation"]
+      "args": ["-y", "@browsermcp/mcp@latest"]
     }
   }
 }
@@ -67,19 +72,21 @@ Model Context Protocol (MCP) servers provide AI agents with specialized capabili
 ```json
 {
   "mcpServers": {
+    "riddle-rush-subagents": {
+      "source": "/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/python/run-mcp-server.sh",
+      "tools": ["*"],
+      "description": "Riddle Rush subagents for monorepo automation"
+    },
     "playwright": {
       "source": "npx -y @executeautomation/playwright-mcp-server",
       "tools": ["*"],
       "description": "Browser automation for E2E testing"
-    },
-    "context7": {
-      "source": "npx -y context7-mcp",
-      "tools": ["*"],
-      "description": "Library documentation (Vue, Nuxt, Vite)"
     }
   }
 }
 ```
+
+**Cursor Example:** `.cursor/mcp.json.example` mirrors `.mcp.json` with descriptions.
 
 ### Available MCP Servers
 

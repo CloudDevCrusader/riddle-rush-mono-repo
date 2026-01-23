@@ -78,7 +78,11 @@ uv run pytest --cov=. --cov-report=html
 
 ## MCP Server Configuration
 
-The server is configured in `.cursor/mcp.json` as `riddle-rush-subagents`.
+The server is configured as `riddle-rush-subagents` in:
+
+- `.mcp.json` (canonical MCP list for agents like Codex/Mistral)
+- `fastmcp.json` (FastMCP config for Claude Desktop)
+- `.cursor/mcp.json` (Cursor MCP config)
 
 To use it in Cursor:
 
