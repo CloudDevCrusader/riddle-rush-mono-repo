@@ -32,6 +32,16 @@
       "args": ["-y", "context7-mcp"],
       "description": "Library documentation (Vue, Nuxt, Vite, TypeScript, etc.)"
     },
+    "browsermcp": {
+      "command": "npx",
+      "args": ["-y", "@browsermcp/mcp@latest"],
+      "description": "Browser automation and inspection via BrowserMCP"
+    },
+    "nuxt-mcp-toolkit": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp-toolkit.nuxt.dev/mcp"],
+      "description": "Nuxt MCP Toolkit documentation and tooling context"
+    },
     "git": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-git"],

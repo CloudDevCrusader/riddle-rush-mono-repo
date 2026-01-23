@@ -25,6 +25,16 @@
       "tools": ["*"],
       "description": "Library documentation (Vue, Nuxt, Vite, TypeScript, etc.)"
     },
+    "browsermcp": {
+      "source": "npx -y @browsermcp/mcp@latest",
+      "tools": ["*"],
+      "description": "Browser automation and inspection via BrowserMCP"
+    },
+    "nuxt-mcp-toolkit": {
+      "source": "npx https://mcp-toolkit.nuxt.dev/mcp",
+      "tools": ["*"],
+      "description": "Nuxt MCP Toolkit documentation and tooling context"
+    },
     "git": {
       "source": "npx -y @modelcontextprotocol/server-git",
       "tools": ["*"],

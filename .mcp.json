@@ -16,6 +16,14 @@
     "nuxt": {
       "command": "npx",
       "args": ["mcp-remote", "https://nuxt.com/mcp"]
+    },
+    "browsermcp": {
+      "command": "npx",
+      "args": ["-y", "@browsermcp/mcp@latest"]
+    },
+    "nuxt-mcp-toolkit": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp-toolkit.nuxt.dev/mcp"]
     }
   }
 }
