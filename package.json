@@ -101,10 +101,10 @@
   },
   "dependencies": {
     "@e2b/code-interpreter": "^2.3.3",
-    "@langchain/openai": "^1.2.1",
+    "@langchain/openai": "^1.2.3",
     "@voltagent/core": "^2.2.0",
     "@voltagent/mcp-server": "^2.0.2",
     "langchain": "^1.2.11",
-    "zod": "^4.3.5"
+    "zod": "^4.3.6"
   }
 }
