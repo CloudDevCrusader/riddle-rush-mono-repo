@@ -51,8 +51,8 @@ Model Context Protocol (MCP) servers provide AI agents with specialized capabili
 {
   "mcpServers": {
     "riddle-rush-subagents": {
-      "command": "/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/python/run-mcp-server.sh",
-      "args": [],
+      "command": "node",
+      "args": ["/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/voltagent/mcp-server.mjs"],
       "cwd": "/home/cloudcrusader/projects/riddle-rush-mono-repo"
     },
     "nuxt-ui": {
@@ -73,9 +73,9 @@ Model Context Protocol (MCP) servers provide AI agents with specialized capabili
 {
   "mcpServers": {
     "riddle-rush-subagents": {
-      "source": "/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/python/run-mcp-server.sh",
+      "source": "node /home/cloudcrusader/projects/riddle-rush-mono-repo/tools/voltagent/mcp-server.mjs",
       "tools": ["*"],
-      "description": "Riddle Rush subagents for monorepo automation"
+      "description": "VoltAgent MCP subagents for repository automation"
     },
     "playwright": {
       "source": "npx -y @executeautomation/playwright-mcp-server",
@@ -90,7 +90,18 @@ Model Context Protocol (MCP) servers provide AI agents with specialized capabili
 
 ### Available MCP Servers
 
-#### 1. **Nuxt UI MCP**
+#### 1. **Riddle Rush Subagents (VoltAgent)**
+
+Project-specific automation subagents powered by VoltAgent.
+
+**Capabilities:**
+
+- Run workspace checks and tests
+- Report repo status
+
+**Entry:** `tools/voltagent/mcp-server.mjs`
+
+#### 2. **Nuxt UI MCP**
 
 Nuxt UI component documentation and examples.
 
@@ -103,7 +114,7 @@ Nuxt UI component documentation and examples.
 
 **Access:** https://ui.nuxt.com/mcp
 
-#### 2. **BrowserMCP**
+#### 3. **BrowserMCP**
 
 Browser automation and inspection via the BrowserMCP server.
 
@@ -115,7 +126,7 @@ Browser automation and inspection via the BrowserMCP server.
 
 **Package:** `@browsermcp/mcp`
 
-#### 3. **Nuxt MCP Toolkit**
+#### 4. **Nuxt MCP Toolkit**
 
 Nuxt MCP Toolkit for Nuxt documentation and tooling context.
 
@@ -127,7 +138,7 @@ Nuxt MCP Toolkit for Nuxt documentation and tooling context.
 
 **Access:** https://mcp-toolkit.nuxt.dev/mcp
 
-#### 4. **Playwright MCP**
+#### 5. **Playwright MCP**
 
 Browser automation for E2E testing and debugging.
 
@@ -148,7 +159,7 @@ pnpm run test:e2e
 pnpm run test:e2e -- --debug tests/e2e/login.spec.ts
 ```
 
-#### 5. **AWS Documentation MCP**
+#### 6. **AWS Documentation MCP**
 
 AWS service documentation and reference.
 
@@ -167,7 +178,7 @@ AWS service documentation and reference.
 - DynamoDB (database)
 - API Gateway (APIs)
 
-#### 6. **Docker MCP**
+#### 7. **Docker MCP**
 
 Docker Hub search and container management.
 
@@ -188,7 +199,7 @@ pnpm run build:docker
 docker-compose up -d
 ```
 
-#### 7. **Context7 MCP**
+#### 8. **Context7 MCP**
 
 Library documentation for modern web development.
 
@@ -209,7 +220,7 @@ Library documentation for modern web development.
 - Check migration guides
 - View TypeScript types
 
-#### 8. **Git MCP**
+#### 9. **Git MCP**
 
 Git operations and repository management.
 
@@ -231,7 +242,7 @@ git add .
 git commit -m "feat: description"
 ```
 
-#### 9. **GitLab MCP**
+#### 10. **GitLab MCP**
 
 GitLab API for CI/CD pipeline management.
 

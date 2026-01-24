@@ -78,7 +78,10 @@ uv run pytest --cov=. --cov-report=html
 
 ## MCP Server Configuration
 
-The server is configured as `riddle-rush-subagents` in:
+This FastMCP server is kept for legacy/backup use. The default MCP subagents
+are now served via VoltAgent at `tools/voltagent/mcp-server.mjs`.
+
+To use this FastMCP server instead, configure it as `riddle-rush-subagents` in:
 
 - `.mcp.json` (canonical MCP list for agents like Codex/Mistral)
 - `fastmcp.json` (FastMCP config for Claude Desktop)

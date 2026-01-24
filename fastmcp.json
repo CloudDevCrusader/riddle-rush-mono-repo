@@ -1,9 +1,9 @@
 {
   "mcpServers": {
     "riddle-rush-subagents": {
-      "source": "/home/cloudcrusader/projects/riddle-rush-mono-repo/tools/python/run-mcp-server.sh",
+      "source": "node /home/cloudcrusader/projects/riddle-rush-mono-repo/tools/voltagent/mcp-server.mjs",
       "tools": ["*"],
-      "description": "Riddle Rush FastMCP subagents for AWS deployment, Terraform management, CI/CD workflows, testing automation, code quality checks, and documentation generation"
+      "description": "VoltAgent MCP subagents for repository automation"
     },
     "nuxt-ui": {
       "source": "npx https://ui.nuxt.com/mcp",
