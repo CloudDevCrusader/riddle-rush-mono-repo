@@ -28,6 +28,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxt/image',
+    '@nuxtjs/mcp-toolkit',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
   ],
@@ -329,6 +330,10 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+  mcp: {
+    name: 'riddle-rush-game',
+    version: process.env.npm_package_version || '1.0.0',
   },
 
   // Motion animation defaults
