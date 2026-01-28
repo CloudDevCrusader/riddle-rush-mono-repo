@@ -26,7 +26,6 @@
       <transition name="wheel-fade">
         <div v-if="isFortuneWheelEnabled && !wheelsComplete" class="wheels-container">
           <div class="wheel-wrapper">
-            xxx
             <div class="wheel-label">
               {{ $t('common.category', 'Category') }}
             </div>
@@ -150,9 +149,16 @@ const selectedCategoryName = computed(() => {
 })
 
 const currentRoundNumber = computed(() => {
-  // If there's an active session, show next round number
-  // Otherwise show round 1
-  return gameStore.currentSession ? gameStore.currentSession.currentRound + 1 : 1
+  // No session yet = first round setup
+  if (!gameStore.currentSession) return 1
+
+  const session = gameStore.currentSession
+  // Check if current round has been completed (saved to roundHistory)
+  const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+
+  // If current round is completed, we're about to start the next round
+  // Otherwise, show the current round number (e.g., on refresh)
+  return isCurrentRoundCompleted ? session.currentRound + 1 : session.currentRound
 })
 
 onMounted(async () => {
@@ -221,16 +227,14 @@ const startGame = async () => {
   startingGame.value = true
 
   try {
-    // Check if this is a next round (active session exists) or initial setup
-    const isNextRound = !!gameStore.currentSession
+    const hasSession = !!gameStore.currentSession
+    const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
 
-    if (isNextRound) {
-      // This is a next round - update the existing session
-      await gameStore.startNextRound(selectedCategory.value, selectedLetter.value)
-    } else {
+    // Determine if this is initial setup or a new round
+    // Initial setup: no session OR pending players from players page
+    if (!hasSession || hasPendingPlayers) {
       // This is initial setup - create new session with players
-      const playerNames =
-        gameStore.pendingPlayerNames.length > 0 ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
+      const playerNames = hasPendingPlayers ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
 
       await gameStore.setupPlayers(
         playerNames,
@@ -242,6 +246,24 @@ const startGame = async () => {
       // Clear pending state
       gameStore.pendingPlayerNames = []
       gameStore.selectedLetter = null
+    } else {
+      // Session exists - check if current round is completed
+      const session = gameStore.currentSession
+      if (!session) return // Safety check
+
+      const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+
+      if (isCurrentRoundCompleted) {
+        // Current round completed - start new round (increment counter)
+        await gameStore.startNextRound(selectedCategory.value, selectedLetter.value)
+      } else {
+        // Refresh during same round - update category/letter but don't increment round
+        session.category = { ...selectedCategory.value, letter: selectedLetter.value }
+        session.letter = selectedLetter.value
+        // Reset player submissions for fair restart on refresh
+        await gameStore.resetPlayerSubmissions()
+        await gameStore.saveSessionToDB()
+      }
     }
 
     // Navigate to game with game ID

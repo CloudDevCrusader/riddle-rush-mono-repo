@@ -911,6 +911,249 @@ describe('Game Store', () => {
     })
   })
 
+  describe('Round Counter Logic', () => {
+    describe('isCurrentRoundCompleted helper logic', () => {
+      it('round is NOT completed when roundHistory is empty and currentRound is 1', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        // After setup: currentRound = 1, roundHistory = []
+        expect(store.currentSession?.currentRound).toBe(1)
+        expect(store.currentSession?.roundHistory.length).toBe(0)
+
+        // isCurrentRoundCompleted = roundHistory.length >= currentRound = 0 >= 1 = false
+        const isCompleted =
+          (store.currentSession?.roundHistory.length ?? 0) >=
+          (store.currentSession?.currentRound ?? 0)
+        expect(isCompleted).toBe(false)
+      })
+
+      it('round IS completed after completeRound is called', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await store.submitPlayerAnswer(bob.id, 'Answer 2')
+          await store.completeRound()
+        }
+
+        // After completeRound: currentRound = 1, roundHistory = [round1]
+        expect(store.currentSession?.currentRound).toBe(1)
+        expect(store.currentSession?.roundHistory.length).toBe(1)
+
+        // isCurrentRoundCompleted = roundHistory.length >= currentRound = 1 >= 1 = true
+        const isCompleted =
+          (store.currentSession?.roundHistory.length ?? 0) >=
+          (store.currentSession?.currentRound ?? 0)
+        expect(isCompleted).toBe(true)
+      })
+
+      it('round is NOT completed after startNextRound', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await store.submitPlayerAnswer(bob.id, 'Answer 2')
+          await store.completeRound()
+          await store.startNextRound()
+        }
+
+        // After startNextRound: currentRound = 2, roundHistory = [round1]
+        expect(store.currentSession?.currentRound).toBe(2)
+        expect(store.currentSession?.roundHistory.length).toBe(1)
+
+        // isCurrentRoundCompleted = roundHistory.length >= currentRound = 1 >= 2 = false
+        const isCompleted =
+          (store.currentSession?.roundHistory.length ?? 0) >=
+          (store.currentSession?.currentRound ?? 0)
+        expect(isCompleted).toBe(false)
+      })
+
+      it('round IS completed after second round completeRound', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          // Round 1
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await store.submitPlayerAnswer(bob.id, 'Answer 2')
+          await store.completeRound()
+          await store.startNextRound()
+
+          // Round 2
+          await store.submitPlayerAnswer(alice.id, 'Answer 3')
+          await store.submitPlayerAnswer(bob.id, 'Answer 4')
+          await store.completeRound()
+        }
+
+        // After second completeRound: currentRound = 2, roundHistory = [round1, round2]
+        expect(store.currentSession?.currentRound).toBe(2)
+        expect(store.currentSession?.roundHistory.length).toBe(2)
+
+        // isCurrentRoundCompleted = roundHistory.length >= currentRound = 2 >= 2 = true
+        const isCompleted =
+          (store.currentSession?.roundHistory.length ?? 0) >=
+          (store.currentSession?.currentRound ?? 0)
+        expect(isCompleted).toBe(true)
+      })
+    })
+
+    describe('Round number display scenarios', () => {
+      it('should show round 1 on initial setup (no session)', () => {
+        const store = useGameStore()
+        // No session exists
+        expect(store.currentSession).toBeNull()
+
+        // Display logic: return 1 when no session
+        const displayRound = store.currentSession ? store.currentSession.currentRound : 1
+        expect(displayRound).toBe(1)
+      })
+
+      it('should show round 1 after setupPlayers (round not completed)', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        // Display logic: if round NOT completed, show currentRound
+        const session = store.currentSession!
+        const isCompleted = session.roundHistory.length >= session.currentRound
+        const displayRound = isCompleted ? session.currentRound + 1 : session.currentRound
+        expect(displayRound).toBe(1)
+      })
+
+      it('should show round 2 after round 1 is completed', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await store.submitPlayerAnswer(bob.id, 'Answer 2')
+          await store.completeRound()
+        }
+
+        // Display logic: if round IS completed, show currentRound + 1
+        const session = store.currentSession!
+        const isCompleted = session.roundHistory.length >= session.currentRound
+        const displayRound = isCompleted ? session.currentRound + 1 : session.currentRound
+        expect(displayRound).toBe(2)
+      })
+
+      it('should show round 2 after startNextRound (round 2 not completed)', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await store.submitPlayerAnswer(bob.id, 'Answer 2')
+          await store.completeRound()
+          await store.startNextRound()
+        }
+
+        // Display logic: after startNextRound, round 2 is NOT completed
+        const session = store.currentSession!
+        const isCompleted = session.roundHistory.length >= session.currentRound
+        const displayRound = isCompleted ? session.currentRound + 1 : session.currentRound
+        expect(displayRound).toBe(2)
+      })
+    })
+
+    describe('Game start scenarios', () => {
+      it('initial setup: pendingPlayerNames triggers setupPlayers', async () => {
+        const store = useGameStore()
+
+        // Simulate coming from players page
+        store.pendingPlayerNames = ['Alice', 'Bob']
+
+        // The round-start page logic
+        const hasSession = !!store.currentSession
+        const hasPendingPlayers = store.pendingPlayerNames.length > 0
+
+        expect(hasSession).toBe(false)
+        expect(hasPendingPlayers).toBe(true)
+
+        // This would trigger setupPlayers
+        await store.setupPlayers(store.pendingPlayerNames)
+        store.pendingPlayerNames = []
+
+        expect(store.currentSession?.currentRound).toBe(1)
+        expect(store.players).toHaveLength(2)
+      })
+
+      it('next round: session exists and round completed triggers startNextRound', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = store.players
+        if (alice && bob) {
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await store.submitPlayerAnswer(bob.id, 'Answer 2')
+          await store.completeRound()
+        }
+
+        // The round-start page logic for next round
+        const hasSession = !!store.currentSession
+        const hasPendingPlayers = store.pendingPlayerNames.length > 0
+        const session = store.currentSession!
+        const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+
+        expect(hasSession).toBe(true)
+        expect(hasPendingPlayers).toBe(false)
+        expect(isCurrentRoundCompleted).toBe(true)
+
+        // This should trigger startNextRound
+        await store.startNextRound()
+
+        expect(store.currentSession?.currentRound).toBe(2)
+      })
+
+      it('refresh during round: session exists but round NOT completed - no increment', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        // Simulate refresh - session exists but round not completed
+        const hasSession = !!store.currentSession
+        const hasPendingPlayers = store.pendingPlayerNames.length > 0
+        const session = store.currentSession!
+        const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+
+        expect(hasSession).toBe(true)
+        expect(hasPendingPlayers).toBe(false)
+        expect(isCurrentRoundCompleted).toBe(false)
+
+        // On refresh, should NOT call startNextRound
+        // Instead, just reset submissions
+        await store.resetPlayerSubmissions()
+
+        // Round should still be 1
+        expect(store.currentSession?.currentRound).toBe(1)
+      })
+
+      it('refresh after partial answers: should not increment round', async () => {
+        const store = useGameStore()
+        await store.setupPlayers(['Alice', 'Bob'])
+
+        // One player submits
+        const alice = store.players[0]
+        if (alice) {
+          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+        }
+
+        // Simulate refresh
+        const session = store.currentSession!
+        const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+
+        expect(isCurrentRoundCompleted).toBe(false)
+        expect(store.currentSession?.currentRound).toBe(1)
+      })
+    })
+  })
+
   describe('Load Session By ID', () => {
     beforeEach(() => {
       vi.clearAllMocks()
