@@ -13,12 +13,12 @@
     "@vite-pwa/nuxt": "^1.1.0",
     "@vueuse/nuxt": "^14.1.0",
     "idb": "^8.0.3",
-    "lodash-es": "^4.17.22",
-    "nuxt": "^4.2.2",
+    "lodash-es": "^4.17.23",
+    "nuxt": "^4.3.0",
     "socket.io-client": "^4.8.3",
     "unleash-proxy-client": "^3.7.8",
-    "vue": "^3.5.26",
-    "vue-i18n": "^11.1.0"
+    "vue": "^3.5.27",
+    "vue-i18n": "^11.2.8"
   },
   "devDependencies": {
     "@capacitor/android": "^8.0.0",
@@ -59,7 +59,7 @@
     "vite-plugin-vue-inspector": "^5.3.2",
     "vitest": "^3.0.0",
     "vue-tsc": "^2.0.0",
-    "zod": "^4.3.5"
+    "zod": "^4.3.6"
   },
   "packageManager": "pnpm@10.28.1",
   "private": true,
