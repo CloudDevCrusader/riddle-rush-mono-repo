@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
-import * as os from 'os'
+import * as os from 'node:os'
 
 const isCI = !!process.env.CI
 // Allow testing against deployed sites via BASE_URL env var
@@ -12,7 +12,7 @@ const isDeployedTest =
 // Adaptive worker configuration
 const getWorkerCount = () => {
   if (process.env.CI) {
-    return process.env.WORKERS ? parseInt(process.env.WORKERS) : 4
+    return process.env.WORKERS ? Number.parseInt(process.env.WORKERS) : 4
   }
   const cpus = os.cpus().length
   return Math.max(4, Math.min(Math.floor(cpus / 2), 8))
@@ -73,7 +73,11 @@ export default defineConfig({
   // Web server - only start for local tests
   ...(!isDeployedTest && {
     webServer: {
-      command: 'DISABLE_SECURITY=true node .output/server/index.mjs',
+      // Use dev server for local tests to avoid build bundling issues
+      // In CI, use pre-built server (assumes build was run beforehand)
+      command: isCI
+        ? 'DISABLE_SECURITY=true node .output/server/index.mjs'
+        : 'DISABLE_SECURITY=true pnpm run dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 300000, // Increase timeout to 5 minutes

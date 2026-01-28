@@ -1,9 +1,37 @@
 {
-  "enabledMcpjsonServers": [
-    "MCP_DOCKER",
-    "AWS_Documentation",
-    "nuxt-ui",
-    "nuxt"
-  ],
-  "enableAllProjectMcpServers": true
+  "permissions": {
+    "allow": [
+      "Bash(pnpm list:*)",
+      "Bash(npx playwright --version)",
+      "Bash(npx playwright install:*)",
+      "Bash(pnpm run test:e2e:*)",
+      "Bash(pnpm run build:*)",
+      "Bash(pnpm exec:*)",
+      "Bash(DISABLE_SECURITY=true timeout 10 node .output/server/index.mjs)",
+      "Bash(curl:*)",
+      "Bash(timeout 20 pnpm run dev:*)",
+      "Bash(DEBUG_BUILD=true pnpm run build:*)",
+      "Bash(pnpm run workspace:check:*)",
+      "Bash(pnpm -w run workspace:check)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "Bash(pnpm run lint:*)",
+      "Bash(pnpm test:unit:*)",
+      "Bash(pnpm test:e2e:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(cat:*)",
+      "Bash(xargs ls:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(pnpm syncpack:check:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm lint:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledPlugins": {
+    "voltagent-qa-sec@voltagent-subagents": true
+  }
 }

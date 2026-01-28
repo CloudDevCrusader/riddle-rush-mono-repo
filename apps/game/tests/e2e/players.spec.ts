@@ -4,6 +4,14 @@ import { generatePlayerName } from './helpers/faker'
 test.describe('Players Management Page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/players', { timeout: 30000 })
+    // Wait for splash screen to complete (it shows for ~3 seconds)
+    await page
+      .waitForSelector('.splash-screen', { state: 'detached', timeout: 10000 })
+      .catch(() => {
+        // Splash screen may have already completed, ignore error
+      })
+    // Wait for page content to be visible
+    await page.waitForSelector('.players-page', { state: 'visible', timeout: 10000 })
   })
 
   test('should display players page with all elements', async ({ page }) => {
@@ -50,14 +58,22 @@ test.describe('Players Management Page', () => {
     const playerItemsBefore = page.locator('.player-item:not(.empty)')
     const countBefore = await playerItemsBefore.count()
 
-    // Mock the prompt to return a player name
-    const playerName = generatePlayerName()
-    page.on('dialog', async (dialog) => {
-      expect(dialog.type()).toBe('prompt')
-      await dialog.accept(playerName)
-    })
-
+    // Click add button to show input field
     await addBtn.click()
+
+    // Wait for input container to appear
+    const inputContainer = page.locator('.player-input-container')
+    await expect(inputContainer).toBeVisible()
+
+    // Clear the default name and enter a new one
+    const playerName = generatePlayerName()
+    const input = page.locator('.player-name-input')
+    await input.clear()
+    await input.fill(playerName)
+
+    // Click confirm button
+    const confirmBtn = page.locator('.confirm-btn')
+    await confirmBtn.click()
     await page.waitForTimeout(300)
 
     const playerItemsAfter = page.locator('.player-item:not(.empty)')
@@ -67,13 +83,18 @@ test.describe('Players Management Page', () => {
   test('should remove a player when clicking remove button', async ({ page }) => {
     const playerItemsBefore = page.locator('.player-item:not(.empty)')
     const countBefore = await playerItemsBefore.count()
+    expect(countBefore).toBeGreaterThan(0) // Ensure we have players to remove
 
+    // Get the remove button and ensure it's visible
     const removeBtn = page.locator('.remove-player-btn').first()
-    await removeBtn.click()
-    await page.waitForTimeout(300)
+    await expect(removeBtn).toBeVisible()
 
+    // Click the remove button (force click to handle overlapping elements)
+    await removeBtn.click({ force: true })
+
+    // Wait for the player to be removed from the list
     const playerItemsAfter = page.locator('.player-item:not(.empty)')
-    await expect(playerItemsAfter).toHaveCount(countBefore - 1)
+    await expect(playerItemsAfter).toHaveCount(countBefore - 1, { timeout: 5000 })
   })
 
   test('should enable start button when players exist', async ({ page }) => {

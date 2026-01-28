@@ -201,7 +201,8 @@ const confirmAddPlayer = () => {
     return
   }
 
-  players.value.push({ name: trimmedName })
+  // Reassign array to trigger shallowRef reactivity
+  players.value = [...players.value, { name: trimmedName }]
   toast.success(t('players.added', `${trimmedName} added!`))
 
   // Reset
@@ -216,7 +217,8 @@ const cancelAddPlayer = () => {
 
 const removePlayer = (index: number) => {
   const playerName = players.value[index]?.name
-  players.value.splice(index, 1)
+  // Reassign array to trigger shallowRef reactivity (splice modifies in-place)
+  players.value = players.value.filter((_, i) => i !== index)
   if (playerName) {
     toast.info(t('players.removed', `${playerName} removed`))
   }
