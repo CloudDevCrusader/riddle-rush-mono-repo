@@ -98,6 +98,7 @@ CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID-}"
 AWS_REGION="${AWS_REGION:-eu-central-1}"
 BUILD_DIR="apps/game/.output/public"
 DRY_RUN="${DRY_RUN:-false}"
+DELETE_OLD_ASSETS="${DELETE_OLD_ASSETS:-false}"
 
 # Set deployment timestamp
 DEPLOYMENT_TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
@@ -256,9 +257,15 @@ if [[ "${DRY_RUN}" = "true" ]]; then
 	echo -e "  Total size: ${TOTAL_SIZE}"
 else
 	# Upload static assets with long-term caching (1 year)
+	# Avoid deleting old hashed assets by default to prevent SRI mismatches
+	# when clients still reference previous builds.
+	ASSET_DELETE_ARGS=()
+	if [[ "${DELETE_OLD_ASSETS}" = "true" ]]; then
+		ASSET_DELETE_ARGS=(--delete)
+	fi
 	echo -e "  Uploading static assets (CSS, JS, images)..."
 	aws s3 sync "${BUILD_DIR}" "s3://${S3_BUCKET}" \
-		--delete \
+		"${ASSET_DELETE_ARGS[@]}" \
 		--cache-control "public, max-age=31536000, immutable" \
 		--exclude "*.html" \
 		--exclude "sw.js" \

@@ -19,6 +19,20 @@ const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuil
 
 export default defineNuxtConfig({
   modules: [
+    // Inline module to disable @pinia/nuxt payload plugin when SSR is disabled
+    // Fixes: "Cannot access 'definePayloadPlugin' before initialization" error
+    function (_options, nuxt) {
+      if (nuxt.options.ssr === false) {
+        nuxt.hook('modules:done', () => {
+          // Remove the payload-plugin as it's not needed without SSR
+          // and causes initialization errors with ssr: false
+          nuxt.options.plugins = nuxt.options.plugins.filter((plugin) => {
+            const pluginSrc = typeof plugin === 'string' ? plugin : plugin.src
+            return !pluginSrc?.includes('payload-plugin')
+          })
+        })
+      }
+    },
     '@pinia/nuxt', // Load Pinia first since stores are used everywhere
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
@@ -134,7 +148,7 @@ export default defineNuxtConfig({
     clearScreen: false, // Keep logs visible
     resolve: {
       preserveSymlinks: false, // Keep default behavior
-      dedupe: ['vue', 'vue-i18n'], // Deduplicate these modules
+      dedupe: ['vue', 'vue-i18n', 'pinia'], // Deduplicate these modules
     },
     plugins: [
       // Inspector already enabled via devtools
@@ -144,8 +158,8 @@ export default defineNuxtConfig({
         : (getDevPlugins({ isDev: true }) as unknown as Plugin[])),
     ],
     optimizeDeps: {
-      include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
-      exclude: ['vue-demi'],
+      include: ['@vueuse/core', '@vueuse/motion', 'lodash-es'],
+      exclude: ['vue-demi', 'pinia', '@pinia/nuxt'],
       esbuildOptions: {
         // Ensure lodash-es is tree-shaken properly
         treeShaking: true,

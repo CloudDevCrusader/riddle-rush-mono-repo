@@ -47,6 +47,16 @@ variable "html_cache_ttl" {
   default     = 300 # 5 minutes
 }
 
+# CloudFront Function for SPA routing (rewrite non-file paths to index.html)
+resource "aws_cloudfront_function" "request_rewrite" {
+  name    = "${var.environment}-request-rewrite"
+  runtime = "cloudfront-js-1.0"
+  comment = "Rewrite non-file requests to index.html for SPA routing"
+  publish = true
+
+  code = file("${path.module}/../../cloudfront-functions/request-rewrite.js")
+}
+
 # CloudFront Origin Access Control
 resource "aws_cloudfront_origin_access_control" "website" {
   name                              = "${var.environment}-oac"
@@ -111,6 +121,12 @@ resource "aws_cloudfront_distribution" "website" {
     min_ttl     = 0
     default_ttl = var.default_cache_ttl
     max_ttl     = 86400 # 1 day
+
+    # Rewrite SPA routes before origin fetch
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.request_rewrite.arn
+    }
   }
 
   # HTML files - short cache for dynamic content
@@ -184,13 +200,7 @@ resource "aws_cloudfront_distribution" "website" {
     response_page_path    = "/404.html"
     error_caching_min_ttl = 300
   }
-
-  custom_error_response {
-    error_code            = 403
-    response_code         = 200
-    response_page_path    = "/index.html"
-    error_caching_min_ttl = 300
-  }
+  # Avoid serving index.html for missing assets (prevents SRI mismatches)
 
   # Viewer certificate
   dynamic "viewer_certificate" {

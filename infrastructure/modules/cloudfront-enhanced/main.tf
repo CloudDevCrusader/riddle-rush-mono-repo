@@ -41,6 +41,23 @@ variable "price_class" {
   default     = "PriceClass_100"
 }
 
+variable "enable_spa_rewrite_function" {
+  description = "Enable CloudFront function for SPA routing"
+  type        = bool
+  default     = false
+}
+
+# CloudFront Function for SPA routing (rewrite non-file paths to index.html)
+resource "aws_cloudfront_function" "request_rewrite" {
+  count   = var.enable_spa_rewrite_function ? 1 : 0
+  name    = "${var.environment}-request-rewrite"
+  runtime = "cloudfront-js-1.0"
+  comment = "Rewrite non-file requests to index.html for SPA routing"
+  publish = true
+
+  code = file("${path.module}/../../cloudfront-functions/request-rewrite.js")
+}
+
 # Enhanced CloudFront Origin Access Control
 resource "aws_cloudfront_origin_access_control" "website" {
   name                              = "${var.environment}-oac-enhanced"
@@ -173,6 +190,15 @@ resource "aws_cloudfront_distribution" "website" {
 
     # Enable real-time metrics for monitoring
     realtime_log_config_arn = "" # Can add if needed
+
+    # Rewrite SPA routes before origin fetch (optional)
+    dynamic "function_association" {
+      for_each = var.enable_spa_rewrite_function ? [1] : []
+      content {
+        event_type   = "viewer-request"
+        function_arn = aws_cloudfront_function.request_rewrite[0].arn
+      }
+    }
   }
 
   # HTML files - Short TTL for dynamic content with edge optimization
@@ -263,12 +289,7 @@ resource "aws_cloudfront_distribution" "website" {
     error_caching_min_ttl = 10 # Faster error recovery
   }
 
-  custom_error_response {
-    error_code            = 403
-    response_code         = 200
-    response_page_path    = "/index.html"
-    error_caching_min_ttl = 10 # Faster error recovery
-  }
+  # Avoid serving index.html for missing assets (prevents SRI mismatches)
 
   # Viewer certificate with enhanced security
   dynamic "viewer_certificate" {

@@ -197,5 +197,9 @@
     "**/vitest.workspace.ts": true
   },
   "circleci.persistedProjectSelection": ["circleci/NqFyu74yrheUgS5wD3ERxe/fhprrcv6zHAooUq6UK155"],
-  "circleci.filters.branchFilter": "allBranches"
+  "circleci.filters.branchFilter": "allBranches",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "djdiox",
+    "projectKey": "djdiox_guess-game-nuxt-pwa"
+  }
 }
