@@ -91,12 +91,6 @@ const handleClick = (event: MouseEvent) => {
   box-shadow: 0 4px 0 var(--color-primary-dark);
 }
 
-.base-button--primary:hover:not(.base-button--disabled) {
-  background: var(--color-primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 var(--color-primary-dark);
-}
-
 .base-button--primary:active:not(.base-button--disabled) {
   transform: translateY(2px);
   box-shadow: 0 2px 0 var(--color-primary-dark);
@@ -107,12 +101,6 @@ const handleClick = (event: MouseEvent) => {
   color: var(--color-dark);
   border: 3px solid var(--color-gray);
   box-shadow: 0 4px 0 var(--color-gray);
-}
-
-.base-button--secondary:hover:not(.base-button--disabled) {
-  background: var(--color-white);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 var(--color-gray);
 }
 
 .base-button--secondary:active:not(.base-button--disabled) {
@@ -127,12 +115,6 @@ const handleClick = (event: MouseEvent) => {
   box-shadow: 0 4px 0 var(--color-danger-dark);
 }
 
-.base-button--danger:hover:not(.base-button--disabled) {
-  background: var(--color-danger-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 var(--color-danger-dark);
-}
-
 .base-button--danger:active:not(.base-button--disabled) {
   transform: translateY(2px);
   box-shadow: 0 2px 0 var(--color-danger-dark);
@@ -143,10 +125,6 @@ const handleClick = (event: MouseEvent) => {
   color: var(--color-dark);
   border: none;
   box-shadow: none;
-}
-
-.base-button--ghost:hover:not(.base-button--disabled) {
-  background: rgba(0, 0, 0, 0.05);
 }
 
 /* States */

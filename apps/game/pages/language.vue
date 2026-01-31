@@ -173,10 +173,6 @@ useHead({
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-.back-btn:hover {
-  transform: scale(1.05);
-}
-
 .back-btn:active {
   transform: scale(0.95);
 }
@@ -231,10 +227,6 @@ useHead({
   transition: all var(--transition-base);
   min-height: 100px;
   padding: 0;
-}
-
-.language-option:hover {
-  transform: translateY(-4px) scale(1.02);
 }
 
 .language-option:active {
@@ -315,10 +307,6 @@ useHead({
   width: clamp(200px, 40vw, 300px);
   height: auto;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
-}
-
-.ok-btn:hover {
-  transform: translateY(-4px) scale(1.05);
 }
 
 .ok-btn:active {

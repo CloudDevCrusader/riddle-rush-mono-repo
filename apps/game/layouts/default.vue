@@ -15,6 +15,7 @@
 
     <!-- Global Loading Overlay -->
     <GlobalLoading />
+    <div class="footer" />
   </div>
 </template>
 
@@ -82,18 +83,9 @@ provide('setBackground', (src: string) => {
   transition: all 0.3s ease;
 }
 
-.connection-indicator:hover {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
 @media (prefers-color-scheme: dark) {
   .connection-indicator {
     background: rgba(31, 41, 55, 0.9);
-  }
-
-  .connection-indicator:hover {
-    background: rgba(31, 41, 55, 1);
   }
 }
 </style>

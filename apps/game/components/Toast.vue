@@ -75,13 +75,6 @@ const removeToast = (id: string) => {
   border-left: 4px solid transparent;
 }
 
-.toast:hover {
-  transform: translateX(-4px);
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.15),
-    0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
 .toast-icon {
   font-size: 24px;
   width: 32px;
@@ -117,11 +110,6 @@ const removeToast = (id: string) => {
   border-radius: var(--radius-sm);
   flex-shrink: 0;
   transition: all var(--transition-base);
-}
-
-.toast-close:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--color-dark);
 }
 
 /* Success Toast */

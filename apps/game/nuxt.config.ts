@@ -92,9 +92,9 @@ export default defineNuxtConfig({
     dirs: ['stores', 'composables'],
   },
   devtools: {
-    enabled: true,
+    enabled: process.env.NODE_ENV === 'development',
     timeline: {
-      enabled: true,
+      enabled: process.env.NODE_ENV === 'development',
     },
   },
 
@@ -283,7 +283,10 @@ export default defineNuxtConfig({
     ],
     strategy: 'no_prefix',
     // Completely disable browser language detection - handled by client plugin
-    detectBrowserLanguage: false,
+    detectBrowserLanguage: {
+      useCookie: true,
+      fallbackLocale: 'en',
+    },
     // Disable the problematic SSR switch locale path plugin
     skipSettingLocaleOnNavigate: true,
     // Completely disable SSR features for client-only app

@@ -205,10 +205,6 @@ const handleNo = () => {
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3)) grayscale(0.6) brightness(1.05);
 }
 
-.action-btn:hover {
-  transform: translateY(-2px);
-}
-
 .action-btn:active {
   transform: translateY(0) scale(0.98);
 }

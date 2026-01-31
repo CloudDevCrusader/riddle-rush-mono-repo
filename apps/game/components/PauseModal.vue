@@ -220,10 +220,6 @@ const handleHome = async () => {
   transform: scale(0.95);
 }
 
-.action-btn:hover {
-  transform: translateY(-2px);
-}
-
 .action-btn:active {
   transform: translateY(0) scale(0.98);
 }

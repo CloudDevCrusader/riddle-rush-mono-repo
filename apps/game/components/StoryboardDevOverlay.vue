@@ -288,10 +288,6 @@ const handleReset = () => {
   justify-content: center;
 }
 
-.close-btn:hover {
-  color: var(--color-dark);
-}
-
 .overlay-section {
   padding: var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
@@ -490,18 +486,8 @@ const handleReset = () => {
   font-size: var(--font-size-sm);
 }
 
-.action-btn:hover {
-  background: var(--color-primary-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
 .action-btn.danger {
   background: #ef4444;
-}
-
-.action-btn.danger:hover {
-  background: #dc2626;
 }
 
 .overlay-footer {

@@ -35,6 +35,7 @@ This document maps the game workflow from the design document (Riddle Rush App.p
 - Checkmark for selected language (mark.png)
 - OK button to confirm (OK.png)
 - Back button (back.png)
+- Supports preselecting language via query param `?lang=<code>` (e.g. `?lang=de`)
 
 **Navigation:** → Main Menu
 

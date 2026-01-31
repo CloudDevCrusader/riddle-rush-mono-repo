@@ -92,8 +92,4 @@ useHead({
 .emergency-back-btn:active {
   transform: scale(0.95);
 }
-
-.emergency-back-btn:hover {
-  background: rgba(255, 107, 53, 1);
-}
 </style>

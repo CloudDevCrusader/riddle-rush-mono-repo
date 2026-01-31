@@ -379,11 +379,6 @@ useHead({
   border: 2px solid transparent;
 }
 
-.player-avatar:hover {
-  border-color: rgba(255, 170, 0, 0.6);
-  transform: scale(1.05);
-}
-
 .avatar-change-btn {
   position: absolute;
   bottom: -2px;
@@ -400,11 +395,6 @@ useHead({
   padding: 0;
   transition: all var(--transition-base);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.avatar-change-btn:hover {
-  background: rgba(68, 200, 255, 1);
-  transform: scale(1.1);
 }
 
 .avatar-change-icon {

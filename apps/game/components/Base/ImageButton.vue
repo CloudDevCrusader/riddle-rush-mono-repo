@@ -90,12 +90,4 @@ const handleClick = (event: MouseEvent) => {
   transition: opacity var(--transition-base);
   pointer-events: none;
 }
-
-.image-button:hover:not(.image-button--disabled) .btn-image {
-  opacity: 0;
-}
-
-.image-button:hover:not(.image-button--disabled) .btn-image-hover {
-  opacity: 1;
-}
 </style>
