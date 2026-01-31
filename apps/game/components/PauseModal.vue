@@ -5,11 +5,6 @@
         <!-- Background Image -->
         <img :src="`${baseUrl}assets/paused/BACKGROUND.png`" alt="Background" class="pause-bg" />
 
-        <!-- Back Button -->
-        <button class="back-btn tap-highlight no-select" @click="handleResume">
-          <img :src="`${baseUrl}assets/paused/back.png`" alt="Back" />
-        </button>
-
         <!-- Title -->
         <div class="title-container">
           <img
