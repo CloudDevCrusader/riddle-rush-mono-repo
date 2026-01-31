@@ -5,8 +5,10 @@
  */
 
 @use 'sass:map';
+@use 'effects/shadows' as *;
 
 @forward 'effects/scaling';
+@forward 'effects/shadows';
 
 // ============================================
 // VARIABLES
@@ -864,6 +866,14 @@ body {
 // ============================================
 // MOCKUP-SPECIFIC UTILITY CLASSES
 // ============================================
+
+.fx-text-glow {
+  @include text-glow;
+}
+
+.fx-panel-shadow {
+  @include panel-shadow;
+}
 
 .text-embossed-gold {
   color: var(--color-text-yellow);
