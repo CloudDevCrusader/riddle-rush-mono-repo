@@ -1,71 +1,5 @@
 <template>
   <div id="app" class="app-container">
-    <!-- Token Test Section - Remove after Phase 1 verification -->
-    <div v-if="showTokenTest" class="token-test">
-      <div class="token-test__header">
-        <h2 class="title-lg text-embossed-gold">Design Token Test</h2>
-        <button class="close-btn" @click="showTokenTest = false">Close</button>
-      </div>
-
-      <!-- Color Tokens -->
-      <section class="token-test__section">
-        <h3 class="title-md text-embossed-white">Button Colors</h3>
-        <div class="flex flex-wrap gap-md">
-          <div class="color-swatch" style="background: var(--bg-gradient-btn-green)">Green</div>
-          <div class="color-swatch" style="background: var(--bg-gradient-btn-blue)">Blue</div>
-          <div class="color-swatch" style="background: var(--bg-gradient-btn-orange)">Orange</div>
-          <div class="color-swatch" style="background: var(--bg-gradient-btn-red)">Red</div>
-        </div>
-      </section>
-
-      <!-- Typography Scale -->
-      <section class="token-test__section">
-        <h3 class="title-md text-embossed-white">Typography Scale</h3>
-        <p style="font-size: var(--font-size-xs)">XS - Extra Small Text</p>
-        <p style="font-size: var(--font-size-sm)">SM - Small Text</p>
-        <p style="font-size: var(--font-size-base)">Base - Body Text</p>
-        <p style="font-size: var(--font-size-lg)">LG - Large Text</p>
-        <p style="font-size: var(--font-size-xl)">XL - Extra Large</p>
-        <p style="font-size: var(--font-size-2xl)">2XL - Heading</p>
-        <p style="font-size: var(--font-size-3xl)">3XL - Title</p>
-        <p class="font-display" style="font-size: var(--font-size-display)">Display</p>
-      </section>
-
-      <!-- Embossed Text Effects -->
-      <section class="token-test__section">
-        <h3 class="title-md text-embossed-white">Text Effects</h3>
-        <p class="title-display text-embossed-gold">RIDDLE RUSH</p>
-        <p class="title-lg text-embossed-white">White Embossed</p>
-        <p class="title-md text-glow-gold">Golden Glow</p>
-      </section>
-
-      <!-- Spacing Scale -->
-      <section class="token-test__section">
-        <h3 class="title-md text-embossed-white">Spacing Scale</h3>
-        <div class="flex flex-col gap-sm">
-          <div class="spacing-demo" style="width: var(--spacing-xs)">xs</div>
-          <div class="spacing-demo" style="width: var(--spacing-sm)">sm</div>
-          <div class="spacing-demo" style="width: var(--spacing-md)">md</div>
-          <div class="spacing-demo" style="width: var(--spacing-lg)">lg</div>
-          <div class="spacing-demo" style="width: var(--spacing-xl)">xl</div>
-          <div class="spacing-demo" style="width: var(--spacing-2xl)">2xl</div>
-        </div>
-      </section>
-
-      <!-- UnoCSS Utilities Test -->
-      <section class="token-test__section">
-        <h3 class="title-md text-embossed-white">UnoCSS Utilities</h3>
-        <div
-          class="flex items-center gap-md p-md rounded-lg"
-          style="background: rgba(0, 0, 0, 0.2)"
-        >
-          <span class="text-game-yellow">Yellow Text</span>
-          <span class="text-btn-green-light">Green Text</span>
-          <span class="text-white">White Text</span>
-        </div>
-      </section>
-    </div>
-
     <Transition name="splash-fade" mode="out-in">
       <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
       <div v-else class="main-content">
@@ -87,9 +21,6 @@ const route = useRoute()
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
 const { setLocale } = useI18n()
-
-// Token test component - set to false after verification
-const showTokenTest = ref(true)
 
 // Force route update by using full route path
 const routeKey = computed(() => {
@@ -207,61 +138,5 @@ useHead({
   .page-leave-active {
     transition: opacity 0.15s ease;
   }
-}
-
-/* Token Test Component Styles */
-.token-test {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: var(--bg-gradient-main);
-  overflow-y: auto;
-  padding: var(--spacing-lg);
-}
-
-.token-test__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-xl);
-}
-
-.close-btn {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--bg-gradient-btn-red);
-  border: none;
-  border-radius: var(--radius-md);
-  color: white;
-  cursor: pointer;
-}
-
-.token-test__section {
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-md);
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: var(--radius-lg);
-}
-
-.color-swatch {
-  width: 100px;
-  height: 60px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.spacing-demo {
-  height: 30px;
-  background: var(--color-btn-blue-light);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: var(--font-size-xs);
 }
 </style>
