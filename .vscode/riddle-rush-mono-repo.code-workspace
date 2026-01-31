@@ -1,33 +1,19 @@
 {
   "folders": [
     {
-      "name": "✨  root",
-      "path": "../..",
+      "path": "..",
     },
     {
-      "name": "🚀  @riddle-rush/docs (CORE)",
-      "path": "../../apps/docs",
+      "path": "../apps/game",
     },
     {
-      "name": "🚀  @riddle-rush/game (CORE)",
-      "path": "../../apps/game",
+      "path": "../infrastructure",
     },
     {
-      "name": "📦  @riddle-rush/config (CORE)",
-      "path": "../../packages/config",
-    },
-    {
-      "name": "📦  @riddle-rush/shared (CORE)",
-      "path": "../../packages/shared",
-    },
-    {
-      "name": "📦  @riddle-rush/types (CORE)",
-      "path": "../../packages/types",
+      "path": "../tools",
     },
   ],
   "settings": {
-    "nuxt.isNuxtApp": false,
-    "volar.takeOverMode.enabled": false,
     "typescript.tsdk": "node_modules/typescript/lib",
     "typescript.enablePromptUseWorkspaceTsdk": true,
     "typescript.preferences.includePackageJsonAutoImports": "on",
@@ -47,11 +33,7 @@
     },
     "path-intellisense.autoSlashAfterDirectory": true,
     "path-intellisense.extensionOnImport": true,
-    "cursor.cpp.disabledLanguages": [],
-  },
-  "extensions": {
-    "recommendations": [
-      "msjsdiag.debugger-for-chrome"
-    ]
+    "circleci.persistedProjectSelection": ["circleci/NqFyu74yrheUgS5wD3ERxe/fhprrcv6zHAooUq6UK155"],
+    "circleci.filters.branchFilter": "allBranches",
   },
 }
