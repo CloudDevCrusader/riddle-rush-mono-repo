@@ -1,0 +1,13 @@
+@mixin text-glow($color: var(--color-text-yellow), $soft-color: var(--color-border-gold)) {
+  text-shadow:
+    0 1px 2px color-mix(in srgb, #{$color} 70%, transparent),
+    0 0 6px color-mix(in srgb, #{$soft-color} 65%, transparent),
+    0 0 12px color-mix(in srgb, #{$soft-color} 45%, transparent),
+    0 0 20px color-mix(in srgb, #{$soft-color} 35%, transparent);
+}
+
+@mixin panel-shadow($lift-y: 12px, $lift-blur: 24px, $inner-blur: 6px) {
+  box-shadow:
+    0 #{$lift-y} #{$lift-blur} color-mix(in srgb, var(--color-dark) 26%, transparent),
+    inset 0 2px #{$inner-blur} color-mix(in srgb, var(--color-white) 55%, transparent);
+}
