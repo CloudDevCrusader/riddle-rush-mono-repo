@@ -94,7 +94,6 @@ Plugins live in `apps/game/plugins` and load alphabetically.
 - `error-sync.client.ts`: global error handling and sync
 - `gitlab-feature-flags.client.ts`: Unleash proxy flags
 - `gtag.client.ts`: Google Analytics integration
-- `i18n-init.client.ts`: restore saved locale on load
 - `storyboard.client.ts`: workflow tracking and dev overlay
 
 Storyboard details: `docs/STORYBOARD-PLUGIN.md`

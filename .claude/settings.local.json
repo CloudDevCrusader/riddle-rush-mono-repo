@@ -70,7 +70,10 @@
       "Skill(gsd:map-codebase)",
       "Bash(pnpm add:*)",
       "Bash(pnpm ls:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(source:*)",
+      "Bash(echo:*)",
+      "Bash(aws route53:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

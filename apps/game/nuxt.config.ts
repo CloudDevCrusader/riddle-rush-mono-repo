@@ -277,7 +277,7 @@ export default defineNuxtConfig({
       { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
     ],
     strategy: 'no_prefix',
-    // Completely disable browser language detection - we handle it manually in i18n-init.client.ts
+    // Completely disable browser language detection - handled by client plugin
     detectBrowserLanguage: false,
     // Disable the problematic SSR switch locale path plugin
     skipSettingLocaleOnNavigate: true,

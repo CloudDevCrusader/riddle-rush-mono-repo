@@ -1,95 +1,16 @@
 /**
- * Vue i18n Plugin
- * Sets up vue-i18n for the application with locale persistence and detection
+ * Nuxt i18n locale setup
+ * Uses @nuxtjs/i18n's instance for locale persistence and detection.
  */
-import { createI18n } from 'vue-i18n'
-
-// Import translation files
-import de from '~/i18n/locales/de.json'
-import en from '~/i18n/locales/en.json'
 
 type LocaleCode = 'de' | 'en'
-const messages = { de, en }
 const supportedLocales = new Set<LocaleCode>(['de', 'en'])
 
 export default defineNuxtPlugin((nuxtApp) => {
-  // Create i18n instance
-  const i18n = createI18n({
-    legacy: false,
-    globalInjection: true,
-    locale: 'de',
-    fallbackLocale: 'de',
-    messages,
-    datetimeFormats: {
-      en: {
-        short: {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        },
-        long: {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          weekday: 'long',
-          hour: 'numeric',
-          minute: 'numeric',
-        },
-      },
-      de: {
-        short: {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        },
-        long: {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          weekday: 'long',
-          hour: 'numeric',
-          minute: 'numeric',
-        },
-      },
-    },
-    numberFormats: {
-      en: {
-        currency: {
-          style: 'currency',
-          currency: 'USD',
-          notation: 'standard',
-        },
-        decimal: {
-          style: 'decimal',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        },
-        percent: {
-          style: 'percent',
-          useGrouping: false,
-        },
-      },
-      de: {
-        currency: {
-          style: 'currency',
-          currency: 'EUR',
-          notation: 'standard',
-        },
-        decimal: {
-          style: 'decimal',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        },
-        percent: {
-          style: 'percent',
-          useGrouping: false,
-        },
-      },
-    },
-  })
+  const i18n = (nuxtApp as { $i18n?: any }).$i18n
+  const i18nGlobal = i18n?.global ?? i18n
 
-  // Install i18n
-  nuxtApp.vueApp.use(i18n)
+  if (!i18nGlobal?.locale?.value) return
 
   // Helper functions for locale detection
   const resolveBrowserLocale = (): LocaleCode | null => {
@@ -135,13 +56,13 @@ export default defineNuxtPlugin((nuxtApp) => {
   let skipLocalePersistence = false
 
   const setInitialLocale = (locale: LocaleCode, options?: { fromRoute?: boolean }) => {
-    if (!locale || locale === i18n.global.locale.value) return
+    if (!locale || locale === i18nGlobal.locale.value) return
 
     if (options?.fromRoute) {
       skipLocalePersistence = true
     }
 
-    i18n.global.locale.value = locale
+    i18nGlobal.locale.value = locale
   }
 
   // Determine initial locale: route > stored settings > browser > fallback
@@ -163,7 +84,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Watch for locale changes and update settings
   watch(
-    () => i18n.global.locale.value,
+    () => i18nGlobal.locale.value,
     (newLocale) => {
       if (!newLocale) return
 
@@ -173,18 +94,5 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   )
 
-  // Provide setLocale function for compatibility with existing code
-  const setLocale = (locale: string) => {
-    if (supportedLocales.has(locale as LocaleCode)) {
-      i18n.global.locale.value = locale as LocaleCode
-    }
-  }
-
-  // Provide i18n instance and helper functions
-  return {
-    provide: {
-      i18n: i18n.global,
-      setLocale,
-    },
-  }
+  return {}
 })

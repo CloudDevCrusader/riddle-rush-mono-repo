@@ -112,6 +112,71 @@ terraform plan
 terraform apply
 ```
 
+### Load Infrastructure Variables
+
+The `load-infra-env.sh` script provides a convenient way to manage AWS infrastructure variables without requiring Terraform to be initialized. It reads variables from `.env` and can sync them with Terraform state or import existing AWS resources.
+
+**Basic Usage:**
+
+```bash
+# Load and display all AWS variables from .env
+source ./scripts/load-infra-env.sh
+
+# Load silently (no output)
+source ./scripts/load-infra-env.sh --quiet
+
+# Load and validate AWS credentials
+source ./scripts/load-infra-env.sh --validate
+```
+
+**Sync from Terraform State:**
+
+```bash
+# Sync .env with current Terraform state (auto-detects environment)
+source ./scripts/load-infra-env.sh --sync
+
+# Sync specific environment
+source ./scripts/load-infra-env.sh --sync dev
+source ./scripts/load-infra-env.sh --sync prod
+```
+
+**Import Existing AWS Resources:**
+
+```bash
+# Import existing AWS resources into Terraform state
+source ./scripts/load-infra-env.sh --import dev
+source ./scripts/load-infra-env.sh --import prod
+```
+
+The import process:
+
+1. Initializes Terraform
+2. Looks up resource IDs from AWS (S3 bucket, CloudFront, OAC, cache policies, Route53 records)
+3. Generates `terraform.tfvars` from your `.env` values
+4. Imports resources into Terraform state
+5. Runs `terraform plan` to verify no drift
+
+**Exported Variables:**
+
+After sourcing the script, these variables are available in your shell:
+
+- `AWS_REGION` - AWS region
+- `AWS_PROFILE` - AWS CLI profile
+- `AWS_S3_BUCKET` - S3 bucket name
+- `AWS_CLOUDFRONT_ID` - CloudFront distribution ID
+- `AWS_CLOUDFRONT_DOMAIN` - CloudFront domain name
+- `AWS_ROUTE53_ZONE_ID` - Route53 hosted zone ID
+- `AWS_ROUTE53_DOMAIN` - Route53 domain name
+- `AWS_WEBSITE_URL` - Website URL
+- `AWS_S3_WEBSITE_URL` - S3 website endpoint URL
+- `AWS_CERTIFICATE_ARN` - ACM certificate ARN
+
+**Help:**
+
+```bash
+source ./scripts/load-infra-env.sh --help
+```
+
 ### Using terraformer to Import Existing Resources
 
 If you have existing AWS resources:
