@@ -187,21 +187,22 @@ $text-shadows: (
 
 // Spacing
 $spacing: (
-  'xs': clamp(0.3rem, 1vw, 0.55rem),
-  'sm': clamp(0.55rem, 2vw, 0.85rem),
-  'md': clamp(0.85rem, 3vw, 1.15rem),
-  'lg': clamp(1.05rem, 3.5vw, 1.55rem),
-  'xl': clamp(1.4rem, 4.5vw, 2.1rem),
-  '2xl': clamp(2rem, 6vw, 3.2rem),
-  '3xl': clamp(3rem, 8vw, 4.4rem),
+  'xs': clamp(0.5rem, 0.39rem + 0.28vw, 0.625rem),
+  'sm': clamp(0.75rem, 0.56rem + 0.56vw, 1rem),
+  'md': clamp(1rem, 0.72rem + 0.83vw, 1.5rem),
+  'lg': clamp(1.5rem, 1.06rem + 1.25vw, 2.25rem),
+  'xl': clamp(2rem, 1.39rem + 1.67vw, 3rem),
+  '2xl': clamp(3rem, 2.06rem + 2.64vw, 4.5rem),
+  '3xl': clamp(4rem, 2.72rem + 3.61vw, 6rem),
 );
 
 // Border Radius
 $radius: (
-  'sm': 10px,
-  'md': 18px,
-  'lg': 26px,
-  'xl': 38px,
+  'sm': 8px,
+  'md': 12px,
+  'lg': 20px,
+  'xl': 28px,
+  '2xl': 36px,
   'full': 9999px,
 );
 
@@ -856,4 +857,55 @@ body {
     --spacing-2xl: clamp(1.5rem, 3.6vw, 2rem);
     --spacing-3xl: clamp(2rem, 4.8vw, 2.5rem);
   }
+}
+
+// ============================================
+// MOCKUP-SPECIFIC UTILITY CLASSES
+// ============================================
+
+.text-embossed-gold {
+  color: var(--color-text-yellow);
+  text-shadow: var(--text-shadow-embossed-gold);
+}
+
+.text-embossed-white {
+  color: var(--color-text-white);
+  text-shadow: var(--text-shadow-embossed-white);
+}
+
+.text-embossed-dark {
+  color: var(--color-text-dark);
+  text-shadow: var(--text-shadow-embossed-dark);
+}
+
+.text-glow-gold {
+  color: var(--color-text-yellow);
+  text-shadow: var(--text-shadow-glow-gold);
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+}
+
+.title-display {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.title-lg {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+}
+
+.title-md {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
 }
