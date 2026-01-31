@@ -2,7 +2,7 @@
   $light: var(--color-btn-green-light),
   $dark: var(--color-btn-green-dark),
   $shadow: var(--color-btn-green-shadow),
-  $highlight: rgba(255, 255, 255, 0.45)
+  $highlight: rgba(255, 255, 255, 0.5)
 ) {
   position: relative;
   overflow: hidden;
@@ -10,16 +10,22 @@
   background: linear-gradient(180deg, #{$light} 0%, #{$dark} 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.12),
     0 10px 0 #{$shadow},
     0 16px 28px rgba(0, 0, 0, 0.18);
 
   &::before {
     content: '';
     position: absolute;
-    inset: -45% -15% 40% -15%;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 0%, #{$highlight} 0%, rgba(255, 255, 255, 0) 70%);
-    opacity: 0.85;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      #{$highlight} 0%,
+      rgba(255, 255, 255, 0.18) 45%,
+      rgba(255, 255, 255, 0) 70%
+    );
+    opacity: 0.7;
     pointer-events: none;
   }
 }
