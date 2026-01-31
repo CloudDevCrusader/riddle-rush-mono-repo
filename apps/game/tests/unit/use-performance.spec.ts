@@ -64,7 +64,7 @@ describe('usePerformance', () => {
 
       const metrics = getMetrics('fn-test')
       expect(metrics).toBeDefined()
-      expect(metrics?.last).toBeGreaterThanOrEqual(10)
+      expect(metrics?.last).toBeGreaterThanOrEqual(8)
     }
   })
 

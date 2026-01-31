@@ -63,7 +63,9 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:pinia.vuejs.org)",
-      "Bash(pnpm --version:*)"
+      "Bash(pnpm --version:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm syncpack:fix:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
