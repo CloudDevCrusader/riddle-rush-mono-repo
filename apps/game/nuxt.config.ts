@@ -174,6 +174,45 @@ export default defineNuxtConfig({
     preset: process.env.NITRO_PRESET || (process.env.VERCEL ? 'vercel-static' : 'node-server'),
     serveStatic: true,
     compressPublicAssets: true,
+    routeRules: {
+      '/': {
+        headers: {
+          'cache-control': 'public, max-age=0, must-revalidate',
+        },
+      },
+      '/**': {
+        isr: 60,
+        headers: {
+          'cache-control': 'public, max-age=0, must-revalidate',
+        },
+      },
+      '/_nuxt/**': {
+        headers: {
+          'cache-control': 'public, max-age=31536000, immutable',
+        },
+      },
+      '/assets/**': {
+        isr: true,
+        headers: {
+          'cache-control': 'public, max-age=31536000, immutable',
+        },
+      },
+      '/sw.js': {
+        headers: {
+          'cache-control': 'public, max-age=0, must-revalidate',
+        },
+      },
+      '/workbox-*.js': {
+        headers: {
+          'cache-control': 'public, max-age=0, must-revalidate',
+        },
+      },
+      '/manifest.webmanifest': {
+        headers: {
+          'cache-control': 'public, max-age=0, must-revalidate',
+        },
+      },
+    },
   },
 
   vite: {
@@ -213,6 +252,10 @@ export default defineNuxtConfig({
           if (warning.code === 'CIRCULAR_DEPENDENCY') {
             if (isDebugBuild || isDev) {
               console.warn('Circular dependency detected:', warning.message)
+              console.warn(
+                'Check this before deploying, might fail after build',
+                JSON.stringify(warning, null, 2)
+              )
             }
             return
           }
