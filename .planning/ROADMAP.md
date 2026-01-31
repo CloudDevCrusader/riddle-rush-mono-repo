@@ -13,7 +13,7 @@ Transform all Riddle Rush screens to match designer mockups pixel-for-pixel by b
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Design Tokens** - Color palette, typography, and spacing foundation
+- [x] **Phase 1: Design Tokens** - Color palette, typography, and spacing foundation
 - [ ] **Phase 2: Design Utilities** - Effects mixins and responsive scaling system
 - [ ] **Phase 3: Core Layout Components** - Panel and background containers
 - [ ] **Phase 4: Interactive Components** - Buttons and display elements
@@ -59,11 +59,12 @@ Plans:
 3. Multi-layer drop shadow mixin applies to text and panels
 4. Responsive scaling utility converts mockup pixel values to clamp() with viewport units
 5. All effects maintain performance (no jank on scroll)
-   **Plans**: TBD
+   **Plans:** 2 plans
 
 Plans:
 
-- TBD
+- [x] 02-01-PLAN.md - Add responsive scaling utilities and shadow/glow mixins
+- [ ] 02-02-PLAN.md - Create glossy button and embossed panel mixins
 
 ### Phase 3: Core Layout Components
 
@@ -244,16 +245,16 @@ Plans:
 **Execution Order:**
 Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
 
-| Phase                     | Plans Complete | Status      | Completed |
-| ------------------------- | -------------- | ----------- | --------- |
-| 1. Design Tokens          | 0/3            | Planned     | -         |
-| 2. Design Utilities       | 0/TBD          | Not started | -         |
-| 3. Core Layout Components | 0/TBD          | Not started | -         |
-| 4. Interactive Components | 0/TBD          | Not started | -         |
-| 5. Structural Components  | 0/TBD          | Not started | -         |
-| 6. Splash & Navigation    | 0/TBD          | Not started | -         |
-| 7. Player Setup           | 0/TBD          | Not started | -         |
-| 8. Core Gameplay          | 0/TBD          | Not started | -         |
-| 9. Game Results           | 0/TBD          | Not started | -         |
-| 10. Settings Pages        | 0/TBD          | Not started | -         |
-| 11. Modal Dialogs         | 0/TBD          | Not started | -         |
+| Phase                     | Plans Complete | Status      | Completed  |
+| ------------------------- | -------------- | ----------- | ---------- |
+| 1. Design Tokens          | 3/3            | Complete    | 2026-01-31 |
+| 2. Design Utilities       | 1/2            | In progress | -          |
+| 3. Core Layout Components | 0/TBD          | Not started | -          |
+| 4. Interactive Components | 0/TBD          | Not started | -          |
+| 5. Structural Components  | 0/TBD          | Not started | -          |
+| 6. Splash & Navigation    | 0/TBD          | Not started | -          |
+| 7. Player Setup           | 0/TBD          | Not started | -          |
+| 8. Core Gameplay          | 0/TBD          | Not started | -          |
+| 9. Game Results           | 0/TBD          | Not started | -          |
+| 10. Settings Pages        | 0/TBD          | Not started | -          |
+| 11. Modal Dialogs         | 0/TBD          | Not started | -          |
