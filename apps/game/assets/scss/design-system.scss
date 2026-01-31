@@ -109,15 +109,27 @@ $fonts: (
   ),
 );
 
+// Fluid Typography Scale (360px min → 1080px max viewport)
+// Formula: clamp(minSize, preferredSize, maxSize)
+// Calculated using: min + (max - min) * ((100vw - 360px) / (1080px - 360px))
 $font-sizes: (
-  'xs': clamp(0.78rem, 1.8vw, 0.9rem),
-  'sm': clamp(0.92rem, 2.2vw, 1.05rem),
-  'base': clamp(1.02rem, 2.8vw, 1.18rem),
-  'lg': clamp(1.18rem, 3.2vw, 1.35rem),
-  'xl': clamp(1.35rem, 3.8vw, 1.6rem),
-  '2xl': clamp(1.65rem, 4.6vw, 2.15rem),
-  '3xl': clamp(2.2rem, 6vw, 3rem),
-  '4xl': clamp(2.8rem, 7vw, 4rem),
+  'xs': clamp(0.75rem, 0.67rem + 0.22vw, 0.875rem),
+  // 12px → 14px
+  'sm': clamp(0.875rem, 0.79rem + 0.24vw, 1rem),
+  // 14px → 16px
+  'base': clamp(1rem, 0.89rem + 0.31vw, 1.125rem),
+  // 16px → 18px
+  'lg': clamp(1.125rem, 0.97rem + 0.42vw, 1.375rem),
+  // 18px → 22px
+  'xl': clamp(1.375rem, 1.17rem + 0.56vw, 1.75rem),
+  // 22px → 28px
+  '2xl': clamp(1.75rem, 1.44rem + 0.83vw, 2.25rem),
+  // 28px → 36px
+  '3xl': clamp(2.25rem, 1.81rem + 1.22vw, 3rem),
+  // 36px → 48px
+  '4xl': clamp(2.75rem, 2.08rem + 1.85vw, 4rem),
+  // 44px → 64px
+  'display': clamp(3rem, 2.17rem + 2.31vw, 4.5rem), // 48px → 72px (titles)
 );
 
 $font-weights: (
@@ -126,6 +138,51 @@ $font-weights: (
   'semibold': 700,
   'bold': 800,
   'black': 900,
+);
+
+// Text Shadow Presets (embossed effects from mockup)
+$text-shadows: (
+  // Gold embossed - for main titles like "RIDDLE RUSH"
+  // Creates 3D depth with highlight, mid-tone, shadow, and glow
+  'embossed-gold': (
+      0 1px 0 rgba(255, 255, 255, 0.4),
+      // Top highlight
+      0 2px 0 #c8a243,
+      // Mid-tone step 1
+      0 4px 0 #a67e2f,
+      // Dark tone step 2
+      0 6px 8px rgba(0, 0, 0, 0.4),
+      // Soft shadow for depth
+      0 0 20px rgba(255, 213, 79, 0.5) // Outer glow
+    ),
+
+  // White embossed - for button labels
+  'embossed-white': (
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      // Subtle depth
+      0 2px 4px rgba(0, 0, 0, 0.15),
+      // Mid shadow
+      0 0 8px rgba(255, 255, 255, 0.3) // Soft glow
+    ),
+
+  // Dark embossed - for text on light backgrounds
+  'embossed-dark': (
+      0 1px 0 rgba(255, 255, 255, 0.6),
+      // Top highlight
+      0 2px 2px rgba(0, 0, 0, 0.1) // Soft shadow
+    ),
+
+  // Glow only - for emphasis text
+  'glow-gold': (
+      0 0 10px rgba(255, 213, 79, 0.6),
+      0 0 20px rgba(255, 213, 79, 0.4),
+      0 0 30px rgba(255, 213, 79, 0.2)
+    ),
+
+  // Subtle - for body text if needed
+  'subtle': (0 1px 2px rgba(0, 0, 0, 0.1)),
+  // None - explicit removal
+  'none': none
 );
 
 // Spacing
@@ -284,6 +341,11 @@ $z-index: (
   // Shadows
   @each $name, $value in $shadows {
     --shadow-#{$name}: #{$value};
+  }
+
+  // Text Shadows
+  @each $name, $value in $text-shadows {
+    --text-shadow-#{$name}: #{$value};
   }
 
   // Transitions
