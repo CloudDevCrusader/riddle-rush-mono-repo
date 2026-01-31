@@ -36,13 +36,16 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 1. Blue gradient backgrounds, orange/gold borders, and button colors (green/blue/orange) available as CSS variables
 2. Display font styles with multi-layer text-shadow for embossed effect defined as CSS variables
-3. Spacing scale derived from 1080×1920 mockup values accessible throughout app
-4. Typography scales maintain readability at 320px width and 1024px width
-   **Plans**: TBD
+3. Spacing scale derived from 1080x1920 mockup values accessible throughout app
+4. Typography scales maintain readability at 360px width and 1024px width
+
+**Plans:** 3 plans
 
 Plans:
 
-- TBD (planned during plan-phase)
+- [ ] 01-01-PLAN.md - Install and configure UnoCSS for utility-first CSS
+- [ ] 01-02-PLAN.md - Enhance design-system.scss with mockup-specific tokens
+- [ ] 01-03-PLAN.md - Wire UnoCSS to SCSS tokens and verify system
 
 ### Phase 2: Design Utilities
 
@@ -239,11 +242,11 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
 
 | Phase                     | Plans Complete | Status      | Completed |
 | ------------------------- | -------------- | ----------- | --------- |
-| 1. Design Tokens          | 0/TBD          | Not started | -         |
+| 1. Design Tokens          | 0/3            | Planned     | -         |
 | 2. Design Utilities       | 0/TBD          | Not started | -         |
 | 3. Core Layout Components | 0/TBD          | Not started | -         |
 | 4. Interactive Components | 0/TBD          | Not started | -         |
