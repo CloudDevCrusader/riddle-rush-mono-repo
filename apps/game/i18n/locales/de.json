@@ -20,7 +20,9 @@
     "category": "Kategorie",
     "letter": "Buchstabe",
     "continue": "Weiter",
-    "finish": "Spiel beenden"
+    "finish": "Spiel beenden",
+    "yes": "JA",
+    "no": "NEIN"
   },
   "home": {
     "offline_badge": "Offline spielbar",
@@ -88,7 +90,9 @@
     "no_active_session": "Bitte starte zuerst ein Spiel",
     "error_submitting": "Fehler beim Einreichen der Antwort",
     "wait_for_players": "Bitte warte, bis alle Spieler geantwortet haben",
-    "error_loading": "Fehler beim Laden der Spielsitzung"
+    "error_loading": "Fehler beim Laden der Spielsitzung",
+    "quitGame": "SPIEL BEENDEN",
+    "quitConfirmation": "Bist du sicher, dass du das Spiel beenden möchtest?"
   },
   "players": {
     "title": "Spieler",
