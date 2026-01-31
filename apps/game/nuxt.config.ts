@@ -1,6 +1,7 @@
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 import { filterSsrPlugins } from './utils/filter-ssr-plugins'
+import { withTrailingSlash } from 'ufo'
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -17,6 +18,10 @@ const isLocalhostBuild = [
   .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
 
 const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
+const resolvedBaseUrl = (() => {
+  const baseUrl = process.env.BASE_URL || process.env.NUXT_PUBLIC_BASE_URL || ''
+  return baseUrl ? withTrailingSlash(baseUrl) : '/'
+})()
 
 // Helper function to filter out problematic i18n plugins
 function filterProblematicPlugins(app: any) {
@@ -124,7 +129,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // Environment variables take precedence over Terraform outputs
-      baseUrl: process.env.BASE_URL || '',
+      baseUrl: resolvedBaseUrl,
       environment: process.env.NODE_ENV || 'development',
       appVersion: process.env.npm_package_version || '1.0.0',
       // CloudWatch configuration - env vars override Terraform
