@@ -7,9 +7,11 @@
 @use 'sass:map';
 @use 'effects/scaling' as *;
 @use 'effects/shadows' as *;
+@use 'effects/glossy' as *;
 
 @forward 'effects/scaling';
 @forward 'effects/shadows';
+@forward 'effects/glossy';
 
 // ============================================
 // VARIABLES
@@ -874,6 +876,10 @@ body {
 
 .fx-panel-shadow {
   @include panel-shadow;
+}
+
+.fx-glossy-button {
+  @include glossy-button;
 }
 
 .text-embossed-gold {
