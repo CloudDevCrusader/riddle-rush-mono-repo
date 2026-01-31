@@ -17,15 +17,6 @@
       }
     },
     {
-      "name": "docs",
-      "path": "apps/docs",
-      "type": "app",
-      "commands": {
-        "dev": "pnpm --filter docs dev",
-        "build": "pnpm --filter docs build"
-      }
-    },
-    {
       "name": "shared",
       "path": "packages/shared",
       "type": "package",

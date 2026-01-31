@@ -23,10 +23,6 @@
       "name": "🎮 Game App"
     },
     {
-      "path": "apps/docs",
-      "name": "📚 Documentation"
-    },
-    {
       "path": "packages",
       "name": "📦 Packages"
     }
@@ -44,7 +40,6 @@
   // Monorepo Environment Variables
   "dotenv.envFile": {
     "apps/game": "${workspaceFolder}/apps/game/.env",
-    "apps/docs": "${workspaceFolder}/apps/docs/.env",
     "packages/*": "${workspaceFolder}/.env.monorepo"
   },
   "dotenv.envFiles": [
