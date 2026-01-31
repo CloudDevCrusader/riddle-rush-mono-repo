@@ -43,9 +43,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 
-- [ ] 01-01-PLAN.md - Install and configure UnoCSS for utility-first CSS
-- [ ] 01-02-PLAN.md - Enhance design-system.scss with mockup-specific tokens
-- [ ] 01-03-PLAN.md - Wire UnoCSS to SCSS tokens and verify system
+- [x] 01-01-PLAN.md - Install and configure UnoCSS for utility-first CSS
+- [x] 01-02-PLAN.md - Enhance design-system.scss with mockup-specific tokens
+- [x] 01-03-PLAN.md - Wire UnoCSS to SCSS tokens and verify system
 
 ### Phase 2: Design Utilities
 

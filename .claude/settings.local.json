@@ -73,7 +73,12 @@
       "Bash(ls:*)",
       "Bash(source:*)",
       "Bash(echo:*)",
-      "Bash(aws route53:*)"
+      "Bash(aws route53:*)",
+      "Skill(gsd:execute-phase)",
+      "Bash(pkill:*)",
+      "Bash(identify -format:*)",
+      "Bash(git -C /home/cloudcrusader/projects/riddle-rush-mono-repo status --short)",
+      "Bash(git -C /home/cloudcrusader/projects/riddle-rush-mono-repo status --porcelain)"
     ]
   },
   "enableAllProjectMcpServers": true,
