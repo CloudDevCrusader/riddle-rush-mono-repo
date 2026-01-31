@@ -65,6 +65,7 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt', // Load Pinia first since stores are used everywhere
     '@nuxtjs/i18n', // Load i18n early but after Pinia
+    '@unocss/nuxt', // Load UnoCSS after Pinia/i18n, before PWA
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
