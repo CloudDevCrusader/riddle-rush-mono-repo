@@ -2,9 +2,9 @@
   "name": "@riddle-rush/docs",
   "version": "1.0.0",
   "dependencies": {
-    "@nuxt/content": "^3.10.0",
-    "nuxt": "^4.2.2",
-    "vue": "^3.5.26"
+    "@nuxt/content": "^3.11.0",
+    "nuxt": "^4.3.0",
+    "vue": "^3.5.27"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.0.0",
