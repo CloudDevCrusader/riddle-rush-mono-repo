@@ -873,4 +873,45 @@ Before claiming a task is complete:
 
 **Remember:** Quality > Speed. Take time to verify each change!
 
+---
+
+## Zenflow Worktree Environment
+
+This project uses **Zenflow** for task orchestration. Zenflow creates a fresh **git worktree** for each task, meaning:
+
+- **No `node_modules/`** — Dependencies are not installed. Run `pnpm install` first.
+- **No `.env` files** — Environment files are gitignored and must be copied from your main worktree. Required files: `.env` (root) and `apps/game/.env`.
+- **No build artifacts** — `.nuxt/`, `.output/`, `dist/` do not exist until you build.
+
+### Zenflow Configuration
+
+Settings are in `.zenflow/settings.json`:
+
+| Setting | Command | Purpose |
+|---|---|---|
+| `setup_script` | `pnpm install` | Install all dependencies |
+| `dev_script` | `pnpm run dev` | Start Nuxt dev server |
+| `verification_script` | `pnpm run workspace:check` | Syncpack + TypeScript + ESLint |
+| `copy_files` | `.env`, `apps/game/.env` | Local config with secrets |
+
+### Quick Start in a Zenflow Worktree
+
+```bash
+# 1. Dependencies are auto-installed by Zenflow, but if needed:
+pnpm install
+
+# 2. Verify environment is ready
+pnpm run workspace:check
+
+# 3. Start development
+pnpm run dev
+```
+
+### Important Notes for Agents in Worktrees
+
+- The **verification script runs automatically** after each agent turn — keep it passing
+- Git hooks (husky) work in worktrees — commits are validated automatically
+- Use `pnpm` (not `npm` or `yarn`) — enforced by `packageManager` field
+- The worktree shares the same git history but has an independent working directory
+
 **Last Updated:** January 2026
