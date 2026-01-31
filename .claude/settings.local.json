@@ -65,11 +65,14 @@
       "WebFetch(domain:pinia.vuejs.org)",
       "Bash(pnpm --version:*)",
       "Bash(pnpm install:*)",
-      "Bash(pnpm syncpack:fix:*)"
+      "Bash(pnpm syncpack:fix:*)",
+      "Bash(chmod:*)",
+      "Skill(gsd:map-codebase)"
     ]
   },
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
     "voltagent-qa-sec@voltagent-subagents": true
-  }
+  },
+  "outputStyle": "Explanatory"
 }

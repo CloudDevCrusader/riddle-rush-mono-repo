@@ -36,3 +36,13 @@ resource "aws_route53_record" "cloudfront_aaaa" {
     evaluate_target_health = false
   }
 }
+
+# Vercel Preview CNAME Record
+resource "aws_route53_record" "vercel_preview" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "preview.riddlerush.de"
+  type    = "CNAME"
+  ttl     = 300
+
+  records = ["50acc2bfd3cce33f.vercel-dns-017.com"]
+}

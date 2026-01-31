@@ -45,7 +45,6 @@ export default defineConfig({
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
     ['list'],
     ['json', { outputFile: 'test-results/results.json' }],
-    ['line'], // Simple line reporter for CI
     ['junit', { outputFile: '../../junit.xml' }],
     ...(isCI ? ([['github']] as const) : []), // GitHub Actions annotations
   ],
