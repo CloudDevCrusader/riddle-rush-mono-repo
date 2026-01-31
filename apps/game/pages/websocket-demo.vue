@@ -263,17 +263,9 @@ dd.error {
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: #2563eb;
-}
-
 .btn-danger {
   background: #ef4444;
   color: white;
-}
-
-.btn-danger:hover:not(:disabled) {
-  background: #dc2626;
 }
 
 .btn-secondary {
@@ -281,17 +273,9 @@ dd.error {
   color: white;
 }
 
-.btn-secondary:hover:not(:disabled) {
-  background: #4b5563;
-}
-
 .btn-info {
   background: #0ea5e9;
   color: white;
-}
-
-.btn-info:hover:not(:disabled) {
-  background: #0284c7;
 }
 
 .btn-success {
@@ -299,17 +283,9 @@ dd.error {
   color: white;
 }
 
-.btn-success:hover:not(:disabled) {
-  background: #059669;
-}
-
 .btn-warning {
   background: #f59e0b;
   color: white;
-}
-
-.btn-warning:hover:not(:disabled) {
-  background: #d97706;
 }
 
 .btn-sm {
@@ -317,10 +293,6 @@ dd.error {
   font-size: 0.875rem;
   background: #e5e7eb;
   color: #374151;
-}
-
-.btn-sm:hover {
-  background: #d1d5db;
 }
 
 .logs {

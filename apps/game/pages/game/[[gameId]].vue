@@ -11,13 +11,10 @@
         class="back-btn tap-highlight no-select"
         @click="handleBack"
       >
-        <NuxtImg
-          src="/assets/alphabets/back.png"
+        <img
+          :src="`${baseUrl}assets/alphabets/back.png`"
           alt="Back"
           class="back-icon"
-          format="webp"
-          quality="85"
-          preset="thumbnail"
           loading="eager"
         />
       </button>
@@ -130,13 +127,10 @@
         class="next-btn btn-primary tap-highlight no-select"
         @click="handleNext"
       >
-        <NuxtImg
-          src="/assets/alphabets/next.png"
+        <img
+          :src="`${baseUrl}assets/alphabets/next.png`"
           alt="Next"
           class="next-icon"
-          format="webp"
-          quality="85"
-          preset="thumbnail"
           loading="lazy"
         />
         <span class="next-text">NEXT</span>

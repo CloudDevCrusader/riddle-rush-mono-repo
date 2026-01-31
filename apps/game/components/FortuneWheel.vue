@@ -321,10 +321,6 @@ watch(
   pointer-events: none;
 }
 
-.wheel-segment:hover {
-  filter: brightness(1.15);
-}
-
 .wheel-segment:active {
   filter: brightness(0.95);
 }

@@ -272,10 +272,6 @@ onMounted(() => {
   font-family: inherit;
 }
 
-.action-btn:hover {
-  background: rgba(0, 255, 0, 0.2);
-}
-
 .debug-enter-active,
 .debug-leave-active {
   transition: all var(--transition-base);

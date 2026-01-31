@@ -135,10 +135,6 @@ const clearLeaderboard = () => {
   transition: all var(--transition-fast);
 }
 
-.close-btn:hover {
-  background: var(--color-gray-light);
-}
-
 .leaderboard-content {
   flex: 1;
   overflow-y: auto;

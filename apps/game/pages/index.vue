@@ -206,14 +206,6 @@ useHead({
   transition: opacity var(--transition-base);
 }
 
-.menu-btn:hover .btn-image {
-  opacity: 0;
-}
-
-.menu-btn:hover .btn-image-hover {
-  opacity: 1;
-}
-
 .menu-panel {
   background: rgba(255, 255, 255, 0.95);
   border: 4px solid #ffaa00;
@@ -248,12 +240,6 @@ useHead({
 
 .menu-item:last-child {
   margin-bottom: 0;
-}
-
-.menu-item:hover {
-  background: var(--color-primary);
-  color: var(--color-white);
-  transform: translateX(4px);
 }
 
 .menu-item:active {

@@ -233,10 +233,6 @@ useHead({
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-.back-btn:hover {
-  transform: scale(1.05);
-}
-
 .back-btn:active {
   transform: scale(0.95);
 }
@@ -381,10 +377,6 @@ useHead({
   height: auto;
 }
 
-.score-action-btn:hover {
-  transform: scale(1.1);
-}
-
 .score-action-btn:active {
   transform: scale(0.95);
 }
@@ -432,10 +424,6 @@ useHead({
   cursor: pointer;
   padding: 0;
   transition: transform var(--transition-base);
-}
-
-.action-btn:hover {
-  transform: translateY(-4px) scale(1.05);
 }
 
 .action-btn:active:not(:disabled) {

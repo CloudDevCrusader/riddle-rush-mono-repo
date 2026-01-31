@@ -173,13 +173,6 @@ watch(
   z-index: 1;
 }
 
-.modal-close:hover {
-  background: var(--color-danger);
-  color: var(--color-white);
-  border-color: var(--color-danger-dark);
-  transform: scale(1.1);
-}
-
 .modal-header {
   padding: var(--spacing-xl);
   border-bottom: 2px solid var(--color-light);
