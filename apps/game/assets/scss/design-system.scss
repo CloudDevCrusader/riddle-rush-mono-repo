@@ -10,22 +10,57 @@
 // VARIABLES
 // ============================================
 
-// Colors
+// Color Palette (enhanced for mockup alignment)
 $colors: (
-  // Primary Colors - ocean blue base
+  // === Background gradient stops (from mockup blue radial) ===
+  'bg-blue-light': #1cc6ff,
+  'bg-blue-mid': #0b7ad6,
+  'bg-blue-dark': #0a4cc7,
+
+  // === Button colors (from mockup buttons) ===
+  'btn-green-light': #b7ff6d,
+  'btn-green-dark': #5fc423,
+  'btn-green-shadow': #3a8c14,
+
+  'btn-blue-light': #44c8ff,
+  'btn-blue-dark': #0a7bda,
+  'btn-blue-shadow': #0756a0,
+
+  'btn-orange-light': #ffb84d,
+  'btn-orange-dark': #ff9500,
+  'btn-orange-shadow': #cc7700,
+
+  'btn-red-light': #ff8961,
+  'btn-red-dark': #ff5b5b,
+  'btn-red-shadow': #cc3333,
+
+  // === Border/accent colors (from mockup panels) ===
+  'border-gold': #ffd54f,
+  'border-orange': #ff9500,
+  'border-gold-dark': #c8a243,
+  'border-gold-darker': #a67e2f,
+  'border-white': rgba(255, 255, 255, 0.4),
+  // === Text colors (from mockup text) ===
+  'text-yellow': #ffd54f,
+  'text-white': #ffffff,
+  'text-dark': #0b3b76,
+  'text-green': #2d5016,
+  'text-orange': #8b5408,
+
+  // === Panel/card colors ===
+  'panel-light': rgba(255, 255, 255, 0.95),
+  'panel-cream': rgba(255, 239, 194, 0.95),
+  // === Existing neutral colors (keep for compatibility) ===
   'primary': #0bb4ff,
   'primary-light': #44c8ff,
   'primary-dark': #0a6bc2,
-  // Secondary / surface accents
   'secondary': #f9c43c,
   'secondary-light': #ffe07d,
   'secondary-dark': #c38d15,
-  // Accent Colors
   'accent-green': #7ed321,
   'accent-yellow': #ffd54f,
   'accent-red': #ff5b5b,
   'accent-blue': #0ea5ff,
-  // Neutral & surfaces
   'dark': #0b3b76,
   'dark-light': #1959a8,
   'gray': #9bb6da,
@@ -34,15 +69,25 @@ $colors: (
   'white': #ffffff
 );
 
-// Background Gradients
+// Gradient Definitions (from mockup)
 $gradients: (
+  // === Main background (mockup radial blue with spotlight) ===
+  'main': radial-gradient(circle at 50% 35%, #1cc6ff 0%, #0b7ad6 40%, #0a4cc7 100%),
+  // === Button gradients (vertical, top-to-bottom) ===
+  'btn-green': linear-gradient(180deg, #b7ff6d 0%, #5fc423 100%),
+  'btn-blue': linear-gradient(180deg, #44c8ff 0%, #0a7bda 100%),
+  'btn-orange': linear-gradient(180deg, #ffb84d 0%, #ff9500 100%),
+  'btn-red': linear-gradient(180deg, #ff8961 0%, #ff5b5b 100%),
+  // === Panel/card gradients ===
+  'panel': linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 239, 194, 0.95) 100%),
+  'panel-solid': linear-gradient(180deg, #ffffff 0%, #fff3d4 100%),
+  // === Keep existing gradients for compatibility ===
   'primary': linear-gradient(180deg, #44c8ff 0%, #0a7bda 100%),
   'secondary': linear-gradient(180deg, #ffe07d 0%, #f6b443 100%),
-  'main': radial-gradient(circle at 50% 35%, #1cc6ff 0%, #0b7ad6 40%, #0a4cc7 100%),
   'warm': linear-gradient(135deg, #ffd36f 0%, #ffad33 100%),
   'cool': linear-gradient(135deg, #4facfe 0%, #00c0ff 100%),
   'success': linear-gradient(180deg, #b7ff6d 0%, #5fc423 100%),
-  'error': linear-gradient(135deg, #ff8ba7 0%, #ff5b5b 100%),
+  'error': linear-gradient(135deg, #ff8ba7 0%, #ff5b5b 100%)
 );
 
 // Typography
