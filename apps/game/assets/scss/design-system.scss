@@ -5,6 +5,7 @@
  */
 
 @use 'sass:map';
+@use 'effects/scaling' as *;
 @use 'effects/shadows' as *;
 
 @forward 'effects/scaling';
@@ -117,23 +118,23 @@ $fonts: (
 // Formula: clamp(minSize, preferredSize, maxSize)
 // Calculated using: min + (max - min) * ((100vw - 360px) / (1080px - 360px))
 $font-sizes: (
-  'xs': clamp(0.75rem, 0.67rem + 0.22vw, 0.875rem),
+  'xs': mockup-clamp(14px),
   // 12px → 14px
-  'sm': clamp(0.875rem, 0.79rem + 0.24vw, 1rem),
+  'sm': mockup-clamp(16px),
   // 14px → 16px
-  'base': clamp(1rem, 0.89rem + 0.31vw, 1.125rem),
+  'base': mockup-clamp(18px),
   // 16px → 18px
-  'lg': clamp(1.125rem, 0.97rem + 0.42vw, 1.375rem),
+  'lg': mockup-clamp(22px),
   // 18px → 22px
-  'xl': clamp(1.375rem, 1.17rem + 0.56vw, 1.75rem),
+  'xl': mockup-clamp(28px),
   // 22px → 28px
-  '2xl': clamp(1.75rem, 1.44rem + 0.83vw, 2.25rem),
+  '2xl': mockup-clamp(36px),
   // 28px → 36px
-  '3xl': clamp(2.25rem, 1.81rem + 1.22vw, 3rem),
+  '3xl': mockup-clamp(48px),
   // 36px → 48px
-  '4xl': clamp(2.75rem, 2.08rem + 1.85vw, 4rem),
+  '4xl': mockup-clamp(64px),
   // 44px → 64px
-  'display': clamp(3rem, 2.17rem + 2.31vw, 4.5rem), // 48px → 72px (titles)
+  'display': mockup-clamp(72px), // 48px → 72px (titles)
 );
 
 $font-weights: (
@@ -149,83 +150,83 @@ $text-shadows: (
   // Gold embossed - for main titles like "RIDDLE RUSH"
   // Creates 3D depth with highlight, mid-tone, shadow, and glow
   'embossed-gold': (
-      0 1px 0 rgba(255, 255, 255, 0.4),
+      0 mockup-clamp(1px) 0 rgba(255, 255, 255, 0.4),
       // Top highlight
-      0 2px 0 #c8a243,
+      0 mockup-clamp(2px) 0 #c8a243,
       // Mid-tone step 1
-      0 4px 0 #a67e2f,
+      0 mockup-clamp(4px) 0 #a67e2f,
       // Dark tone step 2
-      0 6px 8px rgba(0, 0, 0, 0.4),
+      0 mockup-clamp(6px) mockup-clamp(8px) rgba(0, 0, 0, 0.4),
       // Soft shadow for depth
-      0 0 20px rgba(255, 213, 79, 0.5) // Outer glow
+      0 0 mockup-clamp(20px) rgba(255, 213, 79, 0.5) // Outer glow
     ),
 
   // White embossed - for button labels
   'embossed-white': (
-      0 1px 2px rgba(0, 0, 0, 0.2),
+      0 mockup-clamp(1px) mockup-clamp(2px) rgba(0, 0, 0, 0.2),
       // Subtle depth
-      0 2px 4px rgba(0, 0, 0, 0.15),
+      0 mockup-clamp(2px) mockup-clamp(4px) rgba(0, 0, 0, 0.15),
       // Mid shadow
-      0 0 8px rgba(255, 255, 255, 0.3) // Soft glow
+      0 0 mockup-clamp(8px) rgba(255, 255, 255, 0.3) // Soft glow
     ),
 
   // Dark embossed - for text on light backgrounds
   'embossed-dark': (
-      0 1px 0 rgba(255, 255, 255, 0.6),
+      0 mockup-clamp(1px) 0 rgba(255, 255, 255, 0.6),
       // Top highlight
-      0 2px 2px rgba(0, 0, 0, 0.1) // Soft shadow
+      0 mockup-clamp(2px) mockup-clamp(2px) rgba(0, 0, 0, 0.1) // Soft shadow
     ),
 
   // Glow only - for emphasis text
   'glow-gold': (
-      0 0 10px rgba(255, 213, 79, 0.6),
-      0 0 20px rgba(255, 213, 79, 0.4),
-      0 0 30px rgba(255, 213, 79, 0.2)
+      0 0 mockup-clamp(10px) rgba(255, 213, 79, 0.6),
+      0 0 mockup-clamp(20px) rgba(255, 213, 79, 0.4),
+      0 0 mockup-clamp(30px) rgba(255, 213, 79, 0.2)
     ),
 
   // Subtle - for body text if needed
-  'subtle': (0 1px 2px rgba(0, 0, 0, 0.1)),
+  'subtle': (0 mockup-clamp(1px) mockup-clamp(2px) rgba(0, 0, 0, 0.1)),
   // None - explicit removal
   'none': none
 );
 
 // Spacing
 $spacing: (
-  'xs': clamp(0.5rem, 0.39rem + 0.28vw, 0.625rem),
-  'sm': clamp(0.75rem, 0.56rem + 0.56vw, 1rem),
-  'md': clamp(1rem, 0.72rem + 0.83vw, 1.5rem),
-  'lg': clamp(1.5rem, 1.06rem + 1.25vw, 2.25rem),
-  'xl': clamp(2rem, 1.39rem + 1.67vw, 3rem),
-  '2xl': clamp(3rem, 2.06rem + 2.64vw, 4.5rem),
-  '3xl': clamp(4rem, 2.72rem + 3.61vw, 6rem),
+  'xs': mockup-clamp(10px),
+  'sm': mockup-clamp(16px),
+  'md': mockup-clamp(24px),
+  'lg': mockup-clamp(36px),
+  'xl': mockup-clamp(48px),
+  '2xl': mockup-clamp(72px),
+  '3xl': mockup-clamp(96px),
 );
 
 // Border Radius
 $radius: (
-  'sm': 8px,
-  'md': 12px,
-  'lg': 20px,
-  'xl': 28px,
-  '2xl': 36px,
+  'sm': mockup-clamp(8px),
+  'md': mockup-clamp(12px),
+  'lg': mockup-clamp(20px),
+  'xl': mockup-clamp(28px),
+  '2xl': mockup-clamp(36px),
   'full': 9999px,
 );
 
 // Shadows
 $shadows: (
   'sm': (
-    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 mockup-clamp(4px) mockup-clamp(8px) rgba(0, 0, 0, 0.1),
   ),
   'md': (
-    0 8px 18px rgba(0, 0, 0, 0.14),
+    0 mockup-clamp(8px) mockup-clamp(18px) rgba(0, 0, 0, 0.14),
   ),
   'lg': (
-    0 14px 28px rgba(0, 0, 0, 0.18),
+    0 mockup-clamp(14px) mockup-clamp(28px) rgba(0, 0, 0, 0.18),
   ),
   'xl': (
-    0 18px 38px rgba(0, 0, 0, 0.22),
+    0 mockup-clamp(18px) mockup-clamp(38px) rgba(0, 0, 0, 0.22),
   ),
   'inner': (
-    inset 0 2px 6px rgba(0, 0, 0, 0.12),
+    inset 0 mockup-clamp(2px) mockup-clamp(6px) rgba(0, 0, 0, 0.12),
   ),
 );
 
