@@ -67,29 +67,29 @@
 
 ## Traceability
 
-| Requirement | Phase | Status  |
-| ----------- | ----- | ------- |
-| FOUND-01    | —     | Pending |
-| FOUND-02    | —     | Pending |
-| FOUND-03    | —     | Pending |
-| FOUND-04    | —     | Pending |
-| COMP-01     | —     | Pending |
-| COMP-02     | —     | Pending |
-| COMP-03     | —     | Pending |
-| COMP-04     | —     | Pending |
-| COMP-05     | —     | Pending |
-| COMP-06     | —     | Pending |
-| COMP-07     | —     | Pending |
-| PAGE-01     | —     | Pending |
-| PAGE-02     | —     | Pending |
-| PAGE-03     | —     | Pending |
-| PAGE-04     | —     | Pending |
-| PAGE-05     | —     | Pending |
-| PAGE-06     | —     | Pending |
-| PAGE-07     | —     | Pending |
-| PAGE-08     | —     | Pending |
-| MODAL-01    | —     | Pending |
-| MODAL-02    | —     | Pending |
+| Requirement | Phase    | Status  |
+| ----------- | -------- | ------- |
+| FOUND-01    | Phase 1  | Pending |
+| FOUND-02    | Phase 1  | Pending |
+| FOUND-03    | Phase 2  | Pending |
+| FOUND-04    | Phase 2  | Pending |
+| COMP-01     | Phase 3  | Pending |
+| COMP-02     | Phase 4  | Pending |
+| COMP-03     | Phase 4  | Pending |
+| COMP-04     | Phase 5  | Pending |
+| COMP-05     | Phase 3  | Pending |
+| COMP-06     | Phase 5  | Pending |
+| COMP-07     | Phase 5  | Pending |
+| PAGE-01     | Phase 6  | Pending |
+| PAGE-02     | Phase 6  | Pending |
+| PAGE-03     | Phase 7  | Pending |
+| PAGE-04     | Phase 8  | Pending |
+| PAGE-05     | Phase 9  | Pending |
+| PAGE-06     | Phase 9  | Pending |
+| PAGE-07     | Phase 10 | Pending |
+| PAGE-08     | Phase 10 | Pending |
+| MODAL-01    | Phase 11 | Pending |
+| MODAL-02    | Phase 11 | Pending |
 
 ---
 

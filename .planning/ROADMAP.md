@@ -1,0 +1,256 @@
+# Roadmap: Visual Redesign to Match Mockups
+
+## Overview
+
+Transform all Riddle Rush screens to match designer mockups pixel-for-pixel by building a modern CSS design system, creating 7 game-specific components, and migrating 8 pages and 2 modals. Foundation establishes tokens and utilities, components provide reusable UI building blocks, and pages deliver the complete visual overhaul from splash screen through gameplay to leaderboard.
+
+## Phases
+
+**Phase Numbering:**
+
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+Decimal phases appear between their surrounding integers in numeric order.
+
+- [ ] **Phase 1: Design Tokens** - Color palette, typography, and spacing foundation
+- [ ] **Phase 2: Design Utilities** - Effects mixins and responsive scaling system
+- [ ] **Phase 3: Core Layout Components** - Panel and background containers
+- [ ] **Phase 4: Interactive Components** - Buttons and display elements
+- [ ] **Phase 5: Structural Components** - Headers, modals, and scrollable lists
+- [ ] **Phase 6: Splash & Navigation** - Initial screens and main menu
+- [ ] **Phase 7: Player Setup** - Player configuration interface
+- [ ] **Phase 8: Core Gameplay** - Main game screen (critical path)
+- [ ] **Phase 9: Game Results** - Scoring and leaderboard pages
+- [ ] **Phase 10: Settings Pages** - Options and language selection
+- [ ] **Phase 11: Modal Dialogs** - Quit and pause overlays
+
+## Phase Details
+
+### Phase 1: Design Tokens
+
+**Goal**: Establish CSS custom properties for colors, typography, and spacing that match mockup specifications
+**Depends on**: Nothing (first phase)
+**Requirements**: FOUND-01, FOUND-02
+**Success Criteria** (what must be TRUE):
+
+1. Blue gradient backgrounds, orange/gold borders, and button colors (green/blue/orange) available as CSS variables
+2. Display font styles with multi-layer text-shadow for embossed effect defined as CSS variables
+3. Spacing scale derived from 1080×1920 mockup values accessible throughout app
+4. Typography scales maintain readability at 320px width and 1024px width
+   **Plans**: TBD
+
+Plans:
+
+- TBD (planned during plan-phase)
+
+### Phase 2: Design Utilities
+
+**Goal**: Create reusable SCSS mixins for visual effects and responsive scaling functions
+**Depends on**: Phase 1
+**Requirements**: FOUND-03, FOUND-04
+**Success Criteria** (what must be TRUE):
+
+1. Glossy gradient mixin produces mockup-matching button appearance
+2. Embossed border mixin creates 3D panel effect with inner glow
+3. Multi-layer drop shadow mixin applies to text and panels
+4. Responsive scaling utility converts mockup pixel values to clamp() with viewport units
+5. All effects maintain performance (no jank on scroll)
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 3: Core Layout Components
+
+**Goal**: GamePanel and GameBackground components provide foundation for all screens
+**Depends on**: Phase 2
+**Requirements**: COMP-01, COMP-05
+**Success Criteria** (what must be TRUE):
+
+1. GamePanel renders with orange/gold border, rounded corners (18-24px), and inner glow
+2. GameBackground applies blue radial gradient with spotlight effect
+3. Components scale responsively from 320px to 1024px width
+4. Components can be composed (panel inside background) without style conflicts
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 4: Interactive Components
+
+**Goal**: GameButton and GameDisplay provide styled interactive elements matching mockups
+**Depends on**: Phase 2
+**Requirements**: COMP-02, COMP-03
+**Success Criteria** (what must be TRUE):
+
+1. GameButton renders gradient (green primary, blue secondary, orange warning) with embossed 3D effect
+2. Button responds to normal/hover/active/disabled states with appropriate visual feedback
+3. Button press shows active state (inset appearance)
+4. GameDisplay renders yellow/gold text with glow effect for scores and letters
+5. Display text remains readable against busy backgrounds (4.5:1 contrast minimum)
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 5: Structural Components
+
+**Goal**: GameHeader, GameModal, and GameScrollList complete component library
+**Depends on**: Phase 3, Phase 4
+**Requirements**: COMP-04, COMP-06, COMP-07
+**Success Criteria** (what must be TRUE):
+
+1. GameHeader applies decorative text effects to page titles
+2. GameModal renders with colored header bar, backdrop, and centered positioning
+3. Modal backdrop prevents interaction with underlying content
+4. GameScrollList displays player/leaderboard cards with consistent styling
+5. ScrollList handles 1-6 players without layout breaking
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 6: Splash & Navigation
+
+**Goal**: Splash screen and main menu visually match mockups and provide entry to app
+**Depends on**: Phase 5
+**Requirements**: PAGE-01, PAGE-02
+**Success Criteria** (what must be TRUE):
+
+1. Splash screen displays "RIDDLE RUSH" title with 3D text effect
+2. Loading bar animates at bottom of splash screen
+3. Main menu shows PLAY/MENU/OPTIONS/CREDITS buttons stacked vertically
+4. No coins or profile avatar visible on main menu
+5. Buttons respond to touch/click with visual feedback
+6. Navigation from splash to menu works smoothly (300-400ms transition)
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 7: Player Setup
+
+**Goal**: Players page matches mockup for configuring game participants
+**Depends on**: Phase 5
+**Requirements**: PAGE-03
+**Success Criteria** (what must be TRUE):
+
+1. Player count stepper (+/-) adjusts from 1 to 6 players
+2. Name input fields display with placeholder text and mockup styling
+3. Input fields appear/disappear when player count changes
+4. START GAME button is styled and positioned as in mockup
+5. No coins visible on players page
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 8: Core Gameplay
+
+**Goal**: Game page matches alphabet.png mockup for primary gameplay screen (critical path)
+**Depends on**: Phase 5
+**Requirements**: PAGE-04
+**Success Criteria** (what must be TRUE):
+
+1. Round indicator displays centered at top (e.g., "Round 1/3")
+2. Category displays in orange panel below round indicator
+3. Large letter displays prominently in center
+4. Text input field appears between letter and NEXT button
+5. Back button positioned top-left
+6. Nothing appears top-right (no pause button, no coins)
+7. NEXT button matches mockup styling
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 9: Game Results
+
+**Goal**: Scoring and leaderboard pages display game outcomes matching mockups
+**Depends on**: Phase 5
+**Requirements**: PAGE-05, PAGE-06
+**Success Criteria** (what must be TRUE):
+
+1. Scoring page shows player cards with name and score
+2. Green +pts indicators display for correct answers
+3. Red -pts indicators display for incorrect/skipped answers
+4. NEXT ROUND button styled as in mockup
+5. Leaderboard displays "Ranking" header
+6. Crown icons appear for positions 1-3
+7. Numbered badges appear for positions 4-6
+8. Player names and scores align consistently
+9. No coins visible on either page
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 10: Settings Pages
+
+**Goal**: Settings and language pages match mockups for app configuration
+**Depends on**: Phase 5
+**Requirements**: PAGE-07, PAGE-08
+**Success Criteria** (what must be TRUE):
+
+1. Settings page displays "OPTIONS" title in styled header
+2. Sound/Music sliders have custom styled track and thumb
+3. Slider values update visually when adjusted
+4. OK button matches mockup styling
+5. Language page displays "LANGUAGE" title in panel
+6. English/German rows show flag icons with checkmark for selected language
+7. Language selection updates when row clicked
+8. OK button returns to previous screen
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+### Phase 11: Modal Dialogs
+
+**Goal**: Quit and pause modals match mockups for in-game overlays
+**Depends on**: Phase 5
+**Requirements**: MODAL-01, MODAL-02
+**Success Criteria** (what must be TRUE):
+
+1. Quit modal displays red header bar with "QUIT GAME" title
+2. Confirmation text asks "Are you sure you want to quit game?"
+3. NO button styled red, YES button styled green
+4. Pause modal displays blue header with "Game Paused"
+5. Resume message appears below header
+6. Resume button (green), Restart button (blue), Home button (orange) display stacked
+7. Clicking outside modal does not dismiss it
+8. Modal backdrop dims background content
+   **Plans**: TBD
+
+Plans:
+
+- TBD
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11
+
+| Phase                     | Plans Complete | Status      | Completed |
+| ------------------------- | -------------- | ----------- | --------- |
+| 1. Design Tokens          | 0/TBD          | Not started | -         |
+| 2. Design Utilities       | 0/TBD          | Not started | -         |
+| 3. Core Layout Components | 0/TBD          | Not started | -         |
+| 4. Interactive Components | 0/TBD          | Not started | -         |
+| 5. Structural Components  | 0/TBD          | Not started | -         |
+| 6. Splash & Navigation    | 0/TBD          | Not started | -         |
+| 7. Player Setup           | 0/TBD          | Not started | -         |
+| 8. Core Gameplay          | 0/TBD          | Not started | -         |
+| 9. Game Results           | 0/TBD          | Not started | -         |
+| 10. Settings Pages        | 0/TBD          | Not started | -         |
+| 11. Modal Dialogs         | 0/TBD          | Not started | -         |
