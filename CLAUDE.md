@@ -643,6 +643,12 @@ See `infrastructure/README.md` and `docs/TERRAFORM-SETUP.md` for detailed setup 
 - **[docs/deployment/](docs/deployment/)** - Deployment documentation
 - **[docs/archive/](docs/archive/)** - Historical documents
 
+## 🔄 Zenflow Worktree Environment
+
+This project uses **Zenflow** for task orchestration. Each task runs in an isolated git worktree with no installed dependencies or local config files. See `.zenflow/settings.json` for automation config and the **Zenflow Worktree Environment** section in `AGENTS.md` for details.
+
+**Key points:** `pnpm install` runs automatically on setup, `.env` and `apps/game/.env` are copied from your main worktree, and `pnpm run workspace:check` runs as the verification script after each agent turn.
+
 ## 🔄 Workflow Summary for Claude Code
 
 1. **Read AGENTS.md first** - Complete workflow documentation
