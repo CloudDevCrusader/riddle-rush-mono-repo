@@ -103,6 +103,15 @@ This is a Nuxt 4 monorepo using pnpm workspaces. The project consists of:
 - Monitor bundle size with visualizer plugin
 - Use shared build config for consistency
 
+## Zenflow Worktree Environment
+- This project uses **Zenflow** for task orchestration with isolated git worktrees per task
+- Each worktree starts fresh: no `node_modules/`, no `.env` files, no build artifacts
+- Setup: `pnpm install` (not npm/yarn) — runs automatically via Zenflow
+- Required local files copied automatically: `.env` (root), `apps/game/.env`
+- Verification script (`pnpm run workspace:check`) runs after each agent turn
+- See `.zenflow/settings.json` for full automation config
+- See `AGENTS.md` → "Zenflow Worktree Environment" for detailed workflow
+
 ## Best Practices
 - Keep packages focused and independent
 - Share code through workspace packages, not duplication
