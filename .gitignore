@@ -352,3 +352,5 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 tools/crewai_agents_tool/
+.vercel
+.env*.local
