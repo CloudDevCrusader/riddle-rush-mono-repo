@@ -53,13 +53,10 @@
     <div class="game-container">
       <!-- Category Panel -->
       <div class="category-panel">
-        <NuxtImg
+        <img
           :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
           alt="Category"
           class="category-label-image"
-          format="webp"
-          quality="85"
-          preset="thumbnail"
           loading="lazy"
         />
         <div class="category-label">CATEGORY</div>
