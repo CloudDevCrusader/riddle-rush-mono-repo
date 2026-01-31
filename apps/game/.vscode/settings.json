@@ -1,0 +1,6 @@
+{
+  "sonarlint.connectedMode.project": {
+    "connectionId": "djdiox",
+    "projectKey": "djdiox_guess-game-nuxt-pwa"
+  }
+}

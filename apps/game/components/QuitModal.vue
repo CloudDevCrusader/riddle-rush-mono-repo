@@ -5,11 +5,6 @@
         <!-- Background Image -->
         <img :src="`${baseUrl}assets/quit/BACKGROUND.png`" alt="Background" class="quit-bg" />
 
-        <!-- Back Button -->
-        <button class="back-btn tap-highlight no-select" @click="handleNo">
-          <img :src="`${baseUrl}assets/quit/back.png`" alt="Back" />
-        </button>
-
         <!-- Title -->
         <div class="title-container">
           <img :src="`${baseUrl}assets/quit/QUIT GAME.png`" alt="Quit Game" class="title-image" />

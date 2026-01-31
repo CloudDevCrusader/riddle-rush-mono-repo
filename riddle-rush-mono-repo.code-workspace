@@ -1,0 +1,39 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "apps/game",
+    },
+    {
+      "path": "infrastructure",
+    },
+    {
+      "path": "tools",
+    },
+  ],
+  "settings": {
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+    "debug.javascript.autoAttachFilter": "smart",
+    "debug.javascript.unmapMissingSources": true,
+    "debug.javascript.debugByLinkOptions": "always",
+    "debug.internalConsoleOptions": "neverOpen",
+    "debug.openDebug": "openOnDebugBreak",
+    "debug.showBreakpointsInOverviewRuler": true,
+    "debug.toolBarLocation": "docked",
+    "debug.javascript.breakOnConditionalError": true,
+    "files.associations": {
+      "*.css": "css",
+      "*.scss": "scss",
+      "*.vue": "vue",
+      "turbo.json": "jsonc",
+    },
+    "path-intellisense.autoSlashAfterDirectory": true,
+    "path-intellisense.extensionOnImport": true,
+    "circleci.persistedProjectSelection": ["circleci/NqFyu74yrheUgS5wD3ERxe/fhprrcv6zHAooUq6UK155"],
+    "circleci.filters.branchFilter": "allBranches",
+  },
+}
