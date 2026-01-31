@@ -1,0 +1,14 @@
+@mixin embossed-panel(
+  $border: 3px,
+  $border-color: var(--color-border-gold),
+  $border-dark: var(--color-border-gold-darker),
+  $inner-glow: rgba(255, 255, 255, 0.55)
+) {
+  border: #{$border} solid #{$border-color};
+  border-radius: inherit;
+  box-shadow:
+    0 0 0 2px #{$border-dark},
+    0 12px 22px rgba(0, 0, 0, 0.18),
+    inset 0 0 12px #{$inner-glow},
+    inset 0 -4px 8px rgba(0, 0, 0, 0.18);
+}

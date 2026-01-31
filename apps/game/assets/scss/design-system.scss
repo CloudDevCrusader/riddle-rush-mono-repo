@@ -8,10 +8,12 @@
 @use 'effects/scaling' as *;
 @use 'effects/shadows' as *;
 @use 'effects/glossy' as *;
+@use 'effects/embossed' as *;
 
 @forward 'effects/scaling';
 @forward 'effects/shadows';
 @forward 'effects/glossy';
+@forward 'effects/embossed';
 
 // ============================================
 // VARIABLES
@@ -880,6 +882,10 @@ body {
 
 .fx-glossy-button {
   @include glossy-button;
+}
+
+.fx-embossed-panel {
+  @include embossed-panel;
 }
 
 .text-embossed-gold {
