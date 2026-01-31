@@ -20,7 +20,9 @@
     "category": "Category",
     "letter": "Letter",
     "continue": "Continue",
-    "finish": "Finish Game"
+    "finish": "Finish Game",
+    "yes": "YES",
+    "no": "NO"
   },
   "home": {
     "offline_badge": "Play Offline",
@@ -88,7 +90,9 @@
     "no_active_session": "Please start a game first",
     "error_submitting": "Failed to submit answer",
     "wait_for_players": "Please wait for all players to submit",
-    "error_loading": "Failed to load game session"
+    "error_loading": "Failed to load game session",
+    "quitGame": "QUIT GAME",
+    "quitConfirmation": "Are you sure you want to quit game?"
   },
   "players": {
     "title": "Players",
