@@ -1,104 +1,83 @@
 <template>
-  <div class="language-page">
-    <!-- Background Image -->
-    <img :src="`${baseUrl}assets/language/BACKGROUND.png`" alt="Background" class="page-bg" />
+  <GameBackground>
+    <div class="language-page">
+      <!-- Back button -->
+      <button class="back-btn" aria-label="Go back" @click="goBack">
+        <span class="back-icon">&#x2190;</span>
+      </button>
 
-    <!-- Back Button -->
-    <button class="back-btn tap-highlight no-select" @click="goBack">
-      <img :src="`${baseUrl}assets/language/back.png`" alt="Back" />
-    </button>
+      <!-- Header -->
+      <GameHeader color="gold">{{ $t('language.title', 'LANGUAGE') }}</GameHeader>
 
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Title -->
-      <div class="title-container animate-fade-in">
-        <img :src="`${baseUrl}assets/language/LANGUAGE.png`" alt="Language" class="title-image" />
-      </div>
-
-      <!-- Language Card -->
-      <div class="language-card animate-scale-in">
+      <!-- Language selection panel -->
+      <GamePanel class="language-panel">
         <div class="language-options">
-          <!-- English -->
+          <!-- English option -->
           <button
-            class="language-option tap-highlight no-select"
-            :class="{ selected: currentLocale === 'en' }"
+            class="language-row"
+            :class="{ selected: selectedLocale === 'en' }"
             @click="selectLanguage('en')"
           >
             <div class="flag-container">
-              <img
-                :src="`${baseUrl}assets/language/Eng%20Flag.png`"
-                alt="English"
-                class="flag-image"
-              />
+              <span class="flag-emoji">&#x1F1EC;&#x1F1E7;</span>
             </div>
-            <img
-              :src="`${baseUrl}assets/language/Language%20button.png`"
-              alt="Language button"
-              class="button-bg"
-            />
             <span class="language-name">ENGLISH</span>
-            <div v-if="currentLocale === 'en'" class="check-mark">
-              <img :src="`${baseUrl}assets/language/mark.png`" alt="Selected" />
+            <div class="checkbox" :class="{ checked: selectedLocale === 'en' }">
+              <Transition name="checkmark">
+                <span v-if="selectedLocale === 'en'" class="checkmark">&#x2713;</span>
+              </Transition>
             </div>
           </button>
 
-          <!-- German -->
+          <!-- German option -->
           <button
-            class="language-option tap-highlight no-select"
-            :class="{ selected: currentLocale === 'de' }"
+            class="language-row"
+            :class="{ selected: selectedLocale === 'de' }"
             @click="selectLanguage('de')"
           >
             <div class="flag-container">
-              <img
-                :src="`${baseUrl}assets/language/German%20Flag.png`"
-                alt="German"
-                class="flag-image"
-              />
+              <span class="flag-emoji">&#x1F1E9;&#x1F1EA;</span>
             </div>
-            <img
-              :src="`${baseUrl}assets/language/Language%20button.png`"
-              alt="Language button"
-              class="button-bg"
-            />
-            <span class="language-name">GERMAN</span>
-            <div v-if="currentLocale === 'de'" class="check-mark">
-              <img :src="`${baseUrl}assets/language/mark.png`" alt="Selected" />
+            <span class="language-name">DEUTSCH</span>
+            <div class="checkbox" :class="{ checked: selectedLocale === 'de' }">
+              <Transition name="checkmark">
+                <span v-if="selectedLocale === 'de'" class="checkmark">&#x2713;</span>
+              </Transition>
             </div>
           </button>
         </div>
-      </div>
+      </GamePanel>
 
       <!-- OK Button -->
-      <button class="ok-btn tap-highlight no-select animate-slide-up" @click="confirmSelection">
-        <img :src="`${baseUrl}assets/language/OK.png`" alt="OK" />
-      </button>
+      <GameButton variant="primary" size="lg" @click="confirmSelection"> OK </GameButton>
     </div>
-  </div>
+  </GameBackground>
 </template>
 
 <script setup lang="ts">
-const { baseUrl, goHome, goBack, router } = usePageSetup()
+const { goBack, router } = usePageSetup()
 const { locale, setLocale } = useI18n()
 const { settingsStore } = useGameState()
 const route = useRoute()
 
-const currentLocale = ref(locale.value)
+// Stage selection locally (does not apply until OK pressed)
+const selectedLocale = ref(locale.value)
 
 type LocaleCode = 'de' | 'en'
 
 const selectLanguage = (lang: LocaleCode) => {
-  currentLocale.value = lang
+  selectedLocale.value = lang
 }
 
 const confirmSelection = async () => {
   try {
     // Save language preference first
-    settingsStore.setLanguage(currentLocale.value as LocaleCode)
+    settingsStore.setLanguage(selectedLocale.value as LocaleCode)
 
     // Set the locale
-    await setLocale(currentLocale.value as LocaleCode)
+    await setLocale(selectedLocale.value as LocaleCode)
 
-    await updateLanguageQuery(currentLocale.value as LocaleCode)
+    await updateLanguageQuery(selectedLocale.value as LocaleCode)
 
     // Force page reload to ensure all translations update
     // This is the most reliable way to handle language switching in SPAs
@@ -107,8 +86,8 @@ const confirmSelection = async () => {
     }
   } catch (error) {
     console.error('Failed to change language:', error)
-    // Fallback: navigate home without reload
-    goHome()
+    // Fallback: navigate back without reload
+    goBack()
   }
 }
 
@@ -131,27 +110,18 @@ useHead({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .language-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
+  padding: var(--spacing-xl);
+  padding-top: var(--spacing-3xl);
+  gap: var(--spacing-2xl);
   position: relative;
-  overflow-x: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #1a1a2e;
-}
-
-/* Background Image */
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
 }
 
 /* Back Button */
@@ -159,295 +129,223 @@ useHead({
   position: absolute;
   top: var(--spacing-xl);
   left: var(--spacing-xl);
-  z-index: 3;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.back-btn img {
-  width: clamp(40px, 5vw, 60px);
-  height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-.back-btn:active {
-  transform: scale(0.95);
-}
-
-/* Container */
-.container {
-  position: relative;
-  z-index: 2;
-  max-width: 800px;
-  width: 100%;
-  padding: var(--spacing-xl) var(--spacing-md);
+  z-index: 10;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--spacing-3xl);
-}
-
-/* Title */
-.title-container {
-  display: flex;
   justify-content: center;
-  margin-top: var(--spacing-2xl);
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(180deg, #ff9d4d 0%, #e87a1f 100%);
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow:
+    0 4px 0 #b85c0a,
+    0 6px 12px rgba(0, 0, 0, 0.25);
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow:
+      0 2px 0 #b85c0a,
+      0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 4px;
+  }
 }
 
-.title-image {
-  width: clamp(200px, 30vw, 300px);
-  height: auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+.back-icon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  line-height: 1;
 }
 
-/* Language Card */
-.language-card {
-  width: 100%;
-  max-width: 600px;
+/* Language Panel */
+.language-panel {
+  padding: var(--spacing-xl);
 }
 
 .language-options {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2xl);
-}
-
-.language-option {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: var(--spacing-lg);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  min-height: 100px;
-  padding: 0;
 }
 
-.language-option:active {
-  transform: translateY(-2px) scale(0.98);
-}
-
-.button-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Language Row */
+.language-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
   width: 100%;
-  height: 100%;
-  object-fit: fill;
-  z-index: 1;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  min-height: 70px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(180deg, #f5e6c8 0%, #d9c7a0 100%);
+  border: 3px solid #c9a45c;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow:
+    0 4px 0 #9a7a3a,
+    0 6px 12px rgba(0, 0, 0, 0.15);
+
+  &:hover {
+    filter: brightness(1.02);
+    border-color: #ddb96a;
+  }
+
+  &:active {
+    transform: translateY(2px) scale(0.99);
+    box-shadow:
+      0 2px 0 #9a7a3a,
+      0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  &.selected {
+    border-color: #e0b84c;
+    box-shadow:
+      0 4px 0 #9a7a3a,
+      0 6px 12px rgba(0, 0, 0, 0.2),
+      inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 4px;
+  }
 }
 
-.language-option.selected .button-bg {
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3)) brightness(1.1);
-}
-
+/* Flag Container */
 .flag-container {
-  position: relative;
-  z-index: 2;
-  flex-shrink: 0;
-  width: clamp(60px, 8vw, 80px);
-  height: clamp(60px, 8vw, 80px);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-white);
+  width: 56px;
+  height: 56px;
+  background: white;
+  border: 2px solid #c9a45c;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
   overflow: hidden;
 }
 
-.flag-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.flag-emoji {
+  font-size: 2rem;
+  line-height: 1;
 }
 
+/* Language Name */
 .language-name {
-  position: relative;
-  z-index: 2;
   flex: 1;
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-3xl));
-  font-weight: var(--font-weight-black);
+  font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-2xl));
+  font-weight: var(--font-weight-bold);
   color: #3a2817;
-  text-align: center;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.check-mark {
-  position: relative;
-  z-index: 2;
+/* Checkbox */
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: white;
+  border: 2px solid #7a6a4a;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
-  animation: scaleIn 0.3s ease-out;
+  transition: all var(--transition-fast);
+
+  &.checked {
+    background: #4caf50;
+    border-color: #388e3c;
+  }
 }
 
-.check-mark img {
-  width: clamp(24px, 3vw, 32px);
-  height: auto;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+.checkmark {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* OK Button */
-.ok-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
+/* Checkmark Animation */
+.checkmark-enter-active {
+  animation: checkmark-in 0.25s ease-out;
 }
 
-.ok-btn img {
-  width: clamp(200px, 40vw, 300px);
-  height: auto;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+.checkmark-leave-active {
+  animation: checkmark-in 0.15s ease-in reverse;
 }
 
-.ok-btn:active {
-  transform: translateY(-2px) scale(0.95);
-}
-
-/* Animations */
-.animate-fade-in {
-  animation: fadeIn 0.8s ease-out;
-}
-
-@keyframes fadeIn {
+@keyframes checkmark-in {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: scale(0.5);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-.animate-scale-in {
-  animation: scaleIn 0.6s ease-out 0.2s backwards;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
-.animate-slide-up {
-  animation: slideUp 0.6s ease-out 0.4s backwards;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Responsive */
-@media (max-width: 768px) {
-  .container {
-    padding: var(--spacing-2xl) var(--spacing-md);
+@media (width <= 480px) {
+  .language-page {
+    padding: var(--spacing-md);
+    padding-top: var(--spacing-2xl);
+    gap: var(--spacing-xl);
   }
 
-  .back-btn img {
-    width: clamp(40px, 5vw, 50px);
+  .back-btn {
+    width: 44px;
+    height: 44px;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
   }
 
-  .title-image {
-    width: clamp(150px, 35vw, 300px);
+  .back-icon {
+    font-size: 1.25rem;
   }
 
-  .languages-list-container {
-    max-width: calc(100% - var(--spacing-md) * 2);
+  .language-panel {
+    padding: var(--spacing-md);
   }
 
-  .languages-list {
-    max-height: 400px;
-  }
-
-  .language-option {
-    min-height: 70px;
-    padding: var(--spacing-md) var(--spacing-lg);
-  }
-
-  .language-flag {
-    width: clamp(40px, 6vw, 50px);
-    height: clamp(40px, 6vw, 50px);
-  }
-
-  .language-name {
-    font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
-  }
-
-  .check-mark img {
-    width: clamp(22px, 3vw, 28px);
-  }
-
-  .ok-btn img {
-    width: clamp(150px, 35vw, 250px);
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-xl) var(--spacing-sm);
-    gap: var(--spacing-lg);
-  }
-
-  .back-btn img {
-    width: clamp(36px, 4vw, 45px);
-  }
-
-  .title-image {
-    width: clamp(120px, 30vw, 180px);
-  }
-
-  .languages-list-container {
-    max-width: calc(100% - var(--spacing-sm) * 2);
-  }
-
-  .languages-list {
-    max-height: 300px;
-    padding: var(--spacing-sm);
-  }
-
-  .language-option {
+  .language-row {
     min-height: 60px;
     padding: var(--spacing-sm) var(--spacing-md);
     gap: var(--spacing-sm);
   }
 
-  .language-flag {
-    width: clamp(36px, 5vw, 44px);
-    height: clamp(36px, 5vw, 44px);
+  .flag-container {
+    width: 48px;
+    height: 48px;
   }
 
-  .language-name {
-    font-size: clamp(var(--font-size-base), 2vw, var(--font-size-lg));
+  .flag-emoji {
+    font-size: 1.75rem;
   }
 
-  .check-mark img {
-    width: clamp(20px, 2.5vw, 24px);
+  .checkbox {
+    width: 32px;
+    height: 32px;
   }
 
-  .ok-btn img {
-    width: clamp(120px, 30vw, 180px);
+  .checkmark {
+    font-size: 1.25rem;
   }
 }
 </style>
