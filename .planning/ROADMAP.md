@@ -198,11 +198,12 @@ Plans:
 7. Numbered badges appear for positions 4-6
 8. Player names and scores align consistently
 9. No coins visible on either page
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- TBD
+- [ ] 09-01-PLAN.md — Create GamePlayerCard component and scoring page with score indicators
+- [ ] 09-02-PLAN.md — Refactor leaderboard page to use GameScrollList with rank badges
 
 ### Phase 10: Settings Pages
 
@@ -261,6 +262,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Splash & Navigation    | 2/2            | Complete    | 2026-02-01 |
 | 7. Player Setup           | 2/2            | Complete    | 2026-02-01 |
 | 8. Core Gameplay          | 2/2            | Complete    | 2026-02-01 |
-| 9. Game Results           | 0/TBD          | Not started | -          |
+| 9. Game Results           | 0/2            | Not started | -          |
 | 10. Settings Pages        | 0/TBD          | Not started | -          |
 | 11. Modal Dialogs         | 0/TBD          | Not started | -          |
