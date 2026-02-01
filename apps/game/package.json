@@ -13,6 +13,7 @@
     "@riddle-rush/types": "workspace:*",
     "@vite-pwa/nuxt": "^1.1.0",
     "@vueuse/nuxt": "^14.1.0",
+    "focus-trap": "^8.0.0",
     "idb": "^8.0.3",
     "lodash-es": "^4.17.22",
     "nuxt": "^4.2.2",
