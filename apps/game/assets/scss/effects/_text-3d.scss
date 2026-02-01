@@ -1,0 +1,95 @@
+/**
+ * 3D Text Effects
+ *
+ * Multi-layer text-shadow effects for depth and visual polish.
+ * Used by GameHeader for title text with color variants.
+ */
+
+/**
+ * 3D Text Depth Effect (5-layer text-shadow)
+ *
+ * Creates layered depth with 5 offset shadows, each progressively
+ * darker and further away from the text.
+ *
+ * @param $base-color - Main color for depth layers
+ * @param $shadow-color - Final shadow color (darkest)
+ * @param $highlight - Optional top highlight color
+ */
+@mixin text-3d-depth($base-color, $shadow-color, $highlight: null) {
+  @if $highlight {
+    text-shadow:
+      0 1px 0 $highlight,
+      0 2px 0 color-mix(in srgb, $base-color 90%, black),
+      0 3px 0 color-mix(in srgb, $base-color 70%, black),
+      0 4px 0 color-mix(in srgb, $base-color 50%, black),
+      0 5px 0 $shadow-color,
+      0 8px 12px rgba(0, 0, 0, 0.3);
+  } @else {
+    text-shadow:
+      0 2px 0 color-mix(in srgb, $base-color 90%, black),
+      0 3px 0 color-mix(in srgb, $base-color 70%, black),
+      0 4px 0 color-mix(in srgb, $base-color 50%, black),
+      0 5px 0 $shadow-color,
+      0 8px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/**
+ * White 3D Text
+ * Pure white text with subtle gray depth layers
+ */
+@mixin text-3d-white {
+  @include text-3d-depth(
+    $base-color: #ffffff,
+    $shadow-color: rgba(0, 0, 0, 0.15),
+    $highlight: rgba(255, 255, 255, 0.6)
+  );
+}
+
+/**
+ * Gold 3D Text
+ * Yellow-gold text with bronze depth layers
+ */
+@mixin text-3d-gold {
+  @include text-3d-depth(
+    $base-color: var(--color-text-yellow),
+    $shadow-color: var(--color-border-gold-darker),
+    $highlight: rgba(255, 255, 255, 0.4)
+  );
+}
+
+/**
+ * Green 3D Text
+ * Light green text with dark green depth layers
+ */
+@mixin text-3d-green {
+  @include text-3d-depth(
+    $base-color: var(--color-btn-green-light),
+    $shadow-color: var(--color-btn-green-shadow),
+    $highlight: rgba(255, 255, 255, 0.5)
+  );
+}
+
+/**
+ * Blue 3D Text
+ * Light blue text with dark blue depth layers
+ */
+@mixin text-3d-blue {
+  @include text-3d-depth(
+    $base-color: var(--color-btn-blue-light),
+    $shadow-color: var(--color-btn-blue-shadow),
+    $highlight: rgba(255, 255, 255, 0.5)
+  );
+}
+
+/**
+ * Orange 3D Text
+ * Light orange text with dark orange depth layers
+ */
+@mixin text-3d-orange {
+  @include text-3d-depth(
+    $base-color: var(--color-btn-orange-light),
+    $shadow-color: var(--color-btn-orange-shadow),
+    $highlight: rgba(255, 255, 255, 0.5)
+  );
+}
