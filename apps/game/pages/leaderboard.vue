@@ -432,8 +432,9 @@ useHead({
 
 .item-decoration {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
   width: clamp(30px, 4vw, 40px);
   height: auto;
   opacity: 0.3;
@@ -485,7 +486,7 @@ useHead({
 
 .finish-btn img,
 .next-round-btn img {
-  width: clamp(120px, 20vw, 160px);
+  width: clamp(140px, 35vw, 200px);
   height: auto;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
@@ -620,7 +621,7 @@ useHead({
 
   .finish-btn img,
   .next-round-btn img {
-    width: clamp(100px, 20vw, 150px);
+    width: clamp(130px, 30vw, 180px);
   }
 }
 
@@ -708,7 +709,7 @@ useHead({
 
   .finish-btn img,
   .next-round-btn img {
-    width: clamp(80px, 20vw, 120px);
+    width: clamp(120px, 28vw, 160px);
   }
 
   .game-complete-message {
