@@ -242,11 +242,13 @@ Plans:
 6. Resume button (green), Restart button (blue), Home button (orange) display stacked
 7. Clicking outside modal does not dismiss it
 8. Modal backdrop dims background content
-   **Plans**: TBD
+   **Plans**: 3 plans
 
 Plans:
 
-- TBD
+- [ ] 11-01-PLAN.md — Extend GameModal and GameButton with dismissal control and danger variant
+- [ ] 11-02-PLAN.md — Refactor QuitModal to use GameModal with danger variant
+- [ ] 11-03-PLAN.md — Refactor PauseModal to CSS-first with stacked buttons
 
 ## Progress
 
@@ -265,4 +267,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 8. Core Gameplay          | 2/2            | Complete    | 2026-02-01 |
 | 9. Game Results           | 2/2            | Complete    | 2026-02-01 |
 | 10. Settings Pages        | 0/2            | Not started | -          |
-| 11. Modal Dialogs         | 0/TBD          | Not started | -          |
+| 11. Modal Dialogs         | 0/3            | Not started | -          |
