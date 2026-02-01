@@ -167,6 +167,7 @@ syncPlayerList(playerCount.value)
 
 <style scoped lang="scss">
 @use 'assets/scss/effects/scaling' as *;
+@use 'assets/scss/variables' as *;
 
 .players-page {
   width: 100%;
@@ -175,7 +176,7 @@ syncPlayerList(playerCount.value)
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-xl);
+  padding: mockup-clamp(48px) var(--spacing-xl);
 }
 
 .players-panel {
@@ -184,6 +185,18 @@ syncPlayerList(playerCount.value)
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
+  padding: mockup-clamp(32px);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 223, 128, 0.08), transparent 35%),
+    radial-gradient(circle at 80% 10%, rgba(255, 170, 76, 0.12), transparent 30%),
+    linear-gradient(180deg, rgba(12, 30, 64, 0.92) 0%, rgba(10, 20, 44, 0.94) 100%);
+  border: 3px solid var(--color-border-gold);
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -6px 18px rgba(0, 0, 0, 0.3);
+  animation: panelFade var(--transition-slow) ease;
 }
 
 .back-button {
@@ -223,10 +236,13 @@ syncPlayerList(playerCount.value)
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-lg);
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
   border: 2px solid var(--color-border-gold);
-  border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, rgba(255, 230, 168, 0.16), rgba(255, 230, 168, 0.06));
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(180deg, rgba(255, 230, 168, 0.18), rgba(255, 230, 168, 0.08));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 18px rgba(0, 0, 0, 0.28);
 }
 
 .stepper__label {
@@ -234,6 +250,7 @@ syncPlayerList(playerCount.value)
   font-size: var(--font-size-lg);
   color: var(--color-text-yellow);
   letter-spacing: 0.4px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
 }
 
 .stepper__controls {
@@ -250,7 +267,7 @@ syncPlayerList(playerCount.value)
   justify-content: center;
   border-radius: 50%;
   border: 3px solid var(--color-border-gold);
-  background: linear-gradient(180deg, #f9d77a, #f0b647);
+  background: linear-gradient(180deg, #ffeac1 0%, #f7c663 55%, #e7a63a 100%);
   color: var(--color-text-dark);
   font-family: var(--font-display);
   font-size: var(--font-size-2xl);
@@ -260,6 +277,10 @@ syncPlayerList(playerCount.value)
     transform var(--transition-base),
     box-shadow var(--transition-base),
     filter var(--transition-base);
+  box-shadow:
+    inset 0 2px 6px rgba(255, 255, 255, 0.6),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.28),
+    0 8px 18px rgba(0, 0, 0, 0.22);
 
   &:hover:not(:disabled) {
     filter: brightness(1.05);
@@ -282,7 +303,12 @@ syncPlayerList(playerCount.value)
   gap: var(--spacing-xs);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.12);
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.1)
+  );
+  border: 2px solid rgba(255, 223, 128, 0.4);
   color: var(--color-text-white);
   font-family: var(--font-display);
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -300,13 +326,17 @@ syncPlayerList(playerCount.value)
 
 .players-list {
   width: 100%;
+  padding: 0 var(--spacing-xs);
 }
 
 :deep(.players-list .game-scroll-list__row) {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 239, 194, 0.95));
+  background: linear-gradient(180deg, rgba(255, 252, 240, 0.98), rgba(255, 233, 181, 0.96));
   border: 2px solid var(--color-border-gold);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.06);
 }
 
 .player-row {
@@ -338,12 +368,15 @@ syncPlayerList(playerCount.value)
 
   &:focus {
     border-color: var(--color-text-yellow);
-    box-shadow: 0 0 0 4px rgba(255, 223, 128, 0.4);
+    box-shadow:
+      0 0 0 4px rgba(255, 223, 128, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
 }
 
 .start-button {
   margin-top: var(--spacing-md);
+  width: 100%;
 }
 
 @media (max-width: 640px) {
@@ -366,6 +399,22 @@ syncPlayerList(playerCount.value)
   .stepper__button,
   .back-button {
     transition: none;
+  }
+
+  .players-panel {
+    animation: none;
+  }
+}
+
+@keyframes panelFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 </style>
