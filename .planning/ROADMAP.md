@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Splash & Navigation** - Initial screens and main menu
 - [x] **Phase 7: Player Setup** - Player configuration interface
 - [x] **Phase 8: Core Gameplay** - Main game screen (critical path)
-- [ ] **Phase 9: Game Results** - Scoring and leaderboard pages
+- [x] **Phase 9: Game Results** - Scoring and leaderboard pages
 - [ ] **Phase 10: Settings Pages** - Options and language selection
 - [ ] **Phase 11: Modal Dialogs** - Quit and pause overlays
 
@@ -160,7 +160,7 @@ Plans:
 Plans:
 
 - [x] 07-01-PLAN.md — Rebuild players page layout, stepper, and inputs
-- [ ] 07-02-PLAN.md — Verify players page against mockup requirements
+- [x] 07-02-PLAN.md — Verify players page against mockup requirements
 
 ### Phase 8: Core Gameplay
 
@@ -220,11 +220,12 @@ Plans:
 6. English/German rows show flag icons with checkmark for selected language
 7. Language selection updates when row clicked
 8. OK button returns to previous screen
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- TBD
+- [ ] 10-01-PLAN.md — Create GameSlider component and refactor settings page
+- [ ] 10-02-PLAN.md — Refactor language page with emoji flags and selection checkmark
 
 ### Phase 11: Modal Dialogs
 
@@ -263,5 +264,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Player Setup           | 2/2            | Complete    | 2026-02-01 |
 | 8. Core Gameplay          | 2/2            | Complete    | 2026-02-01 |
 | 9. Game Results           | 2/2            | Complete    | 2026-02-01 |
-| 10. Settings Pages        | 0/TBD          | Not started | -          |
+| 10. Settings Pages        | 0/2            | Not started | -          |
 | 11. Modal Dialogs         | 0/TBD          | Not started | -          |
