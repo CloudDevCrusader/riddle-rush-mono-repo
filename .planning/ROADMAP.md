@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Design Utilities** - Effects mixins and responsive scaling system
 - [x] **Phase 3: Core Layout Components** - Panel and background containers
 - [x] **Phase 4: Interactive Components** - Buttons and display elements
-- [ ] **Phase 5: Structural Components** - Headers, modals, and scrollable lists
+- [x] **Phase 5: Structural Components** - Headers, modals, and scrollable lists
 - [ ] **Phase 6: Splash & Navigation** - Initial screens and main menu
 - [ ] **Phase 7: Player Setup** - Player configuration interface
 - [ ] **Phase 8: Core Gameplay** - Main game screen (critical path)
@@ -119,9 +119,9 @@ Plans:
 
 Plans:
 
-- [ ] 05-01-PLAN.md - Create GameHeader and GameScrollList components
-- [ ] 05-02-PLAN.md - Create GameModal with focus trap
-- [ ] 05-03-PLAN.md - Verify structural components (visual + interaction)
+- [x] 05-01-PLAN.md - Create GameHeader and GameScrollList components
+- [x] 05-02-PLAN.md - Create GameModal with focus trap
+- [x] 05-03-PLAN.md - Verify structural components (visual + interaction)
 
 ### Phase 6: Splash & Navigation
 
@@ -255,7 +255,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. Design Utilities       | 2/2            | Complete    | 2026-01-31 |
 | 3. Core Layout Components | 2/2            | Complete    | 2026-02-01 |
 | 4. Interactive Components | 2/2            | Complete    | 2026-02-01 |
-| 5. Structural Components  | 0/3            | Not started | -          |
+| 5. Structural Components  | 3/3            | Complete    | 2026-02-01 |
 | 6. Splash & Navigation    | 0/TBD          | Not started | -          |
 | 7. Player Setup           | 0/TBD          | Not started | -          |
 | 8. Core Gameplay          | 0/TBD          | Not started | -          |

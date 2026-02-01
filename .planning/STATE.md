@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Phase 5 - Structural Components
+**Current focus:** Phase 6 - Splash & Navigation
 
 ## Current Position
 
-Phase: 5 of 11 (Structural Components)
-Plan: 1 of TBD in current phase
-Status: In progress
-Last activity: 2026-02-01 — Completed 05-01-PLAN.md (GameHeader and GameScrollList components)
+Phase: 6 of 11 (Splash & Navigation)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-01 — Completed Phase 5 (Structural Components)
 
-Progress: [████░-----] 39% (Overall: 5/11 phases complete)
+Progress: [█████-----] 45% (Overall: 5/11 phases complete)
 
 ## Performance Metrics
 
@@ -32,7 +32,7 @@ Progress: [████░-----] 39% (Overall: 5/11 phases complete)
 | 02-design-utilities       | 2/2   | 5min  | 2.5min   |
 | 03-core-layout-components | 2/2   | 10min | 5min     |
 | 04-interactive-components | 2/2   | 5min  | 2.5min   |
-| 05-structural-components  | 1/TBD | 3min  | 3min     |
+| 05-structural-components  | 3/3   | 20min | 7min     |
 
 **Recent Trend:**
 
@@ -79,12 +79,6 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-**Phase 5 in progress:**
-
-- ✅ `GameHeader` component created with 3D text effects and 5 color variants
-- ✅ `GameScrollList` component created with rank display (crowns/badges)
-- Next up: Additional structural components (GameInput, decorative elements, etc.)
-
 **General concerns:**
 
 - Safari gradient rendering may differ from Chrome (verify early)
@@ -130,5 +124,11 @@ All design tokens ready for component development.
 ### Phase 5 Plans Status
 
 - **05-01**: ✅ Complete - Create GameHeader and GameScrollList components
+- **05-02**: ✅ Complete - Create GameModal with focus trap
+- **05-03**: ✅ Complete - Verify structural components (visual + interaction)
 
-**Phase 5 (Structural Components): IN PROGRESS**
+**Phase 5 (Structural Components): COMPLETE**
+
+### Phase 6 Plans Status
+
+**Phase 6 (Splash & Navigation): NOT STARTED**
