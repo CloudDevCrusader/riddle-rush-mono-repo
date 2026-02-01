@@ -19,8 +19,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Interactive Components** - Buttons and display elements
 - [x] **Phase 5: Structural Components** - Headers, modals, and scrollable lists
 - [x] **Phase 6: Splash & Navigation** - Initial screens and main menu
-- [ ] **Phase 7: Player Setup** - Player configuration interface
-- [ ] **Phase 8: Core Gameplay** - Main game screen (critical path)
+- [x] **Phase 7: Player Setup** - Player configuration interface
+- [x] **Phase 8: Core Gameplay** - Main game screen (critical path)
 - [ ] **Phase 9: Game Results** - Scoring and leaderboard pages
 - [ ] **Phase 10: Settings Pages** - Options and language selection
 - [ ] **Phase 11: Modal Dialogs** - Quit and pause overlays
@@ -169,18 +169,18 @@ Plans:
 **Requirements**: PAGE-04
 **Success Criteria** (what must be TRUE):
 
-1. Round indicator displays centered at top (e.g., "Round 1/3")
-2. Category displays in orange panel below round indicator
-3. Large letter displays prominently in center
-4. Text input field appears between letter and NEXT button
+1. Round indicator displays centered below header
+2. Category panel has two-part design (orange header + cream body)
+3. Large letter displays with 3D blue styling
+4. Text input styled to fit theme (required for multiplayer)
 5. Back button positioned top-left
-6. Nothing appears top-right (no pause button, no coins)
-7. NEXT button matches mockup styling
-   **Plans**: TBD
+6. NEXT button matches mockup green glossy styling
+   **Plans**: 2 plans
 
 Plans:
 
-- TBD
+- [x] 08-01-PLAN.md — Refactor game page layout and styling to match mockup
+- [x] 08-02-PLAN.md — Verify game page against mockup requirements
 
 ### Phase 9: Game Results
 
@@ -259,8 +259,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Interactive Components | 2/2            | Complete    | 2026-02-01 |
 | 5. Structural Components  | 3/3            | Complete    | 2026-02-01 |
 | 6. Splash & Navigation    | 2/2            | Complete    | 2026-02-01 |
-| 7. Player Setup           | 1/2            | In progress | -          |
-| 8. Core Gameplay          | 0/TBD          | Not started | -          |
+| 7. Player Setup           | 2/2            | Complete    | 2026-02-01 |
+| 8. Core Gameplay          | 2/2            | Complete    | 2026-02-01 |
 | 9. Game Results           | 0/TBD          | Not started | -          |
 | 10. Settings Pages        | 0/TBD          | Not started | -          |
 | 11. Modal Dialogs         | 0/TBD          | Not started | -          |
