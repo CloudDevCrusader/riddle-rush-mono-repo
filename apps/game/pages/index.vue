@@ -1,62 +1,42 @@
 <template>
   <div class="menu-page">
-    <!-- Background Image -->
-    <img :src="`${baseUrl}assets/main-menu/BACKGROUND.png`" alt="Background" class="page-bg" />
-
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Logo -->
-      <div class="logo-container animate-fade-in">
-        <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" class="logo-image" />
-      </div>
-
-      <!-- Menu Buttons -->
-      <div v-show="!showMenu" class="menu-buttons animate-slide-up">
-        <!-- Play Button -->
-        <!-- NOTE: Hover images removed - they have mismatched dimensions (3x larger)
-             and hover effects don't work on mobile/touch devices anyway.
-             The *-1.png assets exist but are not used. -->
-        <button
-          class="menu-btn play-btn tap-highlight no-select"
-          aria-label="Play Game"
-          @click="handlePlay"
-        >
-          <img :src="`${baseUrl}assets/main-menu/PLAY.png`" alt="Play" class="btn-image" />
-        </button>
-
-        <!-- Options Button -->
-        <button class="menu-btn options-btn tap-highlight no-select" @click="toggleMenu">
-          <img :src="`${baseUrl}assets/main-menu/OPTIONS.png`" alt="Options" class="btn-image" />
-        </button>
-
-        <!-- Credits Button -->
-        <button class="menu-btn credits-btn tap-highlight no-select" @click="wrappedGoToCredits">
-          <img :src="`${baseUrl}assets/main-menu/CREDITS.png`" alt="Credits" class="btn-image" />
-        </button>
-      </div>
-
-      <!-- Menu Panel (when toggled) -->
-      <transition name="menu-fade">
-        <div v-if="showMenu" class="menu-panel animate-scale-in">
-          <button
-            class="menu-item tap-highlight no-select"
-            aria-label="Change Language"
-            @click="wrappedGoToLanguage"
-          >
-            <span>🌐</span>
-            <span>{{ $t('menu.language', 'Language') }}</span>
-          </button>
-          <button
-            class="menu-item tap-highlight no-select"
-            aria-label="Open Settings"
-            @click="wrappedGoToSettings"
-          >
-            <span>⚙️</span>
-            <span>{{ $t('menu.settings', 'Settings') }}</span>
-          </button>
+    <GameBackground>
+      <!-- Main Container -->
+      <div class="container">
+        <!-- Logo -->
+        <div class="logo-container">
+          <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" class="logo-image" />
         </div>
-      </transition>
-    </div>
+
+        <!-- Menu Buttons -->
+        <div v-show="!showMenu" class="menu-buttons">
+          <GameButton variant="primary" size="lg" full-width @click="handlePlay">
+            {{ $t('menu.play', 'PLAY') }}
+          </GameButton>
+          <GameButton variant="secondary" size="lg" full-width @click="toggleMenu">
+            {{ $t('menu.menu', 'MENU') }}
+          </GameButton>
+          <GameButton variant="warning" size="lg" full-width @click="wrappedGoToSettings">
+            {{ $t('menu.options', 'OPTIONS') }}
+          </GameButton>
+          <GameButton variant="secondary" size="lg" full-width @click="wrappedGoToCredits">
+            {{ $t('menu.credits', 'CREDITS') }}
+          </GameButton>
+        </div>
+
+        <!-- Menu Panel (when toggled) -->
+        <transition name="menu-fade">
+          <div v-if="showMenu" class="menu-panel">
+            <GameButton variant="secondary" size="md" full-width @click="wrappedGoToLanguage">
+              🌐 {{ $t('menu.language', 'Language') }}
+            </GameButton>
+            <GameButton variant="secondary" size="md" full-width @click="wrappedGoToSettings">
+              ⚙️ {{ $t('menu.settings', 'Settings') }}
+            </GameButton>
+          </div>
+        </transition>
+      </div>
+    </GameBackground>
   </div>
 </template>
 
@@ -115,22 +95,11 @@ useHead({
   min-height: 100dvh;
   position: relative;
   overflow: hidden;
-  background: #1a1a2e;
-}
-
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
 }
 
 .container {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -157,36 +126,9 @@ useHead({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   width: 100%;
   max-width: 400px;
-}
-
-.menu-btn {
-  position: relative;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  width: 100%;
-  transition: transform var(--transition-base);
-}
-
-.menu-btn:active {
-  transform: scale(0.95);
-}
-
-.menu-btn:active .btn-image {
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)) brightness(0.9);
-}
-
-.btn-image {
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
-  transition:
-    filter var(--transition-fast),
-    transform var(--transition-fast);
 }
 
 .menu-panel {
@@ -200,82 +142,9 @@ useHead({
   min-width: 250px;
   max-width: 400px;
   width: 100%;
-}
-
-.menu-item {
-  width: 100%;
   display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: var(--color-light);
-  border: 3px solid var(--color-primary);
-  border-radius: var(--radius-md);
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-dark);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  margin-bottom: var(--spacing-md);
-  text-align: left;
-}
-
-.menu-item:last-child {
-  margin-bottom: 0;
-}
-
-.menu-item:active {
-  transform: translateX(2px);
-}
-
-.menu-item span:first-child {
-  font-size: 24px;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -20px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 30px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .menu-fade-enter-active,
@@ -301,23 +170,13 @@ useHead({
   .menu-buttons {
     width: calc(100% - 2rem);
     max-width: 400px;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
   }
 
   .menu-panel {
     width: 100%;
     max-width: 350px;
     padding: var(--spacing-xl);
-  }
-
-  .menu-item {
-    padding: var(--spacing-md);
-    gap: var(--spacing-md);
-    font-size: clamp(var(--font-size-base), 2.5vw, var(--font-size-lg));
-  }
-
-  .menu-item span:first-child {
-    font-size: clamp(18px, 4vw, 24px);
   }
 }
 
@@ -338,30 +197,11 @@ useHead({
     gap: var(--spacing-sm);
   }
 
-  .menu-btn {
-    width: 100%;
-  }
-
   .menu-panel {
     width: calc(100% - var(--spacing-sm) * 2);
     max-width: 280px;
     padding: var(--spacing-lg);
     min-width: auto;
-  }
-
-  .menu-item {
-    padding: var(--spacing-sm) var(--spacing-md);
-    gap: var(--spacing-md);
-    font-size: clamp(var(--font-size-sm), 2vw, var(--font-size-base));
-    margin-bottom: var(--spacing-sm);
-  }
-
-  .menu-item:last-child {
-    margin-bottom: 0;
-  }
-
-  .menu-item span:first-child {
-    font-size: clamp(16px, 3.5vw, 20px);
   }
 }
 

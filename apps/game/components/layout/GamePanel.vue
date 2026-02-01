@@ -9,17 +9,16 @@
 </script>
 
 <style scoped lang="scss">
-@use 'assets/scss/mixins' as *;
-@use 'assets/scss/variables' as *;
+@use '@/assets/scss/design-system' as *;
 
 .game-panel {
   @include embossed-panel;
 
   width: 100%;
-  max-width: 600px; // Example max-width
+  max-width: 600px;
   padding: 2rem;
-  background-color: $bg-dark-blue;
-  border-radius: $radius-xl;
-  box-shadow: $shadow-lg;
+  background: var(--bg-gradient-panel);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
 }
 </style>

@@ -9,7 +9,7 @@
 </script>
 
 <style scoped lang="scss">
-@use 'assets/scss/variables' as *;
+@use '@/assets/scss/design-system' as *;
 
 .game-background {
   display: flex;
@@ -17,13 +17,7 @@
   align-items: center;
   width: 100%;
   min-height: 100vh;
-  background-color: $bg-dark-blue;
-  background-image: radial-gradient(
-    circle at 50% 50%,
-    rgba($bg-light-blue, 0.8) 0%,
-    rgba($bg-dark-blue, 0.9) 70%,
-    $bg-dark-blue 100%
-  );
+  background: var(--bg-gradient-main);
   overflow-y: auto;
 }
 </style>

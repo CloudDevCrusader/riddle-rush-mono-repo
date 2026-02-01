@@ -1,6 +1,6 @@
 <template>
   <GameBackground>
-    <div ref="pageElement" class="players-page">
+    <div ref="pageElement" class="players-page" :class="{ 'players-page--legacy': isLegacyStyle }">
       <GamePanel class="players-panel">
         <GameHeader color="gold">
           <template #left>
@@ -18,10 +18,9 @@
 
         <div class="players-body">
           <div class="stepper" role="group" :aria-label="t('players.count_label')">
-            <div class="stepper__label">{{ t('players.count_label') }}</div>
-            <div class="stepper__controls">
+            <div class="stepper__pill">
               <button
-                class="stepper__button"
+                class="stepper__button stepper__button--minus"
                 type="button"
                 :aria-label="t('players.decrease')"
                 :disabled="playerCount <= minPlayers"
@@ -30,11 +29,10 @@
                 –
               </button>
               <div class="stepper__count" aria-live="polite">
-                <span class="stepper__count-number">{{ playerCount }}</span>
-                <span class="stepper__count-max">/ {{ MAX_PLAYERS }}</span>
+                {{ t('players.count_label') }}: {{ playerCount }} / {{ MAX_PLAYERS }}
               </div>
               <button
-                class="stepper__button"
+                class="stepper__button stepper__button--plus"
                 type="button"
                 :aria-label="t('players.increase')"
                 :disabled="playerCount >= MAX_PLAYERS"
@@ -83,10 +81,12 @@ import { MAX_PLAYERS } from '@riddle-rush/shared/constants'
 const { t, goBack, toast } = usePageSetup()
 const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
+const runtimeConfig = useRuntimeConfig()
 
 const minPlayers = 1
-const playerCount = ref(2)
+const playerCount = ref(4)
 const playerNames = ref<string[]>([])
+const isLegacyStyle = computed(() => runtimeConfig.public?.playersMockupStyle === 'legacy')
 
 const clampPlayerCount = (value: number) => Math.min(MAX_PLAYERS, Math.max(minPlayers, value))
 
@@ -166,8 +166,7 @@ syncPlayerList(playerCount.value)
 </script>
 
 <style scoped lang="scss">
-@use 'assets/scss/effects/scaling' as *;
-@use 'assets/scss/variables' as *;
+@use '@/assets/scss/design-system' as *;
 
 .players-page {
   width: 100%;
@@ -177,52 +176,27 @@ syncPlayerList(playerCount.value)
   align-items: center;
   justify-content: center;
   padding: mockup-clamp(48px) var(--spacing-xl);
+  background:
+    radial-gradient(circle at 50% 20%, rgba(28, 198, 255, 0.35), transparent 35%),
+    radial-gradient(circle at 20% 40%, rgba(12, 140, 222, 0.25), transparent 30%),
+    var(--bg-gradient-main);
 }
 
 .players-panel {
   width: 100%;
-  max-width: mockup-clamp(720px);
+  max-width: mockup-clamp(760px);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
-  padding: mockup-clamp(32px);
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 223, 128, 0.08), transparent 35%),
-    radial-gradient(circle at 80% 10%, rgba(255, 170, 76, 0.12), transparent 30%),
-    linear-gradient(180deg, rgba(12, 30, 64, 0.92) 0%, rgba(10, 20, 44, 0.94) 100%);
+  padding: mockup-clamp(36px);
+  background: linear-gradient(180deg, rgba(16, 46, 104, 0.94) 0%, rgba(10, 28, 68, 0.96) 100%);
   border: 3px solid var(--color-border-gold);
-  border-radius: var(--radius-2xl);
+  border-radius: mockup-clamp(26px);
   box-shadow:
-    0 16px 36px rgba(0, 0, 0, 0.45),
+    0 20px 40px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -6px 18px rgba(0, 0, 0, 0.3);
   animation: panelFade var(--transition-slow) ease;
-}
-
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 2px solid var(--color-border-gold);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.24));
-  color: var(--color-text-yellow);
-  font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  cursor: pointer;
-  transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base);
-
-  &:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-  }
-
-  &:active {
-    transform: translateY(2px);
-  }
 }
 
 .players-body {
@@ -231,167 +205,217 @@ syncPlayerList(playerCount.value)
   gap: var(--spacing-xl);
 }
 
-.stepper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-md) var(--spacing-xl);
-  border: 2px solid var(--color-border-gold);
-  border-radius: var(--radius-2xl);
-  background: linear-gradient(180deg, rgba(255, 230, 168, 0.18), rgba(255, 230, 168, 0.08));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 8px 18px rgba(0, 0, 0, 0.28);
-}
-
-.stepper__label {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  color: var(--color-text-yellow);
-  letter-spacing: 0.4px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
-}
-
-.stepper__controls {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.stepper__button {
-  width: mockup-clamp(64px);
-  height: mockup-clamp(64px);
+.back-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 3px solid var(--color-border-orange);
+  background: linear-gradient(180deg, #ff7864 0%, #d63a2f 100%);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 10px 0 #a5261f,
+    0 16px 28px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+
+  &:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 10px 0 #a5261f,
+      0 18px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 8px 0 #a5261f,
+      0 14px 24px rgba(0, 0, 0, 0.24);
+  }
+}
+
+.stepper {
+  display: flex;
+  justify-content: center;
+}
+
+.stepper__pill {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
+  min-width: min(100%, 640px);
+  border-radius: mockup-clamp(26px);
+  border: 4px solid var(--color-border-orange);
+  background: linear-gradient(180deg, #3c98e2 0%, #0a7bda 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -2px 8px rgba(0, 0, 0, 0.24),
+    0 12px 22px rgba(0, 0, 0, 0.25);
+}
+
+.stepper__button {
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   border: 3px solid var(--color-border-gold);
-  background: linear-gradient(180deg, #ffeac1 0%, #f7c663 55%, #e7a63a 100%);
-  color: var(--color-text-dark);
   font-family: var(--font-display);
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
+  color: #fff;
   cursor: pointer;
   transition:
     transform var(--transition-base),
     box-shadow var(--transition-base),
-    filter var(--transition-base);
-  box-shadow:
-    inset 0 2px 6px rgba(255, 255, 255, 0.6),
-    inset 0 -4px 10px rgba(0, 0, 0, 0.28),
-    0 8px 18px rgba(0, 0, 0, 0.22);
+    opacity var(--transition-base);
 
-  &:hover:not(:disabled) {
-    filter: brightness(1.05);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+  &--minus {
+    background: linear-gradient(180deg, #ff8c6f 0%, #d8452d 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 10px 0 #a62b1e,
+      0 14px 24px rgba(0, 0, 0, 0.25);
   }
 
-  &:active:not(:disabled) {
-    transform: translateY(2px);
+  &--plus {
+    background: linear-gradient(180deg, #7fe165 0%, #36b02a 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 10px 0 #2c7f22,
+      0 14px 24px rgba(0, 0, 0, 0.25);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  &:active {
+    transform: translateY(2px);
+  }
 }
 
 .stepper__count {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-lg);
-  background: radial-gradient(
-    circle at 50% 40%,
-    rgba(255, 255, 255, 0.22),
-    rgba(255, 255, 255, 0.1)
-  );
-  border: 2px solid rgba(255, 223, 128, 0.4);
-  color: var(--color-text-white);
+  justify-self: center;
   font-family: var(--font-display);
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-.stepper__count-number {
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-}
-
-.stepper__count-max {
-  font-size: var(--font-size-base);
-  color: rgba(255, 255, 255, 0.75);
+  color: #e7f4ff;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.6px;
 }
 
 .players-list {
   width: 100%;
   padding: 0 var(--spacing-xs);
-}
-
-:deep(.players-list .game-scroll-list__row) {
-  background: linear-gradient(180deg, rgba(255, 252, 240, 0.98), rgba(255, 233, 181, 0.96));
-  border: 2px solid var(--color-border-gold);
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 10px 20px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -4px 10px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .player-row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
 }
 
 .player-row__label {
   font-family: var(--font-display);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-dark);
-  letter-spacing: 0.4px;
+  font-size: var(--font-size-xl);
+  color: #d5edff;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
 }
 
 .player-row__input {
   width: 100%;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--radius-lg);
   border: 3px solid var(--color-border-gold);
-  background: rgba(255, 255, 255, 0.96);
+  border-radius: mockup-clamp(22px);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-size-xl);
   font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  color: var(--color-text-dark);
-  outline: none;
+  color: #0b3b76;
+  background: linear-gradient(180deg, #ffffff 0%, #eef1f7 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 10px 16px rgba(0, 0, 0, 0.18),
+    0 4px 0 rgba(0, 0, 0, 0.08);
   transition:
     box-shadow var(--transition-base),
     border-color var(--transition-base);
 
+  &::placeholder {
+    color: rgba(11, 59, 118, 0.75);
+  }
+
   &:focus {
-    border-color: var(--color-text-yellow);
+    outline: none;
+    border-color: var(--color-border-orange);
     box-shadow:
-      0 0 0 4px rgba(255, 223, 128, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      0 10px 16px rgba(0, 0, 0, 0.22),
+      0 0 0 3px rgba(255, 213, 79, 0.35);
   }
 }
 
 .start-button {
   margin-top: var(--spacing-md);
   width: 100%;
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  min-height: mockup-clamp(72px);
+  border-radius: mockup-clamp(24px);
+  background: linear-gradient(180deg, #9eff70 0%, #53c734 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.65),
+    0 12px 0 #2f8f23,
+    0 20px 32px rgba(0, 0, 0, 0.28);
+}
+
+@keyframes panelFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.players-page--legacy {
+  background: var(--bg-gradient-main);
+
+  .players-panel {
+    background: linear-gradient(180deg, rgba(12, 30, 64, 0.92) 0%, rgba(10, 20, 44, 0.94) 100%);
+  }
+
+  .stepper__pill {
+    background: linear-gradient(180deg, rgba(255, 230, 168, 0.18), rgba(255, 230, 168, 0.08));
+    border-color: var(--color-border-gold);
+  }
 }
 
 @media (max-width: 640px) {
-  .players-page {
-    padding: var(--spacing-2xl) var(--spacing-lg);
+  .player-row {
+    grid-template-columns: 1fr;
   }
 
-  .stepper {
-    flex-direction: column;
-    align-items: stretch;
+  .players-panel {
+    padding: var(--spacing-lg);
   }
 
-  .stepper__controls {
-    width: 100%;
-    justify-content: space-between;
+  .stepper__pill {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 }
 
@@ -403,18 +427,6 @@ syncPlayerList(playerCount.value)
 
   .players-panel {
     animation: none;
-  }
-}
-
-@keyframes panelFade {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.99);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 </style>
