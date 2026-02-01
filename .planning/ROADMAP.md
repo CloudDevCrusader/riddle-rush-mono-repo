@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Core Layout Components** - Panel and background containers
 - [x] **Phase 4: Interactive Components** - Buttons and display elements
 - [x] **Phase 5: Structural Components** - Headers, modals, and scrollable lists
-- [ ] **Phase 6: Splash & Navigation** - Initial screens and main menu
+- [x] **Phase 6: Splash & Navigation** - Initial screens and main menu
 - [ ] **Phase 7: Player Setup** - Player configuration interface
 - [ ] **Phase 8: Core Gameplay** - Main game screen (critical path)
 - [ ] **Phase 9: Game Results** - Scoring and leaderboard pages
@@ -140,8 +140,8 @@ Plans:
 
 Plans:
 
-- [ ] 06-01-PLAN.md — Create splash.vue page with animated loading and auto-navigation
-- [ ] 06-02-PLAN.md — Refactor index.vue main menu to use GameButton components
+- [x] 06-01-PLAN.md — Create splash.vue page with animated loading and auto-navigation
+- [x] 06-02-PLAN.md — Refactor index.vue main menu to use GameButton components
 
 ### Phase 7: Player Setup
 
@@ -155,11 +155,12 @@ Plans:
 3. Input fields appear/disappear when player count changes
 4. START GAME button is styled and positioned as in mockup
 5. No coins visible on players page
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- TBD
+- [x] 07-01-PLAN.md — Rebuild players page layout, stepper, and inputs
+- [ ] 07-02-PLAN.md — Verify players page against mockup requirements
 
 ### Phase 8: Core Gameplay
 
@@ -257,8 +258,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Core Layout Components | 2/2            | Complete    | 2026-02-01 |
 | 4. Interactive Components | 2/2            | Complete    | 2026-02-01 |
 | 5. Structural Components  | 3/3            | Complete    | 2026-02-01 |
-| 6. Splash & Navigation    | 0/2            | Not started | -          |
-| 7. Player Setup           | 0/TBD          | Not started | -          |
+| 6. Splash & Navigation    | 2/2            | Complete    | 2026-02-01 |
+| 7. Player Setup           | 1/2            | In progress | -          |
 | 8. Core Gameplay          | 0/TBD          | Not started | -          |
 | 9. Game Results           | 0/TBD          | Not started | -          |
 | 10. Settings Pages        | 0/TBD          | Not started | -          |
