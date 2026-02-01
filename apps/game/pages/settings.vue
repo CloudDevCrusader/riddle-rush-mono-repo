@@ -1,42 +1,100 @@
 <template>
-  <div class="settings-page">
-    <!-- Background Image -->
-    <img :src="`${baseUrl}assets/settings/BACKGROUND.png`" alt="Background" class="page-bg" />
+  <GameBackground>
+    <div class="settings-page">
+      <!-- Header -->
+      <GameHeader color="gold">
+        <template #left>
+          <button class="back-btn tap-highlight no-select" @click="goBack">
+            <span class="back-btn__arrow">&#8592;</span>
+          </button>
+        </template>
+        OPTIONS
+      </GameHeader>
 
-    <!-- Back Button - Always visible -->
-    <button class="emergency-back-btn tap-highlight no-select" @click="forceGoHome">
-      <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" />
-    </button>
+      <!-- Settings Panel -->
+      <GamePanel class="settings-panel">
+        <!-- Sound slider -->
+        <div class="slider-row">
+          <GameSlider v-model="soundVolume" icon="🔊" muted-icon="🔇" @change="handleSoundChange" />
+          <span class="slider-label">Sound</span>
+        </div>
 
-    <!-- Settings Modal (Lazy Loaded) -->
-    <LazySettingsModal
-      v-if="showSettings"
-      v-model="showSettings"
-      @update:model-value="handleModalClose"
-    />
-  </div>
+        <!-- Music slider -->
+        <div class="slider-row">
+          <GameSlider v-model="musicVolume" icon="🎵" muted-icon="🔇" @change="handleMusicChange" />
+          <span class="slider-label">Music</span>
+        </div>
+      </GamePanel>
+
+      <!-- OK Button -->
+      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk"> OK </GameButton>
+    </div>
+  </GameBackground>
 </template>
 
 <script setup lang="ts">
-const { baseUrl } = usePageSetup()
 const router = useRouter()
+const settingsStore = useSettingsStore()
 
-const showSettings = ref(true)
+// Local refs for slider values
+const soundVolume = ref(settingsStore.soundVolume)
+const musicVolume = ref(settingsStore.musicVolume)
 
-// Force navigation home - emergency exit
-const forceGoHome = () => {
-  console.log('Force navigate home')
-  showSettings.value = false
-  router.push('/')
-}
+// Preview sound throttling
+let lastSoundPreviewTime = 0
+const SOUND_PREVIEW_THROTTLE = 500 // ms
 
-// Handle modal close explicitly
-const handleModalClose = (value: boolean) => {
-  console.log('Settings modal close event:', value)
-  if (!value) {
-    forceGoHome()
+// Handle sound volume change
+const handleSoundChange = (value: number) => {
+  settingsStore.updateSetting('soundVolume', value)
+  settingsStore.updateSetting('soundEnabled', value > 0)
+
+  // Play preview sound (throttled)
+  const now = Date.now()
+  if (now - lastSoundPreviewTime > SOUND_PREVIEW_THROTTLE && value > 0) {
+    lastSoundPreviewTime = now
+    // Play preview sound via audio composable if available
+    // For now, this is a placeholder for future audio implementation
   }
 }
+
+// Handle music volume change
+const handleMusicChange = (value: number) => {
+  settingsStore.updateSetting('musicVolume', value)
+  settingsStore.updateSetting('musicEnabled', value > 0)
+}
+
+// Navigate back
+const goBack = () => {
+  router.back()
+}
+
+// Handle OK button
+const handleOk = () => {
+  router.back()
+}
+
+// Handle escape key
+const handleEscape = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    goBack()
+  }
+}
+
+// Load settings on mount
+onMounted(() => {
+  settingsStore.loadSettings()
+  soundVolume.value = settingsStore.soundVolume
+  musicVolume.value = settingsStore.musicVolume
+
+  // Add escape key listener
+  window.addEventListener('keydown', handleEscape)
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscape)
+})
 
 useHead({
   title: 'Settings',
@@ -49,47 +107,76 @@ useHead({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'assets/scss/design-system' as *;
+
 .settings-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  position: relative;
-  overflow: hidden;
-  background: #1a1a2e;
-}
-
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
+  max-width: 600px;
+  padding: var(--spacing-md);
+  gap: var(--spacing-lg);
 }
 
-.emergency-back-btn {
-  position: fixed;
-  top: var(--spacing-xl);
-  left: var(--spacing-xl);
-  z-index: 99999;
-  background: rgba(255, 107, 53, 0.9);
-  border: 3px solid white;
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(40px, 8vw, 52px);
+  height: clamp(40px, 8vw, 52px);
+  background: linear-gradient(180deg, #ffb84d 0%, #ff9500 100%);
+  border: 3px solid #ffd54f;
   border-radius: 50%;
   cursor: pointer;
-  padding: var(--spacing-sm);
-  transition: transform var(--transition-base);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: all var(--transition-fast);
+  box-shadow:
+    0 4px 0 #cc7700,
+    0 6px 12px rgba(0, 0, 0, 0.3);
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow:
+      0 2px 0 #cc7700,
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  &__arrow {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: var(--font-weight-bold);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    line-height: 1;
+  }
 }
 
-.emergency-back-btn img {
-  width: clamp(40px, 5vw, 60px);
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  width: 100%;
 }
 
-.emergency-back-btn:active {
-  transform: scale(0.95);
+.slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.slider-label {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-dark);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  text-transform: lowercase;
+}
+
+.ok-btn {
+  min-width: clamp(150px, 30vw, 200px);
+  margin-top: var(--spacing-md);
 }
 </style>
