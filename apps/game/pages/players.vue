@@ -1,774 +1,371 @@
 <template>
-  <div ref="pageElement" class="players-page">
-    <!-- Background Image -->
-    <img :src="`${baseUrl}assets/players/BACKGROUND.png`" alt="Background" class="page-bg" />
-
-    <!-- Back Button -->
-    <button class="back-btn tap-highlight no-select" @click="goBack">
-      <img :src="`${baseUrl}assets/players/back.png`" alt="Back" />
-    </button>
-
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Title -->
-      <div class="title-container animate-fade-in">
-        <img :src="`${baseUrl}assets/players/players.png`" alt="Players" class="title-image" />
-        <img
-          :src="`${baseUrl}assets/players/top.png`"
-          alt="Top decoration"
-          class="top-decoration"
-        />
-      </div>
-
-      <!-- Players List -->
-      <div class="players-list-container animate-scale-in">
-        <div class="players-list">
-          <div
-            v-for="(player, index) in players"
-            :key="`player-${index}-${player.name}`"
-            class="player-item"
-          >
-            <img
-              :src="`${baseUrl}assets/players/Group 10.png`"
-              alt="Player slot"
-              class="player-slot-bg"
-            />
-            <span class="player-name">{{ player.name }}</span>
-            <button class="remove-player-btn tap-highlight no-select" @click="removePlayer(index)">
-              <img :src="`${baseUrl}assets/players/minus.png`" alt="Remove" />
+  <GameBackground>
+    <div ref="pageElement" class="players-page">
+      <GamePanel class="players-panel">
+        <GameHeader color="gold">
+          <template #left>
+            <button
+              class="back-button"
+              type="button"
+              :aria-label="t('common.back', 'Back')"
+              @click="goBack"
+            >
+              ‹
             </button>
+          </template>
+          {{ t('players.title') }}
+        </GameHeader>
+
+        <div class="players-body">
+          <div class="stepper" role="group" :aria-label="t('players.count_label')">
+            <div class="stepper__label">{{ t('players.count_label') }}</div>
+            <div class="stepper__controls">
+              <button
+                class="stepper__button"
+                type="button"
+                :aria-label="t('players.decrease')"
+                :disabled="playerCount <= minPlayers"
+                @click="changePlayerCount(-1)"
+              >
+                –
+              </button>
+              <div class="stepper__count" aria-live="polite">
+                <span class="stepper__count-number">{{ playerCount }}</span>
+                <span class="stepper__count-max">/ {{ MAX_PLAYERS }}</span>
+              </div>
+              <button
+                class="stepper__button"
+                type="button"
+                :aria-label="t('players.increase')"
+                :disabled="playerCount >= MAX_PLAYERS"
+                @click="changePlayerCount(1)"
+              >
+                +
+              </button>
+            </div>
           </div>
 
-          <!-- Empty slots -->
-          <div
-            v-for="n in Math.max(0, maxPlayers - players.length)"
-            :key="`empty-${n}`"
-            class="player-item empty"
+          <GameScrollList class="players-list" max-height="420px">
+            <div v-for="(_, index) in playerCount" :key="`player-${index}`" class="player-row">
+              <label class="player-row__label" :for="`player-${index}`">
+                {{ placeholderForIndex(index) }}
+              </label>
+              <input
+                :id="`player-${index}`"
+                v-model="playerNames[index]"
+                type="text"
+                class="player-row__input"
+                :placeholder="placeholderForIndex(index)"
+                maxlength="20"
+                autocomplete="off"
+              />
+            </div>
+          </GameScrollList>
+
+          <GameButton
+            class="start-button"
+            variant="primary"
+            size="lg"
+            full-width
+            @click="startGame"
           >
-            <img
-              :src="`${baseUrl}assets/players/Group 10.png`"
-              alt="Empty slot"
-              class="player-slot-bg"
-            />
-            <span class="player-name empty-text">Empty Slot</span>
-          </div>
+            {{ t('players.start') }}
+          </GameButton>
         </div>
-
-        <!-- Scroll Bar -->
-        <div class="scroll-bar">
-          <img
-            :src="`${baseUrl}assets/players/scroll bar.png`"
-            alt="Scroll bar"
-            class="scroll-bg"
-          />
-          <img
-            :src="`${baseUrl}assets/players/screoll.png`"
-            alt="Scroll handle"
-            class="scroll-handle"
-          />
-        </div>
-      </div>
-
-      <!-- Add Player Input (Mobile-Friendly) -->
-      <div v-if="showPlayerInput" class="player-input-container animate-scale-in">
-        <input
-          ref="playerNameInput"
-          v-model="newPlayerName"
-          type="text"
-          :placeholder="$t('players.enter_name', 'Enter player name')"
-          class="player-name-input tap-highlight"
-          maxlength="20"
-          @keyup.enter="confirmAddPlayer"
-          @keyup.esc="cancelAddPlayer"
-          @input="sanitizePlayerName"
-        />
-        <div class="input-buttons">
-          <button class="input-btn confirm-btn tap-highlight no-select" @click="confirmAddPlayer">
-            ✓
-          </button>
-          <button class="input-btn cancel-btn tap-highlight no-select" @click="cancelAddPlayer">
-            ✕
-          </button>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="action-buttons animate-slide-up">
-        <!-- Add Player Button -->
-        <button
-          v-if="players.length < maxPlayers && !showPlayerInput"
-          class="action-btn add-btn tap-highlight no-select"
-          @click="showAddPlayerInput"
-        >
-          <img :src="`${baseUrl}assets/players/add back.png`" alt="Add button bg" class="btn-bg" />
-          <img :src="`${baseUrl}assets/players/add.png`" alt="Add" class="btn-icon" />
-        </button>
-
-        <!-- Start Button -->
-        <button
-          :disabled="players.length === 0"
-          class="action-btn start-btn tap-highlight no-select"
-          :class="{ disabled: players.length === 0 }"
-          @click="startGame"
-        >
-          <img :src="`${baseUrl}assets/players/start.png`" alt="Start" />
-        </button>
-      </div>
+      </GamePanel>
     </div>
-  </div>
+  </GameBackground>
 </template>
 
 <script setup lang="ts">
 import { MAX_PLAYERS } from '@riddle-rush/shared/constants'
 
-const { baseUrl, toast, t, goBack } = usePageSetup()
+const { t, goBack, toast } = usePageSetup()
 const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
 
-const maxPlayers = MAX_PLAYERS
-// Use shallowRef for better performance with large arrays
-const players = shallowRef([{ name: 'Player 1' }, { name: 'Player 2' }])
-const showPlayerInput = ref(false)
-const newPlayerName = ref('')
-const playerNameInput = ref<HTMLInputElement | null>(null)
+const minPlayers = 1
+const playerCount = ref(2)
+const playerNames = ref<string[]>([])
 
-const showAddPlayerInput = () => {
-  if (players.value.length >= maxPlayers) {
-    toast.warning(t('players.max_players', `Maximum ${maxPlayers} players allowed`))
+const clampPlayerCount = (value: number) => Math.min(MAX_PLAYERS, Math.max(minPlayers, value))
+
+const syncPlayerList = (targetCount?: number) => {
+  const nextCount = clampPlayerCount(targetCount ?? playerCount.value)
+  const next = playerNames.value.slice(0, nextCount)
+
+  while (next.length < nextCount) {
+    next.push('')
+  }
+
+  playerCount.value = nextCount
+  playerNames.value = next
+}
+
+const changePlayerCount = (delta: number) => {
+  const nextCount = clampPlayerCount(playerCount.value + delta)
+
+  if (nextCount === playerCount.value) {
+    if (delta > 0) {
+      toast.info(t('players.max_players', [MAX_PLAYERS]))
+    }
     return
   }
 
-  newPlayerName.value = `Player ${players.value.length + 1}`
-  showPlayerInput.value = true
-
-  // Focus input after Vue updates DOM
-  nextTick(() => {
-    playerNameInput.value?.focus()
-    playerNameInput.value?.select()
-  })
+  syncPlayerList(nextCount)
 }
 
-// Validate player name
-const isValidPlayerName = (name: string): { valid: boolean; error?: string } => {
-  const trimmed = name.trim()
+const placeholderForIndex = (index: number) =>
+  (t('players.placeholder', { number: index + 1 }) as string) || `Player ${index + 1}`
 
-  if (!trimmed) {
-    return { valid: false, error: t('players.name_required', 'Please enter a player name') }
-  }
-
-  if (trimmed.length < 1) {
-    return {
-      valid: false,
-      error: t('players.name_too_short', 'Player name must be at least 1 character'),
-    }
-  }
-
-  if (trimmed.length > 20) {
-    return {
-      valid: false,
-      error: t('players.name_too_long', 'Player name must be 20 characters or less'),
-    }
-  }
-
-  // Check for duplicate names - but allow the default "Player X" names
-  const isDefaultName = trimmed.match(/^Player \d+$/i)
-  if (!isDefaultName && players.value.some((p) => p.name.toLowerCase() === trimmed.toLowerCase())) {
-    return {
-      valid: false,
-      error: t('players.duplicate_name', 'A player with this name already exists'),
-    }
-  }
-
-  return { valid: true }
-}
-
-// Sanitize player name input (optimized - no debounce needed for simple sanitization)
-const sanitizePlayerName = () => {
-  // Remove potentially dangerous characters
-  newPlayerName.value = newPlayerName.value.replace(/[<>]/g, '')
-  // Limit length
-  if (newPlayerName.value.length > 20) {
-    newPlayerName.value = newPlayerName.value.slice(0, 20)
-  }
-}
-
-const confirmAddPlayer = () => {
-  const trimmedName = newPlayerName.value.trim()
-
-  const validation = isValidPlayerName(trimmedName)
-  if (!validation.valid) {
-    toast.warning(validation.error || t('players.name_required', 'Please enter a player name'))
+const startGame = () => {
+  if (playerCount.value < minPlayers) {
+    toast.warning(t('players.need_players'))
     return
   }
 
-  // Reassign array to trigger shallowRef reactivity
-  players.value = [...players.value, { name: trimmedName }]
-  toast.success(t('players.added', `${trimmedName} added!`))
-
-  // Reset
-  newPlayerName.value = ''
-  showPlayerInput.value = false
-}
-
-const cancelAddPlayer = () => {
-  newPlayerName.value = ''
-  showPlayerInput.value = false
-}
-
-const removePlayer = (index: number) => {
-  const playerName = players.value[index]?.name
-  // Reassign array to trigger shallowRef reactivity (splice modifies in-place)
-  players.value = players.value.filter((_, i) => i !== index)
-  if (playerName) {
-    toast.info(t('players.removed', `${playerName} removed`))
-  }
-}
-
-const startGame = async () => {
-  // Validate at least one player
-  if (players.value.length === 0) {
-    toast.warning(t('players.need_players', 'Add at least one player to start'))
-    return
-  }
-
-  // Validate all player names are valid
-  const invalidPlayers = players.value.filter((p) => {
-    const validation = isValidPlayerName(p.name)
-    return !validation.valid
+  const names = playerNames.value.slice(0, playerCount.value).map((name, index) => {
+    const trimmed = name.trim()
+    return trimmed || placeholderForIndex(index)
   })
 
-  if (invalidPlayers.length > 0) {
-    toast.warning(t('players.invalid_names', 'Please fix invalid player names before starting'))
+  if (!names.length) {
+    toast.warning(t('players.need_players'))
     return
   }
 
-  try {
-    const playerNames = players.value.map((p) => p.name)
-    // Store player names temporarily, will setup game after both wheels spin
-    gameStore.pendingPlayerNames = playerNames
+  const lowerCaseNames = names.map((name) => name.toLowerCase())
+  const hasDuplicateNames = new Set(lowerCaseNames).size !== lowerCaseNames.length
 
-    // Enhanced toast with random motivational messages
-    const motivationalMessages = [
-      t('players.ready', `${players.value.length} players ready!`),
-      t('players.lets_start', "Let's start the show! 🎉"),
-      t('players.good_luck', 'Good luck everyone! 🍀'),
-      t('players.may_the_best_win', 'May the best win! 🏆'),
-      t('players.game_on', 'Game on! 🎮'),
-      t('players.lets_play', "Let's play! 😃"),
-      t('players.showtime', 'Showtime! ⭐'),
-      t('players.ready_set_go', 'Ready, set, go! 🚀'),
-    ]
-
-    const randomMessage =
-      motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]
-    toast.success(randomMessage as string)
-
-    // Navigate to round start (dual wheel spin)
-    goToRoundStart()
-  } catch (error) {
-    const logger = useLogger()
-    logger.error('Error starting game:', error)
-    toast.error(t('players.error_start', 'Failed to start game. Please try again.'))
+  if (hasDuplicateNames) {
+    toast.warning(t('players.duplicate_name'))
+    return
   }
+
+  gameStore.pendingPlayerNames = names
+  toast.success(t('players.ready', { 0: names.length }))
+  goToRoundStart()
 }
 
-// Mobile swipe gesture: swipe right to go back
 const { pageElement } = usePageSwipe({
-  onSwipeRight: () => {
-    goBack()
-  },
-  threshold: 80, // Require 80px swipe to trigger
+  onSwipeRight: () => goBack(),
+  threshold: 80,
 })
 
 useHead({
-  title: 'Players',
+  title: t('players.title'),
   meta: [
     {
       name: 'description',
-      content: 'Select players for the game',
+      content: t('players.description', 'Select players for the game'),
     },
   ],
 })
+
+syncPlayerList(playerCount.value)
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'assets/scss/effects/scaling' as *;
+
 .players-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  position: relative;
-  overflow: hidden;
-  background: #1a1a2e;
-}
-
-/* Background Image */
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-}
-
-/* Back Button */
-.back-btn {
-  position: absolute;
-  top: var(--spacing-xl);
-  left: var(--spacing-xl);
-  z-index: 3;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.back-btn img {
-  width: clamp(40px, 5vw, 60px);
-  height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-.back-btn:active {
-  opacity: 0.7;
-}
-
-/* Container */
-.container {
-  position: relative;
-  z-index: 2;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-3xl) var(--spacing-xl);
-  gap: var(--spacing-2xl);
 }
 
-/* Title */
-.title-container {
-  position: relative;
+.players-panel {
+  width: 100%;
+  max-width: mockup-clamp(720px);
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-gold);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.24));
+  color: var(--color-text-yellow);
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  &:active {
+    transform: translateY(2px);
+  }
+}
+
+.players-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid var(--color-border-gold);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(255, 230, 168, 0.16), rgba(255, 230, 168, 0.06));
+}
+
+.stepper__label {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-yellow);
+  letter-spacing: 0.4px;
+}
+
+.stepper__controls {
+  display: flex;
   align-items: center;
   gap: var(--spacing-md);
 }
 
-.title-image {
-  width: clamp(200px, 30vw, 300px);
-  height: auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+.stepper__button {
+  width: mockup-clamp(64px);
+  height: mockup-clamp(64px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid var(--color-border-gold);
+  background: linear-gradient(180deg, #f9d77a, #f0b647);
+  color: var(--color-text-dark);
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    filter var(--transition-base);
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.05);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(2px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
-.top-decoration {
-  width: clamp(150px, 25vw, 250px);
-  height: auto;
-  pointer-events: none;
+.stepper__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text-white);
+  font-family: var(--font-display);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* Players List Container */
-.players-list-container {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  gap: var(--spacing-lg);
+.stepper__count-number {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.stepper__count-max {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .players-list {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  max-height: 400px;
-  overflow-y: auto;
-  padding: var(--spacing-md);
-  scrollbar-width: none;
-}
-
-.players-list::-webkit-scrollbar {
-  display: none;
-}
-
-/* Player Item */
-.player-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  min-height: 70px;
-}
-
-.player-slot-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: fill;
-  z-index: 1;
 }
 
-.player-name {
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
-  font-weight: var(--font-weight-bold);
-  color: #2a1810;
-  text-align: center;
-}
-
-.player-name.empty-text {
-  color: rgba(42, 24, 16, 0.4);
-  font-style: italic;
-}
-
-.remove-player-btn {
-  position: relative;
-  z-index: 2;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.remove-player-btn img {
-  width: clamp(30px, 4vw, 40px);
-  height: auto;
-}
-
-.remove-player-btn:active {
-  opacity: 0.7;
-}
-
-/* Scroll Bar */
-.scroll-bar {
-  position: relative;
-  width: 30px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-md) 0;
-}
-
-.scroll-bg {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 100%;
-  width: auto;
-}
-
-.scroll-handle {
-  position: relative;
-  z-index: 2;
-  width: 20px;
-  height: auto;
-  margin-top: var(--spacing-lg);
-}
-
-/* Player Input (Mobile-Friendly) */
-.player-input-container {
-  width: 100%;
-  max-width: 400px;
-  padding: var(--spacing-lg);
-  background: rgba(255, 255, 255, 0.95);
+:deep(.players-list .game-scroll-list__row) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 239, 194, 0.95));
+  border: 2px solid var(--color-border-gold);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
 }
 
-.player-name-input {
+.player-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.player-row__label {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dark);
+  letter-spacing: 0.4px;
+}
+
+.player-row__input {
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 3px solid var(--color-border-gold);
+  background: rgba(255, 255, 255, 0.96);
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: #2a1810;
-  background: var(--color-white);
-  border: 3px solid var(--color-primary);
-  border-radius: var(--radius-md);
+  color: var(--color-text-dark);
   outline: none;
-  transition: all var(--transition-base);
-}
+  transition:
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
 
-.player-name-input:focus {
-  border-color: var(--color-primary-dark);
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
-}
-
-.input-buttons {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
-}
-
-.input-btn {
-  flex: 1;
-  max-width: 80px;
-  min-height: 56px;
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.confirm-btn {
-  background: var(--color-accent-green);
-  color: var(--color-white);
-}
-
-.cancel-btn {
-  background: var(--color-accent-red);
-  color: var(--color-white);
-}
-
-.input-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  gap: var(--spacing-xl);
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.action-btn {
-  position: relative;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.action-btn:active:not(.disabled) {
-  opacity: 0.8;
-}
-
-.action-btn.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Add Button */
-.add-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(80px, 12vw, 120px);
-  height: clamp(80px, 12vw, 120px);
-}
-
-.btn-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.btn-icon {
-  position: relative;
-  z-index: 2;
-  width: 60%;
-  height: auto;
-}
-
-/* Start Button */
-.start-btn img {
-  width: clamp(200px, 35vw, 300px);
-  height: auto;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
-}
-
-/* Animations - Optimized for mobile gaming */
-.animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, opacity;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -15px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
+  &:focus {
+    border-color: var(--color-text-yellow);
+    box-shadow: 0 0 0 4px rgba(255, 223, 128, 0.4);
   }
 }
 
-.animate-scale-in {
-  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s backwards;
-  will-change: transform, opacity;
+.start-button {
+  margin-top: var(--spacing-md);
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale3d(0.95, 0.95, 1);
-  }
-  to {
-    opacity: 1;
-    transform: scale3d(1, 1, 1);
-  }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
-  will-change: transform, opacity;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 25px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-in,
-  .animate-scale-in,
-  .animate-slide-up {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .container {
-    padding: var(--spacing-2xl) var(--spacing-xl);
+@media (max-width: 640px) {
+  .players-page {
+    padding: var(--spacing-2xl) var(--spacing-lg);
   }
 
-  .back-btn img {
-    width: clamp(40px, 5vw, 50px);
+  .stepper {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .title-image {
-    width: clamp(150px, 35vw, 300px);
-  }
-
-  .top-decoration {
-    width: clamp(100px, 18vw, 200px);
-  }
-
-  .players-list {
-    max-height: 350px;
-  }
-
-  .player-item {
-    min-height: 60px;
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-
-  .action-buttons {
-    width: calc(100% - 2rem);
-    max-width: 400px;
-    gap: var(--spacing-lg);
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-xl) var(--spacing-lg);
-    gap: var(--spacing-lg);
-  }
-
-  .title-image {
-    width: clamp(140px, 32vw, 200px);
-  }
-
-  .top-decoration {
-    display: none;
-  }
-
-  .player-item {
-    min-height: 55px;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    gap: var(--spacing-sm);
-  }
-
-  .player-name {
-    font-size: clamp(var(--font-size-base), 2vw, var(--font-size-lg));
-  }
-
-  .action-buttons {
-    width: calc(100% - 2rem);
-    max-width: 350px;
-    flex-direction: row;
-    gap: var(--spacing-md);
-    justify-content: center;
-  }
-
-  .add-btn {
-    width: clamp(70px, 15vw, 90px);
-    height: clamp(70px, 15vw, 90px);
-    flex-shrink: 0;
-  }
-
-  .start-btn {
-    flex: 1;
-    max-width: 220px;
-  }
-
-  .start-btn img {
+  .stepper__controls {
     width: 100%;
-    height: auto;
-    max-width: 220px;
+    justify-content: space-between;
   }
 }
 
-/* Pixel 7 specific (390px - 480px) */
-@media (min-width: 390px) and (max-width: 480px) {
-  .container {
-    padding: var(--spacing-2xl) var(--spacing-xl);
-    gap: var(--spacing-xl);
-  }
-
-  .title-image {
-    width: clamp(160px, 35vw, 220px);
-  }
-
-  .action-buttons {
-    width: calc(100% - 3rem);
-    max-width: 360px;
-    gap: var(--spacing-lg);
-  }
-
-  .add-btn {
-    width: clamp(75px, 16vw, 95px);
-    height: clamp(75px, 16vw, 95px);
-  }
-
-  .start-btn img {
-    max-width: 240px;
+@media (prefers-reduced-motion: reduce) {
+  .stepper__button,
+  .back-button {
+    transition: none;
   }
 }
 </style>

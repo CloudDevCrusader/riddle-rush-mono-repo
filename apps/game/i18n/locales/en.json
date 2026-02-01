@@ -96,6 +96,12 @@
   },
   "players": {
     "title": "Players",
+    "description": "Choose players and begin your game",
+    "count_label": "Players",
+    "increase": "Add player",
+    "decrease": "Remove player",
+    "placeholder": "Player {number}",
+    "start": "Start Game",
     "max_players": "Maximum {0} players allowed",
     "added": "{0} added!",
     "removed": "{0} removed",
