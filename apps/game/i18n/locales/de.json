@@ -96,6 +96,12 @@
   },
   "players": {
     "title": "Spieler",
+    "description": "Wähle die Spieler und starte das Spiel",
+    "count_label": "Spielerzahl",
+    "increase": "Spieler hinzufügen",
+    "decrease": "Spieler entfernen",
+    "placeholder": "Spieler {number}",
+    "start": "Spiel starten",
     "max_players": "Maximal {0} Spieler erlaubt",
     "added": "{0} hinzugefügt!",
     "removed": "{0} entfernt",
