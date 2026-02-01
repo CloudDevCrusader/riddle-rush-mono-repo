@@ -13,37 +13,25 @@
       <!-- Menu Buttons -->
       <div v-show="!showMenu" class="menu-buttons animate-slide-up">
         <!-- Play Button -->
+        <!-- NOTE: Hover images removed - they have mismatched dimensions (3x larger)
+             and hover effects don't work on mobile/touch devices anyway.
+             The *-1.png assets exist but are not used. -->
         <button
           class="menu-btn play-btn tap-highlight no-select"
           aria-label="Play Game"
           @click="handlePlay"
         >
           <img :src="`${baseUrl}assets/main-menu/PLAY.png`" alt="Play" class="btn-image" />
-          <img
-            :src="`${baseUrl}assets/main-menu/PLAY-1.png`"
-            alt="Play hover"
-            class="btn-image-hover"
-          />
         </button>
 
         <!-- Options Button -->
         <button class="menu-btn options-btn tap-highlight no-select" @click="toggleMenu">
           <img :src="`${baseUrl}assets/main-menu/OPTIONS.png`" alt="Options" class="btn-image" />
-          <img
-            :src="`${baseUrl}assets/main-menu/OPTION.png`"
-            alt="Options hover"
-            class="btn-image-hover"
-          />
         </button>
 
         <!-- Credits Button -->
         <button class="menu-btn credits-btn tap-highlight no-select" @click="wrappedGoToCredits">
           <img :src="`${baseUrl}assets/main-menu/CREDITS.png`" alt="Credits" class="btn-image" />
-          <img
-            :src="`${baseUrl}assets/main-menu/CREDITS-1.png`"
-            alt="Credits hover"
-            class="btn-image-hover"
-          />
         </button>
       </div>
 
@@ -185,25 +173,20 @@ useHead({
 }
 
 .menu-btn:active {
-  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+.menu-btn:active .btn-image {
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)) brightness(0.9);
 }
 
 .btn-image {
   width: 100%;
   height: auto;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
-  transition: opacity var(--transition-base);
-}
-
-.btn-image-hover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
-  opacity: 0;
-  transition: opacity var(--transition-base);
+  transition:
+    filter var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .menu-panel {
