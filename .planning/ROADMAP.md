@@ -136,11 +136,12 @@ Plans:
 4. No coins or profile avatar visible on main menu
 5. Buttons respond to touch/click with visual feedback
 6. Navigation from splash to menu works smoothly (300-400ms transition)
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- TBD
+- [ ] 06-01-PLAN.md — Create splash.vue page with animated loading and auto-navigation
+- [ ] 06-02-PLAN.md — Refactor index.vue main menu to use GameButton components
 
 ### Phase 7: Player Setup
 
@@ -256,7 +257,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Core Layout Components | 2/2            | Complete    | 2026-02-01 |
 | 4. Interactive Components | 2/2            | Complete    | 2026-02-01 |
 | 5. Structural Components  | 3/3            | Complete    | 2026-02-01 |
-| 6. Splash & Navigation    | 0/TBD          | Not started | -          |
+| 6. Splash & Navigation    | 0/2            | Not started | -          |
 | 7. Player Setup           | 0/TBD          | Not started | -          |
 | 8. Core Gameplay          | 0/TBD          | Not started | -          |
 | 9. Game Results           | 0/TBD          | Not started | -          |
