@@ -10,6 +10,7 @@
       "name": "game",
       "path": "apps/game",
       "type": "app",
+
       "commands": {
         "dev": "pnpm --filter game dev",
         "build": "pnpm --filter game build",

@@ -27,6 +27,11 @@
       "args": ["mcp-server-aws-docs"],
       "description": "AWS documentation search and reference (S3, CloudFront, etc.)"
     },
+    "mcp-server-aws-docs": {
+      "command": "npx",
+      "args": ["-y", "mcp-server-aws-docs"],
+      "description": "OpenAI API for AI-powered responses"
+    },
     "docker": {
       "command": "npx",
       "args": ["-y", "@docker/mcp-server-docker"],

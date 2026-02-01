@@ -57,7 +57,8 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/home/cloudcrusader/projects/riddle-rush-mono-repo"
+        "/home/cloudcrusader/projects/riddle-rush-mono-repo",
+        "/home/cloudcrusader/"
       ]
     }
   }

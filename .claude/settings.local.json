@@ -78,7 +78,14 @@
       "Bash(pkill:*)",
       "Bash(identify -format:*)",
       "Bash(git -C /home/cloudcrusader/projects/riddle-rush-mono-repo status --short)",
-      "Bash(git -C /home/cloudcrusader/projects/riddle-rush-mono-repo status --porcelain)"
+      "Bash(git -C /home/cloudcrusader/projects/riddle-rush-mono-repo status --porcelain)",
+      "Skill(gsd:plan-phase)",
+      "Skill(gsd:discuss-phase)",
+      "Bash(pgrep:*)",
+      "Bash(# Check recently modified user files \\(excluding .nuxt and node_modules\\) find . \\\\\\( -name \"\"*.vue\"\" -o -name \"\"*.ts\"\" \\\\\\) ! -path \"\"./.nuxt/*\"\" ! -path \"\"./node_modules/*\"\" -exec ls -lt {} +)",
+      "WebFetch(domain:vueuse.org)",
+      "WebFetch(domain:www.w3.org)",
+      "Bash(file:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
