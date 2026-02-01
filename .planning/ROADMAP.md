@@ -22,7 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Player Setup** - Player configuration interface
 - [x] **Phase 8: Core Gameplay** - Main game screen (critical path)
 - [x] **Phase 9: Game Results** - Scoring and leaderboard pages
-- [ ] **Phase 10: Settings Pages** - Options and language selection
+- [x] **Phase 10: Settings Pages** - Options and language selection
 - [ ] **Phase 11: Modal Dialogs** - Quit and pause overlays
 
 ## Phase Details
@@ -224,8 +224,8 @@ Plans:
 
 Plans:
 
-- [ ] 10-01-PLAN.md — Create GameSlider component and refactor settings page
-- [ ] 10-02-PLAN.md — Refactor language page with emoji flags and selection checkmark
+- [x] 10-01-PLAN.md — Create GameSlider component and refactor settings page
+- [x] 10-02-PLAN.md — Refactor language page with emoji flags and selection checkmark
 
 ### Phase 11: Modal Dialogs
 
@@ -266,5 +266,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Player Setup           | 2/2            | Complete    | 2026-02-01 |
 | 8. Core Gameplay          | 2/2            | Complete    | 2026-02-01 |
 | 9. Game Results           | 2/2            | Complete    | 2026-02-01 |
-| 10. Settings Pages        | 0/2            | Not started | -          |
+| 10. Settings Pages        | 2/2            | Complete    | 2026-02-01 |
 | 11. Modal Dialogs         | 0/3            | Not started | -          |
