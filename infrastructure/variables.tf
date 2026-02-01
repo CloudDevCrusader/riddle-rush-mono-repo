@@ -39,18 +39,6 @@ variable "certificate_arn" {
   default     = ""
 }
 
-variable "enable_versioning" {
-  description = "Enable S3 bucket versioning"
-  type        = bool
-  default     = true
-}
-
-variable "enable_lifecycle" {
-  description = "Enable S3 bucket lifecycle policies"
-  type        = bool
-  default     = true
-}
-
 variable "cloudfront_price_class" {
   description = "CloudFront price class (PriceClass_100, PriceClass_200, PriceClass_All)"
   type        = string

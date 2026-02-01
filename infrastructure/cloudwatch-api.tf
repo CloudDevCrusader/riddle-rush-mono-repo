@@ -43,7 +43,7 @@ resource "aws_lambda_function" "error_logs_handler" {
   function_name = "${var.project_name}-error-logs-handler"
   role          = aws_iam_role.error_logs_lambda.arn
   handler       = "index.handler"
-  runtime       = "nodejs18.x"
+  runtime       = "nodejs24.x"
   memory_size   = 256
   timeout       = 30
 

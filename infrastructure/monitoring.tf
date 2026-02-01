@@ -189,7 +189,7 @@ resource "aws_lambda_function" "cache_control" {
   function_name = "${var.project_name}-cache-control"
   role          = aws_iam_role.lambda_edge.arn
   handler       = "index.handler"
-  runtime       = "nodejs18.x"
+  runtime       = "nodejs24.x"
   publish       = true
 
   environment {
