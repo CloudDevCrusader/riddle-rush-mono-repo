@@ -115,11 +115,13 @@ Plans:
 3. Modal backdrop prevents interaction with underlying content
 4. GameScrollList displays player/leaderboard cards with consistent styling
 5. ScrollList handles 1-6 players without layout breaking
-   **Plans**: TBD
+   **Plans**: 3 plans
 
 Plans:
 
-- TBD
+- [ ] 05-01-PLAN.md - Create GameHeader and GameScrollList components
+- [ ] 05-02-PLAN.md - Create GameModal with focus trap
+- [ ] 05-03-PLAN.md - Verify structural components (visual + interaction)
 
 ### Phase 6: Splash & Navigation
 
@@ -253,7 +255,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. Design Utilities       | 2/2            | Complete    | 2026-01-31 |
 | 3. Core Layout Components | 2/2            | Complete    | 2026-02-01 |
 | 4. Interactive Components | 2/2            | Complete    | 2026-02-01 |
-| 5. Structural Components  | 0/TBD          | Not started | -          |
+| 5. Structural Components  | 0/3            | Not started | -          |
 | 6. Splash & Navigation    | 0/TBD          | Not started | -          |
 | 7. Player Setup           | 0/TBD          | Not started | -          |
 | 8. Core Gameplay          | 0/TBD          | Not started | -          |
