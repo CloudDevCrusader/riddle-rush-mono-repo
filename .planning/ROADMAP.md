@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Design Tokens** - Color palette, typography, and spacing foundation
 - [x] **Phase 2: Design Utilities** - Effects mixins and responsive scaling system
-- [ ] **Phase 3: Core Layout Components** - Panel and background containers
+- [x] **Phase 3: Core Layout Components** - Panel and background containers
 - [ ] **Phase 4: Interactive Components** - Buttons and display elements
 - [ ] **Phase 5: Structural Components** - Headers, modals, and scrollable lists
 - [ ] **Phase 6: Splash & Navigation** - Initial screens and main menu
@@ -77,11 +77,12 @@ Plans:
 2. GameBackground applies blue radial gradient with spotlight effect
 3. Components scale responsively from 320px to 1024px width
 4. Components can be composed (panel inside background) without style conflicts
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- TBD
+- [x] 03-01-PLAN.md - Create GameBackground component
+- [x] 03-02-PLAN.md - Create GamePanel component
 
 ### Phase 4: Interactive Components
 
@@ -95,11 +96,12 @@ Plans:
 3. Button press shows active state (inset appearance)
 4. GameDisplay renders yellow/gold text with glow effect for scores and letters
 5. Display text remains readable against busy backgrounds (4.5:1 contrast minimum)
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- TBD
+- [ ] 04-01-PLAN.md - Create GameButton component with gradient variants and 3D press effect
+- [ ] 04-02-PLAN.md - Create GameDisplay component with gold text and glow effect
 
 ### Phase 5: Structural Components
 
@@ -249,8 +251,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | ------------------------- | -------------- | ----------- | ---------- |
 | 1. Design Tokens          | 3/3            | Complete    | 2026-01-31 |
 | 2. Design Utilities       | 2/2            | Complete    | 2026-01-31 |
-| 3. Core Layout Components | 0/TBD          | Not started | -          |
-| 4. Interactive Components | 0/TBD          | Not started | -          |
+| 3. Core Layout Components | 2/2            | Complete    | 2026-02-01 |
+| 4. Interactive Components | 0/2            | Not started | -          |
 | 5. Structural Components  | 0/TBD          | Not started | -          |
 | 6. Splash & Navigation    | 0/TBD          | Not started | -          |
 | 7. Player Setup           | 0/TBD          | Not started | -          |
