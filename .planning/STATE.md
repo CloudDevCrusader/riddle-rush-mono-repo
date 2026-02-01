@@ -5,24 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Phase 7 - Player Setup
+**Current focus:** Phase 8 - Core Gameplay (then business logic, then deployment)
 
 ## Current Position
 
-Phase: 7 of 11 (Player Setup)
+Phase: 8 of 11 (Core Gameplay)
 Plan: 1 of 2 in current phase
 Status: In progress
-Last activity: 2026-02-01 — Completed 07-01-PLAN.md
+Last activity: 2026-02-01 — Completed 08-01-PLAN.md (game page styling)
 
-Progress: [█████████░] 94% (Overall: 15/16 plans complete)
+Progress: [██████████░] 94% (17/18 plans complete)
+
+## Priority Shift
+
+User requested focus on: **Code → Business Logic → Deployment**
+Remaining visual phases (8-11) deprioritized.
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 15
+- Total plans completed: 17
 - Average duration: 3 min
-- Total execution time: 0.75 hours
+- Total execution time: ~0.85 hours
 
 **By Phase:**
 
@@ -33,11 +38,14 @@ Progress: [█████████░] 94% (Overall: 15/16 plans complete)
 | 03-core-layout-components | 2/2   | 10min | 5min     |
 | 04-interactive-components | 2/2   | 5min  | 2.5min   |
 | 05-structural-components  | 3/3   | 20min | 7min     |
+| 06-splash-navigation      | 2/2   | 6min  | 3min     |
+| 07-player-setup           | 2/2   | 6min  | 3min     |
+| 08-core-gameplay          | 1/2   | 3min  | 3min     |
 
 **Recent Trend:**
 
-- Last 5 plans: 6min, 5min, 2min, 3min, 3min
-- Trend: Slightly slower (recent plans averaging ~3.8 min)
+- Last 5 plans: 3min, 3min, 3min, 3min, 3min
+- Trend: Consistent ~3 min per plan
 
 _Updated after each plan completion_
 
@@ -48,7 +56,7 @@ _Updated after each plan completion_
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- No coins anywhere (not part of game mechanics, designer included speculatively)
+- No coins anywhere (not part of game mechanics, designer included speculatively) — REMOVED: focus on game, placeholder acceptable
 - Keep text input on game page (required for multiplayer answer submission)
 - No pause button top-right (simplify game header)
 - CSS-first approach (mockup style achievable with CSS, avoid heavy images)
@@ -70,6 +78,8 @@ Recent decisions affecting current work:
 - 3D text depth using 5-layer text-shadow with color-mix() (05-01)
 - Inline SVG crowns for rank indicators to avoid external image dependencies (05-01)
 - Dual scrollbar styling approach (webkit + Firefox) for broad compatibility (05-01)
+- Two-part panel design using ::before/::after pseudo-elements (08-01)
+- Text-stroke with paint-order for outlined text matching mockup (08-01)
 
 ### Pending Todos
 
@@ -87,58 +97,12 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Session resumed; presenting status for 07-02 verification (players page)
+Stopped at: Completed 08-01-PLAN.md (game page styling)
 Resume file: None
 
-### Phase 1 Plans Status
+### Phase 8 Plans Status
 
-- **01-01**: ✅ Complete - UnoCSS installed and configured
-- **01-02**: ✅ Complete - Enhanced design-system.scss tokens
-- **01-03**: ✅ Complete - Wire UnoCSS to tokens + verify
+- **08-01**: ✅ Complete - Game page styling aligned with mockup
+- **08-02**: ⏳ Pending
 
-**Phase 1 (Design Tokens): COMPLETE**
-
-All design tokens ready for component development.
-
-### Phase 2 Plans Status
-
-- **02-01**: ✅ Complete - Responsive scaling utilities + shadow/glow mixins
-- **02-02**: ✅ Complete - Glossy button and embossed panel mixins
-
-**Phase 2 (Design Utilities): COMPLETE**
-
-### Phase 3 Plans Status
-
-- **03-01**: ✅ Complete - Create GameBackground component
-- **03-02**: ✅ Complete - Create GamePanel component
-
-**Phase 3 (Core Layout Components): COMPLETE**
-
-### Phase 4 Plans Status
-
-- **04-01**: ✅ Complete - Create GameButton component with variants and 3D press effect
-- **04-02**: ✅ Complete - Create GameDisplay component with gold text and glow effects
-
-**Phase 4 (Interactive Components): COMPLETE**
-
-### Phase 5 Plans Status
-
-- **05-01**: ✅ Complete - Create GameHeader and GameScrollList components
-- **05-02**: ✅ Complete - Create GameModal with focus trap
-- **05-03**: ✅ Complete - Verify structural components (visual + interaction)
-
-**Phase 5 (Structural Components): COMPLETE**
-
-### Phase 6 Plans Status
-
-- **06-01**: ✅ Complete - Create splash.vue page with animated loading and auto-navigation
-- **06-02**: ✅ Complete - Refactor index.vue main menu to use GameButton components
-
-**Phase 6 (Splash & Navigation): COMPLETE**
-
-### Phase 7 Plans Status
-
-- **07-01**: ✅ Complete - Rebuild players page layout, stepper, and inputs
-- **07-02**: ⬜ Not started - Verify players page against mockup requirements
-
-**Phase 7 (Player Setup): IN PROGRESS**
+**Phase 8 (Core Gameplay): IN PROGRESS**
