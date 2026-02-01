@@ -12,9 +12,9 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 5 of 11 (Structural Components)
 Plan: 1 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-01 — Completed 05-02-PLAN.md (GameModal component)
+Last activity: 2026-02-01 — Completed 05-01-PLAN.md (GameHeader and GameScrollList components)
 
-Progress: [████░-----] 39% (Overall: 10/11 phases with plans complete)
+Progress: [████░-----] 39% (Overall: 5/11 phases complete)
 
 ## Performance Metrics
 
@@ -36,8 +36,8 @@ Progress: [████░-----] 39% (Overall: 10/11 phases with plans complete)
 
 **Recent Trend:**
 
-- Last 5 plans: 10min, 5min, 2min, 3min, 3min
-- Trend: Stable (recent plans averaging ~5 min)
+- Last 5 plans: 5min, 2min, 3min, 3min, 3min
+- Trend: Stable (recent plans averaging ~3 min)
 
 _Updated after each plan completion_
 
@@ -67,8 +67,9 @@ Recent decisions affecting current work:
 - White text default for game buttons due to dark gradient backgrounds (04-01)
 - No GPU acceleration hints for static text to avoid mobile memory issues (04-02)
 - Dynamic tag prop pattern for semantic HTML flexibility (04-02)
-- Focus trap library for WCAG keyboard navigation compliance in modals (05-02)
-- Manual Escape key and backdrop handling in modals (05-02)
+- 3D text depth using 5-layer text-shadow with color-mix() (05-01)
+- Inline SVG crowns for rank indicators to avoid external image dependencies (05-01)
+- Dual scrollbar styling approach (webkit + Firefox) for broad compatibility (05-01)
 
 ### Pending Todos
 
@@ -80,19 +81,19 @@ Recent decisions affecting current work:
 
 **Phase 5 in progress:**
 
-- ✅ `GameModal` component created with focus trap and two variants (blue/red)
+- ✅ `GameHeader` component created with 3D text effects and 5 color variants
+- ✅ `GameScrollList` component created with rank display (crowns/badges)
 - Next up: Additional structural components (GameInput, decorative elements, etc.)
 
 **General concerns:**
 
-- Backdrop-filter performance needs testing on mid-range phones (used in GameModal)
 - Safari gradient rendering may differ from Chrome (verify early)
-- Focus trap behavior with screen readers should be tested
+- Custom scrollbar styling may not work on all mobile browsers (graceful degradation)
 
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 05-02-PLAN.md (GameModal component)
+Stopped at: Completed 05-01-PLAN.md (GameHeader and GameScrollList components)
 Resume file: None
 
 ### Phase 1 Plans Status
@@ -128,6 +129,6 @@ All design tokens ready for component development.
 
 ### Phase 5 Plans Status
 
-- **05-02**: ✅ Complete - Create GameModal component with focus trap and variants
+- **05-01**: ✅ Complete - Create GameHeader and GameScrollList components
 
 **Phase 5 (Structural Components): IN PROGRESS**
