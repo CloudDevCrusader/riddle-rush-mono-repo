@@ -319,7 +319,7 @@ export default defineNuxtConfig({
   },
 
   i18n: {
-    langDir: 'locales',
+    langDir: 'i18n/locales',
     defaultLocale: 'de',
     locales: [
       { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
