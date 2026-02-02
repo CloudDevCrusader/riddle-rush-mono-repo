@@ -21,7 +21,7 @@
 
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <span class="round-text"> $i18n.t('game.round') {{ formattedRound }} </span>
+        <span class="round-text">{{ $t('game.round') }} {{ formattedRound }}</span>
       </div>
 
       <!-- Pause Button -->
