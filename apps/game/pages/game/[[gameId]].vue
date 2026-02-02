@@ -21,7 +21,7 @@
 
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <span class="round-text">{{ $t('game.round') }} {{ formattedRound }}</span>
+        <span class="round-text">{{ t('game.round') }} {{ formattedRound }}</span>
       </div>
 
       <!-- Pause Button -->
@@ -75,7 +75,7 @@
         class="answer-input-section"
       >
         <div class="player-turn-indicator">
-          <span class="turn-label">{{ $t('game.current_turn', 'Current Turn') }}:</span>
+          <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name">{{ currentPlayerTurn.name }}</span>
         </div>
         <form class="answer-form" @submit.prevent="submitAnswer">
@@ -83,7 +83,7 @@
             v-model="playerAnswer"
             type="text"
             class="answer-input"
-            :placeholder="$t('game.your_answer', 'Your answer...')"
+            :placeholder="t('game.your_answer', 'Your answer...')"
             autocomplete="off"
             autocapitalize="words"
             maxlength="50"
@@ -91,14 +91,14 @@
             @keyup.enter="submitAnswer"
           />
           <button type="submit" class="submit-answer-btn" :disabled="false">
-            {{ $t('game.submit', 'Submit') }}
+            {{ t('game.submit', 'Submit') }}
           </button>
         </form>
       </div>
 
       <!-- All Players Submitted Message -->
       <div v-if="allPlayersSubmitted" class="all-submitted-message">
-        <p>{{ $t('game.all_submitted', 'All players have submitted!') }}</p>
+        <p>{{ t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
 

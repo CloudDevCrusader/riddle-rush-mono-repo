@@ -7,7 +7,7 @@
       </button>
 
       <!-- Header -->
-      <GameHeader color="gold">{{ $t('language.title', 'LANGUAGE') }}</GameHeader>
+      <GameHeader color="gold">{{ t('language.title', 'LANGUAGE') }}</GameHeader>
 
       <!-- Language selection panel -->
       <GamePanel class="language-panel">
@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 const { goBack, router } = usePageSetup()
-const { locale, setLocale } = useI18n()
+const { locale, setLocale, t } = useI18n()
 const { settingsStore } = useGameState()
 const route = useRoute()
 
