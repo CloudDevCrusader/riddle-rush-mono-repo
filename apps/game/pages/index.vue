@@ -11,16 +11,16 @@
         <!-- Menu Buttons -->
         <div v-show="!showMenu" class="menu-buttons">
           <GameButton variant="primary" size="lg" full-width @click="handlePlay">
-            {{ $t('menu.play', 'PLAY') }}
+            {{ t('menu.play', 'PLAY') }}
           </GameButton>
           <GameButton variant="secondary" size="lg" full-width @click="toggleMenu">
-            {{ $t('menu.menu', 'MENU') }}
+            {{ t('menu.menu', 'MENU') }}
           </GameButton>
           <GameButton variant="warning" size="lg" full-width @click="wrappedGoToSettings">
-            {{ $t('menu.options', 'OPTIONS') }}
+            {{ t('menu.options', 'OPTIONS') }}
           </GameButton>
           <GameButton variant="secondary" size="lg" full-width @click="wrappedGoToCredits">
-            {{ $t('menu.credits', 'CREDITS') }}
+            {{ t('menu.credits', 'CREDITS') }}
           </GameButton>
         </div>
 
@@ -28,10 +28,10 @@
         <transition name="menu-fade">
           <div v-if="showMenu" class="menu-panel">
             <GameButton variant="secondary" size="md" full-width @click="wrappedGoToLanguage">
-              🌐 {{ $t('menu.language', 'Language') }}
+              🌐 {{ t('menu.language', 'Language') }}
             </GameButton>
             <GameButton variant="secondary" size="md" full-width @click="wrappedGoToSettings">
-              ⚙️ {{ $t('menu.settings', 'Settings') }}
+              ⚙️ {{ t('menu.settings', 'Settings') }}
             </GameButton>
           </div>
         </transition>
