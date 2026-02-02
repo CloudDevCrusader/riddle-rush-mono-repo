@@ -131,7 +131,9 @@
     "close": "Close",
     "play": "Play",
     "language": "Language",
-    "credits": "Credits"
+    "credits": "Credits",
+    "menu": "MENU",
+    "options": "OPTIONS"
   },
   "pause": {
     "title": "Game Paused",
@@ -184,6 +186,7 @@
     "category": "Category",
     "time": "Time",
     "game_complete": "Game Complete!",
+    "ranking": "Ranking",
     "current_standings": "Current Standings",
     "winner_title": "Final Standings",
     "no_players": "No players yet",
@@ -191,8 +194,16 @@
     "image_too_large": "Image must be smaller than 2MB",
     "avatar_updated": "Avatar updated successfully!",
     "avatar_error": "Failed to update avatar. Please try again.",
+    "finish": "OK",
+    "finish_error": "Failed to finish game. Please try again.",
     "finish_game": "Finish Game",
     "next_round": "Play Next Round"
+  },
+  "scoring": {
+    "title": "Scoring",
+    "player": "Player",
+    "next_round": "Next Round",
+    "description": "View round scoring results"
   },
   "settings": {
     "title": "Settings",

@@ -42,6 +42,9 @@
             <span class="credit-name">Sarmad Ali</span>
           </div>
         </div>
+
+        <!-- Version -->
+        <div class="version-info">v{{ appVersion }}</div>
       </div>
 
       <!-- OK Button -->
@@ -54,6 +57,8 @@
 
 <script setup lang="ts">
 const { baseUrl, goBack } = usePageSetup()
+const runtimeConfig = useRuntimeConfig()
+const appVersion = runtimeConfig.public.appVersion
 
 useHead({
   title: 'Riddle Rush - Credits',
@@ -195,6 +200,16 @@ useHead({
   width: 2px;
   height: 24px;
   background: rgba(255, 255, 255, 0.3);
+}
+
+/* Version Info */
+.version-info {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: var(--spacing-lg);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* OK Button */

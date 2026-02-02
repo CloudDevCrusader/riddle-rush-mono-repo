@@ -35,7 +35,6 @@ Every screen in the app must visually match its corresponding mockup at 1080×19
 
 ### Out of Scope
 
-- Coin system — deliberately excluded from design, not part of the game mechanics
 - Profile avatar / user accounts — not part of current game flow
 - New game features — this is a visual alignment project only
 - Back-end / API changes — frontend-only work
@@ -62,7 +61,6 @@ Every screen in the app must visually match its corresponding mockup at 1080×19
 
 | Decision                     | Rationale                                                                          | Outcome    |
 | ---------------------------- | ---------------------------------------------------------------------------------- | ---------- |
-| No coins anywhere            | Not part of game mechanics, designer included speculatively                        | -- Pending |
 | Keep text input on game page | Required for multiplayer answer submission                                         | -- Pending |
 | No pause button top-right    | Simplify game header; pause via ESC key or back button                             | -- Pending |
 | CSS-first approach           | Mockup style (gradients, borders, shadows) achievable with CSS, avoid heavy images | -- Pending |
