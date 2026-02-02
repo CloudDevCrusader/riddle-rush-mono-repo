@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'warning'
+  variant?: 'primary' | 'secondary' | 'warning' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
@@ -139,6 +139,15 @@ const handleClick = (event: MouseEvent) => {
     var(--color-btn-orange-shadow)
   );
   --shadow-color: var(--color-btn-orange-shadow);
+}
+
+.game-button--danger {
+  @include glossy-button(
+    var(--color-btn-red-light),
+    var(--color-btn-red-dark),
+    var(--color-btn-red-shadow)
+  );
+  --shadow-color: var(--color-btn-red-shadow);
 }
 
 // Disabled state
