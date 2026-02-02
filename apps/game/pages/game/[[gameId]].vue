@@ -21,7 +21,7 @@
 
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <span class="round-text"> ROUND {{ formattedRound }} </span>
+        <span class="round-text"> $i18n.t('game.round') {{ formattedRound }} </span>
       </div>
 
       <!-- Pause Button -->
@@ -104,17 +104,15 @@
 
     <!-- Pause Modal (Lazy Loaded) -->
     <LazyPauseModal
-      v-if="showPauseModal"
-      :visible="showPauseModal"
-      @resume="showPauseModal = false"
+      v-model="showPauseModal"
+      @resume="handleResume"
       @restart="handleRestart"
-      @home="showPauseModal = false"
+      @home="handleHome"
     />
 
     <!-- Quit Modal (Lazy Loaded) -->
     <LazyQuitModal
-      v-if="showQuitModal"
-      :visible="showQuitModal"
+      v-model="showQuitModal"
       @confirm="handleQuitConfirmed"
       @cancel="showQuitModal = false"
     />
@@ -241,11 +239,21 @@ const handleNext = async () => {
   }
 }
 
+const handleResume = () => {
+  // Modal already sets showPauseModal to false via v-model
+  // No additional logic needed - game continues
+}
+
 const handleRestart = () => {
-  showPauseModal.value = false
+  // Modal already handles abandonGame and sets showPauseModal to false
   // Navigate to players page to start new game
   const { goToPlayers } = useNavigation()
   goToPlayers()
+}
+
+const handleHome = () => {
+  // Modal already handles abandonGame, navigation, and sets showPauseModal to false
+  // No additional logic needed
 }
 
 // Handle ESC key to pause
