@@ -43,11 +43,15 @@ interface Props {
   modelValue: boolean
   variant?: 'default' | 'danger'
   title?: string
+  closeOnBackdrop?: boolean
+  closeOnEscape?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
   title: undefined,
+  closeOnBackdrop: true,
+  closeOnEscape: true,
 })
 
 const emit = defineEmits<{
@@ -65,12 +69,14 @@ const close = () => {
 }
 
 const handleBackdropClick = () => {
-  close()
+  if (props.closeOnBackdrop) {
+    close()
+  }
 }
 
 // Handle Escape key
 const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && props.modelValue) {
+  if (event.key === 'Escape' && props.modelValue && props.closeOnEscape) {
     close()
   }
 }
