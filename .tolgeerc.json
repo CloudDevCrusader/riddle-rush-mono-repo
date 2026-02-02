@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.tolgee.io/cli-schema.json",
+  "projectId": 27759,
+  "format": "JSON_TOLGEE",
+  "patterns": ["./apps/game/**/*.ts|vue?(x)"],
+  "push": {
+    "filesTemplate": "./apps/game/i18n/locales/{languageTag}.json",
+    "language": ["de", "en"]
+  },
+  "pull": {
+    "path": "./apps/game/i18n/locales"
+  }
+}

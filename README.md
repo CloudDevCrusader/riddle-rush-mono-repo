@@ -87,10 +87,10 @@ pnpm run agent:fix        # Auto-fix all issues
 
 ## 🏗️ Project Structure
 
-```
+````
 riddle-rush-nuxt-pwa/
 ├── apps/
-│   ├── game/              # Main Nuxt 4 PWA application
+│   ├──     game/              # Main Nuxt 4 PWA application
 │   └── docs/              # Documentation site
 ├── packages/
 │   ├── shared/            # Shared utilities and constants
@@ -100,14 +100,7 @@ riddle-rush-nuxt-pwa/
 ├── docs/                  # Documentation files
 │   ├── setup/            # Setup and configuration guides
 │   ├── deployment/       # Deployment documentation
-│   └── archive/          # Historical documents
-└── scripts/              # Build and deployment scripts
-```
-
-## 🧪 Testing
-
-- **367 Unit Tests** (Vitest) - 92.6% pass rate
-- **12 E2E Tests** (Playwright) - Full coverage of critical flows
+│   - **12 E2E Tests** (Playwright) - Full coverage of critical flows
 - Run tests: `pnpm run test:unit`
 - Coverage: `pnpm run test:unit:coverage`
 
@@ -125,7 +118,7 @@ riddle-rush-nuxt-pwa/
 git commit -m "feat: add new feature"
 git commit -m "fix: resolve bug"
 git commit -m "docs: update guide"
-```
+````
 
 ## 🔧 Tech Stack
 

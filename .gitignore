@@ -118,6 +118,8 @@ htmlcov/
 .nox/
 **/.nox/
 .hypothesis/
+.tools/claudia
+tools/claudia/
 **/.hypothesis/
 *.cover
 .host/

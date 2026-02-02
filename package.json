@@ -54,7 +54,6 @@
     "infra:prod:plan": "cd infrastructure/environments/production && terraform plan",
     "infra:setup": "cd infrastructure && ./scripts/setup-tfenv.sh",
     "lint": "turbo run lint",
-    "lint:fix": "turbo run lint:fix",
     "playwright:docker": "./scripts/playwright-docker.sh",
     "prepare": "husky",
     "syncpack:check": "syncpack list-mismatches",

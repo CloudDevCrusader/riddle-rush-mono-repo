@@ -85,12 +85,17 @@
       "Bash(# Check recently modified user files \\(excluding .nuxt and node_modules\\) find . \\\\\\( -name \"\"*.vue\"\" -o -name \"\"*.ts\"\" \\\\\\) ! -path \"\"./.nuxt/*\"\" ! -path \"\"./node_modules/*\"\" -exec ls -lt {} +)",
       "WebFetch(domain:vueuse.org)",
       "WebFetch(domain:www.w3.org)",
-      "Bash(file:*)"
+      "Bash(file:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(pnpm --filter @riddle-rush/game run typecheck:*)",
+      "Bash(wc:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
-    "voltagent-qa-sec@voltagent-subagents": true
+    "voltagent-qa-sec@voltagent-subagents": true,
+    "playwright-tools@claude-settings": true,
+    "voltagent-lang@voltagent-subagents": true
   },
   "outputStyle": "Explanatory"
 }

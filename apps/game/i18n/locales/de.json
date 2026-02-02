@@ -131,7 +131,9 @@
     "close": "Schließen",
     "play": "Spielen",
     "language": "Sprache",
-    "credits": "Credits"
+    "credits": "Credits",
+    "menu": "MENÜ",
+    "options": "OPTIONEN"
   },
   "pause": {
     "title": "Spiel pausiert",
@@ -184,6 +186,7 @@
     "category": "Kategorie",
     "time": "Zeit",
     "game_complete": "Spiel beendet!",
+    "ranking": "Rangliste",
     "current_standings": "Aktuelle Platzierung",
     "winner_title": "Endstand",
     "no_players": "Noch keine Spieler",
@@ -191,8 +194,16 @@
     "image_too_large": "Bild muss kleiner als 2MB sein",
     "avatar_updated": "Avatar erfolgreich aktualisiert!",
     "avatar_error": "Fehler beim Aktualisieren des Avatars. Bitte versuche es erneut.",
+    "finish": "OK",
+    "finish_error": "Spiel konnte nicht beendet werden. Bitte versuche es erneut.",
     "finish_game": "Spiel beenden",
     "next_round": "Nächste Runde spielen"
+  },
+  "scoring": {
+    "title": "Auswertung",
+    "player": "Spieler",
+    "next_round": "Nächste Runde",
+    "description": "Ergebnisse der Runde anzeigen"
   },
   "settings": {
     "title": "Einstellungen",
