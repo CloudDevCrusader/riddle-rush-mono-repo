@@ -2,12 +2,12 @@
   <GameBackground>
     <div class="language-page">
       <!-- Back button -->
-      <button class="back-btn" aria-label="Go back" @click="goBack">
+      <button class="back-btn" :aria-label="t('common.back')" @click="goBack">
         <span class="back-icon">&#x2190;</span>
       </button>
 
       <!-- Header -->
-      <GameHeader color="gold">{{ t('language.title', 'LANGUAGE') }}</GameHeader>
+      <GameHeader color="gold">{{ t('language.title') }}</GameHeader>
 
       <!-- Language selection panel -->
       <GamePanel class="language-panel">
@@ -21,7 +21,7 @@
             <div class="flag-container">
               <span class="flag-emoji">&#x1F1EC;&#x1F1E7;</span>
             </div>
-            <span class="language-name">ENGLISH</span>
+            <span class="language-name">{{ t('language.english') }}</span>
             <div class="checkbox" :class="{ checked: selectedLocale === 'en' }">
               <Transition name="checkmark">
                 <span v-if="selectedLocale === 'en'" class="checkmark">&#x2713;</span>
@@ -38,7 +38,7 @@
             <div class="flag-container">
               <span class="flag-emoji">&#x1F1E9;&#x1F1EA;</span>
             </div>
-            <span class="language-name">DEUTSCH</span>
+            <span class="language-name">{{ t('language.german') }}</span>
             <div class="checkbox" :class="{ checked: selectedLocale === 'de' }">
               <Transition name="checkmark">
                 <span v-if="selectedLocale === 'de'" class="checkmark">&#x2713;</span>
@@ -49,7 +49,9 @@
       </GamePanel>
 
       <!-- OK Button -->
-      <GameButton variant="primary" size="lg" @click="confirmSelection"> OK </GameButton>
+      <GameButton variant="primary" size="lg" @click="confirmSelection">
+        {{ t('common.ok') }}
+      </GameButton>
     </div>
   </GameBackground>
 </template>

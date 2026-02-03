@@ -135,7 +135,9 @@
     "starting_game": "Spiel wird gestartet..."
   },
   "language": {
-    "title": "SPRACHE"
+    "title": "SPRACHE",
+    "english": "ENGLISCH",
+    "german": "DEUTSCH"
   },
   "leaderboard": {
     "avatar_error": "Fehler beim Aktualisieren des Avatars. Bitte versuche es erneut.",
@@ -149,17 +151,22 @@
     "image_too_large": "Bild muss kleiner als 2MB sein",
     "invalid_image": "Bitte wähle eine gültige Bilddatei",
     "next_round": "Nächste Runde spielen",
+    "ranking": "Platzierung",
     "no_players": "Noch keine Spieler",
     "score": "Punkte",
     "time": "Zeit",
     "title": "Bestenliste",
-    "winner_title": "Endstand"
+    "winner_title": "Endstand",
+    "finish": "OK",
+    "finish_error": "Spiel konnte nicht beendet werden. Bitte versuche es erneut."
   },
   "menu": {
     "close": "Schließen",
     "credits": "Credits",
     "end_game": "Spiel Beenden",
     "home": "Zur Startseite",
+    "menu": "Menü",
+    "options": "Optionen",
     "language": "Sprache",
     "play": "Spielen",
     "settings": "Einstellungen",
@@ -211,6 +218,12 @@
     "restart": "Neu starten",
     "scores_saved": "Punktestände erfolgreich gespeichert!",
     "your_score": "Dein Score"
+  },
+  "scoring": {
+    "title": "Punktewertung",
+    "player": "Spieler",
+    "next_round": "Nächste Runde",
+    "description": "Rundenpunkte ansehen"
   },
   "settings": {
     "debug": "Debug-Modus",

@@ -135,7 +135,9 @@
     "starting_game": "Starting game..."
   },
   "language": {
-    "title": "LANGUAGE"
+    "title": "LANGUAGE",
+    "english": "ENGLISH",
+    "german": "DEUTSCH"
   },
   "leaderboard": {
     "avatar_error": "Failed to update avatar. Please try again.",
@@ -149,17 +151,22 @@
     "image_too_large": "Image must be smaller than 2MB",
     "invalid_image": "Please select a valid image file",
     "next_round": "Play Next Round",
+    "ranking": "Ranking",
     "no_players": "No players yet",
     "score": "Score",
     "time": "Time",
     "title": "Leaderboard",
-    "winner_title": "Final Standings"
+    "winner_title": "Final Standings",
+    "finish": "OK",
+    "finish_error": "Failed to finish game. Please try again."
   },
   "menu": {
     "close": "Close",
     "credits": "Credits",
     "end_game": "End Game",
     "home": "Home",
+    "menu": "Menu",
+    "options": "Options",
     "language": "Language",
     "play": "Play",
     "settings": "Settings",
@@ -211,6 +218,12 @@
     "restart": "Restart",
     "scores_saved": "Scores saved successfully!",
     "your_score": "Your Score"
+  },
+  "scoring": {
+    "title": "Scoring",
+    "player": "Player",
+    "next_round": "Next Round",
+    "description": "View round scoring results"
   },
   "settings": {
     "debug": "Debug Mode",

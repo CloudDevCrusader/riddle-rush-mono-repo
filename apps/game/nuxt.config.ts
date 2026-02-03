@@ -326,31 +326,14 @@ export default defineNuxtConfig({
       { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
     ],
     strategy: 'no_prefix',
-    // Completely disable browser language detection - handled by client plugin
     detectBrowserLanguage: {
       useCookie: true,
       fallbackLocale: 'en',
     },
-    // Disable the problematic SSR switch locale path plugin
     skipSettingLocaleOnNavigate: true,
-    // Completely disable SSR features for client-only app
-    differentDomains: false,
-    // Disable SSR-specific compilation
     compilation: {
       strictMessage: false,
       escapeHtml: false,
-    },
-    // Try to disable SSR plugin loading by using custom locale detector
-    // This might prevent SSR plugins from being registered
-    experimental: {
-      localeDetector: undefined, // Disable SSR locale detector
-    },
-    // Bundle configuration - ensure messages are included
-    bundle: {
-      compositionOnly: false,
-      runtimeOnly: false,
-      fullInstall: true,
-      dropMessageCompiler: false,
     },
   },
 

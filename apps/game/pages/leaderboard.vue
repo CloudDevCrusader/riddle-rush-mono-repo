@@ -3,13 +3,13 @@
     <div class="leaderboard-page">
       <!-- Header -->
       <GameHeader variant="gold">
-        {{ t('leaderboard.title', 'Leaderboard') }}
+        {{ t('leaderboard.title') }}
       </GameHeader>
 
       <!-- Ranking subtitle panel -->
       <GamePanel variant="blue" padding="sm">
         <h2 class="leaderboard-page__subtitle">
-          {{ t('leaderboard.ranking', 'Ranking') }}
+          {{ t('leaderboard.ranking') }}
         </h2>
       </GamePanel>
 
@@ -26,10 +26,10 @@
       <!-- Navigation buttons -->
       <div class="leaderboard-page__actions">
         <GameButton v-if="!isGameCompleted" variant="primary" size="lg" @click="handleNextRound">
-          {{ t('leaderboard.next_round', 'Next Round') }}
+          {{ t('leaderboard.next_round') }}
         </GameButton>
         <GameButton variant="secondary" size="lg" @click="handleFinish">
-          {{ t('leaderboard.finish', 'OK') }}
+          {{ t('leaderboard.finish') }}
         </GameButton>
       </div>
     </div>
@@ -53,7 +53,7 @@ const handleFinish = async () => {
   } catch (error) {
     const logger = useLogger()
     logger.error('Error finishing game:', error)
-    toast.error(t('leaderboard.finish_error', 'Failed to finish game. Please try again.'))
+    toast.error(t('leaderboard.finish_error'))
     isFinishing.value = false
   }
 }
@@ -64,7 +64,7 @@ const handleNextRound = async () => {
 }
 
 useHead({
-  title: 'Leaderboard',
+  title: t('leaderboard.title'),
   meta: [
     {
       name: 'description',

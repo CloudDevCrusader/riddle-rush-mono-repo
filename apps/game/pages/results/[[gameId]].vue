@@ -2,7 +2,7 @@
   <GameBackground>
     <div class="scoring-page">
       <GameHeader color="gold">
-        {{ t('scoring.title', 'Scoring') }}
+        {{ t('scoring.title') }}
       </GameHeader>
 
       <div class="scoring-page__list">
@@ -13,7 +13,7 @@
           :initial="{ opacity: 0, y: 20 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: index * 50 } }"
           :player="player"
-          :label="`${t('scoring.player', 'Player')} ${index + 1}`"
+          :label="`${t('scoring.player')} ${index + 1}`"
         />
       </div>
 
@@ -24,7 +24,7 @@
         class="scoring-page__button"
         @click="handleNextRound"
       >
-        {{ t('scoring.next_round', 'Next Round') }}
+        {{ t('scoring.next_round') }}
       </GameButton>
     </div>
   </GameBackground>
@@ -41,11 +41,11 @@ const handleNextRound = async () => {
 }
 
 useHead({
-  title: t('scoring.title', 'Scoring'),
+  title: t('scoring.title'),
   meta: [
     {
       name: 'description',
-      content: t('scoring.description', 'View round scoring results'),
+      content: t('scoring.description'),
     },
   ],
 })

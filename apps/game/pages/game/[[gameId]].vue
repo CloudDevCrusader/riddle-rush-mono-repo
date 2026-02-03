@@ -58,7 +58,7 @@
         />
         <div class="category-label">CATEGORY</div>
         <div class="category-name">
-          {{ currentCategory?.name?.toUpperCase() || 'LOADING...' }}
+          {{ currentCategory?.name?.toUpperCase() || t('game.category_loading') }}
         </div>
       </div>
 
@@ -75,7 +75,7 @@
         class="answer-input-section"
       >
         <div class="player-turn-indicator">
-          <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
+          <span class="turn-label">{{ t('game.current_turn') }}:</span>
           <span class="turn-name">{{ currentPlayerTurn.name }}</span>
         </div>
         <form class="answer-form" @submit.prevent="submitAnswer">
@@ -83,7 +83,7 @@
             v-model="playerAnswer"
             type="text"
             class="answer-input"
-            :placeholder="t('game.your_answer', 'Your answer...')"
+            :placeholder="t('game.your_answer')"
             autocomplete="off"
             autocapitalize="words"
             maxlength="50"
@@ -91,14 +91,14 @@
             @keyup.enter="submitAnswer"
           />
           <button type="submit" class="submit-answer-btn" :disabled="false">
-            {{ t('game.submit', 'Submit') }}
+            {{ t('game.submit') }}
           </button>
         </form>
       </div>
 
       <!-- All Players Submitted Message -->
       <div v-if="allPlayersSubmitted" class="all-submitted-message">
-        <p>{{ t('game.all_submitted', 'All players have submitted!') }}</p>
+        <p>{{ t('game.all_submitted') }}</p>
       </div>
     </div>
 
@@ -127,11 +127,11 @@
       >
         <img
           :src="`${baseUrl}assets/alphabets/next.png`"
-          alt="Next"
+          :alt="t('common.next')"
           class="next-icon"
           loading="lazy"
         />
-        <span class="next-text">NEXT</span>
+        <span class="next-text">{{ t('common.next') }}</span>
       </button>
     </div>
   </div>
@@ -205,28 +205,28 @@ const submitAnswer = async () => {
     await gameStore.submitPlayerAnswer(player.id, answer)
 
     if (answer) {
-      toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
+      toast.success(t('game.answer_submitted', { 0: player.name }))
     } else {
-      toast.info(t('game.answer_skipped', `${player.name} skipped their turn`))
+      toast.info(t('game.answer_skipped', { 0: player.name }))
     }
 
     playerAnswer.value = ''
 
     // If all players submitted, show message
     if (allPlayersSubmitted.value) {
-      toast.info(t('game.all_submitted', 'All players have submitted!'))
+      toast.info(t('game.all_submitted'))
     }
   } catch (error) {
     const logger = useLogger()
     logger.error('Error submitting answer:', error)
-    toast.error(t('game.error_submitting', 'Failed to submit answer'))
+    toast.error(t('game.error_submitting'))
   }
 }
 
 const handleNext = async () => {
   // In round-based flow, NEXT goes to results/scoring screen
   if (players.value.length > 0 && !allPlayersSubmitted.value) {
-    toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
+    toast.warning(t('game.wait_for_players'))
     return
   }
 
@@ -264,7 +264,7 @@ onMounted(async () => {
       await gameStore.loadSessionById(gameId.value)
     } catch (error) {
       logger.error('Failed to load game session:', error)
-      toast.error(t('game.error_loading', 'Failed to load game session'))
+      toast.error(t('game.error_loading'))
       // Fallback to starting a new game
       await gameActions.resumeOrStartGame()
     }

@@ -16,7 +16,7 @@
     <div class="top-bar">
       <!-- Round Indicator -->
       <div class="round-indicator">
-        <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
+        <div class="round-text">{{ t('game.round') }} {{ currentRoundNumber }}</div>
       </div>
     </div>
 
@@ -27,7 +27,7 @@
         <div v-if="isFortuneWheelEnabled && !wheelsComplete" class="wheels-container">
           <div class="wheel-wrapper">
             <div class="wheel-label">
-              {{ t('common.category', 'Category') }}
+              {{ t('common.category') }}
             </div>
             <FortuneWheel
               ref="categoryWheelRef"
@@ -43,7 +43,7 @@
 
           <div class="wheel-wrapper">
             <div class="wheel-label">
-              {{ t('common.letter', 'Letter') }}
+              {{ t('common.letter') }}
             </div>
             <FortuneWheel
               ref="letterWheelRef"
@@ -67,7 +67,7 @@
         >
           <div class="result-item animate-scale-in">
             <div class="result-label">
-              {{ t('common.category', 'Category') }}
+              {{ t('common.category') }}
             </div>
             <div class="result-value">
               <span class="result-icon">{{ selectedCategoryIcon }}</span>
@@ -79,7 +79,7 @@
 
           <div class="result-item animate-scale-in" style="animation-delay: 0.2s">
             <div class="result-label">
-              {{ t('common.letter', 'Letter') }}
+              {{ t('common.letter') }}
             </div>
             <div class="result-value">
               <span class="result-text result-letter">{{ selectedLetter }}</span>
@@ -92,7 +92,7 @@
       <div v-if="startingGame" class="loading-container">
         <Spinner />
         <p class="loading-text">
-          {{ t('home.starting_game', 'Starting game...') }}
+          {{ t('home.starting_game') }}
         </p>
       </div>
     </div>
@@ -281,7 +281,7 @@ const startGame = async () => {
     logger.error('Failed to start game:', error)
     startingGame.value = false
     // Show error to user
-    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+    toast.error(t('game.error_starting'))
   }
 }
 

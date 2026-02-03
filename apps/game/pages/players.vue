@@ -7,7 +7,7 @@
             <button
               class="back-button"
               type="button"
-              :aria-label="t('common.back', 'Back')"
+              :aria-label="t('common.back')"
               @click="goBack"
             >
               ‹
@@ -116,7 +116,7 @@ const changePlayerCount = (delta: number) => {
 }
 
 const placeholderForIndex = (index: number) =>
-  (t('players.placeholder', { number: index + 1 }) as string) || `Player ${index + 1}`
+  t('players.placeholder', { number: index + 1 }) as string
 
 const startGame = () => {
   if (playerCount.value < minPlayers) {
@@ -157,7 +157,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: t('players.description', 'Select players for the game'),
+      content: t('players.description'),
     },
   ],
 })
