@@ -2,10 +2,11 @@
 Orchestrate `/gsd-new-milestone` from context loading through roadmap approval.
 
 Design goals:
+
 - Keep base context small
 - Load heavy assets only when needed
 - Leverage existing validated requirements
-</purpose>
+  </purpose>
 
 <always_loaded>
 Load these first:
@@ -14,7 +15,7 @@ Load these first:
 - `./.opencode/get-shit-done/references/ui-brand.md`
 - `./.opencode/get-shit-done/templates/project.md`
 - `./.opencode/get-shit-done/templates/requirements.md`
-</always_loaded>
+  </always_loaded>
 
 <process>
 
@@ -31,6 +32,7 @@ cat .planning/MILESTONE-CONTEXT.md 2>/dev/null
 ```
 
 Error if PROJECT.md missing:
+
 ```
 ERROR: No project found. Run /gsd-new-project first.
 ```
@@ -38,10 +40,12 @@ ERROR: No project found. Run /gsd-new-project first.
 ## Phase 2: Gather Milestone Goals
 
 **If MILESTONE-CONTEXT.md exists:**
+
 - Use features and scope from discuss-milestone
 - Present summary for confirmation
 
 **If no context file:**
+
 - Present what shipped in last milestone
 - Start with: "What do you want to build next?"
 - Use question to explore features, priorities, constraints
@@ -52,6 +56,7 @@ Parse last version from MILESTONES.md.
 Suggest next version (v1.0 → v1.1, or v2.0 for major).
 
 question:
+
 - header: "Version"
 - question: "What version for this milestone?"
 - options:
@@ -69,6 +74,7 @@ Add/update Current Milestone section:
 **Goal:** [One sentence describing milestone focus]
 
 **Target features:**
+
 - [Feature 1]
 - [Feature 2]
 - [Feature 3]
@@ -97,6 +103,7 @@ Delete MILESTONE-CONTEXT.md if exists (consumed).
 @./.opencode/get-shit-done/references/git-planning-commit.md
 
 If committing:
+
 ```bash
 git add .planning/PROJECT.md .planning/STATE.md
 git commit -m "docs: start milestone v[X.Y] [Name]"
@@ -107,6 +114,7 @@ git commit -m "docs: start milestone v[X.Y] [Name]"
 @./.opencode/get-shit-done/references/model-profile-resolution.md
 
 Resolve models for:
+
 - `gsd-project-researcher`
 - `gsd-research-synthesizer`
 - `gsd-roadmapper`
@@ -114,6 +122,7 @@ Resolve models for:
 ## Phase 7: Research Decision
 
 question:
+
 - header: "Research"
 - question: "Research the domain ecosystem for new features before defining requirements?"
 - options:
@@ -131,11 +140,13 @@ mkdir -p .planning/research
 ```
 
 Create milestone-aware research brief:
+
 - Note this is SUBSEQUENT MILESTONE
 - List validated/existing capabilities (DO NOT re-research)
 - Focus on NEW features only
 
 Load research prompt templates and spawn 4 parallel researchers:
+
 - Stack (additions for new features)
 - Features (expected behavior)
 - Architecture (integration)
@@ -152,27 +163,33 @@ If committing, commit research artifacts.
 Display `GSD ► DEFINING REQUIREMENTS` banner.
 
 Load context:
+
 - `.planning/PROJECT.md` (Validated requirements = existing)
 - `.planning/research/FEATURES.md` (if exists)
 
 **If research exists:**
+
 - Present features by category
 - Scope each category with question (multi-select)
 
 **If no research:**
+
 - Gather requirements through question conversation
 
 Track:
+
 - Selected features → this milestone's requirements
 - Unselected table stakes → future milestone
 - Unselected differentiators → out of scope
 
 Additions pass:
+
 - header: "Additions"
 - question: "Any requirements research missed?"
 - options: "No" / "Yes, let me add some"
 
 Generate REQUIREMENTS.md:
+
 - v1 Requirements for THIS milestone (checkboxes, REQ-IDs)
 - Future Requirements (deferred)
 - Out of Scope (explicit exclusions)
@@ -189,12 +206,14 @@ If committing, commit requirements.
 Display `GSD ► CREATING ROADMAP` banner.
 
 **Determine starting phase number:**
+
 - Read MILESTONES.md for last phase number
 - New phases continue from there
 
 Create compact context files in `.planning/_ctx/`.
 
 Spawn gsd-roadmapper with milestone context:
+
 - Start phase numbering from [N]
 - Derive phases from THIS MILESTONE's requirements
 - Map every requirement to exactly one phase
@@ -202,10 +221,12 @@ Spawn gsd-roadmapper with milestone context:
 - Validate 100% coverage
 
 Handle returns:
+
 - `## ROADMAP BLOCKED`: Surface blockers, resolve, respawn
 - `## ROADMAP CREATED`: Present structured summary
 
 Approval gate:
+
 - header: "Roadmap"
 - question: "Does this roadmap structure work for you?"
 - options: "Approve" / "Adjust phases" / "Review full file"
@@ -213,6 +234,7 @@ Approval gate:
 If adjust: Collect feedback, respawn roadmapper, loop until approved.
 
 After approval, if committing:
+
 ```bash
 git add .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 git commit -m "docs: create milestone v[X.Y] roadmap ([N] phases)"
@@ -231,6 +253,7 @@ Show artifact table:
 | Roadmap | `.planning/ROADMAP.md` |
 
 Show Next Up block:
+
 - `/gsd-discuss-phase [N]` — gather context and clarify approach
 - optional `/gsd-plan-phase [N]`
 

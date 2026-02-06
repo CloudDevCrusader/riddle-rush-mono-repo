@@ -2,14 +2,16 @@
 Orchestrate `/gsd-plan-phase` from validation through plan verification.
 
 Design goals:
+
 - Spawn research, planner, and checker agents with fresh context
 - Build compact context files to avoid passing full source docs
 - Handle revision loop for plan quality
-</purpose>
+  </purpose>
 
 <always_loaded>
+
 - `./.opencode/get-shit-done/references/ui-brand.md`
-</always_loaded>
+  </always_loaded>
 
 <process>
 
@@ -22,6 +24,7 @@ ls .planning/ 2>/dev/null || { echo "ERROR: Run /gsd-new-project first"; exit 1;
 @./.opencode/get-shit-done/references/model-profile-resolution.md
 
 Resolve models for:
+
 - `gsd-phase-researcher`
 - `gsd-planner`
 - `gsd-plan-checker`
@@ -31,6 +34,7 @@ Resolve models for:
 @./.opencode/get-shit-done/references/phase-argument-parsing.md
 
 Extract from $ARGUMENTS:
+
 - Phase number (integer or decimal)
 - `--research` — Force re-research
 - `--skip-research` — Skip research
@@ -40,6 +44,7 @@ Extract from $ARGUMENTS:
 If no phase number: Detect next unplanned phase.
 
 Check for existing research and plans:
+
 ```bash
 ls "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
 ls "${PHASE_DIR}"/*-PLAN.md 2>/dev/null
@@ -83,12 +88,14 @@ Otherwise spawn `gsd-phase-researcher`:
 Display: `GSD ► RESEARCHING PHASE {X}`
 
 Build research prompt with:
+
 - Phase description from ROADMAP
 - Requirements (if any)
 - Prior decisions from STATE.md
 - CONTEXT_CONTENT (locked decisions, Claude's discretion, deferred)
 
 Handle returns:
+
 - `## RESEARCH COMPLETE` → Continue
 - `## RESEARCH BLOCKED` → Present blocker, offer options
 
@@ -107,11 +114,13 @@ mkdir -p "${PHASE_DIR}/_ctx"
 ```
 
 Create:
+
 - `planner-input.md` — phase goal, requirements, locked decisions, research findings, **full CONTEXT_CONTENT**
 - `checker-input.md` — phase goal, must-haves, requirements, verification constraints, **full CONTEXT_CONTENT**
 - `revision-input.md` — issues from checker, **full CONTEXT_CONTENT** (created during revision loop)
 
 **CRITICAL:** All three context files MUST include the full CONTEXT_CONTENT (user decisions from /gsd-discuss-phase). This ensures:
+
 - Planner honors locked decisions when creating tasks
 - Checker can verify plans don't contradict user decisions
 - Revision loop preserves user constraints
@@ -171,6 +180,7 @@ If `--skip-verify` or `workflow.plan_check = false`: Skip to Step 13.
 Display: `GSD ► VERIFYING PLANS`
 
 Read plans:
+
 ```bash
 PLANS_CONTENT=$(cat "${PHASE_DIR}"/*-PLAN.md 2>/dev/null)
 ```
@@ -214,6 +224,7 @@ Return: ## VERIFICATION PASSED or ## ISSUES FOUND",
 Track `iteration_count`.
 
 If iteration_count < 3:
+
 - Display: `Sending back to planner for revision... (iteration {N}/3)`
 - Write revision-input.md with:
   - Issues from checker
@@ -225,6 +236,7 @@ If iteration_count < 3:
 **CRITICAL:** Each revision iteration MUST re-inject CONTEXT_CONTENT. Without this, the planner loses user constraints during revision.
 
 If iteration_count >= 3:
+
 - Display remaining issues
 - Offer: Force proceed / Provide guidance / Abandon
 
@@ -254,15 +266,15 @@ Route to completion banner.
 
 <completion_banner>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► PHASE {X} PLANNED ✓
+GSD ► PHASE {X} PLANNED ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Phase {X}: {Name}** — {N} plan(s) in {M} wave(s)
 
-| Wave | Plans | What it builds |
-|------|-------|----------------|
-| 1 | 01, 02 | [objectives] |
-| 2 | 03 | [objective] |
+| Wave | Plans  | What it builds |
+| ---- | ------ | -------------- |
+| 1    | 01, 02 | [objectives]   |
+| 2    | 03     | [objective]    |
 
 Research: {Completed | Used existing | Skipped}
 Verification: {Passed | Passed with override | Skipped}
@@ -280,7 +292,8 @@ Verification: {Passed | Passed with override | Skipped}
 ───────────────────────────────────────────────────────────────
 
 **Also available:**
-- cat .planning/phases/{phase-dir}/*-PLAN.md — review plans
+
+- cat .planning/phases/{phase-dir}/\*-PLAN.md — review plans
 - /gsd-plan-phase {X} --research — re-research first
 
 ───────────────────────────────────────────────────────────────

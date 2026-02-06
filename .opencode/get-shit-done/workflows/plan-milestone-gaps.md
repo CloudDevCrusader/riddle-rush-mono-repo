@@ -13,11 +13,13 @@ ls -t .planning/v*-MILESTONE-AUDIT.md 2>/dev/null | head -1
 ```
 
 Parse YAML frontmatter:
+
 - `gaps.requirements` — unsatisfied requirements
 - `gaps.integration` — missing cross-phase connections
 - `gaps.flows` — broken E2E flows
 
 Error if no audit file or no gaps:
+
 ```
 No audit gaps found. Run /gsd-audit-milestone first.
 ```
@@ -26,15 +28,16 @@ No audit gaps found. Run /gsd-audit-milestone first.
 
 Group by priority from REQUIREMENTS.md:
 
-| Priority | Action |
-|----------|--------|
-| `must` | Create phase, blocks milestone |
-| `should` | Create phase, recommended |
-| `nice` | Ask user: include or defer? |
+| Priority | Action                         |
+| -------- | ------------------------------ |
+| `must`   | Create phase, blocks milestone |
+| `should` | Create phase, recommended      |
+| `nice`   | Ask user: include or defer?    |
 
 ## Step 3: Group Gaps into Phases
 
 Cluster related gaps:
+
 - Same affected phase → combine
 - Same subsystem (auth, API, UI) → combine
 - Dependency order (fix stubs before wiring)
@@ -60,12 +63,14 @@ New phases continue from highest existing.
 
 **Phase {N}: {Name}**
 Closes:
+
 - {REQ-ID}: {description}
 - Integration: {from} → {to}
 
 {If nice-to-have gaps:}
 
 ### Deferred (nice-to-have)
+
 These gaps are optional. Include them?
 
 ---
@@ -79,6 +84,7 @@ Add phases with gap closure context:
 
 ```markdown
 ### Phase {N}: {Name}
+
 **Goal:** {derived from gaps}
 **Requirements:** {REQ-IDs}
 **Gap Closure:** Closes gaps from audit

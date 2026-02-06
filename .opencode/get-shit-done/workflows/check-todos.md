@@ -13,6 +13,7 @@ TODO_COUNT=$(ls .planning/todos/pending/*.md 2>/dev/null | wc -l | tr -d ' ')
 ```
 
 If 0:
+
 ```
 No pending todos.
 
@@ -22,11 +23,13 @@ Would you like to:
 1. Continue with current phase (/gsd-progress)
 2. Add a todo now (/gsd-add-todo)
 ```
+
 Exit.
 
 ## Step 2: Parse Filter
 
 Check for area filter in arguments:
+
 - `/gsd-check-todos` → show all
 - `/gsd-check-todos api` → filter to area:api
 
@@ -42,6 +45,7 @@ done | sort
 ```
 
 Display:
+
 ```
 Pending Todos:
 
@@ -59,6 +63,7 @@ Wait for number. If invalid, reprompt.
 ## Step 5: Load Context
 
 Read todo file. Display:
+
 ```
 ## [title]
 
@@ -82,12 +87,14 @@ If todo's area matches an upcoming phase, note for action options.
 ## Step 7: Offer Actions
 
 **If matches roadmap phase:**
+
 - "Work on it now"
 - "Add to phase plan"
 - "Brainstorm approach"
 - "Put it back"
 
 **If no match:**
+
 - "Work on it now"
 - "Create a phase"
 - "Brainstorm approach"
@@ -96,9 +103,11 @@ If todo's area matches an upcoming phase, note for action options.
 ## Step 8: Execute Action
 
 **Work on it now:**
+
 ```bash
 mv ".planning/todos/pending/[file]" ".planning/todos/done/"
 ```
+
 Update STATE.md. Begin work.
 
 **Add to phase plan / Create a phase / Brainstorm:** Keep in pending, route appropriately.
@@ -110,6 +119,7 @@ Update STATE.md. Begin work.
 @./.opencode/get-shit-done/references/git-planning-commit.md
 
 If todo moved:
+
 ```bash
 git add .planning/todos/done/[file]
 git commit -m "docs: start work on todo - [title]"
