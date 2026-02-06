@@ -1,195 +1,253 @@
 # External Integrations
 
-**Analysis Date:** 2026-01-31
+**Analysis Date:** 2026-02-06
 
 ## APIs & External Services
 
-**Wikipedia Category Data:**
+**Wikipedia/PetScan:**
 
-- PetScan API - Wikipedia category term extraction
-  - SDK/Client: Direct HTTP fetch
-  - URL: Configurable via `PETSCAN_API_URL` environment variable (default: https://petscan.wmflabs.org)
-  - Usage: `composables/useAnswerCheck.ts` - 5-minute cache for category terms
-  - Caching: Workbox runtime caching strategy (NetworkFirst with 10s timeout)
+- **Purpose**: Answer validation for game categories
+- **Implementation**: Direct fetch to `https://petscan.wmflabs.org/`
+- **Client**: Native fetch API in `apps/game/composables/useAnswerCheck.ts`
+- **Caching**: 5-minute in-memory cache for category data
+- **Auth**: None (public API)
+- **Offline Fallback**: Static JSON at `public/data/offlineAnswers.json`
 
-**Real-time Communication:**
+**Google Analytics 4:**
 
-- Socket.IO 4.8.3 - WebSocket/polling for multiplayer features
-  - Client: `socket.io-client` 4.8.3
-  - Implementation: `composables/useWebSocket.ts`
-  - Connection URL: `http://localhost:3000` (dev) or `window.location.origin` (production)
-  - Transports: WebSocket and polling fallback
-  - Reconnection: Enabled with exponential backoff (1s-5s delay, max 5 attempts)
+- **Purpose**: User behavior tracking and page analytics
+- **Implementation**: Custom plugin at `apps/game/plugins/gtag.client.ts`
+- **SDK**: Google Tag Manager script (loaded dynamically)
+- **Auth**: `GTAG_ID` environment variable
+- **Enabled**: Production only with valid GTAG_ID
+- **Privacy**: Anonymized IP, SameSite=None;Secure cookies
+- **Route Tracking**: Automatic via router.afterEach hook
 
-**Feature Flags:**
+**GitLab Feature Flags (Unleash Protocol):**
 
-- GitLab Feature Flags (Unleash Protocol)
-  - Client: `unleash-proxy-client` 3.7.8
-  - Configuration: `plugins/gitlab-feature-flags.client.ts`
-  - URL: `GITLAB_FEATURE_FLAGS_URL` (format: https://gitlab.com/api/v4/feature_flags/unleash/:project_id)
-  - Auth: `GITLAB_FEATURE_FLAGS_TOKEN`
-  - Refresh interval: 30 seconds
-  - Fallback: Local settings store if not configured
-  - Composable: `composables/useFeatureFlags.ts`
-  - Tracked flags: `fortune-wheel`, `websocket`
+- **Purpose**: Remote feature flag management
+- **Implementation**: Plugin at `apps/game/plugins/gitlab-feature-flags.client.ts`
+- **SDK**: `unleash-proxy-client` 3.7.8
+- **Auth**:
+  - URL: `GITLAB_FEATURE_FLAGS_URL` (format: `https://gitlab.com/api/v4/feature_flags/unleash/:project_id`)
+  - Token: `GITLAB_FEATURE_FLAGS_TOKEN`
+- **Refresh**: Every 30 seconds
+- **Fallback**: Local settings store if not configured
+- **Flags**: `fortune-wheel`, `websocket`
 
 ## Data Storage
 
 **Databases:**
 
-- IndexedDB (Client-side, offline-first)
-  - Connection: Direct browser IndexedDB API
-  - Client: `idb` 8.0.3 (wrapper library)
-  - Implementation: `composables/useIndexedDB.ts`
-  - Database name: `riddle-rush-db` (version 3)
-  - Stores:
-    - `gameSession` - Current active game session
-    - `gameSessionsById` - Sessions indexed by ID
-    - `gameHistory` - Completed sessions (indexed on `startTime`)
-    - `statistics` - Aggregated player statistics
-    - `leaderboard` - High scores (indexed on `score` and `timestamp`)
-    - `settings` - User preferences
-  - Purpose: Offline-first data persistence, local game state
+- **IndexedDB** (Client-side)
+  - Database: `riddle-rush-db`
+  - Client: `idb` 8.0.3
+  - Stores: `gameSession`, `gameHistory`, `statistics`, `leaderboard`, `settings`
+  - Managed by: `apps/game/composables/useIndexedDB.ts`
+
+- **IndexedDB** (Error Logs)
+  - Database: `ErrorLogs`
+  - Purpose: Offline error queue for CloudWatch sync
+  - Managed by: `apps/game/composables/useErrorSync.ts`
+  - Fallback: localStorage if IndexedDB unavailable
+
+- **DynamoDB** (AWS Infrastructure - defined but not actively used by client)
+  - Tables defined in `infrastructure/dynamodb.tf`:
+    - `users` (hash: userId)
+    - `leaderboard` (hash: gameMode, range: score)
+    - `performance_metrics` (hash: metricId, range: timestamp)
+    - `websocket_connections` (hash: connectionId)
+  - Billing: Pay-per-request
+  - Features: Streams enabled, point-in-time recovery, TTL
 
 **File Storage:**
 
-- Local filesystem only (Static assets via public directory)
-  - Public assets: `/public/` directory
-  - Game data: `/assets/data/` (JSON files for categories, questions, etc.)
-  - Icons/Images: PWA icons (pwa-192x192.png, pwa-512x512.png, etc.)
+- **Local filesystem only** - Static JSON files at `/data/categories.json`, `/data/offlineAnswers.json`
+- **S3** (deployment target, not runtime storage)
+  - Bucket: `${project_name}-production-${account_id}`
+  - Module: `infrastructure/modules/s3-website`
+  - Acceleration: Enabled
+  - Versioning: Enabled (30-day retention)
 
 **Caching:**
 
-- Service Worker + Workbox (via @vite-pwa/nuxt)
-  - Purpose: Offline support and performance
-  - Strategies:
-    - **CacheFirst**: Images, fonts, Google Fonts
-    - **NetworkFirst**: Start URL, external APIs (10s timeout)
-  - Cache expiration: 30 days for images, 1 year for fonts
-  - Max file size for caching: 2MB (5MB in debug builds)
+- Service Worker cache (Workbox)
+  - Images: CacheFirst, 30 days, 60 entries
+  - Fonts: CacheFirst, 1 year, 10 entries
+  - Start URL: NetworkFirst, 3s timeout
+  - Google Fonts: CacheFirst with separate stylesheets/webfonts caches
+- In-memory cache for PetScan category data (5 minutes)
 
 ## Authentication & Identity
 
 **Auth Provider:**
 
-- Custom client-side (No central auth)
-  - Implementation: Player-based (no user accounts in MVP)
-  - Session ID: Auto-generated per game
-  - Player identification: Client-side only (no server persistence)
-
-**WebSocket User Identification:**
-
-- Auto-generated anonymous user IDs via Socket.IO
-  - Format: `user-` + 7-char random string
-  - Implementation: `composables/useWebSocket.ts`
-  - Purpose: Multiplayer real-time tracking
+- **None** - No authentication system implemented
+- User identification via randomly generated IDs in WebSocket composable
+- Format: `user-${Math.random().toString(36).substring(7)}`
+- Stored in: `apps/game/composables/useWebSocket.ts`
 
 ## Monitoring & Observability
 
 **Error Tracking:**
 
-- CloudWatch (optional, AWS-native)
+- **AWS CloudWatch** (via API Gateway + Lambda)
   - Endpoint: `CLOUDWATCH_ENDPOINT` environment variable
-  - Auth: `CLOUDWATCH_API_KEY`
-  - Implementation: `composables/useErrorSync.ts`
-  - Sync interval: Periodic (every 30 seconds or on accumulation)
-  - Error types captured: Unhandled exceptions, promise rejections, custom errors
-  - Debug mode: `DEBUG_ERROR_SYNC` flag
+  - Auth: `CLOUDWATCH_API_KEY` via X-API-Key header
+  - Implementation: `apps/game/composables/useErrorSync.ts`
+  - Infrastructure: `infrastructure/cloudwatch-api.tf`
+  - Lambda: Node.js 24.x handler for log processing
+  - Sync: Every 5 minutes, on visibility change, on online event
+  - Offline Queue: IndexedDB with localStorage fallback
+  - Enabled: Production only (or `DEBUG_ERROR_SYNC=true`)
 
 **Logs:**
 
-- Centralized logging composable
-  - Implementation: `composables/useLogger.ts`
-  - Output: Console (production builds have console statements removed via build step)
-  - Logging only in development mode
-  - Integration with error sync for CloudWatch
+- Development: Console logging via `apps/game/composables/useLogger.ts` (stripped in production)
+- Production: CloudWatch via error sync composable
+- Infrastructure: CloudWatch Log Groups with 7-30 day retention
 
-**Analytics:**
+**Performance Monitoring:**
 
-- Google Analytics 4 (GA4)
-  - ID: `GTAG_ID` (Google Analytics measurement ID)
-  - Implementation: `plugins/gtag.client.ts`
-  - Activation: Production environment only when GTAG_ID is configured
-  - Script: `https://www.googletagmanager.com/gtag/js?id=${gtagId}`
-  - Features:
-    - Page view tracking (on route changes)
-    - Custom event tracking via `composables/useAnalytics.ts`
-    - Anonymized IP tracking
-    - SameSite=None;Secure cookies
-  - Composable: `composables/useAnalytics.ts` for custom events
-  - Events: `game_start`, `answer_correct`, `answer_incorrect`, `round_complete`, etc.
+- WebSocket-based performance logging (infrastructure defined but client-optional)
+- Metrics sent to Socket.IO server: `apps/game/server/plugins/socket.ts`
+- Can be forwarded to CloudWatch via Lambda integration
+
+**Dashboards:**
+
+- CloudWatch Dashboard for error logs API
+- Terraform-defined: `infrastructure/dashboard.tf`, `infrastructure/cloudwatch-api.tf`
 
 ## CI/CD & Deployment
 
 **Hosting:**
 
-- AWS (Production)
-  - S3 bucket for static site hosting
-  - CloudFront CDN for global distribution
-  - Configuration via Terraform in `infrastructure/environments/production/`
-  - Environment variable: `AWS_S3_BUCKET`
-
-- GitLab Pages (Staging/Dev)
-  - Used for staging and development deployments
-  - Triggered via GitLab CI/CD pipeline
-  - `.gitlab-ci.yml` configuration
+- **Production**: AWS S3 + CloudFront
+  - Distribution: Enhanced CloudFront with custom domain support
+  - Module: `infrastructure/modules/cloudfront-enhanced`
+  - Price Class: Configurable (default: all edge locations)
+  - SSL: ACM certificate support via `certificate_arn` variable
 
 **CI Pipeline:**
 
-- GitLab CI/CD
+- **GitLab CI/CD**
+  - Custom Docker image for builds (40-50% speed improvement)
+  - Monorepo change detection (40-60% CI time savings)
   - Stages: test → quality → build → deploy → verify
-  - Change detection: Selective job runs based on file changes
-  - Docker image: Custom CI image (`ci-build`) for faster builds
-  - Jobs: Unit tests, SonarCloud analysis, builds, deployment, E2E verification
-  - Monorepo optimization: Only affected workspaces are tested/built
+  - Branches: main (production), staging, development
 
-**Docker:**
+**Deployment Scripts:**
 
-- Custom Docker image: `ci-build`
-  - Purpose: Pre-installed dependencies for faster CI builds
-  - Usage: GitLab CI/CD pipeline
-  - Location: Not in source repo (built separately)
+- `scripts/deploy-prod.sh` - Production deployment
+- `scripts/deploy-dev.sh` - Development deployment
+- `scripts/aws-deploy.sh` - Direct AWS S3 + CloudFront sync
+- `scripts/terraform-apply.sh` - Infrastructure provisioning
 
-- Playwright Docker: `mcr.microsoft.com/playwright:v1.57.0-noble`
-  - Purpose: E2E testing in CI
-  - Usage: `scripts/e2e-docker.sh`
+**Infrastructure as Code:**
+
+- Terraform for all AWS resources
+- Modules: `s3-website`, `cloudfront-enhanced`, `lambda-ssr`
+- Environments: `production`, `staging`, `development`, `docs`
+- State management: S3 backend with DynamoDB locking (commented in configs)
 
 ## Environment Configuration
 
-**Required env vars:**
+**Required env vars (Development):**
 
-- `NODE_ENV` - Application environment (development/production)
-- `BASE_URL` - Base path for asset loading
-- `GOOGLE_ANALYTICS_ID` - GA4 measurement ID (production only)
-- `AWS_S3_BUCKET` - S3 bucket name (production deployment)
+- `NODE_ENV` - Environment mode (development/production)
+- `BASE_URL` - Application base path
+- `APP_VERSION` - Version string from package.json
+
+**Required env vars (Production):**
+
+- `GOOGLE_ANALYTICS_ID` / `GTAG_ID` - Analytics tracking ID
+- `AWS_ACCESS_KEY_ID` - AWS deployment credentials
+- `AWS_SECRET_ACCESS_KEY` - AWS deployment credentials
+- `AWS_S3_BUCKET` - Deployment bucket name
+- `AWS_CLOUDFRONT_ID` - CloudFront distribution ID for cache invalidation
 - `AWS_REGION` - AWS region (default: eu-central-1)
-- `AWS_CLOUDFRONT_ID` - CloudFront distribution ID (optional)
 
 **Optional env vars:**
 
-- `CLOUDWATCH_ENDPOINT` - CloudWatch API endpoint
-- `CLOUDWATCH_API_KEY` - CloudWatch authentication key
-- `DEBUG_ERROR_SYNC` - Enable error sync debugging
-- `GITLAB_FEATURE_FLAGS_URL` - GitLab Feature Flags Unleash URL
-- `GITLAB_FEATURE_FLAGS_TOKEN` - GitLab Feature Flags auth token
-- `PETSCAN_API_URL` - PetScan Wikipedia API URL (default: https://petscan.wmflabs.org)
+- `GITLAB_FEATURE_FLAGS_URL` - GitLab feature flags endpoint
+- `GITLAB_FEATURE_FLAGS_TOKEN` - GitLab API token
+- `CLOUDWATCH_ENDPOINT` - Error logging API endpoint
+- `CLOUDWATCH_API_KEY` - CloudWatch API authentication key
+- `DEBUG_ERROR_SYNC` - Enable error sync in development
+- `CLOUDFRONT_DOMAIN` - Custom CloudFront domain
+- `WEBSITE_URL` - Primary website URL
+- `CDN_URL` - CDN base URL for assets
+
+**Mobile build env vars:**
+
+- `ANDROID_KEYSTORE_PATH` - Path to Android signing keystore
+- `ANDROID_KEYSTORE_PASSWORD` - Keystore password
+- `ANDROID_KEYSTORE_ALIAS` - Key alias
+- `ANDROID_KEYSTORE_ALIAS_PASSWORD` - Key password
 
 **Secrets location:**
 
-- GitLab CI/CD variables (protected, masked)
-- .env file (local development only, not committed)
-- Terraform outputs (for AWS deployment)
+- `.env` files (not committed)
+- GitLab CI/CD variables (for pipeline)
+- AWS Secrets Manager (not currently used but infrastructure ready)
 
 ## Webhooks & Callbacks
 
 **Incoming:**
 
-- None (Static SPA, no server webhooks)
+- None currently implemented
+- Infrastructure ready: API Gateway REST API at `infrastructure/cloudwatch-api.tf`
 
 **Outgoing:**
 
-- None (Client-side only, uses polling/WebSocket for real-time)
+- CloudWatch error logging via API Gateway POST to `/logs`
+- WebSocket messages to server (if WebSocket feature enabled)
+
+## WebSocket Integration (Optional Feature)
+
+**Server:**
+
+- **Socket.IO** server in Nuxt dev mode
+- Implementation: `apps/game/server/plugins/socket.ts`
+- Transports: WebSocket, polling
+- CORS: All origins (development mode)
+- Events: `logPerformance`, `updateLeaderboard`, `getUserStats`, `ping`
+
+**AWS WebSocket API (Infrastructure Defined):**
+
+- API Gateway V2 WebSocket API
+- Lambda handlers: connect, disconnect, message
+- Runtime: Node.js 20.x
+- Infrastructure: `infrastructure/websocket.tf`
+- Routes: `$connect`, `$disconnect`, `$default`
+- Integration: DynamoDB for connection tracking, user data, leaderboard
+- Throttling: 5000 burst, 10000 rate limit
+
+**Client:**
+
+- Composable: `apps/game/composables/useWebSocket.ts`
+- Connection: localhost:3000 (dev), origin (prod)
+- Auto-reconnection with exponential backoff
+- Connection monitoring via ping/pong every 30 seconds
+
+## Service Worker (PWA)
+
+**Implementation:**
+
+- Vite PWA plugin with Workbox
+- Strategy: `autoUpdate` with skipWaiting
+- Max file size: 2MB production, 5MB debug builds
+- Runtime caching strategies configured per resource type
+- Offline navigation fallback to `/`
+
+**Manifest:**
+
+- Name: "Riddle Rush"
+- Display: standalone
+- Orientation: portrait
+- Theme: #ff6b35
+- Icons: 192x192, 512x512, Apple Touch Icon
 
 ---
 
-_Integration audit: 2026-01-31_
+_Integration audit: 2026-02-06_
