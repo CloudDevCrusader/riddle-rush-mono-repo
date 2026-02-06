@@ -269,14 +269,26 @@ Plans:
 9. Git tag v1.0.3 created and GitHub release published
 10. 24-hour production monitoring shows stability
 
-**Plans**: TBD (to be planned)
+**Plans**: 10 plans
 
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 12 to break down)
+- [ ] 12-01-PLAN.md — E2E test fixes with data-testid attributes
+- [ ] 12-02-PLAN.md — Unit tests for useAnswerCheck, useGameActions, useGameState
+- [ ] 12-03-PLAN.md — Unit tests for useStatistics, useAudio, useIndexedDB
+- [ ] 12-04-PLAN.md — Extract S3, CloudFront, DynamoDB Terraform modules
+- [ ] 12-05-PLAN.md — Extract Lambda, API Gateway, WebSocket, CloudWatch modules
+- [ ] 12-06-PLAN.md — Extract category and session management composables
+- [ ] 12-07-PLAN.md — Extract player and scoring management composables
+- [ ] 12-08-PLAN.md — Extract attempt, statistics, persistence composables
+- [ ] 12-09-PLAN.md — Visual audit of all game pages
+- [ ] 12-10-PLAN.md — Deployment script enhancements
 
 **Details**:
-[To be added during planning - see TASKS_V1.0.3.md for detailed breakdown]
+
+- **Wave 1 (Blocking):** Plan 01 - E2E fixes establish safety net
+- **Wave 2 (Parallel):** Plans 02-08 - Testing, Terraform, Game Store refactoring
+- **Wave 3 (Polish):** Plans 09-10 - Visual audit and deployment automation
 
 ## Progress
 
@@ -296,4 +308,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Game Results                    | 2/2            | Complete    | 2026-02-01 |
 | 10. Settings Pages                 | 2/2            | Complete    | 2026-02-01 |
 | 11. Modal Dialogs                  | 0/3            | Not started | -          |
-| 12. App Optimization & Refactoring | 0/TBD          | Not planned | -          |
+| 12. App Optimization & Refactoring | 0/10           | Planned     | -          |
