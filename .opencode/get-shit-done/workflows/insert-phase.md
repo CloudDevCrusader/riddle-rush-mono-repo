@@ -14,6 +14,7 @@ Remaining: phase description
 Example: `/gsd-insert-phase 72 Fix critical auth bug`
 
 Validate:
+
 ```bash
 if [ $# -lt 2 ]; then
   echo "ERROR: Both phase number and description required"
@@ -66,6 +67,7 @@ Insert after target phase:
 ## Step 8: Update STATE.md
 
 Add to "Roadmap Evolution":
+
 ```
 - Phase {decimal} inserted after Phase {after}: {description} (URGENT)
 ```

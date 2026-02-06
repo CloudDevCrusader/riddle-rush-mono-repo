@@ -11,6 +11,7 @@ Reads existing VERIFICATION.md files (phases already verified during execute-pha
 @./.opencode/get-shit-done/references/model-profile-resolution.md
 
 Resolve model for:
+
 - `gsd-integration-checker`
 
 ## Step 1: Determine Milestone Scope
@@ -27,12 +28,14 @@ ls -d .planning/phases/*/ | sort -V
 ## Step 2: Read All Phase Verifications
 
 For each phase directory:
+
 ```bash
 cat .planning/phases/01-*/*-VERIFICATION.md
 cat .planning/phases/02-*/*-VERIFICATION.md
 ```
 
 Extract from each:
+
 - Status: passed | gaps_found
 - Critical gaps (blockers)
 - Non-critical gaps (tech debt, deferred)
@@ -60,12 +63,14 @@ Verify cross-phase wiring and E2E user flows.",
 ## Step 4: Collect Results
 
 Combine:
+
 - Phase-level gaps and tech debt
 - Integration checker report (wiring gaps, broken flows)
 
 ## Step 5: Check Requirements Coverage
 
 For each requirement:
+
 - Find owning phase
 - Check phase verification status
 - Determine: satisfied | partial | unsatisfied
@@ -76,8 +81,8 @@ Create `.planning/v{version}-MILESTONE-AUDIT.md`:
 
 ```yaml
 ---
-milestone: {version}
-audited: {timestamp}
+milestone: { version }
+audited: { timestamp }
 status: passed | gaps_found | tech_debt
 scores:
   requirements: N/M
@@ -99,6 +104,7 @@ tech_debt:
 Route by status:
 
 **If passed:**
+
 ```
 ## ✓ Milestone {version} — Audit Passed
 
@@ -106,6 +112,7 @@ Route by status:
 ```
 
 **If gaps_found:**
+
 ```
 ## ⚠ Milestone {version} — Gaps Found
 
@@ -113,6 +120,7 @@ Route by status:
 ```
 
 **If tech_debt:**
+
 ```
 ## ⚡ Milestone {version} — Tech Debt Review
 

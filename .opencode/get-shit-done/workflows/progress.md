@@ -13,10 +13,12 @@ test -d .planning && echo "exists" || echo "missing"
 ```
 
 If no `.planning/`:
+
 ```
 No planning structure found.
 Run /gsd-new-project to start a new project.
 ```
+
 Exit.
 
 If missing STATE.md: suggest `/gsd-new-project`.
@@ -26,6 +28,7 @@ If ROADMAP.md missing but PROJECT.md exists: Route F (between milestones).
 ## Step 2: Load Context
 
 Read:
+
 - `.planning/STATE.md`
 - `.planning/ROADMAP.md`
 - `.planning/PROJECT.md`
@@ -43,6 +46,7 @@ From STATE.md: current phase, plan number, status.
 Calculate: total plans, completed plans, remaining plans.
 
 Check for:
+
 - CONTEXT.md in phase directory
 - Pending todos: `ls .planning/todos/pending/*.md 2>/dev/null | wc -l`
 - Active debug sessions: `ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`
@@ -85,6 +89,7 @@ CONTEXT: [✓ if exists | - if not]
 ## Step 6: Route to Next Action
 
 **Count files in current phase:**
+
 ```bash
 ls -1 .planning/phases/[phase-dir]/*-PLAN.md 2>/dev/null | wc -l
 ls -1 .planning/phases/[phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
@@ -92,18 +97,19 @@ ls -1 .planning/phases/[phase-dir]/*-UAT.md 2>/dev/null | wc -l
 ```
 
 **Check for UAT gaps:**
+
 ```bash
 grep -l "status: diagnosed" .planning/phases/[phase-dir]/*-UAT.md 2>/dev/null
 ```
 
 **Route based on state:**
 
-| Condition | Route |
-|-----------|-------|
-| uat_with_gaps > 0 | Route E — UAT gaps need fix plans |
-| summaries < plans | Route A — Unexecuted plans exist |
-| summaries = plans AND plans > 0 | Step 7 — Check milestone status |
-| plans = 0 | Route B — Phase needs planning |
+| Condition                       | Route                             |
+| ------------------------------- | --------------------------------- |
+| uat_with_gaps > 0               | Route E — UAT gaps need fix plans |
+| summaries < plans               | Route A — Unexecuted plans exist  |
+| summaries = plans AND plans > 0 | Step 7 — Check milestone status   |
+| plans = 0                       | Route B — Phase needs planning    |
 
 </process>
 
@@ -126,6 +132,7 @@ Find first PLAN.md without matching SUMMARY.md.
 ## Route B: Phase needs planning
 
 **If CONTEXT.md exists:**
+
 ```
 ## ▶ Next Up
 
@@ -136,6 +143,7 @@ Find first PLAN.md without matching SUMMARY.md.
 ```
 
 **If CONTEXT.md does NOT exist:**
+
 ```
 ## ▶ Next Up
 
@@ -224,8 +232,9 @@ When phase complete (summaries = plans AND plans > 0):
 
 Read ROADMAP.md, identify current and highest phase numbers.
 
-| Condition | Route |
-|-----------|-------|
+| Condition         | Route                        |
+| ----------------- | ---------------------------- |
 | current < highest | Route C — More phases remain |
 | current = highest | Route D — Milestone complete |
+
 </step7_milestone_check>

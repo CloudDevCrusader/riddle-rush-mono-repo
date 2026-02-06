@@ -41,10 +41,10 @@ DECIMAL_PHASE="${PADDED}.${NEXT_DECIMAL}"
 ## Examples
 
 | Existing Phases | Next Phase |
-|-----------------|------------|
-| 06 only | 06.1 |
-| 06, 06.1 | 06.2 |
-| 06, 06.1, 06.2 | 06.3 |
+| --------------- | ---------- |
+| 06 only         | 06.1       |
+| 06, 06.1        | 06.2       |
+| 06, 06.1, 06.2  | 06.3       |
 
 ## Directory Naming
 

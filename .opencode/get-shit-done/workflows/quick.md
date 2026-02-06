@@ -2,11 +2,12 @@
 Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking) while skipping optional agents.
 
 Quick mode is the same system with a shorter path:
+
 - Spawns gsd-planner (quick mode) + gsd-executor(s)
 - Skips research, plan-checker, verifier
 - Quick tasks live in `.planning/quick/` separate from planned phases
 - Updates STATE.md "Quick Tasks Completed" table
-</purpose>
+  </purpose>
 
 <process>
 
@@ -15,6 +16,7 @@ Quick mode is the same system with a shorter path:
 @./.opencode/get-shit-done/references/model-profile-resolution.md
 
 Resolve models for:
+
 - `gsd-planner`
 - `gsd-executor`
 
@@ -40,6 +42,7 @@ question(
 Store as `$DESCRIPTION`.
 
 Generate slug:
+
 ```bash
 slug=$(echo "$DESCRIPTION" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//' | cut -c1-40)
 ```
@@ -125,11 +128,12 @@ If missing, insert after `### Blockers/Concerns`:
 ```markdown
 ### Quick Tasks Completed
 
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
+| #   | Description | Date | Commit | Directory |
+| --- | ----------- | ---- | ------ | --------- |
 ```
 
 **Append row:**
+
 ```markdown
 | ${next_num} | ${DESCRIPTION} | $(date +%Y-%m-%d) | ${commit_hash} | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
 ```
@@ -148,6 +152,7 @@ git commit -m "docs(quick-${next_num}): ${DESCRIPTION}"
 ```
 
 Display completion:
+
 ```
 GSD ► QUICK TASK COMPLETE
 

@@ -12,6 +12,7 @@ Output: Phase deleted, subsequent phases renumbered, git commit as historical re
 @./.opencode/get-shit-done/references/phase-argument-parsing.md
 
 Phase number required. Error if not provided:
+
 ```
 ERROR: Phase number required
 Usage: /gsd-remove-phase <phase-number>
@@ -31,6 +32,7 @@ Parse current phase from STATE.md.
 Search for `### Phase {target}:` heading.
 
 If not found:
+
 ```
 ERROR: Phase {target} not found in roadmap
 Available phases: [list]
@@ -41,6 +43,7 @@ Available phases: [list]
 Target must be > current phase number.
 
 If target <= current:
+
 ```
 ERROR: Cannot remove Phase {target}
 
@@ -52,11 +55,13 @@ To abandon current work, use /gsd-pause-work instead.
 ```
 
 Check for SUMMARY.md files:
+
 ```bash
 ls .planning/phases/{target}-*/*-SUMMARY.md 2>/dev/null
 ```
 
 If any exist:
+
 ```
 ERROR: Phase {target} has completed work
 Cannot remove phases with completed work.
@@ -69,6 +74,7 @@ Find phase directory.
 Find all subsequent phases needing renumbering.
 
 **Subsequent phase detection:**
+
 - For integer removal (17): Find phases > 17, decimals 17.x → 16.x
 - For decimal removal (17.1): Find decimals > 17.1 within same integer
 
@@ -97,6 +103,7 @@ fi
 ## Step 8: Renumber Directories
 
 Process in descending order to avoid overwrites:
+
 ```bash
 mv ".planning/phases/20-name" ".planning/phases/19-name"
 mv ".planning/phases/19-name" ".planning/phases/18-name"
@@ -104,12 +111,14 @@ mv ".planning/phases/18-name" ".planning/phases/17-name"
 ```
 
 Handle decimal directories:
+
 - `17.1-fix-bug` → `16.1-fix-bug` (if removing integer 17)
 - `17.2-hotfix` → `17.1-hotfix` (if removing decimal 17.1)
 
 ## Step 9: Rename Files in Directories
 
 Inside each renumbered directory:
+
 ```bash
 mv "18-01-PLAN.md" "17-01-PLAN.md"
 mv "18-02-PLAN.md" "17-02-PLAN.md"
@@ -131,6 +140,7 @@ Do NOT add "Roadmap Evolution" note — git commit is the record.
 ## Step 12: Update File Contents
 
 Search for and update internal phase references:
+
 ```bash
 grep -r "Phase 18" .planning/phases/17-*/
 ```
@@ -140,6 +150,7 @@ grep -r "Phase 18" .planning/phases/17-*/
 @./.opencode/get-shit-done/references/git-planning-commit.md
 
 If committing:
+
 ```bash
 git add .planning/
 git commit -m "chore: remove phase {target} ({original-name})"
@@ -170,9 +181,10 @@ Current position: Phase {current} of {new-total}
 </process>
 
 <anti_patterns>
+
 - Don't remove completed phases (have SUMMARY.md)
 - Don't remove current or past phases
 - Don't leave gaps in numbering
 - Don't add "removed phase" notes to STATE.md
 - Don't modify completed phase directories
-</anti_patterns>
+  </anti_patterns>

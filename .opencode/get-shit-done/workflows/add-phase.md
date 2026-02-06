@@ -60,6 +60,7 @@ Insert at end of milestone:
 ## Step 8: Update STATE.md
 
 Add to "Roadmap Evolution":
+
 ```
 - Phase {N} added: {description}
 ```
