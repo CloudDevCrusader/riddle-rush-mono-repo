@@ -24,6 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Game Results** - Scoring and leaderboard pages
 - [x] **Phase 10: Settings Pages** - Options and language selection
 - [ ] **Phase 11: Modal Dialogs** - Quit and pause overlays
+- [ ] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
 
 ## Phase Details
 
@@ -250,21 +251,49 @@ Plans:
 - [ ] 11-02-PLAN.md — Refactor QuitModal to use GameModal with danger variant
 - [ ] 11-03-PLAN.md — Refactor PauseModal to CSS-first with stacked buttons
 
+### Phase 12: App Optimization & Refactoring
+
+**Goal**: Prepare app for production v1.0.3 with comprehensive testing, optimized Terraform infrastructure, and proper deployment
+**Depends on**: Phase 11
+**Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03
+**Success Criteria** (what must be TRUE):
+
+1. All composables have unit tests with >75% coverage
+2. Integration tests cover WebSocket and IndexedDB flows
+3. E2E test suite passes with 100% success rate
+4. Terraform infrastructure refactored with reusable modules and validation
+5. CloudFront cache policies extracted to dedicated module
+6. Production bundle built and optimized (<5MB total)
+7. Lighthouse score >90 on all categories
+8. Version 1.0.3 deployed to production with monitoring
+9. Git tag v1.0.3 created and GitHub release published
+10. 24-hour production monitoring shows stability
+
+**Plans**: TBD (to be planned)
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 12 to break down)
+
+**Details**:
+[To be added during planning - see TASKS_V1.0.3.md for detailed breakdown]
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12
 
-| Phase                     | Plans Complete | Status      | Completed  |
-| ------------------------- | -------------- | ----------- | ---------- |
-| 1. Design Tokens          | 3/3            | Complete    | 2026-01-31 |
-| 2. Design Utilities       | 2/2            | Complete    | 2026-01-31 |
-| 3. Core Layout Components | 2/2            | Complete    | 2026-02-01 |
-| 4. Interactive Components | 2/2            | Complete    | 2026-02-01 |
-| 5. Structural Components  | 3/3            | Complete    | 2026-02-01 |
-| 6. Splash & Navigation    | 2/2            | Complete    | 2026-02-01 |
-| 7. Player Setup           | 2/2            | Complete    | 2026-02-01 |
-| 8. Core Gameplay          | 2/2            | Complete    | 2026-02-01 |
-| 9. Game Results           | 2/2            | Complete    | 2026-02-01 |
-| 10. Settings Pages        | 2/2            | Complete    | 2026-02-01 |
-| 11. Modal Dialogs         | 0/3            | Not started | -          |
+| Phase                              | Plans Complete | Status      | Completed  |
+| ---------------------------------- | -------------- | ----------- | ---------- |
+| 1. Design Tokens                   | 3/3            | Complete    | 2026-01-31 |
+| 2. Design Utilities                | 2/2            | Complete    | 2026-01-31 |
+| 3. Core Layout Components          | 2/2            | Complete    | 2026-02-01 |
+| 4. Interactive Components          | 2/2            | Complete    | 2026-02-01 |
+| 5. Structural Components           | 3/3            | Complete    | 2026-02-01 |
+| 6. Splash & Navigation             | 2/2            | Complete    | 2026-02-01 |
+| 7. Player Setup                    | 2/2            | Complete    | 2026-02-01 |
+| 8. Core Gameplay                   | 2/2            | Complete    | 2026-02-01 |
+| 9. Game Results                    | 2/2            | Complete    | 2026-02-01 |
+| 10. Settings Pages                 | 2/2            | Complete    | 2026-02-01 |
+| 11. Modal Dialogs                  | 0/3            | Not started | -          |
+| 12. App Optimization & Refactoring | 0/TBD          | Not planned | -          |
