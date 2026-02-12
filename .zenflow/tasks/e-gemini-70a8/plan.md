@@ -36,3 +36,7 @@ Implement the bug fix.
 4. Update `{@artifacts_path}/investigation.md` with implementation notes and test results
 
 If blocked or uncertain, ask the user for direction.
+
+### [ ] Step: Unit & E2E tests
+
+Verify your work with e2e and unit teats
