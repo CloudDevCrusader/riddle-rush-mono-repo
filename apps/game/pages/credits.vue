@@ -19,7 +19,7 @@
       <div class="credits-panel animate-scale-in">
         <!-- Game Design -->
         <div class="credit-section">
-          <h2 class="section-heading">Game Design</h2>
+          <h2 class="section-heading">{{ t('credits.game_design') }}</h2>
           <div class="credit-box">
             <span class="credit-name">Tobi</span>
             <span class="credit-divider" />
@@ -29,7 +29,7 @@
 
         <!-- Programming -->
         <div class="credit-section">
-          <h2 class="section-heading">Programming</h2>
+          <h2 class="section-heading">{{ t('credits.programming') }}</h2>
           <div class="credit-box">
             <span class="credit-name">Markus</span>
           </div>
@@ -37,7 +37,7 @@
 
         <!-- Art -->
         <div class="credit-section">
-          <h2 class="section-heading">Art</h2>
+          <h2 class="section-heading">{{ t('credits.art') }}</h2>
           <div class="credit-box">
             <span class="credit-name">Sarmad Ali</span>
           </div>
@@ -56,16 +56,16 @@
 </template>
 
 <script setup lang="ts">
-const { baseUrl, goBack } = usePageSetup()
+const { baseUrl, goBack, t } = usePageSetup()
 const runtimeConfig = useRuntimeConfig()
 const appVersion = runtimeConfig.public.appVersion
 
 useHead({
-  title: 'Riddle Rush - Credits',
+  title: `Riddle Rush - ${t('credits.title')}`,
   meta: [
     {
       name: 'description',
-      content: 'Meet the team behind Riddle Rush',
+      content: t('credits.title'),
     },
   ],
 })

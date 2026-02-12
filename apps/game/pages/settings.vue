@@ -8,7 +8,7 @@
             <span class="back-btn__arrow">&#8592;</span>
           </button>
         </template>
-        OPTIONS
+        {{ t('settings.title') }}
       </GameHeader>
 
       <!-- Settings Panel -->
@@ -16,24 +16,26 @@
         <!-- Sound slider -->
         <div class="slider-row">
           <GameSlider v-model="soundVolume" icon="🔊" muted-icon="🔇" @change="handleSoundChange" />
-          <span class="slider-label">Sound</span>
+          <span class="slider-label">{{ t('settings.sound') }}</span>
         </div>
 
         <!-- Music slider -->
         <div class="slider-row">
           <GameSlider v-model="musicVolume" icon="🎵" muted-icon="🔇" @change="handleMusicChange" />
-          <span class="slider-label">Music</span>
+          <span class="slider-label">{{ t('settings.music') }}</span>
         </div>
       </GamePanel>
 
       <!-- OK Button -->
-      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk"> OK </GameButton>
+      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk">
+        {{ t('common.ok') }}
+      </GameButton>
     </div>
   </GameBackground>
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
+const { t, goBack: navigateBack } = usePageSetup()
 const settingsStore = useSettingsStore()
 
 // Local refs for slider values
@@ -66,12 +68,12 @@ const handleMusicChange = (value: number) => {
 
 // Navigate back
 const goBack = () => {
-  router.back()
+  navigateBack()
 }
 
 // Handle OK button
 const handleOk = () => {
-  router.back()
+  navigateBack()
 }
 
 // Handle escape key
@@ -97,11 +99,11 @@ onUnmounted(() => {
 })
 
 useHead({
-  title: 'Settings',
+  title: t('settings.title'),
   meta: [
     {
       name: 'description',
-      content: 'Game settings',
+      content: t('settings.title'),
     },
   ],
 })
