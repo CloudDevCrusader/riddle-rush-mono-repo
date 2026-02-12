@@ -11,62 +11,61 @@ const enLocale = JSON.parse(fs.readFileSync(enLocalePath, 'utf-8'))
 
 test.describe('Translation Checks', () => {
   
-  test('should not show translation keys on home page in English', async ({ page }) => {
-    // 1. Force English via URL
-    await page.goto('/?lang=en')
+  test('should not show raw translation keys on home page', async ({ page }) => {
+    await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    // 2. Scan for text that looks like a key (e.g. "menu.options")
-    // We exclude common patterns like filenames or URLs if any
     const bodyText = await page.innerText('body')
+    // Pattern for keys like "menu.play"
     const keyPattern = /\b[a-z]+\.[a-z_]+\b/g
     const matches = bodyText.match(keyPattern)
     
-    // Filter out potential false positives if necessary
-    // For now, assume any "word.word" is a missing key
     if (matches) {
         console.log('Found potential missing keys:', matches)
     }
     expect(matches).toBeNull()
   })
 
-  test('should show category in English after starting game', async ({ page }) => {
-    // 1. Force English
-    await page.goto('/?lang=en')
+  test('should show category in English and not as a key', async ({ page }) => {
+    // 1. Switch to English via language page
+    await page.goto('/language')
+    await page.getByText('ENGLISH').click()
+    await page.getByRole('button', { name: 'OK' }).click()
     await page.waitForLoadState('networkidle')
-
-    // 2. Click Play
-    const playBtn = page.locator('button').filter({ hasText: 'PLAY' }).first()
+    
+    // 2. Go to Home and Start Game
+    await page.goto('/')
+    const playBtn = page.locator('button').filter({ hasText: /Play/i }).first()
     await expect(playBtn).toBeVisible()
     await playBtn.click()
 
-    // 3. Wait for players page
+    // 3. Check Players Page
     await page.waitForURL('**/players')
-    
-    // 4. Click Start Game
-    // Text should be "Start Game" in English
     const startBtn = page.locator('.start-button')
     await expect(startBtn).toBeVisible()
+    // Should NOT show the key
+    await expect(startBtn).not.toHaveText('players.start')
+    // Should show the English translation
     await expect(startBtn).toHaveText('Start Game', { ignoreCase: true })
     await startBtn.click()
 
-    // 5. Wait for round start page
+    // 4. Check Round Start Page
     await page.waitForURL('**/round-start')
     
-    // 6. Check for category name
-    // The category names are in enLocale.categories values.
-    const englishCategories = Object.values(enLocale.categories)
+    // Wait for the result text to appear (after wheel spin)
+    // Increase timeout for the wheel spin
+    const resultText = page.locator('.result-text').first()
+    await expect(resultText).toBeVisible({ timeout: 15000 })
     
-    // Wait for one of these to appear
-    await expect.poll(async () => {
-        const text = await page.innerText('body')
-        // Check if any english category is present
-        // Note: some categories might be sub-strings of others, but strict check is hard.
-        // We just want to ensure we don't see raw keys or German-only names (if possible).
-        return englishCategories.some(cat => text.includes(cat as string))
-    }, {
-        message: 'Expected to find an English category name on the screen',
-        timeout: 10000
-    }).toBe(true)
+    const categoryName = await resultText.innerText()
+    console.log('Detected category name:', categoryName)
+    
+    // Should not be a key
+    expect(categoryName).not.toContain('categories.')
+    
+    // Verify it's one of the English category names
+    const englishCategories = Object.values(enLocale.categories)
+    const found = englishCategories.some(cat => categoryName.includes(cat as string) || (cat as string).includes(categoryName))
+    expect(found, `Category name "${categoryName}" should be one of the English category names`).toBe(true)
   })
 })
