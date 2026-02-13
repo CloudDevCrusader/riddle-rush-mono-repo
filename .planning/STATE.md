@@ -92,12 +92,15 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Push pending commits to remote.
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~550 lines) for simplification and bug risk.
-- Switch CI/CD from CircleCI to Vercel (fix SCSS import paths for Vercel build).
-- Add non-blocking GitHub Action for quality checks (typecheck, lint, tests — informational only).
+
+### Completed Todos (2026-02-13)
+
+- ~~Push pending commits to remote.~~ Done.
+- ~~Switch CI/CD from CircleCI to Vercel.~~ Done — removed CircleCI, fixed SCSS import paths, verified Vercel build succeeds.
+- ~~Add non-blocking GitHub Action for quality checks.~~ Done — replaced broken npm-based tests.yml with pnpm/turbo quality checks workflow.
 
 ### Blockers/Concerns
 
@@ -108,8 +111,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-02
-Stopped at: Completed 11-01-PLAN.md (Component extensions for modals)
+Last session: 2026-02-13
+Stopped at: Completed DevOps todos (CircleCI removal, Vercel fix, GitHub Action quality checks)
 Resume file: None
 
 ### Phase 11 Plans Status

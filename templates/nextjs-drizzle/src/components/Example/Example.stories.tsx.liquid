@@ -1,0 +1,88 @@
+/**
+ * {{ componentName }} Component Stories
+ *
+ * DESIGN PATTERNS:
+ * - Stories render the View (dumb) component directly for isolated testing
+ * - Playground Story (REQUIRED): Interactive story for testing all component variants
+ * - State Stories (SUGGESTED): Individual stories for each component state
+ *
+ * CODING STANDARDS:
+ * - Import Meta and StoryObj types from @storybook/react
+ * - Import the View component, not the smart component
+ * - Export meta as default with satisfies Meta<typeof ComponentView>
+ * - Use args for default props, argTypes for control configuration
+ *
+ * USAGE:
+ * - Playground: Shows all variants in one view for quick testing
+ * - State stories: Document and test individual states (Default, Loading, Error, Empty, etc.)
+ * - Configure controls via argTypes for interactive testing
+ */
+
+import type { Meta, StoryObj } from '@storybook/react';
+import { {{ componentName }}View } from './{{ componentName }}View';
+
+const meta = {
+  title: 'Components/{{ componentName }}',
+  component: {{ componentName }}View,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    children: {
+      control: 'text',
+    },
+  },
+} satisfies Meta<typeof {{ componentName }}View>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/**
+ * Playground story (REQUIRED)
+ * Shows all component variants in one view for quick visual testing.
+ * Use this to explore different states and configurations.
+ */
+export const Playground: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <{{ componentName }}View>Default {{ componentName }}</{{ componentName }}View>
+      <{{ componentName }}View className="bg-primary-100 px-3 py-1 rounded-full text-sm">
+        Custom styled {{ componentName }}
+      </{{ componentName }}View>
+    </div>
+  ),
+};
+
+/**
+ * Default state story (SUGGESTED)
+ * Shows the component in its default/normal state.
+ */
+export const Default: Story = {
+  args: {
+    children: 'This is a {{ componentName }} component',
+  },
+};
+
+/**
+ * Additional state stories (SUGGESTED)
+ * Add stories for different component states:
+ * - Loading: Component in loading state
+ * - Error: Component displaying error state
+ * - Empty: Component with no data
+ * - Disabled: Component in disabled state
+ * - WithData: Component with populated data
+ *
+ * Example:
+ * export const Loading: Story = {
+ *   args: {
+ *     isLoading: true,
+ *   },
+ * };
+ *
+ * export const Error: Story = {
+ *   args: {
+ *     error: 'Something went wrong',
+ *   },
+ * };
+ */
