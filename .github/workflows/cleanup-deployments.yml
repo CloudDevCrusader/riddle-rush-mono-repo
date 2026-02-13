@@ -1,0 +1,31 @@
+name: Cleanup Old Deployments
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    name: Cleanup Old Preview Deployments
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Remove old preview deployments
+        run: |
+          echo "Fetching deployments..."
+          # List all deployments and remove previews older than 7 days
+          vercel ls --token=${{ secrets.VERCEL_TOKEN }} --meta gitBranch!=main --meta gitBranch!=development | \
+          grep -E "([7-9]d|[0-9]{2,}d|[0-9]+mo|[0-9]+y) ago" | \
+          awk '{print $1}' | \
+          while read -r deployment_url; do
+            echo "Removing old deployment: $deployment_url"
+            vercel rm "$deployment_url" --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          done
+        continue-on-error: true

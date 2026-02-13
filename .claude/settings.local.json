@@ -88,14 +88,30 @@
       "Bash(file:*)",
       "Bash(git check-ignore:*)",
       "Bash(pnpm --filter @riddle-rush/game run typecheck:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(grep:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "riddle-rush-subagents",
+    "nuxt-ui",
+    "nuxt",
+    "nuxt-mcp-toolkit",
+    "browsermcp",
+    "playwright",
+    "aws-docs",
+    "docker",
+    "context7",
+    "git",
+    "gitlab",
+    "filesystem"
+  ],
   "enabledPlugins": {
     "voltagent-qa-sec@voltagent-subagents": true,
     "playwright-tools@claude-settings": true,
     "voltagent-lang@voltagent-subagents": true
   },
-  "outputStyle": "Explanatory"
+  "outputStyle": "Explanatory",
+  "prefersReducedMotion": true
 }
