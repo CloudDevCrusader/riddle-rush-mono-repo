@@ -265,7 +265,7 @@ else
 	fi
 	echo -e "  Uploading static assets (CSS, JS, images)..."
 	aws s3 sync "${BUILD_DIR}" "s3://${S3_BUCKET}" \
-		"${ASSET_DELETE_ARGS[@]}" \
+		${ASSET_DELETE_ARGS[@]+"${ASSET_DELETE_ARGS[@]}"} \
 		--cache-control "public, max-age=31536000, immutable" \
 		--exclude "*.html" \
 		--exclude "sw.js" \
