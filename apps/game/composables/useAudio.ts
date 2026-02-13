@@ -1,8 +1,12 @@
 import type { CategorySettings } from '@riddle-rush/types/game'
+import { ref } from 'vue'
+
+// Global audio context and settings
+let audioContext: AudioContext | null = null
+const masterVolume = ref(1.0)
+const isMuted = ref(false)
 
 export function useAudio() {
-  let audioContext: AudioContext | null = null
-
   const initAudioContext = () => {
     if (!audioContext && typeof window !== 'undefined') {
       const AudioContextClass =
@@ -11,6 +15,11 @@ export function useAudio() {
       audioContext = new AudioContextClass()
     }
     return audioContext
+  }
+
+  // Calculate effective volume (considering mute and master volume)
+  const getEffectiveVolume = (volume: number): number => {
+    return isMuted.value ? 0 : volume * masterVolume.value
   }
 
   const playTone = (
@@ -22,6 +31,9 @@ export function useAudio() {
     const ctx = initAudioContext()
     if (!ctx) return
 
+    const effectiveVol = getEffectiveVolume(volume)
+    if (effectiveVol === 0) return // Skip if muted
+
     const oscillator = ctx.createOscillator()
     const gainNode = ctx.createGain()
 
@@ -31,7 +43,7 @@ export function useAudio() {
     oscillator.frequency.value = frequency
     oscillator.type = type
 
-    gainNode.gain.setValueAtTime(volume, ctx.currentTime)
+    gainNode.gain.setValueAtTime(effectiveVol, ctx.currentTime)
     gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration)
 
     oscillator.start(ctx.currentTime)
