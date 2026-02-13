@@ -1,13 +1,16 @@
 # Fix bug
 
 ## Configuration
+
 - **Artifacts Path**: {@artifacts_path} → `.zenflow/tasks/{task_id}`
 
 ---
 
 ## Workflow Steps
 
-### [ ] Step: Investigation and Planning
+### [x] Step: Investigation and Planning
+
+<!-- chat-id: 73945f68-3c85-46ec-87e8-8bc4e9493592 -->
 
 Analyze the bug report and design a solution.
 
@@ -19,12 +22,14 @@ Analyze the bug report and design a solution.
 6. Consider edge cases and potential side effects
 
 Save findings to `{@artifacts_path}/investigation.md` with:
+
 - Bug summary
 - Root cause analysis
 - Affected components
 - Proposed solution
 
 ### [ ] Step: Implementation
+
 Read `{@artifacts_path}/investigation.md`
 Implement the bug fix.
 
