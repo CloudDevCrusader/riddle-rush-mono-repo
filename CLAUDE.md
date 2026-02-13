@@ -103,14 +103,14 @@ riddle-rush-monorepo/
 
 ### Workspace Packages
 
-| Package | Name | Description |
-|---------|------|-------------|
-| `apps/game` | `@riddle-rush/game` | Nuxt 4 PWA — the main game application |
-| `apps/mobile` | — | NativeScript Vue mobile app |
-| `packages/config` | `@riddle-rush/config` | Shared Vite/build configurations |
-| `packages/shared` | `@riddle-rush/shared` | Shared utilities, constants, route definitions |
-| `packages/types` | `@riddle-rush/types` | Shared TypeScript types (`GameSession`, etc.) |
-| `packages/riddle-cli` | — | oclif-based CLI tool |
+| Package               | Name                  | Description                                    |
+| --------------------- | --------------------- | ---------------------------------------------- |
+| `apps/game`           | `@riddle-rush/game`   | Nuxt 4 PWA — the main game application         |
+| `apps/mobile`         | —                     | NativeScript Vue mobile app                    |
+| `packages/config`     | `@riddle-rush/config` | Shared Vite/build configurations               |
+| `packages/shared`     | `@riddle-rush/shared` | Shared utilities, constants, route definitions |
+| `packages/types`      | `@riddle-rush/types`  | Shared TypeScript types (`GameSession`, etc.)  |
+| `packages/riddle-cli` | —                     | oclif-based CLI tool                           |
 
 ### Key Technologies
 
@@ -286,13 +286,13 @@ Key pattern: Store actions save to IndexedDB after mutations, ensuring data pers
 
 Managed via `composables/useIndexedDB.ts`:
 
-| Store | Purpose | Indexes |
-|-------|---------|---------|
-| `gameSession` | Current active session | — |
-| `gameHistory` | Completed sessions | `startTime` |
-| `statistics` | Aggregated player stats | — |
-| `leaderboard` | High scores | `score`, `timestamp` |
-| `settings` | User preferences | — |
+| Store         | Purpose                 | Indexes              |
+| ------------- | ----------------------- | -------------------- |
+| `gameSession` | Current active session  | —                    |
+| `gameHistory` | Completed sessions      | `startTime`          |
+| `statistics`  | Aggregated player stats | —                    |
+| `leaderboard` | High scores             | `score`, `timestamp` |
+| `settings`    | User preferences        | —                    |
 
 **Critical**: All store mutations affecting game state must call corresponding `save*ToDB()` methods in `stores/game.ts`.
 
@@ -335,22 +335,22 @@ The app uses a **phased game design system** with dedicated component categories
 
 #### `components/game/` — Game Design Components
 
-| Component | Purpose |
-|-----------|---------|
-| `GameButton.vue` | 3D press effect button variants |
-| `GameDisplay.vue` | Display/readout component |
-| `GameHeader.vue` | 3D text effect headers |
-| `GameModal.vue` | Focus-trapped modal dialogs |
+| Component            | Purpose                            |
+| -------------------- | ---------------------------------- |
+| `GameButton.vue`     | 3D press effect button variants    |
+| `GameDisplay.vue`    | Display/readout component          |
+| `GameHeader.vue`     | 3D text effect headers             |
+| `GameModal.vue`      | Focus-trapped modal dialogs        |
 | `GamePlayerCard.vue` | Player cards with score indicators |
-| `GameScrollList.vue` | Scrollable rank displays |
-| `GameSlider.vue` | Volume/settings slider controls |
+| `GameScrollList.vue` | Scrollable rank displays           |
+| `GameSlider.vue`     | Volume/settings slider controls    |
 
 #### `components/layout/` — Layout Components
 
-| Component | Purpose |
-|-----------|---------|
+| Component            | Purpose            |
+| -------------------- | ------------------ |
 | `GameBackground.vue` | Themed backgrounds |
-| `GamePanel.vue` | Content panels |
+| `GamePanel.vue`      | Content panels     |
 
 #### `components/Base/` — Base Components
 
@@ -362,34 +362,34 @@ The app uses a **phased game design system** with dedicated component categories
 
 ### Composables
 
-| Composable | Purpose |
-|------------|---------|
-| `useIndexedDB()` | All database operations |
-| `useStatistics()` | Aggregate stats from game sessions |
-| `useAnalytics()` | Google Analytics tracking |
-| `useAudio()` | Sound effects management |
-| `useAnswerCheck()` | Validate answers against category terms (5-min cache) |
-| `usePageSetup()` | Common page utilities (router, t, baseUrl, toast) |
-| `useLogger()` | Centralized logging (dev-only, stripped in prod) |
-| `useNavigation()` | Page navigation helpers |
-| `useGameState()` | Game state management |
-| `useGameActions()` | Game action dispatchers |
-| `useForm()` | Form handling utilities |
-| `useModal()` | Modal state management |
-| `useToast()` | Toast notification system |
-| `useLoading()` | Loading state management |
-| `useAssets()` | Asset URL resolution |
-| `useOptimizedImage()` | Image optimization helpers |
-| `useLodash()` | Tree-shaken Lodash utilities |
-| `useFeatureFlags()` | Unleash feature flag client |
-| `useWebSocket()` | Socket.io WebSocket integration |
-| `usePerformance()` | Performance monitoring |
-| `useLocalStorage()` | LocalStorage wrapper |
-| `usePageSwipe()` | Swipe gesture handling |
-| `useMenu()` | Menu state management |
-| `useCategoryEmoji()` | Category-to-emoji mapping |
-| `useErrorSync()` | Error synchronization |
-| `useStoryboard()` | Storyboard development overlay |
+| Composable            | Purpose                                               |
+| --------------------- | ----------------------------------------------------- |
+| `useIndexedDB()`      | All database operations                               |
+| `useStatistics()`     | Aggregate stats from game sessions                    |
+| `useAnalytics()`      | Google Analytics tracking                             |
+| `useAudio()`          | Sound effects management                              |
+| `useAnswerCheck()`    | Validate answers against category terms (5-min cache) |
+| `usePageSetup()`      | Common page utilities (router, t, baseUrl, toast)     |
+| `useLogger()`         | Centralized logging (dev-only, stripped in prod)      |
+| `useNavigation()`     | Page navigation helpers                               |
+| `useGameState()`      | Game state management                                 |
+| `useGameActions()`    | Game action dispatchers                               |
+| `useForm()`           | Form handling utilities                               |
+| `useModal()`          | Modal state management                                |
+| `useToast()`          | Toast notification system                             |
+| `useLoading()`        | Loading state management                              |
+| `useAssets()`         | Asset URL resolution                                  |
+| `useOptimizedImage()` | Image optimization helpers                            |
+| `useLodash()`         | Tree-shaken Lodash utilities                          |
+| `useFeatureFlags()`   | Unleash feature flag client                           |
+| `useWebSocket()`      | Socket.io WebSocket integration                       |
+| `usePerformance()`    | Performance monitoring                                |
+| `useLocalStorage()`   | LocalStorage wrapper                                  |
+| `usePageSwipe()`      | Swipe gesture handling                                |
+| `useMenu()`           | Menu state management                                 |
+| `useCategoryEmoji()`  | Category-to-emoji mapping                             |
+| `useErrorSync()`      | Error synchronization                                 |
+| `useStoryboard()`     | Storyboard development overlay                        |
 
 ### Shared Packages
 
@@ -615,15 +615,15 @@ GOOGLE_ANALYTICS_ID=    # Optional
 
 ### docs/ Directory
 
-| Category | Path | Key Files |
-|----------|------|-----------|
-| **Development** | `docs/development/` | `AGENT-WORKFLOW.md`, `TOOLS-AND-AGENTS.md` |
-| **Deployment** | `docs/deployment/` | `AWS-DEPLOYMENT.md`, `DOCKER-CI-IMAGE.md`, `DOCKER-DEPLOYMENT.md` |
-| **Setup** | `docs/setup/` | `MONOREPO_ENVIRONMENT_GUIDE.md`, `HUSKY-TURBOREPO-SETUP.md`, `TERRAFORM-SETUP.md` |
-| **Monorepo** | `docs/` | `MONOREPO.md`, `MONOREPO-REFACTOR.md`, `MONOREPO-ENHANCEMENTS.md` |
-| **Testing** | `docs/` | `TESTING-GUIDE.md`, `TESTING.md` |
-| **Performance** | `docs/` | `ASSET-OPTIMIZATION.md`, `BUILD-OPTIMIZATION.md`, `PERFORMANCE.md` |
-| **Archive** | `docs/archive/` | Historical documents |
+| Category        | Path                | Key Files                                                                         |
+| --------------- | ------------------- | --------------------------------------------------------------------------------- |
+| **Development** | `docs/development/` | `AGENT-WORKFLOW.md`, `TOOLS-AND-AGENTS.md`                                        |
+| **Deployment**  | `docs/deployment/`  | `AWS-DEPLOYMENT.md`, `DOCKER-CI-IMAGE.md`, `DOCKER-DEPLOYMENT.md`                 |
+| **Setup**       | `docs/setup/`       | `MONOREPO_ENVIRONMENT_GUIDE.md`, `HUSKY-TURBOREPO-SETUP.md`, `TERRAFORM-SETUP.md` |
+| **Monorepo**    | `docs/`             | `MONOREPO.md`, `MONOREPO-REFACTOR.md`, `MONOREPO-ENHANCEMENTS.md`                 |
+| **Testing**     | `docs/`             | `TESTING-GUIDE.md`, `TESTING.md`                                                  |
+| **Performance** | `docs/`             | `ASSET-OPTIMIZATION.md`, `BUILD-OPTIMIZATION.md`, `PERFORMANCE.md`                |
+| **Archive**     | `docs/archive/`     | Historical documents                                                              |
 
 ---
 
@@ -671,3 +671,9 @@ git push
 ```
 
 **Remember:** Git hooks will automatically run TypeScript checks, linting, secret scanning, and validate your commit message!
+
+<!-- AICODE:START -->
+
+@.claude/aicode-instructions.md
+
+<!-- AICODE:END -->
