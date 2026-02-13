@@ -291,10 +291,6 @@ useHead({
     width: clamp(180px, 40vw, 300px);
   }
 
-  .credits-container {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
   .credits-panel {
     padding: var(--spacing-xl);
     max-height: 400px;
@@ -319,27 +315,10 @@ useHead({
     width: clamp(140px, 35vw, 200px);
   }
 
-  .credits-container {
-    max-width: calc(100% - var(--spacing-sm) * 2);
-  }
-
   .credits-panel {
     padding: var(--spacing-lg);
     max-height: 300px;
     margin: 0 var(--spacing-sm);
-  }
-
-  .credit-item {
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
-  }
-
-  .credit-label {
-    font-size: clamp(var(--font-size-xs), 1.8vw, var(--font-size-sm));
-  }
-
-  .credit-value {
-    font-size: clamp(var(--font-size-sm), 2vw, var(--font-size-base));
   }
 
   .ok-btn img {
