@@ -45,3 +45,10 @@ If blocked or uncertain, ask the user for direction.
 ### [x] Step: Testing & Verify
 
 Unit & E2E tests
+
+### [x] Step: Make PR mergeable
+
+<!-- chat-id: d9a409a1-c520-4acf-8666-db0d5a691ea4 -->
+<!-- agent: claude-code-default -->
+
+I cant create a PR and merge it if the lintting errors or the the typecheck fails
