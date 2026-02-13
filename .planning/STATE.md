@@ -92,6 +92,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
+- Push pending commits to remote.
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~550 lines) for simplification and bug risk.
