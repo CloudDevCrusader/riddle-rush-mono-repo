@@ -1,109 +1,76 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-01-31
+**Analysis Date:** 2026-02-06
 
 ## Test Framework
 
-**Unit Test Runner:**
+**Runner:**
 
-- Framework: Vitest with happy-dom environment
+- Vitest ^3.0.0
 - Config: `apps/game/vitest.config.ts`
-- Globals: true (test functions auto-imported)
 
-**E2E Test Framework:**
+**Assertion Library:**
 
-- Framework: Playwright (v1.57.0)
-- Config: `apps/game/playwright.config.ts`
-- Reporters: HTML, JSON, JUnit, list, GitHub annotations (in CI)
+- Vitest built-in (Chai-compatible)
+- Methods: `expect()`, `toBe()`, `toEqual()`, `toHaveLength()`, etc.
 
 **Run Commands:**
 
 ```bash
-# Unit tests
-pnpm run test              # Watch mode
-pnpm run test:unit         # Run once
-pnpm run test:unit:coverage # Run with coverage (coverage disabled due to version conflicts)
-
-# E2E tests
-pnpm run test:e2e          # Headless against local build
-pnpm run test:e2e:headed   # Show browser window
-pnpm run test:e2e:ui       # Interactive UI mode
-pnpm run test:e2e:local    # Full local build + test
-pnpm run test:e2e:production  # Test production site
-pnpm run test:e2e:staging     # Test staging site
-pnpm run test:e2e:dev         # Test dev site
+pnpm run test:unit              # Run all unit tests once
+pnpm run test:watch             # Watch mode
+pnpm run test:unit:coverage     # With coverage report
+pnpm run test                   # Root: runs game tests via Turbo
 ```
 
 ## Test File Organization
 
-**Unit Tests:**
+**Location:**
 
-- Location: `tests/unit/` directory
-- Naming: `*.spec.ts` or `*.test.ts` suffix
-- Colocated pattern also supported: test file next to source
-- Setup file: `tests/unit/setup.ts` runs before all unit tests
+- Co-located pattern: `apps/game/tests/unit/` (separate directory)
+- Test files: `apps/game/tests/unit/*.spec.ts`
+- E2E tests: `apps/game/tests/e2e/*.spec.ts`
 
-**E2E Tests:**
+**Naming:**
 
-- Location: `tests/e2e/` directory
-- Naming: `*.spec.ts` suffix
-- Snapshot directory: `tests/e2e/__snapshots__/`
-- Helpers: `tests/e2e/helpers/` (faker, diagnostics, waits, etc.)
-
-**Test Utilities:**
-
-- Factories: `tests/unit/factories.spec.ts` has `createCategoryList()` helper
-- Global setup: `tests/utils/global-setup.ts`
-- Global teardown: `tests/utils/global-teardown.ts`
+- Unit tests: `{feature-name}.spec.ts` - e.g., `game-store.spec.ts`, `use-form.spec.ts`
+- E2E tests: `{page-or-flow}.spec.ts` - e.g., `game-complete-flow.spec.ts`, `players.spec.ts`
 
 **Structure:**
 
 ```
-tests/
-├── unit/
-│   ├── setup.ts                    # Vitest setup
-│   ├── use-logger.spec.ts
-│   ├── game-store.spec.ts
-│   ├── settings-store.spec.ts
-│   └── ...
-├── e2e/
-│   ├── players.spec.ts
+apps/game/tests/
+├── e2e/                        # Playwright E2E tests
 │   ├── game-complete-flow.spec.ts
-│   ├── helpers/
-│   │   ├── faker.ts
-│   │   ├── waits.ts
-│   │   └── ...
-│   └── __snapshots__/
+│   ├── players.spec.ts
+│   ├── leaderboard.spec.ts
+│   └── helpers/
+│       └── faker.ts
+├── unit/                       # Vitest unit tests
+│   ├── setup.ts               # Global test setup
+│   ├── game-store.spec.ts
+│   ├── use-form.spec.ts
+│   └── factories.spec.ts
 └── utils/
-    ├── global-setup.ts
-    └── global-teardown.ts
+    ├── factories.ts           # Test data factories
+    ├── global-setup.ts        # E2E global setup
+    └── global-teardown.ts     # E2E global teardown
 ```
 
-## Unit Test Structure
+## Test Structure
 
 **Suite Organization:**
 
 ```typescript
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useGameStore } from '~/stores/game'
-
 describe('Game Store', () => {
-  let mockCategories: Category[]
-
   beforeEach(() => {
-    // Clear all mocks before each test
     vi.clearAllMocks()
-
-    // Reset Pinia for store tests
-    setActivePinia(createPinia())
-
-    // Setup test data
-    mockCategories = createCategoryList(10)
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    // Setup mocks
   })
 
   afterEach(() => {
-    // Cleanup
     vi.clearAllTimers()
     vi.clearAllMocks()
   })
@@ -115,11 +82,11 @@ describe('Game Store', () => {
     })
   })
 
-  describe('Actions', () => {
-    it('should update state when called', async () => {
+  describe('Category Fetching', () => {
+    it('fetches categories', async () => {
       const store = useGameStore()
       await store.fetchCategories()
-      expect(store.categories.length).toBeGreaterThan(0)
+      expect(fetchMock).toHaveBeenCalled()
     })
   })
 })
@@ -127,29 +94,40 @@ describe('Game Store', () => {
 
 **Patterns:**
 
-- Use nested `describe()` blocks for test grouping
-- Each test should be isolated and independent
-- Descriptive test names: "should [behavior] when [condition]"
-- Use `beforeEach` for test setup, `afterEach` for cleanup
-- Clear mocks between tests to prevent state leakage
+- Nested `describe()` blocks for logical grouping
+- `beforeEach()` for setup - Pinia activation, mock resets
+- `afterEach()` for cleanup - clear timers and mocks
+- One assertion focus per test (but multiple expects allowed for context)
+- Descriptive test names: `'should update field value'`, `'returns null for unknown id'`
 
 ## Mocking
 
-**Framework:** Vitest `vi` module
+**Framework:** Vitest `vi` API
 
-**Mocking Composables:**
+**Patterns:**
+
+**Mock modules:**
 
 ```typescript
 vi.mock('~/composables/useIndexedDB', () => ({
   useIndexedDB: () => ({
-    saveGameSession: vi.fn().mockResolvedValue(undefined),
-    getGameSession: vi.fn().mockResolvedValue(null),
-    saveGameHistory: vi.fn().mockResolvedValue(undefined),
+    saveGameSession: mockSaveGameSession,
+    getGameSession: mockGetGameSession,
+    getGameSessionById: mockGetGameSessionById,
   }),
 }))
 ```
 
-**Mocking Global Functions:**
+**Mock functions:**
+
+```typescript
+const mockSaveGameSession = vi.fn().mockResolvedValue(undefined)
+const mockGetGameSession = vi.fn().mockResolvedValue(null)
+const fetchMock = vi.fn()
+vi.stubGlobal('$fetch', fetchMock as unknown as typeof $fetch)
+```
+
+**Mock Nuxt composables (in setup file):**
 
 ```typescript
 const mockUseRuntimeConfig = vi.fn(() => ({
@@ -160,385 +138,293 @@ const mockUseRuntimeConfig = vi.fn(() => ({
   },
 }))
 
-vi.stubGlobal('useRuntimeConfig', mockUseRuntimeConfig)
-// Or make globally available in setup
-;(globalThis as any).useRuntimeConfig = mockUseRuntimeConfig
-```
-
-**Mocking Fetch:**
-
-```typescript
-const fetchMock = vi.fn()
-vi.stubGlobal('$fetch', fetchMock as unknown as typeof $fetch)
-
-// In test:
-fetchMock.mockResolvedValue(mockData)
-```
-
-**Mocking localStorage:**
-
-```typescript
-const localStorageMock = (() => {
-  let store: Record<string, string> = {}
-  return {
-    getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value
-    }),
-    removeItem: vi.fn((key: string) => {
-      Reflect.deleteProperty(store, key)
-    }),
-    clear: vi.fn(() => {
-      store = {}
-    }),
-  }
-})()
-
-Object.defineProperty(global, 'localStorage', { value: localStorageMock })
+Object.assign(globalThis, {
+  useRuntimeConfig: mockUseRuntimeConfig,
+  useRoute: mockUseRoute,
+  useRouter: mockUseRouter,
+})
 ```
 
 **What to Mock:**
 
-- External APIs (PetScan, Google Analytics)
-- Database operations (IndexedDB)
-- Browser APIs (localStorage, window location)
-- Time-dependent functions (use `vi.useFakeTimers()`)
-- Async operations that are tested elsewhere
+- External APIs and database calls (`$fetch`, IndexedDB composables)
+- Nuxt runtime composables (`useRuntimeConfig`, `useRouter`, `useRoute`)
+- Time-dependent functions (use `vi.useFakeTimers()` when needed)
+- Browser APIs not available in test environment
 
 **What NOT to Mock:**
 
-- Vue's reactivity system
-- Pinia store state/getters (test the real store)
-- Utility functions (test the actual implementation)
-- DOM elements in unit tests (use integration tests instead)
+- The code under test itself
+- Simple utility functions (test them directly)
+- Vue reactivity system (use real Vue in tests)
 
 ## Fixtures and Factories
 
 **Test Data:**
 
 ```typescript
-// Factory function for creating test data
-const createCategoryList = (count: number): Category[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    name: `Category ${i + 1}`,
-    letter: 'A',
-    description: 'Test category',
-  }))
+// From apps/game/tests/utils/factories.ts
+export const createCategoryList = (count: number): Category[] => {
+  const categories: Category[] = []
+  for (let i = 0; i < count; i++) {
+    categories.push({
+      id: i + 1,
+      name: `Category ${i + 1}`,
+      terms: [`Term ${i}-1`, `Term ${i}-2`],
+    })
+  }
+  return categories
+}
+```
+
+**E2E Faker helpers:**
+
+```typescript
+// From apps/game/tests/e2e/helpers/faker.ts
+import { faker } from '@faker-js/faker'
+
+export function generatePlayerName(): string {
+  return faker.person.firstName()
 }
 
-// In test:
-const mockCategories = createCategoryList(10)
-fetchMock.mockResolvedValue(mockCategories)
+export function generateAnswer(): string {
+  return faker.word.noun()
+}
 ```
 
 **Location:**
 
-- Factory functions in `tests/unit/factories.spec.ts` or as helpers
-- Or defined inline in test file for simple cases
-- Shared factories exported for use across multiple test files
-
-**Faker Helpers:**
-
-```typescript
-// tests/e2e/helpers/faker.ts
-export const generatePlayerName = (): string => {
-  const names = ['Alice', 'Bob', 'Charlie', 'Diana']
-  return names[Math.floor(Math.random() * names.length)]
-}
-```
+- Unit test factories: `apps/game/tests/utils/factories.ts`
+- E2E helpers: `apps/game/tests/e2e/helpers/`
+- Used to create consistent, realistic test data
 
 ## Coverage
 
-**Requirements:** No enforced minimum (coverage disabled due to version conflicts)
+**Requirements:** 80% threshold (currently disabled due to version conflicts)
+
+**Configuration in `vitest.config.ts`:**
+
+```typescript
+coverage: {
+  enabled: false, // Disabled due to version conflicts
+  provider: 'v8',
+  reporter: ['text', 'json-summary', 'lcov', 'cobertura'],
+  reportsDirectory: './coverage',
+  exclude: [
+    'node_modules/',
+    'tests/',
+    '**/*.spec.ts',
+    '**/*.test.ts',
+    '.nuxt/',
+    '.output/',
+    '**/*.config.ts',
+    '**/types.ts',
+  ],
+  all: true,
+  skipFull: false,
+}
+```
 
 **View Coverage:**
 
 ```bash
 pnpm run test:unit:coverage
-# Output to coverage/ directory with LCOV report
+open coverage/index.html
 ```
-
-**Configuration:** (`vitest.config.ts`)
-
-- Provider: v8
-- Reporters: text, json-summary, lcov, cobertura
-- All files included except: node_modules, tests, configs, type files
-- Currently disabled: `coverage: { enabled: false }`
 
 ## Test Types
 
 **Unit Tests:**
 
-- Scope: Individual functions, composables, stores
+- Scope: Individual composables, stores, utility functions
 - Approach: Isolated testing with mocked dependencies
-- Environment: happy-dom (lightweight DOM)
-- Examples: `use-logger.spec.ts`, `settings-store.spec.ts`, `game-store.spec.ts`
-- Speed: Fast (< 100ms per test)
-- Database: Mock IndexedDB, use real Pinia stores
-- Testing stores: Reset Pinia before each test, clear all mocks
+- Location: `apps/game/tests/unit/`
+- Examples: `game-store.spec.ts`, `use-form.spec.ts`, `use-logger.spec.ts`
+- Environment: `happy-dom` for DOM simulation
 
 **Integration Tests:**
 
-- Scope: Component interactions, store + composable combinations
-- Approach: Test how multiple units work together
-- Not heavily used in this codebase; tests focus on unit or E2E
-- Example: testing a component that uses both a store and composable
+- Scope: Not formally separated - integrated into E2E tests
+- Approach: Full user flows across multiple pages
+- Examples: Complete game flow from menu → players → game → results → leaderboard
 
 **E2E Tests:**
 
-- Framework: Playwright
-- Scope: Complete user workflows from UI perspective
-- Approach: Test against real application build
+- Framework: Playwright ^1.49.1
+- Config: `apps/game/playwright.config.ts`
+- Scope: Full browser automation, multi-page flows
+- Location: `apps/game/tests/e2e/`
 - Examples: `game-complete-flow.spec.ts`, `players.spec.ts`, `offline.spec.ts`
-- Speed: Slow (5-30 seconds per test)
-- Devices: Multiple projects (desktop Chrome, Firefox, mobile phones, tablets)
-- Running against deployed sites: Use `BASE_URL` env var
-  ```bash
-  BASE_URL=https://staging.example.com pnpm run test:e2e
-  ```
+
+**E2E Run Commands:**
+
+```bash
+pnpm run test:e2e               # Headless
+pnpm run test:e2e:headed        # Show browser
+pnpm run test:e2e:ui            # Interactive UI mode
+pnpm run test:e2e:simple        # Simplified config
+pnpm run test:bdd               # BDD tests (generate + run)
+```
 
 ## Common Patterns
 
 **Async Testing:**
 
 ```typescript
-it('should load game session', async () => {
+it('fetches categories', async () => {
   const store = useGameStore()
   await store.fetchCategories()
-
-  expect(store.categories.length).toBeGreaterThan(0)
-})
-
-// With mocks:
-it('should handle fetch errors', async () => {
-  fetchMock.mockRejectedValueOnce(new Error('Network error'))
-
-  const store = useGameStore()
-  const categories = await store.fetchCategories()
-
-  expect(categories).toEqual([]) // Or handles error gracefully
+  expect(fetchMock).toHaveBeenCalled()
+  expect(store.categories).toEqual(mockCategories)
 })
 ```
 
 **Error Testing:**
 
 ```typescript
-it('should log error with context', () => {
-  const logger = useLogger()
-  const testError = new Error('Test error')
-  const context = { userId: '123', action: 'submit' }
-
-  logger.error('Error occurred', testError, context)
-
-  expect(consoleSpy.error).toHaveBeenCalledWith(
-    '[ERROR] Error occurred',
-    testError,
-    expect.objectContaining({
-      timestamp: expect.any(String),
-      userId: '123',
-      action: 'submit',
-    })
-  )
-})
-```
-
-**State Mutations:**
-
-```typescript
-it('updates state correctly', () => {
+it('should throw error when session not found', async () => {
   const store = useGameStore()
+  mockGetGameSessionById.mockResolvedValue(null)
 
-  // Initial state
-  expect(store.isOnline).toBe(true)
-
-  // Mutate via action
-  store.setOnlineStatus(false)
-
-  // Verify new state
-  expect(store.isOnline).toBe(false)
+  await expect(store.loadSessionById('non-existent')).rejects.toThrow('Failed to load game session')
 })
 ```
 
-**Spying on Calls:**
+**Reactive State Testing:**
 
 ```typescript
-it('calls save method after update', async () => {
-  const mockSave = vi.fn().mockResolvedValue(undefined)
+it('makes form dirty', () => {
+  const form = useForm({
+    username: { initialValue: '' },
+  })
 
-  vi.mock('~/composables/useIndexedDB', () => ({
-    useIndexedDB: () => ({ saveGameSession: mockSave }),
-  }))
+  form.handleChange('username', 'alice')
+  expect(form.isDirty.value).toBe(true)
+})
+```
 
+**Pinia Store Testing (critical pattern):**
+
+```typescript
+beforeEach(() => {
+  vi.clearAllMocks()
+  const pinia = createPinia()
+  setActivePinia(pinia)
+  // Force reset all stores
+  // @ts-expect-error: Accessing internal Pinia API for test cleanup
+  pinia._s.forEach((store: any) => store.$reset())
+})
+```
+
+**Mock clearing:**
+
+```typescript
+beforeEach(() => {
+  vi.clearAllMocks()
+  mockGetGameSession.mockResolvedValue(null)
+  fetchMock.mockClear()
+})
+```
+
+## Playwright E2E Patterns
+
+**Wait for page ready:**
+
+```typescript
+async function waitForPageReady(page: Page, selector: string, timeout = 10000) {
+  await page.waitForLoadState('networkidle')
+  await page.waitForSelector(selector, { timeout })
+}
+```
+
+**Handle dialogs:**
+
+```typescript
+page.once('dialog', async (dialog) => {
+  expect(dialog.type()).toBe('prompt')
+  await dialog.accept('Player Name')
+})
+await page.locator('.add-btn').click()
+```
+
+**Data-testid selectors (language-agnostic):**
+
+```typescript
+const nextBtn = page.locator('[data-testid="next-button"]')
+await expect(nextBtn).toBeVisible()
+await nextBtn.click()
+```
+
+**Multi-device testing:**
+
+- Projects: `mobile-chrome-pixel5`, `mobile-safari-iphone15`, `tablet-ipad`, `mobile-chrome-galaxy`
+- Configured in `playwright.config.ts` using Playwright device emulation
+
+**Test tagging:**
+
+```typescript
+test('my test @smoke @critical', async ({ page }) => {
+  // Run with: npx playwright test --grep @smoke
+})
+```
+
+## Skipped Tests Pattern
+
+**When tests need fixing (CI issues):**
+
+```typescript
+it.skip('does not refetch if already loaded', async () => {
+  // TODO: Fix mock in CI environment (Node 20 vs 24 difference)
   const store = useGameStore()
   await store.fetchCategories()
-
-  expect(mockSave).toHaveBeenCalledWith(expect.any(Object))
+  await store.fetchCategories()
+  expect(fetchMock).toHaveBeenCalledTimes(1)
 })
 ```
 
-## E2E Test Patterns
+**Pattern:** Use `.skip()` with comment explaining why and what needs fixing
 
-**Page Navigation:**
+## Test Configuration
 
-```typescript
-test.beforeEach(async ({ page }) => {
-  // Navigate to page and wait for content
-  await page.goto('/players', { timeout: 30000 })
+**Vitest:**
 
-  // Wait for splash screen to finish
-  await page
-    .waitForSelector('.splash-screen', { state: 'detached', timeout: 10000 })
-    .catch(() => {}) // Ignore if not present
+- Globals enabled: `globals: true`
+- Environment: `happy-dom` (lightweight DOM simulation)
+- Pool: `forks` (avoids localStorage warnings)
+- Setup file: `tests/unit/setup.ts`
+- Auto-imports: Vue, Vue Router, Pinia (via unplugin-auto-import)
 
-  // Wait for page to be visible
-  await page.waitForSelector('.players-page', { state: 'visible' })
-})
-```
+**Playwright:**
 
-**Element Interactions:**
+- Parallel execution: `fullyParallel: true`
+- Retries: 1 in CI, 0 locally
+- Workers: Adaptive based on CPU (4-8 workers)
+- Timeout: 60s-90s (longer for mobile/deployed tests)
+- Reporters: HTML, list, JSON, JUnit, GitHub Actions annotations
+- Screenshots: Full page on failure
+- Video: On first retry
+- Traces: On first retry
 
-```typescript
-test('should add a player', async ({ page }) => {
-  const addBtn = page.locator('.add-btn')
-  await expect(addBtn).toBeVisible()
+**Environment Variables:**
 
-  await addBtn.click()
+- `BASE_URL` - Test deployed sites (e.g., `https://riddlerush.de`)
+- `CI` - Detect CI environment for different config
+- `DISABLE_SECURITY` - Disable security headers for testing
 
-  const input = page.locator('.player-name-input')
-  await input.fill('Alice')
+## BDD Testing Support
 
-  const confirmBtn = page.locator('.confirm-btn')
-  await confirmBtn.click()
+**Framework:** Custom BDD generator + Playwright
 
-  await expect(page.locator('.player-item:not(.empty)')).toHaveCount(2)
-})
-```
-
-**Waiting Strategies:**
-
-```typescript
-// Wait for element visibility
-await page.waitForSelector('.splash-screen', { state: 'detached' })
-
-// Wait for specific timeout
-await page.waitForTimeout(300)
-
-// Wait for network idle
-await page.waitForLoadState('networkidle')
-
-// Wait for condition
-await expect(page.locator('.player-count')).toHaveCount(expectedCount)
-```
-
-**Using Test Helpers:**
-
-```typescript
-import { generatePlayerName } from './helpers/faker'
-import { waitForGameLoad, waitForPageTransition } from './helpers/waits'
-
-test('complete game flow', async ({ page }) => {
-  const playerName = generatePlayerName()
-
-  await waitForGameLoad(page)
-  // Continue with test
-})
-```
-
-**Screenshots and Traces:**
-
-- Automatically captured on first retry (configured in `playwright.config.ts`)
-- Screenshots: `mode: 'only-on-failure'`
-- Traces: `trace: 'on-first-retry'`
-- Video: `video: 'on-first-retry'`
-- View failed test artifacts: Check `test-results/` and `playwright-report/`
-
-**Multiple Devices:**
-
-```typescript
-// playwright.config.ts has projects for:
-// - Desktop: Chrome, Firefox
-// - Mobile: Pixel 5, iPhone 15, Galaxy S9+
-// - Tablet: iPad Pro 11
-
-// Run single project:
-pnpm run test:e2e -- --project=mobile-chrome-pixel5
-
-// Run only mobile tests:
-pnpm run test:e2e -- --grep @mobile
-```
-
-## Test Tags for Organization
-
-**Available tags** (used in E2E tests):
-
-- `@smoke` - Quick sanity tests
-- `@critical` - Essential user flows
-- `@slow` - Long-running tests
-- `@mobile` - Mobile-specific tests
-- `@tablet` - Tablet-specific tests
-
-**Usage:**
-
-```typescript
-test('complete game flow @smoke @critical', async ({ page }) => {
-  // Test code
-})
-```
-
-**Run with tags:**
+**Commands:**
 
 ```bash
-# Run only critical tests
-pnpm run test:e2e -- --grep @critical
-
-# Run everything except slow tests
-pnpm run test:e2e -- --grep-invert @slow
+pnpm run test:bdd               # Generate + run BDD tests
+pnpm run test:bdd:headed        # BDD with visible browser
+pnpm run test:bdd:generate      # Only generate test files
 ```
 
-## Test Configuration Details
-
-**Vitest Config** (`vitest.config.ts`):
-
-- Environment: happy-dom (lightweight, sufficient for most tests)
-- Pool: forks (avoids localStorage issues)
-- Setup file: `tests/unit/setup.ts` (initializes Vue, Pinia, Nuxt mocks)
-- Include: `tests/unit/**/*.{test,spec}.ts`
-- Exclude: node_modules, .nuxt, .output, tests/e2e
-
-**Playwright Config** (`playwright.config.ts`):
-
-- Base URL: `process.env.BASE_URL || localhost:3000`
-- Timeout: 60000ms (mobile), adaptive for deployed sites
-- Retries: 1 in CI (0 locally)
-- Workers: 4 in CI, adaptive locally (50% of CPU cores, max 8)
-- Screenshot: Only on failure, full page
-- Video: On first retry only
-- Trace: On first retry only
-
-## Known Testing Gaps
-
-**Areas with limited coverage:**
-
-- Error scenarios in game submission (see CONCERNS.md)
-- Network failure recovery
-- Edge cases: 0 players, empty inputs
-- Input validation
-- Pause/Quit modal interactions
-
-## Best Practices
-
-- Keep unit tests fast (< 100ms)
-- Keep E2E tests focused on user workflows, not implementation details
-- Use `data-testid` attributes in templates for stable element selection
-- Clear mocks between tests to prevent state pollution
-- Use factories/fixtures for test data consistency
-- Test the behavior, not the implementation
-- Group related tests with `describe()` blocks
-- Make assertions specific: `toEqual`, `toBe` (not generic matchers)
-- Reset Pinia stores before each test to prevent cross-contamination
-- Use meaningful test names that describe the scenario
+**Pattern:** Generate JavaScript test files from feature specifications
 
 ---
 
-_Testing analysis: 2026-01-31_
+_Testing analysis: 2026-02-06_
