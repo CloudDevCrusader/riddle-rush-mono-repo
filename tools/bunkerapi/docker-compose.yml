@@ -1,0 +1,76 @@
+x-ui-env: &bw-ui-env # We anchor the environment variables to avoid duplication
+  DATABASE_URI: 'mariadb+pymysql://bunkerweb:${DB_PASSWORD:-changeme}@bw-db:3306/db' # Set DB_PASSWORD in .env file
+
+services:
+  bw-scheduler:
+    image: bunkerity/bunkerweb-scheduler:1.6.7
+    environment:
+      <<: *bw-ui-env
+      BUNKERWEB_INSTANCES: '192.168.1.11 192.168.1.12' # Replace with your worker IPs
+      API_WHITELIST_IP: '127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16' # Allow local networks
+      # API_LISTEN_HTTPS: "yes" # Recommended to enable HTTPS for internal API
+      # API_TOKEN: "my_secure_token" # Optional: set a token for added security
+      SERVER_NAME: ''
+      MULTISITE: 'yes'
+      USE_REDIS: 'yes'
+      REDIS_HOST: 'redis'
+    volumes:
+      - bw-storage:/data # This is used to persist the cache and other data like the backups
+    restart: 'unless-stopped'
+    networks:
+      - bw-db
+      - bw-redis
+
+  bw-ui:
+    image: bunkerity/bunkerweb-ui:1.6.7
+    ports:
+      - '7000:7000' # Expose the Web UI port
+    environment:
+      <<: *bw-ui-env
+      ADMIN_USERNAME: '${ADMIN_USERNAME:-admin}'
+      ADMIN_PASSWORD: '${ADMIN_PASSWORD}' # Set ADMIN_PASSWORD in .env file (required)
+      TOTP_ENCRYPTION_KEYS: '${TOTP_SECRET}' # Set TOTP_SECRET in .env file (required)
+    restart: 'unless-stopped'
+    networks:
+      - bw-db
+      - bw-redis
+
+  bw-db:
+    image: mariadb:11
+    # We set the max allowed packet size to avoid issues with large queries
+    command: --max-allowed-packet=67108864
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'bunkerweb'
+      MYSQL_PASSWORD: '${DB_PASSWORD}' # Set DB_PASSWORD in .env file (required)
+    volumes:
+      - bw-data:/var/lib/mysql
+    restart: 'unless-stopped'
+    networks:
+      - bw-db
+
+  redis: # Redis service for the persistence of reports/bans/stats
+    image: redis:8-alpine
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --appendonly yes
+    volumes:
+      - redis-data:/data
+    restart: 'unless-stopped'
+    networks:
+      - bw-redis
+
+volumes:
+  bw-data:
+  bw-storage:
+  redis-data:
+
+networks:
+  bw-db:
+    name: bw-db
+  bw-redis:
+    name: bw-redis

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🚨 IMPORTANT: Agent Workflow (NEW - January 2026)
+## 🚨 IMPORTANT: Agent Workflow (February 2026)
 
 **Before making ANY changes, read this:**
 
@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 # 1. Make changes (small, focused)
 # 2. Validate IMMEDIATELY
-pnpm run workspace:check  # TypeScript + ESLint + Syncpack
+pnpm run workspace:check  # Syncpack + TypeScript + ESLint (via Turbo)
 
 # 3. Commit right away (don't wait!)
 git add .
@@ -25,38 +25,40 @@ git commit -m "feat: description"  # Conventional Commits enforced by hooks
 # 4. Continue with next change
 ```
 
-### Git Hooks (Automatic)
+### Git Hooks (Automatic via Husky)
 
-- ✅ Pre-commit: TypeScript validation, lint-staged, secret scanning
-- ✅ Commit-msg: Conventional Commits format enforced
-- ✅ Pre-push: Final validation
+- ✅ **Pre-commit**: Secret scanning, lint-staged (ESLint + Prettier), TypeScript validation
+- ✅ **Commit-msg**: Conventional Commits format enforced (minimum 10 chars)
+- ✅ **Pre-push**: TypeScript checks, unit tests, syncpack version check
 
 ### Commit Format (Required)
 
 ```
-feat:     New feature
-fix:      Bug fix
-docs:     Documentation
-refactor: Code restructuring
-test:     Test changes
-chore:    Maintenance
-perf:     Performance
-style:    Formatting
+feat:     New feature        fix:      Bug fix
+docs:     Documentation      refactor: Code restructuring
+test:     Test changes       chore:    Maintenance
+perf:     Performance        style:    Formatting
+ci:       CI/CD changes      build:    Build system
 ```
+
+Optional scope: `feat(game): add dark mode support`
 
 ### Agent Commands
 
 ```bash
-pnpm run agent:help   # Show command reference
-pnpm run agent:check  # Run all quality checks
-pnpm run agent:fix    # Auto-fix all issues
+pnpm run agent:help     # Show command reference
+pnpm run agent:check    # Run all quality checks (= workspace:check)
+pnpm run agent:fix      # Auto-fix all issues
+pnpm run agent:status   # Show status
+pnpm run agent:validate # Validate changes
+pnpm run agent:commit   # Validate + stage + ready to commit
 ```
 
 ---
 
 ## Project Overview
 
-This is a **Nuxt 4 Progressive Web App (PWA)** - "Riddle Rush" - a word guessing game where players guess terms from Wikipedia categories starting with a specific letter. The app works offline, stores data locally using IndexedDB, and is deployed to GitLab Pages with multiple environments.
+This is a **pnpm monorepo** orchestrated by **Turborepo** containing "Riddle Rush" — a word guessing game where players guess terms from Wikipedia categories starting with a specific letter.
 
 **Key Features:**
 
@@ -67,378 +69,461 @@ This is a **Nuxt 4 Progressive Web App (PWA)** - "Riddle Rush" - a word guessing
 - Comprehensive testing (Vitest unit tests + Playwright E2E tests)
 - GitLab CI/CD with automated deployment
 - AWS deployment support (S3 + CloudFront)
+- Android mobile builds via Capacitor
+- Game design system with themed components
+
+### Monorepo Structure
+
+```
+riddle-rush-monorepo/
+├── apps/
+│   ├── game/              # 🎮 Main Nuxt 4 PWA (the core game)
+│   └── mobile/            # 📱 NativeScript Vue mobile app
+├── packages/
+│   ├── config/            # ⚙️  Shared Vite/build configurations
+│   ├── shared/            # 🔧 Shared utilities, constants, routes
+│   ├── types/             # 📝 Shared TypeScript type definitions
+│   └── riddle-cli/        # 🖥️  CLI tool (oclif-based)
+├── tools/                 # 🤖 AI agents, Python tools, integrations
+│   ├── python/            # Python MCP server
+│   ├── ai-agents/         # AI agent tooling
+│   ├── composio/          # Composio integration
+│   ├── fastmcp/           # FastMCP integration
+│   ├── langchain/         # LangChain tools
+│   └── voltagent/         # VoltAgent integration
+├── infrastructure/        # 🏗️  Terraform (AWS S3 + CloudFront)
+├── docs/                  # 📚 Documentation
+├── scripts/               # 🔨 CI/CD, deployment, agent scripts
+├── turbo.json             # Turborepo task configuration
+├── pnpm-workspace.yaml    # Workspace package definitions
+├── eslint.config.mjs      # ESLint 9 flat config (root)
+├── .syncpackrc.json       # Dependency version sync rules
+└── .changeset/            # Changeset version management
+```
+
+### Workspace Packages
+
+| Package               | Name                  | Description                                    |
+| --------------------- | --------------------- | ---------------------------------------------- |
+| `apps/game`           | `@riddle-rush/game`   | Nuxt 4 PWA — the main game application         |
+| `apps/mobile`         | —                     | NativeScript Vue mobile app                    |
+| `packages/config`     | `@riddle-rush/config` | Shared Vite/build configurations               |
+| `packages/shared`     | `@riddle-rush/shared` | Shared utilities, constants, route definitions |
+| `packages/types`      | `@riddle-rush/types`  | Shared TypeScript types (`GameSession`, etc.)  |
+| `packages/riddle-cli` | —                     | oclif-based CLI tool                           |
+
+### Key Technologies
+
+- **Nuxt 4** (not Nuxt 3) — client-side SPA with `ssr: false`
+- **Turborepo** — task orchestration with smart caching
+- **pnpm 10.28.2** — package manager (enforced via `packageManager` field)
+- **Node ≥ 20** — runtime requirement
+- **ESLint 9** — flat config with `@nuxt/eslint-config/flat`
+- **Syncpack** — dependency version consistency across workspace
+- **Changesets** — versioning and changelog management
+- **Capacitor** — Android mobile builds from the game app
+- **UnoCSS** — utility-first CSS in game app
+- **Husky** — git hooks for quality gates
+
+---
 
 ## Essential Commands
 
 ### Development
 
 ```bash
-pnpm install          # Install dependencies (required after clone)
-pnpm run dev          # Start development server at localhost:3000
-pnpm run generate     # Generate static site for production
-pnpm run preview      # Preview production build locally
-pnpm run postinstall  # Generate Nuxt types (run after install)
+pnpm install              # Install all workspace dependencies
+pnpm run dev              # Start game dev server (via Turbo)
+pnpm run dev:all          # Start all apps in parallel
+pnpm run build            # Build game app (via Turbo)
+pnpm run build:all        # Build all apps
+pnpm run generate         # Generate static site for game
+```
+
+#### Game App Specific (run from `apps/game/`)
+
+```bash
+pnpm run dev              # Nuxt dev at localhost:3000
+pnpm run dev:mobile       # Dev with --host 0.0.0.0 (mobile access)
+pnpm run dev:mobile-https # Dev with HTTPS for mobile testing
+pnpm run preview          # Preview production build
+pnpm run postinstall      # Generate Nuxt types
 ```
 
 ### Testing
 
 ```bash
-# Unit tests (Vitest)
-pnpm run test              # Run in watch mode
-pnpm run test:unit         # Run once
-pnpm run test:unit:coverage # Run with coverage report
+# Unit tests (Vitest) — via Turbo
+pnpm run test             # Run game tests
+pnpm run test:unit        # Run all workspace unit tests
+
+# From apps/game/:
+pnpm run test:unit              # Run once
+pnpm run test:unit:coverage     # With coverage report
+pnpm run test:watch             # Watch mode
 
 # E2E tests (Playwright)
-pnpm run test:e2e          # Headless against local build
-pnpm run test:e2e:headed   # Show browser
-pnpm run test:e2e:ui       # Interactive UI mode
-pnpm run test:e2e:local    # Full local build + test (./scripts/e2e-local.sh)
+pnpm run test:e2e               # Headless via Turbo
+pnpm run test:e2e:ui            # Interactive UI mode
 
-# Test deployed environments
-pnpm run test:e2e:production  # Test production site
-pnpm run test:e2e:staging     # Test staging site
-pnpm run test:e2e:dev         # Test dev site
+# From apps/game/:
+pnpm run test:e2e               # Headless
+pnpm run test:e2e:headed        # Show browser
+pnpm run test:e2e:ui            # Interactive UI
+pnpm run test:e2e:simple        # Simplified config
+pnpm run test:bdd               # BDD tests (generate + run)
+pnpm run test:bdd:headed        # BDD with visible browser
 ```
 
 ### Code Quality (REQUIRED before commit)
 
 ```bash
-# Run ALL checks (recommended)
+# Run ALL checks via Turbo (recommended)
 pnpm run workspace:check  # Syncpack + TypeScript + ESLint
 
-# Or run individually:
-pnpm run typecheck        # TypeScript type checking
-pnpm run lint             # ESLint check
-pnpm run lint:fix         # Auto-fix linting issues
-pnpm run format           # Format with Prettier
-pnpm run format:check     # Check formatting
+# Auto-fix everything
+pnpm run workspace:fix    # Syncpack fix + lint fix + format
 
-# Agent helpers
-pnpm run agent:check      # Same as workspace:check
-pnpm run agent:fix        # Auto-fix everything
+# Individual checks
+pnpm run typecheck        # TypeScript across all packages (Turbo)
+pnpm run lint             # ESLint across all packages (Turbo)
+pnpm run lint:fix         # Auto-fix linting (Turbo)
+pnpm run format           # Prettier format (Turbo)
+pnpm run format:check     # Check formatting (Turbo)
+pnpm run syncpack:check   # Dependency version mismatches
+pnpm run syncpack:fix     # Fix version mismatches
 ```
 
-**Note:** Git hooks automatically run these checks before commit!
+### Mobile Development (Capacitor / Android)
+
+```bash
+pnpm run android:sync     # Build game + sync to Android
+pnpm run android:run      # Run on Android device/emulator
+pnpm run android:open     # Open in Android Studio
+```
+
+### Dependency Management
+
+```bash
+pnpm run maintain         # Update deps + syncpack fix + workspace check
+pnpm run syncpack:check   # Check dependency version consistency
+pnpm run syncpack:fix     # Fix version mismatches
+pnpm run syncpack:format  # Format package.json files
+
+# Changesets
+pnpm run changeset            # Create a new changeset
+pnpm run changeset:version    # Apply changesets (bump versions)
+pnpm run changeset:publish    # Publish packages
+```
 
 ### Deployment
 
-#### AWS (S3 + CloudFront) - Recommended
-
-**Application Deployment (Build + Upload + Invalidate):**
+#### AWS (S3 + CloudFront) — Recommended
 
 ```bash
-# Production deployment (with optional version tagging)
+# Full deployment workflows
 pnpm run deploy:prod              # Deploy to production
-./scripts/deploy-prod.sh 1.2.0    # Deploy with version tag
+pnpm run deploy:dev               # Deploy to development
 
-# Development deployment
-pnpm run deploy:dev                # Deploy to development
-# Or: ./scripts/deploy-dev.sh
+# Infrastructure (Terraform)
+pnpm run infra:prod:init          # Init production Terraform
+pnpm run infra:prod:plan          # Plan production changes
+pnpm run infra:prod:apply         # Apply production changes
+pnpm run infra:dev:init           # Init development Terraform
+pnpm run infra:dev:plan           # Plan development changes
+pnpm run infra:dev:apply          # Apply development changes
+pnpm run infra:setup              # Setup tfenv
+
+# Other
+pnpm run deploy:infrastructure    # Deploy app using existing infra
+pnpm run deploy:aws               # Direct AWS deployment (needs env vars)
+pnpm run terraform:plan           # Plan via script
+pnpm run terraform:apply          # Apply via script
 ```
-
-**Note:** These scripts assume infrastructure is already deployed. To manage infrastructure separately, see below.
-
-**Separate Operations:**
-
-```bash
-# 1. Plan infrastructure changes
-pnpm run terraform:plan production
-./scripts/terraform-plan.sh production
-
-# 2. Apply infrastructure changes
-pnpm run terraform:apply production
-./scripts/terraform-apply.sh production
-
-# 3. Deploy application (build + upload + invalidate)
-source ./scripts/get-terraform-outputs.sh production
-./scripts/aws-deploy.sh production
-```
-
-**Infrastructure + App (after infrastructure is ready):**
-
-```bash
-pnpm run deploy:infrastructure [environment]  # Deploy app using existing infrastructure
-```
-
-**Staging deployment (still uses GitLab Pages):**
-
-```bash
-./scripts/deploy-staging.sh        # Deploy to staging
-```
-
-**Note:** `deploy-prod.sh` and `deploy-dev.sh`:
-
-- Load AWS configuration from Terraform outputs (infrastructure must be deployed separately)
-- Run pre-deployment checks (lint, typecheck, tests)
-- Build and deploy to AWS S3 + CloudFront
-- Display deployment URLs
 
 #### Manual AWS Deployment
 
-For manual deployment without the scripts:
-
 ```bash
-# Quick deployment (S3 only)
-export AWS_S3_BUCKET=your-unique-bucket-name
-export AWS_REGION=eu-central-1
-./scripts/aws-deploy.sh production
-
-# With CloudFront CDN
 export AWS_S3_BUCKET=your-bucket-name
 export AWS_CLOUDFRONT_ID=E1234567890ABC
 export AWS_REGION=eu-central-1
 ./scripts/aws-deploy.sh production
-
-# Test against AWS deployment
-BASE_URL=https://your-domain.com pnpm run test:e2e
 ```
 
-**Note:** You can also use npm scripts:
-
-- `pnpm run deploy:prod` - Deploy to production (full workflow)
-- `pnpm run deploy:dev` - Deploy to development (full workflow)
-- `pnpm run terraform:plan` - Plan infrastructure changes
-- `pnpm run terraform:apply` - Apply infrastructure changes
-- `pnpm run deploy:infrastructure` - Deploy app using existing infrastructure
-- `pnpm run deploy:aws` - Direct AWS deployment (requires env vars)
-
-#### GitLab Pages (Legacy - Staging only)
+### Python & AI Tools
 
 ```bash
-./scripts/deploy-staging.sh  # Deploy to staging (GitLab Pages)
+pnpm run python:lint      # Ruff linting
+pnpm run python:format    # Black formatting
+pnpm run python:check     # Python checks
+pnpm run ai:status        # AI agent status
+pnpm run ai:agents        # Run AI agents
+pnpm run ai:tools         # AI agent tools
 ```
 
-See [AWS Deployment Guide](docs/AWS-DEPLOYMENT.md) for detailed setup instructions.
+### Locale Validation
+
+```bash
+pnpm run validate:locales  # Validate i18n translation files
+```
+
+---
 
 ## Architecture Overview
 
-### Core State Management Pattern
+### Game App (`apps/game/`)
 
-The app uses Pinia stores with IndexedDB persistence:
+The main game is a **Nuxt 4 PWA** — a client-side SPA deployed as static files.
 
-- **Game Store** (`stores/game.ts`): Manages game sessions, categories, score, attempts. Persists current session to IndexedDB automatically.
+#### Core State Management (Pinia + IndexedDB)
+
+- **Game Store** (`stores/game.ts`): Game sessions, categories, score, attempts. Auto-persists to IndexedDB.
 - **Settings Store** (`stores/settings.ts`): User preferences, audio settings, category filters.
 
 Key pattern: Store actions save to IndexedDB after mutations, ensuring data persists across sessions and works offline.
 
-### Data Persistence Architecture
+#### Data Persistence — IndexedDB
 
-**IndexedDB Structure** (`composables/useIndexedDB.ts`):
+Managed via `composables/useIndexedDB.ts`:
 
-- `gameSession` store: Current active session
-- `gameHistory` store: Completed sessions with indexes on `startTime`
-- `statistics` store: Aggregated player stats
-- `leaderboard` store: High scores indexed by `score` and `timestamp`
-- `settings` store: User preferences
+| Store         | Purpose                 | Indexes              |
+| ------------- | ----------------------- | -------------------- |
+| `gameSession` | Current active session  | —                    |
+| `gameHistory` | Completed sessions      | `startTime`          |
+| `statistics`  | Aggregated player stats | —                    |
+| `leaderboard` | High scores             | `score`, `timestamp` |
+| `settings`    | User preferences        | —                    |
 
-**Critical**: All store mutations that affect game state must call corresponding `save*ToDB()` methods in `stores/game.ts` to maintain persistence.
+**Critical**: All store mutations affecting game state must call corresponding `save*ToDB()` methods in `stores/game.ts`.
 
-### PWA Implementation
+#### PWA Implementation
 
-**Service Worker** (configured in `nuxt.config.ts`):
+Service Worker configured in `nuxt.config.ts`:
 
-- `registerType: 'autoUpdate'` - Auto-updates when new version detected
-- Runtime caching strategies:
-  - `CacheFirst` for game data (`/data/*.json`), fonts
-  - `NetworkFirst` for external APIs (PetScan) with 10s timeout
-- Critical files cached via `globPatterns` for offline-first experience
+- `registerType: 'autoUpdate'`
+- `CacheFirst` for game data (`/data/*.json`), fonts
+- `NetworkFirst` for external APIs (PetScan) with 10s timeout
+- Install prompt captured in game store via `beforeinstallprompt` event
+- PWA icons in `public/` directory
 
-**Install Prompt** managed in `stores/game.ts`:
+#### i18n Configuration
 
-- Captures `beforeinstallprompt` event in store state
-- `showInstallPrompt()` action triggers native install dialog
-
-**PWA Icons**: Located in `public/` directory (pwa-\*.png, favicon.ico, apple-touch-icon.png)
-
-### i18n Configuration
-
-Configured with `@nuxtjs/i18n` in `nuxt.config.ts`:
-
-- Default locale: `de` (German)
-- Available: `de`, `en`
+- Default locale: `de` (German), available: `de`, `en`
 - Strategy: `no_prefix` (no locale in URL path)
-- `detectBrowserLanguage: false` - Explicit language selection only
+- `detectBrowserLanguage: false` — explicit selection only
 - Translation files: `locales/de.json`, `locales/en.json`
 
-### Routing & SSR
+#### Routing & SSR
 
-**Important**: `ssr: false` in `nuxt.config.ts` - This is a pure client-side SPA. No server-side rendering occurs. All pages are statically generated.
-
-**Base URL Handling**: The app uses different base URLs per environment:
-
-- Production: `/riddle-rush-nuxt-pwa/`
-- Local dev: `/`
-
-This is configured via `app.baseURL` and `runtimeConfig.public.baseUrl` in `nuxt.config.ts`.
+- **`ssr: false`** — pure client-side SPA, statically generated
+- Base URL varies by environment (production: `/riddle-rush-nuxt-pwa/`, local: `/`)
+- Configured via `app.baseURL` and `runtimeConfig.public.baseUrl`
 
 ### Game Flow
 
-**Current Flow** (MVP):
+1. **Main Menu** (`pages/index.vue`) → **Players** (`pages/players.vue`)
+2. **Round Start** (`pages/round-start.vue`) — Fortune wheel selects category/letter
+3. **Game** (`pages/game.vue`) — Players submit answers
+4. **Results** (`pages/results/`) — Score display
+5. **Leaderboard** (`pages/leaderboard.vue`) — Final rankings
 
-1. Main Menu (`pages/index.vue`) → Players (`pages/players.vue`)
-2. Round Start (`pages/round-start.vue`) - Fortune wheel selects category/letter
-3. Game (`pages/game.vue`) - Players submit answers
-4. Results (`pages/results.vue`) - Score display
-5. Leaderboard (`pages/leaderboard.vue`) - Final rankings
+Additional pages: `settings.vue`, `language.vue`, `credits.vue`, `splash.vue`
 
-**Removed for MVP**: Win page, coin system, alphabet selection page (replaced by round-start)
+### Game Design System (Component Architecture)
 
-### Testing Architecture
+The app uses a **phased game design system** with dedicated component categories:
 
-**Unit Tests** (Vitest with happy-dom):
+#### `components/game/` — Game Design Components
 
-- Located in `tests/unit/` or colocated as `*.spec.ts`
+| Component            | Purpose                            |
+| -------------------- | ---------------------------------- |
+| `GameButton.vue`     | 3D press effect button variants    |
+| `GameDisplay.vue`    | Display/readout component          |
+| `GameHeader.vue`     | 3D text effect headers             |
+| `GameModal.vue`      | Focus-trapped modal dialogs        |
+| `GamePlayerCard.vue` | Player cards with score indicators |
+| `GameScrollList.vue` | Scrollable rank displays           |
+| `GameSlider.vue`     | Volume/settings slider controls    |
+
+#### `components/layout/` — Layout Components
+
+| Component            | Purpose            |
+| -------------------- | ------------------ |
+| `GameBackground.vue` | Themed backgrounds |
+| `GamePanel.vue`      | Content panels     |
+
+#### `components/Base/` — Base Components
+
+`Button.vue`, `Modal.vue`, `ImageButton.vue`
+
+#### Other Components
+
+`DebugPanel.vue` (Ctrl+Shift+D), `FortuneWheel.vue`, `Spinner.vue`, `Toast.vue`, `PauseModal.vue`, `QuitModal.vue`, `SplashScreen.vue`, `ConnectionStatus.vue`, `GameHistory.vue`, `Leaderboard.vue`, `PlayerLeaderboard.vue`, `PageTransition.vue`, `SettingsModal.vue`, `GlobalLoading.vue`, `StoryboardDevOverlay.vue`
+
+### Composables
+
+| Composable            | Purpose                                               |
+| --------------------- | ----------------------------------------------------- |
+| `useIndexedDB()`      | All database operations                               |
+| `useStatistics()`     | Aggregate stats from game sessions                    |
+| `useAnalytics()`      | Google Analytics tracking                             |
+| `useAudio()`          | Sound effects management                              |
+| `useAnswerCheck()`    | Validate answers against category terms (5-min cache) |
+| `usePageSetup()`      | Common page utilities (router, t, baseUrl, toast)     |
+| `useLogger()`         | Centralized logging (dev-only, stripped in prod)      |
+| `useNavigation()`     | Page navigation helpers                               |
+| `useGameState()`      | Game state management                                 |
+| `useGameActions()`    | Game action dispatchers                               |
+| `useForm()`           | Form handling utilities                               |
+| `useModal()`          | Modal state management                                |
+| `useToast()`          | Toast notification system                             |
+| `useLoading()`        | Loading state management                              |
+| `useAssets()`         | Asset URL resolution                                  |
+| `useOptimizedImage()` | Image optimization helpers                            |
+| `useLodash()`         | Tree-shaken Lodash utilities                          |
+| `useFeatureFlags()`   | Unleash feature flag client                           |
+| `useWebSocket()`      | Socket.io WebSocket integration                       |
+| `usePerformance()`    | Performance monitoring                                |
+| `useLocalStorage()`   | LocalStorage wrapper                                  |
+| `usePageSwipe()`      | Swipe gesture handling                                |
+| `useMenu()`           | Menu state management                                 |
+| `useCategoryEmoji()`  | Category-to-emoji mapping                             |
+| `useErrorSync()`      | Error synchronization                                 |
+| `useStoryboard()`     | Storyboard development overlay                        |
+
+### Shared Packages
+
+#### `packages/types` (`@riddle-rush/types`)
+
+Core game types: `GameSession`, `GameAttempt`, `Category`, etc. Imported as:
+
+```ts
+import type { GameSession } from '@riddle-rush/types'
+```
+
+#### `packages/shared` (`@riddle-rush/shared`)
+
+Shared constants (`SCORE_PER_CORRECT_ANSWER`, `MAX_PLAYERS`, `NAVIGATION_DELAY_MS`), route definitions, and utility functions.
+
+#### `packages/config` (`@riddle-rush/config`)
+
+Shared Vite/build configurations used across workspace apps.
+
+---
+
+## Code Quality & Configuration
+
+### ESLint 9 (Flat Config)
+
+Root `eslint.config.mjs` using `@nuxt/eslint-config/flat`:
+
+- `@stylistic/semi`: no semicolons
+- `@stylistic/quotes`: single quotes
+- `@stylistic/comma-dangle`: always-multiline
+- `no-console`: warn (except `warn`, `error`)
+- `@typescript-eslint/no-unused-vars`: error (except `_`-prefixed)
+- Tests have relaxed rules (`no-console: off`, `no-explicit-any: off`)
+
+### Syncpack (Dependency Consistency)
+
+Configured in `.syncpackrc.json`:
+
+- Exact versions for workspace packages (`@riddle-rush/**`)
+- Caret ranges (`^`) for external dependencies
+- Enforces consistent versions across all workspace `package.json` files
+
+### Changesets (Version Management)
+
+Configured in `.changeset/config.json`:
+
+- Base branch: `main`
+- Access: `restricted`
+- Internal dependency updates: `patch`
+- Ignored packages: `@riddle-rush/config`, `@riddle-rush/shared`, `@riddle-rush/types`
+
+### Turborepo (Task Orchestration)
+
+Configured in `turbo.json`:
+
+- **Smart caching** for builds, lint, typecheck, tests
+- **Dependency graph** awareness (`dependsOn: ["^build"]`)
+- **Parallel execution** for independent tasks
+- **Environment variables** tracked for cache invalidation
+- Remote cache disabled (can be enabled)
+
+Key tasks: `build`, `dev`, `lint`, `typecheck`, `test:unit`, `test:e2e`, `format`, `clean`
+
+Root-only tasks (prefixed `//`): `workspace:check`, `workspace:fix`, `syncpack:check`, `agent:check`, `python:lint`
+
+---
+
+## Testing Architecture
+
+### Unit Tests (Vitest with happy-dom)
+
+- Located in `apps/game/tests/unit/` or colocated as `*.spec.ts`
 - Coverage thresholds: 80% (lines, functions, branches, statements)
 - Key patterns:
   - Pinia stores require `setActivePinia(createPinia())` in `beforeEach`
-  - Composables should be tested in isolation
   - Use `vi.mock()` for external dependencies
 
-**E2E Tests** (Playwright):
+### E2E Tests (Playwright)
 
-- Located in `tests/e2e/`
+- Located in `apps/game/tests/e2e/`
 - Projects: Desktop Chrome, Firefox, Mobile Chrome (Pixel 5)
-- Can test local builds OR deployed sites via `BASE_URL` env var
-- Retries: 2 in CI, 0 locally
+- Supports local builds and deployed sites via `BASE_URL` env var
+- BDD testing available via `test:bdd` scripts
+- Uses `data-testid` attributes for language-agnostic testing
 - Screenshots/traces captured on failure
-- Tests use `data-testid` attributes for language-agnostic testing
 
-**Critical E2E Pattern**: Tests detect if running against deployed site via URL and adjust timeouts accordingly (see `playwright.config.ts`).
+---
 
 ## GitLab CI/CD Pipeline
 
 **Stages**: test → quality → build → deploy → verify
 
-**Custom Docker Image**: The CI pipeline uses a custom Docker image (`ci-build`) with pre-installed dependencies for faster builds (~40-50% speed improvement). See `docs/DOCKER-CI-IMAGE.md` for details.
-
-**Monorepo Optimization**: The pipeline uses change detection to only run jobs when relevant files change, saving 40-60% of CI time on focused commits. See `docs/MONOREPO-CI-OPTIMIZATION.md` for details.
-
-**Workflow Rules**: Pipeline runs on:
-
-- Merge requests (only affected apps are tested/built)
-- Manual triggers (web UI/API - all jobs available)
-- Version tags (full pipeline for releases)
-- Main/staging/development branches (selective based on changes)
+- Custom Docker image (`ci-build`) for faster builds (~40-50% speed improvement)
+- **Monorepo change detection** — only runs jobs for affected apps/packages (40-60% CI time savings)
+- Pipeline runs on merge requests, manual triggers, version tags, and main/staging/development branches
 
 **Branch Strategy**:
 
 - `main` → production (`https://riddlerush.de`)
-- `staging` → staging environment (`/staging` path)
-- `development` → dev environment (`/dev` path)
+- `staging` → staging environment
+- `development` → dev environment
 - `tags` → AWS deployment (S3 + CloudFront)
 
-**Key Jobs**:
-
-1. `test` - Unit tests for game app (runs when game/packages change)
-2. `sonarcloud-check` - Code quality analysis (merge requests, main branches)
-3. `build` - Game app build (runs when game/packages change)
-4. `build:docs` - Documentation site build (runs when docs change)
-5. `pages` - Deploy docs to GitLab Pages (runs when docs change)
-6. `deploy:aws` - Deploy game to AWS (tags only)
-7. `verify:e2e:*` - E2E tests against deployed sites (manual, `allow_failure: true`)
-
-**Change Detection**: Jobs automatically skip when their related files haven't changed, significantly reducing pipeline duration for focused commits.
-
-**E2E in CI**: Uses `mcr.microsoft.com/playwright:v1.57.0-noble` Docker image. Waits 30s after deployment for propagation before testing.
-
-## Code Quality & Best Practices
-
-### Logging System
-
-**Centralized Logging** (`composables/useLogger.ts`):
-
-- All console statements replaced with logger utility
-- Only logs in development mode
-- Production builds have console statements removed
-- Use `useLogger()` composable for all logging needs
-
-### Constants Management
-
-**Shared Constants** (`utils/constants.ts`):
-
-- All magic numbers extracted to centralized file
-- Includes: scores, timing, API configs, limits
-- Examples: `SCORE_PER_CORRECT_ANSWER`, `MAX_PLAYERS`, `NAVIGATION_DELAY_MS`
-
-### Common Patterns
-
-**Page Setup Composable** (`composables/usePageSetup.ts`):
-
-- Reduces boilerplate in page components
-- Provides: `router`, `t`, `baseUrl`, `toast`
-- Use in all page components for consistency
-
-### Error Handling
-
-**Current State**: Basic error handling with logger
-**Needed Improvements** (see `docs/MVP-TASKS.md`):
-
-- Try-catch blocks in game submission
-- Network error recovery
-- IndexedDB fallback to localStorage
-- User-facing error messages/toasts
-
-## Common Patterns & Conventions
-
-### Composables Usage
-
-- `useIndexedDB()`: All database operations
-- `useStatistics()`: Aggregate stats from game sessions
-- `useAnalytics()`: Google Analytics tracking
-- `useAudio()`: Sound effects management
-- `useAnswerCheck()`: Validate player answers against category terms (with 5-minute caching)
-- `usePageSetup()`: Common page utilities
-- `useLogger()`: Centralized logging
-
-### Type Safety
-
-- `types/game.ts`: Core game types (`GameSession`, `GameAttempt`, `Category`, etc.)
-- `experimental.typedPages: true` - Auto-generated route types
-- Strict mode enabled: `typescript.strict: true`
-
-### Component Patterns
-
-- `components/DebugPanel.vue`: Press `Ctrl+Shift+D` to toggle. Shows game state, IndexedDB data, network status. Useful for debugging.
-- `components/Spinner.vue`: Loading indicator used during async operations
-- `components/Base/*`: Base components (Button, Modal, ImageButton)
-- Auto-imported components (Nuxt convention) - no explicit imports needed
-
-### Git Hooks (Husky)
-
-- **pre-commit**: `lint-staged` runs ESLint + Prettier auto-fix on staged files
-- **pre-push**: Runs `typecheck` and `test:unit`
-- Skipped in CI via `prepare` script check
+---
 
 ## Development Workflow
 
-1. **Starting new features**:
-   - Read relevant stores, composables, and types first
-   - Check existing patterns in similar components
-   - Run `pnpm run dev` for hot-reload development
-   - Use Debug Panel (`Ctrl+Shift+D`) to inspect state
+### Starting New Features
 
-2. **Before committing**:
-   - Pre-commit hook auto-fixes linting
-   - If TypeScript errors exist, pre-push will fail
-   - Run `pnpm run typecheck` and `pnpm run test:unit` locally to catch issues early
+1. Read relevant stores, composables, and types first
+2. Check existing patterns in similar components
+3. Run `pnpm run dev` for hot-reload development
+4. Use Debug Panel (`Ctrl+Shift+D`) to inspect state
 
-3. **Testing changes**:
-   - Unit test new logic in `tests/unit/`
-   - E2E test critical user flows in `tests/e2e/`
-   - Use `pnpm run test:e2e:ui` for interactive debugging
-   - Use `data-testid` attributes for testable elements
+### Before Committing
 
-4. **Deployment**:
-   - Merge to target branch (`main`, `staging`, `development`)
-   - CI pipeline automatically builds and deploys
-   - E2E tests can be manually triggered against deployed site
-   - For AWS: Create version tag to trigger deployment
+- Pre-commit hook auto-fixes linting and scans for secrets
+- If TypeScript errors exist, pre-push will fail
+- Run `pnpm run workspace:check` locally to catch issues early
+
+### Testing Changes
+
+- Unit test new logic in `apps/game/tests/unit/`
+- E2E test critical user flows in `apps/game/tests/e2e/`
+- Use `pnpm run test:e2e:ui` for interactive debugging
+- Use `data-testid` attributes for testable elements
+
+---
 
 ## Environment Variables
 
 ### Development
 
-Create `.env` file:
+Create `.env` at project root and `apps/game/.env`:
 
 ```bash
 NODE_ENV=development
@@ -447,147 +532,36 @@ BASE_URL=/
 GOOGLE_ANALYTICS_ID=    # Optional
 ```
 
-### GitLab CI/CD Variables
+### CI/CD Variables (GitLab)
 
-Set in GitLab: Settings → CI/CD → Variables
+- `GOOGLE_ANALYTICS_ID`, `BASE_URL` — App config
+- `SONAR_TOKEN`, `SONAR_PROJECT_KEY`, `SONAR_ORGANIZATION` — SonarCloud
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BUCKET`, `AWS_CLOUDFRONT_ID`, `AWS_REGION` — AWS deployment
 
-- `GOOGLE_ANALYTICS_ID` (optional, masked)
-- `BASE_URL` (optional, for custom base paths)
-- `SONAR_TOKEN` (for SonarCloud, masked, protected)
-- `SONAR_PROJECT_KEY` (for SonarCloud)
-- `SONAR_ORGANIZATION` (for SonarCloud)
-- `AWS_ACCESS_KEY_ID` (for AWS deployment, masked, protected)
-- `AWS_SECRET_ACCESS_KEY` (for AWS deployment, masked, protected)
-- `AWS_S3_BUCKET` (for AWS deployment)
-- `AWS_CLOUDFRONT_ID` (for AWS deployment, optional)
-- `AWS_REGION` (for AWS deployment, default: us-east-1)
+---
 
 ## Debugging Tips
 
-- **IndexedDB inspection**: Use browser DevTools → Application → IndexedDB → `riddle-rush-db`
-- **Debug Panel**: `Ctrl+Shift+D` shows live state, export as JSON
-- **Service Worker**: DevTools → Application → Service Workers. Can unregister for testing.
-- **E2E debugging**: Use `npx playwright show-trace test-results/.../trace.zip` for failed test analysis
-- **PWA testing**: Use browser's "Application" DevTools to simulate offline mode
-- **Network debugging**: Check PetScan API calls in Network tab, verify caching behavior
+- **IndexedDB**: DevTools → Application → IndexedDB → `riddle-rush-db`
+- **Debug Panel**: `Ctrl+Shift+D` — live state, export as JSON
+- **Service Worker**: DevTools → Application → Service Workers (unregister for testing)
+- **E2E traces**: `npx playwright show-trace test-results/.../trace.zip`
+- **PWA offline**: DevTools Application tab → simulate offline
+- **Turbo cache**: `turbo run build --dry` to see what would run
+
+---
 
 ## Important Constraints
 
-- **No Server**: This is a static site. No server API routes exist in production.
-- **Client-only**: Code assuming `window`, `localStorage`, IndexedDB available must be wrapped in `onMounted` or client-only components.
-- **Base URL**: Always use `useRuntimeConfig().public.baseUrl` for absolute paths, not hardcoded URLs.
-- **Package Manager**: Must use `pnpm`, not `npm` or `yarn`. Version managed via `packageManager` field (10.26.2).
+- **No Server**: Static site only — no server API routes in production
+- **Client-only**: Code using `window`, `localStorage`, IndexedDB must be wrapped in `onMounted` or client-only components
+- **Base URL**: Always use `useRuntimeConfig().public.baseUrl` — never hardcode URLs
+- **Package Manager**: Must use `pnpm` (not npm/yarn). Version: `pnpm@10.28.2`
 - **Nuxt Version**: Nuxt 4 (not Nuxt 3)
-- **Node Version**: Node 20 (specified in CI/CD)
+- **Node Version**: Node ≥ 20
+- **Workspace packages**: Import shared code via `@riddle-rush/types`, `@riddle-rush/shared`, `@riddle-rush/config`
 
-## Known Issues & Technical Debt
-
-### Critical Issues (see `docs/MVP-TASKS.md`)
-
-- Error handling missing in game submission (`pages/game.vue`)
-- Pause functionality not implemented (design assets exist)
-- Quit confirmation modal not implemented
-- Input validation needed for player names
-- Edge cases: 0 players, empty inputs, network failures
-
-### Completed Optimizations
-
-- ✅ Centralized logging system
-- ✅ Shared constants file
-- ✅ Common page setup composable
-- ✅ Category caching (5-minute cache)
-- ✅ Console statements removed from production
-- ✅ Type safety improvements
-
-### Remaining Work
-
-- Error handling improvements
-- Pause/Quit modals
-- Input validation
-- E2E test coverage for error scenarios
-- Performance optimizations (image compression, lazy loading)
-
-## Project Structure
-
-```
-riddle-rush-nuxt-pwa/
-├── components/          # Vue components (auto-imported)
-│   ├── Base/          # Base components (Button, Modal, etc.)
-│   └── *.vue          # Feature components
-├── composables/        # Vue composables (auto-imported)
-├── layouts/           # Nuxt layouts
-├── pages/             # Nuxt pages (file-based routing)
-├── stores/            # Pinia stores
-├── types/             # TypeScript type definitions
-├── utils/             # Utility functions and constants
-├── locales/           # i18n translation files
-├── public/            # Static assets (images, icons, data)
-├── tests/
-│   ├── unit/          # Vitest unit tests
-│   ├── e2e/           # Playwright E2E tests
-│   └── utils/         # Test utilities
-├── scripts/           # Deployment and CI scripts
-└── docs/              # Documentation
-```
-
-## Infrastructure as Code
-
-**Terraform Infrastructure** (`infrastructure/`):
-
-- Terraform configurations for AWS (S3 + CloudFront)
-- Uses `tfenv` for Terraform version management
-- Supports `terraformer` for importing existing resources
-- Environment-specific configurations (production/staging/development)
-
-**Quick Commands:**
-
-```bash
-# Setup Terraform
-pnpm run infra:setup
-
-# Initialize
-pnpm run infra:init
-
-# Plan changes
-pnpm run infra:plan
-
-# Apply changes
-pnpm run infra:apply
-
-# Import existing resources
-pnpm run infra:import
-```
-
-See `infrastructure/README.md` and `docs/TERRAFORM-SETUP.md` for detailed setup and usage.
-
-## Additional Resources
-
-### Deployment & Infrastructure
-
-- **AWS Deployment**: See `docs/AWS-DEPLOYMENT.md` for comprehensive AWS setup
-- **Terraform Setup**: See `docs/TERRAFORM-SETUP.md` for Terraform infrastructure guide
-- **Docker CI Image**: See `docs/DOCKER-CI-IMAGE.md` for custom Docker image documentation
-- **Monorepo CI Optimization**: See `docs/MONOREPO-CI-OPTIMIZATION.md` for change detection strategy
-
-### Optimization & Performance
-
-- **Asset Optimization**: See `docs/ASSET-OPTIMIZATION.md` for asset loading strategies and image optimization
-- **AWS Asset Optimization**: See `docs/AWS-ASSET-OPTIMIZATION.md` for CloudFront CDN integration and cost optimization
-- **Build Optimization**: See `docs/BUILD-OPTIMIZATION.md` for build performance optimizations
-
-### Development & Testing
-
-- **Testing Guide**: See `docs/TESTING.md` for detailed testing documentation
-- **Development Guide**: See `docs/DEVELOPMENT.md` for refactoring history and optimizations
-- **Dependency Management**: See `docs/DEPENDENCY-MANAGEMENT.md` for dependency upgrade workflows
-- **Useful Packages**: See `docs/USEFUL-PACKAGES.md` for recommended Nuxt packages and plugins
-
-### Project Information
-
-- **Project History**: See `docs/PROJECT-HISTORY.md` for consolidated history of completed work
-- **Game Workflow**: See `docs/WORKFLOW.md` for complete game flow documentation
-- **MVP Tasks**: See `docs/MVP-TASKS.md` for critical tasks and known issues
-- **TODO**: See `docs/TODO.md` for future enhancements
+---
 
 ## Quick Reference
 
@@ -595,67 +569,83 @@ See `infrastructure/README.md` and `docs/TERRAFORM-SETUP.md` for detailed setup 
 
 **Add a new page:**
 
-1. Create `pages/new-page.vue`
+1. Create `apps/game/pages/new-page.vue`
 2. Use `usePageSetup()` composable
-3. Add translations to `locales/de.json` and `locales/en.json`
-4. Add E2E test in `tests/e2e/`
+3. Add translations to `apps/game/locales/de.json` and `en.json`
+4. Add E2E test in `apps/game/tests/e2e/`
 
 **Add a new composable:**
 
-1. Create `composables/useNewFeature.ts`
+1. Create `apps/game/composables/useNewFeature.ts`
 2. Use `useLogger()` for logging
-3. Add unit tests in `tests/unit/`
+3. Add unit tests in `apps/game/tests/unit/`
+
+**Add a shared type:**
+
+1. Add to `packages/types/src/game.ts` (or new file)
+2. Export from `packages/types/src/index.ts`
+3. Import via `import type { MyType } from '@riddle-rush/types'`
+
+**Add a shared utility:**
+
+1. Add to `packages/shared/src/`
+2. Export from `packages/shared/src/index.ts`
+3. Import via `import { myUtil } from '@riddle-rush/shared'`
 
 **Deploy to production:**
 
-1. Merge to `main` branch
-2. CI automatically builds and deploys to GitLab Pages
-3. Manually trigger `verify:e2e:production` to test
-
-**Deploy to AWS:**
-
-1. Create version tag: `git tag v1.0.0 && git push --tags`
-2. CI automatically deploys to AWS
-3. Manually trigger `verify:e2e:aws` to test
+1. Merge to `main` branch — CI auto-deploys
+2. Or create version tag: `git tag v1.0.0 && git push --tags` for AWS
 
 **Debug a failing test:**
 
-1. Run `pnpm run test:e2e:ui` for interactive mode
+1. `pnpm run test:e2e:ui` for interactive mode
 2. Or `pnpm run test:e2e:headed` to see browser
 3. Check `test-results/` for screenshots and traces
 
-## 📚 Documentation Structure (Updated January 2026)
+---
+
+## 📚 Documentation Structure
 
 ### Root Level
 
-- **[README.md](README.md)** - Project overview and quick start
-- **[AGENTS.md](AGENTS.md)** - Complete agent workflow guide (START HERE for AI agents)
-- **[CLAUDE.md](CLAUDE.md)** - This file (Claude Code specific)
+- **[README.md](README.md)** — Project overview and quick start
+- **[AGENTS.md](AGENTS.md)** — Complete agent workflow guide (START HERE for AI agents)
+- **[CLAUDE.md](CLAUDE.md)** — This file (Claude Code specific)
 
 ### docs/ Directory
 
-- **[docs/README.md](docs/README.md)** - Documentation index
-- **[docs/PLUGINS.md](docs/PLUGINS.md)** - Vite/Nuxt plugin configuration
-- **[docs/WORKFLOW_SYSTEM_REPORT.md](docs/WORKFLOW_SYSTEM_REPORT.md)** - Complete workflow analysis
-- **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** - Development guide
-- **[docs/TESTING-GUIDE.md](docs/TESTING-GUIDE.md)** - Testing strategy
-- **[docs/setup/](docs/setup/)** - Setup and configuration guides
-- **[docs/deployment/](docs/deployment/)** - Deployment documentation
-- **[docs/archive/](docs/archive/)** - Historical documents
+| Category        | Path                | Key Files                                                                         |
+| --------------- | ------------------- | --------------------------------------------------------------------------------- |
+| **Development** | `docs/development/` | `AGENT-WORKFLOW.md`, `TOOLS-AND-AGENTS.md`                                        |
+| **Deployment**  | `docs/deployment/`  | `AWS-DEPLOYMENT.md`, `DOCKER-CI-IMAGE.md`, `DOCKER-DEPLOYMENT.md`                 |
+| **Setup**       | `docs/setup/`       | `MONOREPO_ENVIRONMENT_GUIDE.md`, `HUSKY-TURBOREPO-SETUP.md`, `TERRAFORM-SETUP.md` |
+| **Monorepo**    | `docs/`             | `MONOREPO.md`, `MONOREPO-REFACTOR.md`, `MONOREPO-ENHANCEMENTS.md`                 |
+| **Testing**     | `docs/`             | `TESTING-GUIDE.md`, `TESTING.md`                                                  |
+| **Performance** | `docs/`             | `ASSET-OPTIMIZATION.md`, `BUILD-OPTIMIZATION.md`, `PERFORMANCE.md`                |
+| **Archive**     | `docs/archive/`     | Historical documents                                                              |
+
+---
 
 ## 🔄 Zenflow Worktree Environment
 
-This project uses **Zenflow** for task orchestration. Each task runs in an isolated git worktree with no installed dependencies or local config files. See `.zenflow/settings.json` for automation config and the **Zenflow Worktree Environment** section in `AGENTS.md` for details.
+This project uses **Zenflow** for task orchestration. Each task runs in an isolated git worktree with no installed dependencies or local config files. See `.zenflow/settings.json` for automation config.
 
-**Key points:** `pnpm install` runs automatically on setup, `.env` and `apps/game/.env` are copied from your main worktree, and `pnpm run workspace:check` runs as the verification script after each agent turn.
+**Key points:**
+
+- `pnpm install` runs automatically on setup
+- `.env` and `apps/game/.env` are copied from your main worktree
+- `pnpm run workspace:check` runs as the verification script after each agent turn
+
+---
 
 ## 🔄 Workflow Summary for Claude Code
 
-1. **Read AGENTS.md first** - Complete workflow documentation
-2. **Make small changes** - One logical change at a time
-3. **Validate immediately** - `pnpm run workspace:check`
-4. **Commit frequently** - Every 10-20 minutes with conventional format
-5. **Use git hooks** - They automatically validate your commits
+1. **Read AGENTS.md first** — complete workflow documentation
+2. **Make small changes** — one logical change at a time
+3. **Validate immediately** — `pnpm run workspace:check`
+4. **Commit frequently** — every 10-20 minutes with conventional format
+5. **Use git hooks** — they automatically validate your commits
 
 ### Example Session
 
@@ -665,19 +655,25 @@ pnpm install
 pnpm run workspace:check  # Verify baseline
 
 # Make change #1
-# Edit: composables/useColorMode.ts
+# Edit: apps/game/composables/useColorMode.ts
 pnpm run workspace:check
-git add composables/useColorMode.ts
+git add apps/game/composables/useColorMode.ts
 git commit -m "feat: add color mode toggle"
 
 # Make change #2
-# Edit: components/ColorModeButton.vue
+# Edit: apps/game/components/ColorModeButton.vue
 pnpm run workspace:check
-git add components/ColorModeButton.vue
+git add apps/game/components/ColorModeButton.vue
 git commit -m "feat: add color mode button component"
 
 # Push
 git push
 ```
 
-**Remember:** Git hooks will automatically run TypeScript checks, linting, and validate your commit message!
+**Remember:** Git hooks will automatically run TypeScript checks, linting, secret scanning, and validate your commit message!
+
+<!-- AICODE:START -->
+
+@.claude/aicode-instructions.md
+
+<!-- AICODE:END -->
