@@ -217,6 +217,16 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // Resolve bare SCSS imports like `@use 'assets/scss/...'` during Vercel builds
+          // Sass @use doesn't understand Vite aliases (@/, ~/), so we add the app root
+          // as an include path so `assets/scss/...` resolves relative to the app directory
+          includePaths: [new URL('.', import.meta.url).pathname],
+        },
+      },
+    },
     resolve: {
       preserveSymlinks: false, // Keep default behavior
       dedupe: ['vue'], // Deduplicate Vue to ensure a single instance
