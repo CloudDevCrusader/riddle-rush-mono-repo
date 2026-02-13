@@ -319,7 +319,7 @@ export default defineNuxtConfig({
   },
 
   i18n: {
-    langDir: 'i18n/locales',
+    langDir: '../translations/locales',
     defaultLocale: 'de',
     locales: [
       { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
@@ -345,11 +345,11 @@ export default defineNuxtConfig({
     experimental: {
       localeDetector: undefined, // Disable SSR locale detector
     },
-    // Bundle only client-side plugins
+    // Bundle configuration - ensure messages are included
     bundle: {
-      compositionOnly: true,
+      compositionOnly: false,
       runtimeOnly: false,
-      fullInstall: false,
+      fullInstall: true,
       dropMessageCompiler: false,
     },
   },
