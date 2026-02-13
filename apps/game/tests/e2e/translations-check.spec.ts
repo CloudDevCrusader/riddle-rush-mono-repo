@@ -49,23 +49,45 @@ test.describe('Translation Checks', () => {
     await expect(startBtn).toHaveText('Start Game', { ignoreCase: true })
     await startBtn.click()
 
-    // 4. Check Round Start Page
-    await page.waitForURL('**/round-start')
+    // 4. Check Round Start OR Game Page
+    // Depending on feature flags, we might be on round-start (with wheels) or directly in game
+    await page.waitForURL(url => url.pathname.includes('round-start') || url.pathname.includes('game'))
     
-    // Wait for the result text to appear (after wheel spin)
-    // Increase timeout for the wheel spin
-    const resultText = page.locator('.result-text').first()
-    await expect(resultText).toBeVisible({ timeout: 15000 })
+    const isRoundStart = page.url().includes('round-start')
     
-    const categoryName = await resultText.innerText()
+    let categoryName = ''
+    if (isRoundStart) {
+        // Wait for wheels to complete and results to show
+        const resultText = page.locator('.result-text').first()
+        // It might skip directly to game if it navigates fast, so we handle both
+        try {
+            await expect(resultText).toBeVisible({ timeout: 10000 })
+            categoryName = await resultText.innerText()
+        } catch (e) {
+            // Maybe already navigated to game
+            await page.waitForURL('**/game/**')
+            const gameCatName = page.locator('.category-name')
+            await expect(gameCatName).toBeVisible()
+            categoryName = await gameCatName.innerText()
+        }
+    } else {
+        const gameCatName = page.locator('.category-name')
+        await expect(gameCatName).toBeVisible()
+        categoryName = await gameCatName.innerText()
+    }
+
     console.log('Detected category name:', categoryName)
     
     // Should not be a key
     expect(categoryName).not.toContain('categories.')
+    expect(categoryName).not.toEqual('LOADING...')
     
-    // Verify it's one of the English category names
-    const englishCategories = Object.values(enLocale.categories)
-    const found = englishCategories.some(cat => categoryName.includes(cat as string) || (cat as string).includes(categoryName))
-    expect(found, `Category name "${categoryName}" should be one of the English category names`).toBe(true)
+    // Verify it's one of the English category names (case-insensitive)
+    const englishCategories = Object.values(enLocale.categories).map(c => (c as string).toLowerCase())
+    const found = englishCategories.some(cat => 
+        categoryName.toLowerCase().includes(cat) || 
+        cat.includes(categoryName.toLowerCase())
+    )
+    expect(found, `Category name "${categoryName}" should match one of the English category names`).toBe(true)
   })
 })

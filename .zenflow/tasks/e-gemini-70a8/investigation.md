@@ -34,25 +34,13 @@ The following files were found to have missing translations based on the script 
 - `apps/game/pages/leaderboard.vue`
 - `apps/game/pages/results/[[gameId]].vue`
 
-## Proposed Solution
+## Implementation Notes
+- **Added Missing Translations**: Integrated 150+ category translations and several missing static keys (menu, leaderboard, scoring) into `de.json` and `en.json`.
+- **Localized UI Components**: Updated `game/[[gameId]].vue`, `GameHistory.vue`, and `Leaderboard.vue` to use translated category names instead of raw data.
+- **Fixed Nuxt Configuration**: Resolved a path duplication issue in `nuxt.config.ts` where `langDir` was causing Nitro to look in `i18n/i18n/locales`.
+- **Improved E2E Tests**: Refined the translation check E2E test to be robust against navigation reloads and asynchronous feature flags (Fortune Wheel).
 
-1.  **Fix Static Keys:** Add the 9 missing keys to `de.json` and `en.json` with appropriate translations.
-2.  **Fix Category Keys:**
-    - Update `de.json` and `en.json` to include keys matching the `searchWord` from `categories.json`.
-    - Map the existing translations (where applicable) to the new keys.
-    - Ensure English translations are provided for all categories.
-3.  **Automated Verification:**
-    - Convert the analysis script into a unit test to prevent regression.
-    - Add an E2E test to verify that category names are correctly translated in the app (e.g., check that "Animal" is shown in English mode, not "Tier").
-
-## Testing Plan
-
-### Unit Tests
-- Create a test file `apps/game/tests/unit/translations.spec.ts`.
-- Implement a test that scans code for `t()` usages and verifies keys exist in `de.json` and `en.json`.
-- Verify that `categories.json` `searchWord`s have corresponding keys in `de.json` and `en.json`.
-
-### E2E Tests
-- Update or create an E2E test that switches the language to English.
-- Verify that keys are not displayed on the screen.
-- Verify that specific category names are displayed in English.
+## Test Results
+- **Unit Tests**: `apps/game/tests/unit/translations.spec.ts` passes, verifying all categories have translations in both languages.
+- **E2E Tests**: `apps/game/tests/e2e/translations-check.spec.ts` passes, confirming no raw translation keys are visible in the UI and category names are correctly localized.
+- **Workspace Quality**: `pnpm run workspace:check` passed successfully (Syncpack + TypeScript + ESLint).

@@ -35,7 +35,7 @@
               <div class="game-info">
                 <div class="info-row">
                   <span class="info-label">{{ t('history.category', 'Category') }}:</span>
-                  <span class="info-value">{{ game.category.name }}</span>
+                  <span class="info-value">{{ t(`categories.${game.category.searchWord}`, game.category.name) }}</span>
                 </div>
                 <div class="info-row">
                   <span class="info-label">{{ t('history.letter', 'Letter') }}:</span>
