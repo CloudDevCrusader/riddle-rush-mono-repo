@@ -96,11 +96,12 @@ Recent decisions affecting current work:
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~550 lines) for simplification and bug risk.
 
-### Completed Todos (2026-02-13)
+### Completed Todos (2026-02-14)
 
 - ~~Push pending commits to remote.~~ Done.
 - ~~Switch CI/CD from CircleCI to Vercel.~~ Done — removed CircleCI, fixed SCSS import paths, verified Vercel build succeeds.
 - ~~Add non-blocking GitHub Action for quality checks.~~ Done — replaced broken npm-based tests.yml with pnpm/turbo quality checks workflow.
+- ~~Fix Docker image build for pnpm monorepo.~~ Done (quick-001) — fixed workspace file layering, corepack auto-version, output path, health check port. Pushed to GitHub.
 
 ### Blockers/Concerns
 
@@ -111,8 +112,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-13
-Stopped at: Completed DevOps todos (CircleCI removal, Vercel fix, GitHub Action quality checks)
+Last session: 2026-02-14
+Stopped at: Completed quick-001 (Fix Docker image build and push)
 Resume file: None
 
 ### Phase 11 Plans Status
