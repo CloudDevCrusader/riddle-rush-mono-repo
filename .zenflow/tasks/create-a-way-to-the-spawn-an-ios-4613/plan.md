@@ -123,6 +123,18 @@ Reference: `spec.md` Step D
 
 ---
 
+### [x] Step: Create GitHub Actions workflow for iOS E2E
+
+Created `.github/workflows/ios-e2e.yml` with two jobs:
+
+- `e2e-webkit-visual` — Playwright WebKit on Ubuntu (no Xcode needed, video artifacts)
+- `e2e-ios-simulator` — Real iOS Simulator on `macos-15` with Xcode 16
+
+Workflow is **manual-only** (`workflow_dispatch`) to avoid macOS runner costs on every push.
+Inputs: `job` (which job to run) and `test_filter` (Playwright `--grep` filter).
+
+---
+
 ### [ ] Step: Root scripts and documentation
 
 Wire everything up at the workspace level:
