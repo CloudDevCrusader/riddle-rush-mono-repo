@@ -62,6 +62,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ### [ ] Step: Install @capacitor/ios and update capacitor config
 
+<!-- chat-id: 30bc5e73-cabe-4559-9b39-b81079698094 -->
+
 Install the iOS Capacitor platform and add iOS-specific configuration:
 
 - `pnpm --filter @riddle-rush/game add -D @capacitor/ios@^8.0.0`
@@ -76,6 +78,8 @@ Reference: `spec.md` Step A
 
 ### [ ] Step: Create playwright.ios.config.ts
 
+<!-- chat-id: 56216cb9-21f0-4cef-a753-005fca51114a -->
+
 Create a dedicated Playwright config for iOS visual testing:
 
 - New file: `apps/game/playwright.ios.config.ts` (iPhone 15 only, headless: false by default)
@@ -89,6 +93,8 @@ Reference: `spec.md` Step B
 ---
 
 ### [ ] Step: Create scripts/ios-visual-e2e.sh (Path A — no Xcode needed)
+
+<!-- chat-id: 43f2e952-cb1b-496c-a962-27b6ad3b83b2 -->
 
 Create the primary visual E2E runner that works without Xcode:
 
@@ -106,6 +112,8 @@ Reference: `spec.md` Step C
 ---
 
 ### [ ] Step: Create scripts/ios-simulator-launch.sh (Path B — requires Xcode)
+
+<!-- chat-id: 26fe3bb9-b057-4946-a13d-14b26c87a74b -->
 
 Create the native iOS Simulator launcher:
 
@@ -137,6 +145,8 @@ Inputs: `job` (which job to run) and `test_filter` (Playwright `--grep` filter).
 
 ### [ ] Step: Root scripts and documentation
 
+<!-- chat-id: ab4d31a1-3469-4cc1-9d45-8c5bfafa1b63 -->
+
 Wire everything up at the workspace level:
 
 - Add `ios:e2e` and `ios:e2e:visual` to root `package.json`
@@ -145,3 +155,7 @@ Wire everything up at the workspace level:
 - Commit: `docs: document ios simulator and e2e commands`
 
 Reference: `spec.md` Step E
+
+### [x] Step: Make Pull Request mergeable
+
+<!-- chat-id: ca9cd8af-d983-4488-8711-561a9f740836 -->
