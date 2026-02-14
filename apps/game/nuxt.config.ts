@@ -30,17 +30,16 @@ function filterProblematicPlugins(app: any) {
     app.plugins = app.plugins.filter((plugin: any) => {
       const src = typeof plugin === 'string' ? plugin : plugin.src || plugin
       if (src && typeof src === 'string') {
-        // Remove problematic plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
+        // Remove SSR-only plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
+        // NOTE: Do NOT filter the preload plugin — it's required to load locale messages
         const isProblematicPlugin =
           src.includes('switch-locale-path-ssr') ||
           src.includes('i18n-ssr') ||
           src.includes('locale-detector-ssr') ||
           src.includes('route-locale-detect') ||
           src.includes('ssg-detect') ||
-          (src.includes('preload') && src.includes('i18n')) || // i18n:plugin:preload also causes circular dependency
           src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/preload')
+          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
 
         if (isProblematicPlugin) {
           // Only log in development to avoid cluttering production logs
@@ -329,7 +328,12 @@ export default defineNuxtConfig({
   },
 
   i18n: {
-    langDir: '../translations/locales',
+    // @nuxtjs/i18n v10 resolves langDir and vueI18n relative to <rootDir>/<restructureDir>/
+    // The default restructureDir is "i18n", so all paths would be prefixed with i18n/.
+    // Set to '.' so paths resolve from the project root directly.
+    restructureDir: '.',
+    langDir: 'translations/locales',
+    vueI18n: 'translations/i18n.config',
     defaultLocale: 'de',
     locales: [
       { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
