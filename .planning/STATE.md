@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 11 of 11 (Modal Dialogs)
 Plan: 1 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-02 — Completed 11-01-PLAN.md (Component extensions for modals)
+Last activity: 2026-02-14 - Completed quick task 001: Fix Docker image and push working version to GitHub
 
 Progress: [███████████████] 100% (23/25 plans complete)
 
@@ -109,6 +109,12 @@ Recent decisions affecting current work:
 
 - Safari gradient rendering may differ from Chrome (verify early)
 - Custom scrollbar styling may not work on all mobile browsers (graceful degradation)
+
+### Quick Tasks Completed
+
+| #   | Description                                         | Date       | Commit  | Directory                                                                                             |
+| --- | --------------------------------------------------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------- |
+| 001 | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140 | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/) |
 
 ## Session Continuity
 
