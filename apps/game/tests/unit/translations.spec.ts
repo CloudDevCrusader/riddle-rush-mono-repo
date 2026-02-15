@@ -17,7 +17,7 @@ function flattenKeys(obj: any, prefix = ''): string[] {
 
 describe('Translations', () => {
   const rootDir = path.resolve(__dirname, '../..')
-  const localesDir = path.join(rootDir, 'i18n/locales')
+  const localesDir = path.join(rootDir, 'translations/locales')
   const categoriesPath = path.join(rootDir, 'public/data/categories.json')
 
   const dePath = path.join(localesDir, 'de.json')
@@ -49,12 +49,12 @@ describe('Translations', () => {
 
   it('should have consistent keys between de and en', () => {
     // Check if keys in DE exist in EN
-    deKeys.forEach(key => {
+    deKeys.forEach((key) => {
       expect(enKeys.has(key), `Key '${key}' exists in DE but missing in EN`).toBe(true)
     })
 
     // Check if keys in EN exist in DE
-    enKeys.forEach(key => {
+    enKeys.forEach((key) => {
       expect(deKeys.has(key), `Key '${key}' exists in EN but missing in DE`).toBe(true)
     })
   })
