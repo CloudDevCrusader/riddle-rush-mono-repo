@@ -233,7 +233,7 @@ Results:
 
 ---
 
-### [ ] Step 8: Remove legacy single-player shims from game store
+### [x] Step 8: Remove legacy single-player shims from game store
 
 <!-- chat-id: 039b5e93-4bac-4a65-872c-ca66d82ad1a4 -->
 
@@ -256,6 +256,26 @@ Verification:
 - `pnpm run typecheck` — no missing property errors
 - `pnpm run test:unit` — game store tests pass
 - `pnpm run workspace:check`
+
+**Completed**: Removed legacy `currentScore` and `currentAttempts` getters from game store.
+
+Files modified:
+
+- `apps/game/stores/game.ts` — removed 2 legacy getters (555 → 553 lines)
+- `apps/game/components/DebugPanel.vue` — updated to use `currentSession?.score` and `currentSession?.attempts`
+- `apps/game/composables/useGameActions.ts` — updated `shareScore()` to use `currentSession?.score`
+- `apps/game/tests/unit/game-store-session.spec.ts` — updated tests to verify session properties directly
+- `apps/game/tests/unit/use-game-actions.spec.ts` — removed `currentScore` from mock, replaced with `currentSession`
+
+Note: Store is at 553 lines (vs 420 target). The remaining size is due to:
+
+- Multi-player game logic (setupPlayers, submitPlayerAnswer, assignPlayerScore, etc.)
+- Category management (fetchCategories, loadMoreCategories, getRandomCategory)
+- IndexedDB persistence methods
+
+Further reduction would require splitting the store itself, which may be a future task.
+
+All 590 unit tests pass. Workspace checks pass.
 
 ---
 
