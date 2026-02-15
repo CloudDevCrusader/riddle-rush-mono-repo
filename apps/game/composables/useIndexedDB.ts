@@ -1,25 +1,32 @@
 import { openDB, type IDBPDatabase } from 'idb'
+import type { CategorySettings } from '@riddle-rush/types/game'
 import { useLogger } from './useLogger'
-import type {
-  GameSession,
-  GameStatistics,
-  LeaderboardEntry,
-  CategorySettings,
-} from '@riddle-rush/types/game'
+import { useGameSessionDB } from './useGameSessionDB'
+import { useGameHistoryDB } from './useGameHistoryDB'
+import { useStatisticsDB } from './useStatisticsDB'
+import { useLeaderboardDB } from './useLeaderboardDB'
 
+// Database configuration
 const DB_NAME = 'riddle-rush-db'
 const DB_VERSION = 3
-const GAME_SESSION_STORE = 'gameSession'
-const GAME_SESSIONS_BY_ID_STORE = 'gameSessionsById'
-const GAME_HISTORY_STORE = 'gameHistory'
-const STATISTICS_STORE = 'statistics'
-const LEADERBOARD_STORE = 'leaderboard'
-const SETTINGS_STORE = 'settings'
 
+// Store names (exported for domain composables and testing)
+export const GAME_SESSION_STORE = 'gameSession'
+export const GAME_SESSIONS_BY_ID_STORE = 'gameSessionsById'
+export const GAME_HISTORY_STORE = 'gameHistory'
+export const STATISTICS_STORE = 'statistics'
+export const LEADERBOARD_STORE = 'leaderboard'
+export const SETTINGS_STORE = 'settings'
+
+// Module-level singleton for database connection
 let dbInstance: IDBPDatabase | null = null
 let dbPromise: Promise<IDBPDatabase> | null = null
 
-async function getDB() {
+/**
+ * Get the shared IndexedDB instance.
+ * Uses a singleton pattern to ensure only one connection is opened.
+ */
+export async function getDB(): Promise<IDBPDatabase> {
   // Return cached instance if available
   if (dbInstance) return dbInstance
 
@@ -68,184 +75,26 @@ async function getDB() {
   }
 }
 
+/**
+ * Main IndexedDB composable that combines all domain-specific operations.
+ * Maintains backwards compatibility with existing call sites.
+ *
+ * For new code, consider using the domain-specific composables directly:
+ * - useGameSessionDB: Game session operations
+ * - useGameHistoryDB: Game history operations
+ * - useStatisticsDB: Statistics operations
+ * - useLeaderboardDB: Leaderboard operations
+ */
 export function useIndexedDB() {
   const logger = useLogger()
 
-  const saveGameSession = async (session: GameSession) => {
-    try {
-      const db = await getDB()
+  // Initialize domain composables with shared getDB
+  const sessionDB = useGameSessionDB(getDB)
+  const historyDB = useGameHistoryDB(getDB)
+  const statisticsDB = useStatisticsDB(getDB)
+  const leaderboardDB = useLeaderboardDB(getDB)
 
-      // Only serialize if the session is not already a plain object
-      const serialized =
-        session && typeof session === 'object' ? JSON.parse(JSON.stringify(session)) : session
-
-      // Use transaction for atomic operations
-      const tx = db.transaction([GAME_SESSION_STORE, GAME_SESSIONS_BY_ID_STORE], 'readwrite')
-
-      // Save as current session
-      await tx.objectStore(GAME_SESSION_STORE).put(serialized, 'current')
-
-      // Also save by ID for direct access if ID exists
-      if (session.id) {
-        try {
-          await tx.objectStore(GAME_SESSIONS_BY_ID_STORE).put(serialized)
-        } catch (idSaveError) {
-          logger.warn('Failed to save session by ID (non-critical):', idSaveError)
-          // Continue even if ID storage fails
-        }
-      }
-
-      await tx.done
-    } catch (error) {
-      logger.error('Error saving game session:', error)
-      throw error // Re-throw to ensure calling code knows about the failure
-    }
-  }
-
-  const getGameSession = async (): Promise<GameSession | null> => {
-    try {
-      const db = await getDB()
-      const session = await db.get(GAME_SESSION_STORE, 'current')
-      return session || null
-    } catch (error) {
-      logger.error('Error getting game session:', error)
-      return null
-    }
-  }
-
-  const getGameSessionById = async (sessionId: string): Promise<GameSession | null> => {
-    try {
-      const db = await getDB()
-      const session = await db.get(GAME_SESSIONS_BY_ID_STORE, sessionId)
-      return session || null
-    } catch (error) {
-      logger.error('Error getting game session by ID:', error)
-      return null
-    }
-  }
-
-  const clearGameSession = async () => {
-    try {
-      const db = await getDB()
-      await db.delete(GAME_SESSION_STORE, 'current')
-    } catch (error) {
-      logger.error('Error clearing game session:', error)
-    }
-  }
-
-  const saveGameHistory = async (history: GameSession[]) => {
-    try {
-      const db = await getDB()
-      const tx = db.transaction(GAME_HISTORY_STORE, 'readwrite')
-
-      for (const session of history) {
-        await tx.store.put(session)
-      }
-
-      await tx.done
-    } catch (error) {
-      logger.error('Error saving game history:', error)
-    }
-  }
-
-  const getGameHistory = async (limit = 50): Promise<GameSession[]> => {
-    try {
-      const db = await getDB()
-      const index = db.transaction(GAME_HISTORY_STORE).store.index('startTime')
-
-      // Use cursor for better performance with large datasets
-      const sessions: GameSession[] = []
-      let cursor = await index.openCursor(null, 'prev') // Start from end (newest first)
-
-      while (cursor && sessions.length < limit) {
-        sessions.push(cursor.value)
-        cursor = await cursor.continue()
-      }
-
-      return sessions
-    } catch (error) {
-      logger.error('Error getting game history:', error)
-      return []
-    }
-  }
-
-  const clearGameHistory = async () => {
-    try {
-      const db = await getDB()
-      await db.clear(GAME_HISTORY_STORE)
-    } catch (error) {
-      logger.error('Error clearing game history:', error)
-    }
-  }
-
-  const getStatistics = async (): Promise<GameStatistics | null> => {
-    try {
-      const db = await getDB()
-      const stats = await db.get(STATISTICS_STORE, 'current')
-      return stats || null
-    } catch (error) {
-      logger.error('Error getting statistics:', error)
-      return null
-    }
-  }
-
-  const saveStatistics = async (stats: GameStatistics) => {
-    try {
-      const db = await getDB()
-      await db.put(STATISTICS_STORE, stats, 'current')
-    } catch (error) {
-      logger.error('Error saving statistics:', error)
-    }
-  }
-
-  const initializeStatistics = async (): Promise<GameStatistics> => {
-    const stats: GameStatistics = {
-      totalGames: 0,
-      totalAttempts: 0,
-      correctAttempts: 0,
-      totalScore: 0,
-      totalPlayTime: 0,
-      categoriesPlayed: {},
-      lastPlayed: Date.now(),
-      bestScore: 0,
-      averageScore: 0,
-      streakCurrent: 0,
-      streakBest: 0,
-    }
-    await saveStatistics(stats)
-    return stats
-  }
-
-  const getLeaderboard = async (limit = 10): Promise<LeaderboardEntry[]> => {
-    try {
-      const db = await getDB()
-      const index = db.transaction(LEADERBOARD_STORE).store.index('score')
-
-      // Use cursor for better performance with large datasets
-      const entries: LeaderboardEntry[] = []
-      let cursor = await index.openCursor(null, 'prev') // Start from highest scores
-
-      while (cursor && entries.length < limit) {
-        entries.push(cursor.value)
-        cursor = await cursor.continue()
-      }
-
-      return entries
-    } catch (error) {
-      logger.error('Error getting leaderboard:', error)
-      return []
-    }
-  }
-
-  const saveLeaderboardEntry = async (entry: LeaderboardEntry) => {
-    try {
-      const db = await getDB()
-      await db.put(LEADERBOARD_STORE, entry)
-    } catch (error) {
-      logger.error('Error saving leaderboard entry:', error)
-    }
-  }
-
+  // Settings operations (kept inline as they're simpler and not in a separate domain composable)
   const getSettings = async (): Promise<CategorySettings | null> => {
     try {
       const db = await getDB()
@@ -276,18 +125,23 @@ export function useIndexedDB() {
   }
 
   return {
-    saveGameSession,
-    getGameSession,
-    getGameSessionById,
-    clearGameSession,
-    saveGameHistory,
-    getGameHistory,
-    clearGameHistory,
-    getStatistics,
-    saveStatistics,
-    initializeStatistics,
-    getLeaderboard,
-    saveLeaderboardEntry,
+    // Game session operations
+    saveGameSession: sessionDB.saveGameSession,
+    getGameSession: sessionDB.getGameSession,
+    getGameSessionById: sessionDB.getGameSessionById,
+    clearGameSession: sessionDB.clearGameSession,
+    // Game history operations
+    saveGameHistory: historyDB.saveGameHistory,
+    getGameHistory: historyDB.getGameHistory,
+    clearGameHistory: historyDB.clearGameHistory,
+    // Statistics operations
+    getStatistics: statisticsDB.getStatistics,
+    saveStatistics: statisticsDB.saveStatistics,
+    initializeStatistics: statisticsDB.initializeStatistics,
+    // Leaderboard operations
+    getLeaderboard: leaderboardDB.getLeaderboard,
+    saveLeaderboardEntry: leaderboardDB.saveLeaderboardEntry,
+    // Settings operations
     getSettings,
     saveSettings,
     initializeSettings,
