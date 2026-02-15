@@ -58,7 +58,11 @@
         />
         <div class="category-label">CATEGORY</div>
         <div class="category-name">
-          {{ currentCategory ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase() : 'LOADING...' }}
+          {{
+            currentCategory
+              ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
+              : 'LOADING...'
+          }}
         </div>
       </div>
 

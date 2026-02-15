@@ -165,8 +165,8 @@
     "clear": "Clear",
     "current_standings": "Current Standings",
     "empty": "No entries yet. Play some rounds!",
-    "finish": "Finish",
-    "finish_error": "Error finishing game",
+    "finish": "OK",
+    "finish_error": "Failed to finish game. Please try again.",
     "finish_game": "Finish Game",
     "game_complete": "Game Complete!",
     "image_too_large": "Image must be smaller than 2MB",
@@ -185,8 +185,8 @@
     "end_game": "End Game",
     "home": "Home",
     "language": "Language",
-    "menu": "Menu",
-    "options": "Options",
+    "menu": "MENU",
+    "options": "OPTIONS",
     "play": "Play",
     "settings": "Settings",
     "share_score": "Share Score",
@@ -194,12 +194,6 @@
   },
   "offline": {
     "warning": "You are offline. Some features may not work."
-  },
-  "scoring": {
-    "title": "Scoring",
-    "player": "Player",
-    "next_round": "Next Round",
-    "description": "Here are the results of the last round"
   },
   "pause": {
     "home": "Home",
@@ -244,6 +238,12 @@
     "scores_saved": "Scores saved successfully!",
     "your_score": "Your Score"
   },
+  "scoring": {
+    "description": "View round scoring results",
+    "next_round": "Next Round",
+    "player": "Player",
+    "title": "Scoring"
+  },
   "settings": {
     "debug": "Debug Mode",
     "language_changed": "Language changed",
@@ -251,6 +251,7 @@
     "leaderboard_disabled": "Leaderboard disabled",
     "leaderboard_enabled": "Leaderboard enabled",
     "maxPlayers": "Max Players",
+    "music": "Music",
     "reset": "Reset",
     "reset_success": "Settings reset to defaults",
     "sound": "Sound",

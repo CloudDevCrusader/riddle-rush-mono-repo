@@ -19,7 +19,7 @@
       <div class="credits-panel animate-scale-in">
         <!-- Game Design -->
         <div class="credit-section">
-          <h2 class="section-heading">Game Design</h2>
+          <h2 class="section-heading">{{ t('credits.game_design') }}</h2>
           <div class="credit-box">
             <span class="credit-name">Tobi</span>
             <span class="credit-divider" />
@@ -29,7 +29,7 @@
 
         <!-- Programming -->
         <div class="credit-section">
-          <h2 class="section-heading">Programming</h2>
+          <h2 class="section-heading">{{ t('credits.programming') }}</h2>
           <div class="credit-box">
             <span class="credit-name">Markus</span>
           </div>
@@ -37,7 +37,7 @@
 
         <!-- Art -->
         <div class="credit-section">
-          <h2 class="section-heading">Art</h2>
+          <h2 class="section-heading">{{ t('credits.art') }}</h2>
           <div class="credit-box">
             <span class="credit-name">Sarmad Ali</span>
           </div>
@@ -56,16 +56,16 @@
 </template>
 
 <script setup lang="ts">
-const { baseUrl, goBack } = usePageSetup()
+const { baseUrl, goBack, t } = usePageSetup()
 const runtimeConfig = useRuntimeConfig()
 const appVersion = runtimeConfig.public.appVersion
 
 useHead({
-  title: 'Riddle Rush - Credits',
+  title: `Riddle Rush - ${t('credits.title')}`,
   meta: [
     {
       name: 'description',
-      content: 'Meet the team behind Riddle Rush',
+      content: t('credits.title'),
     },
   ],
 })
@@ -291,10 +291,6 @@ useHead({
     width: clamp(180px, 40vw, 300px);
   }
 
-  .credits-container {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
   .credits-panel {
     padding: var(--spacing-xl);
     max-height: 400px;
@@ -319,27 +315,10 @@ useHead({
     width: clamp(140px, 35vw, 200px);
   }
 
-  .credits-container {
-    max-width: calc(100% - var(--spacing-sm) * 2);
-  }
-
   .credits-panel {
     padding: var(--spacing-lg);
     max-height: 300px;
     margin: 0 var(--spacing-sm);
-  }
-
-  .credit-item {
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
-  }
-
-  .credit-label {
-    font-size: clamp(var(--font-size-xs), 1.8vw, var(--font-size-sm));
-  }
-
-  .credit-value {
-    font-size: clamp(var(--font-size-sm), 2vw, var(--font-size-base));
   }
 
   .ok-btn img {

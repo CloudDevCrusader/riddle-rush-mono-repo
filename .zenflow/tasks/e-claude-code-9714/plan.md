@@ -10,7 +10,7 @@
 
 ### [x] Step: Investigation and Planning
 
-<!-- chat-id: 2ff8af24-acd1-4093-b07b-d652e2702dd3 -->
+<!-- chat-id: f519525e-3708-4748-a8e6-8772be70a479 -->
 
 Analyze the bug report and design a solution.
 
@@ -30,7 +30,7 @@ Save findings to `{@artifacts_path}/investigation.md` with:
 
 ### [x] Step: Implementation
 
-<!-- chat-id: 4c807ab6-2ff4-4fa1-b3c2-4a5082774360 -->
+<!-- chat-id: 47ba8f61-146c-4973-a131-34ff75a9fe93 -->
 
 Read `{@artifacts_path}/investigation.md`
 Implement the bug fix.
@@ -42,8 +42,13 @@ Implement the bug fix.
 
 If blocked or uncertain, ask the user for direction.
 
-### [ ] Step: Unit & E2E tests
+### [x] Step: Testing & Verify
 
-<!-- chat-id: c0f772fb-fd47-49f2-a904-f243fa55f350 -->
+Unit & E2E tests
 
-Verify your work with e2e and unit teats
+### [x] Step: Make PR mergeable
+
+<!-- chat-id: d9a409a1-c520-4acf-8666-db0d5a691ea4 -->
+<!-- agent: claude-code-default -->
+
+I cant create a PR and merge it if the lintting errors or the the typecheck fails

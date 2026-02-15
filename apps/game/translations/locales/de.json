@@ -165,15 +165,15 @@
     "clear": "Löschen",
     "current_standings": "Aktuelle Platzierung",
     "empty": "Noch keine Einträge. Spiel ein paar Runden!",
-    "finish": "Beenden",
-    "finish_error": "Fehler beim Beenden",
+    "finish": "OK",
+    "finish_error": "Fehler beim Beenden des Spiels. Bitte versuche es erneut.",
     "finish_game": "Spiel beenden",
     "game_complete": "Spiel beendet!",
     "image_too_large": "Bild muss kleiner als 2MB sein",
     "invalid_image": "Bitte wähle eine gültige Bilddatei",
     "next_round": "Nächste Runde spielen",
     "no_players": "Noch keine Spieler",
-    "ranking": "Rangliste",
+    "ranking": "Platzierung",
     "score": "Punkte",
     "time": "Zeit",
     "title": "Bestenliste",
@@ -185,8 +185,8 @@
     "end_game": "Spiel Beenden",
     "home": "Zur Startseite",
     "language": "Sprache",
-    "menu": "Menü",
-    "options": "Optionen",
+    "menu": "MENÜ",
+    "options": "OPTIONEN",
     "play": "Spielen",
     "settings": "Einstellungen",
     "share_score": "Score Teilen",
@@ -194,12 +194,6 @@
   },
   "offline": {
     "warning": "Sie sind offline. Einige Funktionen funktionieren möglicherweise nicht."
-  },
-  "scoring": {
-    "title": "Punktestand",
-    "player": "Spieler",
-    "next_round": "Nächste Runde",
-    "description": "Hier sind die Ergebnisse der letzten Runde"
   },
   "pause": {
     "home": "Startseite",
@@ -244,6 +238,12 @@
     "scores_saved": "Punktestände erfolgreich gespeichert!",
     "your_score": "Dein Score"
   },
+  "scoring": {
+    "description": "Rundenergebnisse anzeigen",
+    "next_round": "Nächste Runde",
+    "player": "Spieler",
+    "title": "Auswertung"
+  },
   "settings": {
     "debug": "Debug-Modus",
     "language_changed": "Sprache geändert",
@@ -251,6 +251,7 @@
     "leaderboard_disabled": "Bestenliste deaktiviert",
     "leaderboard_enabled": "Bestenliste aktiviert",
     "maxPlayers": "Max. Spieler",
+    "music": "Musik",
     "reset": "Zurücksetzen",
     "reset_success": "Einstellungen auf Standard zurückgesetzt",
     "sound": "Sound",
