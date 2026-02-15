@@ -189,7 +189,9 @@ Note: The page is still 776 lines (vs 650 target) because the bulk is CSS for th
 
 ---
 
-### [ ] Step 7: Extract RoundSetupControls component from round-start page
+### [x] Step 7: Extract RoundSetupControls component from round-start page
+
+<!-- chat-id: feb3a235-b264-49ac-9bbb-631512b9eeaf -->
 
 Reduce `pages/round-start.vue` (627 lines) by extracting the category/letter selection controls. Target: page < 420 lines.
 
@@ -206,6 +208,28 @@ Verification:
 - `pnpm run typecheck`
 - Manual: complete a round-start flow, verify category/letter selection works
 - `pnpm run workspace:check`
+
+**Completed**: Created `RoundSetupControls.vue` component that encapsulates:
+
+- Dual fortune wheel UI (category + letter wheels)
+- Results display showing selected category/letter after wheels complete
+- Category icon mapping logic
+- `selectRandom()` method for non-wheel mode
+- `startWheelSpins()` method for wheel mode
+
+Updated round-start page to:
+
+- Use the new `<RoundSetupControls>` component
+- Handle `setup-complete` event to start the game
+- Retain page layout (background, top bar, loading indicator)
+
+Results:
+
+- **round-start.vue**: 627 → 271 lines (-356 lines, **-57%**)
+- **RoundSetupControls.vue**: 434 lines (new reusable component)
+- Template reduced from ~100 lines to ~42 lines
+- Script reduced from ~190 lines to ~100 lines (game start logic retained in page)
+- All 590 unit tests pass. Workspace checks pass.
 
 ---
 
