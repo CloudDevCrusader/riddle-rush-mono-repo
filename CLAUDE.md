@@ -54,6 +54,13 @@ pnpm run agent:validate # Validate changes
 pnpm run agent:commit   # Validate + stage + ready to commit
 ```
 
+## MCP Servers for Claude Code
+
+- Config files: `fastmcp.json` (Claude Desktop) and `.mcp.json` (generic MCP clients). Copy with `scripts/agent-install.sh` or `cp fastmcp.json ~/.config/claude/fastmcp.json`, then restart Claude Code.
+- Available servers: `docker` (Docker Hub search + container management), `riddle-rush-subagents` (VoltAgent repo tools), `nuxt-ui`, `nuxt`, `playwright`, `aws-docs`, `context7`, `browsermcp`, `nuxt-mcp-toolkit`, `git`, `gitlab` (needs `GITLAB_PERSONAL_ACCESS_TOKEN`), `filesystem`.
+- Docker MCP notes: requires local Docker daemon; supports searching/pulling images and basic container ops for CI/CD checks.
+- If a server is missing in Claude Code, verify the config path and rerun `scripts/agent-install.sh --interactive` to refresh secrets and env vars.
+
 ---
 
 ## Project Overview
