@@ -41,7 +41,7 @@ const onSplashComplete = () => {
 
 onMounted(async () => {
   // Load persisted state
-  gameStore.loadFromDB()
+  await gameStore.loadFromDB()
   settingsStore.loadSettings()
 
   // Set the saved language preference
