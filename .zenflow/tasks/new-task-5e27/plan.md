@@ -305,3 +305,25 @@ Contents:
 - Architecture improvements explained
 - Deferred work documented for future tasks
 - Full commit history
+
+### [x] Step: Make PR Mergeable
+
+<!-- chat-id: 35b60e91-6726-47db-9cb1-7a264b9b3d3a -->
+
+**Completed**: Made PR mergeable with the following actions:
+
+1. **Fixed Nuxt duplicate export warning** — Removed re-export of `validationRules` from `useForm.ts` (now only exported from `validators.ts`). Updated test file to import directly from the new location.
+
+2. **All code quality checks pass**:
+   - ✅ Quality Checks (syncpack, lint)
+   - ✅ Typecheck, Lint & Tests (TypeScript, ESLint, 590 unit tests)
+   - ✅ CodeRabbit (automated code review)
+
+3. **Updated PR**:
+   - Title: "refactor(game): simplify code and improve test coverage"
+   - Added comprehensive description with metrics and test plan
+   - Added status comment explaining Vercel failure (manually canceled, not code-related)
+
+4. **PR Status**: MERGEABLE (no conflicts), all code checks passing
+
+PR URL: https://github.com/CloudDevCrusader/riddle-rush-mono-repo/pull/30
