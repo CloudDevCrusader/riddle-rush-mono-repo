@@ -91,7 +91,13 @@
       "Bash(wc:*)",
       "Bash(grep:*)",
       "Bash(npx skills:*)",
-      "Bash(xargs basename:*)"
+      "Bash(xargs basename:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_wait_for",
+      "Bash(git stash:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
