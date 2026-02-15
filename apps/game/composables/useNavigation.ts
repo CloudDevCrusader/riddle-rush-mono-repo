@@ -27,7 +27,17 @@ export function useNavigation() {
         await new Promise((resolve) => setTimeout(resolve, 200))
       }
 
-      await router.push(route)
+      // Use a timeout guard to prevent indefinite hanging
+      const navigationPromise = router.push(route)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Navigation timeout after 10s')), 10000)
+      )
+
+      await Promise.race([navigationPromise, timeoutPromise])
+
+      // Hide loading AFTER navigation completes, not before
+      // Add a small delay to ensure the new route has started rendering
+      await new Promise((resolve) => setTimeout(resolve, 100))
     } finally {
       hideLoading()
     }

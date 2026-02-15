@@ -40,20 +40,26 @@ const onSplashComplete = () => {
 }
 
 onMounted(async () => {
-  // Load persisted state
-  gameStore.loadFromDB()
-  settingsStore.loadSettings()
+  // Load persisted state - MUST await these operations to ensure data is ready
+  // before rendering any game components
+  try {
+    await gameStore.loadFromDB()
+    settingsStore.loadSettings()
 
-  // Set the saved language preference
-  if (settingsStore.hasStoredSettings()) {
-    const savedLanguage = settingsStore.getLanguage()
-    if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
-      try {
-        await setLocale(savedLanguage as 'de' | 'en')
-      } catch (error) {
-        console.error('Failed to set saved language:', error)
+    // Set the saved language preference
+    if (settingsStore.hasStoredSettings()) {
+      const savedLanguage = settingsStore.getLanguage()
+      if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
+        try {
+          await setLocale(savedLanguage as 'de' | 'en')
+        } catch (error) {
+          console.error('Failed to set saved language:', error)
+        }
       }
     }
+  } catch (error) {
+    console.error('Failed to initialize app state:', error)
+    // Attempt to render anyway with empty/default state
   }
 
   // Monitor online status

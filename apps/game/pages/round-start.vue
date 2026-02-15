@@ -22,9 +22,18 @@
 
     <!-- Main Container -->
     <div class="container">
+      <!-- Loading Categories Indicator -->
+      <div v-if="loadingCategories" class="loading-container">
+        <Spinner />
+        <p>{{ t('common.loading', 'Loading') }}...</p>
+      </div>
+
       <!-- Dual Wheels Phase (only shown if feature is enabled) -->
       <transition name="wheel-fade">
-        <div v-if="isFortuneWheelEnabled && !wheelsComplete" class="wheels-container">
+        <div
+          v-if="!loadingCategories && isFortuneWheelEnabled && !wheelsComplete"
+          class="wheels-container"
+        >
           <div class="wheel-wrapper">
             <div class="wheel-label">
               {{ t('common.category', 'Category') }}
@@ -119,6 +128,7 @@ const categorySpinComplete = ref(false)
 const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
+const loadingCategories = ref(true) // Show loading spinner while fetching categories
 
 const categoryIconMap: Record<string, string> = {
   female_name: '👩',
@@ -162,32 +172,40 @@ const currentRoundNumber = computed(() => {
 })
 
 onMounted(async () => {
-  // Fetch all categories
-  await gameStore.fetchCategories()
-  const allCategories = gameStore.categories
+  try {
+    // Fetch all categories with loading indicator
+    loadingCategories.value = true
+    await gameStore.fetchCategories()
+    const allCategories = gameStore.categories
 
-  // If fortune wheel is disabled, skip directly to game
-  if (!isFortuneWheelEnabled.value) {
-    // Select random category and letter
-    const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
-    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
+    // If fortune wheel is disabled, skip directly to game
+    if (!isFortuneWheelEnabled.value) {
+      // Select random category and letter
+      const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
+      const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
 
-    selectedCategory.value = randomCategory ?? null
-    selectedLetter.value = randomLetter ?? null
+      selectedCategory.value = randomCategory ?? null
+      selectedLetter.value = randomLetter ?? null
 
-    // Start game immediately
-    await startGame()
-    return
-  }
+      // Start game immediately
+      await startGame()
+      return
+    }
 
-  // Select up to 12 categories for the wheel
-  displayCategories.value = allCategories.slice(0, 12)
+    // Select up to 12 categories for the wheel
+    displayCategories.value = allCategories.slice(0, 12)
 
-  // Auto-spin both wheels immediately (will complete within 5 seconds)
-  setTimeout(() => {
+    // Auto-spin both wheels immediately (will complete within 5 seconds)
+    // Use nextTick to ensure refs are ready after render
+    await nextTick()
     categoryWheelRef.value?.spinRandom()
     letterWheelRef.value?.spinRandom()
-  }, 100)
+  } catch (error) {
+    console.error('Failed to load round start:', error)
+    toast?.error('Failed to load categories. Please try again.')
+  } finally {
+    loadingCategories.value = false
+  }
 })
 
 const getCategoryIcon = (category: Category): string => {
