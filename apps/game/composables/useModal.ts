@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { MODAL_CLOSE_DATA_CLEAR_DELAY_MS } from '~/utils/animation-constants'
 
 /**
  * Composable for managing modal state
@@ -20,7 +21,7 @@ export function useModal<T = any>(initialState = false) {
     // Clear data after transition
     setTimeout(() => {
       data.value = null
-    }, 300)
+    }, MODAL_CLOSE_DATA_CLEAR_DELAY_MS)
   }
 
   const toggle = () => {

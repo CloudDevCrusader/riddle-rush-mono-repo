@@ -97,7 +97,9 @@ Verification:
 
 ---
 
-### [ ] Step 4: Extract validation utilities from useForm
+### [x] Step 4: Extract validation utilities from useForm
+
+<!-- chat-id: ef52a4d2-7c29-4b7d-b7d8-1ea27bab515e -->
 
 Reduce `useForm.ts` (226 lines) by extracting reusable validation rules to a utility file.
 
@@ -120,7 +122,9 @@ Verification:
 
 ---
 
-### [ ] Step 5: Extract animation constants from pages and components
+### [x] Step 5: Extract animation constants from pages and components
+
+<!-- chat-id: b96c602f-e524-4460-8b85-161bcb6d5a2c -->
 
 Replace magic numbers (animation durations, delays) scattered across pages and components with named constants.
 
@@ -139,6 +143,16 @@ Verification:
 
 - `pnpm run typecheck && pnpm run lint`
 - Visual smoke test: run `pnpm run dev`, navigate to round-start and game pages, verify animations still work
+
+**Completed**: Created `animation-constants.ts` with 15 named constants. Updated:
+
+- `FortuneWheel.vue` — uses `WHEEL_SPIN_DURATION_MS`, `WHEEL_SPIN_COMPLETE_DELAY_MS`
+- `SplashScreen.vue` — uses `SPLASH_*` constants for loading simulation
+- `round-start.vue` — uses `WHEEL_AUTO_SPIN_DELAY_MS`
+- `useNavigation.ts` — uses `LOADING_*` and `NAVIGATION_DEBOUNCE_MS` constants
+- `useModal.ts` — uses `MODAL_CLOSE_DATA_CLEAR_DELAY_MS`
+
+All 590 unit tests pass. Workspace checks pass.
 
 ---
 

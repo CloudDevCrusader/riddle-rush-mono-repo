@@ -2,6 +2,13 @@ import { ROUTES, getGameRoute, getResultsRoute } from '@riddle-rush/shared/route
 import { useLoading } from './useLoading'
 import { useLodash } from './useLodash'
 import type { DebouncedFunc } from './useLodash'
+import {
+  LOADING_INITIAL_PROGRESS,
+  LOADING_SECONDARY_PROGRESS,
+  LOADING_STEP_DELAY_MS,
+  LOADING_STEP_SECONDARY_DELAY_MS,
+  NAVIGATION_DEBOUNCE_MS,
+} from '~/utils/animation-constants'
 
 /**
  * Navigation composable
@@ -21,10 +28,10 @@ export function useNavigation() {
 
       // Simulate loading for better UX on fast transitions
       if (simulateLoading) {
-        setProgress(30)
-        await new Promise((resolve) => setTimeout(resolve, 300))
-        setProgress(70)
-        await new Promise((resolve) => setTimeout(resolve, 200))
+        setProgress(LOADING_INITIAL_PROGRESS)
+        await new Promise((resolve) => setTimeout(resolve, LOADING_STEP_DELAY_MS))
+        setProgress(LOADING_SECONDARY_PROGRESS)
+        await new Promise((resolve) => setTimeout(resolve, LOADING_STEP_SECONDARY_DELAY_MS))
       }
 
       await router.push(route)
@@ -41,7 +48,7 @@ export function useNavigation() {
           (route: string, simulateLoading = false) => {
             void navigateWithLoading(route, simulateLoading)
           },
-          200,
+          NAVIGATION_DEBOUNCE_MS,
           { leading: true, trailing: false }
         )
       })

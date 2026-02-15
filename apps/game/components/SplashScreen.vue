@@ -34,6 +34,13 @@
 </template>
 
 <script setup lang="ts">
+import {
+  SPLASH_LOADING_DURATION_MS,
+  SPLASH_PROGRESS_INTERVAL_MS,
+  SPLASH_COMPLETE_DELAY_MS,
+  SPLASH_FADE_OUT_DURATION_MS,
+} from '~/utils/animation-constants'
+
 const config = useRuntimeConfig()
 // Ensure base URL has trailing slash or is empty
 const baseUrl = computed(() => {
@@ -49,9 +56,7 @@ const emit = defineEmits<{
 }>()
 
 const simulateLoading = () => {
-  const duration = 2500 // 2.5 seconds
-  const intervalTime = 20 // Update every 20ms
-  const steps = duration / intervalTime
+  const steps = SPLASH_LOADING_DURATION_MS / SPLASH_PROGRESS_INTERVAL_MS
   const increment = 100 / steps
 
   const interval = setInterval(() => {
@@ -63,10 +68,10 @@ const simulateLoading = () => {
         visible.value = false
         setTimeout(() => {
           emit('complete')
-        }, 500) // Wait for fade out animation
-      }, 300) // Show 100% briefly
+        }, SPLASH_FADE_OUT_DURATION_MS) // Wait for fade out animation
+      }, SPLASH_COMPLETE_DELAY_MS) // Show 100% briefly
     }
-  }, intervalTime)
+  }, SPLASH_PROGRESS_INTERVAL_MS)
 }
 
 onMounted(() => {

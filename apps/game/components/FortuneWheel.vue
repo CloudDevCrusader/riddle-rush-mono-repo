@@ -50,6 +50,8 @@
 </template>
 
 <script setup lang="ts" generic="T">
+import { WHEEL_SPIN_DURATION_MS, WHEEL_SPIN_COMPLETE_DELAY_MS } from '~/utils/animation-constants'
+
 interface Props {
   items: T[]
   getItemKey: (item: T, index: number) => string | number
@@ -120,7 +122,7 @@ const spinWheel = (targetRotation: number) => {
 
   // Use requestAnimationFrame for smoother animation
   const startTime = performance.now()
-  const duration = 1800 // 1.8 seconds for more dramatic spin
+  const duration = WHEEL_SPIN_DURATION_MS
   const startRotation = wheelRotation.value
   const rotationDiff = targetRotation - startRotation
 
@@ -162,7 +164,7 @@ const selectItem = (item: T, index: number) => {
   // Emit spin complete after animation
   setTimeout(() => {
     if (item) emit('spin-complete', item)
-  }, 1500)
+  }, WHEEL_SPIN_COMPLETE_DELAY_MS)
 }
 
 // Expose spin method for parent components
@@ -191,7 +193,7 @@ const spinRandom = () => {
       emit('update:modelValue', randomItem)
       emit('spin-complete', randomItem)
     }
-  }, 1800)
+  }, WHEEL_SPIN_DURATION_MS)
 
   return randomItem
 }

@@ -102,6 +102,7 @@
 <script setup lang="ts">
 import type { Category } from '@riddle-rush/types/game'
 import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
+import { WHEEL_AUTO_SPIN_DELAY_MS } from '~/utils/animation-constants'
 
 const { baseUrl, toast, t } = usePageSetup()
 const { goToGame } = useNavigation()
@@ -187,7 +188,7 @@ onMounted(async () => {
   setTimeout(() => {
     categoryWheelRef.value?.spinRandom()
     letterWheelRef.value?.spinRandom()
-  }, 100)
+  }, WHEEL_AUTO_SPIN_DELAY_MS)
 })
 
 const getCategoryIcon = (category: Category): string => {
