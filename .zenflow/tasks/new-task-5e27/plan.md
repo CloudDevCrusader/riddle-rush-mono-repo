@@ -49,7 +49,7 @@ Verification:
 
 ---
 
-### [ ] Step 2: Split oversized game-store unit test file
+### [x] Step 2: Split oversized game-store unit test file
 
 <!-- chat-id: 8606cdef-272e-4d72-a82c-83689c12f9cb -->
 
@@ -72,7 +72,9 @@ Verification:
 
 ---
 
-### [ ] Step 3: Split useIndexedDB into domain composables
+### [x] Step 3: Split useIndexedDB into domain composables
+
+<!-- chat-id: bdb08c5f-e03d-4044-91a1-1f158d03ab05 -->
 
 Extract the five DB concerns from `useIndexedDB.ts` into dedicated composables. Keep the original file as a thin re-exporter of the shared `getDB()` + store constants so existing call sites are unaffected.
 
