@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { useForm, validationRules } from '../../composables/useForm'
+import { useForm } from '../../composables/useForm'
+import { validationRules } from '../../utils/validators'
 
 describe('useForm', () => {
   describe('initialization', () => {

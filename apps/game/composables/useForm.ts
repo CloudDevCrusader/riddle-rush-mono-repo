@@ -1,8 +1,5 @@
 import { ref, reactive, readonly, computed } from 'vue'
 
-// Re-export validation rules for backwards compatibility
-export { validationRules } from '~/utils/validators'
-
 /**
  * Composable for form handling with Vue 3 Composition API
  * Provides validation, submission, and error handling
