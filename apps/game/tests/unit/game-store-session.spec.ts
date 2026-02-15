@@ -104,14 +104,14 @@ describe('Game Store - Session Lifecycle', () => {
       expect(store.hasActiveSession).toBe(false)
     })
 
-    it('currentScore is 0 when no session', () => {
+    it('session score is undefined when no session', () => {
       const store = useGameStore()
-      expect(store.currentScore).toBe(0)
+      expect(store.currentSession?.score).toBeUndefined()
     })
 
-    it('currentAttempts is empty when no session', () => {
+    it('session attempts is undefined when no session', () => {
       const store = useGameStore()
-      expect(store.currentAttempts).toEqual([])
+      expect(store.currentSession?.attempts).toBeUndefined()
     })
   })
 
@@ -181,16 +181,16 @@ describe('Game Store - Session Lifecycle', () => {
     it('adds correct attempt with score', async () => {
       const store = useGameStore()
       await store.submitAttempt('correct answer', true)
-      expect(store.currentScore).toBe(10)
-      expect(store.currentAttempts).toHaveLength(1)
-      expect(store.currentAttempts[0]!.found).toBe(true)
+      expect(store.currentSession?.score).toBe(10)
+      expect(store.currentSession?.attempts).toHaveLength(1)
+      expect(store.currentSession?.attempts?.[0]!.found).toBe(true)
     })
 
     it('adds incorrect attempt without score', async () => {
       const store = useGameStore()
       await store.submitAttempt('wrong', false)
-      expect(store.currentScore).toBe(0)
-      expect(store.currentAttempts[0]!.found).toBe(false)
+      expect(store.currentSession?.score).toBe(0)
+      expect(store.currentSession?.attempts?.[0]!.found).toBe(false)
     })
 
     it('accumulates score for multiple correct', async () => {
@@ -198,13 +198,13 @@ describe('Game Store - Session Lifecycle', () => {
       await store.submitAttempt('a', true)
       await store.submitAttempt('b', true)
       await store.submitAttempt('c', true)
-      expect(store.currentScore).toBe(30)
+      expect(store.currentSession?.score).toBe(30)
     })
 
     it('records attempt term', async () => {
       const store = useGameStore()
       await store.submitAttempt('my answer', true)
-      expect(store.currentAttempts[0]!.term).toBe('my answer')
+      expect(store.currentSession?.attempts?.[0]!.term).toBe('my answer')
     })
 
     it('records attempt timestamp', async () => {
@@ -212,8 +212,8 @@ describe('Game Store - Session Lifecycle', () => {
       const before = Date.now()
       await store.submitAttempt('test', true)
       const after = Date.now()
-      expect(store.currentAttempts[0]!.timestamp).toBeGreaterThanOrEqual(before)
-      expect(store.currentAttempts[0]!.timestamp).toBeLessThanOrEqual(after)
+      expect(store.currentSession?.attempts?.[0]!.timestamp).toBeGreaterThanOrEqual(before)
+      expect(store.currentSession?.attempts?.[0]!.timestamp).toBeLessThanOrEqual(after)
     })
 
     it('persists after each attempt', async () => {
@@ -226,7 +226,7 @@ describe('Game Store - Session Lifecycle', () => {
     it('handles empty term', async () => {
       const store = useGameStore()
       await store.submitAttempt('', false)
-      expect(store.currentAttempts[0]!.term).toBe('')
+      expect(store.currentSession?.attempts?.[0]!.term).toBe('')
     })
 
     it('does nothing without active session', async () => {

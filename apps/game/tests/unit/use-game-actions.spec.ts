@@ -70,7 +70,7 @@ vi.mock('~/stores/game', () => ({
     setupPlayers: mockSetupPlayers,
     startNextRound: mockStartNextRound,
     hasActiveSession: false,
-    currentScore: 0,
+    currentSession: null,
   }),
 }))
 
@@ -103,7 +103,7 @@ const mockUseGameStore = () => ({
   setupPlayers: mockSetupPlayers,
   startNextRound: mockStartNextRound,
   hasActiveSession: false,
-  currentScore: 0,
+  currentSession: null,
 })
 
 const mockUseToast = () => ({

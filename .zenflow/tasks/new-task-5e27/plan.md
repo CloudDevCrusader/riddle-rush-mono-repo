@@ -235,6 +235,8 @@ Results:
 
 ### [ ] Step 8: Remove legacy single-player shims from game store
 
+<!-- chat-id: 039b5e93-4bac-4a65-872c-ca66d82ad1a4 -->
+
 Clean up `stores/game.ts` by removing getters marked `// Legacy support` (currentScore, currentAttempts) after verifying no template/component uses them directly.
 
 Steps:

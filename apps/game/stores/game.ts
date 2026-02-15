@@ -58,8 +58,6 @@ export const useGameStore = defineStore('game', {
 
   getters: {
     hasActiveSession: (state) => state.currentSession !== null,
-    currentScore: (state) => state.currentSession?.score ?? 0, // Legacy support
-    currentAttempts: (state) => state.currentSession?.attempts ?? [], // Legacy support
     canInstall: (state) => state.installPromptEvent !== null,
     currentCategory: (state) => state.currentSession?.category ?? null,
     currentLetter: (state) => state.currentSession?.letter ?? '',
