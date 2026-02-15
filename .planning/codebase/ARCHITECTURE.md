@@ -1,216 +1,236 @@
 # Architecture
 
-**Analysis Date:** 2026-02-06
+**Analysis Date:** 2026-02-13
 
 ## Pattern Overview
 
-**Overall:** Monorepo SPA with Client-Side State Management + IndexedDB Persistence
+**Overall:** Monorepo with a Nuxt 4 SPA as the primary application, shared packages for types/constants/config, and AWS infrastructure-as-code.
 
 **Key Characteristics:**
 
-- Client-only Nuxt 4 PWA (ssr: false) deployed as static files
-- Pinia stores for reactive state with automatic IndexedDB persistence
-- Composable-driven architecture for reusability and separation of concerns
-- Turborepo task orchestration across workspace packages
-- Multi-player game flow with round-based progression
+- Client-only SPA (SSR disabled) — all game logic runs in the browser
+- Composable-centric architecture — business logic lives in Vue composables, not services
+- IndexedDB for persistence — no backend database; all game state is stored client-side
+- Pinia stores as the central state layer — composables read/write through stores
+- Shared packages provide types, constants, and routes consumed by the game app
+- Infrastructure managed separately via Terraform (AWS S3 + CloudFront)
 
 ## Layers
 
-**Presentation Layer:**
+**Presentation Layer (Pages + Components):**
 
-- Purpose: Vue 3 components for UI rendering and user interaction
-- Location: `apps/game/components/`, `apps/game/pages/`
-- Contains: Page components, game design system components, layout components
-- Depends on: Composables, Stores, Shared types
-- Used by: Nuxt routing system, app.vue
+- Purpose: Render UI, handle user interactions, define page routes
+- Location: `apps/game/pages/`, `apps/game/components/`
+- Contains: Vue SFCs with `<template>`, `<script setup>`, `<style scoped>`
+- Depends on: Composables, Stores, Layouts
+- Used by: Nuxt router (file-based routing)
 
-**State Management Layer:**
+**Layout Layer:**
 
-- Purpose: Centralized reactive state with persistence
-- Location: `apps/game/stores/`
-- Contains: Pinia stores (`game.ts`, `settings.ts`)
-- Depends on: Composables (useIndexedDB, useStatistics), Shared types
-- Used by: Components, Composables, Pages
+- Purpose: Provide consistent page structure (backgrounds, back buttons, global overlays)
+- Location: `apps/game/layouts/`
+- Contains: `default.vue` (standard pages), `game.vue` (in-game pages), `menu.vue`
+- Depends on: Components (ConnectionStatus, GlobalLoading), Composables (useFeatureFlags)
+- Used by: Pages via `definePageMeta({ layout: 'game' })`
 
-**Business Logic Layer:**
+**Composables Layer (Business Logic):**
 
-- Purpose: Reusable business logic and cross-cutting concerns
+- Purpose: Encapsulate reusable logic, side effects, and API integrations
 - Location: `apps/game/composables/`
-- Contains: 26+ composables for game actions, state access, answer validation, audio, analytics
-- Depends on: Stores, Shared constants, Types
-- Used by: Components, Pages, Stores
+- Contains: 26 composable files covering navigation, game state, persistence, analytics, audio, form handling, feature flags, WebSocket, etc.
+- Depends on: Stores, shared packages (`@riddle-rush/types`, `@riddle-rush/shared`), browser APIs (IndexedDB, localStorage, Web Share, PetScan API)
+- Used by: Pages, Components, other Composables
 
-**Data Persistence Layer:**
+**State Management Layer (Pinia Stores):**
 
-- Purpose: IndexedDB operations for offline-first storage
-- Location: `apps/game/composables/useIndexedDB.ts`
-- Contains: Database initialization, CRUD operations for sessions/history/statistics/leaderboard/settings
-- Depends on: `idb` library, Shared types
-- Used by: Stores (game.ts, settings.ts)
+- Purpose: Centralized reactive state for game sessions and settings
+- Location: `apps/game/stores/`
+- Contains: `game.ts` (game session, players, rounds, history), `settings.ts` (user preferences)
+- Depends on: Composables (useIndexedDB, useStatistics, useLogger, useLodash), shared packages
+- Used by: Composables, Pages, Components (auto-imported by Nuxt)
 
-**Shared Layer:**
+**Plugin Layer:**
 
-- Purpose: Workspace-level code sharing across apps
-- Location: `packages/types/`, `packages/shared/`, `packages/config/`
-- Contains: TypeScript types, constants, utilities, Vite configurations
-- Depends on: Nothing (base layer)
-- Used by: All apps and packages
+- Purpose: Initialize client-side services on app startup
+- Location: `apps/game/plugins/`
+- Contains: 8 client-only plugins (`.client.ts` suffix) for init ordering, error sync, feature flags, analytics, i18n, performance monitoring, storyboard, WebSocket
+- Depends on: External SDKs (Unleash, Socket.IO, gtag)
+- Used by: Nuxt app lifecycle (auto-loaded)
+
+**Server Layer:**
+
+- Purpose: Nitro server plugins for WebSocket support
+- Location: `apps/game/server/plugins/`
+- Contains: `socket.ts` — Socket.IO server attached to Nitro
+- Depends on: Socket.IO
+- Used by: Nitro runtime (when running with SSR/node-server preset)
+
+**Shared Packages Layer:**
+
+- Purpose: Cross-app type safety, constants, routing, and build configuration
+- Location: `packages/`
+- Contains:
+  - `packages/types/` — TypeScript interfaces (`GameSession`, `Player`, `Category`, etc.)
+  - `packages/shared/` — Constants (`ALPHABET`, `SCORE_PER_CORRECT_ANSWER`), route definitions (`ROUTES`), utilities
+  - `packages/config/` — Shared ESLint, Prettier, and Vite plugin configurations
+  - `packages/riddle-cli/` — oclif-based CLI for project management
+- Depends on: Nothing (leaf dependencies)
+- Used by: `apps/game` via `workspace:*` dependencies
+
+**Service Layer (Legacy/Supplementary):**
+
+- Purpose: Pure business logic classes (static methods, no Vue dependencies)
+- Location: `services/`
+- Contains: `GameService.ts` (session creation, scoring, validation, fuzzy matching), `StorageService.ts` (localStorage/IndexedDB wrappers)
+- Depends on: Game types
+- Used by: Potentially consumed by game app, but most logic is duplicated in composables/stores
+
+**Infrastructure Layer:**
+
+- Purpose: AWS infrastructure provisioning (S3, CloudFront, WAF, Route53, DynamoDB, Lambda, IAM)
+- Location: `infrastructure/`
+- Contains: Terraform `.tf` files, CloudFront functions, Lambda handlers, environment configs
+- Depends on: AWS provider
+- Used by: CI/CD deployment scripts
 
 ## Data Flow
 
-**Game Initialization Flow:**
+**Game Session Lifecycle:**
 
-1. `app.vue` mounts → loads persisted state from IndexedDB via `gameStore.loadFromDB()` and `settingsStore.loadSettings()`
-2. User navigates to index page (`pages/index.vue`) → Main menu
-3. User clicks "PLAY" → navigates to `pages/players.vue`
-4. Players submit names → `gameStore.initializeMultiplayerSession(players)` → creates session in state
-5. Navigate to `pages/round-start.vue` → fortune wheel selects category/letter
-6. `gameStore.startRound()` → updates session, saves to IndexedDB
-7. Navigate to `pages/game/[[gameId]].vue` → players submit answers
-8. Each submission → `gameStore.submitPlayerAnswer()` → validates via `useAnswerCheck()` → updates scores → saves to IndexedDB
-9. All players submit → navigate to `pages/results/[[gameId]].vue` → display scores
-10. Next round or end game → either back to step 5 or navigate to `pages/leaderboard.vue`
+1. User navigates to `/players` and enters player names
+2. `useGameStore.setupPlayers()` creates a `GameSession` with players, random category (from `/data/categories.json`), and random letter
+3. Session is persisted to IndexedDB via `useIndexedDB.saveGameSession()`
+4. During gameplay at `/game/[gameId]`, players submit answers — `submitPlayerAnswer()` updates player state
+5. Host assigns scores via `assignPlayerScore()` — each mutation triggers IndexedDB save
+6. `completeRound()` records round history; `startNextRound()` resets player state and picks new category/letter
+7. `completeGame()` marks session as completed, updates statistics
+8. Results displayed at `/results/[gameId]` using `leaderboard` getter (sorted by `totalScore`)
 
-**Answer Validation Flow:**
+**Answer Verification Flow:**
 
-1. Player submits answer in game page
-2. `useAnswerCheck().checkAnswer()` called with answer, category, letter
-3. Fetch category terms from PetScan API (cached for 5 minutes) or offline data
-4. Normalize answer and check against term list
-5. Return `{ found: boolean, suggestions: string[] }`
-6. If found → increment score, play correct sound, save to IndexedDB
-7. If not found → show suggestions, play incorrect sound
+1. `useAnswerCheck.checkAnswer()` receives `searchWord`, `letter`, and `term`
+2. Looks up category to determine `searchProvider` ('petscan', 'offline', or 'wikipedia')
+3. For 'petscan': fetches from `https://petscan.wmflabs.org/` API (Wikipedia category search)
+4. For 'offline': loads `/data/offlineAnswers.json` static file
+5. Filters results by starting letter, returns `{ found: boolean, other: string[] }`
 
-**State Persistence Flow:**
+**Persistence Strategy:**
 
-1. Store action modifies state (e.g., `gameStore.submitPlayerAnswer()`)
-2. Store action calls corresponding `save*ToDB()` method (e.g., `saveGameSession()`)
-3. `useIndexedDB()` serializes data and writes to IndexedDB via `idb` library
-4. On app mount, `loadFromDB()` reads from IndexedDB and hydrates store state
-5. All operations atomic via IndexedDB transactions
+1. Game sessions and history → IndexedDB (`riddle-rush-db`, version 3, using `idb` library)
+2. User settings (sound, language, debug mode) → localStorage (`game-settings` key)
+3. Categories → Fetched from static JSON (`/data/categories.json`), cached in Pinia store
+4. No backend database — fully client-side storage
 
 **State Management:**
 
-- Pinia stores are single source of truth
-- Composables access stores via `useGameStore()`, `useSettingsStore()`
-- Components access via computed properties from `useGameState()` composable
-- All mutations go through store actions, never direct state modification
+- Pinia stores (`game`, `settings`) are the single source of truth
+- `useGameState()` composable provides computed wrappers for common store getters
+- `useGameActions()` composable provides action wrappers with error handling, toast notifications, and audio feedback
+- Stores are auto-imported by Nuxt — no explicit import needed in pages/components
 
 ## Key Abstractions
 
-**GameSession:**
+**Composables (use\* pattern):**
 
-- Purpose: Represents a complete game with multi-player state
-- Examples: `stores/game.ts` state.currentSession
-- Pattern: Single active session in memory, persisted to IndexedDB on every mutation
-- Fields: `id`, `players[]`, `currentRound`, `category`, `letter`, `status`, `roundHistory`
+- Purpose: Encapsulate related logic and expose reactive state/methods
+- Examples: `apps/game/composables/useNavigation.ts`, `apps/game/composables/useGameState.ts`, `apps/game/composables/useIndexedDB.ts`
+- Pattern: Function that returns reactive refs, computed values, and methods. Named with `use` prefix. Used via Nuxt auto-import.
 
-**Player:**
+**Pinia Stores:**
 
-- Purpose: Individual player state within a session
-- Examples: `GameSession.players[]`
-- Pattern: Array of player objects with scores and submission state
-- Fields: `id`, `name`, `totalScore`, `currentRoundScore`, `hasSubmitted`, `avatar`
+- Purpose: Centralized state with getters and actions
+- Examples: `apps/game/stores/game.ts`, `apps/game/stores/settings.ts`
+- Pattern: `defineStore('name', { state, getters, actions })` (Options API style). Actions handle async persistence.
 
-**Composables:**
+**Shared Package Exports:**
 
-- Purpose: Encapsulate reusable logic with reactive dependencies
-- Examples: `composables/useGameState.ts`, `composables/useGameActions.ts`, `composables/useAnswerCheck.ts`
-- Pattern: Export function returning reactive refs/computed values and methods
-- Usage: `const { currentCategory, players } = useGameState()`
+- Purpose: Type-safe cross-package contracts
+- Examples: `packages/types/src/game.ts` exports `GameSession`, `Player`, `Category`; `packages/shared/src/routes.ts` exports `ROUTES` constant and helper functions
+- Pattern: Packages use `exports` field in `package.json` for subpath exports (e.g., `@riddle-rush/shared/constants`)
 
-**Game Design Components:**
+**Layouts:**
 
-- Purpose: Reusable UI components with 3D effects and consistent styling
-- Examples: `components/game/GameButton.vue`, `components/game/GameModal.vue`, `components/game/GamePlayerCard.vue`
-- Pattern: Self-contained Vue components with props/emits, using UnoCSS utilities
-- Usage: `<GameButton variant="primary" @click="handleAction">Label</GameButton>`
+- Purpose: Page structure templates with provide/inject customization
+- Examples: `apps/game/layouts/game.vue` provides `setBackground` and `setBackButton` via Vue `provide()`
+- Pattern: Layouts provide configuration methods; pages inject and call them
 
-**IndexedDB Stores:**
+**Client Plugins:**
 
-- Purpose: Structured client-side database for offline persistence
-- Examples: `gameSession`, `gameHistory`, `statistics`, `leaderboard`, `settings`
-- Pattern: Object stores with optional indexes for querying
-- Schema: `gameSession` (single current), `gameHistory` (keyPath: id, index: startTime), `leaderboard` (keyPath: sessionId, indexes: score, timestamp)
+- Purpose: Initialize services before app renders
+- Examples: `apps/game/plugins/00.init-plugin-system.client.ts`, `apps/game/plugins/gtag.client.ts`
+- Pattern: `defineNuxtPlugin()` with naming convention — numeric prefix controls load order, `.client.ts` suffix restricts to browser
 
 ## Entry Points
 
-**Application Root:**
+**App Entry:**
 
 - Location: `apps/game/app.vue`
-- Triggers: Nuxt app mount
-- Responsibilities: Global state initialization, event listeners (online/offline, PWA install prompt, keyboard shortcuts), splash screen control, layout/page rendering
+- Triggers: Nuxt app initialization
+- Responsibilities: Shows splash screen, loads persisted state from IndexedDB and localStorage, sets up online/offline listeners, PWA install prompt handler, debug mode keyboard shortcut (Ctrl+Shift+D)
 
-**Main Entry (Index):**
+**Page Router (File-Based):**
 
-- Location: `apps/game/pages/index.vue`
-- Triggers: Root route `/`
-- Responsibilities: Main menu, navigation to players/settings/credits/language
+- Location: `apps/game/pages/`
+- Triggers: URL navigation
+- Responsibilities: Each `.vue` file maps to a route:
+  - `index.vue` → `/` (main menu)
+  - `players.vue` → `/players` (player setup)
+  - `round-start.vue` → `/round-start` (round intro)
+  - `game/[[gameId]].vue` → `/game/:gameId?` (gameplay)
+  - `results/[[gameId]].vue` → `/results/:gameId?` (results/leaderboard)
+  - `leaderboard.vue` → `/leaderboard`
+  - `settings.vue` → `/settings`
+  - `language.vue` → `/language`
+  - `credits.vue` → `/credits`
 
-**Game Flow Entry:**
+**Nitro Server:**
 
-- Location: `apps/game/pages/players.vue`
-- Triggers: User clicks "PLAY" from main menu
-- Responsibilities: Collect player names (1-6), initialize multiplayer session, navigate to round-start
-
-**Round Start:**
-
-- Location: `apps/game/pages/round-start.vue`
-- Triggers: After players page or after previous round results
-- Responsibilities: Fortune wheel animation, category/letter selection, start new round, navigate to game page
-
-**Game Page:**
-
-- Location: `apps/game/pages/game/[[gameId]].vue`
-- Triggers: After round-start completes
-- Responsibilities: Answer input, validation, score tracking, player turn management, navigate to results when all submitted
-
-**Results Page:**
-
-- Location: `apps/game/pages/results/[[gameId]].vue`
-- Triggers: After all players submit answers
-- Responsibilities: Display round scores, show leaderboard, navigate to next round or final leaderboard
+- Location: `apps/game/server/plugins/socket.ts`
+- Triggers: Server startup (when using node-server preset)
+- Responsibilities: Initializes Socket.IO server for real-time features (performance logging, leaderboard broadcasts, connection monitoring)
 
 **Build Entry:**
 
 - Location: `apps/game/nuxt.config.ts`
-- Triggers: Build/dev process
-- Responsibilities: Nuxt configuration, module registration, Vite plugins, PWA setup, i18n config
+- Triggers: `nuxt build` / `nuxt dev`
+- Responsibilities: Configures modules (Pinia, i18n, UnoCSS, PWA, VueUse, etc.), Vite plugins, Nitro preset, security headers, caching strategies
+
+**Infrastructure Entry:**
+
+- Location: `infrastructure/main.tf`
+- Triggers: `terraform apply`
+- Responsibilities: Provisions AWS S3 bucket, CloudFront distribution (with WAF, Lambda@Edge, cache policies), Route53, DynamoDB, monitoring
 
 ## Error Handling
 
-**Strategy:** Composable-level try-catch with user feedback + logging
+**Strategy:** Graceful degradation with user-facing toast notifications and structured logging
 
 **Patterns:**
 
-- Store actions wrap critical operations in try-catch blocks
-- Errors logged via `useLogger()` (dev-only, stripped in production)
-- User-facing errors displayed via `useToast()` with i18n messages
-- Failed IndexedDB operations logged but don't crash app (graceful degradation)
-- Network errors for PetScan API return empty arrays with warning logs
-- Offline mode detected via `window.addEventListener('offline')` → state flag
-- PWA service worker provides fallback for failed network requests (CacheFirst for static, NetworkFirst for API)
+- **Try/catch in actions:** All store actions and composable methods wrap async operations in try/catch. Errors are logged via `useLogger()` and user-friendly messages shown via `useToast()`. See `apps/game/composables/useGameActions.ts` for the canonical pattern.
+- **Non-blocking persistence:** IndexedDB save failures are logged but never thrown — the game continues even if persistence fails. See `apps/game/stores/game.ts` methods like `saveSessionToDB()`.
+- **Fallback chains:** Feature flags fall back from GitLab/Unleash → local settings store → default values. See `apps/game/composables/useFeatureFlags.ts`.
+- **Error sync to remote:** `useErrorSync` composable sends errors to a CloudWatch endpoint in production. `useLogger.error()` automatically triggers sync. See `apps/game/composables/useLogger.ts`.
+- **Plugin error isolation:** Each plugin is independently loaded; failures in one plugin don't prevent app startup.
 
 ## Cross-Cutting Concerns
 
-**Logging:** `useLogger()` composable wraps console with conditional logic (dev-only). Stripped from production builds via Vite tree-shaking.
+**Logging:** `useLogger()` composable at `apps/game/composables/useLogger.ts`. Provides `log`, `warn`, `error`, `debug`, `info` methods. Development mode logs to console; production syncs errors to CloudWatch via `useErrorSync`. Use `useLogger()` instead of raw `console.*`.
 
-**Validation:** Answer validation via `useAnswerCheck()` with PetScan API integration (5-min cache) or offline fallback. Letter validation checks first character match.
+**Validation:** No centralized validation layer. `useForm()` composable at `apps/game/composables/useForm.ts` handles form-level validation. `GameService.validatePlayerName()` at `services/GameService.ts` provides player name validation. Answer validation uses PetScan API or offline data via `useAnswerCheck()`.
 
-**Authentication:** Not implemented (client-only game, no user accounts). Optional `userId` field in GameSession for future extension.
+**Authentication:** No authentication — the app is a client-side party game with no user accounts. Player identity is session-scoped via `crypto.randomUUID()`.
 
-**i18n:** `@nuxtjs/i18n` module with `de` (default) and `en` locales. Translation files in `apps/game/i18n/locales/`. `useI18n()` composable provides `t()` function. No URL prefix (`strategy: no_prefix`).
+**Internationalization:** `@nuxtjs/i18n` module with `vue-i18n`. Two locales: German (`de`, default) and English (`en`). Translation files at `apps/game/translations/locales/`. Strategy: `no_prefix` (no locale in URL). Language preference persisted in settings store.
 
-**Analytics:** `useAnalytics()` composable wraps Google Analytics 4. Events tracked: page views, game start, game end, answer submit. Configured via `GOOGLE_ANALYTICS_ID` env var.
+**Analytics:** Google Analytics 4 via custom `gtag.client.ts` plugin. `useAnalytics()` composable provides `trackEvent()`, `trackPageView()`, and game-specific event helpers. Only active in production when `GTAG_ID` is set.
 
-**Audio:** `useAudio()` composable manages sound effects (correct answer, incorrect answer, new round, game end). Audio enabled/disabled via settings store.
+**Feature Flags:** GitLab Feature Flags via Unleash protocol. `useFeatureFlags()` composable checks remote flags with local settings fallback. Currently gates: fortune wheel and WebSocket features.
 
-**Performance Monitoring:** `usePerformance()` composable tracks page load times, component render times. Data logged in dev, collected for analytics in production.
+**Performance Monitoring:** `usePerformance()` composable and `performance.client.ts` plugin track metrics. WebSocket-based reporting when connected.
 
-**Feature Flags:** `useFeatureFlags()` composable integrates Unleash for remote feature toggling. Currently used for fortune wheel feature.
-
-**PWA:** `@vite-pwa/nuxt` module with `registerType: 'autoUpdate'`. Service worker strategies: CacheFirst for static assets, NetworkFirst for API calls. Install prompt captured via `beforeinstallprompt` event.
+**PWA/Offline:** `@vite-pwa/nuxt` module with Workbox. Service worker with CacheFirst strategy for assets/fonts, NetworkFirst for start URL. Full offline gameplay supported via IndexedDB persistence.
 
 ---
 
-_Architecture analysis: 2026-02-06_
+_Architecture analysis: 2026-02-13_

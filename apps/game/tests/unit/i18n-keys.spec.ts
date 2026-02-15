@@ -78,7 +78,7 @@ function extractUsedKeys(content: string): string[] {
 
 describe('i18n Translation Key Coverage', () => {
   const gameRoot = resolve(__dirname, '../../')
-  const localesDir = join(gameRoot, 'i18n', 'locales')
+  const localesDir = join(gameRoot, 'translations', 'locales')
 
   // Load both locale files
   const deJson = JSON.parse(readFileSync(join(localesDir, 'de.json'), 'utf-8'))

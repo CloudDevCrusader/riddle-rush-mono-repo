@@ -2,10 +2,13 @@
   "mcpServers": {
     "playwright-test": {
       "command": "npx",
-      "args": [
-        "playwright",
-        "run-test-mcp-server"
-      ]
+      "args": ["playwright", "run-test-mcp-server"]
+    },
+    "one-mcp": {
+      "type": "stdio",
+      "disabled": false,
+      "command": "npx",
+      "args": ["-y", "@agiflowai/one-mcp", "mcp-serve"]
     }
   }
 }

@@ -1,341 +1,281 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-02-06
+**Analysis Date:** 2026-02-13
 
 ## Tech Debt
 
-**SSR/i18n Plugin Circular Dependencies:**
+**Skipped Unit Tests (Game Store):**
 
-- Issue: Nuxt 4 + @nuxtjs/i18n SSR plugins cause "Cannot access 'NuxtPluginIndicator' before initialization" errors. Workaround involves manual plugin filtering in multiple hooks.
-- Files: `apps/game/nuxt.config.ts` (lines 26-62, 289-308), `apps/game/utils/filter-ssr-plugins.ts`
-- Impact: Fragile build process requiring custom Vite plugin and multiple hook interventions. SSR plugins disabled despite being auto-registered by i18n module.
-- Fix approach: Upgrade to stable Nuxt 4 + i18n combo when circular dependency issues are resolved upstream, or switch to `no_prefix` strategy with fully client-side i18n.
+- Issue: 7+ unit tests in the game store spec are skipped with TODOs citing CI environment issues (Node 20 vs 24 differences, state pollution between tests, race conditions, timing-dependent failures)
+- Files: `apps/game/tests/unit/game-store.spec.ts`
+- Impact: Core game logic (session management, scoring, player operations) lacks automated regression coverage. Bugs in these areas go undetected until production.
+- Fix approach: Pin Node version in CI, isolate store state per test with `createPinia()` fresh instances, replace `setTimeout` assertions with `vi.advanceTimersByTime()`.
 
-**Legacy Single-Player Mode Support:**
+**Skipped E2E Tests (Results Page):**
 
-- Issue: Game store maintains dual code paths for legacy single-player (score/attempts) and modern multi-player (players array)
-- Files: `apps/game/stores/game.ts` (lines 61-62, 204-228, 232-256)
-- Impact: Increased complexity, potential confusion about which fields to use, redundant state management
-- Fix approach: Remove legacy single-player fields after confirming all pages use multi-player pattern, migrate any remaining single-player logic
+- Issue: 6+ E2E tests for the results page are skipped, covering score display, button interactions, and navigation flows
+- Files: `apps/game/tests/e2e/results.spec.ts`
+- Impact: No automated verification of the post-game experience — score rendering, replay flow, and navigation after game completion are all untested.
+- Fix approach: Fix the component mounting/rendering issues causing failures, ensure test fixtures provide complete game state.
 
-**Manual Lodash Tree-Shaking:**
+**Empty Seed Test:**
 
-- Issue: Custom `useLodashSync()` composable exists to work around initialization issues, duplicates functionality
-- Files: `apps/game/composables/useLodash.ts`, usage in `apps/game/stores/game.ts` (line 6, 34)
-- Impact: Maintenance burden, potential for drift between sync/async versions
-- Fix approach: Refactor to use standard lodash-es imports once initialization order is guaranteed
+- Issue: `seed.spec.ts` at root is an empty placeholder with no test content
+- Files: `seed.spec.ts`
+- Impact: Clutters test runs, gives false confidence in test count
+- Fix approach: Either implement seeding tests or delete the file.
 
-**WebSocket Infrastructure Not Fully Integrated:**
+**Duplicate Game Logic — GameService vs Store:**
 
-- Issue: WebSocket support exists (socket.io, AWS Lambda handlers, composable) but not used in core game flow
-- Files: `apps/game/composables/useWebSocket.ts`, `apps/game/pages/websocket-demo.vue`, `apps/game/plugins/websocket.client.ts`, `infrastructure/lambda/websocket/`
-- Impact: Unused infrastructure increasing bundle size, unclear whether real-time features are planned or abandoned
-- Fix approach: Either integrate WebSocket features into game (multiplayer sync, live leaderboards) or remove if not part of roadmap
+- Issue: `GameService.ts` duplicates logic already present in the game store (shuffling, player creation, score calculation, Levenshtein distance). Two sources of truth for core game mechanics.
+- Files: `services/GameService.ts`, `apps/game/stores/game.ts`
+- Impact: Changes to game logic must be made in two places. Divergence causes subtle scoring/matching bugs.
+- Fix approach: Consolidate all game logic into either the store or the service. If the service is meant to be portable, remove Nuxt alias imports (`~/types/game`) and have the store delegate to it.
 
-**Terraform Outputs Env Var Integration Complexity:**
+**Static-Only Class Anti-Pattern:**
 
-- Issue: Complex runtime config merging Terraform outputs from environment variables with manual fallbacks
-- Files: `apps/game/nuxt.config.ts` (lines 130-161), `nuxt.config.terraform.ts`
-- Impact: Difficult to debug configuration issues, unclear precedence rules
-- Fix approach: Standardize on single config source (env vars OR Terraform outputs), document clearly
+- Issue: `StorageService.ts` uses a class with only static methods, requiring an eslint-disable for `no-extraneous-class`
+- Files: `services/StorageService.ts`
+- Impact: Unnecessary OOP overhead, harder to tree-shake, eslint rules suppressed
+- Fix approach: Convert to plain exported functions (`export function saveToStorage(...)`)
 
-**Test Page in Production:**
+**Legacy Single-Player Code:**
 
-- Issue: `apps/game/pages/component-test.vue` exists for testing but not excluded from production builds
-- Files: `apps/game/pages/component-test.vue`
-- Impact: Exposes internal testing page to users if they guess the route
-- Fix approach: Add route guard or exclude from production builds via nuxt.config
+- Issue: Scattered `// Legacy support` and `// Legacy single-player` comments indicate abandoned code paths that are still executed
+- Files: `apps/game/stores/game.ts` (multiple locations throughout the 555-line file)
+- Impact: Increases store complexity, confuses future developers about which code paths are active
+- Fix approach: Audit all legacy-commented code paths, remove dead code, ensure multiplayer-only paths are clean.
 
-**Race Condition in Category Loading:**
+**Unimplemented Wikipedia Search Provider:**
 
-- Issue: Fixed with polling workaround (100ms checks, 10s timeout) but not ideal
-- Files: `apps/game/stores/game.ts` (lines 106-123)
-- Impact: Could hang for 10 seconds if `categoriesLoading` flag gets stuck, no cancellation mechanism
-- Fix approach: Use proper async locking (e.g., p-queue or manual promise cache) instead of polling
+- Issue: Wikipedia is declared as a search provider in types but throws "not yet implemented" at runtime
+- Files: `apps/game/composables/useAnswerCheck.ts:148`, `packages/types/src/game.ts`
+- Impact: If a user somehow selects Wikipedia as provider, they get a runtime error instead of a graceful fallback
+- Fix approach: Either implement the Wikipedia provider or remove it from the type union and UI options.
+
+**Mock Database Response in Socket Server:**
+
+- Issue: `getUserStats` handler returns mock/stub data with comment "replace with actual database query"
+- Files: `apps/game/server/plugins/socket.ts`
+- Impact: User statistics are fabricated, not real. Any UI displaying stats shows incorrect data.
+- Fix approach: Connect to actual data store or remove the endpoint until implemented.
+
+**Incompatible Mobile App:**
+
+- Issue: `apps/mobile` uses NativeScript with Vue 2 (`nativescript-vue: ^2.9.3`, `vue-template-compiler`) while the game app uses Vue 3 with Composition API
+- Files: `apps/mobile/package.json`, `apps/mobile/app/components/`
+- Impact: Mobile app cannot share any Vue components, composables, or stores with the game app. The two apps are effectively separate codebases despite being in the same monorepo.
+- Fix approach: Either upgrade mobile to NativeScript + Vue 3 or extract it to a separate repo.
+
+**Misplaced Root Dependencies:**
+
+- Issue: Root `package.json` includes heavy AI/agent dependencies (`langchain`, `@e2b/code-interpreter`, `@voltagent/core`, `@langchain/anthropic`) in production dependencies that are unrelated to the game
+- Files: `package.json` (root)
+- Impact: Inflated install times, confusing dependency graph, potential version conflicts
+- Fix approach: Move AI agent dependencies to a separate workspace package or devDependencies if only used for tooling.
 
 ## Known Bugs
 
-**Division by Zero Risk in Statistics:**
+**Potential Score Assignment Bug:**
 
-- Symptoms: Potential NaN values in average calculations when no games played
-- Files: `apps/game/composables/useStatistics.ts`
-- Trigger: Access statistics before any games completed
-- Workaround: Frontend likely checks for empty data, but not guaranteed
+- Symptoms: `assignPlayerScore` in the game store deduplicates score updates with `if (points !== player.currentRoundScore)` — this could silently discard legitimate score changes to the same numeric value (e.g., re-submitting after a correction)
+- Files: `apps/game/stores/game.ts` (within `assignPlayerScore` action)
+- Trigger: Two consecutive answer submissions that evaluate to the same point value
+- Workaround: None — the logic silently drops the update
 
-**IndexedDB Transaction Silent Failures:**
+**Insecure and Non-Persistent User ID:**
 
-- Symptoms: Save operations may fail silently in offline scenarios or quota exceeded
-- Files: `apps/game/composables/useIndexedDB.ts` (catch blocks log but don't surface errors to UI)
-- Trigger: Browser storage quota exceeded, incognito mode restrictions
-- Workaround: None visible - errors logged but game continues without persistence
+- Symptoms: `useWebSocket.ts` generates userId with `Math.random().toString(36).substring(2, 15)` — not cryptographically secure and regenerated on every page load
+- Files: `apps/game/composables/useWebSocket.ts:16`
+- Trigger: Every new WebSocket connection creates a new identity
+- Workaround: None — users effectively lose their multiplayer identity on refresh
 
-**PetScan API Not Implemented Error:**
+**Category Loading Race Condition Guard:**
 
-- Symptoms: Wikipedia search provider throws "not yet implemented" error
-- Files: `apps/game/composables/useAnswerCheck.ts` (line 148)
-- Trigger: Category with `searchProvider: 'wikipedia'`
-- Workaround: Only use 'petscan' or 'offline' providers
-
-**Score Duplication Prevention Edge Case:**
-
-- Symptoms: Score assignment prevents duplicate additions but could cause issues if legitimate re-scoring needed
-- Files: `apps/game/stores/game.ts` (lines 468-472)
-- Trigger: Assigning same score twice in a round (e.g., correction scenarios)
-- Workaround: Clear player round state before re-scoring
+- Symptoms: Category loading uses a polling loop with 100ms intervals up to 10 seconds (`while` loop checking `!categories.value?.length`) as a guard against race conditions
+- Files: `apps/game/stores/game.ts:114-123`
+- Trigger: When categories haven't loaded by the time game initialization runs
+- Workaround: The polling loop itself is the workaround — it masks a missing reactive dependency or initialization ordering issue
 
 ## Security Considerations
 
-**Client-Side Category Caching:**
+**CORS Wildcard on WebSocket Server:**
 
-- Risk: 5-minute category cache could serve stale data if categories.json updated
-- Files: `apps/game/composables/useAnswerCheck.ts` (lines 16-19)
-- Current mitigation: Cache duration short enough for most updates
-- Recommendations: Add cache-busting query param based on app version
+- Risk: Socket.IO server accepts connections from any origin (`cors: { origin: '*' }`)
+- Files: `apps/game/server/plugins/socket.ts:10`
+- Current mitigation: None
+- Recommendations: Restrict to known origins (game domain, localhost for dev). Use environment variable for allowed origins.
 
-**Unvalidated User Input in WebSocket:**
+**Terraform State File Committed:**
 
-- Risk: userId generated client-side (random string), no server validation visible
-- Files: `apps/game/composables/useWebSocket.ts` (line 16)
-- Current mitigation: Appears to be demo/monitoring feature only
-- Recommendations: Add server-side user validation if WebSocket features go production
+- Risk: `terraform.tfstate` is committed to the repository. While currently nearly empty (181 bytes), this file can contain secrets (API keys, database passwords) as infrastructure grows.
+- Files: `terraform.tfstate`
+- Current mitigation: State is mostly empty
+- Recommendations: Add `terraform.tfstate` and `*.tfstate.backup` to `.gitignore`. Use remote state backend (S3 + DynamoDB).
 
-**CSP Allows unsafe-inline and unsafe-eval:**
+**Minimal XSS Sanitization:**
 
-- Risk: XSS protection weakened by allowing inline scripts/eval
-- Files: `apps/game/nuxt.config.ts` (lines 592-593)
-- Current mitigation: Client-only SPA reduces server-side XSS risk
-- Recommendations: Tighten CSP for production by using nonces or removing unsafe directives
+- Risk: Player name input sanitization only strips `<>` characters — does not handle attribute injection, unicode tricks, or encoded entities
+- Files: `apps/game/pages/game/[[gameId]].vue:188`
+- Current mitigation: Basic `<>` stripping
+- Recommendations: Use a proper sanitization library (e.g., DOMPurify) or enforce strict alphanumeric pattern validation on player names.
 
-**Debug Build Environment Variable:**
+**GA4 Plugin Uses innerHTML Pattern:**
 
-- Risk: `DEBUG_BUILD=true` disables minification, exposing source logic
-- Files: `apps/game/nuxt.config.ts` (lines 6-9)
-- Current mitigation: Requires explicit env var set
-- Recommendations: Ensure production deployments never set DEBUG_BUILD
+- Risk: `gtag.client.ts` injects Google Analytics config ID via script tag creation, using `(window as any).gtag` pattern
+- Files: `apps/game/plugins/gtag.client.ts`
+- Current mitigation: Config ID comes from runtime config, not user input
+- Recommendations: Use the official `@nuxtjs/gtag` module or ensure CSP headers allow inline scripts.
 
-**Google Analytics ID in Runtime Config:**
+**Placeholder CloudWatch Endpoint Exposed:**
 
-- Risk: gtagId exposed in client bundle
-- Files: `apps/game/nuxt.config.ts` (line 143)
-- Current mitigation: Analytics IDs are typically public anyway
-- Recommendations: Acceptable - GA IDs are meant to be public
+- Risk: `useErrorSync.ts` contains a hardcoded placeholder URL `'https://your-api-gateway.execute-api.region.amazonaws.com/prod/logs'` — if error sync is enabled, it sends error logs to a non-existent (or potentially squattable) endpoint
+- Files: `apps/game/composables/useErrorSync.ts:171`
+- Current mitigation: The endpoint likely returns 404, so errors are silently lost
+- Recommendations: Move endpoint to environment configuration, disable error sync until a real endpoint is configured.
 
 ## Performance Bottlenecks
 
-**Leaderboard Getter Recreates Objects:**
+**Oversized Single-File Components:**
 
-- Problem: Computed `leaderboard` getter sorts and maps players on every access
-- Files: `apps/game/stores/game.ts` (lines 85-100)
-- Cause: Pinia getter runs on every access, creating new PlayerWithRank objects
-- Improvement path: Memoize with manual dirty tracking or use computed() ref in action
+- Problem: Several Vue SFCs exceed 500 lines with heavy inline styles and complex template logic
+- Files: `apps/game/pages/game/[[gameId]].vue` (912 lines), `apps/game/pages/round-start.vue` (627 lines), `apps/game/components/FortuneWheel.vue` (512 lines), `apps/game/components/SettingsModal.vue` (511 lines), `apps/game/components/StoryboardDevOverlay.vue` (529 lines)
+- Cause: All logic, template, and styles in a single file with no extraction to composables or child components
+- Improvement path: Extract composables for logic (e.g., `useFortuneWheel`, `useGamePage`), break into smaller child components, move styles to utility classes or extracted CSS.
 
-**JSON Cloning for Session History:**
+**Unbatched IndexedDB Writes:**
 
-- Problem: `JSON.parse(JSON.stringify())` used for deep cloning sessions
-- Files: `apps/game/stores/game.ts` (lines 39-42, 262)
-- Cause: Simple but slow for large objects
-- Improvement path: Use structuredClone() (available in modern browsers) or lodash cloneDeep
+- Problem: `saveSessionToDB()` is called on every player answer submission, triggering a full IndexedDB write each time
+- Files: `apps/game/stores/game.ts` (within answer submission flow), `apps/game/composables/useIndexedDB.ts`
+- Cause: No debouncing or batching of DB operations
+- Improvement path: Debounce `saveSessionToDB()` calls (e.g., 500ms), or batch writes at round/game boundaries.
 
-**PetScan API No Timeout:**
+**Full History Rewrite on Save:**
 
-- Problem: Fetch to PetScan has no timeout, could hang indefinitely
-- Files: `apps/game/composables/useAnswerCheck.ts` (line 46)
-- Cause: Native fetch without AbortController
-- Improvement path: Add timeout using AbortSignal.timeout() or Promise.race()
+- Problem: `saveGameHistory` iterates and puts ALL history entries on every save, not just new/changed ones
+- Files: `apps/game/composables/useIndexedDB.ts` (within save logic)
+- Cause: No diffing or append-only pattern
+- Improvement path: Track which entries are new/dirty and only write those, or use an append-only pattern with a cursor.
 
-**Service Worker Caching Large Files:**
+**JSON Deep Clone for Session History:**
 
-- Problem: Debug builds allow up to 5MB per file in cache, could exhaust storage
-- Files: `apps/game/nuxt.config.ts` (line 516)
-- Cause: Unminified code with sourcemaps for debugging
-- Improvement path: Reduce limit or exclude debug builds from PWA caching
-
-**No Image Lazy Loading Enforcement:**
-
-- Problem: Image optimization configured but lazy loading not enforced globally
-- Files: `apps/game/nuxt.config.ts` (lines 358-439)
-- Cause: Developers must remember to use NuxtImg/NuxtPicture components
-- Improvement path: Create wrapper component that enforces lazy loading by default
+- Problem: Session history is copied using `JSON.parse(JSON.stringify(session))` — blocks the main thread for large sessions and silently drops non-serializable data (Dates, functions, undefined values)
+- Files: `apps/game/stores/game.ts`
+- Cause: Quick-and-dirty deep clone instead of using `structuredClone()` or a targeted copy
+- Improvement path: Use `structuredClone()` (available in all modern browsers and Node 17+) or create a typed `cloneSession()` utility.
 
 ## Fragile Areas
 
-**Nuxt Plugin Initialization Order:**
+**Plugin Initialization Order:**
 
-- Files: `apps/game/nuxt.config.ts` (lines 289-308), `apps/game/plugins/00.init-plugin-system.client.ts`
-- Why fragile: Multiple hooks filtering problematic plugins, depends on timing
-- Safe modification: Test thoroughly after any module/plugin additions, especially i18n changes
-- Test coverage: Not explicitly tested in unit/E2E suites
+- Files: `apps/game/plugins/00.init-plugin-system.client.ts`, `apps/game/nuxt.config.ts`
+- Why fragile: A plugin exists solely to work around `@nuxtjs/i18n` circular dependency. The Nuxt config also has a `filterProblematicPlugins` function that removes i18n SSR plugins at runtime. Both are undocumented ordering hacks.
+- Safe modification: Do not rename or reorder plugins without understanding the i18n initialization chain. Test SSR and client-side rendering after any plugin changes.
+- Test coverage: No tests cover plugin initialization order.
 
-**IndexedDB Database Migrations:**
+**SSR-Unsafe Composables:**
 
-- Files: `apps/game/composables/useIndexedDB.ts` (lines 30-58)
-- Why fragile: DB_VERSION=3, upgrade function doesn't handle oldVersion properly
-- Safe modification: Always increment DB_VERSION, add version-specific migration logic
-- Test coverage: No automated testing of DB migrations
+- Files: `apps/game/composables/useLogger.ts:52`, `apps/game/composables/useErrorSync.ts`
+- Why fragile: `useLogger` references `window.location.href` and `navigator.userAgent` without SSR guards. `useErrorSync` uses `typeof useRuntimeConfig !== 'undefined'` as a runtime feature detection pattern. Both will crash or behave unpredictably during SSR.
+- Safe modification: Always wrap browser API access in `if (import.meta.client)` or `onMounted()` hooks. Test both SSR and CSR rendering paths.
+- Test coverage: No SSR-specific tests exist.
 
-**Base URL Configuration:**
+**IndexedDB Singleton in HMR:**
 
-- Files: `apps/game/nuxt.config.ts` (lines 21-24), multiple environment variable sources
-- Why fragile: Complex resolution logic with multiple fallbacks and special cases
-- Safe modification: Test in localhost, Playwright, and deployed environments after any change
-- Test coverage: E2E tests check base URL but not all permutations
+- Files: `apps/game/composables/useIndexedDB.ts`
+- Why fragile: Uses a module-level `let dbInstance` singleton. During HMR (hot module replacement) in development, the module re-executes but the old DB connection may still be open, causing "blocked" or "version change" errors.
+- Safe modification: Add HMR cleanup handler (`if (import.meta.hot) { import.meta.hot.dispose(() => dbInstance?.close()) }`) or use a Nuxt-managed provide/inject pattern.
+- Test coverage: Unit tests mock IndexedDB entirely, so this issue is invisible in tests.
 
-**Fortune Wheel Random Selection:**
+**Dual IndexedDB Connections:**
 
-- Files: `apps/game/stores/game.ts` (lines 22-28, 174-179)
-- Why fragile: No seeding for tests, true randomness makes E2E tests harder
-- Safe modification: Extract randomness to injectable service for test determinism
-- Test coverage: E2E tests work around randomness using UI inspection
+- Files: `apps/game/composables/useIndexedDB.ts`, `apps/game/composables/useErrorSync.ts`
+- Why fragile: `useErrorSync` opens its own separate IndexedDB database (`ErrorLogs`) independent of the main game database. Two concurrent DB connections increase resource usage and can cause blocking during version upgrades.
+- Safe modification: Consolidate into a single database with multiple object stores, or ensure version management is coordinated.
+- Test coverage: Neither DB connection pattern is tested in integration.
 
-**Multi-Player State Reactivity:**
+**Misplaced Middleware:**
 
-- Files: `apps/game/stores/game.ts` (lines 443-477)
-- Why fragile: Manual player index updates required for Vue reactivity, easy to miss
-- Safe modification: Always update via playerIndex = findIndex(), not direct array mutation
-- Test coverage: Unit tests exist (`apps/game/tests/unit/game-store.spec.ts`) but limited multi-player scenarios
+- Files: `middleware/game-active.global.ts` (at monorepo root)
+- Why fragile: Global middleware placed at monorepo root instead of `apps/game/middleware/`. Nuxt may not auto-register it correctly depending on the workspace configuration. If Nuxt's file-system routing doesn't scan the root `middleware/` directory, this middleware is silently ignored.
+- Safe modification: Move to `apps/game/middleware/game-active.global.ts`.
+- Test coverage: No tests verify middleware registration or behavior.
 
 ## Scaling Limits
 
-**Single IndexedDB Instance:**
+**In-Memory WebSocket State:**
 
-- Current capacity: Browser-dependent (typically 50MB - 10GB depending on available disk space)
-- Limit: Unlimited game history could exhaust quota
-- Scaling path: Add retention policy (e.g., keep last 100 games), implement data pruning
+- Current capacity: Single-server deployment with all WebSocket rooms held in memory
+- Limit: Cannot scale horizontally — adding a second server would split rooms, causing players to be invisible to each other
+- Scaling path: Add Redis adapter for Socket.IO (`@socket.io/redis-adapter`) to share state across instances.
 
-**In-Memory Category Cache:**
+**IndexedDB Storage:**
 
-- Current capacity: All categories loaded into memory (~hundreds of entries currently)
-- Limit: Thousands of categories would slow initial load
-- Scaling path: Implement pagination, virtual scrolling, or lazy load categories on demand
-
-**Service Worker Cache Size:**
-
-- Current capacity: 2MB max per file (5MB in debug builds), no global limit set
-- Limit: Large PWA cache could fill mobile device storage
-- Scaling path: Implement cache eviction strategy, limit total cache size
-
-**PetScan API Rate Limiting:**
-
-- Current capacity: No rate limiting on client side
-- Limit: Could hit PetScan API rate limits with many concurrent users
-- Scaling path: Implement client-side rate limiting, add exponential backoff, or cache results
+- Current capacity: Browser-dependent (typically 50MB-unlimited with user permission)
+- Limit: Game history grows unbounded — no cleanup or rotation strategy
+- Scaling path: Implement max history size with LRU eviction, or archive old sessions to server-side storage.
 
 ## Dependencies at Risk
 
-**Nuxt 4 Compatibility:**
+**NativeScript Vue 2 in Mobile App:**
 
-- Risk: Nuxt 4 still in active development (compatibilityVersion: 4)
-- Impact: Breaking changes in patches could affect build/runtime
-- Migration plan: Monitor Nuxt releases, have rollback plan to Nuxt 3 if needed
+- Risk: Vue 2 reached end-of-life December 2023. `nativescript-vue ^2.9.3` has no path to Vue 3 without a full rewrite.
+- Impact: Mobile app cannot receive Vue security patches, cannot use any shared Vue 3 code from the game app
+- Migration plan: Evaluate NativeScript + Vue 3 compatibility, or consider alternative mobile frameworks (Capacitor, Expo).
 
-**@nuxtjs/i18n Circular Dependencies:**
+**Heavy AI Agent Dependencies at Root:**
 
-- Risk: Module causes initialization errors with SSR plugins
-- Impact: Custom workarounds required, may break on updates
-- Migration plan: Consider switching to simpler i18n solution (vue-i18n directly) or wait for stable Nuxt 4 support
-
-**Socket.io Infrastructure:**
-
-- Risk: WebSocket infrastructure included but not actively used
-- Impact: Bundle bloat, unused Lambda functions in AWS
-- Migration plan: Either integrate WebSocket features or remove entirely (socket.io-client, server plugins, Lambda handlers)
-
-**Sharp Image Processing:**
-
-- Risk: Native dependency, can cause issues on different platforms
-- Impact: Build failures on ARM/different OS if not properly configured
-- Migration plan: Sharp is standard for Nuxt/Next.js, well-supported but ensure CI has proper build environment
+- Risk: `langchain`, `@langchain/anthropic`, `@e2b/code-interpreter`, `@voltagent/core` are fast-moving packages with frequent breaking changes
+- Impact: `pnpm install` is slower, dependency resolution conflicts possible with game dependencies
+- Migration plan: Isolate into a separate `packages/ai-tools` workspace or move to devDependencies.
 
 ## Missing Critical Features
 
-**Error Boundary for PWA:**
+**No Real User Statistics Backend:**
 
-- Problem: No global error boundary to catch unhandled Vue errors
-- Blocks: Users see white screen on critical errors, no recovery path
-- Priority: High
+- Problem: `getUserStats` returns mock data — there is no database or API for persisting user statistics across sessions
+- Blocks: Leaderboards, player progression, achievement systems, and any server-side game analytics
 
-**Offline Queue for IndexedDB:**
+**No Error Reporting in Production:**
 
-- Problem: Failed writes logged but not retried when connection restored
-- Blocks: Data loss in poor network conditions
-- Priority: Medium
+- Problem: CloudWatch endpoint in `useErrorSync` is a placeholder URL. No Sentry, Datadog, or other error tracking is configured.
+- Blocks: Visibility into production errors — bugs go undetected until users report them manually.
 
-**Session Recovery UI:**
+**No Authentication System:**
 
-- Problem: Game store can load sessions but no UI flow to resume interrupted games
-- Blocks: Users lose progress if they close app mid-game
-- Priority: Medium
-
-**Analytics for Critical Errors:**
-
-- Problem: Errors logged to console but not sent to analytics/monitoring
-- Blocks: Unable to track production issues systematically
-- Priority: High
-
-**Cache Invalidation Strategy:**
-
-- Problem: No way to force reload categories/assets when updated
-- Blocks: Users see stale data until cache expires or manual reload
-- Priority: Medium
+- Problem: Players are identified only by in-memory names and random WebSocket IDs. No login, no persistent identity.
+- Blocks: Cross-session game history, multiplayer friend lists, saved preferences synced across devices.
 
 ## Test Coverage Gaps
 
-**IndexedDB Edge Cases:**
+**Untested Composables (11 of 26):**
 
-- What's not tested: Quota exceeded, concurrent writes, DB version migrations
-- Files: `apps/game/composables/useIndexedDB.ts`
-- Risk: Silent failures in production storage scenarios
-- Priority: High
+- What's not tested: `useGameActions`, `useGameState`, `useAnalytics`, `useStoryboard`, `useOptimizedImage`, `useAudio`, `useAnswerCheck`, `useColorMode`, `usePerformance`, `useDeviceCapabilities`, `useFeatureFlags`
+- Files: `apps/game/composables/useGameActions.ts`, `apps/game/composables/useGameState.ts`, `apps/game/composables/useAnalytics.ts`, `apps/game/composables/useStoryboard.ts`, `apps/game/composables/useOptimizedImage.ts`, `apps/game/composables/useAudio.ts`, `apps/game/composables/useAnswerCheck.ts`, `apps/game/composables/useColorMode.ts`, `apps/game/composables/usePerformance.ts`, `apps/game/composables/useDeviceCapabilities.ts`, `apps/game/composables/useFeatureFlags.ts`
+- Risk: Core gameplay composables (`useGameActions`, `useGameState`, `useAnswerCheck`) handle critical game logic — scoring, round management, answer validation — with zero test coverage
+- Priority: High for `useAnswerCheck` (fuzzy matching logic), `useGameActions` (state mutations), `useGameState` (derived state). Medium for others.
 
-**Multi-Player State Transitions:**
+**GameService Has No Tests:**
 
-- What's not tested: All players submitting simultaneously, network delays, round transitions with disconnections
-- Files: `apps/game/stores/game.ts` (multi-player actions)
-- Risk: Race conditions in production multiplayer games
-- Priority: High
+- What's not tested: Levenshtein distance calculation, fuzzy answer matching, score computation, player creation helpers
+- Files: `services/GameService.ts`
+- Risk: Core scoring algorithm changes could break fairness without detection
+- Priority: High — this is the scoring engine
 
-**PWA Installation Flow:**
+**No Integration Tests:**
 
-- What's not tested: BeforeInstallPrompt event handling, installation outcomes
-- Files: `apps/game/stores/game.ts` (lines 317-332)
-- Risk: Install prompt may not work correctly on different browsers
+- What's not tested: Store-to-composable interactions, plugin initialization chains, WebSocket message flows
+- Files: All stores, composables, and plugins
+- Risk: Individual units may pass but fail when composed. The plugin ordering hack (`00.init-plugin-system.client.ts`) is especially vulnerable.
 - Priority: Medium
 
-**Base URL Configuration:**
+**Pervasive `as any` Casting (~50+ instances):**
 
-- What's not tested: All environment variable permutations (localhost, AWS, custom BASE_URL)
-- Files: `apps/game/nuxt.config.ts` (base URL resolution)
-- Risk: Asset 404s in specific deployment scenarios
-- Priority: Medium
-
-**Error Recovery Flows:**
-
-- What's not tested: Network failures during game play, IndexedDB failures, category load failures
-- Files: Multiple composables/stores
-- Risk: Poor user experience when errors occur
-- Priority: High
-
-**WebSocket Reconnection:**
-
-- What's not tested: Connection drops, reconnection logic, message queuing during disconnect
-- Files: `apps/game/composables/useWebSocket.ts`
-- Risk: WebSocket features (if enabled) fail ungracefully
-- Priority: Low (feature not integrated)
-
-**i18n Edge Cases:**
-
-- What's not tested: Missing translation keys, locale switching during game, fallback behavior
-- Files: `apps/game/i18n/locales/`
-- Risk: UI shows keys instead of text in some scenarios
-- Priority: Medium
-
-**Build Variants:**
-
-- What's not tested: DEBUG_BUILD mode, different NITRO_PRESET values, SSR disabled
-- Files: `apps/game/nuxt.config.ts`
-- Risk: Production builds differ from tested development builds
-- Priority: Medium
+- What's not tested: Type safety at cast boundaries — the TypeScript compiler cannot verify correctness where `as any` is used
+- Files: `apps/game/composables/usePageSetup.ts`, `apps/game/composables/useErrorSync.ts:100`, `apps/game/plugins/error-sync.client.ts:7`, and ~47 other locations across source files
+- Risk: Runtime type errors in production that TypeScript should have caught at compile time
+- Priority: Medium — systematically replace with proper typing or `as unknown as TargetType` with runtime guards
 
 ---
 
-_Concerns audit: 2026-02-06_
+_Concerns audit: 2026-02-13_

@@ -887,12 +887,12 @@ This project uses **Zenflow** for task orchestration. Zenflow creates a fresh **
 
 Settings are in `.zenflow/settings.json`:
 
-| Setting | Command | Purpose |
-|---|---|---|
-| `setup_script` | `pnpm install` | Install all dependencies |
-| `dev_script` | `pnpm run dev` | Start Nuxt dev server |
+| Setting               | Command                    | Purpose                        |
+| --------------------- | -------------------------- | ------------------------------ |
+| `setup_script`        | `pnpm install`             | Install all dependencies       |
+| `dev_script`          | `pnpm run dev`             | Start Nuxt dev server          |
 | `verification_script` | `pnpm run workspace:check` | Syncpack + TypeScript + ESLint |
-| `copy_files` | `.env`, `apps/game/.env` | Local config with secrets |
+| `copy_files`          | `.env`, `apps/game/.env`   | Local config with secrets      |
 
 ### Quick Start in a Zenflow Worktree
 
@@ -915,3 +915,9 @@ pnpm run dev
 - The worktree shares the same git history but has an independent working directory
 
 **Last Updated:** January 2026
+
+<!-- AICODE:START -->
+
+@.claude/aicode-instructions.md
+
+<!-- AICODE:END -->

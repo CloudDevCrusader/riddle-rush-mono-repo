@@ -9,7 +9,7 @@
 </script>
 
 <style scoped lang="scss">
-@use '@/assets/scss/design-system' as *;
+@use 'assets/scss/design-system' as *;
 
 .game-panel {
   @include embossed-panel;
