@@ -70,31 +70,11 @@
       </div>
 
       <!-- Player Answer Input (for multiplayer) -->
-      <div
+      <GameAnswerForm
         v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
-        class="answer-input-section"
-      >
-        <div class="player-turn-indicator">
-          <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
-          <span class="turn-name">{{ currentPlayerTurn.name }}</span>
-        </div>
-        <form class="answer-form" @submit.prevent="submitAnswer">
-          <input
-            v-model="playerAnswer"
-            type="text"
-            class="answer-input"
-            :placeholder="t('game.your_answer', 'Your answer...')"
-            autocomplete="off"
-            autocapitalize="words"
-            maxlength="50"
-            @input="sanitizeInput"
-            @keyup.enter="submitAnswer"
-          />
-          <button type="submit" class="submit-answer-btn" :disabled="false">
-            {{ t('game.submit', 'Submit') }}
-          </button>
-        </form>
-      </div>
+        :current-player="currentPlayerTurn"
+        @submit="handleAnswerSubmit"
+      />
 
       <!-- All Players Submitted Message -->
       <div v-if="allPlayersSubmitted" class="all-submitted-message">
@@ -156,7 +136,6 @@ const route = useRoute()
 // Handle game ID from route parameter
 const gameId = computed(() => route.params.gameId as string | undefined)
 
-const playerAnswer = ref('')
 const showPauseModal = ref(false)
 const showQuitModal = ref(false)
 
@@ -182,26 +161,13 @@ const handleQuitConfirmed = () => {
   goHome()
 }
 
-// Sanitize input to prevent XSS and limit special characters
-// Optimized: Direct mutation is faster than debouncing for simple sanitization
-const sanitizeInput = () => {
-  // Remove potentially dangerous characters
-  playerAnswer.value = playerAnswer.value.replace(/[<>]/g, '')
-  // Limit length
-  if (playerAnswer.value.length > 50) {
-    playerAnswer.value = playerAnswer.value.slice(0, 50)
-  }
-}
-
-const submitAnswer = async () => {
+const handleAnswerSubmit = async (answer: string) => {
   const player = currentPlayerTurn.value
   if (!player) {
     return
   }
 
   try {
-    // Allow empty answers (player can skip their turn)
-    const answer = playerAnswer.value.trim() || ''
     await gameStore.submitPlayerAnswer(player.id, answer)
 
     if (answer) {
@@ -210,14 +176,11 @@ const submitAnswer = async () => {
       toast.info(t('game.answer_skipped', `${player.name} skipped their turn`))
     }
 
-    playerAnswer.value = ''
-
     // If all players submitted, show message
     if (allPlayersSubmitted.value) {
       toast.info(t('game.all_submitted', 'All players have submitted!'))
     }
   } catch (error) {
-    const logger = useLogger()
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))
   }
@@ -600,91 +563,6 @@ useHead({
   opacity: 0.5;
 }
 
-/* Answer Input Section */
-.answer-input-section {
-  width: 100%;
-  max-width: 500px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 4px solid #ffaa00;
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.15),
-    var(--shadow-lg);
-}
-
-.player-turn-indicator {
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
-}
-
-.turn-label {
-  font-family: var(--font-display);
-  font-size: clamp(0.9rem, 2vw, 1.2rem);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-dark);
-  display: block;
-  margin-bottom: var(--spacing-sm);
-}
-
-.turn-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  display: block;
-}
-
-.answer-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.answer-input {
-  width: 100%;
-  padding: var(--spacing-lg);
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2.5vw, 1.3rem);
-  font-weight: var(--font-weight-semibold);
-  border: 3px solid var(--color-primary);
-  border-radius: var(--radius-md);
-  background: var(--color-white);
-  color: var(--color-dark);
-  text-align: center;
-  transition: all var(--transition-base);
-}
-
-.answer-input:focus {
-  outline: none;
-  border-color: #ffaa00;
-  box-shadow: 0 0 0 4px rgba(255, 170, 0, 0.2);
-}
-
-.submit-answer-btn {
-  padding: var(--spacing-md) var(--spacing-xl);
-  background: var(--bg-gradient-success);
-  border: 3px solid #ffaa00;
-  border-radius: var(--radius-md);
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-white);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 6px 0 rgba(58, 140, 20, 0.3);
-}
-
-.submit-answer-btn:not(:disabled):active {
-  transform: translateY(2px);
-  box-shadow: 0 3px 0 rgba(58, 140, 20, 0.3);
-}
-
-.submit-answer-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .all-submitted-message {
   width: 100%;
   max-width: 500px;
@@ -821,10 +699,6 @@ useHead({
     -webkit-text-stroke: clamp(3px, 0.8vw, 6px) #2b5b84;
   }
 
-  .answer-input-section {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
   .game-container {
     gap: var(--spacing-2xl);
     padding: var(--spacing-lg) var(--spacing-md);
@@ -878,16 +752,6 @@ useHead({
   .letter-value {
     font-size: clamp(6rem, 18vw, 12rem);
     -webkit-text-stroke: clamp(2px, 0.6vw, 4px) #2b5b84;
-  }
-
-  .answer-input-section {
-    max-width: calc(100% - var(--spacing-sm) * 2);
-    padding: var(--spacing-md);
-  }
-
-  .answer-input {
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    padding: var(--spacing-md);
   }
 
   .game-container {
