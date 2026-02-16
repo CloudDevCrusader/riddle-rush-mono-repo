@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 11 of 11 (Modal Dialogs)
 Plan: 1 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-14 - Completed quick task 001: Fix Docker image and push working version to GitHub
+Last activity: 2026-02-16 - Completed 11.1-02: GameScrollList rank fix
 
 Progress: [███████████████] 100% (23/25 plans complete)
 
@@ -89,6 +89,7 @@ Recent decisions affecting current work:
 - Staged selection pattern for language changes (apply on OK, not immediately) (10-02)
 - Modal dismissal props default to true for backward compatibility (11-01)
 - Danger variant uses same glossy-button mixin pattern as other variants (11-01)
+- Use v-else for unlimited rank badges instead of v-else-if with index guard (11.1-02)
 
 ### Pending Todos
 
@@ -118,8 +119,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-14
-Stopped at: Completed quick-001 (Fix Docker image build and push)
+Last session: 2026-02-16
+Stopped at: Completed 11.1-02-PLAN.md (GameScrollList rank fix)
 Resume file: None
 
 ### Phase 11 Plans Status
