@@ -247,6 +247,12 @@ else
 	echo -e "${GREEN}✓ Bucket exists${NC}"
 fi
 
+# Create pre-deployment backup
+BACKUP_PREFIX=""
+if [[ "${DRY_RUN}" != "true" ]]; then
+	BACKUP_PREFIX=$(create_deployment_backup "${S3_BUCKET}" || echo "")
+fi
+
 # Upload to S3 with optimized caching
 echo -e "\n☁️  Uploading to S3..."
 TOTAL_SIZE=$(du -sh "${BUILD_DIR}" | cut -f1)
@@ -338,6 +344,30 @@ if [[ -n "${CLOUDFRONT_ID}" ]]; then
 else
 	echo -e "${YELLOW}⚠️  No CloudFront distribution ID provided. Skipping cache invalidation.${NC}"
 	echo -e "${YELLOW}  Set AWS_CLOUDFRONT_ID environment variable to enable this.${NC}"
+fi
+
+# Verify deployment
+if [[ "${DRY_RUN}" != "true" ]]; then
+	DEPLOYMENT_URL=""
+	case "${ENVIRONMENT}" in
+	production) DEPLOYMENT_URL="https://riddlerush.de" ;;
+	development) DEPLOYMENT_URL="https://dev.riddlerush.de" ;;
+	staging) DEPLOYMENT_URL="https://staging.riddlerush.de" ;;
+	esac
+
+	if [[ -n "${DEPLOYMENT_URL}" ]]; then
+		if ! verify_deployment "${DEPLOYMENT_URL}" 3; then
+			if [[ -n "${BACKUP_PREFIX}" ]]; then
+				rollback_deployment "${S3_BUCKET}" "${BACKUP_PREFIX}" "${CLOUDFRONT_ID}"
+				exit 1
+			else
+				log "WARN" "Verification failed but no backup available for rollback"
+			fi
+		else
+			# Clean up old backups on success
+			cleanup_old_backups "${S3_BUCKET}" 5
+		fi
+	fi
 fi
 
 # Display deployment URLs
