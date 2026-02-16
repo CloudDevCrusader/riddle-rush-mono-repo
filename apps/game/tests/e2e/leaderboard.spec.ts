@@ -57,6 +57,20 @@ test.describe('Leaderboard Page', () => {
     await expect(rankBadge).toBeVisible()
   })
 
+  test('should display rank badges for all positions (not limited to 6)', async ({ page }) => {
+    // This test verifies the fix: rank badges should show for position 4+
+    // Previously, GameScrollList had `v-else-if="index < 6"` which limited badges to positions 4-6
+    const entries = page.locator('.leaderboard-item')
+    const count = await entries.count()
+
+    // Each leaderboard entry should have a rank badge (crown or numbered)
+    for (let i = 0; i < count; i++) {
+      const entry = entries.nth(i)
+      const rankBadge = entry.locator('.rank-badge')
+      await expect(rankBadge).toBeVisible()
+    }
+  })
+
   test('should display player info in each entry', async ({ page }) => {
     const firstEntry = page.locator('.leaderboard-item').first()
     const playerName = firstEntry.locator('.player-name')
