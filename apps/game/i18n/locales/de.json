@@ -212,6 +212,17 @@
     "scores_saved": "Punktestände erfolgreich gespeichert!",
     "your_score": "Dein Score"
   },
+  "scoring": {
+    "confirm_scores": "Punkte bestätigen",
+    "description": "Rundenergebnisse ansehen",
+    "error_saving": "Fehler beim Speichern der Punkte. Bitte erneut versuchen.",
+    "finish_game": "Spiel beenden",
+    "next_round": "Nächste Runde",
+    "play_another_round": "Möchtet ihr noch eine Runde spielen?",
+    "player": "Spieler",
+    "round_complete": "Runde abgeschlossen!",
+    "title": "Punktevergabe"
+  },
   "settings": {
     "debug": "Debug-Modus",
     "language_changed": "Sprache geändert",
