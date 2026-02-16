@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 11 of 11 (Modal Dialogs)
 Plan: 1 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-02 — Completed 11-01-PLAN.md (Component extensions for modals)
+Last activity: 2026-02-14 - Completed quick task 001: Fix Docker image and push working version to GitHub
 
 Progress: [███████████████] 100% (23/25 plans complete)
 
@@ -96,6 +96,13 @@ Recent decisions affecting current work:
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~550 lines) for simplification and bug risk.
 
+### Completed Todos (2026-02-14)
+
+- ~~Push pending commits to remote.~~ Done.
+- ~~Switch CI/CD from CircleCI to Vercel.~~ Done — removed CircleCI, fixed SCSS import paths, verified Vercel build succeeds.
+- ~~Add non-blocking GitHub Action for quality checks.~~ Done — replaced broken npm-based tests.yml with pnpm/turbo quality checks workflow.
+- ~~Fix Docker image build for pnpm monorepo.~~ Done (quick-001) — fixed workspace file layering, corepack auto-version, output path, health check port. Pushed to GitHub.
+
 ### Blockers/Concerns
 
 **General concerns:**
@@ -103,10 +110,16 @@ Recent decisions affecting current work:
 - Safari gradient rendering may differ from Chrome (verify early)
 - Custom scrollbar styling may not work on all mobile browsers (graceful degradation)
 
+### Quick Tasks Completed
+
+| #   | Description                                         | Date       | Commit  | Directory                                                                                             |
+| --- | --------------------------------------------------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------- |
+| 001 | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140 | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/) |
+
 ## Session Continuity
 
-Last session: 2026-02-02
-Stopped at: Completed 11-01-PLAN.md (Component extensions for modals)
+Last session: 2026-02-14
+Stopped at: Completed quick-001 (Fix Docker image build and push)
 Resume file: None
 
 ### Phase 11 Plans Status
