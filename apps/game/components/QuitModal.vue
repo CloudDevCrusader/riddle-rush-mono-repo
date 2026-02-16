@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
 const { t } = usePageSetup()
-const { goHome } = useNavigation()
 const { gameStore } = useGameState()
 const audio = useAudio()
 
@@ -57,7 +56,6 @@ const handleYes = async () => {
   }
   emit('confirm')
   isVisible.value = false
-  goHome()
 }
 </script>
 

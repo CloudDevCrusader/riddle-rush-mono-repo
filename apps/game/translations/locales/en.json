@@ -244,6 +244,17 @@
     "scores_saved": "Scores saved successfully!",
     "your_score": "Your Score"
   },
+  "scoring": {
+    "confirm_scores": "Confirm Scores",
+    "description": "View round scoring results",
+    "error_saving": "Failed to save scores. Please try again.",
+    "finish_game": "Finish Game",
+    "next_round": "Next Round",
+    "play_another_round": "Would you like to play another round?",
+    "player": "Player",
+    "round_complete": "Round Complete!",
+    "title": "Scoring"
+  },
   "settings": {
     "debug": "Debug Mode",
     "language_changed": "Language changed",
