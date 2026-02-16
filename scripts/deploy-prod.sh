@@ -155,6 +155,9 @@ display_deployment_url "${ENVIRONMENT}" | head -n -1
 # Push version tag if created
 push_version_tag "${VERSION}"
 
+# Post-deployment tasks
+post_deployment "production"
+
 echo -e "\n${BLUE}💡 Tips:${NC}"
 echo -e "  - Run E2E tests: ${YELLOW}BASE_URL=https://riddlerush.de pnpm run test:e2e${NC}"
 echo -e "  - Check CloudFront invalidation status in AWS Console"
