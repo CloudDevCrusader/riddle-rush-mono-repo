@@ -3,14 +3,14 @@ import { useIndexedDB } from '../composables/useIndexedDB'
 import { useStatistics } from '../composables/useStatistics'
 import { useLogger } from '../composables/useLogger'
 import { useCategoryEmoji } from '../composables/useCategoryEmoji'
-import { useLodashSync } from '../composables/useLodash'
+import { useCategoryManager } from '../composables/useCategoryManager'
+import { useSessionManager } from '../composables/useSessionManager'
 import {
   ALPHABET,
   SCORE_PER_CORRECT_ANSWER,
   DEFAULT_DISPLAYED_CATEGORIES,
 } from '@riddle-rush/shared/constants'
 import type {
-  GameSession,
   GameAttempt,
   GameState,
   Category,
@@ -25,20 +25,6 @@ const randomLetter = () => {
   }
   const index = Math.floor(Math.random() * ALPHABET.length)
   return ALPHABET.charAt(index).toLowerCase()
-}
-
-// Utility functions using synchronous lodash to avoid initialization issues
-const getRandomCategory = (categories: Category[]): Category | null => {
-  if (!categories.length) return null
-
-  const { shuffle } = useLodashSync()
-  const shuffled = shuffle(categories)
-  return shuffled[0] ?? null
-}
-
-const cloneSessionForHistory = (session: GameSession): GameSession => {
-  // Use JSON clone for session objects - faster and sufficient for our data structure
-  return JSON.parse(JSON.stringify(session)) as GameSession
 }
 
 export const useGameStore = defineStore('game', {
@@ -104,78 +90,28 @@ export const useGameStore = defineStore('game', {
 
   actions: {
     async fetchCategories(force = false) {
-      // Return cached categories if already loaded
-      if (this.categoriesLoaded && !force) {
-        return this.categories
-      }
-
-      // Wait if already loading (race condition guard)
-      if (this.categoriesLoading) {
-        // Poll until loading is complete (max 10 seconds)
-        const maxAttempts = 100
-        for (let i = 0; i < maxAttempts; i++) {
-          await new Promise((resolve) => setTimeout(resolve, 100))
-          if (!this.categoriesLoading) {
-            return this.categories
-          }
-        }
-        throw new Error('Category loading timeout')
-      }
-
-      this.categoriesLoading = true
-
-      try {
-        const categories = await $fetch<Category[]>('/data/categories.json')
-
-        if (!categories || categories.length === 0) {
-          throw new Error('No categories found in data file')
-        }
-
-        this.categories = categories
-        this.categoriesLoaded = true
-        this.categoryLoadError = null
-
-        return categories
-      } catch (error) {
-        const logger = useLogger()
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load categories'
-        this.categoryLoadError = errorMessage
-        logger.error('Error fetching categories:', error)
-
-        // Don't throw if we have cached categories
-        if (this.categories.length > 0) {
-          logger.warn('Using cached categories due to fetch error')
-          return this.categories
-        }
-
-        throw new Error(errorMessage)
-      } finally {
-        this.categoriesLoading = false
-      }
+      const categoryManager = useCategoryManager()
+      return categoryManager.fetchCategories(this, force)
     },
 
     loadMoreCategories(step = 9) {
-      if (!this.hasMoreCategories) return
-
-      this.displayedCategoryCount = Math.min(
-        this.displayedCategoryCount + step,
-        this.categories.length
-      )
+      const categoryManager = useCategoryManager()
+      categoryManager.loadMoreCategories(this, step)
     },
 
     resetDisplayedCategories(count = 9) {
-      this.displayedCategoryCount = Math.min(count, this.categories.length || count)
+      const categoryManager = useCategoryManager()
+      categoryManager.resetDisplayedCategories(this, count)
     },
 
     getCategoryById(categoryId: number): Category | null {
-      return this.categories.find((category: Category) => category.id === categoryId) ?? null
+      const categoryManager = useCategoryManager()
+      return categoryManager.getCategoryById(this.categories, categoryId)
     },
 
     getRandomCategory(): Category | null {
-      if (!this.categories.length) return null
-
-      const index = Math.floor(Math.random() * this.categories.length)
-      return this.categories[index] ?? null
+      const categoryManager = useCategoryManager()
+      return categoryManager.getRandomCategory(this.categories)
     },
 
     generateLetter() {
@@ -191,9 +127,12 @@ export const useGameStore = defineStore('game', {
     },
 
     async startNewGame() {
+      const categoryManager = useCategoryManager()
+      const sessionManager = useSessionManager()
+
       await this.fetchCategories()
 
-      const category = getRandomCategory(this.categories)
+      const category = categoryManager.getRandomCategory(this.categories)
 
       if (!category) {
         throw new Error('Unable to start game without categories')
@@ -209,19 +148,7 @@ export const useGameStore = defineStore('game', {
         return this.startNextRound()
       } else {
         // Legacy single-player mode
-        const session: GameSession = {
-          id: crypto.randomUUID(),
-          userId: 'default-user',
-          category: { ...category, letter },
-          letter,
-          startTime: Date.now(),
-          score: 0,
-          attempts: [],
-          players: [],
-          currentRound: 0,
-          roundHistory: [],
-          status: 'active',
-        }
+        const session = sessionManager.createSinglePlayerSession(category, letter)
 
         this.currentSession = session
         await this.saveSessionToDB()
@@ -257,9 +184,10 @@ export const useGameStore = defineStore('game', {
     async endGame() {
       if (!this.currentSession) return
 
+      const sessionManager = useSessionManager()
       const session = this.currentSession
       session.endTime = Date.now()
-      this.history.push(cloneSessionForHistory(session))
+      this.history.push(sessionManager.cloneSessionForHistory(session))
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
@@ -404,9 +332,12 @@ export const useGameStore = defineStore('game', {
       customLetter?: string,
       customCategory?: Category
     ) {
+      const categoryManager = useCategoryManager()
+      const sessionManager = useSessionManager()
+
       await this.fetchCategories()
 
-      const category = customCategory || getRandomCategory(this.categories)
+      const category = customCategory || categoryManager.getRandomCategory(this.categories)
       if (!category) {
         throw new Error('Unable to start game without categories')
       }
@@ -422,17 +353,7 @@ export const useGameStore = defineStore('game', {
         hasSubmitted: false,
       }))
 
-      const session: GameSession = {
-        id: crypto.randomUUID(),
-        gameName,
-        players,
-        currentRound: 1,
-        category: { ...category, letter },
-        letter,
-        startTime: Date.now(),
-        status: 'active',
-        roundHistory: [],
-      }
+      const session = sessionManager.createSession(players, category, letter, gameName)
 
       this.currentSession = session
       await this.saveSessionToDB()
@@ -511,8 +432,10 @@ export const useGameStore = defineStore('game', {
     async startNextRound(category?: Category, letter?: string) {
       if (!this.currentSession) return
 
+      const categoryManager = useCategoryManager()
+
       // Use provided category and letter, or pick random ones
-      const selectedCategory = category || getRandomCategory(this.categories)
+      const selectedCategory = category || categoryManager.getRandomCategory(this.categories)
       if (!selectedCategory) {
         throw new Error('Unable to start round without categories')
       }
