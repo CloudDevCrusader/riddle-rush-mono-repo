@@ -688,7 +688,61 @@ describe('Game Store', () => {
         }
       })
 
-      it('adds to total score', async () => {
+      it('0→10: totalScore increases by 10', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          expect(alice.totalScore).toBe(0)
+          await store.assignPlayerScore(alice.id, 10)
+          expect(alice.totalScore).toBe(10)
+          expect(alice.currentRoundScore).toBe(10)
+        }
+      })
+
+      it('10→20: totalScore increases by 10 (not 20)', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.assignPlayerScore(alice.id, 10)
+          expect(alice.totalScore).toBe(10)
+
+          await store.assignPlayerScore(alice.id, 20)
+          expect(alice.totalScore).toBe(20)
+          expect(alice.currentRoundScore).toBe(20)
+        }
+      })
+
+      it('20→10: totalScore decreases by 10', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.assignPlayerScore(alice.id, 20)
+          expect(alice.totalScore).toBe(20)
+
+          await store.assignPlayerScore(alice.id, 10)
+          expect(alice.totalScore).toBe(10)
+          expect(alice.currentRoundScore).toBe(10)
+        }
+      })
+
+      it('10→10: totalScore unchanged (delta = 0)', async () => {
+        const store = useGameStore()
+        const alice = store.players[0]
+
+        if (alice) {
+          await store.assignPlayerScore(alice.id, 10)
+          expect(alice.totalScore).toBe(10)
+
+          await store.assignPlayerScore(alice.id, 10)
+          expect(alice.totalScore).toBe(10)
+          expect(alice.currentRoundScore).toBe(10)
+        }
+      })
+
+      it('replaces score correctly when adjusting up then down', async () => {
         const store = useGameStore()
         const alice = store.players[0]
 
@@ -697,7 +751,7 @@ describe('Game Store', () => {
           expect(alice.totalScore).toBe(50)
 
           await store.assignPlayerScore(alice.id, 30)
-          expect(alice.totalScore).toBe(80)
+          expect(alice.totalScore).toBe(30)
           expect(alice.currentRoundScore).toBe(30)
         }
       })
@@ -711,6 +765,25 @@ describe('Game Store', () => {
 
           expect(mockSaveGameSession).toHaveBeenCalled()
         }
+      })
+
+      it('does nothing for invalid player ID', async () => {
+        const store = useGameStore()
+        mockSaveGameSession.mockClear()
+
+        await store.assignPlayerScore('invalid-id', 50)
+
+        expect(mockSaveGameSession).not.toHaveBeenCalled()
+      })
+
+      it('does nothing without active session', async () => {
+        const store = useGameStore()
+        store.currentSession = null
+        mockSaveGameSession.mockClear()
+
+        await store.assignPlayerScore('any-id', 50)
+
+        expect(mockSaveGameSession).not.toHaveBeenCalled()
       })
     })
 

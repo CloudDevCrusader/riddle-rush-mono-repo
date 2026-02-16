@@ -465,12 +465,10 @@ export const useGameStore = defineStore('game', {
       const player = this.currentSession.players[playerIndex]
       if (!player) return
 
-      // Only add to total score if the points are different from current round score
-      // This prevents duplicate additions when the same score is assigned multiple times
-      if (points !== player.currentRoundScore) {
-        player.totalScore += points
-      }
-
+      // Calculate delta to ensure idempotent score assignment
+      // Calling with the same value multiple times is safe (delta = 0)
+      const delta = points - player.currentRoundScore
+      player.totalScore += delta
       player.currentRoundScore = points
 
       await this.saveSessionToDB()
