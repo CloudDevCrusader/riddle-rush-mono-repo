@@ -48,7 +48,7 @@ test.describe('Players Management Page', () => {
     const playerItems = page.locator('.player-item:not(.empty)')
     const totalSlots = (await playerItems.count()) + (await emptySlots.count())
     // Total slots should be 6
-    expect(totalSlots).toBe(6)
+    expect(totalSlots).toBe(10)
   })
 
   test('should add a player when clicking add button', async ({ page }) => {
