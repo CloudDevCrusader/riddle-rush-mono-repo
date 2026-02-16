@@ -1,6 +1,6 @@
 <template>
   <GameBackground>
-    <div class="leaderboard-page">
+    <div class="leaderboard-page" data-testid="leaderboard-container">
       <!-- Header -->
       <GameHeader variant="gold">
         {{ t('leaderboard.title', 'Leaderboard') }}
@@ -15,9 +15,16 @@
 
       <!-- Ranked player list -->
       <GameScrollList :show-ranks="true" max-height="500px">
-        <div v-for="entry in leaderboard" :key="entry.id" class="leaderboard-row">
-          <span class="leaderboard-row__name">{{ entry.name }}</span>
-          <GameDisplay size="md" :glow="false">
+        <div
+          v-for="(entry, index) in leaderboard"
+          :key="entry.id"
+          class="leaderboard-row"
+          :data-testid="`leaderboard-entry-${index}`"
+        >
+          <span class="leaderboard-row__name" :data-testid="`leaderboard-player-name-${index}`">{{
+            entry.name
+          }}</span>
+          <GameDisplay size="md" :glow="false" :data-testid="`leaderboard-player-score-${index}`">
             {{ entry.totalScore }}
           </GameDisplay>
         </div>
@@ -25,10 +32,21 @@
 
       <!-- Navigation buttons -->
       <div class="leaderboard-page__actions">
-        <GameButton v-if="!isGameCompleted" variant="primary" size="lg" @click="handleNextRound">
+        <GameButton
+          v-if="!isGameCompleted"
+          variant="primary"
+          size="lg"
+          data-testid="leaderboard-next-round-button"
+          @click="handleNextRound"
+        >
           {{ t('leaderboard.next_round', 'Next Round') }}
         </GameButton>
-        <GameButton variant="secondary" size="lg" @click="handleFinish">
+        <GameButton
+          variant="secondary"
+          size="lg"
+          data-testid="leaderboard-finish-button"
+          @click="handleFinish"
+        >
           {{ t('leaderboard.finish', 'OK') }}
         </GameButton>
       </div>
