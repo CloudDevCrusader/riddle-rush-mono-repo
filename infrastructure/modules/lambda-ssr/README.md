@@ -1,37 +1,20 @@
 # Lambda SSR Module
 
-This Terraform module deploys a Nuxt SSR application using AWS Lambda + API Gateway (HTTP API).
+Deploys a Node.js Lambda function for SSR with IAM execution role, CloudWatch logging,
+Lambda Function URL, API Gateway HTTP API, and optional custom domain support.
 
 ## Features
 
-- ✅ **AWS Lambda** - Serverless SSR execution
-- ✅ **Lambda Function URL** - Direct access (simpler, faster)
-- ✅ **API Gateway HTTP API** - Better for custom domains, logging, and throttling
-- ✅ **CloudWatch Logs** - Automatic logging for Lambda and API Gateway
-- ✅ **Custom Domain Support** - Optional custom domain configuration
-- ✅ **CORS Configuration** - Pre-configured CORS for web applications
+- AWS Lambda function with configurable runtime, memory, timeout
+- IAM execution role with basic Lambda permissions
+- Optional DynamoDB access policy (when `dynamodb_table_arns` provided)
+- Configurable environment variables (merged with defaults)
+- Lambda Function URL for direct access
+- API Gateway HTTP API for custom domains and advanced features
+- CloudWatch log groups for both Lambda and API Gateway
+- Optional custom domain with TLS 1.2
 
 ## Usage
-
-### 1. Build your Nuxt app with Nitro
-
-```bash
-cd apps/game
-pnpm run build
-```
-
-This creates `.output/server/` with Lambda-ready code.
-
-### 2. Package for Lambda
-
-Create a deployment zip:
-
-```bash
-cd apps/game/.output/server
-zip -r ../../lambda-deploy.zip .
-```
-
-### 3. Use in Terraform
 
 ```hcl
 module "lambda_ssr" {
@@ -39,167 +22,100 @@ module "lambda_ssr" {
 
   project_name    = "riddle-rush"
   environment     = "production"
-  lambda_zip_path = "../../apps/game/lambda-deploy.zip"
+  lambda_code_path = "../../apps/game/lambda-deploy.zip"
 
-  # Optional: Custom domain
-  domain_name     = "game.example.com"
-  certificate_arn = "arn:aws:acm:region:account:certificate/xxx"
+  # Optional: customize runtime and resources
+  runtime     = "nodejs22.x"
+  memory_size = 512
+  timeout     = 30
+  handler     = "index.handler"
+
+  # Optional: additional environment variables
+  environment_variables = {
+    APP_VERSION = "1.0.0"
+    BASE_URL    = "https://riddlerush.de"
+  }
+
+  # Optional: DynamoDB access
+  dynamodb_table_arns = [
+    "arn:aws:dynamodb:eu-central-1:123456789:table/sessions"
+  ]
+
+  # Optional: custom domain
+  domain_name     = "game.riddlerush.de"
+  certificate_arn = "arn:aws:acm:eu-central-1:123456789:certificate/xxx"
 
   tags = {
     Application = "Riddle Rush"
-    ManagedBy   = "Terraform"
   }
 }
 ```
 
-### 4. Outputs
+## Variables
 
-After deployment:
+| Name                    | Description                                    | Type           | Default           | Required |
+| ----------------------- | ---------------------------------------------- | -------------- | ----------------- | -------- |
+| `project_name`          | Project name for resource naming               | `string`       | -                 | yes      |
+| `environment`           | Environment (production, staging, development) | `string`       | -                 | yes      |
+| `lambda_code_path`      | Path to Lambda deployment package              | `string`       | -                 | yes      |
+| `runtime`               | Lambda runtime                                 | `string`       | `"nodejs22.x"`    | no       |
+| `handler`               | Lambda handler function                        | `string`       | `"index.handler"` | no       |
+| `memory_size`           | Lambda memory size in MB                       | `number`       | `512`             | no       |
+| `timeout`               | Lambda timeout in seconds                      | `number`       | `30`              | no       |
+| `environment_variables` | Environment variables for Lambda               | `map(string)`  | `{}`              | no       |
+| `dynamodb_table_arns`   | DynamoDB table ARNs for Lambda permissions     | `list(string)` | `[]`              | no       |
+| `domain_name`           | Custom domain name for API Gateway             | `string`       | `""`              | no       |
+| `certificate_arn`       | ACM certificate ARN for custom domain          | `string`       | `""`              | no       |
+| `tags`                  | Additional tags for resources                  | `map(string)`  | `{}`              | no       |
 
-```bash
-# Lambda Function URL (direct access)
-terraform output lambda_function_url
+## Outputs
 
-# API Gateway URL
-terraform output api_gateway_url
+| Name                   | Description                                   |
+| ---------------------- | --------------------------------------------- |
+| `function_name`        | Lambda function name                          |
+| `function_arn`         | Lambda function ARN                           |
+| `invoke_arn`           | Lambda invoke ARN for API Gateway integration |
+| `role_arn`             | Lambda execution role ARN                     |
+| `function_url`         | Lambda Function URL (direct access)           |
+| `api_gateway_url`      | API Gateway endpoint URL                      |
+| `api_gateway_id`       | API Gateway ID                                |
+| `custom_domain_url`    | Custom domain URL (if configured)             |
+| `custom_domain_target` | DNS target for custom domain                  |
 
-# Custom domain URL
-terraform output custom_domain_url
-```
+## IAM Permissions
+
+The Lambda execution role includes:
+
+- `AWSLambdaBasicExecutionRole` -- CloudWatch Logs write access
+- Optional DynamoDB CRUD permissions (when `dynamodb_table_arns` is non-empty)
 
 ## Architecture
 
 ```
-User Request
-    ↓
+Client Request
+    |
+    v
 API Gateway HTTP API / Lambda Function URL
-    ↓
-Lambda Function (Node.js 22.x)
-    ↓
-Nuxt SSR Rendering
-    ↓
-HTML Response + Client Hydration
-    ↓
-Service Worker (PWA)
+    |
+    v
+Lambda Function (Node.js)
+    |
+    v
+SSR Rendering (Nuxt/Nitro)
+    |
+    v
+HTML Response
 ```
 
-## Comparison: Lambda Function URL vs API Gateway
+## Deployment
 
-### Lambda Function URL
+1. Build the Nuxt app: `pnpm run build`
+2. Package for Lambda: `cd apps/game/.output/server && zip -r ../../lambda-deploy.zip .`
+3. Apply Terraform: `terraform apply`
 
-- ✅ **Simpler** - Direct Lambda invocation
-- ✅ **Cheaper** - No API Gateway costs
-- ✅ **Faster** - One less hop
-- ❌ **No custom domains** - Must use Lambda URL
-- ❌ **Limited features** - No throttling, WAF, etc.
+## Cost Estimation (100k monthly visitors)
 
-### API Gateway HTTP API
-
-- ✅ **Custom domains** - Use your own domain
-- ✅ **Advanced features** - Throttling, WAF, caching
-- ✅ **Better monitoring** - Detailed CloudWatch metrics
-- ❌ **More expensive** - \$1/million requests + \$0.90/million
-- ❌ **Slightly slower** - Extra hop
-
-**Recommendation:** Use Lambda Function URL for development, API Gateway for production.
-
-## Cost Estimation
-
-### Lambda
-
-- **Free tier**: 1M requests/month, 400,000 GB-seconds
-- **After free tier**: \$0.20 per 1M requests + \$0.0000166667/GB-second
-
-### API Gateway HTTP API (if used)
-
-- \$1.00 per million requests
-- \$0.09 per GB data transfer (first 10 TB)
-
-### Example: 100k monthly visitors
-
-- 500k page views (5 pages/visit)
-- Lambda: ~\$0.10
-- API Gateway: ~\$0.50
-- **Total: ~\$0.60/month**
-
-## CloudFront Integration
-
-To add CDN caching:
-
-```hcl
-resource "aws_cloudfront_distribution" "ssr" {
-  origin {
-    domain_name = trimprefix(module.lambda_ssr.api_gateway_url, "https://")
-    origin_id   = "lambda-ssr"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-
-  enabled = true
-
-  default_cache_behavior {
-    target_origin_id       = "lambda-ssr"
-    viewer_protocol_policy = "redirect-to-https"
-
-    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods  = ["GET", "HEAD", "OPTIONS"]
-
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "all"
-      }
-    }
-  }
-}
-```
-
-## Environment Variables
-
-The Lambda function receives:
-
-- `NODE_ENV` - Set to `production` or `development`
-
-To add more:
-
-```hcl
-environment {
-  variables = {
-    NODE_ENV = "production"
-    CUSTOM_VAR = "value"
-  }
-}
-```
-
-## Monitoring
-
-CloudWatch dashboards are automatically created with:
-
-- Lambda invocations, errors, duration
-- API Gateway requests, 4xx/5xx errors, latency
-
-## Troubleshooting
-
-### "Cannot find module"
-
-- Ensure all dependencies are bundled in the zip
-- Nitro should handle this automatically
-
-### "Task timed out"
-
-- Increase `lambda_timeout` (default: 10s)
-- Optimize SSR performance
-
-### "Memory exceeded"
-
-- Increase `lambda_memory` (default: 512MB)
-
-### CORS errors
-
-- CORS is pre-configured for `*` origins
-- Customize in `main.tf` if needed
+- Lambda: ~$0.10/month (free tier covers most)
+- API Gateway HTTP API: ~$0.50/month
+- CloudWatch Logs: ~$0.50/month
+- Total: ~$1.10/month

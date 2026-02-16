@@ -1,5 +1,9 @@
+# Lambda SSR Module
+# Deploys a Node.js Lambda function with IAM role, Function URL, API Gateway HTTP API,
+# CloudWatch logging, and optional custom domain support.
+
 # IAM Role for Lambda function
-resource "aws_iam_role" "lambda" {
+resource "aws_iam_role" "lambda_exec" {
   name = "${var.project_name}-${var.environment}-ssr-lambda"
 
   assume_role_policy = jsonencode({
@@ -21,27 +25,56 @@ resource "aws_iam_role" "lambda" {
   )
 }
 
-# Attach basic Lambda execution policy
+# Attach basic Lambda execution policy (CloudWatch Logs access)
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
-  role       = aws_iam_role.lambda.name
+  role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# DynamoDB access policy (optional, when dynamodb_table_arns is provided)
+resource "aws_iam_role_policy" "dynamodb_access" {
+  count = length(var.dynamodb_table_arns) > 0 ? 1 : 0
+
+  name = "${var.project_name}-${var.environment}-dynamodb-access"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+      ]
+      Resource = var.dynamodb_table_arns
+    }]
+  })
+}
+
 # Lambda function
-resource "aws_lambda_function" "ssr" {
-  filename         = var.lambda_zip_path
+resource "aws_lambda_function" "ssr_handler" {
+  filename         = var.lambda_code_path
   function_name    = "${var.project_name}-${var.environment}-ssr"
-  role             = aws_iam_role.lambda.arn
-  handler          = "index.handler"
-  source_code_hash = filebase64sha256(var.lambda_zip_path)
-  runtime          = var.lambda_runtime
-  memory_size      = var.lambda_memory
-  timeout          = var.lambda_timeout
+  role             = aws_iam_role.lambda_exec.arn
+  handler          = var.handler
+  source_code_hash = filebase64sha256(var.lambda_code_path)
+  runtime          = var.runtime
+  memory_size      = var.memory_size
+  timeout          = var.timeout
 
   environment {
-    variables = {
-      NODE_ENV = var.environment == "production" ? "production" : "development"
-    }
+    variables = merge(
+      {
+        NODE_ENV = var.environment == "production" ? "production" : "development"
+      },
+      var.environment_variables
+    )
   }
 
   tags = merge(
@@ -52,9 +85,9 @@ resource "aws_lambda_function" "ssr" {
   )
 }
 
-# CloudWatch Log Group
+# CloudWatch Log Group for Lambda
 resource "aws_cloudwatch_log_group" "lambda" {
-  name              = "/aws/lambda/${aws_lambda_function.ssr.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.ssr_handler.function_name}"
   retention_in_days = var.environment == "production" ? 30 : 7
 
   tags = merge(
@@ -67,7 +100,7 @@ resource "aws_cloudwatch_log_group" "lambda" {
 
 # Lambda Function URL (simpler than API Gateway for SSR)
 resource "aws_lambda_function_url" "ssr" {
-  function_name      = aws_lambda_function.ssr.function_name
+  function_name      = aws_lambda_function.ssr_handler.function_name
   authorization_type = "NONE"
 
   cors {
@@ -79,7 +112,7 @@ resource "aws_lambda_function_url" "ssr" {
   }
 }
 
-# API Gateway HTTP API (alternative to Function URL, better for custom domains)
+# API Gateway HTTP API (better for custom domains, logging, throttling)
 resource "aws_apigatewayv2_api" "ssr" {
   name          = "${var.project_name}-${var.environment}-ssr-api"
   protocol_type = "HTTP"
@@ -103,7 +136,7 @@ resource "aws_apigatewayv2_api" "ssr" {
 resource "aws_apigatewayv2_integration" "ssr" {
   api_id                 = aws_apigatewayv2_api.ssr.id
   integration_type       = "AWS_PROXY"
-  integration_uri        = aws_lambda_function.ssr.invoke_arn
+  integration_uri        = aws_lambda_function.ssr_handler.invoke_arn
   integration_method     = "POST"
   payload_format_version = "2.0"
 }
@@ -161,7 +194,7 @@ resource "aws_cloudwatch_log_group" "api_gateway" {
 resource "aws_lambda_permission" "api_gateway" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.ssr.function_name
+  function_name = aws_lambda_function.ssr_handler.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.ssr.execution_arn}/*/*"
 }

@@ -1,14 +1,26 @@
-output "lambda_function_arn" {
-  description = "ARN of the Lambda function"
-  value       = aws_lambda_function.ssr.arn
+# Lambda SSR Module Outputs
+
+output "function_name" {
+  description = "Lambda function name"
+  value       = aws_lambda_function.ssr_handler.function_name
 }
 
-output "lambda_function_name" {
-  description = "Name of the Lambda function"
-  value       = aws_lambda_function.ssr.function_name
+output "function_arn" {
+  description = "Lambda function ARN"
+  value       = aws_lambda_function.ssr_handler.arn
 }
 
-output "lambda_function_url" {
+output "invoke_arn" {
+  description = "Lambda invoke ARN for API Gateway"
+  value       = aws_lambda_function.ssr_handler.invoke_arn
+}
+
+output "role_arn" {
+  description = "Lambda execution role ARN"
+  value       = aws_iam_role.lambda_exec.arn
+}
+
+output "function_url" {
   description = "Lambda Function URL (direct access)"
   value       = aws_lambda_function_url.ssr.function_url
 }
