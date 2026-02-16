@@ -10,16 +10,40 @@
 
         <!-- Menu Buttons -->
         <div v-show="!showMenu" class="menu-buttons">
-          <GameButton variant="primary" size="lg" full-width @click="handlePlay">
+          <GameButton
+            variant="primary"
+            size="lg"
+            full-width
+            data-testid="menu-start-button"
+            @click="handlePlay"
+          >
             {{ t('menu.play', 'PLAY') }}
           </GameButton>
-          <GameButton variant="secondary" size="lg" full-width @click="toggleMenu">
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="menu-menu-button"
+            @click="toggleMenu"
+          >
             {{ t('menu.menu', 'MENU') }}
           </GameButton>
-          <GameButton variant="warning" size="lg" full-width @click="wrappedGoToSettings">
+          <GameButton
+            variant="warning"
+            size="lg"
+            full-width
+            data-testid="menu-settings-button"
+            @click="wrappedGoToSettings"
+          >
             {{ t('menu.options', 'OPTIONS') }}
           </GameButton>
-          <GameButton variant="secondary" size="lg" full-width @click="wrappedGoToCredits">
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="menu-credits-button"
+            @click="wrappedGoToCredits"
+          >
             {{ t('menu.credits', 'CREDITS') }}
           </GameButton>
         </div>
@@ -27,10 +51,22 @@
         <!-- Menu Panel (when toggled) -->
         <transition name="menu-fade">
           <div v-if="showMenu" class="menu-panel">
-            <GameButton variant="secondary" size="md" full-width @click="wrappedGoToLanguage">
+            <GameButton
+              variant="secondary"
+              size="md"
+              full-width
+              data-testid="menu-language-button"
+              @click="wrappedGoToLanguage"
+            >
               🌐 {{ t('menu.language', 'Language') }}
             </GameButton>
-            <GameButton variant="secondary" size="md" full-width @click="wrappedGoToSettings">
+            <GameButton
+              variant="secondary"
+              size="md"
+              full-width
+              data-testid="menu-panel-settings-button"
+              @click="wrappedGoToSettings"
+            >
               ⚙️ {{ t('menu.settings', 'Settings') }}
             </GameButton>
           </div>
