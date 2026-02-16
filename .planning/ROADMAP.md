@@ -23,9 +23,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8: Core Gameplay** - Main game screen (critical path)
 - [x] **Phase 9: Game Results** - Scoring and leaderboard pages
 - [x] **Phase 10: Settings Pages** - Options and language selection
-- [ ] **Phase 11: Modal Dialogs** - Quit and pause overlays
+- [x] **Phase 11: Modal Dialogs** - Quit and pause overlays
 - [x] **Phase 11.1: Scoring & Player Config** - INSERTED: Score increment ±1, player count 2-10, leaderboard rank fixes
-- [ ] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
+- [x] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
 
 ## Phase Details
 
@@ -248,9 +248,9 @@ Plans:
 
 Plans:
 
-- [ ] 11-01-PLAN.md — Extend GameModal and GameButton with dismissal control and danger variant
-- [ ] 11-02-PLAN.md — Refactor QuitModal to use GameModal with danger variant
-- [ ] 11-03-PLAN.md — Refactor PauseModal to CSS-first with stacked buttons
+- [x] 11-01-PLAN.md — Extend GameModal and GameButton with dismissal control and danger variant
+- [x] 11-02-PLAN.md — Refactor QuitModal to use GameModal with danger variant
+- [x] 11-03-PLAN.md — Refactor PauseModal to CSS-first with stacked buttons
 
 ### Phase 11.1: Scoring & Player Config (INSERTED)
 
@@ -315,18 +315,18 @@ Plans:
 **Execution Order:**
 Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12
 
-| Phase                              | Plans Complete | Status      | Completed  |
-| ---------------------------------- | -------------- | ----------- | ---------- |
-| 1. Design Tokens                   | 3/3            | Complete    | 2026-01-31 |
-| 2. Design Utilities                | 2/2            | Complete    | 2026-01-31 |
-| 3. Core Layout Components          | 2/2            | Complete    | 2026-02-01 |
-| 4. Interactive Components          | 2/2            | Complete    | 2026-02-01 |
-| 5. Structural Components           | 3/3            | Complete    | 2026-02-01 |
-| 6. Splash & Navigation             | 2/2            | Complete    | 2026-02-01 |
-| 7. Player Setup                    | 2/2            | Complete    | 2026-02-01 |
-| 8. Core Gameplay                   | 2/2            | Complete    | 2026-02-01 |
-| 9. Game Results                    | 2/2            | Complete    | 2026-02-01 |
-| 10. Settings Pages                 | 2/2            | Complete    | 2026-02-01 |
-| 11. Modal Dialogs                  | 0/3            | Not started | -          |
-| 11.1. Scoring & Player Config      | 2/2            | Complete    | 2026-02-16 |
-| 12. App Optimization & Refactoring | 0/10           | Planned     | -          |
+| Phase                              | Plans Complete | Status   | Completed  |
+| ---------------------------------- | -------------- | -------- | ---------- |
+| 1. Design Tokens                   | 3/3            | Complete | 2026-01-31 |
+| 2. Design Utilities                | 2/2            | Complete | 2026-01-31 |
+| 3. Core Layout Components          | 2/2            | Complete | 2026-02-01 |
+| 4. Interactive Components          | 2/2            | Complete | 2026-02-01 |
+| 5. Structural Components           | 3/3            | Complete | 2026-02-01 |
+| 6. Splash & Navigation             | 2/2            | Complete | 2026-02-01 |
+| 7. Player Setup                    | 2/2            | Complete | 2026-02-01 |
+| 8. Core Gameplay                   | 2/2            | Complete | 2026-02-01 |
+| 9. Game Results                    | 2/2            | Complete | 2026-02-01 |
+| 10. Settings Pages                 | 2/2            | Complete | 2026-02-01 |
+| 11. Modal Dialogs                  | 3/3            | Complete | 2026-02-16 |
+| 11.1. Scoring & Player Config      | 2/2            | Complete | 2026-02-16 |
+| 12. App Optimization & Refactoring | 10/10          | Complete | 2026-02-16 |
