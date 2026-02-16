@@ -1,0 +1,98 @@
+# {{ appName }}
+
+{{ description }}
+
+## Getting Started
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+{% if withDrizzle %}
+### 2. Set Up Database
+
+Start the local database with Docker:
+
+```bash
+docker-compose up -d
+```
+
+This starts:{% if databaseProvider == "neon" %}
+- PostgreSQL 17 on port 5432
+- Neon Proxy on port 4444 (allows using Neon serverless driver locally){% else %}
+- PostgreSQL 17 on port 5432{% endif %}
+
+Copy `.env.local` and update if needed (default values work with docker-compose):
+
+```bash
+# .env.local is already configured for local development
+# DATABASE_URL is set to work with docker-compose
+```
+
+### 3. Run Database Migrations
+
+Generate and apply migrations:
+
+```bash
+# Generate migration files from schema
+npm run db:generate
+
+# Apply migrations to database
+npm run db:migrate
+```
+
+Optional - Open Drizzle Studio to view/manage your database:
+
+```bash
+npm run db:studio
+```
+{% endif %}
+### {% if withDrizzle %}4{% else %}2{% endif %}. Start Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see your app.
+
+### {% if withDrizzle %}5{% else %}3{% endif %}. Start Storybook (Optional)
+
+Run Storybook for component development:
+
+```bash
+npm run storybook
+```
+
+Open [http://localhost:6006](http://localhost:6006) to view components.
+
+## Tech Stack
+
+- **Next.js 15** - React framework with App Router
+- **React 19** - UI library
+- **TypeScript** - Type safety
+- **Tailwind CSS 4** - Utility-first CSS{% if withDrizzle %}
+- **Drizzle ORM** - Type-safe database ORM
+- **{{ databaseProvider | capitalize }}** - Database provider{% endif %}
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx      # Root layout
+│   ├── page.tsx        # Home page
+│   └── globals.css     # Global styles{% if withDrizzle %}
+├── db/
+│   ├── drizzle.ts      # Database client
+│   ├── schema.ts       # Database schema
+│   └── migrations/     # Migration files{% endif %}
+```
+
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [Tailwind CSS](https://tailwindcss.com/docs){% if withDrizzle %}
+- [Drizzle ORM Documentation](https://orm.drizzle.team/docs/overview)
+- [Drizzle Kit Commands](https://orm.drizzle.team/docs/kit-overview){% endif %}

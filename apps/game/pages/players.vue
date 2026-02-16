@@ -166,7 +166,7 @@ syncPlayerList(playerCount.value)
 </script>
 
 <style scoped lang="scss">
-@use '@/assets/scss/design-system' as *;
+@use 'assets/scss/design-system' as *;
 
 .players-page {
   width: 100%;

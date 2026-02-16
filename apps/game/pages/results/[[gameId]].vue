@@ -208,7 +208,7 @@ useHead({
 </script>
 
 <style scoped lang="scss">
-@use '@/assets/scss/design-system' as *;
+@use 'assets/scss/design-system' as *;
 
 .scoring-page {
   display: flex;
