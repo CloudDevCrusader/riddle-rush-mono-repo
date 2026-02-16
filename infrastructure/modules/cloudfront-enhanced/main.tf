@@ -1,52 +1,6 @@
 # Enhanced CloudFront Module
 # Optimized for maximum performance with edge caching
 
-variable "bucket_regional_domain_name" {
-  description = "Regional domain name of the S3 bucket"
-  type        = string
-}
-
-variable "bucket_arn" {
-  description = "ARN of the S3 bucket"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment (development, staging, production)"
-  type        = string
-  default     = "development"
-}
-
-variable "domain_name" {
-  description = "Custom domain name for CloudFront (deprecated, use domain_names)"
-  type        = string
-  default     = ""
-}
-
-variable "domain_names" {
-  description = "List of custom domain names for CloudFront"
-  type        = list(string)
-  default     = []
-}
-
-variable "certificate_arn" {
-  description = "ACM certificate ARN for custom domain"
-  type        = string
-  default     = ""
-}
-
-variable "price_class" {
-  description = "CloudFront price class"
-  type        = string
-  default     = "PriceClass_100"
-}
-
-variable "enable_spa_rewrite_function" {
-  description = "Enable CloudFront function for SPA routing"
-  type        = bool
-  default     = false
-}
-
 # CloudFront Function for SPA routing (rewrite non-file paths to index.html)
 resource "aws_cloudfront_function" "request_rewrite" {
   count   = var.enable_spa_rewrite_function ? 1 : 0
@@ -331,25 +285,4 @@ resource "aws_cloudfront_distribution" "website" {
     ManagedBy   = "Terraform"
     Optimized   = "EdgeCaching"
   }
-}
-
-# Outputs
-output "distribution_id" {
-  description = "ID of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.id
-}
-
-output "distribution_arn" {
-  description = "ARN of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.arn
-}
-
-output "distribution_domain_name" {
-  description = "Domain name of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.domain_name
-}
-
-output "distribution_hosted_zone_id" {
-  description = "Hosted zone ID of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.hosted_zone_id
 }
