@@ -5,11 +5,9 @@ import { useLogger } from '../composables/useLogger'
 import { useCategoryEmoji } from '../composables/useCategoryEmoji'
 import { useCategoryManager } from '../composables/useCategoryManager'
 import { useSessionManager } from '../composables/useSessionManager'
-import {
-  ALPHABET,
-  SCORE_PER_CORRECT_ANSWER,
-  DEFAULT_DISPLAYED_CATEGORIES,
-} from '@riddle-rush/shared/constants'
+import { usePlayerManager } from '../composables/usePlayerManager'
+import { useScoringEngine } from '../composables/useScoringEngine'
+import { ALPHABET, DEFAULT_DISPLAYED_CATEGORIES } from '@riddle-rush/shared/constants'
 import type {
   GameAttempt,
   GameState,
@@ -60,29 +58,18 @@ export const useGameStore = defineStore('game', {
     players: (state) => state.currentSession?.players ?? [],
     currentRound: (state) => state.currentSession?.currentRound ?? 0,
     allPlayersSubmitted: (state) => {
-      const players = state.currentSession?.players ?? []
-      if (players.length === 0) return false
-      return players.every((p) => p.hasSubmitted)
+      const playerManager = usePlayerManager()
+      return playerManager.allPlayersSubmitted(state.currentSession?.players ?? [])
     },
     currentPlayerTurn: (state) => {
-      const players = state.currentSession?.players ?? []
-      return players.find((p) => !p.hasSubmitted) ?? null
+      const playerManager = usePlayerManager()
+      return playerManager.getCurrentPlayerTurn(state.currentSession?.players ?? [])
     },
     leaderboard(state): PlayerWithRank[] {
+      const playerManager = usePlayerManager()
       const players = state.currentSession?.players ?? []
-      if (players.length === 0) return []
-
-      // Memoize sorting - only recalculate if players or scores changed
-      const sorted = [...players].sort((a, b) => b.totalScore - a.totalScore)
-
       const isGameCompleted = state.currentSession?.status === 'completed'
-      const topScore = sorted[0]?.totalScore ?? 0
-
-      return sorted.map((player, index) => ({
-        ...player,
-        rank: index + 1,
-        isWinner: isGameCompleted && index === 0 && topScore > 0,
-      }))
+      return playerManager.buildLeaderboard(players, isGameCompleted ?? false)
     },
     isGameCompleted: (state) => state.currentSession?.status === 'completed',
     gameStatus: (state) => state.currentSession?.status ?? 'active',
@@ -159,6 +146,8 @@ export const useGameStore = defineStore('game', {
     async submitAttempt(term: string, found: boolean) {
       if (!this.currentSession) return
 
+      const scoringEngine = useScoringEngine()
+
       const attempt: GameAttempt = {
         term,
         found,
@@ -174,9 +163,7 @@ export const useGameStore = defineStore('game', {
       }
 
       this.currentSession.attempts.push(attempt)
-      if (found) {
-        this.currentSession.score += SCORE_PER_CORRECT_ANSWER
-      }
+      this.currentSession.score += scoringEngine.calculateAttemptScore(found)
 
       await this.saveSessionToDB()
     },
@@ -334,6 +321,7 @@ export const useGameStore = defineStore('game', {
     ) {
       const categoryManager = useCategoryManager()
       const sessionManager = useSessionManager()
+      const playerManager = usePlayerManager()
 
       await this.fetchCategories()
 
@@ -344,14 +332,7 @@ export const useGameStore = defineStore('game', {
 
       const letter = customLetter || this.generateLetter()
 
-      const players: Player[] = playerNames.map((name, index) => ({
-        id: crypto.randomUUID(),
-        name: name || `Player ${index + 1}`,
-        totalScore: 0,
-        currentRoundScore: 0,
-        currentRoundAnswer: undefined,
-        hasSubmitted: false,
-      }))
+      const players = playerManager.createPlayers(playerNames)
 
       const session = sessionManager.createSession(players, category, letter, gameName)
 
@@ -364,14 +345,14 @@ export const useGameStore = defineStore('game', {
     async submitPlayerAnswer(playerId: string, answer: string) {
       if (!this.currentSession) return
 
-      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      const playerManager = usePlayerManager()
+      const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
       // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
-      player.currentRoundAnswer = answer
-      player.hasSubmitted = true
+      playerManager.submitPlayerAnswer(player, answer)
 
       await this.saveSessionToDB()
     },
@@ -379,18 +360,15 @@ export const useGameStore = defineStore('game', {
     async assignPlayerScore(playerId: string, points: number) {
       if (!this.currentSession) return
 
-      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      const playerManager = usePlayerManager()
+      const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
       // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
 
-      // Calculate delta to ensure idempotent score assignment
-      // Calling with the same value multiple times is safe (delta = 0)
-      const delta = points - player.currentRoundScore
-      player.totalScore += delta
-      player.currentRoundScore = points
+      playerManager.assignPlayerScore(player, points)
 
       await this.saveSessionToDB()
     },
@@ -398,13 +376,14 @@ export const useGameStore = defineStore('game', {
     async updatePlayerAvatar(playerId: string, avatarUrl: string) {
       if (!this.currentSession) return
 
-      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      const playerManager = usePlayerManager()
+      const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
       // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
-      player.avatar = avatarUrl
+      playerManager.updatePlayerAvatar(player, avatarUrl)
 
       await this.saveSessionToDB()
     },
@@ -433,6 +412,7 @@ export const useGameStore = defineStore('game', {
       if (!this.currentSession) return
 
       const categoryManager = useCategoryManager()
+      const playerManager = usePlayerManager()
 
       // Use provided category and letter, or pick random ones
       const selectedCategory = category || categoryManager.getRandomCategory(this.categories)
@@ -443,11 +423,7 @@ export const useGameStore = defineStore('game', {
       const selectedLetter = letter || this.generateLetter()
 
       // Reset player round state
-      this.currentSession.players.forEach((player) => {
-        player.currentRoundScore = 0
-        player.currentRoundAnswer = undefined
-        player.hasSubmitted = false
-      })
+      playerManager.resetPlayerRoundState(this.currentSession.players)
 
       this.currentSession.currentRound += 1
       this.currentSession.category = { ...selectedCategory, letter: selectedLetter }
@@ -461,16 +437,16 @@ export const useGameStore = defineStore('game', {
     async resetPlayerSubmissions() {
       if (!this.currentSession) return
 
-      this.currentSession.players.forEach((player) => {
-        player.hasSubmitted = false
-      })
+      const playerManager = usePlayerManager()
+      playerManager.resetPlayerSubmissions(this.currentSession.players)
 
       await this.saveSessionToDB()
     },
 
     getPlayerById(playerId: string): Player | null {
       if (!this.currentSession) return null
-      return this.currentSession.players.find((p) => p.id === playerId) ?? null
+      const playerManager = usePlayerManager()
+      return playerManager.getPlayerById(this.currentSession.players, playerId)
     },
   },
 })
