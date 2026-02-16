@@ -502,3 +502,96 @@ push_version_tag() {
 	git push origin "v${version}" || echo -e "${YELLOW}⚠️  Failed to push tag (may already exist)${NC}"
 	echo -e "${GREEN}✓ Tag ${version} pushed${NC}"
 }
+
+# ===========================================
+# Deployment Verification & Rollback
+# ===========================================
+
+verify_deployment() {
+	local url=$1
+	local max_attempts=${2:-5}
+	local attempt=1
+
+	log "INFO" "Verifying deployment at $url..."
+
+	while [ $attempt -le $max_attempts ]; do
+		local http_code
+		http_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+		if [ "$http_code" = "200" ]; then
+			log "SUCCESS" "Deployment verified (HTTP 200) at $url"
+			return 0
+		fi
+		log "WARN" "Attempt $attempt/$max_attempts: HTTP $http_code, retrying in 10s..."
+		sleep 10
+		((attempt++))
+	done
+
+	log "ERROR" "Deployment verification failed after $max_attempts attempts"
+	return 1
+}
+
+create_deployment_backup() {
+	local s3_bucket=$1
+	local backup_prefix="backup-$(date +%Y%m%d-%H%M%S)"
+
+	log "INFO" "Creating pre-deployment backup: $backup_prefix"
+
+	aws s3 sync "s3://$s3_bucket/" "s3://$s3_bucket-backups/$backup_prefix/" \
+		--quiet 2>/dev/null || {
+		log "WARN" "Backup creation failed (backup bucket may not exist)"
+		echo ""
+		return 1
+	}
+
+	log "SUCCESS" "Backup created at s3://$s3_bucket-backups/$backup_prefix/"
+	echo "$backup_prefix"
+}
+
+rollback_deployment() {
+	local s3_bucket=$1
+	local backup_prefix=$2
+	local cloudfront_id=${3:-}
+
+	log "ERROR" "Initiating rollback from backup: $backup_prefix"
+
+	aws s3 sync "s3://$s3_bucket-backups/$backup_prefix/" "s3://$s3_bucket/" \
+		--delete 2>/dev/null || {
+		log "ERROR" "Rollback failed! Manual intervention required."
+		return 1
+	}
+
+	if [[ -n "$cloudfront_id" ]]; then
+		local invalidation_id
+		invalidation_id=$(aws cloudfront create-invalidation \
+			--distribution-id "$cloudfront_id" \
+			--paths "/*" \
+			--query 'Invalidation.Id' \
+			--output text 2>/dev/null || echo "")
+		if [[ -n "$invalidation_id" ]]; then
+			log "INFO" "CloudFront invalidation created: $invalidation_id"
+		fi
+	fi
+
+	log "SUCCESS" "Rollback complete"
+}
+
+cleanup_old_backups() {
+	local s3_bucket=$1
+	local keep=${2:-5}
+
+	log "INFO" "Cleaning up old backups (keeping last $keep)..."
+
+	local backups
+	backups=$(aws s3 ls "s3://$s3_bucket-backups/" 2>/dev/null | awk '{print $2}' | sort -r)
+	local count=0
+
+	for backup in $backups; do
+		((count++))
+		if [ $count -gt $keep ]; then
+			log "INFO" "Removing old backup: $backup"
+			aws s3 rm "s3://$s3_bucket-backups/$backup" --recursive --quiet 2>/dev/null
+		fi
+	done
+
+	log "SUCCESS" "Backup cleanup complete"
+}
