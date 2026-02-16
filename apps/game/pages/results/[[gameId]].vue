@@ -5,7 +5,7 @@
         {{ t('scoring.title', 'Scoring') }}
       </GameHeader>
 
-      <div class="scoring-page__list">
+      <div class="scoring-page__list" data-testid="results-scores-container">
         <div
           v-for="(player, index) in players"
           :key="player.id"
@@ -13,6 +13,7 @@
           :initial="{ opacity: 0, y: 20 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: index * 50 } }"
           class="scoring-page__player-entry"
+          :data-testid="`results-player-entry-${index}`"
         >
           <GamePlayerCard
             :player="player"
