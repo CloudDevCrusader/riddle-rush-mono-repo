@@ -136,7 +136,9 @@ Plan created below — the Implementation step has been replaced with 5 concrete
 
 ---
 
-### [ ] Step: Implement score entry UI on results page
+### [x] Step: Implement score entry UI on results page
+
+<!-- chat-id: ccb3b8db-fade-4e51-b6dc-43855fe43411 -->
 
 **Goal:** Add per-player score controls (+/- buttons + score display) and a "Confirm Scores" button to the results page, wiring them to `assignPlayerScore()` and `completeRound()`.
 
@@ -180,6 +182,8 @@ Plan created below — the Implementation step has been replaced with 5 concrete
 ---
 
 ### [ ] Step: Add leaderboard overlay and decision modal to results page
+
+<!-- chat-id: ca6b452f-9a42-4807-9db7-e70df48e02fb -->
 
 **Goal:** After scores are confirmed, show the `PlayerLeaderboard` overlay briefly, then present a "Next Round or Finish?" modal.
 

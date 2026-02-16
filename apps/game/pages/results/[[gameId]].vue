@@ -59,15 +59,59 @@
         {{ t('scoring.confirm_scores', 'Confirm Scores') }}
       </GameButton>
     </div>
+
+    <!-- Leaderboard overlay (shown briefly after confirming scores) -->
+    <PlayerLeaderboard
+      :visible="showLeaderboard"
+      :players="leaderboard"
+      :is-game-completed="false"
+      :current-round="currentRound"
+      @close="handleLeaderboardDismiss"
+      @continue="handleLeaderboardDismiss"
+    />
+
+    <!-- Decision modal: next round or finish game -->
+    <GameModal
+      v-model="showDecisionModal"
+      :title="t('scoring.round_complete', 'Round Complete!')"
+      :close-on-backdrop="false"
+      :close-on-escape="false"
+    >
+      <div class="decision-content">
+        <p class="decision-content__text">
+          {{ t('scoring.play_another_round', 'Would you like to play another round?') }}
+        </p>
+        <div class="decision-content__actions">
+          <GameButton
+            variant="primary"
+            size="lg"
+            full-width
+            data-testid="next-round"
+            @click="handleNextRound"
+          >
+            {{ t('scoring.next_round', 'Next Round') }}
+          </GameButton>
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="finish-game"
+            @click="handleFinishGame"
+          >
+            {{ t('scoring.finish_game', 'Finish Game') }}
+          </GameButton>
+        </div>
+      </div>
+    </GameModal>
   </GameBackground>
 </template>
 
 <script setup lang="ts">
-import { SCORE_INCREMENT } from '@riddle-rush/shared/constants'
+import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
 const { t } = usePageSetup()
-const { gameStore, players } = useGameState()
-const { goToRoundStart } = useNavigation()
+const { gameStore, players, leaderboard, currentRound } = useGameState()
+const { goToRoundStart, goToLeaderboard } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
 
 // Pending scores for each player (local state before confirming)
@@ -82,6 +126,11 @@ onMounted(() => {
 
 const isConfirming = ref(false)
 
+// Post-confirm overlay/modal state
+const showLeaderboard = ref(false)
+const showDecisionModal = ref(false)
+let dismissTimer: ReturnType<typeof setTimeout> | null = null
+
 const incrementScore = (playerId: string) => {
   const current = pendingScores.get(playerId) ?? 0
   pendingScores.set(playerId, current + SCORE_INCREMENT)
@@ -94,6 +143,15 @@ const decrementScore = (playerId: string) => {
     pendingScores.set(playerId, current - SCORE_INCREMENT)
     void playClick()
   }
+}
+
+const handleLeaderboardDismiss = () => {
+  if (dismissTimer) {
+    clearTimeout(dismissTimer)
+    dismissTimer = null
+  }
+  showLeaderboard.value = false
+  showDecisionModal.value = true
 }
 
 const handleConfirmScores = async () => {
@@ -111,14 +169,32 @@ const handleConfirmScores = async () => {
 
     void playScoreIncrease()
 
-    // Navigate to round start for the next round
-    // (The next step will add leaderboard overlay + decision modal here)
-    await goToRoundStart()
+    // Show leaderboard overlay (auto-dismisses after timeout)
+    showLeaderboard.value = true
+    dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS)
   } catch {
     // Score saving failed — allow the user to retry
     isConfirming.value = false
   }
 }
+
+const handleNextRound = async () => {
+  showDecisionModal.value = false
+  await goToRoundStart()
+}
+
+const handleFinishGame = async () => {
+  showDecisionModal.value = false
+  await gameStore.completeGame()
+  await goToLeaderboard()
+}
+
+onUnmounted(() => {
+  if (dismissTimer) {
+    clearTimeout(dismissTimer)
+    dismissTimer = null
+  }
+})
 
 useHead({
   title: t('scoring.title', 'Scoring'),
@@ -174,6 +250,21 @@ useHead({
 
 .scoring-page__button {
   max-width: 600px;
+}
+
+.decision-content {
+  text-align: center;
+}
+
+.decision-content__text {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.decision-content__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 @media (max-width: 640px) {
