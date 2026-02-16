@@ -1319,4 +1319,178 @@ describe('Game Store', () => {
       }
     })
   })
+
+  describe('Complete Game', () => {
+    beforeEach(async () => {
+      const store = useGameStore()
+      await store.setupPlayers(['Alice', 'Bob'])
+
+      const [alice, bob] = store.players
+      if (alice && bob) {
+        await store.submitPlayerAnswer(alice.id, 'Answer 1')
+        await store.submitPlayerAnswer(bob.id, 'Answer 2')
+        await store.assignPlayerScore(alice.id, 100)
+        await store.assignPlayerScore(bob.id, 50)
+        await store.completeRound()
+      }
+    })
+
+    it('sets status to completed', async () => {
+      const store = useGameStore()
+      await store.completeGame()
+
+      expect(store.currentSession?.status).toBe('completed')
+    })
+
+    it('sets endTime', async () => {
+      const store = useGameStore()
+      const before = Date.now()
+
+      await store.completeGame()
+
+      const after = Date.now()
+      expect(store.currentSession?.endTime).toBeGreaterThanOrEqual(before)
+      expect(store.currentSession?.endTime).toBeLessThanOrEqual(after)
+    })
+
+    it('keeps session for leaderboard display', async () => {
+      const store = useGameStore()
+      await store.completeGame()
+
+      // Session should NOT be cleared (unlike endGame)
+      expect(store.currentSession).not.toBeNull()
+      expect(store.hasActiveSession).toBe(true)
+    })
+
+    it('returns the completed session', async () => {
+      const store = useGameStore()
+      const result = await store.completeGame()
+
+      expect(result).toBeDefined()
+      expect(result?.status).toBe('completed')
+    })
+
+    it('persists to database', async () => {
+      const store = useGameStore()
+      mockSaveGameSession.mockClear()
+      mockSaveGameHistory.mockClear()
+
+      await store.completeGame()
+
+      expect(mockSaveGameSession).toHaveBeenCalled()
+      expect(mockSaveGameHistory).toHaveBeenCalled()
+    })
+
+    it('calls updateStatistics', async () => {
+      const store = useGameStore()
+      mockUpdateStatistics.mockClear()
+
+      await store.completeGame()
+
+      expect(mockUpdateStatistics).toHaveBeenCalled()
+    })
+
+    it('does nothing without active session', async () => {
+      const store = useGameStore()
+      store.currentSession = null
+      mockSaveGameSession.mockClear()
+
+      await store.completeGame()
+
+      expect(mockSaveGameSession).not.toHaveBeenCalled()
+    })
+
+    it('isGameCompleted getter returns true after completeGame', async () => {
+      const store = useGameStore()
+
+      expect(store.isGameCompleted).toBe(false)
+
+      await store.completeGame()
+
+      expect(store.isGameCompleted).toBe(true)
+    })
+
+    it('gameStatus getter returns completed after completeGame', async () => {
+      const store = useGameStore()
+
+      expect(store.gameStatus).toBe('active')
+
+      await store.completeGame()
+
+      expect(store.gameStatus).toBe('completed')
+    })
+  })
+
+  describe('Leaderboard Winner Logic', () => {
+    beforeEach(async () => {
+      const store = useGameStore()
+      await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
+
+      const [alice, bob, charlie] = store.players
+      if (alice && bob && charlie) {
+        await store.assignPlayerScore(alice.id, 100)
+        await store.assignPlayerScore(bob.id, 200)
+        await store.assignPlayerScore(charlie.id, 150)
+      }
+    })
+
+    it('isWinner is false for all players when game is active', () => {
+      const store = useGameStore()
+      const leaderboard = store.leaderboard
+
+      expect(leaderboard.every((p) => p.isWinner === false)).toBe(true)
+    })
+
+    it('isWinner is true only for first place when game is completed', async () => {
+      const store = useGameStore()
+      await store.completeGame()
+
+      const leaderboard = store.leaderboard
+
+      // Bob has highest score (200) and should be winner
+      expect(leaderboard[0]?.name).toBe('Bob')
+      expect(leaderboard[0]?.isWinner).toBe(true)
+
+      // Others should not be winners
+      expect(leaderboard[1]?.isWinner).toBe(false)
+      expect(leaderboard[2]?.isWinner).toBe(false)
+    })
+
+    it('isWinner is false when top score is 0', async () => {
+      const store = useGameStore()
+
+      // Reset all scores to 0
+      for (const player of store.players) {
+        await store.assignPlayerScore(player.id, 0)
+      }
+
+      await store.completeGame()
+
+      const leaderboard = store.leaderboard
+
+      // No winner when all scores are 0
+      expect(leaderboard.every((p) => p.isWinner === false)).toBe(true)
+    })
+
+    it('rank is assigned correctly', () => {
+      const store = useGameStore()
+      const leaderboard = store.leaderboard
+
+      expect(leaderboard[0]?.rank).toBe(1)
+      expect(leaderboard[1]?.rank).toBe(2)
+      expect(leaderboard[2]?.rank).toBe(3)
+    })
+
+    it('players are sorted by totalScore descending', () => {
+      const store = useGameStore()
+      const leaderboard = store.leaderboard
+
+      expect(leaderboard[0]?.name).toBe('Bob')
+      expect(leaderboard[0]?.totalScore).toBe(200)
+      expect(leaderboard[1]?.name).toBe('Charlie')
+      expect(leaderboard[1]?.totalScore).toBe(150)
+      expect(leaderboard[2]?.name).toBe('Alice')
+      expect(leaderboard[2]?.totalScore).toBe(100)
+    })
+  })
 })
