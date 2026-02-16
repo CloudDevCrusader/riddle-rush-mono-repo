@@ -181,7 +181,7 @@ Plan created below — the Implementation step has been replaced with 5 concrete
 
 ---
 
-### [ ] Step: Add leaderboard overlay and decision modal to results page
+### [x] Step: Add leaderboard overlay and decision modal to results page
 
 <!-- chat-id: ca6b452f-9a42-4807-9db7-e70df48e02fb -->
 
@@ -232,6 +232,8 @@ Plan created below — the Implementation step has been replaced with 5 concrete
 ---
 
 ### [ ] Step: E2E and unit tests
+
+<!-- chat-id: c2ea1e8c-7913-4512-ba71-1e5026b5b75f -->
 
 **Goal:** Write comprehensive tests for the new scoring workflow.
 
