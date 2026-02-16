@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Phase 11 - Modal Dialogs (remaining plans 11-02, 11-03)
+**Current focus:** Phase 12 - App Optimization & Refactoring
 
 ## Current Position
 
-Phase: 11 of 12 (Modal Dialogs — remaining plans)
-Plan: 1 of 3 in Phase 11 (11-01 complete, 11-02 and 11-03 pending)
-Status: In progress
-Last activity: 2026-02-16 - Completed Phase 11.1 (Scoring & Player Config) — verified ✅
+Phase: 12 of 12 (App Optimization & Refactoring)
+Plan: 1 of 10 — In progress
+Status: Executing
+Last activity: 2026-02-16 - Completed Plan 12-01 (E2E Test Resilience)
 
-Progress: [████████████████████████░░] 93% (26/28 plans complete)
+Progress: [█████████████████████████░░░] 76% (29/38 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 26
+- Total plans completed: 29
 - Average duration: 3.4 min
-- Total execution time: ~1.5 hours
+- Total execution time: ~1.6 hours
 
 **By Phase:**
 
@@ -38,13 +38,14 @@ Progress: [███████████████████████
 | 08-core-gameplay           | 2/2   | 5min  | 2.5min   |
 | 09-game-results            | 2/2   | 7min  | 3.5min   |
 | 10-settings-pages          | 2/2   | 7min  | 3.5min   |
-| 11-modal-dialogs           | 1/3   | 3min  | 3min     |
+| 11-modal-dialogs           | 3/3   | 9min  | 3min     |
 | 11.1-scoring-player-config | 2/2   | 14min | 7min     |
+| 12-app-optimization        | 1/10  | 4min  | 4min     |
 
 **Recent Trend:**
 
-- Last 5 plans: 3min, 3min, 3min, 8min, 6min
-- Trend: Consistent ~3-7 min per plan
+- Last 5 plans: 3min, 3min, 8min, 6min, 4min
+- Trend: Consistent ~3-8 min per plan
 
 _Updated after each plan completion_
 
@@ -94,6 +95,9 @@ Recent decisions affecting current work:
 - SCORE_INCREMENT reduced from 10 to 1 for finer-grained scoring (11.1-01)
 - Player range expanded to 2-10 with default 2, configurable via env vars (11.1-01)
 - Player limits sourced from Nuxt runtimeConfig.public for env var overrides (11.1-01)
+- data-testid naming convention: {page}-{element}-{type} for E2E test resilience (12-01)
+- Dynamic data-testid via template literals for indexed elements (12-01)
+- Reusable E2E test helper functions for multi-step game flows (12-01)
 
 ### Pending Todos
 
@@ -124,16 +128,16 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed Phase 11.1 (Scoring & Player Config) — verified ✅
+Stopped at: Completed 12-01-PLAN.md (E2E Test Resilience)
 Resume file: None
 
 ### Phase 11 Plans Status
 
 - **11-01**: Complete - GameModal dismissal control props and GameButton danger variant
-- **11-02**: Pending - Quit modal implementation
-- **11-03**: Pending - Pause modal implementation
+- **11-02**: Complete - Quit modal refactored to use GameModal with danger variant
+- **11-03**: Complete - Pause modal refactored with CSS-first stacked buttons
 
-**Phase 11 (Modal Dialogs): IN PROGRESS** (1/3 plans complete)
+**Phase 11 (Modal Dialogs): COMPLETE** (3/3 plans complete)
 
 ### Phase 11.1 Plans Status
 
@@ -141,6 +145,10 @@ Resume file: None
 - **11.1-02**: Complete - GameScrollList rank fix
 
 **Phase 11.1 (Scoring & Player Config): COMPLETE** (2/2 plans, verified ✅)
+
+### Phase 12 Plans Status
+
+- **12-01**: Complete - E2E test resilience with data-testid selectors
 
 ### Roadmap Evolution
 
