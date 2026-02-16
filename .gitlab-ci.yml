@@ -42,8 +42,12 @@ before_script:
   # Conditionally enable corepack only if not already available
   - |
     if ! command -v pnpm &> /dev/null; then
-      echo "pnpm not found, enabling corepack..."
-      corepack enable && corepack prepare pnpm@10.28.0 --activate
+      echo "pnpm not found, installing via corepack..."
+      corepack enable --install-directory ~/.local/bin 2>/dev/null \
+        || sudo corepack enable 2>/dev/null \
+        || corepack enable
+      corepack prepare pnpm@10.28.0 --activate
+      export PATH="$HOME/.local/bin:$PATH"
     else
       echo "pnpm already available, skipping corepack setup"
     fi
