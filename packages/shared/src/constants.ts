@@ -9,9 +9,11 @@ export const DB_VERSION = 2
 
 // Game Configuration
 export const SCORE_PER_CORRECT_ANSWER = 10
-export const SCORE_INCREMENT = 10
+export const SCORE_INCREMENT = 1
 export const MIN_ROUND_NUMBER = 1
-export const MAX_PLAYERS = 6
+export const MIN_PLAYERS = 2
+export const MAX_PLAYERS = 10
+export const DEFAULT_PLAYERS = 2
 export const MAX_SUGGESTIONS = 4
 export const DEFAULT_DISPLAYED_CATEGORIES = 9
 

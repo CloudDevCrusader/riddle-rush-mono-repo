@@ -1,3 +1,4 @@
+import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants'
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 import { filterSsrPlugins } from './utils/filter-ssr-plugins'
@@ -140,6 +141,10 @@ export default defineNuxtConfig({
       gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
       gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
       gtagId: process.env.GTAG_ID || '',
+      // Game configuration - env vars override shared constants
+      minPlayers: Number(process.env.NUXT_PUBLIC_MIN_PLAYERS) || MIN_PLAYERS,
+      maxPlayers: Number(process.env.NUXT_PUBLIC_MAX_PLAYERS) || MAX_PLAYERS,
+      defaultPlayers: Number(process.env.NUXT_PUBLIC_DEFAULT_PLAYERS) || DEFAULT_PLAYERS,
       // Additional variables with safe Terraform fallback
       ...((): Record<string, string> => {
         const terraform = getTerraformOutputsFromEnv()
