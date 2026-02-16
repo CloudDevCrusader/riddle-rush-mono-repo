@@ -50,7 +50,9 @@ Plan created below — the Implementation step has been replaced with 5 concrete
 
 ---
 
-### [ ] Step: Fix store bug and QuitModal double-navigation
+### [x] Step: Fix store bug and QuitModal double-navigation
+
+<!-- chat-id: 68154ee1-3e25-4adf-bdfd-c5345403cf4f -->
 
 **Goal:** Fix two bugs that must be resolved before any new scoring logic is wired up.
 
