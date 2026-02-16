@@ -7,6 +7,7 @@
             <button
               class="back-button"
               type="button"
+              data-testid="players-back-button"
               :aria-label="t('common.back', 'Back')"
               @click="goBack"
             >
@@ -22,6 +23,7 @@
               <button
                 class="stepper__button stepper__button--minus"
                 type="button"
+                data-testid="players-decrease-button"
                 :aria-label="t('players.decrease')"
                 :disabled="playerCount <= minPlayers"
                 @click="changePlayerCount(-1)"
@@ -34,6 +36,7 @@
               <button
                 class="stepper__button stepper__button--plus"
                 type="button"
+                data-testid="players-increase-button"
                 :aria-label="t('players.increase')"
                 :disabled="playerCount >= maxPlayers"
                 @click="changePlayerCount(1)"
@@ -53,6 +56,7 @@
                 v-model="playerNames[index]"
                 type="text"
                 class="player-row__input"
+                :data-testid="`players-name-input-${index}`"
                 :placeholder="placeholderForIndex(index)"
                 maxlength="20"
                 autocomplete="off"
@@ -65,6 +69,7 @@
             variant="primary"
             size="lg"
             full-width
+            data-testid="players-start-button"
             @click="startGame"
           >
             {{ t('players.start') }}
