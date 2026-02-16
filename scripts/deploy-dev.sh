@@ -118,6 +118,9 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 # Display deployment URL
 CURRENT_URL=https://dev.riddlerush.de
 
+# Post-deployment tasks
+post_deployment "development"
+
 echo -e "\n${BLUE}💡 Tips:${NC}"
 echo -e "  - Run E2E tests: ${YELLOW}BASE_URL=${CURRENT_URL} pnpm run test:e2e${NC}"
 echo -e "  - Check CloudFront invalidation status in AWS Console"
