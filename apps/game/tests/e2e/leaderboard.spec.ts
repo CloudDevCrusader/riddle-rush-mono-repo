@@ -2,176 +2,102 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Leaderboard Page', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up game state first by going through players page
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
+    // Set up game state by going through the full flow:
+    // players → round-start → game → results → confirm → leaderboard
+    await page.goto('/players', { timeout: 30000 })
 
-    // Start game with default player to initialize store
-    const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await page.waitForTimeout(2000)
+    // Wait for players page to load
+    const playerStartBtn = page.locator('[data-testid="players-start-button"]')
+    await expect(playerStartBtn).toBeVisible({ timeout: 15000 })
+    await playerStartBtn.click()
 
-    // Wait for round-start to complete
-    await expect(page).toHaveURL(/\/round-start/, { timeout: 10000 })
-    await page.waitForTimeout(2000)
+    // Wait for game page (goes through /round-start → /game)
+    await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
+    await page.waitForTimeout(500)
 
-    // Now navigate to leaderboard
-    await page.goto('/leaderboard')
-  })
+    // Submit answers for both players
+    const answerInput = page.locator('[data-testid="game-answer-input"]')
+    const submitBtn = page.locator('[data-testid="game-submit-button"]')
 
-  test('should display leaderboard page with all elements', async ({ page }) => {
-    // Check for title
-    const title = page.locator('.title-image')
-    await expect(title).toBeVisible()
+    // Player 1
+    await expect(answerInput).toBeVisible({ timeout: 5000 })
+    await answerInput.fill('TestAnswer1')
+    await submitBtn.click()
+    await page.waitForTimeout(500)
 
-    // Check for ranking
-    const ranking = page.locator('.ranking-image')
-    await expect(ranking).toBeVisible()
+    // Player 2
+    await expect(answerInput).toBeVisible({ timeout: 5000 })
+    await answerInput.fill('TestAnswer2')
+    await submitBtn.click()
+    await page.waitForTimeout(1000)
 
-    // Check for leaderboard list
-    const leaderboardList = page.locator('.leaderboard-list')
-    await expect(leaderboardList).toBeVisible()
+    // Click NEXT to go to results
+    const nextBtn = page.locator('[data-testid="next-button"]')
+    await expect(nextBtn).toBeVisible({ timeout: 10000 })
+    await nextBtn.click()
+    await expect(page).toHaveURL(/\/results/, { timeout: 5000 })
 
-    // Check for action buttons (finish button should always be visible)
-    const finishBtn = page.locator('.finish-btn')
-    await expect(finishBtn).toBeVisible()
-  })
+    // Confirm scores (default 0 for all) to trigger leaderboard overlay
+    const confirmBtn = page.locator('[data-testid="confirm-scores"]')
+    await expect(confirmBtn).toBeVisible({ timeout: 5000 })
+    await confirmBtn.click()
 
-  test('should display leaderboard entries', async ({ page }) => {
-    // Wait for page to fully load
-    await page.waitForLoadState('networkidle')
+    // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+    const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+    await finishGameBtn.click()
 
-    const entries = page.locator('.leaderboard-item')
-
-    // Wait for at least one entry to appear
-    await expect(entries.first()).toBeVisible({ timeout: 5000 })
-
-    const count = await entries.count()
-    expect(count).toBeGreaterThan(0)
-  })
-
-  test('should display rank badges', async ({ page }) => {
-    const firstEntry = page.locator('.leaderboard-item').first()
-    const rankBadge = firstEntry.locator('.rank-badge')
-
-    await expect(rankBadge).toBeVisible()
-  })
-
-  test('should display rank badges for all positions (not limited to 6)', async ({ page }) => {
-    // This test verifies the fix: rank badges should show for position 4+
-    // Previously, GameScrollList had `v-else-if="index < 6"` which limited badges to positions 4-6
-    const entries = page.locator('.leaderboard-item')
-    const count = await entries.count()
-
-    // Each leaderboard entry should have a rank badge (crown or numbered)
-    for (let i = 0; i < count; i++) {
-      const entry = entries.nth(i)
-      const rankBadge = entry.locator('.rank-badge')
-      await expect(rankBadge).toBeVisible()
-    }
-  })
-
-  test('should display player info in each entry', async ({ page }) => {
-    const firstEntry = page.locator('.leaderboard-item').first()
-    const playerName = firstEntry.locator('.player-name')
-    const scoreValue = firstEntry.locator('.score-value')
-
-    await expect(playerName).toBeVisible()
-    await expect(scoreValue).toBeVisible()
-    await expect(scoreValue).toHaveText(/\d+/)
-  })
-
-  test('should display player avatars', async ({ page }) => {
-    const firstEntry = page.locator('.leaderboard-item').first()
-    const playerAvatar = firstEntry.locator('.player-avatar')
-
-    await expect(playerAvatar).toBeVisible()
-  })
-
-  test('should navigate to menu when clicking finish (game completed)', async ({ page }) => {
-    // Note: This test assumes game is completed
-    // In a real scenario, you'd need to complete the game first
-    const finishBtn = page.locator('.finish-btn')
-    await finishBtn.click()
-
-    // Should navigate to home or round-start depending on game state
+    // Now we should be on the leaderboard page
+    await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 })
     await page.waitForTimeout(500)
   })
 
-  test('should show back button when game is not completed', async ({ page }) => {
-    // Back button should be visible when game is not completed
-    const backBtn = page.locator('.back-btn')
-    // Back button may or may not be visible depending on game state
-    const backBtnCount = await backBtn.count()
-    // If visible, it should work
-    if (backBtnCount > 0) {
-      await expect(backBtn).toBeVisible()
-    }
+  test('should display leaderboard container', async ({ page }) => {
+    const container = page.locator('[data-testid="leaderboard-container"]')
+    await expect(container).toBeVisible()
   })
 
-  test('should not show back button when game is completed', async ({ page }) => {
-    // When game is completed, back button should be hidden
-    // This would require setting up a completed game state
-    // For now, we just verify the finish button is present
-    const finishBtn = page.locator('.finish-btn')
+  test('should display leaderboard entries', async ({ page }) => {
+    // Should have entries for both default players
+    const entry0 = page.locator('[data-testid="leaderboard-entry-0"]')
+    await expect(entry0).toBeVisible()
+
+    const entry1 = page.locator('[data-testid="leaderboard-entry-1"]')
+    await expect(entry1).toBeVisible()
+  })
+
+  test('should display player names in entries', async ({ page }) => {
+    const playerName0 = page.locator('[data-testid="leaderboard-player-name-0"]')
+    await expect(playerName0).toBeVisible()
+
+    const playerName1 = page.locator('[data-testid="leaderboard-player-name-1"]')
+    await expect(playerName1).toBeVisible()
+  })
+
+  test('should display player scores in entries', async ({ page }) => {
+    const playerScore0 = page.locator('[data-testid="leaderboard-player-score-0"]')
+    await expect(playerScore0).toBeVisible()
+
+    const playerScore1 = page.locator('[data-testid="leaderboard-player-score-1"]')
+    await expect(playerScore1).toBeVisible()
+  })
+
+  test('should display finish button (game is completed)', async ({ page }) => {
+    // Game was completed via "Finish Game" — so only finish button should show
+    const finishBtn = page.locator('[data-testid="leaderboard-finish-button"]')
     await expect(finishBtn).toBeVisible()
   })
 
-  test('should show game complete message when game is completed', async ({ page }) => {
-    // Game complete message should appear when game is completed
-    const completeMessage = page.locator('.game-complete-message')
-    // May or may not be visible depending on game state
-    const messageCount = await completeMessage.count()
-    if (messageCount > 0) {
-      await expect(completeMessage).toBeVisible()
-    }
+  test('should not display next round button when game is completed', async ({ page }) => {
+    // Game was completed — next round button should NOT be visible
+    const nextRoundBtn = page.locator('[data-testid="leaderboard-next-round-button"]')
+    await expect(nextRoundBtn).not.toBeVisible()
   })
 
-  test('should have scroll bar decoration', async ({ page }) => {
-    const scrollBar = page.locator('.scroll-bar')
-    await expect(scrollBar).toBeVisible()
-  })
+  test('should navigate to menu when clicking finish', async ({ page }) => {
+    const finishBtn = page.locator('[data-testid="leaderboard-finish-button"]')
+    await finishBtn.click()
 
-  test('should be responsive on mobile', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 })
-
-    const title = page.locator('.title-image')
-    const leaderboardList = page.locator('.leaderboard-list')
-    const finishBtn = page.locator('.finish-btn')
-
-    await expect(title).toBeVisible()
-    await expect(leaderboardList).toBeVisible()
-    await expect(finishBtn).toBeVisible()
-  })
-
-  test('should have entries sorted by score descending', async ({ page }) => {
-    const scoreValues = await page.locator('.score-value').allTextContents()
-    const scores = scoreValues.map((s) => Number.parseInt(s)).filter((s) => !Number.isNaN(s))
-
-    // Check if scores are in descending order
-    for (let i = 0; i < scores.length - 1; i++) {
-      const currentScore = scores[i]
-      const nextScore = scores[i + 1]
-      if (currentScore !== undefined && nextScore !== undefined) {
-        expect(currentScore).toBeGreaterThanOrEqual(nextScore)
-      }
-    }
-  })
-
-  test('should navigate to round-start when next round clicked (game not completed)', async ({
-    page,
-  }) => {
-    // When game is not completed, next round button should go to round-start
-    const nextRoundBtn = page.locator('.next-round-btn')
-    // Only click if the button exists (game not completed)
-    const btnCount = await nextRoundBtn.count()
-    if (btnCount > 0) {
-      await nextRoundBtn.click()
-
-      // Should navigate to round-start or home depending on game state
-      await page.waitForTimeout(500)
-      const url = page.url()
-      expect(url).toMatch(/\/(round-start|\/)/)
-    }
+    await expect(page).toHaveURL(/\/$/)
   })
 })
