@@ -20,7 +20,6 @@ test.describe('Translation Checks', () => {
     const matches = bodyText.match(keyPattern)
 
     if (matches) {
-      // eslint-disable-next-line no-console
       console.log('Found potential missing keys:', matches)
     }
     expect(matches).toBeNull()
@@ -78,7 +77,6 @@ test.describe('Translation Checks', () => {
       categoryName = (await gameCatName.textContent()) ?? ''
     }
 
-    // eslint-disable-next-line no-console
     console.log('Detected category name:', categoryName)
 
     // Should not be a key

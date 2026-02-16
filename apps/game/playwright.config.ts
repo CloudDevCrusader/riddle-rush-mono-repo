@@ -76,7 +76,7 @@ export default defineConfig({
       // In CI, use pre-built server (assumes build was run beforehand)
       command: isCI
         ? 'DISABLE_SECURITY=true node .output/server/index.mjs'
-        : 'DISABLE_SECURITY=true pnpm run dev',
+        : 'DISABLE_SECURITY=true NUXT_DEVTOOLS=false pnpm run dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 300000, // Increase timeout to 5 minutes

@@ -43,6 +43,7 @@
     "@vitest/ui": "^4.0.18",
     "@vueuse/motion": "^3.0.3",
     "eslint": "^9.39.2",
+    "fake-indexeddb": "^6.2.5",
     "happy-dom": "^15.11.7",
     "nuxt-security": "^2.5.1",
     "parcel-codegen-loader": "^2.1.0",

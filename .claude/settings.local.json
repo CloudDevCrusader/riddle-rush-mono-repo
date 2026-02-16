@@ -97,7 +97,8 @@
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_wait_for",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enableAllProjectMcpServers": true,
@@ -105,7 +106,8 @@
   "enabledPlugins": {
     "voltagent-qa-sec@voltagent-subagents": true,
     "playwright-tools@claude-settings": true,
-    "voltagent-lang@voltagent-subagents": true
+    "voltagent-lang@voltagent-subagents": true,
+    "huggingface-skills@claude-plugins-official": true
   },
   "outputStyle": "Explanatory",
   "prefersReducedMotion": true
