@@ -1,0 +1,326 @@
+name: iOS E2E Tests
+
+# Cost note: macos-15 runners are ~10x more expensive than ubuntu.
+# This workflow is manual-only by default. Uncomment push/PR triggers if needed.
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Which job to run'
+        required: true
+        default: 'webkit-visual'
+        type: choice
+        options:
+          - webkit-visual # Playwright WebKit (fast, Ubuntu, no Xcode needed)
+          - ios-simulator # Real iOS Simulator (macOS, requires Xcode)
+          - both # Run both jobs
+      test_filter:
+        description: 'Playwright --grep filter (e.g. @smoke). Leave empty for all tests.'
+        required: false
+        default: ''
+
+env:
+  PNPM_VERSION: '10.28.2'
+  NODE_VERSION: '20'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# JOB 1 — Playwright WebKit (Safari engine) — runs on Ubuntu, no Xcode needed.
+# Opens a headed WebKit window; captures video artifacts for visual review.
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+  e2e-webkit-visual:
+    name: 'E2E · WebKit / Safari (Ubuntu)'
+    runs-on: ubuntu-latest
+    if: >
+      github.event.inputs.job == 'webkit-visual' ||
+      github.event.inputs.job == 'both'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Install only the WebKit binary — keeps the step fast
+      - name: Install Playwright WebKit
+        run: pnpm exec playwright install webkit --with-deps
+        working-directory: apps/game
+
+      - name: Build game app
+        run: pnpm --filter @riddle-rush/game run build
+        env:
+          NODE_ENV: production
+          BASE_URL: /
+
+      # Run tests headed (--headed) so WebKit renders visually.
+      # Video is always captured so the run can be reviewed as an artifact.
+      - name: Run E2E tests on iPhone 15 WebKit
+        working-directory: apps/game
+        env:
+          DISABLE_SECURITY: 'true'
+          PLAYWRIGHT_TEST_FILTER: ${{ github.event.inputs.test_filter }}
+        run: |
+          GREP_ARGS=""
+          if [ -n "$PLAYWRIGHT_TEST_FILTER" ]; then
+            GREP_ARGS="--grep $PLAYWRIGHT_TEST_FILTER"
+          fi
+
+          pnpm exec playwright test \
+            --project=mobile-safari-iphone15 \
+            --headed \
+            --video=on \
+            --reporter=html,list \
+            $GREP_ARGS
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-webkit-report-${{ github.run_number }}
+          path: |
+            apps/game/playwright-report/
+            apps/game/test-results/
+          retention-days: 14
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2 — Real iOS Simulator via Capacitor + xcrun simctl.
+  # Runs on macos-15 which ships with Xcode 16 and iOS 18 simulator runtimes.
+  # ─────────────────────────────────────────────────────────────────────────────
+  e2e-ios-simulator:
+    name: 'E2E · iOS Simulator (macOS 15 / Xcode 16)'
+    runs-on: macos-15
+    if: >
+      github.event.inputs.job == 'ios-simulator' ||
+      github.event.inputs.job == 'both'
+
+    env:
+      # Target device — override via workflow_dispatch or repository variable
+      IOS_DEVICE_NAME: ${{ vars.IOS_DEVICE_NAME || 'iPhone 16' }}
+      IOS_OS_VERSION: ${{ vars.IOS_OS_VERSION || '18.4' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Install Playwright WebKit binary for test execution
+      - name: Install Playwright WebKit
+        run: pnpm exec playwright install webkit --with-deps
+        working-directory: apps/game
+
+      # Print available Xcode + simulators for debugging
+      - name: Show Xcode version and available simulators
+        run: |
+          xcode-select -p
+          xcodebuild -version
+          xcrun simctl list runtimes | grep -i ios || true
+          xcrun simctl list devicetypes | grep -i iphone | head -10
+
+      # Find the UDID of the target simulator
+      - name: Select iOS simulator
+        id: simulator
+        run: |
+          UDID=$(xcrun simctl list devices available --json \
+            | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          target = '${{ env.IOS_DEVICE_NAME }}'
+          for runtime, devices in data['devices'].items():
+              if '${{ env.IOS_OS_VERSION }}' in runtime:
+                  for d in devices:
+                      if target in d['name'] and d['isAvailable']:
+                          print(d['udid'])
+                          sys.exit(0)
+          # Fallback: any available iPhone
+          for runtime, devices in data['devices'].items():
+              for d in devices:
+                  if 'iPhone' in d['name'] and d['isAvailable']:
+                      print(d['udid'])
+                      sys.exit(0)
+          sys.exit(1)
+          ")
+
+          if [ -z "$UDID" ]; then
+            echo "❌ No matching simulator found for ${{ env.IOS_DEVICE_NAME }} ${{ env.IOS_OS_VERSION }}"
+            xcrun simctl list devices available | grep iPhone | head -10
+            exit 1
+          fi
+
+          echo "✅ Selected simulator UDID: $UDID"
+          echo "udid=$UDID" >> $GITHUB_OUTPUT
+
+          DEVICE_NAME=$(xcrun simctl list devices available --json \
+            | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          for runtime, devices in data['devices'].items():
+              for d in devices:
+                  if d.get('udid') == '$UDID':
+                      print(d['name'])
+                      sys.exit(0)
+          " 2>/dev/null || echo '${{ env.IOS_DEVICE_NAME }}')
+          echo "name=$DEVICE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Boot iOS simulator
+        run: |
+          UDID="${{ steps.simulator.outputs.udid }}"
+          echo "Booting simulator $UDID (${{ steps.simulator.outputs.name }})..."
+          xcrun simctl boot "$UDID" || true  # already booted is fine
+
+          # Wait for boot (up to 120s)
+          TIMEOUT=120
+          ELAPSED=0
+          until xcrun simctl list devices | grep "$UDID" | grep -q "Booted"; do
+            if [ $ELAPSED -ge $TIMEOUT ]; then
+              echo "❌ Simulator failed to boot within ${TIMEOUT}s"
+              exit 1
+            fi
+            echo "  Waiting for boot... (${ELAPSED}s)"
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+          done
+          echo "✅ Simulator booted"
+
+      - name: Build game (Nuxt static output)
+        run: pnpm --filter @riddle-rush/game run build
+        env:
+          NODE_ENV: production
+          BASE_URL: /
+
+      # Sync web assets into the Capacitor iOS project
+      - name: Sync Capacitor iOS
+        working-directory: apps/game
+        run: |
+          # Install @capacitor/ios if not already present
+          if ! pnpm list @capacitor/ios --depth=0 2>/dev/null | grep -q '@capacitor/ios'; then
+            pnpm add -D @capacitor/ios@^8.0.0
+          fi
+          npx cap sync ios
+
+      # Build the .app bundle via xcodebuild (no signing needed for Simulator)
+      - name: Build iOS app for Simulator
+        working-directory: apps/game/ios/App
+        run: |
+          xcodebuild \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "id=${{ steps.simulator.outputs.udid }}" \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build | xcpretty || xcodebuild \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "id=${{ steps.simulator.outputs.udid }}" \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      # Install and launch the app in the booted simulator
+      - name: Install and launch app in simulator
+        run: |
+          APP_PATH="apps/game/ios/App/build/Build/Products/Debug-iphonesimulator/App.app"
+
+          if [ ! -d "$APP_PATH" ]; then
+            echo "❌ App bundle not found at $APP_PATH"
+            find apps/game/ios/App/build -name "*.app" 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "Installing $APP_PATH..."
+          xcrun simctl install "${{ steps.simulator.outputs.udid }}" "$APP_PATH"
+
+          echo "Launching com.riddlerush.game..."
+          xcrun simctl launch "${{ steps.simulator.outputs.udid }}" com.riddlerush.game
+
+          # Give the app a moment to initialize its WKWebView
+          sleep 3
+
+      # Start the Nuxt dev server so Playwright can reach the app via localhost
+      - name: Start Nuxt dev server
+        working-directory: apps/game
+        run: |
+          DISABLE_SECURITY=true pnpm run dev &
+          # Wait for server to be ready
+          npx wait-on http://localhost:3000 --timeout 60000
+        env:
+          NODE_ENV: development
+
+      # Run the full E2E suite against the iPhone 15 WebKit project.
+      # The Capacitor WKWebView inside the simulator loads localhost:3000.
+      - name: Run E2E tests against iOS simulator
+        working-directory: apps/game
+        env:
+          BASE_URL: 'http://localhost:3000'
+          PLAYWRIGHT_TEST_FILTER: ${{ github.event.inputs.test_filter }}
+        run: |
+          GREP_ARGS=""
+          if [ -n "$PLAYWRIGHT_TEST_FILTER" ]; then
+            GREP_ARGS="--grep $PLAYWRIGHT_TEST_FILTER"
+          fi
+
+          pnpm exec playwright test \
+            --project=mobile-safari-iphone15 \
+            --video=on \
+            --reporter=html,list \
+            $GREP_ARGS
+
+      - name: Shutdown simulator
+        if: always()
+        run: xcrun simctl shutdown "${{ steps.simulator.outputs.udid }}" || true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-ios-simulator-report-${{ github.run_number }}
+          path: |
+            apps/game/playwright-report/
+            apps/game/test-results/
+          retention-days: 14
+
+      - name: Upload simulator screenshots
+        if: always()
+        run: |
+          SCREENSHOTS_DIR="simulator-screenshots"
+          mkdir -p "$SCREENSHOTS_DIR"
+          xcrun simctl io "${{ steps.simulator.outputs.udid }}" screenshot \
+            "$SCREENSHOTS_DIR/final-state.png" 2>/dev/null || true
+
+      - name: Upload simulator screenshots artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-screenshots-${{ github.run_number }}
+          path: simulator-screenshots/
+          retention-days: 14
