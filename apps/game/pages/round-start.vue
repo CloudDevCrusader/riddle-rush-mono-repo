@@ -15,7 +15,7 @@
     <!-- Top Bar -->
     <div class="top-bar">
       <!-- Round Indicator -->
-      <div class="round-indicator">
+      <div class="round-indicator" data-testid="round-indicator">
         <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
       </div>
     </div>
@@ -24,7 +24,11 @@
     <div class="container">
       <!-- Dual Wheels Phase (only shown if feature is enabled) -->
       <transition name="wheel-fade">
-        <div v-if="isFortuneWheelEnabled && !wheelsComplete" class="wheels-container">
+        <div
+          v-if="isFortuneWheelEnabled && !wheelsComplete"
+          class="wheels-container"
+          data-testid="round-wheels-container"
+        >
           <div class="wheel-wrapper">
             <div class="wheel-label">
               {{ t('common.category', 'Category') }}
@@ -64,8 +68,9 @@
         <div
           v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
           class="results-display"
+          data-testid="round-results-display"
         >
-          <div class="result-item animate-scale-in">
+          <div class="result-item animate-scale-in" data-testid="round-category-display">
             <div class="result-label">
               {{ t('common.category', 'Category') }}
             </div>
@@ -77,7 +82,11 @@
 
           <div class="divider">×</div>
 
-          <div class="result-item animate-scale-in" style="animation-delay: 0.2s">
+          <div
+            class="result-item animate-scale-in"
+            style="animation-delay: 0.2s"
+            data-testid="round-letter-display"
+          >
             <div class="result-label">
               {{ t('common.letter', 'Letter') }}
             </div>
@@ -89,7 +98,7 @@
       </transition>
 
       <!-- Loading indicator -->
-      <div v-if="startingGame" class="loading-container">
+      <div v-if="startingGame" class="loading-container" data-testid="round-loading">
         <Spinner />
         <p class="loading-text">
           {{ t('home.starting_game', 'Starting game...') }}
