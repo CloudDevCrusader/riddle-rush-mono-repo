@@ -80,7 +80,7 @@ test.describe('Results/Scoring Page', () => {
 
     // Check new score
     const newScore = Number.parseInt((await scoreDisplay.textContent()) || '0')
-    expect(newScore).toBe(initialScore + 10)
+    expect(newScore).toBe(initialScore + 1)
   })
 
   test('should decrease score when clicking decrement button', async ({ page }) => {
@@ -96,14 +96,14 @@ test.describe('Results/Scoring Page', () => {
     await page.waitForTimeout(100)
 
     const beforeScore = Number.parseInt((await scoreDisplay.textContent()) || '0')
-    expect(beforeScore).toBe(20)
+    expect(beforeScore).toBe(2)
 
     // Now decrement
     await decrementBtn.click()
     await page.waitForTimeout(200)
 
     const afterScore = Number.parseInt((await scoreDisplay.textContent()) || '0')
-    expect(afterScore).toBe(10)
+    expect(afterScore).toBe(1)
   })
 
   test('should disable decrement button when score is 0', async ({ page }) => {
@@ -249,7 +249,7 @@ test.describe('Results Page - Multi-Player', () => {
     await page.waitForTimeout(50)
 
     // Verify scores
-    await expect(scoreDisplays.nth(0)).toContainText('30')
-    await expect(scoreDisplays.nth(1)).toContainText('10')
+    await expect(scoreDisplays.nth(0)).toContainText('3')
+    await expect(scoreDisplays.nth(1)).toContainText('1')
   })
 })

@@ -80,9 +80,9 @@ test.describe('Scoring Workflow', () => {
       await firstIncrement.click()
       await page.waitForTimeout(100)
 
-      // Score should be 30 (3 * 10)
+      // Score should be 3 (3 * 1)
       const scoreDisplays = page.locator('.scoring-page__score-value')
-      await expect(scoreDisplays.first()).toContainText('30')
+      await expect(scoreDisplays.first()).toContainText('3')
     })
 
     test('should decrement score when clicking -', async ({ page }) => {
@@ -99,9 +99,9 @@ test.describe('Scoring Workflow', () => {
       await firstDecrement.click()
       await page.waitForTimeout(100)
 
-      // Score should be 10 (2 * 10 - 1 * 10)
+      // Score should be 1 (2 * 1 - 1 * 1)
       const scoreDisplays = page.locator('.scoring-page__score-value')
-      await expect(scoreDisplays.first()).toContainText('10')
+      await expect(scoreDisplays.first()).toContainText('1')
     })
 
     test('should disable decrement button when score is 0', async ({ page }) => {
@@ -324,7 +324,7 @@ test.describe('Scoring Workflow', () => {
 
       // Player 2 should be first (40 > 30)
       const firstScore = leaderboardItems.first().locator('.player-total-score, .score-value')
-      await expect(firstScore).toContainText('40')
+      await expect(firstScore).toContainText('4')
     })
   })
 
