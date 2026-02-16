@@ -20,7 +20,7 @@
       </button>
 
       <!-- Round Indicator -->
-      <div class="round-indicator">
+      <div class="round-indicator" data-testid="game-round-indicator">
         <span class="round-text">{{ t('game.round') }} {{ formattedRound }}</span>
       </div>
 
@@ -28,6 +28,7 @@
       <button
         class="pause-btn tap-highlight no-select"
         aria-label="Pause game"
+        data-testid="game-pause-button"
         @click="showPauseModal = true"
       >
         <svg
@@ -49,7 +50,7 @@
     <!-- Main Game Area -->
     <div class="game-container">
       <!-- Category Panel -->
-      <div class="category-panel">
+      <div class="category-panel" data-testid="game-category-info">
         <img
           :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
           alt="Category"
@@ -67,7 +68,7 @@
       </div>
 
       <!-- Large Letter Display -->
-      <div class="letter-display">
+      <div class="letter-display" data-testid="game-letter-info">
         <span class="letter-value">
           {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
         </span>
@@ -78,7 +79,7 @@
         v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
         class="answer-input-section"
       >
-        <div class="player-turn-indicator">
+        <div class="player-turn-indicator" data-testid="game-player-turn">
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name">{{ currentPlayerTurn.name }}</span>
         </div>
@@ -87,6 +88,7 @@
             v-model="playerAnswer"
             type="text"
             class="answer-input"
+            data-testid="game-answer-input"
             :placeholder="t('game.your_answer', 'Your answer...')"
             autocomplete="off"
             autocapitalize="words"
@@ -94,14 +96,23 @@
             @input="sanitizeInput"
             @keyup.enter="submitAnswer"
           />
-          <button type="submit" class="submit-answer-btn" :disabled="false">
+          <button
+            type="submit"
+            class="submit-answer-btn"
+            data-testid="game-submit-button"
+            :disabled="false"
+          >
             {{ t('game.submit', 'Submit') }}
           </button>
         </form>
       </div>
 
       <!-- All Players Submitted Message -->
-      <div v-if="allPlayersSubmitted" class="all-submitted-message">
+      <div
+        v-if="allPlayersSubmitted"
+        class="all-submitted-message"
+        data-testid="game-all-submitted"
+      >
         <p>{{ t('game.all_submitted', 'All players have submitted!') }}</p>
       </div>
     </div>
