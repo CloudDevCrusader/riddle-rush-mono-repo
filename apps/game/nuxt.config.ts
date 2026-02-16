@@ -227,7 +227,6 @@ export default defineNuxtConfig({
           // Resolve bare SCSS imports like `@use 'assets/scss/...'` during Vercel builds
           // Sass @use doesn't understand Vite aliases (@/, ~/), so we add the app root
           // as an include path so `assets/scss/...` resolves relative to the app directory
-          // @ts-expect-error includePaths is a valid Sass option not typed in Vite's SassPreprocessorOptions
           includePaths: [new URL('.', import.meta.url).pathname],
         },
       },
