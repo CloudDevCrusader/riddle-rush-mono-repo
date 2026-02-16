@@ -27,7 +27,9 @@
                 <span v-else class="rank-number">{{ index + 1 }}</span>
               </div>
               <div class="entry-info">
-                <span class="category">{{ t(`categories.${entry.categoryKey}`, entry.category) }}</span>
+                <span class="category">{{
+                  t(`categories.${entry.categoryKey}`, entry.category)
+                }}</span>
                 <span class="meta"
                   >{{ formatDuration(entry.duration) }} · {{ entry.correctAttempts }}/{{
                     entry.attempts
