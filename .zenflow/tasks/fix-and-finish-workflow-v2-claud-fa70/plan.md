@@ -87,7 +87,9 @@ Plan created below — the Implementation step has been replaced with 5 concrete
 
 ---
 
-### [ ] Step: Add i18n scoring translations
+### [x] Step: Add i18n scoring translations
+
+<!-- chat-id: 836c01ce-6804-44cc-ac47-512b2e9e2a45 -->
 
 **Goal:** Add all user-facing strings for the scoring workflow to both locale files.
 
