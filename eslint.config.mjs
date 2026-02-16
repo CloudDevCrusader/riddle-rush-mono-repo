@@ -41,5 +41,6 @@ export default createConfigForNuxt({
       'test-results/',
       '*.min.js',
       'scripts/',
+      '.claude/get-shit-done/bin/',
     ],
   })

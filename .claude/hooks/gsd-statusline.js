@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-/* eslint-disable */
 // Claude Code Statusline - GSD Edition
 // Shows: model | current task | directory | context usage
 
-const fs = require('fs')
-const path = require('path')
-const os = require('os')
+const fs = require('node:fs')
+const path = require('node:path')
+const os = require('node:os')
 
 // Read JSON from stdin
 let input = ''
@@ -35,15 +34,15 @@ process.stdin.on('end', () => {
       // Color based on scaled usage (thresholds adjusted for new scale)
       if (used < 63) {
         // ~50% real
-        ctx = ` \x1b[32m${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[32m${bar} ${used}%\x1B[0m`
       } else if (used < 81) {
         // ~65% real
-        ctx = ` \x1b[33m${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[33m${bar} ${used}%\x1B[0m`
       } else if (used < 95) {
         // ~76% real
-        ctx = ` \x1b[38;5;208m${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[38;5;208m${bar} ${used}%\x1B[0m`
       } else {
-        ctx = ` \x1b[5;31m💀 ${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[5;31m💀 ${bar} ${used}%\x1B[0m`
       }
     }
 
@@ -64,9 +63,11 @@ process.stdin.on('end', () => {
             const todos = JSON.parse(fs.readFileSync(path.join(todosDir, files[0].name), 'utf8'))
             const inProgress = todos.find((t) => t.status === 'in_progress')
             if (inProgress) task = inProgress.activeForm || ''
-          } catch (e) {}
+          } catch {
+            /* ignored */
+          }
         }
-      } catch (e) {
+      } catch {
         // Silently fail on file system errors - don't break statusline
       }
     }
@@ -78,21 +79,23 @@ process.stdin.on('end', () => {
       try {
         const cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'))
         if (cache.update_available) {
-          gsdUpdate = '\x1b[33m⬆ /gsd:update\x1b[0m │ '
+          gsdUpdate = '\x1B[33m⬆ /gsd:update\x1B[0m │ '
         }
-      } catch (e) {}
+      } catch {
+        /* ignored */
+      }
     }
 
     // Output
     const dirname = path.basename(dir)
     if (task) {
       process.stdout.write(
-        `${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`
+        `${gsdUpdate}\x1B[2m${model}\x1B[0m │ \x1B[1m${task}\x1B[0m │ \x1B[2m${dirname}\x1B[0m${ctx}`
       )
     } else {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`)
+      process.stdout.write(`${gsdUpdate}\x1B[2m${model}\x1B[0m │ \x1B[2m${dirname}\x1B[0m${ctx}`)
     }
-  } catch (e) {
+  } catch {
     // Silent fail - don't break statusline on parse errors
   }
 })
