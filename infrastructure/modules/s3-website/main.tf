@@ -1,43 +1,18 @@
 # S3 Website Module
-# Reusable module for creating S3 buckets for static websites
+# Reusable module for creating S3 buckets configured for static website hosting
+# Includes versioning, lifecycle rules, CORS, transfer acceleration, and public access blocking
 
-variable "bucket_name" {
-  description = "Name of the S3 bucket"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment (development, staging, production)"
-  type        = string
-  default     = "development"
-}
-
-variable "enable_acceleration" {
-  description = "Enable S3 Transfer Acceleration"
-  type        = bool
-  default     = false
-}
-
-variable "versioning_enabled" {
-  description = "Enable S3 bucket versioning"
-  type        = bool
-  default     = true
-}
-
-variable "noncurrent_version_expiration_days" {
-  description = "Days before noncurrent versions are expired"
-  type        = number
-  default     = 30
+locals {
+  bucket_name = var.bucket_name != "" ? var.bucket_name : "${var.project_name}-${var.environment}"
 }
 
 # S3 Bucket
 resource "aws_s3_bucket" "website" {
-  bucket = var.bucket_name
+  bucket = local.bucket_name
 
   tags = {
-    Name        = "${var.bucket_name}"
+    Name        = "${var.project_name}-website"
     Environment = var.environment
-    ManagedBy   = "Terraform"
   }
 }
 
@@ -50,16 +25,36 @@ resource "aws_s3_bucket_accelerate_configuration" "website" {
 
 # S3 Bucket Versioning
 resource "aws_s3_bucket_versioning" "website" {
-  count  = var.versioning_enabled ? 1 : 0
   bucket = aws_s3_bucket.website.id
 
   versioning_configuration {
-    status = "Enabled"
+    status = var.enable_versioning ? "Enabled" : "Suspended"
   }
 }
 
 # S3 Bucket Lifecycle Configuration
 resource "aws_s3_bucket_lifecycle_configuration" "website" {
+  count  = length(var.lifecycle_rules) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.website.id
+
+  dynamic "rule" {
+    for_each = var.lifecycle_rules
+    content {
+      id     = rule.value.id
+      status = rule.value.enabled ? "Enabled" : "Disabled"
+
+      filter {}
+
+      noncurrent_version_expiration {
+        noncurrent_days = rule.value.noncurrent_version_expiration_days
+      }
+    }
+  }
+}
+
+# Default lifecycle rule when no custom rules provided
+resource "aws_s3_bucket_lifecycle_configuration" "website_default" {
+  count  = length(var.lifecycle_rules) == 0 ? 1 : 0
   bucket = aws_s3_bucket.website.id
 
   rule {
@@ -69,12 +64,29 @@ resource "aws_s3_bucket_lifecycle_configuration" "website" {
     filter {}
 
     noncurrent_version_expiration {
-      noncurrent_days = var.noncurrent_version_expiration_days
+      noncurrent_days = 30
     }
   }
 }
 
-# S3 Bucket Public Access Block
+# S3 Intelligent Tiering for cost optimization
+resource "aws_s3_bucket_intelligent_tiering_configuration" "website" {
+  count  = var.enable_intelligent_tiering ? 1 : 0
+  bucket = aws_s3_bucket.website.id
+  name   = "intelligent-tiering"
+
+  tiering {
+    access_tier = "ARCHIVE_ACCESS"
+    days        = 90
+  }
+
+  tiering {
+    access_tier = "DEEP_ARCHIVE_ACCESS"
+    days        = 180
+  }
+}
+
+# S3 Bucket Public Access Block (always block public access - use CloudFront OAC instead)
 resource "aws_s3_bucket_public_access_block" "website" {
   bucket = aws_s3_bucket.website.id
 
@@ -89,31 +101,23 @@ resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.website.id
 
   index_document {
-    suffix = "index.html"
+    suffix = var.index_document
   }
 
   error_document {
-    key = "404.html"
+    key = var.error_document
   }
 }
 
-# Outputs
-output "bucket_id" {
-  description = "ID of the S3 bucket"
-  value       = aws_s3_bucket.website.id
-}
+# S3 CORS Configuration
+resource "aws_s3_bucket_cors_configuration" "website" {
+  count  = length(var.cors_allowed_origins) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.website.id
 
-output "bucket_arn" {
-  description = "ARN of the S3 bucket"
-  value       = aws_s3_bucket.website.arn
-}
-
-output "bucket_domain_name" {
-  description = "Domain name of the S3 bucket"
-  value       = aws_s3_bucket.website.bucket_domain_name
-}
-
-output "bucket_regional_domain_name" {
-  description = "Regional domain name of the S3 bucket"
-  value       = aws_s3_bucket.website.bucket_regional_domain_name
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
+    allowed_origins = var.cors_allowed_origins
+    max_age_seconds = 3600
+  }
 }
