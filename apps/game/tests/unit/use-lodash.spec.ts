@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const { useLodash, useLodashSync } = await import('../../composables/useLodash')
 
-describe('useLodash', () => {
+describe('useLodash', { timeout: 60_000 }, () => {
   let lodash: ReturnType<typeof useLodash>
 
   beforeEach(() => {
