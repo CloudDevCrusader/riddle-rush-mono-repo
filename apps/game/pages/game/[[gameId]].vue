@@ -81,7 +81,7 @@
       >
         <div class="player-turn-indicator" data-testid="game-player-turn">
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
-          <span class="turn-name">{{ currentPlayerTurn.name }}</span>
+          <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
         </div>
         <form class="answer-form" @submit.prevent="submitAnswer">
           <input
