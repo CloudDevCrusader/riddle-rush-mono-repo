@@ -1,15 +1,13 @@
 import { defineStore } from 'pinia'
-import { useIndexedDB } from '../composables/useIndexedDB'
-import { useStatistics } from '../composables/useStatistics'
-import { useLogger } from '../composables/useLogger'
 import { useCategoryEmoji } from '../composables/useCategoryEmoji'
 import { useCategoryManager } from '../composables/useCategoryManager'
 import { useSessionManager } from '../composables/useSessionManager'
 import { usePlayerManager } from '../composables/usePlayerManager'
 import { useScoringEngine } from '../composables/useScoringEngine'
+import { usePersistence } from '../composables/usePersistence'
+import { useGameLifecycle } from '../composables/useGameLifecycle'
 import { ALPHABET, DEFAULT_DISPLAYED_CATEGORIES } from '@riddle-rush/shared/constants'
 import type {
-  GameAttempt,
   GameState,
   Category,
   BeforeInstallPromptEvent,
@@ -76,26 +74,23 @@ export const useGameStore = defineStore('game', {
   },
 
   actions: {
+    // Category actions
     async fetchCategories(force = false) {
       const categoryManager = useCategoryManager()
       return categoryManager.fetchCategories(this, force)
     },
-
     loadMoreCategories(step = 9) {
       const categoryManager = useCategoryManager()
       categoryManager.loadMoreCategories(this, step)
     },
-
     resetDisplayedCategories(count = 9) {
       const categoryManager = useCategoryManager()
       categoryManager.resetDisplayedCategories(this, count)
     },
-
     getCategoryById(categoryId: number): Category | null {
       const categoryManager = useCategoryManager()
       return categoryManager.getCategoryById(this.categories, categoryId)
     },
-
     getRandomCategory(): Category | null {
       const categoryManager = useCategoryManager()
       return categoryManager.getRandomCategory(this.categories)
@@ -105,11 +100,9 @@ export const useGameStore = defineStore('game', {
       return randomLetter()
     },
 
+    // Session lifecycle
     async resumeOrStartNewGame() {
-      if (this.currentSession) {
-        return this.currentSession
-      }
-
+      if (this.currentSession) return this.currentSession
       return this.startNewGame()
     },
 
@@ -118,25 +111,16 @@ export const useGameStore = defineStore('game', {
       const sessionManager = useSessionManager()
 
       await this.fetchCategories()
-
       const category = categoryManager.getRandomCategory(this.categories)
-
-      if (!category) {
-        throw new Error('Unable to start game without categories')
-      }
+      if (!category) throw new Error('Unable to start game without categories')
 
       const letter = this.generateLetter()
-
-      // Check if we have players (multi-player mode) or use legacy single-player
       const hasPlayers = this.currentSession?.players && this.currentSession.players.length > 0
 
       if (hasPlayers) {
-        // Multi-player: start new round
         return this.startNextRound()
       } else {
-        // Legacy single-player mode
         const session = sessionManager.createSinglePlayerSession(category, letter)
-
         this.currentSession = session
         await this.saveSessionToDB()
         return session
@@ -147,20 +131,12 @@ export const useGameStore = defineStore('game', {
       if (!this.currentSession) return
 
       const scoringEngine = useScoringEngine()
-
-      const attempt: GameAttempt = {
-        term,
-        found,
-        timestamp: Date.now(),
-      }
+      const lifecycle = useGameLifecycle()
+      const attempt = lifecycle.createAttempt(term, found)
 
       // Legacy single-player support
-      if (!this.currentSession.attempts) {
-        this.currentSession.attempts = []
-      }
-      if (this.currentSession.score === undefined) {
-        this.currentSession.score = 0
-      }
+      if (!this.currentSession.attempts) this.currentSession.attempts = []
+      if (this.currentSession.score === undefined) this.currentSession.score = 0
 
       this.currentSession.attempts.push(attempt)
       this.currentSession.score += scoringEngine.calculateAttemptScore(found)
@@ -172,20 +148,15 @@ export const useGameStore = defineStore('game', {
       if (!this.currentSession) return
 
       const sessionManager = useSessionManager()
+      const lifecycle = useGameLifecycle()
       const session = this.currentSession
+
       session.endTime = Date.now()
       this.history.push(sessionManager.cloneSessionForHistory(session))
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
-
-      try {
-        const { updateStatistics } = useStatistics()
-        await updateStatistics(session)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error updating statistics on endGame:', error)
-      }
+      await lifecycle.updateStatisticsForSession(session)
 
       this.currentSession = null
     },
@@ -193,6 +164,7 @@ export const useGameStore = defineStore('game', {
     async completeGame() {
       if (!this.currentSession) return
 
+      const lifecycle = useGameLifecycle()
       const session = this.currentSession
 
       session.status = 'completed'
@@ -200,14 +172,7 @@ export const useGameStore = defineStore('game', {
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
-
-      try {
-        const { updateStatistics } = useStatistics()
-        await updateStatistics(session)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error updating statistics on completeGame:', error)
-      }
+      await lifecycle.updateStatisticsForSession(session)
 
       // Don't clear session - keep it so leaderboard can display winner
       return session
@@ -228,84 +193,45 @@ export const useGameStore = defineStore('game', {
     setOnlineStatus(status: boolean) {
       this.isOnline = status
     },
-
     setInstallPrompt(event: BeforeInstallPromptEvent | null) {
       this.installPromptEvent = event
     },
 
     async showInstallPrompt() {
       if (!this.installPromptEvent) return false
-
       await this.installPromptEvent.prompt()
       const { outcome } = await this.installPromptEvent.userChoice
-
-      if (outcome === 'accepted') {
-        this.installPromptEvent = null
-      }
-
+      if (outcome === 'accepted') this.installPromptEvent = null
       return outcome === 'accepted'
     },
 
+    // Persistence actions (delegate to usePersistence)
     async loadFromDB() {
-      try {
-        const { getGameSession, getGameHistory } = useIndexedDB()
+      const persistence = usePersistence()
 
-        const session = await getGameSession()
-        if (session) {
-          this.currentSession = session
-        }
+      const session = await persistence.loadSessionFromDB()
+      if (session) this.currentSession = session
 
-        const history = await getGameHistory()
-        if (history) {
-          this.history = history
-        }
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error loading from IndexedDB:', error)
-        // Continue without persisted data
-      }
+      const history = await persistence.loadHistoryFromDB()
+      if (history) this.history = history
     },
 
     async saveSessionToDB() {
       if (!this.currentSession) return
-
-      try {
-        const { saveGameSession } = useIndexedDB()
-        await saveGameSession(this.currentSession)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error saving session to IndexedDB:', error)
-        // Don't throw - allow game to continue even if save fails
-      }
+      const persistence = usePersistence()
+      await persistence.saveSessionToDB(this.currentSession)
     },
 
     async saveHistoryToDB() {
-      try {
-        const { saveGameHistory } = useIndexedDB()
-        await saveGameHistory(this.history)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error saving history to IndexedDB:', error)
-        // Don't throw - allow game to continue even if save fails
-      }
+      const persistence = usePersistence()
+      await persistence.saveHistoryToDB(this.history)
     },
 
     async loadSessionById(sessionId: string) {
-      try {
-        const { getGameSessionById } = useIndexedDB()
-        const session = await getGameSessionById(sessionId)
-
-        if (!session) {
-          throw new Error(`Game session with ID ${sessionId} not found`)
-        }
-
-        this.currentSession = session
-        return session
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error loading game session by ID:', error)
-        throw new Error('Failed to load game session')
-      }
+      const persistence = usePersistence()
+      const session = await persistence.loadSessionById(sessionId)
+      this.currentSession = session
+      return session
     },
 
     clearSession() {
@@ -324,21 +250,15 @@ export const useGameStore = defineStore('game', {
       const playerManager = usePlayerManager()
 
       await this.fetchCategories()
-
       const category = customCategory || categoryManager.getRandomCategory(this.categories)
-      if (!category) {
-        throw new Error('Unable to start game without categories')
-      }
+      if (!category) throw new Error('Unable to start game without categories')
 
       const letter = customLetter || this.generateLetter()
-
       const players = playerManager.createPlayers(playerNames)
-
       const session = sessionManager.createSession(players, category, letter, gameName)
 
       this.currentSession = session
       await this.saveSessionToDB()
-
       return session
     },
 
@@ -349,7 +269,6 @@ export const useGameStore = defineStore('game', {
       const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
-      // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
       playerManager.submitPlayerAnswer(player, answer)
@@ -364,10 +283,8 @@ export const useGameStore = defineStore('game', {
       const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
-      // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
-
       playerManager.assignPlayerScore(player, points)
 
       await this.saveSessionToDB()
@@ -380,7 +297,6 @@ export const useGameStore = defineStore('game', {
       const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
-      // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
       playerManager.updatePlayerAvatar(player, avatarUrl)
@@ -391,18 +307,8 @@ export const useGameStore = defineStore('game', {
     async completeRound() {
       if (!this.currentSession) return
 
-      const roundResult = {
-        roundNumber: this.currentSession.currentRound,
-        category: this.currentSession.category.name,
-        letter: this.currentSession.letter,
-        timestamp: Date.now(),
-        playerResults: this.currentSession.players.map((p) => ({
-          playerId: p.id,
-          playerName: p.name,
-          answer: p.currentRoundAnswer || '',
-          score: p.currentRoundScore,
-        })),
-      }
+      const lifecycle = useGameLifecycle()
+      const roundResult = lifecycle.buildRoundResult(this.currentSession)
 
       this.currentSession.roundHistory.push(roundResult)
       await this.saveSessionToDB()
@@ -414,15 +320,10 @@ export const useGameStore = defineStore('game', {
       const categoryManager = useCategoryManager()
       const playerManager = usePlayerManager()
 
-      // Use provided category and letter, or pick random ones
       const selectedCategory = category || categoryManager.getRandomCategory(this.categories)
-      if (!selectedCategory) {
-        throw new Error('Unable to start round without categories')
-      }
+      if (!selectedCategory) throw new Error('Unable to start round without categories')
 
       const selectedLetter = letter || this.generateLetter()
-
-      // Reset player round state
       playerManager.resetPlayerRoundState(this.currentSession.players)
 
       this.currentSession.currentRound += 1
@@ -430,7 +331,6 @@ export const useGameStore = defineStore('game', {
       this.currentSession.letter = selectedLetter
 
       await this.saveSessionToDB()
-
       return this.currentSession
     },
 
