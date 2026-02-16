@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 12 of 12 (App Optimization & Refactoring)
-Plan: 6 of 10 — Complete
-Status: Ready to execute Plan 12-07
-Last activity: 2026-02-16 - Completed Plan 12-06 (Extract useCategoryManager and useSessionManager)
+Plan: 7 of 10 — Complete
+Status: Ready to execute Plan 12-08
+Last activity: 2026-02-16 - Completed Plan 12-07 (Extract usePlayerManager and useScoringEngine)
 
-Progress: [██████████████████████████████░░░] 89% (34/38 total plans complete)
+Progress: [███████████████████████████████░░] 92% (35/38 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 34
+- Total plans completed: 35
 - Average duration: 3.4 min
-- Total execution time: ~1.6 hours
+- Total execution time: ~1.7 hours
 
 **By Phase:**
 
@@ -40,11 +40,11 @@ Progress: [███████████████████████
 | 10-settings-pages          | 2/2   | 7min  | 3.5min   |
 | 11-modal-dialogs           | 3/3   | 9min  | 3min     |
 | 11.1-scoring-player-config | 2/2   | 14min | 7min     |
-| 12-app-optimization        | 6/10  | 30min | 5min     |
+| 12-app-optimization        | 7/10  | 34min | 4.9min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 3min, 3min, 8min, 6min, 4min
+- Last 5 plans: 3min, 8min, 6min, 4min, 4min
 - Trend: Consistent ~3-8 min per plan
 
 _Updated after each plan completion_
@@ -104,7 +104,7 @@ Recent decisions affecting current work:
 
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
-- Review game store size (~550 lines) for simplification and bug risk.
+- Review game store size (~452 lines) for further simplification and bug risk.
 
 ### Completed Todos (2026-02-14)
 
@@ -129,7 +129,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed Plan 12-06 (Extract useCategoryManager and useSessionManager)
+Stopped at: Completed Plan 12-07 (Extract usePlayerManager and useScoringEngine)
 Resume file: None
 
 ### Phase 11 Plans Status
@@ -155,6 +155,7 @@ Resume file: None
 - **12-04**: Complete - Terraform modules (S3, CloudFront, DynamoDB)
 - **12-05**: Complete - Terraform modules (Lambda, API Gateway, WebSocket, CloudWatch)
 - **12-06**: Complete - Extract useCategoryManager and useSessionManager from game store
+- **12-07**: Complete - Extract usePlayerManager and useScoringEngine from game store
 
 ### Roadmap Evolution
 
