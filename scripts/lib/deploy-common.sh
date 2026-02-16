@@ -13,6 +13,35 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # ===========================================
+# Structured Logging
+# ===========================================
+
+log() {
+	local level=$1
+	shift
+	local message="$*"
+	local timestamp
+	timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+
+	case $level in
+	ERROR) echo -e "[$timestamp] ${RED}[ERROR]${NC} $message" >&2 ;;
+	SUCCESS) echo -e "[$timestamp] ${GREEN}[OK]${NC} $message" ;;
+	WARN) echo -e "[$timestamp] ${YELLOW}[WARN]${NC} $message" ;;
+	INFO) echo -e "[$timestamp] ${BLUE}[INFO]${NC} $message" ;;
+	*) echo "[$timestamp] [$level] $message" ;;
+	esac
+}
+
+log_section() {
+	local title=$1
+	echo ""
+	echo "=========================================="
+	echo "  $title"
+	echo "=========================================="
+	echo ""
+}
+
+# ===========================================
 # AWS Functions
 # ===========================================
 
