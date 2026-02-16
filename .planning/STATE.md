@@ -5,45 +5,46 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Phase 11 - Modal Dialogs
+**Current focus:** Phase 11.1 - Scoring and Player Config
 
 ## Current Position
 
-Phase: 11 of 11 (Modal Dialogs)
-Plan: 1 of 3 in current phase
+Phase: 11.1 of 11 (Scoring and Player Config)
+Plan: 1 of 2 in current phase
 Status: In progress
-Last activity: 2026-02-16 - Completed 11.1-02: GameScrollList rank fix
+Last activity: 2026-02-16 - Completed 11.1-01: Scoring increment and player config
 
-Progress: [███████████████] 100% (23/25 plans complete)
+Progress: [████████████████] 100% (24/26 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 23
-- Average duration: 3.2 min
-- Total execution time: ~1.3 hours
+- Total plans completed: 24
+- Average duration: 3.3 min
+- Total execution time: ~1.4 hours
 
 **By Phase:**
 
-| Phase                     | Plans | Total | Avg/Plan |
-| ------------------------- | ----- | ----- | -------- |
-| 01-design-tokens          | 3/3   | 20min | 7min     |
-| 02-design-utilities       | 2/2   | 5min  | 2.5min   |
-| 03-core-layout-components | 2/2   | 10min | 5min     |
-| 04-interactive-components | 2/2   | 5min  | 2.5min   |
-| 05-structural-components  | 3/3   | 20min | 7min     |
-| 06-splash-navigation      | 2/2   | 6min  | 3min     |
-| 07-player-setup           | 2/2   | 6min  | 3min     |
-| 08-core-gameplay          | 2/2   | 5min  | 2.5min   |
-| 09-game-results           | 2/2   | 7min  | 3.5min   |
-| 10-settings-pages         | 2/2   | 7min  | 3.5min   |
-| 11-modal-dialogs          | 1/3   | 3min  | 3min     |
+| Phase                      | Plans | Total | Avg/Plan |
+| -------------------------- | ----- | ----- | -------- |
+| 01-design-tokens           | 3/3   | 20min | 7min     |
+| 02-design-utilities        | 2/2   | 5min  | 2.5min   |
+| 03-core-layout-components  | 2/2   | 10min | 5min     |
+| 04-interactive-components  | 2/2   | 5min  | 2.5min   |
+| 05-structural-components   | 3/3   | 20min | 7min     |
+| 06-splash-navigation       | 2/2   | 6min  | 3min     |
+| 07-player-setup            | 2/2   | 6min  | 3min     |
+| 08-core-gameplay           | 2/2   | 5min  | 2.5min   |
+| 09-game-results            | 2/2   | 7min  | 3.5min   |
+| 10-settings-pages          | 2/2   | 7min  | 3.5min   |
+| 11-modal-dialogs           | 1/3   | 3min  | 3min     |
+| 11.1-scoring-player-config | 1/2   | 8min  | 8min     |
 
 **Recent Trend:**
 
-- Last 5 plans: 4min, 4min, 4min, 3min, 3min
-- Trend: Consistent ~3-4 min per plan
+- Last 5 plans: 4min, 4min, 3min, 3min, 8min
+- Trend: Consistent ~3-4 min per plan (11.1-01 longer due to multi-file changes)
 
 _Updated after each plan completion_
 
@@ -90,6 +91,9 @@ Recent decisions affecting current work:
 - Modal dismissal props default to true for backward compatibility (11-01)
 - Danger variant uses same glossy-button mixin pattern as other variants (11-01)
 - Use v-else for unlimited rank badges instead of v-else-if with index guard (11.1-02)
+- SCORE_INCREMENT reduced from 10 to 1 for finer-grained scoring (11.1-01)
+- Player range expanded to 2-10 with default 2, configurable via env vars (11.1-01)
+- Player limits sourced from Nuxt runtimeConfig.public for env var overrides (11.1-01)
 
 ### Pending Todos
 
@@ -120,7 +124,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 11.1-02-PLAN.md (GameScrollList rank fix)
+Stopped at: Completed 11.1-01-PLAN.md (Scoring increment and player config)
 Resume file: None
 
 ### Phase 11 Plans Status
