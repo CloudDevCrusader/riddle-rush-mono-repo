@@ -595,3 +595,43 @@ cleanup_old_backups() {
 
 	log "SUCCESS" "Backup cleanup complete"
 }
+
+# ===========================================
+# Post-Deployment Tasks
+# ===========================================
+
+post_deployment() {
+	local environment=$1
+	local version
+	version=$(grep '"version"' package.json | head -1 | sed 's/.*"\([0-9][0-9.]*\)".*/\1/')
+	local timestamp
+	timestamp=$(date +%Y%m%d-%H%M%S)
+
+	log_section "Post-Deployment Tasks"
+
+	# Record deployment in STATE.md if it exists
+	if [[ -f ".planning/STATE.md" ]]; then
+		log "INFO" "Recording deployment in STATE.md..."
+		{
+			echo ""
+			echo "### Deployment: ${environment}"
+			echo "- **Version:** ${version}"
+			echo "- **Timestamp:** ${timestamp}"
+			echo "- **Branch:** $(git branch --show-current)"
+			echo "- **Commit:** $(git rev-parse --short HEAD)"
+		} >>".planning/STATE.md"
+		log "SUCCESS" "STATE.md updated with deployment record"
+	fi
+
+	# Deployment summary
+	log_section "Deployment Summary"
+	log "SUCCESS" "Environment: $environment"
+	log "SUCCESS" "Version: $version"
+	log "SUCCESS" "Timestamp: $timestamp"
+
+	case $environment in
+	production) log "SUCCESS" "URL: https://riddlerush.de" ;;
+	development) log "SUCCESS" "URL: https://dev.riddlerush.de" ;;
+	staging) log "SUCCESS" "URL: https://staging.riddlerush.de" ;;
+	esac
+}
