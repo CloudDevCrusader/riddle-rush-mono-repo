@@ -29,13 +29,13 @@
                 –
               </button>
               <div class="stepper__count" aria-live="polite">
-                {{ t('players.count_label') }}: {{ playerCount }} / {{ MAX_PLAYERS }}
+                {{ t('players.count_label') }}: {{ playerCount }} / {{ maxPlayers }}
               </div>
               <button
                 class="stepper__button stepper__button--plus"
                 type="button"
                 :aria-label="t('players.increase')"
-                :disabled="playerCount >= MAX_PLAYERS"
+                :disabled="playerCount >= maxPlayers"
                 @click="changePlayerCount(1)"
               >
                 +
@@ -76,19 +76,18 @@
 </template>
 
 <script setup lang="ts">
-import { MAX_PLAYERS } from '@riddle-rush/shared/constants'
-
 const { t, goBack, toast } = usePageSetup()
 const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
 const runtimeConfig = useRuntimeConfig()
 
-const minPlayers = 1
-const playerCount = ref(4)
+const minPlayers = runtimeConfig.public.minPlayers as number
+const playerCount = ref(runtimeConfig.public.defaultPlayers as number)
 const playerNames = ref<string[]>([])
+const maxPlayers = computed(() => runtimeConfig.public.maxPlayers as number)
 const isLegacyStyle = computed(() => runtimeConfig.public?.playersMockupStyle === 'legacy')
 
-const clampPlayerCount = (value: number) => Math.min(MAX_PLAYERS, Math.max(minPlayers, value))
+const clampPlayerCount = (value: number) => Math.min(maxPlayers.value, Math.max(minPlayers, value))
 
 const syncPlayerList = (targetCount?: number) => {
   const nextCount = clampPlayerCount(targetCount ?? playerCount.value)
@@ -107,7 +106,7 @@ const changePlayerCount = (delta: number) => {
 
   if (nextCount === playerCount.value) {
     if (delta > 0) {
-      toast.info(t('players.max_players', [MAX_PLAYERS]))
+      toast.info(t('players.max_players', [maxPlayers.value]))
     }
     return
   }
