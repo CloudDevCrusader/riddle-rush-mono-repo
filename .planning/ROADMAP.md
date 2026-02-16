@@ -24,6 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Game Results** - Scoring and leaderboard pages
 - [x] **Phase 10: Settings Pages** - Options and language selection
 - [ ] **Phase 11: Modal Dialogs** - Quit and pause overlays
+- [x] **Phase 11.1: Scoring & Player Config** - INSERTED: Score increment ±1, player count 2-10, leaderboard rank fixes
 - [ ] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
 
 ## Phase Details
@@ -251,6 +252,25 @@ Plans:
 - [ ] 11-02-PLAN.md — Refactor QuitModal to use GameModal with danger variant
 - [ ] 11-03-PLAN.md — Refactor PauseModal to CSS-first with stacked buttons
 
+### Phase 11.1: Scoring & Player Config (INSERTED)
+
+**Goal**: Adjust scoring increment to ±1 per button press, make player count limits configurable via runtime config (env vars), set defaults to 2-10 players with default 2, and ensure leaderboard displays correct scores and rank positions for up to 10 players
+**Depends on**: Phase 9 (Game Results)
+**Success Criteria** (what must be TRUE):
+
+1. Score +/- buttons on results page change score by 1 per press (not 10)
+2. Player count limits (min, max, default) are configurable via Nuxt runtime config / environment variables
+3. Default player range is 2-10 with default 2 (overridable per deployment)
+4. Read-only leaderboard page shows each player's correct total score and rank position
+5. GameScrollList rank badges display for positions 4-10 (not just 4-6)
+
+**Plans**: 2 plans
+
+Plans:
+
+- [x] 11.1-01-PLAN.md — Update scoring increment, player limits via runtime config, and shared constants
+- [x] 11.1-02-PLAN.md — Fix GameScrollList rank display for up to 10 players and verify leaderboard
+
 ### Phase 12: App Optimization & Refactoring
 
 **Goal**: Prepare app for production v1.0.3 with comprehensive testing, optimized Terraform infrastructure, and proper deployment
@@ -293,7 +313,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12
 
 | Phase                              | Plans Complete | Status      | Completed  |
 | ---------------------------------- | -------------- | ----------- | ---------- |
@@ -308,4 +328,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Game Results                    | 2/2            | Complete    | 2026-02-01 |
 | 10. Settings Pages                 | 2/2            | Complete    | 2026-02-01 |
 | 11. Modal Dialogs                  | 0/3            | Not started | -          |
+| 11.1. Scoring & Player Config      | 2/2            | Complete    | 2026-02-16 |
 | 12. App Optimization & Refactoring | 0/10           | Planned     | -          |
