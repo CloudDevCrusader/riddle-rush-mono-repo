@@ -36,10 +36,10 @@ resource "aws_api_gateway_resource" "errors" {
 
 # POST method for error logging
 resource "aws_api_gateway_method" "post_errors" {
-  rest_api_id   = aws_api_gateway_rest_api.error_logging.id
-  resource_id   = aws_api_gateway_resource.errors.id
-  http_method   = "POST"
-  authorization = "NONE"
+  rest_api_id      = aws_api_gateway_rest_api.error_logging.id
+  resource_id      = aws_api_gateway_resource.errors.id
+  http_method      = "POST"
+  authorization    = "NONE"
   api_key_required = var.enable_api_key
 }
 

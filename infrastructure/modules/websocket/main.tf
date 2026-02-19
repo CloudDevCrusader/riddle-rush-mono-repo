@@ -27,10 +27,10 @@ resource "aws_apigatewayv2_api" "websocket" {
 # --- $connect route ---
 
 resource "aws_apigatewayv2_integration" "connect" {
-  api_id                 = aws_apigatewayv2_api.websocket.id
-  integration_type       = "AWS_PROXY"
-  integration_uri        = var.connect_lambda_arn
-  integration_method     = "POST"
+  api_id                    = aws_apigatewayv2_api.websocket.id
+  integration_type          = "AWS_PROXY"
+  integration_uri           = var.connect_lambda_arn
+  integration_method        = "POST"
   content_handling_strategy = "CONVERT_TO_TEXT"
 }
 
@@ -51,10 +51,10 @@ resource "aws_lambda_permission" "connect" {
 # --- $disconnect route ---
 
 resource "aws_apigatewayv2_integration" "disconnect" {
-  api_id                 = aws_apigatewayv2_api.websocket.id
-  integration_type       = "AWS_PROXY"
-  integration_uri        = var.disconnect_lambda_arn
-  integration_method     = "POST"
+  api_id                    = aws_apigatewayv2_api.websocket.id
+  integration_type          = "AWS_PROXY"
+  integration_uri           = var.disconnect_lambda_arn
+  integration_method        = "POST"
   content_handling_strategy = "CONVERT_TO_TEXT"
 }
 
@@ -75,10 +75,10 @@ resource "aws_lambda_permission" "disconnect" {
 # --- $default route (message handler) ---
 
 resource "aws_apigatewayv2_integration" "message" {
-  api_id                 = aws_apigatewayv2_api.websocket.id
-  integration_type       = "AWS_PROXY"
-  integration_uri        = var.message_lambda_arn
-  integration_method     = "POST"
+  api_id                    = aws_apigatewayv2_api.websocket.id
+  integration_type          = "AWS_PROXY"
+  integration_uri           = var.message_lambda_arn
+  integration_method        = "POST"
   content_handling_strategy = "CONVERT_TO_TEXT"
 }
 

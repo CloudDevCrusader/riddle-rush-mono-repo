@@ -40,8 +40,8 @@ variable "enable_intelligent_tiering" {
 variable "lifecycle_rules" {
   description = "S3 lifecycle rules for version management"
   type = list(object({
-    id                                = string
-    enabled                           = bool
+    id                                 = string
+    enabled                            = bool
     noncurrent_version_expiration_days = number
   }))
   default = []
