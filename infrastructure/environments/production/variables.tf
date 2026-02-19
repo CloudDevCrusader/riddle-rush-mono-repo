@@ -16,20 +16,14 @@ variable "bucket_name" {
   default     = ""
 }
 
-variable "domain_name" {
-  description = "Custom domain name for CloudFront (optional, deprecated - use domain_names)"
-  type        = string
-  default     = ""
-}
-
 variable "domain_names" {
-  description = "List of custom domain names for CloudFront (optional)"
+  description = "List of custom domain names for CloudFront"
   type        = list(string)
   default     = []
 }
 
 variable "certificate_arn" {
-  description = "ACM certificate ARN for custom domain (required if domain_name is set)"
+  description = "ACM certificate ARN for custom domain (required if domain_names is set)"
   type        = string
   default     = ""
 }
