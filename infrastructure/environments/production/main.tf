@@ -495,8 +495,10 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_4xx" {
   period              = 300
   statistic           = "Average"
   threshold           = 15
-  alarm_description   = "CloudFront 4xx error rate exceeds 15%"
+  alarm_description   = "CloudFront 4xx error rate > 15%"
+  treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.alerts.arn]
+  ok_actions          = [aws_sns_topic.alerts.arn]
 
   dimensions = {
     DistributionId = module.cloudfront.distribution_id
@@ -514,8 +516,10 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx" {
   period              = 300
   statistic           = "Average"
   threshold           = 5
-  alarm_description   = "CloudFront 5xx error rate exceeds 5%"
+  alarm_description   = "CloudFront 5xx error rate > 5%"
+  treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.alerts.arn]
+  ok_actions          = [aws_sns_topic.alerts.arn]
 
   dimensions = {
     DistributionId = module.cloudfront.distribution_id
