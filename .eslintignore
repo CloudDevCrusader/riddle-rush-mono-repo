@@ -41,6 +41,12 @@ Thumbs.db
 *.generated.*
 .nuxt.d.ts
 eslint-typegen.d.ts
+*.d.ts
+
+# Tooling
+.claude/
+.opencode/
+
 
 # Scripts
 scripts/
