@@ -6,15 +6,13 @@ data "aws_route53_zone" "main" {
 }
 
 locals {
-  # Support both domain_name (backward compatibility) and domain_names
-  domain_names_list = length(var.domain_names) > 0 ? var.domain_names : (var.domain_name != "" ? [var.domain_name] : [])
-  create_dns_records = length(local.domain_names_list) > 0
+  create_dns_records = length(var.domain_names) > 0
 }
 
 resource "aws_route53_record" "cloudfront_a" {
-  count   = local.create_dns_records ? length(local.domain_names_list) : 0
+  count   = local.create_dns_records ? length(var.domain_names) : 0
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = local.domain_names_list[count.index]
+  name    = var.domain_names[count.index]
   type    = "A"
 
   alias {
@@ -25,9 +23,9 @@ resource "aws_route53_record" "cloudfront_a" {
 }
 
 resource "aws_route53_record" "cloudfront_aaaa" {
-  count   = local.create_dns_records ? length(local.domain_names_list) : 0
+  count   = local.create_dns_records ? length(var.domain_names) : 0
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = local.domain_names_list[count.index]
+  name    = var.domain_names[count.index]
   type    = "AAAA"
 
   alias {
