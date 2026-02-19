@@ -1,47 +1,47 @@
-import { tool } from "langchain";
-import { TavilySearch } from "@langchain/tavily";
-import { z } from "zod";
+import { tool } from 'langchain'
+import { TavilySearch } from '@langchain/tavily'
+import { z } from 'zod'
 
 const internetSearch = tool(
   async ({
     query,
     maxResults = 5,
-    topic = "general",
+    topic = 'general',
     includeRawContent = false,
   }: {
-    query: string;
-    maxResults?: number;
-    topic?: "general" | "news" | "finance";
-    includeRawContent?: boolean;
+    query: string
+    maxResults?: number
+    topic?: 'general' | 'news' | 'finance'
+    includeRawContent?: boolean
   }) => {
     const tavilySearch = new TavilySearch({
       maxResults,
       tavilyApiKey: process.env.TAVILY_API_KEY,
       includeRawContent,
       topic,
-    });
-    return await tavilySearch._call({ query });
+    })
+    return await tavilySearch._call({ query })
   },
   {
-    name: "internet_search",
-    description: "Run a web search",
+    name: 'internet_search',
+    description: 'Run a web search',
     schema: z.object({
-      query: z.string().describe("The search query"),
+      query: z.string().describe('The search query'),
       maxResults: z
         .number()
         .optional()
         .default(5)
-        .describe("Maximum number of results to return"),
+        .describe('Maximum number of results to return'),
       topic: z
-        .enum(["general", "news", "finance"])
+        .enum(['general', 'news', 'finance'])
         .optional()
-        .default("general")
-        .describe("Search topic category"),
+        .default('general')
+        .describe('Search topic category'),
       includeRawContent: z
         .boolean()
         .optional()
         .default(false)
-        .describe("Whether to include raw content"),
+        .describe('Whether to include raw content'),
     }),
   },
-);
+)

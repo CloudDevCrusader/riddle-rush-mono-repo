@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const protectedPages = ['/game']
 
   // Check if current route requires active game
-  const requiresActiveGame = protectedPages.some((page) => to.path.startsWith(page))
+  const requiresActiveGame = protectedPages.some(page => to.path.startsWith(page))
 
   if (requiresActiveGame && !gameStore.hasActiveSession) {
     // Redirect to home page with query param to show message

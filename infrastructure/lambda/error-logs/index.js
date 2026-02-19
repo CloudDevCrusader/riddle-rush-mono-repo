@@ -29,7 +29,7 @@ exports.handler = async (event) => {
     const { app, environment, version, logs } = body
 
     // Process each log entry
-    const logEvents = logs.map((log) => ({
+    const logEvents = logs.map(log => ({
       timestamp: new Date(log.timestamp || Date.now()).getTime(),
       message: formatLogMessage(log, app, environment, version),
     }))

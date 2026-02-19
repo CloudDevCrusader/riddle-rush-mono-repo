@@ -12,8 +12,8 @@ const repoRoot = resolve(__dirname, '../..')
 const COMMANDS = {
   'git:status': { command: 'git', args: ['status', '-sb'] },
   'workspace:check': { command: 'pnpm', args: ['run', 'workspace:check'] },
-  typecheck: { command: 'pnpm', args: ['run', 'typecheck'] },
-  lint: { command: 'pnpm', args: ['run', 'lint'] },
+  'typecheck': { command: 'pnpm', args: ['run', 'typecheck'] },
+  'lint': { command: 'pnpm', args: ['run', 'lint'] },
   'test:unit': { command: 'pnpm', args: ['run', 'test:unit'] },
 }
 
