@@ -6,12 +6,11 @@ project_name = "riddle-rush-pwa"
 aws_region   = "eu-central-1"
 
 # If you have an existing bucket, specify it here for import
-# Leave empty for auto-generated name
-bucket_name = ""
+# Leave empty for auto-generated name (project-production-accountid)
+bucket_name = "riddle-rush-pwa-production-720377205549"
 
-# Optional: Custom domain
-# domain_names = ["riddlerush.de"]
-# domain_name = "riddlerush.de" # Deprecated, use domain_names
-# certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/..."
+# Custom domain
+domain_names    = ["riddlerush.de"]
+certificate_arn = "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/YOUR_CERT_ID"
 
 cloudfront_price_class = "PriceClass_100"
