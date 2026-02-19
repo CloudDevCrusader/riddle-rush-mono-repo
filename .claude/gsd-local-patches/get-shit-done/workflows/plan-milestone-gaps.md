@@ -70,7 +70,7 @@ Find highest existing phase:
 
 ```bash
 # Get sorted phase list, extract last one
-PHASES=$(node ./.claude/get-shit-done/bin/gsd-tools.js phases list)
+PHASES=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs phases list)
 HIGHEST=$(echo "$PHASES" | jq -r '.directories[-1]')
 ```
 
@@ -143,7 +143,7 @@ mkdir -p ".planning/phases/{NN}-{name}"
 ## 8. Commit Roadmap Update
 
 ```bash
-node ./.claude/get-shit-done/bin/gsd-tools.js commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md
+node ./.claude/get-shit-done/bin/gsd-tools.cjs commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md
 ```
 
 ## 9. Offer Next Steps

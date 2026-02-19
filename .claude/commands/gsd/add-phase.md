@@ -12,12 +12,11 @@ allowed-tools:
 Add a new integer phase to the end of the current milestone in the roadmap.
 
 Routes to the add-phase workflow which handles:
-
 - Phase number calculation (next sequential integer)
 - Directory creation with slug generation
 - Roadmap structure updates
 - STATE.md roadmap evolution tracking
-  </objective>
+</objective>
 
 <execution_context>
 @.planning/ROADMAP.md
@@ -29,7 +28,6 @@ Routes to the add-phase workflow which handles:
 **Follow the add-phase workflow** from `@./.claude/get-shit-done/workflows/add-phase.md`.
 
 The workflow handles all logic including:
-
 1. Argument parsing and validation
 2. Roadmap existence checking
 3. Current milestone identification
@@ -38,4 +36,4 @@ The workflow handles all logic including:
 6. Phase directory creation
 7. Roadmap entry insertion
 8. STATE.md updates
-   </process>
+</process>
