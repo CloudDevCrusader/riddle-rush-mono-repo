@@ -1,0 +1,13 @@
+# Example variables for the translation environment.
+#
+# Create a terraform.tfvars file and populate it with your values.
+# Do NOT commit terraform.tfvars to version control.
+
+# aws_region         = "eu-central-1"
+# instance_type      = "t4g.small"
+# domain_name        = "translation.riddlerush.de"
+
+# ssh_public_key     = "ssh-ed25519 AAAA... your-key-name"
+# ssh_allowed_cidr   = ["YOUR_IP/32"] # Recommended for security
+
+# tolgee_admin_password = "replaceme"

@@ -2,7 +2,17 @@
 
 Self-hosted translation management for Riddle Rush i18n files.
 
-## Quick Start
+## Production Instance
+
+The live, hosted instance is available at: **https://translation.riddlerush.de**
+
+The infrastructure for this instance is managed by Terraform at `infrastructure/environments/translation/`.
+
+---
+
+## Local Development Quick Start
+
+For local testing or development on the Tolgee setup itself:
 
 ```bash
 # Start Tolgee (from monorepo root)
