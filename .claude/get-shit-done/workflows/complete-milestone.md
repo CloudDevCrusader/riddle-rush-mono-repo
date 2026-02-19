@@ -44,10 +44,15 @@ ROADMAP=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs roadmap analyze)
 ```
 
 This returns all phases with plan/summary counts and disk status. Use this to verify:
-
 - Which phases belong to this milestone?
 - All phases complete (all plans have summaries)? Check `disk_status === 'complete'` for each.
 - `progress_percent` should be 100%.
+
+**Requirements completion check (REQUIRED before presenting):**
+
+Parse REQUIREMENTS.md traceability table:
+- Count total v1 requirements vs checked-off (`[x]`) requirements
+- Identify any non-Complete rows in the traceability table
 
 Present:
 
@@ -61,7 +66,24 @@ Includes:
 - Phase 4: Polish (1/1 plan complete)
 
 Total: {phase_count} phases, {total_plans} plans, all complete
+Requirements: {N}/{M} v1 requirements checked off
 ```
+
+**If requirements incomplete** (N < M):
+
+```
+⚠ Unchecked Requirements:
+
+- [ ] {REQ-ID}: {description} (Phase {X})
+- [ ] {REQ-ID}: {description} (Phase {Y})
+```
+
+MUST present 3 options:
+1. **Proceed anyway** — mark milestone complete with known gaps
+2. **Run audit first** — `/gsd:audit-milestone` to assess gap severity
+3. **Abort** — return to development
+
+If user selects "Proceed anyway": note incomplete requirements in MILESTONES.md under `### Known Gaps` with REQ-IDs and descriptions.
 
 <config-check>
 
@@ -91,7 +113,6 @@ Ready to mark this milestone as shipped?
 ```
 
 Wait for confirmation.
-
 - "adjust scope": Ask which phases to include.
 - "wait": Stop, user returns when ready.
 
@@ -211,8 +232,7 @@ Update PROJECT.md inline. Update "Last updated" footer:
 
 ```markdown
 ---
-
-_Last updated: [date] after v[X.Y] milestone_
+*Last updated: [date] after v[X.Y] milestone*
 ```
 
 **Example full evolution (v1.0 → v1.1 prep):**
@@ -351,7 +371,6 @@ ARCHIVE=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs milestone complete "v[X
 ```
 
 The CLI handles:
-
 - Creating `.planning/milestones/` directory
 - Archiving ROADMAP.md to `milestones/v[X.Y]-ROADMAP.md`
 - Archiving REQUIREMENTS.md to `milestones/v[X.Y]-REQUIREMENTS.md` with archive header
@@ -368,19 +387,16 @@ Verify: `✅ Milestone archived to .planning/milestones/`
 AskUserQuestion(header="Archive Phases", question="Archive phase directories to milestones/?", options: "Yes — move to milestones/v[X.Y]-phases/" | "Skip — keep phases in place")
 
 If "Yes": move phase directories to the milestone archive:
-
 ```bash
 mkdir -p .planning/milestones/v[X.Y]-phases
 # For each phase directory in .planning/phases/:
 mv .planning/phases/{phase-dir} .planning/milestones/v[X.Y]-phases/
 ```
-
 Verify: `✅ Phase directories archived to .planning/milestones/v[X.Y]-phases/`
 
 If "Skip": Phase directories remain in `.planning/phases/` as raw execution history. Use `/gsd:cleanup` later to archive retroactively.
 
 After archival, the AI still handles:
-
 - Reorganizing ROADMAP.md with milestone grouping (requires judgment)
 - Full PROJECT.md evolution review (requires understanding)
 - Deleting original ROADMAP.md and REQUIREMENTS.md
@@ -438,7 +454,6 @@ See: .planning/PROJECT.md (updated [today])
 ```
 
 **Accumulated Context:**
-
 - Clear decisions summary (full log in PROJECT.md)
 - Clear resolved blockers
 - Keep open blockers for next milestone
@@ -589,7 +604,6 @@ Confirm: "Tagged: v[X.Y]"
 Ask: "Push tag to remote? (y/n)"
 
 If yes:
-
 ```bash
 git push origin v[X.Y]
 ```
@@ -603,7 +617,6 @@ Commit milestone completion.
 ```bash
 node ./.claude/get-shit-done/bin/gsd-tools.cjs commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
 ```
-
 ```
 
 Confirm: "Committed: chore: complete v[X.Y] milestone"
@@ -613,16 +626,13 @@ Confirm: "Committed: chore: complete v[X.Y] milestone"
 <step name="offer_next">
 
 ```
-
 ✅ Milestone v[X.Y] [Name] complete
 
 Shipped:
-
 - [N] phases ([M] plans, [P] tasks)
 - [One sentence of what shipped]
 
 Archived:
-
 - milestones/v[X.Y]-ROADMAP.md
 - milestones/v[X.Y]-REQUIREMENTS.md
 
@@ -640,7 +650,6 @@ Tag: v[X.Y]
 <sub>`/clear` first → fresh context window</sub>
 
 ---
-
 ```
 
 </step>
@@ -683,7 +692,9 @@ Milestone completion is successful when:
 - [ ] STATE.md updated with fresh project reference
 - [ ] Git tag created (v[X.Y])
 - [ ] Milestone commit made (includes archive files and deletion)
+- [ ] Requirements completion checked against REQUIREMENTS.md traceability table
+- [ ] Incomplete requirements surfaced with proceed/audit/abort options
+- [ ] Known gaps recorded in MILESTONES.md if user proceeded with incomplete requirements
 - [ ] User knows next step (/gsd:new-milestone)
 
 </success_criteria>
-```

@@ -17,7 +17,6 @@ INIT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs init milestone-op)
 Extract from init JSON: `milestone_version`, `milestone_name`, `phase_count`, `completed_phases`, `commit_docs`.
 
 Resolve integration checker model:
-
 ```bash
 CHECKER_MODEL=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs resolve-model gsd-integration-checker --raw)
 ```
@@ -46,7 +45,6 @@ PHASE_INFO=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs find-phase 01 --raw)
 ```
 
 From each VERIFICATION.md, extract:
-
 - **Status:** passed | gaps_found
 - **Critical gaps:** (if any — these are blockers)
 - **Non-critical gaps:** tech debt, deferred items, warnings
@@ -59,6 +57,8 @@ If a phase is missing VERIFICATION.md, flag it as "unverified phase" — this is
 
 With phase context collected:
 
+Extract `MILESTONE_REQ_IDS` from REQUIREMENTS.md traceability table — all REQ-IDs assigned to phases in this milestone.
+
 ```
 Task(
   prompt="Check cross-phase integration and E2E flows.
@@ -66,6 +66,11 @@ Task(
 Phases: {phase_dirs}
 Phase exports: {from SUMMARYs}
 API routes: {routes created}
+
+Milestone Requirements:
+{MILESTONE_REQ_IDS — list each REQ-ID with description and assigned phase}
+
+MUST map each integration finding to affected requirement IDs where applicable.
 
 Verify cross-phase wiring and E2E user flows.",
   subagent_type="gsd-integration-checker",
@@ -76,17 +81,51 @@ Verify cross-phase wiring and E2E user flows.",
 ## 4. Collect Results
 
 Combine:
-
 - Phase-level gaps and tech debt (from step 2)
 - Integration checker's report (wiring gaps, broken flows)
 
-## 5. Check Requirements Coverage
+## 5. Check Requirements Coverage (3-Source Cross-Reference)
 
-For each requirement in REQUIREMENTS.md mapped to this milestone:
+MUST cross-reference three independent sources for each requirement:
 
-- Find owning phase
-- Check phase verification status
-- Determine: satisfied | partial | unsatisfied
+### 5a. Parse REQUIREMENTS.md Traceability Table
+
+Extract all REQ-IDs mapped to milestone phases from the traceability table:
+- Requirement ID, description, assigned phase, current status, checked-off state (`[x]` vs `[ ]`)
+
+### 5b. Parse Phase VERIFICATION.md Requirements Tables
+
+For each phase's VERIFICATION.md, extract the expanded requirements table:
+- Requirement | Source Plan | Description | Status | Evidence
+- Map each entry back to its REQ-ID
+
+### 5c. Extract SUMMARY.md Frontmatter Cross-Check
+
+For each phase's SUMMARY.md, extract `requirements-completed` from YAML frontmatter:
+```bash
+for summary in .planning/phases/*-*/*-SUMMARY.md; do
+  node ./.claude/get-shit-done/bin/gsd-tools.cjs summary-extract "$summary" --fields requirements_completed | jq -r '.requirements_completed'
+done
+```
+
+### 5d. Status Determination Matrix
+
+For each REQ-ID, determine status using all three sources:
+
+| VERIFICATION.md Status | SUMMARY Frontmatter | REQUIREMENTS.md | → Final Status |
+|------------------------|---------------------|-----------------|----------------|
+| passed                 | listed              | `[x]`           | **satisfied**  |
+| passed                 | listed              | `[ ]`           | **satisfied** (update checkbox) |
+| passed                 | missing             | any             | **partial** (verify manually) |
+| gaps_found             | any                 | any             | **unsatisfied** |
+| missing                | listed              | any             | **partial** (verification gap) |
+| missing                | missing             | any             | **unsatisfied** |
+
+### 5e. FAIL Gate and Orphan Detection
+
+**REQUIRED:** Any `unsatisfied` requirement MUST force `gaps_found` status on the milestone audit.
+
+**Orphan detection:** Requirements present in REQUIREMENTS.md traceability table but absent from ALL phase VERIFICATION.md files MUST be flagged as orphaned. Orphaned requirements are treated as `unsatisfied` — they were assigned but never verified by any phase.
 
 ## 6. Aggregate into v{version}-MILESTONE-AUDIT.md
 
@@ -94,33 +133,39 @@ Create `.planning/v{version}-v{version}-MILESTONE-AUDIT.md` with:
 
 ```yaml
 ---
-milestone: { version }
-audited: { timestamp }
+milestone: {version}
+audited: {timestamp}
 status: passed | gaps_found | tech_debt
 scores:
   requirements: N/M
   phases: N/M
   integration: N/M
   flows: N/M
-gaps: # Critical blockers
-  requirements: [...]
+gaps:  # Critical blockers
+  requirements:
+    - id: "{REQ-ID}"
+      status: "unsatisfied | partial | orphaned"
+      phase: "{assigned phase}"
+      claimed_by_plans: ["{plan files that reference this requirement}"]
+      completed_by_plans: ["{plan files whose SUMMARY marks it complete}"]
+      verification_status: "passed | gaps_found | missing | orphaned"
+      evidence: "{specific evidence or lack thereof}"
   integration: [...]
   flows: [...]
-tech_debt: # Non-critical, deferred
+tech_debt:  # Non-critical, deferred
   - phase: 01-auth
     items:
-      - 'TODO: add rate limiting'
-      - 'Warning: no password strength validation'
+      - "TODO: add rate limiting"
+      - "Warning: no password strength validation"
   - phase: 03-dashboard
     items:
-      - 'Deferred: mobile responsive layout'
+      - "Deferred: mobile responsive layout"
 ---
 ```
 
 Plus full markdown report with tables for requirements, phases, integration, tech debt.
 
 **Status values:**
-
 - `passed` — all requirements met, no critical gaps, minimal tech debt
 - `gaps_found` — critical blockers exist
 - `tech_debt` — no blockers but accumulated deferred items need review
@@ -169,20 +214,17 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 ### Unsatisfied Requirements
 
 {For each unsatisfied requirement:}
-
 - **{REQ-ID}: {description}** (Phase {X})
   - {reason}
 
 ### Cross-Phase Issues
 
 {For each integration gap:}
-
 - **{from} → {to}:** {issue}
 
 ### Broken Flows
 
 {For each flow gap:}
-
 - **{flow name}:** breaks at {step}
 
 ───────────────────────────────────────────────────────────────
@@ -198,7 +240,6 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 ───────────────────────────────────────────────────────────────
 
 **Also available:**
-
 - cat .planning/v{version}-MILESTONE-AUDIT.md — see full report
 - /gsd:complete-milestone {version} — proceed anyway (accept tech debt)
 
@@ -219,7 +260,6 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 
 {For each phase with debt:}
 **Phase {X}: {name}**
-
 - {item 1}
 - {item 2}
 
@@ -243,11 +283,15 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 </offer_next>
 
 <success_criteria>
-
 - [ ] Milestone scope identified
 - [ ] All phase VERIFICATION.md files read
+- [ ] SUMMARY.md `requirements-completed` frontmatter extracted for each phase
+- [ ] REQUIREMENTS.md traceability table parsed for all milestone REQ-IDs
+- [ ] 3-source cross-reference completed (VERIFICATION + SUMMARY + traceability)
+- [ ] Orphaned requirements detected (in traceability but absent from all VERIFICATIONs)
 - [ ] Tech debt and deferred gaps aggregated
-- [ ] Integration checker spawned for cross-phase wiring
-- [ ] v{version}-MILESTONE-AUDIT.md created
+- [ ] Integration checker spawned with milestone requirement IDs
+- [ ] v{version}-MILESTONE-AUDIT.md created with structured requirement gap objects
+- [ ] FAIL gate enforced — any unsatisfied requirement forces gaps_found status
 - [ ] Results presented with actionable next steps
-      </success_criteria>
+</success_criteria>

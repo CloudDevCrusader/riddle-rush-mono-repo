@@ -1,7 +1,7 @@
 ---
 name: gsd:execute-phase
 description: Execute all plans in a phase with wave-based parallelization
-argument-hint: '<phase-number> [--gaps-only]'
+argument-hint: "<phase-number> [--gaps-only]"
 allowed-tools:
   - Read
   - Write
@@ -13,7 +13,6 @@ allowed-tools:
   - TodoWrite
   - AskUserQuestion
 ---
-
 <objective>
 Execute all plans in a phase using wave-based parallel execution.
 
@@ -31,7 +30,6 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 Phase: $ARGUMENTS
 
 **Flags:**
-
 - `--gaps-only` — Execute only gap closure plans (plans with `gap_closure: true` in frontmatter). Use after verify-work creates fix plans.
 
 @.planning/ROADMAP.md
