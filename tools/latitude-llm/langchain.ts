@@ -8,7 +8,7 @@ const telemetry = new LatitudeTelemetry(
     instrumentations: {
       langchain: { callbackManagerModule: LangchainCallbacks }, // This enables automatic tracing for the LangChain SDK
     },
-  }
+  },
 )
 
 async function generateSupportReply(input: string) {
@@ -18,9 +18,9 @@ async function generateSupportReply(input: string) {
       path: 'generate-support-reply', // Add a path to identify this prompt in Latitude
     },
     async () => {
-      const agent = createAgent({ model: 'claude-sonnet-4-5' });
-      const result = await agent.invoke({});
+      const agent = createAgent({ model: 'claude-sonnet-4-5' })
+      const result = await agent.invoke({})
       return result
-    }
+    },
   )
 }

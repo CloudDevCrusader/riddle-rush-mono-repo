@@ -37,6 +37,7 @@
     "changeset:publish": "changeset publish",
     "changeset:version": "changeset version",
     "clean": "pnpm -r clean && rm -rf node_modules",
+    "version": "changeset version",
     "deploy:aws": "./scripts/aws-deploy.sh",
     "deploy:dev": "./scripts/deploy-dev.sh",
     "deploy:infrastructure": "./scripts/deploy-infrastructure.sh",

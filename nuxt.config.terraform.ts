@@ -31,7 +31,7 @@ export function getTerraformOutputs(environment: string = 'prod'): TerraformOutp
   try {
     const outputFile = join(
       process.cwd(),
-      `infrastructure/environments/${environment}/terraform-outputs.json`
+      `infrastructure/environments/${environment}/terraform-outputs.json`,
     )
     const outputs = JSON.parse(readFileSync(outputFile, 'utf-8'))
 

@@ -8,7 +8,7 @@ const telemetry = new LatitudeTelemetry(
     instrumentations: {
       anthropic: Anthropic, // This enables automatic tracing for the Anthropic SDK
     },
-  }
+  },
 )
 
 async function generateSupportReply(input: string) {
@@ -18,9 +18,9 @@ async function generateSupportReply(input: string) {
       path: 'generate-support-reply', // Add a path to identify this prompt in Latitude
     },
     async () => {
-      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-      const response = await client.messages.create({});
+      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+      const response = await client.messages.create({})
       return response
-    }
+    },
   )
 }
