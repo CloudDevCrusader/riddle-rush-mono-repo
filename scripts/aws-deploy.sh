@@ -364,8 +364,8 @@ if [[ "${DRY_RUN}" != "true" ]]; then
 				log "WARN" "Verification failed but no backup available for rollback"
 			fi
 		else
-			# Clean up old backups on success
-			cleanup_old_backups "${S3_BUCKET}" 5
+			# Clean up old backups on success (non-critical, don't fail deployment)
+			cleanup_old_backups "${S3_BUCKET}" 5 || true
 		fi
 	fi
 fi

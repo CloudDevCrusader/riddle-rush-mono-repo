@@ -586,7 +586,7 @@ cleanup_old_backups() {
 	local count=0
 
 	for backup in $backups; do
-		((count++))
+		(( count += 1 ))
 		if [ $count -gt $keep ]; then
 			log "INFO" "Removing old backup: $backup"
 			aws s3 rm "s3://$s3_bucket-backups/$backup" --recursive --quiet 2>/dev/null
