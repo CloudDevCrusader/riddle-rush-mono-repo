@@ -3,6 +3,8 @@ import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 import { filterSsrPlugins } from './utils/filter-ssr-plugins'
 import { withTrailingSlash } from 'ufo'
+import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema'
+import type { Manifest as ViteBundleManifest } from 'vue-bundle-renderer'
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -25,11 +27,11 @@ const resolvedBaseUrl = (() => {
 })()
 
 // Helper function to filter out problematic i18n plugins
-function filterProblematicPlugins(app: any) {
+function filterProblematicPlugins(app: NuxtAppSchema) {
   if (app.plugins && Array.isArray(app.plugins)) {
     const originalLength = app.plugins.length
-    app.plugins = app.plugins.filter((plugin: any) => {
-      const src = typeof plugin === 'string' ? plugin : plugin.src || plugin
+    app.plugins = app.plugins.filter((plugin: NuxtPlugin) => {
+      const src = plugin.src
       if (src && typeof src === 'string') {
         // Remove SSR-only plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
         // NOTE: Do NOT filter the preload plugin — it's required to load locale messages
@@ -309,15 +311,14 @@ export default defineNuxtConfig({
         console.warn('Development mode: Ensuring proper plugin initialization order')
       }
     },
-    // Filter out problematic i18n plugins - use multiple hooks to ensure it works
-    'app:resolve': (app: any) => {
+    // Filter out problematic i18n plugins at app resolution stage
+    'app:resolve': (app: NuxtAppSchema) => {
       filterProblematicPlugins(app)
     },
-    'build:manifest': (manifest: any) => {
-      // Also filter at build manifest stage
-      if (manifest.app && manifest.app.plugins) {
-        filterProblematicPlugins(manifest.app)
-      }
+    // build:manifest receives the Vite/Webpack bundle manifest (asset map), not app plugins —
+    // plugin filtering is handled in app:resolve above. This hook is kept as a no-op placeholder.
+    'build:manifest': (_manifest: ViteBundleManifest) => {
+      // Plugin filtering is handled in app:resolve; bundle manifest has no plugin list.
     },
   },
 
@@ -337,12 +338,14 @@ export default defineNuxtConfig({
     // The default restructureDir is "i18n", so all paths would be prefixed with i18n/.
     // Set to '.' so paths resolve from the project root directly.
     restructureDir: '.',
-    langDir: 'translations/locales',
+    // langDir is intentionally omitted: messages are statically bundled via vueI18n/i18n.config.ts.
+    // Adding langDir + file properties would trigger runtime lazy-loading which conflicts with
+    // the static bundle and causes intermittent missing key race conditions (especially with PWA).
     vueI18n: 'translations/i18n.config',
     defaultLocale: 'de',
     locales: [
-      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
-      { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
+      { code: 'en', iso: 'en-US', name: 'English' },
+      { code: 'de', iso: 'de-DE', name: 'Deutsch' },
     ],
     strategy: 'no_prefix',
     // Completely disable browser language detection - handled by client plugin
@@ -530,7 +533,7 @@ export default defineNuxtConfig({
     workbox: {
       navigateFallback: '/',
       navigateFallbackAllowlist: [/^\/(?!api\/)/],
-      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
+      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2,json}'],
       // Allow larger files in debug/development builds (unminified code with sourcemaps)
       maximumFileSizeToCacheInBytes: isDebugBuild || isDev ? 5 * 1024 * 1024 : 2 * 1024 * 1024,
       // Performance: Optimize cache strategies
