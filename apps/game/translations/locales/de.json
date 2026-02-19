@@ -195,12 +195,6 @@
   "offline": {
     "warning": "Sie sind offline. Einige Funktionen funktionieren möglicherweise nicht."
   },
-  "scoring": {
-    "title": "Punktestand",
-    "player": "Spieler",
-    "next_round": "Nächste Runde",
-    "description": "Hier sind die Ergebnisse der letzten Runde"
-  },
   "pause": {
     "home": "Startseite",
     "message": "Spiel ist pausiert, drücke Fortsetzen zum Weiterspielen",

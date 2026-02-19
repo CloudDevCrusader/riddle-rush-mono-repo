@@ -195,12 +195,6 @@
   "offline": {
     "warning": "You are offline. Some features may not work."
   },
-  "scoring": {
-    "title": "Scoring",
-    "player": "Player",
-    "next_round": "Next Round",
-    "description": "Here are the results of the last round"
-  },
   "pause": {
     "home": "Home",
     "message": "Game is paused, press resume to continue",
