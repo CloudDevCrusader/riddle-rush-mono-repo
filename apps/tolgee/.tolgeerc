@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.tolgee.io/cli-schema.json",
+  "apiUrl": "http://localhost:8085",
+  "format": "JSON_ICU",
+  "push": {
+    "filesTemplate": "../game/translations/locales/{languageTag}.json",
+    "forceMode": "OVERRIDE"
+  },
+  "pull": {
+    "path": "../game/translations/locales"
+  }
+}

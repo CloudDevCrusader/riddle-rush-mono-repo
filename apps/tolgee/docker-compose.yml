@@ -1,0 +1,11 @@
+services:
+  app:
+    image: tolgee/tolgee
+    volumes:
+      - ./data:/data
+      - ./config.yaml:/config.yaml
+    ports:
+      - '8085:8080'
+      - '25432:25432'
+    environment:
+      spring.config.additional-location: file:///config.yaml
