@@ -1,0 +1,6 @@
+tolgee:
+  authentication:
+    enabled: true
+    initial-username: admin
+    initial-password: admin
+  front-end-url: http://localhost:8085
