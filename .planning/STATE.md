@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** All phases complete. Project "Visual Redesign & Refactor" is finished.
+**Current focus:** Infrastructure and tooling enhancements.
 
 ## Current Position
 
 Phase: 12 of 12 (App Optimization & Refactoring)
 Plan: 10 of 10 — Complete
-Status: MILESTONE COMPLETE
-Last activity: 2026-02-19 - Completed quick task 002: fix missing i18n keys and investigate intermittent loading failures
+Status: MILESTONE COMPLETE - Executing ad-hoc tasks.
+Last activity: 2026-02-19 - Completed quick task 003: Host Tolgee on AWS EC2
 
 Progress: [█████████████████████████████████] 100% (38/38 total plans complete)
 
@@ -56,6 +56,9 @@ _Updated after each plan completion_
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- **[New]** EC2 is more cost-effective than ECS Fargate for Tolgee hosting due to 24/7 uptime and persistent storage needs (avoids costly EFS/NAT Gateway).
+- **[New]** Tolgee admin password and SSH keys will be managed via a local, gitignored `terraform.tfvars` file for security.
+- **[New]** Terraform state for the `translation` environment will use the existing dev S3 bucket but a separate key path for isolation.
 - No coins anywhere (not part of game mechanics, designer included speculatively) — REMOVED: focus on game, placeholder acceptable
 - Keep text input on game page (required for multiplayer answer submission)
 - No pause button top-right (simplify game header)
@@ -105,6 +108,7 @@ Recent decisions affecting current work:
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~352 lines) for further simplification and bug risk.
+- **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
 
 ### Completed Todos (2026-02-14)
 
@@ -126,27 +130,13 @@ Recent decisions affecting current work:
 | --- | --------------------------------------------------- | ---------- | --------- | ----------------------------------------------------------------------------------------------------- |
 | 001 | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/) |
 | 002 | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)   |
+| 003 | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                     |
 
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed Quick Task 2 (Fix missing i18n keys and lazy-load race)
+Stopped at: Completed Quick Task 3 (Host Tolgee on AWS EC2)
 Resume file: None
-
-### Phase 11 Plans Status
-
-- **11-01**: Complete - GameModal dismissal control props and GameButton danger variant
-- **11-02**: Complete - Quit modal refactored to use GameModal with danger variant
-- **11-03**: Complete - Pause modal refactored with CSS-first stacked buttons
-
-**Phase 11 (Modal Dialogs): COMPLETE** (3/3 plans complete)
-
-### Phase 11.1 Plans Status
-
-- **11.1-01**: Complete - Scoring increment and player config
-- **11.1-02**: Complete - GameScrollList rank fix
-
-**Phase 11.1 (Scoring & Player Config): COMPLETE** (2/2 plans, verified ✅)
 
 ### Phase 12 Plans Status
 
@@ -158,11 +148,7 @@ Resume file: None
 - **12-06**: Complete - Extract useCategoryManager and useSessionManager from game store
 - **12-07**: Complete - Extract usePlayerManager and useScoringEngine from game store
 - **12-08**: Complete - Extract usePersistence and useGameLifecycle from game store
-- **12-09**: Complete - (skipped or combined)
+- **12-09**: (skipped or combined)
 - **12-10**: Complete - Deployment script enhancements (logging, backup, verify, rollback, post-deploy)
 
 **Phase 12 (App Optimization & Refactoring): COMPLETE** (10/10 plans complete)
-
-### Roadmap Evolution
-
-- **2026-02-06**: Phase 12 added - App Optimization & Refactoring (production readiness with comprehensive testing and Terraform optimization)
