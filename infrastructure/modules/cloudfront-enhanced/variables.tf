@@ -48,3 +48,20 @@ variable "enable_spa_rewrite_function" {
   type        = bool
   default     = false
 }
+
+variable "custom_error_responses" {
+  description = "Custom error responses for SPA routing. Defaults to 404->index.html if empty."
+  type = list(object({
+    error_code            = number
+    response_code         = number
+    response_page_path    = string
+    error_caching_min_ttl = number
+  }))
+  default = []
+}
+
+variable "web_acl_arn" {
+  description = "ARN of WAFv2 Web ACL to associate with CloudFront (must be CLOUDFRONT scope in us-east-1)"
+  type        = string
+  default     = ""
+}
