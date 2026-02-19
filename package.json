@@ -45,6 +45,7 @@
     "deploy:vercel:dev": "STAGE=development vercel",
     "deploy:vercel:prod": "STAGE=production vercel --prod",
     "deploy:vercel:preview": "vercel",
+    "deploy:preview": "./scripts/deploy-preview.sh",
     "vercel:env:pull": "vercel env pull .env.local",
     "vercel:link": "vercel link",
     "dev": "turbo run dev --filter=@riddle-rush/game",
