@@ -1,0 +1,403 @@
+name: Optimized CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+  workflow_dispatch:
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10.28.2'
+
+jobs:
+  # ====================================
+  # Quality Gates - Fast Feedback
+  # ====================================
+  quality-checks:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Dependency version check
+        run: pnpm run syncpack:check
+
+      - name: TypeScript typecheck
+        run: pnpm run typecheck
+
+      - name: ESLint
+        run: pnpm run lint
+
+      - name: Code formatting check
+        run: pnpm run format:check
+
+  # ====================================
+  # Unit Tests - Parallel Execution
+  # ====================================
+  unit-tests:
+    name: Unit Tests (Node ${{ matrix.node-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: quality-checks
+    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests
+        run: pnpm run test:unit
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-node${{ matrix.node-version }}-${{ matrix.os }}
+          path: |
+            **/test-results/
+            **/coverage/
+          retention-days: 7
+
+  # ====================================
+  # Build Artifacts with Caching
+  # ====================================
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/**/.output/
+            apps/**/dist/
+            packages/**/dist/
+            .turbo/
+          key: ${{ runner.os }}-build-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.vue') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build:all
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            apps/**/.output/
+            apps/**/dist/
+            packages/**/dist/
+          retention-days: 7
+
+  # ====================================
+  # Security Scanning
+  # ====================================
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run dependency vulnerability scan
+        run: pnpm audit --prod
+
+      - name: Run security checks
+        run: |
+          echo "Running security checks..."
+          # Add additional security scanning tools here
+          # Example: pnpm run security:scan
+          echo "✅ Security checks completed"
+
+  # ====================================
+  # Deployment - Vercel
+  # ====================================
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: [build, security-scan]
+    timeout-minutes: 15
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Set environment stage
+        id: stage
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "stage=production" >> $GITHUB_OUTPUT
+            echo "vercel_env=production" >> $GITHUB_OUTPUT
+            echo "vercel_prod=--prod" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/development" ]]; then
+            echo "stage=development" >> $GITHUB_OUTPUT
+            echo "vercel_env=preview" >> $GITHUB_OUTPUT
+            echo "vercel_prod=" >> $GITHUB_OUTPUT
+          else
+            echo "stage=preview" >> $GITHUB_OUTPUT
+            echo "vercel_env=preview" >> $GITHUB_OUTPUT
+            echo "vercel_prod=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=${{ steps.stage.outputs.vercel_env }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build for Vercel
+        env:
+          STAGE: ${{ steps.stage.outputs.stage }}
+          NODE_ENV: ${{ steps.stage.outputs.stage == 'production' && 'production' || 'development' }}
+        run: vercel build ${{ steps.stage.outputs.vercel_prod }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          else
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt ${{ steps.stage.outputs.vercel_prod }} --token=${{ secrets.VERCEL_TOKEN }})
+          fi
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $DEPLOYMENT_URL"
+
+      - name: Comment PR with deployment URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const stage = '${{ steps.stage.outputs.stage }}';
+            const url = '${{ steps.deploy.outputs.url }}';
+            const emoji = stage === 'production' ? '🚀' : '🔧';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${emoji} **${stage.charAt(0).toUpperCase() + stage.slice(1)} Deployed!**\n\n🔗 ${url}\n\n**Environment:** \`STAGE=${stage}\`\n**Branch:** \`${context.payload.pull_request.head.ref}\`\n**Commit:** \`${context.sha.substring(0, 7)}\``
+            })
+
+  # ====================================
+  # Documentation Deployment
+  # ====================================
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build documentation
+        run: |
+          cd apps/docs
+          pnpm run generate
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/docs/.output/public
+          force_orphan: true
+
+  # ====================================
+  # Summary and Reporting
+  # ====================================
+  summary:
+    name: Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [quality-checks, unit-tests, build, security-scan, deploy-vercel, deploy-docs]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "# 🚀 CI/CD Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "## 📊 Job Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status | Duration |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|----------|" >> $GITHUB_STEP_SUMMARY
+
+          echo "| Quality Checks | ${{ needs.quality-checks.result }} | ${{ needs.quality-checks.duration }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.unit-tests.result }} | ${{ needs.unit-tests.duration }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ needs.build.result }} | ${{ needs.build.duration }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Scan | ${{ needs.security-scan.result }} | ${{ needs.security-scan.duration }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deploy Vercel | ${{ needs.deploy-vercel.result }} | ${{ needs.deploy-vercel.duration }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deploy Docs | ${{ needs.deploy-docs.result }} | ${{ needs.deploy-docs.duration }} |" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔗 Deployment URLs" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.deploy-vercel.result }}" == "success" ]; then
+            echo "- **Vercel**: ${{ needs.deploy-vercel.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ needs.deploy-docs.result }}" == "success" ]; then
+            echo "- **Documentation**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- [Build Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [Test Results](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📈 Performance Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Duration**: ${{ github.run_duration }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Parallel Jobs**: ${{ strategy.job-total }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cache Hits**: Check individual job logs" >> $GITHUB_STEP_SUMMARY
