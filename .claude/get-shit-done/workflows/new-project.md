@@ -7,11 +7,13 @@ Read all files referenced by the invoking prompt's execution_context before star
 </required_reading>
 
 <auto_mode>
+
 ## Auto Mode Detection
 
 Check if `--auto` flag is present in $ARGUMENTS.
 
 **If auto mode:**
+
 - Skip brownfield mapping offer (assume greenfield)
 - Skip deep questioning (extract context from provided document)
 - Config: YOLO mode is implicit (skip that question), but ask depth/git/agents FIRST (Step 2a)
@@ -23,6 +25,7 @@ Check if `--auto` flag is present in $ARGUMENTS.
 
 **Document requirement:**
 Auto mode requires an idea document — either:
+
 - File reference: `/gsd:new-project --auto @prd.md`
 - Pasted/written text in the prompt
 
@@ -37,6 +40,7 @@ Usage:
 
 The document should describe what you want to build.
 ```
+
 </auto_mode>
 
 <process>
@@ -49,11 +53,12 @@ The document should describe what you want to build.
 INIT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs init new-project)
 ```
 
-Parse JSON for: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `project_exists`, `has_codebase_map`, `planning_exists`, `has_existing_code`, `has_package_file`, `is_brownfield`, `needs_codebase_map`, `has_git`.
+Parse JSON for: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `project_exists`, `has_codebase_map`, `planning_exists`, `has_existing_code`, `has_package_file`, `is_brownfield`, `needs_codebase_map`, `has_git`, `project_path`.
 
 **If `project_exists` is true:** Error — project already initialized. Use `/gsd:progress`.
 
 **If `has_git` is false:** Initialize git:
+
 ```bash
 git init
 ```
@@ -65,6 +70,7 @@ git init
 **If `needs_codebase_map` is true** (from init — existing code detected but no codebase map):
 
 Use AskUserQuestion:
+
 - header: "Codebase"
 - question: "I detected existing code in this directory. Would you like to map the codebase first?"
 - options:
@@ -72,9 +78,11 @@ Use AskUserQuestion:
   - "Skip mapping" — Proceed with project initialization
 
 **If "Map codebase first":**
+
 ```
 Run `/gsd:map-codebase` first, then return to `/gsd:new-project`
 ```
+
 Exit command.
 
 **If "Skip mapping" OR `needs_codebase_map` is false:** Continue to Step 3.
@@ -224,6 +232,7 @@ Wait for their response. This gives you the context needed to ask intelligent fo
 Based on what they said, ask follow-up questions that dig into their response. Use AskUserQuestion with options that probe what they mentioned — interpretations, clarifications, concrete examples.
 
 Keep following threads. Each answer opens new threads to explore. Ask about:
+
 - What excited them
 - What problem sparked this
 - What they mean by vague terms
@@ -231,6 +240,7 @@ Keep following threads. Each answer opens new threads to explore. Ask about:
 - What's already decided
 
 Consult `questioning.md` for techniques:
+
 - Challenge vagueness
 - Make abstract concrete
 - Surface assumptions
@@ -320,16 +330,17 @@ Initialize with any decisions made during questioning:
 ```markdown
 ## Key Decisions
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| [Choice from questioning] | [Why] | — Pending |
+| Decision                  | Rationale | Outcome   |
+| ------------------------- | --------- | --------- |
+| [Choice from questioning] | [Why]     | — Pending |
 ```
 
 **Last updated footer:**
 
 ```markdown
 ---
-*Last updated: [date] after initialization*
+
+_Last updated: [date] after initialization_
 ```
 
 Do not compress. Capture everything gathered.
@@ -413,11 +424,11 @@ questions: [
 
 These spawn additional agents during planning/execution. They add tokens and time but improve quality.
 
-| Agent | When it runs | What it does |
-|-------|--------------|--------------|
-| **Researcher** | Before planning each phase | Investigates domain, finds patterns, surfaces gotchas |
-| **Plan Checker** | After plan is created | Verifies plan actually achieves the phase goal |
-| **Verifier** | After phase execution | Confirms must-haves were delivered |
+| Agent            | When it runs               | What it does                                          |
+| ---------------- | -------------------------- | ----------------------------------------------------- |
+| **Researcher**   | Before planning each phase | Investigates domain, finds patterns, surfaces gotchas |
+| **Plan Checker** | After plan is created      | Verifies plan actually achieves the phase goal        |
+| **Verifier**     | After phase execution      | Confirms must-haves were delivered                    |
 
 All recommended for important projects. Skip for quick experiments.
 
@@ -481,10 +492,12 @@ Create `.planning/config.json` with all settings:
 ```
 
 **If commit_docs = No:**
+
 - Set `commit_docs: false` in config.json
 - Add `.planning/` to `.gitignore` (create if needed)
 
 **If commit_docs = Yes:**
+
 - No additional gitignore entries needed
 
 **Commit config.json:**
@@ -504,6 +517,7 @@ Use models from init: `researcher_model`, `synthesizer_model`, `roadmapper_model
 **If auto mode:** Default to "Research first" without asking.
 
 Use AskUserQuestion:
+
 - header: "Research"
 - question: "Research the domain ecosystem before defining requirements?"
 - options:
@@ -513,6 +527,7 @@ Use AskUserQuestion:
 **If "Research first":**
 
 Display stage banner:
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► RESEARCHING
@@ -522,6 +537,7 @@ Researching [domain] ecosystem...
 ```
 
 Create research directory:
+
 ```bash
 mkdir -p .planning/research
 ```
@@ -529,10 +545,12 @@ mkdir -p .planning/research
 **Determine milestone context:**
 
 Check if this is greenfield or subsequent milestone:
+
 - If no "Validated" requirements in PROJECT.md → Greenfield (building from scratch)
 - If "Validated" requirements exist → Subsequent milestone (adding to existing app)
 
 Display spawning indicator:
+
 ```
 ◆ Spawning 4 researchers in parallel...
   → Stack research
@@ -541,7 +559,7 @@ Display spawning indicator:
   → Pitfalls research
 ```
 
-Spawn 4 parallel gsd-project-researcher agents with rich context:
+Spawn 4 parallel gsd-project-researcher agents with path references:
 
 ```
 Task(prompt="First, read ./.claude/agents/gsd-project-researcher.md for your role and instructions.
@@ -561,9 +579,9 @@ Subsequent: Research what's needed to add [target features] to an existing [doma
 What's the standard 2025 stack for [domain]?
 </question>
 
-<project_context>
-[PROJECT.md summary - core value, constraints, what they're building]
-</project_context>
+<files_to_read>
+- {project_path} (Project context and goals)
+</files_to_read>
 
 <downstream_consumer>
 Your STACK.md feeds into roadmap creation. Be prescriptive:
@@ -601,9 +619,9 @@ Subsequent: How do [target features] typically work? What's expected behavior?
 What features do [domain] products have? What's table stakes vs differentiating?
 </question>
 
-<project_context>
-[PROJECT.md summary]
-</project_context>
+<files_to_read>
+- {project_path} (Project context)
+</files_to_read>
 
 <downstream_consumer>
 Your FEATURES.md feeds into requirements definition. Categorize clearly:
@@ -641,9 +659,9 @@ Subsequent: How do [target features] integrate with existing [domain] architectu
 How are [domain] systems typically structured? What are major components?
 </question>
 
-<project_context>
-[PROJECT.md summary]
-</project_context>
+<files_to_read>
+- {project_path} (Project context)
+</files_to_read>
 
 <downstream_consumer>
 Your ARCHITECTURE.md informs phase structure in roadmap. Include:
@@ -681,9 +699,9 @@ Subsequent: What are common mistakes when adding [target features] to [domain]?
 What do [domain] projects commonly get wrong? Critical mistakes?
 </question>
 
-<project_context>
-[PROJECT.md summary]
-</project_context>
+<files_to_read>
+- {project_path} (Project context)
+</files_to_read>
 
 <downstream_consumer>
 Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
@@ -713,13 +731,12 @@ Task(prompt="
 Synthesize research outputs into SUMMARY.md.
 </task>
 
-<research_files>
-Read these files:
+<files_to_read>
 - .planning/research/STACK.md
 - .planning/research/FEATURES.md
 - .planning/research/ARCHITECTURE.md
 - .planning/research/PITFALLS.md
-</research_files>
+</files_to_read>
 
 <output>
 Write to: .planning/research/SUMMARY.md
@@ -730,6 +747,7 @@ Commit after writing.
 ```
 
 Display research complete banner and key findings:
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► RESEARCH COMPLETE ✓
@@ -749,6 +767,7 @@ Files: `.planning/research/`
 ## 7. Define Requirements
 
 Display stage banner:
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► DEFINING REQUIREMENTS
@@ -758,6 +777,7 @@ Display stage banner:
 **Load context:**
 
 Read PROJECT.md and extract:
+
 - Core value (the ONE thing that must work)
 - Stated constraints (budget, timeline, tech limitations)
 - Any explicit scope boundaries
@@ -765,6 +785,7 @@ Read PROJECT.md and extract:
 **If research exists:** Read research/FEATURES.md and extract feature categories.
 
 **If auto mode:**
+
 - Auto-include all table stakes features (users expect these)
 - Include features explicitly mentioned in provided document
 - Auto-defer differentiators not mentioned in document
@@ -803,6 +824,7 @@ Here are the features for [domain]:
 Ask: "What are the main things users need to be able to do?"
 
 For each capability mentioned:
+
 - Ask clarifying questions to make it specific
 - Probe for related capabilities
 - Group into categories
@@ -821,6 +843,7 @@ For each category, use AskUserQuestion:
   - "None for v1" — Defer entire category
 
 Track responses:
+
 - Selected features → v1 requirements
 - Unselected table stakes → v2 (users expect these)
 - Unselected differentiators → out of scope
@@ -828,6 +851,7 @@ Track responses:
 **Identify gaps:**
 
 Use AskUserQuestion:
+
 - header: "Additions"
 - question: "Any requirements research missed? (Features specific to your vision)"
 - options:
@@ -841,6 +865,7 @@ Cross-check requirements against Core Value from PROJECT.md. If gaps detected, s
 **Generate REQUIREMENTS.md:**
 
 Create `.planning/REQUIREMENTS.md` with:
+
 - v1 Requirements grouped by category (checkboxes, REQ-IDs)
 - v2 Requirements (deferred)
 - Out of Scope (explicit exclusions with reasoning)
@@ -851,12 +876,14 @@ Create `.planning/REQUIREMENTS.md` with:
 **Requirement quality criteria:**
 
 Good requirements are:
+
 - **Specific and testable:** "User can reset password via email link" (not "Handle password reset")
 - **User-centric:** "User can X" (not "System does Y")
 - **Atomic:** One capability per requirement (not "User can login and manage profile")
 - **Independent:** Minimal dependencies on other requirements
 
 Reject vague requirements. Push for specificity:
+
 - "Handle authentication" → "User can log in with email/password and stay logged in across sessions"
 - "Support sharing" → "User can share post via link that opens in recipient's browser"
 
@@ -894,6 +921,7 @@ node ./.claude/get-shit-done/bin/gsd-tools.cjs commit "docs: define v1 requireme
 ## 8. Create Roadmap
 
 Display stage banner:
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► CREATING ROADMAP
@@ -902,23 +930,18 @@ Display stage banner:
 ◆ Spawning roadmapper...
 ```
 
-Spawn gsd-roadmapper agent with context:
+Spawn gsd-roadmapper agent with path references:
 
 ```
 Task(prompt="
 <planning_context>
 
-**Project:**
-@.planning/PROJECT.md
-
-**Requirements:**
-@.planning/REQUIREMENTS.md
-
-**Research (if exists):**
-@.planning/research/SUMMARY.md
-
-**Config:**
-@.planning/config.json
+<files_to_read>
+- .planning/PROJECT.md (Project context)
+- .planning/REQUIREMENTS.md (v1 Requirements)
+- .planning/research/SUMMARY.md (Research findings - if exists)
+- .planning/config.json (Depth and mode settings)
+</files_to_read>
 
 </planning_context>
 
@@ -939,6 +962,7 @@ Write files first, then return. This ensures artifacts persist even if context i
 **Handle roadmapper return:**
 
 **If `## ROADMAP BLOCKED`:**
+
 - Present blocker information
 - Work with user to resolve
 - Re-spawn when resolved
@@ -988,6 +1012,7 @@ Success criteria:
 **CRITICAL: Ask for approval before committing (interactive mode only):**
 
 Use AskUserQuestion:
+
 - header: "Roadmap"
 - question: "Does this roadmap structure work for you?"
 - options:
@@ -998,21 +1023,26 @@ Use AskUserQuestion:
 **If "Approve":** Continue to commit.
 
 **If "Adjust phases":**
+
 - Get user's adjustment notes
 - Re-spawn roadmapper with revision context:
+
   ```
   Task(prompt="
   <revision>
   User feedback on roadmap:
   [user's notes]
 
-  Current ROADMAP.md: @.planning/ROADMAP.md
+  <files_to_read>
+  - .planning/ROADMAP.md (Current roadmap to revise)
+  </files_to_read>
 
   Update the roadmap based on feedback. Edit files in place.
   Return ROADMAP REVISED with changes made.
   </revision>
   ", subagent_type="gsd-roadmapper", model="{roadmapper_model}", description="Revise roadmap")
   ```
+
 - Present revised roadmap
 - Loop until user approves
 

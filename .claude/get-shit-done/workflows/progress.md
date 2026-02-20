@@ -9,23 +9,13 @@ Read all files referenced by the invoking prompt's execution_context before star
 <process>
 
 <step name="init_context">
-**Load progress context (with file contents to avoid redundant reads):**
+**Load progress context (paths only):**
 
 ```bash
-INIT_RAW=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs init progress --include state,roadmap,project,config)
-# Large payloads are written to a tmpfile — output starts with @file:/path
-if [[ "$INIT_RAW" == @file:* ]]; then
-  INIT_FILE="${INIT_RAW#@file:}"
-  INIT=$(cat "$INIT_FILE")
-  rm -f "$INIT_FILE"
-else
-  INIT="$INIT_RAW"
-fi
+INIT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs init progress)
 ```
 
-Extract from init JSON: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`.
-
-**File contents (from --include):** `state_content`, `roadmap_content`, `project_content`, `config_content`. These are null if files don't exist.
+Extract from init JSON: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`, `state_path`, `roadmap_path`, `project_path`, `config_path`.
 
 If `project_exists` is false (no `.planning/` directory):
 
@@ -47,15 +37,14 @@ If missing both ROADMAP.md and PROJECT.md: suggest `/gsd:new-project`.
 </step>
 
 <step name="load">
-**Use project context from INIT:**
+**Use structured extraction from gsd-tools:**
 
-All file contents are already loaded via `--include` in init_context step:
-- `state_content` — living memory (position, decisions, issues)
-- `roadmap_content` — phase structure and objectives
-- `project_content` — current state (What This Is, Core Value, Requirements)
-- `config_content` — settings (model_profile, workflow toggles)
+Instead of reading full files, use targeted tools to get only the data needed for the report:
 
-No additional file reads needed.
+- `ROADMAP=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs roadmap analyze)`
+- `STATE=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs state-snapshot)`
+
+This minimizes orchestrator context usage.
 </step>
 
 <step name="analyze_roadmap">
@@ -66,6 +55,7 @@ ROADMAP=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs roadmap analyze)
 ```
 
 This returns structured JSON with:
+
 - All phases with disk status (complete/partial/planned/empty/no_directory)
 - Goal and dependencies per phase
 - Plan and summary counts per phase
@@ -89,9 +79,8 @@ Use this instead of manually reading/parsing ROADMAP.md.
 <step name="position">
 **Parse current position from init context and roadmap analysis:**
 
-- Use `current_phase` and `next_phase` from roadmap analyze
-- Use phase-level `has_context` and `has_research` flags from analyze
-- Note `paused_at` if work was paused (from init context)
+- Use `current_phase` and `next_phase` from `$ROADMAP`
+- Note `paused_at` if work was paused (from `$STATE`)
 - Count pending todos: use `init todos` or `list-todos`
 - Check for active debug sessions: `ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`
   </step>
@@ -122,11 +111,12 @@ Plan [M] of [phase-total]: [status]
 CONTEXT: [✓ if has_context | - if not]
 
 ## Key Decisions Made
-- [decision 1 from STATE.md]
-- [decision 2]
+- [extract from $STATE.decisions[]]
+- [e.g. jq -r '.decisions[].decision' from state-snapshot]
 
 ## Blockers/Concerns
-- [any blockers or concerns from STATE.md]
+- [extract from $STATE.blockers[]]
+- [e.g. jq -r '.blockers[].text' from state-snapshot]
 
 ## Pending Todos
 - [count] pending — /gsd:check-todos to review
@@ -166,16 +156,17 @@ grep -l "status: diagnosed" .planning/phases/[current-phase-dir]/*-UAT.md 2>/dev
 ```
 
 Track:
+
 - `uat_with_gaps`: UAT.md files with status "diagnosed" (gaps need fixing)
 
 **Step 2: Route based on counts**
 
-| Condition | Meaning | Action |
-|-----------|---------|--------|
-| uat_with_gaps > 0 | UAT gaps need fix plans | Go to **Route E** |
-| summaries < plans | Unexecuted plans exist | Go to **Route A** |
-| summaries = plans AND plans > 0 | Phase complete | Go to Step 3 |
-| plans = 0 | Phase not yet planned | Go to **Route B** |
+| Condition                       | Meaning                 | Action            |
+| ------------------------------- | ----------------------- | ----------------- |
+| uat_with_gaps > 0               | UAT gaps need fix plans | Go to **Route E** |
+| summaries < plans               | Unexecuted plans exist  | Go to **Route A** |
+| summaries = plans AND plans > 0 | Phase complete          | Go to Step 3      |
+| plans = 0                       | Phase not yet planned   | Go to **Route B** |
 
 ---
 
@@ -274,6 +265,7 @@ UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
 **Step 3: Check milestone status (only when phase complete)**
 
 Read ROADMAP.md and identify:
+
 1. Current phase number
 2. All phase numbers in the current milestone section
 
@@ -283,8 +275,8 @@ State: "Current phase is {X}. Milestone has {N} phases (highest: {Y})."
 
 **Route based on milestone status:**
 
-| Condition | Meaning | Action |
-|-----------|---------|--------|
+| Condition                     | Meaning            | Action            |
+| ----------------------------- | ------------------ | ----------------- |
 | current phase < highest phase | More phases remain | Go to **Route C** |
 | current phase = highest phase | Milestone complete | Go to **Route D** |
 
