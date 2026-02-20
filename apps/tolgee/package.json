@@ -12,6 +12,6 @@
     "sync": "tolgee push --force-mode OVERRIDE && tolgee pull"
   },
   "devDependencies": {
-    "@tolgee/cli": "^2.7.3"
+    "@tolgee/cli": "^2.16.1"
   }
 }
