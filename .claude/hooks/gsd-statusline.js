@@ -64,7 +64,7 @@ process.stdin.on('end', () => {
             const inProgress = todos.find((t) => t.status === 'in_progress')
             if (inProgress) task = inProgress.activeForm || ''
           } catch {
-            // ignore
+            // Ignore JSON parse errors
           }
         }
       } catch {
@@ -82,7 +82,7 @@ process.stdin.on('end', () => {
           gsdUpdate = '\x1B[33m⬆ /gsd:update\x1B[0m │ '
         }
       } catch {
-        // ignore
+        // Ignore cache read errors
       }
     }
 

@@ -36,6 +36,7 @@ Extract from init JSON: `mapper_model`, `commit_docs`, `codebase_dir`, `existing
 Check if .planning/codebase/ already exists using `has_maps` from init context.
 
 If `codebase_dir_exists` is true:
+
 ```bash
 ls -la .planning/codebase/
 ```
@@ -70,6 +71,7 @@ mkdir -p .planning/codebase
 ```
 
 **Expected output files:**
+
 - STACK.md (from tech mapper)
 - INTEGRATIONS.md (from tech mapper)
 - ARCHITECTURE.md (from arch mapper)
@@ -90,17 +92,13 @@ Use Task tool with `subagent_type="gsd-codebase-mapper"`, `model="{mapper_model}
 
 **Agent 1: Tech Focus**
 
-Task tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
-model: "{mapper_model}"
-run_in_background: true
-description: "Map codebase tech stack"
-```
-
-Prompt:
-```
-Focus: tech
+Task(
+  subagent_type="gsd-codebase-mapper",
+  model="{mapper_model}",
+  run_in_background=true,
+  description="Map codebase tech stack",
+  prompt="Focus: tech
 
 Analyze this codebase for technology stack and external integrations.
 
@@ -108,22 +106,19 @@ Write these documents to .planning/codebase/:
 - STACK.md - Languages, runtime, frameworks, dependencies, configuration
 - INTEGRATIONS.md - External APIs, databases, auth providers, webhooks
 
-Explore thoroughly. Write documents directly using templates. Return confirmation only.
+Explore thoroughly. Write documents directly using templates. Return confirmation only."
+)
 ```
 
 **Agent 2: Architecture Focus**
 
-Task tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
-model: "{mapper_model}"
-run_in_background: true
-description: "Map codebase architecture"
-```
-
-Prompt:
-```
-Focus: arch
+Task(
+  subagent_type="gsd-codebase-mapper",
+  model="{mapper_model}",
+  run_in_background=true,
+  description="Map codebase architecture",
+  prompt="Focus: arch
 
 Analyze this codebase architecture and directory structure.
 
@@ -131,22 +126,19 @@ Write these documents to .planning/codebase/:
 - ARCHITECTURE.md - Pattern, layers, data flow, abstractions, entry points
 - STRUCTURE.md - Directory layout, key locations, naming conventions
 
-Explore thoroughly. Write documents directly using templates. Return confirmation only.
+Explore thoroughly. Write documents directly using templates. Return confirmation only."
+)
 ```
 
 **Agent 3: Quality Focus**
 
-Task tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
-model: "{mapper_model}"
-run_in_background: true
-description: "Map codebase conventions"
-```
-
-Prompt:
-```
-Focus: quality
+Task(
+  subagent_type="gsd-codebase-mapper",
+  model="{mapper_model}",
+  run_in_background=true,
+  description="Map codebase conventions",
+  prompt="Focus: quality
 
 Analyze this codebase for coding conventions and testing patterns.
 
@@ -154,29 +146,27 @@ Write these documents to .planning/codebase/:
 - CONVENTIONS.md - Code style, naming, patterns, error handling
 - TESTING.md - Framework, structure, mocking, coverage
 
-Explore thoroughly. Write documents directly using templates. Return confirmation only.
+Explore thoroughly. Write documents directly using templates. Return confirmation only."
+)
 ```
 
 **Agent 4: Concerns Focus**
 
-Task tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
-model: "{mapper_model}"
-run_in_background: true
-description: "Map codebase concerns"
-```
-
-Prompt:
-```
-Focus: concerns
+Task(
+  subagent_type="gsd-codebase-mapper",
+  model="{mapper_model}",
+  run_in_background=true,
+  description="Map codebase concerns",
+  prompt="Focus: concerns
 
 Analyze this codebase for technical debt, known issues, and areas of concern.
 
 Write this document to .planning/codebase/:
 - CONCERNS.md - Tech debt, bugs, security, performance, fragile areas
 
-Explore thoroughly. Write document directly using template. Return confirmation only.
+Explore thoroughly. Write document directly using template. Return confirmation only."
+)
 ```
 
 Continue to collect_confirmations.
@@ -188,6 +178,7 @@ Wait for all 4 agents to complete.
 Read each agent's output file to collect confirmations.
 
 **Expected confirmation format from each agent:**
+
 ```
 ## Mapping Complete
 
@@ -215,6 +206,7 @@ wc -l .planning/codebase/*.md
 ```
 
 **Verification checklist:**
+
 - All 7 documents exist
 - No empty documents (each should have >20 lines)
 
@@ -272,6 +264,7 @@ Continue to offer_next.
 Present completion summary and next steps.
 
 **Get line counts:**
+
 ```bash
 wc -l .planning/codebase/*.md
 ```
@@ -317,6 +310,7 @@ End workflow.
 </process>
 
 <success_criteria>
+
 - .planning/codebase/ directory created
 - 4 parallel gsd-codebase-mapper agents spawned with run_in_background=true
 - Agents write documents directly (orchestrator doesn't receive document contents)
@@ -324,4 +318,4 @@ End workflow.
 - All 7 codebase documents exist
 - Clear completion summary with line counts
 - User offered clear next steps in GSD style
-</success_criteria>
+  </success_criteria>

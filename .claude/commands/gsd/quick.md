@@ -1,7 +1,7 @@
 ---
 name: gsd:quick
 description: Execute a quick task with GSD guarantees (atomic commits, state tracking) but skip optional agents
-argument-hint: "[--full]"
+argument-hint: '[--full]'
 allowed-tools:
   - Read
   - Write
@@ -12,10 +12,12 @@ allowed-tools:
   - Task
   - AskUserQuestion
 ---
+
 <objective>
 Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking).
 
 Quick mode is the same system with a shorter path:
+
 - Spawns gsd-planner (quick mode) + gsd-executor(s)
 - Quick tasks live in `.planning/quick/` separate from planned phases
 - Updates STATE.md "Quick Tasks Completed" table (NOT ROADMAP.md)
@@ -30,8 +32,9 @@ Quick mode is the same system with a shorter path:
 </execution_context>
 
 <context>
-@.planning/STATE.md
 $ARGUMENTS
+
+Context files are resolved inside the workflow (`init quick`) and delegated via `<files_to_read>` blocks.
 </context>
 
 <process>

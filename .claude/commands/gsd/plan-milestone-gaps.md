@@ -9,6 +9,7 @@ allowed-tools:
   - Grep
   - AskUserQuestion
 ---
+
 <objective>
 Create all phases necessary to close gaps identified by `/gsd:audit-milestone`.
 
@@ -25,13 +26,7 @@ One command creates all fix phases — no manual `/gsd:add-phase` per gap.
 **Audit results:**
 Glob: .planning/v*-MILESTONE-AUDIT.md (use most recent)
 
-**Original intent (for prioritization):**
-@.planning/PROJECT.md
-@.planning/REQUIREMENTS.md
-
-**Current state:**
-@.planning/ROADMAP.md
-@.planning/STATE.md
+Original intent and current planning state are loaded on demand inside the workflow.
 </context>
 
 <process>
