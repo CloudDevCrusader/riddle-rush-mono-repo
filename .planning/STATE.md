@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 12 of 12 (App Optimization & Refactoring)
 Plan: 10 of 10 — Complete
 Status: MILESTONE COMPLETE - Executing ad-hoc tasks.
-Last activity: 2026-02-19 - Completed quick task 003: Host Tolgee on AWS EC2
+Last activity: 2026-02-20 - Completed quick task 004: Update all dependencies
 
 Progress: [█████████████████████████████████] 100% (38/38 total plans complete)
 
@@ -56,9 +56,11 @@ _Updated after each plan completion_
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- **[New]** EC2 is more cost-effective than ECS Fargate for Tolgee hosting due to 24/7 uptime and persistent storage needs (avoids costly EFS/NAT Gateway).
-- **[New]** Tolgee admin password and SSH keys will be managed via a local, gitignored `terraform.tfvars` file for security.
-- **[New]** Terraform state for the `translation` environment will use the existing dev S3 bucket but a separate key path for isolation.
+- **[New]** Syncpack v14 migration: use `lint`/`fix` commands, remove deprecated config properties.
+- **[New]** Use `@ts-expect-error` for cross-package vite/rollup Plugin type conflicts in monorepo.
+- EC2 is more cost-effective than ECS Fargate for Tolgee hosting due to 24/7 uptime and persistent storage needs (avoids costly EFS/NAT Gateway).
+- Tolgee admin password and SSH keys will be managed via a local, gitignored `terraform.tfvars` file for security.
+- Terraform state for the `translation` environment will use the existing dev S3 bucket but a separate key path for isolation.
 - No coins anywhere (not part of game mechanics, designer included speculatively) — REMOVED: focus on game, placeholder acceptable
 - Keep text input on game page (required for multiplayer answer submission)
 - No pause button top-right (simplify game header)
@@ -131,11 +133,12 @@ Recent decisions affecting current work:
 | 001 | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/) |
 | 002 | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)   |
 | 003 | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                     |
+| 004 | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                  |
 
 ## Session Continuity
 
-Last session: 2026-02-19
-Stopped at: Completed Quick Task 3 (Host Tolgee on AWS EC2)
+Last session: 2026-02-20
+Stopped at: Completed Quick Task 4 (Update all dependencies)
 Resume file: None
 
 ### Phase 12 Plans Status
