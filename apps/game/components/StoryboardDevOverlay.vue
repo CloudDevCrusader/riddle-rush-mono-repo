@@ -87,7 +87,7 @@
                 :key="`${state.id}-${state.timestamp}`"
                 class="history-item"
               >
-                <span class="history-index">#{{ flow.history.length - index }}</span>
+                <span class="history-index">#{{ flow.history.length - Number(index) }}</span>
                 <span class="history-name">{{ state.name }}</span>
                 <span class="history-time">{{ formatTime(state.timestamp) }}</span>
               </div>
