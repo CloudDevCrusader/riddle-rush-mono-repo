@@ -228,8 +228,8 @@ export default defineNuxtConfig({
         scss: {
           // Resolve bare SCSS imports like `@use 'assets/scss/...'` during Vercel builds
           // Sass @use doesn't understand Vite aliases (@/, ~/), so we add the app root
-          // as an include path so `assets/scss/...` resolves relative to the app directory
-          includePaths: [new URL('.', import.meta.url).pathname],
+          // as a load path so `assets/scss/...` resolves relative to the app directory
+          loadPaths: [new URL('.', import.meta.url).pathname],
         },
       },
     },
@@ -239,12 +239,14 @@ export default defineNuxtConfig({
     },
     plugins: [
       // Filter out SSR plugins at build time (must be first)
+      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
+      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       ...(process.env.NODE_ENV === 'production'
-        ? (getBuildPlugins({ isDev: false }) as unknown as Plugin[])
-        : (getDevPlugins({ isDev: true }) as unknown as Plugin[])),
+        ? getBuildPlugins({ isDev: false })
+        : getDevPlugins({ isDev: true })),
     ],
     optimizeDeps: {
       include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
@@ -387,15 +389,6 @@ export default defineNuxtConfig({
       lg: 1024,
       xl: 1280,
       xxl: 1536,
-    },
-    // Explicitly use sharp for image processing
-    sharp: {
-      enabled: true,
-      // Advanced sharp options for better compression
-      quality: 80,
-      progressive: true,
-      withoutEnlargement: true,
-      withoutReduction: false,
     },
     providers: {
       ipx: {
