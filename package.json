@@ -3,23 +3,23 @@
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
   "version": "1.1.0",
   "devDependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.42",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.49",
     "@changesets/cli": "^2.29.8",
     "@composio/claude-agent-sdk": "^0.6.3",
     "@composio/core": "^0.6.3",
-    "@pnpm/filter-workspace-packages": "^1.2.7",
-    "@trigger.dev/sdk": "^4.3.3",
-    "@types/node": "^22.19.11",
-    "@vitest/coverage-v8": "^3.0.0",
-    "eslint": "^9.39.2",
+    "@pnpm/filter-workspace-packages": "^1000.1.2",
+    "@trigger.dev/sdk": "^4.4.1",
+    "@types/node": "^25.3.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "eslint": "^10.0.1",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
-    "lint-staged": "^15.5.2",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.8.1",
-    "syncpack": "^13.0.4",
-    "turbo": "^2.8.9",
+    "syncpack": "^14.0.0",
+    "turbo": "^2.8.10",
     "typescript": "^5.9.3",
-    "vitest": "^3.0.0"
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">=20.0.0",
@@ -72,8 +72,8 @@
     "lint:fix": "turbo run lint:fix",
     "playwright:docker": "./scripts/playwright-docker.sh",
     "prepare": "husky",
-    "syncpack:check": "syncpack list-mismatches",
-    "syncpack:fix": "syncpack fix-mismatches",
+    "syncpack:check": "syncpack lint",
+    "syncpack:fix": "syncpack fix",
     "syncpack:format": "syncpack format",
     "terraform:apply": "./scripts/terraform-apply.sh",
     "terraform:outputs": "./scripts/get-terraform-outputs.sh",
@@ -123,10 +123,10 @@
   },
   "dependencies": {
     "@e2b/code-interpreter": "^2.3.3",
-    "@langchain/openai": "^1.2.1",
-    "@voltagent/core": "^2.2.0",
+    "@langchain/openai": "^1.2.9",
+    "@voltagent/core": "^2.4.4",
     "@voltagent/mcp-server": "^2.0.2",
-    "langchain": "^1.2.11",
-    "zod": "^4.3.5"
+    "langchain": "^1.2.25",
+    "zod": "^4.3.6"
   }
 }
