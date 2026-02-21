@@ -37,7 +37,11 @@ async function logGameDebugInfo(page: Page, context: string): Promise<void> {
 /**
  * Exponential backoff delay calculator
  */
-function getBackoffDelay(attempt: number, baseDelay: number = 100, maxDelay: number = 2000): number {
+function getBackoffDelay(
+  attempt: number,
+  baseDelay: number = 100,
+  maxDelay: number = 2000
+): number {
   const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay)
   return delay + Math.random() * 50 // Add jitter
 }
@@ -74,7 +78,9 @@ export async function waitForGameState(
     console.log(`[waitForGameState] Reached state: ${targetState} in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForGameState:timeout')
-    throw new Error(`Timeout waiting for game state "${targetState}" after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for game state "${targetState}" after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -126,10 +132,14 @@ export async function waitForRoundTransition(
       return roundStore?.currentRound || gameStore?.currentRound || 0
     })
 
-    console.log(`[waitForRoundTransition] Transitioned to round ${newRound} in ${Date.now() - startTime}ms`)
+    console.log(
+      `[waitForRoundTransition] Transitioned to round ${newRound} in ${Date.now() - startTime}ms`
+    )
   } catch (error) {
     await logGameDebugInfo(page, 'waitForRoundTransition:timeout')
-    throw new Error(`Timeout waiting for round transition after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for round transition after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -158,7 +168,9 @@ export async function waitForAnimationComplete(
         // Check CSS animations
         const animations = element.getAnimations()
         if (animations.length > 0) {
-          return animations.every(anim => anim.playState === 'finished' || anim.playState === 'idle')
+          return animations.every(
+            (anim) => anim.playState === 'finished' || anim.playState === 'idle'
+          )
         }
 
         // Check for transition by monitoring computed styles
@@ -186,7 +198,9 @@ export async function waitForAnimationComplete(
     console.log(`[waitForAnimationComplete] Animation complete in ${Date.now() - startTime}ms`)
   } catch (error) {
     console.log(`[waitForAnimationComplete] Timeout or error for selector: ${selector}`)
-    throw new Error(`Timeout waiting for animation on "${selector}" after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for animation on "${selector}" after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -238,7 +252,9 @@ export async function waitForNetworkIdle(
     if (elapsed > timeout) {
       clearInterval(checkInterval)
       cleanup()
-      rejectPromise(new Error(`Network idle timeout after ${timeout}ms. Pending requests: ${pendingRequests}`))
+      rejectPromise(
+        new Error(`Network idle timeout after ${timeout}ms. Pending requests: ${pendingRequests}`)
+      )
       return
     }
 
@@ -279,28 +295,30 @@ export async function waitForAssetLoad(
       const loaded = await page.evaluate((src: string) => {
         // Check for images
         const images = Array.from(document.querySelectorAll('img'))
-        const matchingImage = images.find(img => img.src.includes(src) || img.dataset.src?.includes(src))
+        const matchingImage = images.find(
+          (img) => img.src.includes(src) || img.dataset.src?.includes(src)
+        )
         if (matchingImage) {
           return matchingImage.complete && matchingImage.naturalHeight > 0
         }
 
         // Check for audio/video
         const media = Array.from(document.querySelectorAll('audio, video'))
-        const matchingMedia = media.find(m => (m as HTMLMediaElement).src.includes(src))
+        const matchingMedia = media.find((m) => (m as HTMLMediaElement).src.includes(src))
         if (matchingMedia) {
           return (matchingMedia as HTMLMediaElement).readyState >= 2 // HAVE_CURRENT_DATA
         }
 
         // Check for loaded scripts
         const scripts = Array.from(document.querySelectorAll('script'))
-        const matchingScript = scripts.find(s => s.src.includes(src))
+        const matchingScript = scripts.find((s) => s.src.includes(src))
         if (matchingScript) {
           return true // Scripts are loaded if they exist in DOM
         }
 
         // Check for stylesheets
         const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
-        const matchingLink = links.find(l => (l as HTMLLinkElement).href.includes(src))
+        const matchingLink = links.find((l) => (l as HTMLLinkElement).href.includes(src))
         if (matchingLink) {
           const sheet = (matchingLink as HTMLLinkElement).sheet
           return sheet !== null
@@ -308,7 +326,7 @@ export async function waitForAssetLoad(
 
         // Check performance entries for any resource
         const entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
-        return entries.some(entry => entry.name.includes(src) && entry.responseEnd > 0)
+        return entries.some((entry) => entry.name.includes(src) && entry.responseEnd > 0)
       }, assetSrc)
 
       if (loaded) {
@@ -376,7 +394,10 @@ export async function waitForPageReady(
     // 3. Wait for network to settle
     const remainingTimeout = timeout - (Date.now() - startTime)
     if (remainingTimeout > 0) {
-      await waitForNetworkIdle(page, { timeout: Math.min(remainingTimeout, 5000), idleTime: 200 }).catch(() => {
+      await waitForNetworkIdle(page, {
+        timeout: Math.min(remainingTimeout, 5000),
+        idleTime: 200,
+      }).catch(() => {
         console.log('[waitForPageReady] Network idle timeout, continuing...')
       })
     }
@@ -385,22 +406,26 @@ export async function waitForPageReady(
     if (checkAssets) {
       const remainingTimeout2 = timeout - (Date.now() - startTime)
       if (remainingTimeout2 > 0) {
-        await page.waitForFunction(
-          () => {
-            const images = Array.from(document.querySelectorAll('img[src]:not([loading="lazy"])'))
-            return images.every(img => (img as HTMLImageElement).complete)
-          },
-          { timeout: Math.min(remainingTimeout2, 3000), polling: POLL_INTERVAL }
-        ).catch(() => {
-          console.log('[waitForPageReady] Asset load timeout, continuing...')
-        })
+        await page
+          .waitForFunction(
+            () => {
+              const images = Array.from(document.querySelectorAll('img[src]:not([loading="lazy"])'))
+              return images.every((img) => (img as HTMLImageElement).complete)
+            },
+            { timeout: Math.min(remainingTimeout2, 3000), polling: POLL_INTERVAL }
+          )
+          .catch(() => {
+            console.log('[waitForPageReady] Asset load timeout, continuing...')
+          })
       }
     }
 
     console.log(`[waitForPageReady] Page ready in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForPageReady:timeout')
-    throw new Error(`Timeout waiting for page ready with selector "${selector}" after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for page ready with selector "${selector}" after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -445,7 +470,9 @@ export async function waitForRoundComplete(
         }
 
         // Check for results display
-        const resultsElement = document.querySelector('.round-results, [data-testid="round-results"]')
+        const resultsElement = document.querySelector(
+          '.round-results, [data-testid="round-results"]'
+        )
         if (resultsElement) {
           return true
         }
@@ -458,7 +485,9 @@ export async function waitForRoundComplete(
     console.log(`[waitForRoundComplete] Round completed in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForRoundComplete:timeout')
-    throw new Error(`Timeout waiting for round completion after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for round completion after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -487,13 +516,15 @@ export async function waitForResultsRendered(
         ]
 
         const resultsElement = resultsSelectors
-          .map(sel => document.querySelector(sel))
-          .find(el => el !== null)
+          .map((sel) => document.querySelector(sel))
+          .find((el) => el !== null)
 
         if (!resultsElement) return false
 
         // Check if scores are displayed
-        const scoreElements = document.querySelectorAll('[data-testid="player-score"], .player-score, .score')
+        const scoreElements = document.querySelectorAll(
+          '[data-testid="player-score"], .player-score, .score'
+        )
         if (scoreElements.length === 0) return false
 
         // Check Pinia state
@@ -518,7 +549,9 @@ export async function waitForResultsRendered(
       try {
         await page.waitForFunction(
           () => {
-            const animatingElements = document.querySelectorAll('.animating, [data-animating="true"]')
+            const animatingElements = document.querySelectorAll(
+              '.animating, [data-animating="true"]'
+            )
             return animatingElements.length === 0
           },
           { timeout: Math.min(remainingTimeout, 2000), polling: 100 }
@@ -531,7 +564,9 @@ export async function waitForResultsRendered(
     console.log(`[waitForResultsRendered] Results rendered in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForResultsRendered:timeout')
-    throw new Error(`Timeout waiting for results to render after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for results to render after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -552,7 +587,12 @@ export async function getRoundState(
     const roundStore = pinia._s?.get('round') || pinia.state?.value?.round
 
     const round = roundStore?.currentRound || gameStore?.currentRound || 0
-    const state = roundStore?.state || roundStore?.roundState || gameStore?.state || gameStore?.gameState || 'unknown'
+    const state =
+      roundStore?.state ||
+      roundStore?.roundState ||
+      gameStore?.state ||
+      gameStore?.gameState ||
+      'unknown'
     const players = roundStore?.players?.length || gameStore?.players?.length || 0
 
     return { round, state, players }
@@ -580,9 +620,11 @@ export async function waitForWebSocketConnection(
         // Check for common WebSocket state indicators
         const pinia = (window as any).__pinia__
         if (pinia) {
-          const socketStore = pinia._s?.get('socket') || pinia._s?.get('websocket') || pinia.state?.value?.socket
+          const socketStore =
+            pinia._s?.get('socket') || pinia._s?.get('websocket') || pinia.state?.value?.socket
           if (socketStore) {
-            const connected = socketStore.connected || socketStore.isConnected || socketStore.status === 'connected'
+            const connected =
+              socketStore.connected || socketStore.isConnected || socketStore.status === 'connected'
             if (connected) return true
           }
         }
@@ -607,7 +649,9 @@ export async function waitForWebSocketConnection(
     console.log(`[waitForWebSocketConnection] Connected in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForWebSocketConnection:timeout')
-    throw new Error(`Timeout waiting for WebSocket connection after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for WebSocket connection after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -625,14 +669,14 @@ export async function waitForGameEvent(
 
   // Inject event listener
   await page.evaluate((event: string) => {
-    (window as any).__gameEventReceived__ = (window as any).__gameEventReceived__ || {}
+    ;(window as any).__gameEventReceived__ = (window as any).__gameEventReceived__ || {}
     ;(window as any).__gameEventReceived__[event] = false
 
     // Try to hook into socket events
     const socket = (window as any).$socket || (window as any).__socket__
     if (socket && socket.on) {
       socket.on(event, () => {
-        (window as any).__gameEventReceived__[event] = true
+        ;(window as any).__gameEventReceived__[event] = true
       })
     }
   }, eventName)
@@ -649,7 +693,9 @@ export async function waitForGameEvent(
     console.log(`[waitForGameEvent] Event "${eventName}" received in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, `waitForGameEvent:${eventName}:timeout`)
-    throw new Error(`Timeout waiting for game event "${eventName}" after ${timeout}ms. ${(error as Error).message}`)
+    throw new Error(
+      `Timeout waiting for game event "${eventName}" after ${timeout}ms. ${(error as Error).message}`
+    )
   }
 }
 
@@ -674,7 +720,7 @@ export async function withRetry<T>(
       if (attempt < maxRetries) {
         const delay = getBackoffDelay(attempt, baseDelay, maxDelay)
         console.log(`[withRetry] Retrying in ${Math.round(delay)}ms...`)
-        await new Promise(resolve => setTimeout(resolve, delay))
+        await new Promise((resolve) => setTimeout(resolve, delay))
       }
     }
   }

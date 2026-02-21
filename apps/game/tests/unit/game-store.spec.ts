@@ -43,7 +43,9 @@ describe('Game Store', () => {
     // Force reset all stores
     // @ts-expect-error: Accessing internal Pinia API for test cleanup
 
-    pinia._s.forEach((store: any) => store.$reset())
+    pinia._s.forEach((store: any) => {
+      store.$reset()
+    })
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
     fetchMock.mockClear()
@@ -91,16 +93,6 @@ describe('Game Store', () => {
     it('hasActiveSession is false when no session', () => {
       const store = useGameStore()
       expect(store.hasActiveSession).toBe(false)
-    })
-
-    it('currentScore is 0 when no session', () => {
-      const store = useGameStore()
-      expect(store.currentScore).toBe(0)
-    })
-
-    it('currentAttempts is empty when no session', () => {
-      const store = useGameStore()
-      expect(store.currentAttempts).toEqual([])
     })
   })
 
@@ -244,77 +236,21 @@ describe('Game Store', () => {
     })
   })
 
-  describe('Submit Attempt', () => {
-    beforeEach(async () => {
-      const store = useGameStore()
-      await store.startNewGame()
-      vi.clearAllMocks()
-    })
-
-    it('adds correct attempt with score', async () => {
-      const store = useGameStore()
-      await store.submitAttempt('correct answer', true)
-      expect(store.currentScore).toBe(10)
-      expect(store.currentAttempts).toHaveLength(1)
-      expect(store.currentAttempts[0]!.found).toBe(true)
-    })
-
-    it('adds incorrect attempt without score', async () => {
-      const store = useGameStore()
-      await store.submitAttempt('wrong', false)
-      expect(store.currentScore).toBe(0)
-      expect(store.currentAttempts[0]!.found).toBe(false)
-    })
-
-    it('accumulates score for multiple correct', async () => {
-      const store = useGameStore()
-      await store.submitAttempt('a', true)
-      await store.submitAttempt('b', true)
-      await store.submitAttempt('c', true)
-      expect(store.currentScore).toBe(30)
-    })
-
-    it('records attempt term', async () => {
-      const store = useGameStore()
-      await store.submitAttempt('my answer', true)
-      expect(store.currentAttempts[0]!.term).toBe('my answer')
-    })
-
-    it('records attempt timestamp', async () => {
-      const store = useGameStore()
-      const before = Date.now()
-      await store.submitAttempt('test', true)
-      const after = Date.now()
-      expect(store.currentAttempts[0]!.timestamp).toBeGreaterThanOrEqual(before)
-      expect(store.currentAttempts[0]!.timestamp).toBeLessThanOrEqual(after)
-    })
-
-    it('persists after each attempt', async () => {
-      const store = useGameStore()
-      await store.submitAttempt('a', true)
-      await store.submitAttempt('b', false)
-      expect(mockSaveGameSession).toHaveBeenCalledTimes(2)
-    })
-
-    it('handles empty term', async () => {
-      const store = useGameStore()
-      await store.submitAttempt('', false)
-      expect(store.currentAttempts[0]!.term).toBe('')
-    })
-
-    it('does nothing without active session', async () => {
-      const store = useGameStore()
-      store.currentSession = null
-      await store.submitAttempt('test', true)
-      expect(mockSaveGameSession).not.toHaveBeenCalled()
-    })
-  })
-
   describe('End Game', () => {
     beforeEach(async () => {
       const store = useGameStore()
       await store.startNewGame()
-      await store.submitAttempt('answer', true)
+      // Create a session with some test data
+      if (store.currentSession) {
+        store.currentSession.score = 10
+        store.currentSession.attempts = [
+          {
+            term: 'answer',
+            found: true,
+            timestamp: Date.now(),
+          },
+        ]
+      }
       vi.clearAllMocks()
     })
 

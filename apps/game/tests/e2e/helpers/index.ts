@@ -1,6 +1,6 @@
 /**
  * E2E Test Helpers Index
- * 
+ *
  * Centralized exports for all e2e test utilities
  */
 

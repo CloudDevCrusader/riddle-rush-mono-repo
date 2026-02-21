@@ -40,8 +40,6 @@ export const useGameStore = defineStore('game', {
 
   getters: {
     hasActiveSession: (state) => state.currentSession !== null,
-    currentScore: (state) => state.currentSession?.score ?? 0, // Legacy support
-    currentAttempts: (state) => state.currentSession?.attempts ?? [], // Legacy support
     canInstall: (state) => state.installPromptEvent !== null,
     currentCategory: (state) => state.currentSession?.category ?? null,
     currentLetter: (state) => state.currentSession?.letter ?? '',
@@ -125,23 +123,6 @@ export const useGameStore = defineStore('game', {
         await this.saveSessionToDB()
         return session
       }
-    },
-
-    async submitAttempt(term: string, found: boolean) {
-      if (!this.currentSession) return
-
-      const scoringEngine = useScoringEngine()
-      const lifecycle = useGameLifecycle()
-      const attempt = lifecycle.createAttempt(term, found)
-
-      // Legacy single-player support
-      if (!this.currentSession.attempts) this.currentSession.attempts = []
-      if (this.currentSession.score === undefined) this.currentSession.score = 0
-
-      this.currentSession.attempts.push(attempt)
-      this.currentSession.score += scoringEngine.calculateAttemptScore(found)
-
-      await this.saveSessionToDB()
     },
 
     async endGame() {

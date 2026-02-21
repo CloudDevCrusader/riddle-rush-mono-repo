@@ -23,8 +23,18 @@ const mockGameStore = {
   get hasActiveSession() {
     return mockHasActiveSession
   },
-  get currentScore() {
-    return mockCurrentScore
+  get currentSession() {
+    return {
+      score: mockCurrentScore,
+      attempts: [],
+      id: '1',
+      status: 'active',
+      category: null,
+      letter: '',
+      players: [],
+      currentRound: 0,
+      roundHistory: [],
+    }
   },
 }
 
