@@ -13,7 +13,7 @@
       >
         <img
           :src="`${baseUrl}assets/alphabets/back.png`"
-          alt="Back"
+          :alt="t('common.back', 'Back')"
           class="back-icon"
           loading="eager"
         />
@@ -27,7 +27,7 @@
       <!-- Pause Button -->
       <button
         class="pause-btn tap-highlight no-select"
-        aria-label="Pause game"
+        :aria-label="t('pause.title', 'Game Paused')"
         data-testid="game-pause-button"
         @click="showPauseModal = true"
       >
@@ -57,12 +57,12 @@
           class="category-label-image"
           loading="lazy"
         />
-        <div class="category-label">CATEGORY</div>
+        <div class="category-label">{{ t('common.category', 'CATEGORY').toUpperCase() }}</div>
         <div class="category-name">
           {{
             currentCategory
               ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
-              : 'LOADING...'
+              : t('game.category_loading', 'Loading...').toUpperCase()
           }}
         </div>
       </div>
@@ -94,13 +94,12 @@
             autocapitalize="words"
             maxlength="50"
             @input="sanitizeInput"
-            @keyup.enter="submitAnswer"
           />
           <button
             type="submit"
             class="submit-answer-btn"
             data-testid="game-submit-button"
-            :disabled="false"
+            :disabled="isSubmitting"
           >
             {{ t('game.submit', 'Submit') }}
           </button>
@@ -142,11 +141,11 @@
       >
         <img
           :src="`${baseUrl}assets/alphabets/next.png`"
-          alt="Next"
+          :alt="t('common.next', 'NEXT')"
           class="next-icon"
           loading="lazy"
         />
-        <span class="next-text">NEXT</span>
+        <span class="next-text">{{ t('common.next', 'NEXT') }}</span>
       </button>
     </div>
   </div>
@@ -172,6 +171,7 @@ const route = useRoute()
 const gameId = computed(() => route.params.gameId as string | undefined)
 
 const playerAnswer = ref('')
+const isSubmitting = ref(false)
 const showPauseModal = ref(false)
 const showQuitModal = ref(false)
 
@@ -209,10 +209,15 @@ const sanitizeInput = () => {
 }
 
 const submitAnswer = async () => {
+  // Guard against double submission (form submit + keyup.enter race, or rapid clicks)
+  if (isSubmitting.value) return
+
   const player = currentPlayerTurn.value
   if (!player) {
     return
   }
+
+  isSubmitting.value = true
 
   try {
     // Allow empty answers (player can skip their turn)
@@ -235,6 +240,8 @@ const submitAnswer = async () => {
     const logger = useLogger()
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))
+  } finally {
+    isSubmitting.value = false
   }
 }
 
@@ -303,12 +310,14 @@ onMounted(async () => {
 })
 
 useHead({
-  title: 'Riddle Rush - Game',
+  title: t('game.page_title', 'Riddle Rush - Game'),
   meta: [
     {
       name: 'description',
-      content:
-        'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
+      content: t(
+        'game.meta_description',
+        'An exciting word guessing game for friends and family. Play offline, perfect for game nights!'
+      ),
     },
   ],
 })
