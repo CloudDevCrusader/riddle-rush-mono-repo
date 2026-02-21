@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const enLocalePath = path.resolve(__dirname, '../../i18n/locales/en.json')
+const enLocalePath = path.resolve(__dirname, '../../translations/locales/en.json')
 const enLocale = JSON.parse(fs.readFileSync(enLocalePath, 'utf-8'))
 
 test.describe('Translation Checks', () => {

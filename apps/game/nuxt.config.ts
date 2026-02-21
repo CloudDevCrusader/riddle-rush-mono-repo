@@ -188,7 +188,6 @@ export default defineNuxtConfig({
         },
       },
       '/**': {
-        isr: 60,
         headers: {
           'cache-control': 'public, max-age=0, must-revalidate',
         },
@@ -199,7 +198,6 @@ export default defineNuxtConfig({
         },
       },
       '/assets/**': {
-        isr: true,
         headers: {
           'cache-control': 'public, max-age=31536000, immutable',
         },
@@ -533,6 +531,8 @@ export default defineNuxtConfig({
       cleanupOutdatedCaches: true,
       skipWaiting: true,
       clientsClaim: true,
+      // Runtime caching configuration
+      // Note: Cache names are dynamically managed by pwa-cache-version.client.ts plugin
       runtimeCaching: [
         {
           urlPattern: /^\/$/,
@@ -583,10 +583,6 @@ export default defineNuxtConfig({
           },
         },
       ],
-    },
-    devOptions: {
-      enabled: true,
-      type: 'module',
     },
   },
 
