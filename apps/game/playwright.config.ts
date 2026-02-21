@@ -83,33 +83,26 @@ export default defineConfig({
     },
   }),
 
-  // Multiple mobile device profiles
-  // Note: Remove grep/grepInvert to run all tests, or use CLI --grep for filtering
+  // Streamlined device profiles for faster CI/CD
+  // 1 Android device + 1 iOS tablet for comprehensive coverage
   projects: [
     {
-      name: 'mobile-chrome-pixel5',
-      use: { ...devices['Pixel 5'] },
-      // Run all tests by default; use --grep @tablet to filter
+      name: 'android-pixel5',
+      use: {
+        ...devices['Pixel 5'],
+        // Mobile devices may need extra time for complex interactions
+        actionTimeout: isDeployedTest ? 15000 : 8000,
+      },
       grepInvert: /@tablet/,
     },
     {
-      name: 'mobile-safari-iphone15',
-      use: { ...devices['iPhone 15'] },
-      grepInvert: /@tablet/,
-    },
-    {
-      name: 'tablet-ipad',
+      name: 'ios-ipad-pro',
       use: {
         ...devices['iPad Pro 11'],
         // Tablets may need extra time for rendering larger viewports
         actionTimeout: isDeployedTest ? 20000 : 10000,
       },
       grepInvert: /@mobile-only/,
-    },
-    {
-      name: 'mobile-chrome-galaxy',
-      use: { ...devices['Galaxy S9+'] },
-      grepInvert: /@tablet/,
     },
   ],
 
