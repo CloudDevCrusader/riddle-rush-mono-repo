@@ -1,80 +1,31 @@
 <template>
   <div class="game-page">
-    <!-- Background -->
-    <div class="game-bg" />
+    <img src="~/assets/figma/background-1-6.png" class="game-bg" alt="background" />
 
-    <!-- Top Bar -->
     <header class="game-header">
-      <!-- Back Button -->
-      <button
-        data-testid="back-button"
-        class="back-btn tap-highlight no-select"
-        @click="handleBack"
-      >
-        <img
-          :src="`${baseUrl}assets/alphabets/back.png`"
-          :alt="t('common.back', 'Back')"
-          class="back-icon"
-          loading="eager"
-        />
-      </button>
-
-      <!-- Round Indicator -->
-      <div class="round-indicator" data-testid="game-round-indicator">
-        <span class="round-text">{{ t('game.round') }} {{ formattedRound }}</span>
+      <img src="~/assets/figma/back-1-3.png" class="back-btn" alt="Back" @click="handleBack" />
+      <div class="round-indicator">
+        <img src="~/assets/figma/round-01-1.png" alt="Round" />
       </div>
-
-      <!-- Pause Button -->
-      <button
-        class="pause-btn tap-highlight no-select"
-        :aria-label="t('pause.title', 'Game Paused')"
-        data-testid="game-pause-button"
-        @click="showPauseModal = true"
-      >
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <rect x="6" y="4" width="4" height="16" />
-          <rect x="14" y="4" width="4" height="16" />
-        </svg>
-      </button>
+      <div class="coin-bar">
+        <img src="~/assets/figma/coin-bar-1-4.png" alt="Coin bar" />
+        <span class="coin-bar-text">100</span>
+      </div>
     </header>
 
-    <!-- Main Game Area -->
     <div class="game-container">
-      <!-- Category Panel -->
-      <div class="category-panel" data-testid="game-category-info">
-        <img
-          :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
-          alt="Category"
-          class="category-label-image"
-          loading="lazy"
-        />
-        <div class="category-label">{{ t('common.category', 'CATEGORY').toUpperCase() }}</div>
-        <div class="category-name">
-          {{
-            currentCategory
-              ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
-              : t('game.category_loading', 'Loading...').toUpperCase()
-          }}
+      <div class="category-panel">
+        <img src="~/assets/figma/back-1-2.png" class="category-bg" alt="Category background" />
+        <div class="category-text">
+          <img src="~/assets/figma/category-1.png" class="category-title" alt="Category" />
+          <img src="~/assets/figma/animal-1.png" class="category-name" alt="Animal" />
         </div>
       </div>
 
-      <!-- Large Letter Display -->
-      <div class="letter-display" data-testid="game-letter-info">
-        <span class="letter-value">
-          {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
-        </span>
+      <div class="letter-display">
+        <img src="~/assets/figma/a-1.png" class="letter-image" alt="Letter A" />
       </div>
 
-      <!-- Player Answer Input (for multiplayer) -->
       <div
         v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
         class="answer-input-section"
@@ -106,7 +57,6 @@
         </form>
       </div>
 
-      <!-- All Players Submitted Message -->
       <div
         v-if="allPlayersSubmitted"
         class="all-submitted-message"
@@ -116,7 +66,6 @@
       </div>
     </div>
 
-    <!-- Pause Modal (Lazy Loaded) -->
     <LazyPauseModal
       v-model="showPauseModal"
       @resume="handleResume"
@@ -124,29 +73,14 @@
       @home="handleHome"
     />
 
-    <!-- Quit Modal (Lazy Loaded) -->
     <LazyQuitModal
       v-model="showQuitModal"
       @confirm="handleQuitConfirmed"
       @cancel="showQuitModal = false"
     />
 
-    <!-- Bottom Navigation -->
     <div class="bottom-nav">
-      <button
-        v-if="allPlayersSubmitted || players.length === 0"
-        data-testid="next-button"
-        class="next-btn btn-primary tap-highlight no-select"
-        @click="handleNext"
-      >
-        <img
-          :src="`${baseUrl}assets/alphabets/next.png`"
-          :alt="t('common.next', 'NEXT')"
-          class="next-icon"
-          loading="lazy"
-        />
-        <span class="next-text">{{ t('common.next', 'NEXT') }}</span>
-      </button>
+      <img src="~/assets/figma/next-1.png" class="next-btn" alt="Next" @click="handleNext" />
     </div>
   </div>
 </template>
@@ -325,11 +259,10 @@ useHead({
 
 <style scoped>
 .game-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  background: var(--bg-gradient-main);
   position: relative;
-  overflow-x: hidden;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -338,599 +271,157 @@ useHead({
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  /* Background image optimized via Nuxt Image in template */
-  /* background-image: url('/assets/alphabets/BACKGROUND.png'); */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 1;
-  pointer-events: none;
-  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Header */
 .game-header {
-  position: relative;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-lg) var(--spacing-md);
-  z-index: var(--z-base);
+  align-items: center;
+  padding: 1rem;
 }
 
 .back-btn {
   width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
-  border: 4px solid #ffaa00;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-lg);
-  position: relative;
-  overflow: hidden;
-}
-
-.back-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.back-btn:active {
-  transform: translateY(2px);
-  box-shadow:
-    0 4px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-md);
-}
-
-.back-icon {
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .round-indicator {
-  flex: 1;
+  flex-grow: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+}
+
+.round-indicator img {
+  width: 150px;
+}
+
+.coin-bar {
   position: relative;
+  width: 120px;
 }
 
-/* Gold text with brown outline matching mockup */
-.round-text {
-  position: relative;
-  z-index: 2;
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 4vw, 2.5rem);
-  font-weight: var(--font-weight-black);
-  color: #ffd700;
-  /* Brown/dark outline using text-stroke */
-  -webkit-text-stroke: clamp(1px, 0.3vw, 2px) #8b4513;
-  paint-order: stroke fill;
-  text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.4),
-    0 0 10px rgba(255, 215, 0, 0.3);
-  letter-spacing: 3px;
-}
-
-.pause-btn {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #44c8ff 0%, #0a6bc2 100%);
-  border: 4px solid #ffaa00;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-lg);
-  color: var(--color-white);
-  position: relative;
-  overflow: hidden;
-}
-
-.pause-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.pause-btn:active {
-  transform: translateY(2px);
-  box-shadow:
-    0 4px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-md);
-}
-
-.pause-btn svg {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  z-index: 1;
-}
-
-/* Game Container */
-.game-container {
-  flex: 1;
-  position: relative;
-  padding: var(--spacing-xl) var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-3xl);
-  z-index: var(--z-base);
-  min-height: 0; /* Allow flex shrinking */
-}
-
-/* Category Panel - Two-part design matching mockup */
-.category-panel {
+.coin-bar img {
   width: 100%;
-  max-width: 600px;
-  border: 5px solid #e89520;
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.15),
-    var(--shadow-lg);
-  position: relative;
-  overflow: hidden;
+}
+
+.coin-bar-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.game-container {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1rem;
 }
 
-/* Orange header section */
-.category-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 45%;
-  background: linear-gradient(180deg, #ffb347 0%, #e89520 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Cream/beige body section */
-.category-panel::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 55%;
-  background: linear-gradient(180deg, #fff5e0 0%, #ffe6b8 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.category-label-image {
-  display: none; /* Hide the image, using CSS text instead */
-}
-
-.category-label {
+.category-panel {
   position: relative;
-  z-index: 2;
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3.5vw, 2rem);
-  font-weight: var(--font-weight-black);
-  color: var(--color-white);
-  text-shadow:
-    -1px -1px 0 #8b4513,
-    1px -1px 0 #8b4513,
-    -1px 1px 0 #8b4513,
-    1px 1px 0 #8b4513,
-    0 2px 4px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  padding: var(--spacing-md) var(--spacing-xl);
-  letter-spacing: 2px;
-  opacity: 1;
+  width: 100%;
+  max-width: 400px;
+}
+
+.category-bg {
+  width: 100%;
+}
+
+.category-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-title {
+  width: 120px;
 }
 
 .category-name {
-  position: relative;
-  z-index: 2;
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 6vw, 3.5rem);
-  font-weight: var(--font-weight-black);
-  /* Gold 3D text effect */
-  color: #d4a017;
-  text-shadow:
-    -2px -2px 0 #8b6914,
-    2px -2px 0 #8b6914,
-    -2px 2px 0 #8b6914,
-    2px 2px 0 #8b6914,
-    0 4px 0 #7a5c12,
-    0 6px 8px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  padding: var(--spacing-lg) var(--spacing-xl);
-  letter-spacing: 3px;
+  width: 200px;
 }
 
-/* Letter Display - Light blue with dark blue outline and 3D shadow */
 .letter-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100%;
-  max-width: 500px;
-  position: relative;
+  max-width: 300px;
 }
 
-/* Cyan glow underneath the letter */
-.letter-display::before {
-  content: '';
-  position: absolute;
-  bottom: -10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 30%;
-  background: radial-gradient(ellipse at center, rgba(100, 200, 255, 0.4) 0%, transparent 70%);
-  pointer-events: none;
-  filter: blur(20px);
+.letter-image {
+  width: 100%;
 }
 
-.letter-value {
-  font-family: var(--font-display);
-  font-size: clamp(10rem, 30vw, 20rem);
-  font-weight: var(--font-weight-black);
-  /* Light blue fill color matching mockup */
-  color: #7ec8e3;
-  /* Dark blue outline using text-stroke + 3D shadow */
-  -webkit-text-stroke: clamp(4px, 1vw, 8px) #2b5b84;
-  paint-order: stroke fill;
-  text-shadow:
-    /* 3D depth shadow - offset down-right */
-    6px 6px 0 #1a3d5c,
-    8px 8px 0 #153250,
-    10px 10px 0 #102844,
-    /* Soft blur shadow for depth */ 12px 12px 20px rgba(0, 0, 0, 0.4);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  position: relative;
-  z-index: 1;
-}
-
-/* Inner highlight for 3D effect */
-.letter-value::before {
-  content: attr(data-letter);
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  color: #a8dff0;
-  -webkit-text-stroke: 0;
-  z-index: -1;
-  opacity: 0.5;
-}
-
-/* Answer Input Section */
 .answer-input-section {
   width: 100%;
-  max-width: 500px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 4px solid #ffaa00;
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.15),
-    var(--shadow-lg);
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 1rem;
+  border: 2px solid #ffaa00;
 }
 
 .player-turn-indicator {
   text-align: center;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 1rem;
 }
 
 .turn-label {
-  font-family: var(--font-display);
-  font-size: clamp(0.9rem, 2vw, 1.2rem);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-dark);
-  display: block;
-  margin-bottom: var(--spacing-sm);
+  font-weight: bold;
 }
 
 .turn-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  display: block;
+  font-style: italic;
 }
 
 .answer-form {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 1rem;
 }
 
 .answer-input {
-  width: 100%;
-  padding: var(--spacing-lg);
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2.5vw, 1.3rem);
-  font-weight: var(--font-weight-semibold);
-  border: 3px solid var(--color-primary);
-  border-radius: var(--radius-md);
-  background: var(--color-white);
-  color: var(--color-dark);
-  text-align: center;
-  transition: all var(--transition-base);
-}
-
-.answer-input:focus {
-  outline: none;
-  border-color: #ffaa00;
-  box-shadow: 0 0 0 4px rgba(255, 170, 0, 0.2);
+  flex-grow: 1;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 .submit-answer-btn {
-  padding: var(--spacing-md) var(--spacing-xl);
-  background: var(--bg-gradient-success);
-  border: 3px solid #ffaa00;
-  border-radius: var(--radius-md);
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-white);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 6px 0 rgba(58, 140, 20, 0.3);
-}
-
-.submit-answer-btn:not(:disabled):active {
-  transform: translateY(2px);
-  box-shadow: 0 3px 0 rgba(58, 140, 20, 0.3);
-}
-
-.submit-answer-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .all-submitted-message {
-  width: 100%;
-  max-width: 500px;
-  background: var(--bg-gradient-success);
-  border: 4px solid #ffaa00;
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
   text-align: center;
-  box-shadow: var(--shadow-lg);
+  font-weight: bold;
+  color: #4caf50;
 }
 
-.all-submitted-message p {
-  font-family: var(--font-display);
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  margin: 0;
-}
-
-/* Bottom Navigation */
 .bottom-nav {
-  position: relative;
-  padding: var(--spacing-xl) var(--spacing-md);
   display: flex;
   justify-content: center;
-  z-index: var(--z-base);
+  padding: 1rem;
 }
 
-/* NEXT Button - Bright green glossy gradient with gold border */
 .next-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-  min-width: 220px;
-  padding: var(--spacing-lg) var(--spacing-3xl);
-  /* Bright green glossy gradient matching mockup */
-  background: linear-gradient(180deg, #9dff4d 0%, #5fc423 50%, #4aab18 100%);
-  border: 4px solid #e89520;
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 8px 0 #3a8c14,
-    0 12px 20px rgba(0, 0, 0, 0.25),
-    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  width: 100%;
+  max-width: 300px;
   cursor: pointer;
-  transition: all var(--transition-base);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Glossy highlight on top half */
-.next-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.1) 100%);
-  pointer-events: none;
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-}
-
-/* 3D press effect */
-.next-btn:active {
-  transform: translateY(4px);
-  box-shadow:
-    0 4px 0 #3a8c14,
-    0 6px 12px rgba(0, 0, 0, 0.2),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
-}
-
-.next-icon {
-  width: 28px;
-  height: 28px;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
-}
-
-.next-text {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3.5vw, 2rem);
-  font-weight: var(--font-weight-black);
-  color: var(--color-white);
-  /* White text with shadow for contrast */
-  text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.3),
-    0 0 8px rgba(0, 0, 0, 0.2);
-  letter-spacing: 3px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .game-header {
-    padding: var(--spacing-md);
-  }
-
-  .back-btn,
-  .pause-btn {
-    width: clamp(50px, 12vw, 64px);
-    height: clamp(50px, 12vw, 64px);
-    border: 3px solid #ffaa00;
-  }
-
-  .back-icon {
-    width: clamp(24px, 6vw, 32px);
-    height: clamp(24px, 6vw, 32px);
-  }
-
-  .round-text {
-    font-size: clamp(1.3rem, 3vw, 1.8rem);
-  }
-
-  .category-panel {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
-  .category-label {
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
-    padding: var(--spacing-sm) var(--spacing-lg);
-  }
-
-  .category-name {
-    font-size: clamp(1.8rem, 5vw, 2.5rem);
-    padding: var(--spacing-md) var(--spacing-lg);
-  }
-
-  .letter-display {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
-  .letter-value {
-    font-size: clamp(8rem, 22vw, 16rem);
-    -webkit-text-stroke: clamp(3px, 0.8vw, 6px) #2b5b84;
-  }
-
-  .answer-input-section {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
-  .game-container {
-    gap: var(--spacing-2xl);
-    padding: var(--spacing-lg) var(--spacing-md);
-  }
-
-  .bottom-nav {
-    padding: var(--spacing-lg) var(--spacing-md);
-  }
-
-  .next-btn {
-    min-width: 180px;
-    padding: var(--spacing-md) var(--spacing-2xl);
-  }
-
-  .next-text {
-    font-size: clamp(1.2rem, 3vw, 1.6rem);
-  }
-}
-
-@media (max-width: 480px) {
-  .game-header {
-    padding: var(--spacing-sm);
-  }
-
-  .back-btn,
-  .pause-btn {
-    width: clamp(44px, 11vw, 56px);
-    height: clamp(44px, 11vw, 56px);
-    border: 2px solid #ffaa00;
-  }
-
-  .round-text {
-    font-size: clamp(1.1rem, 2.8vw, 1.4rem);
-  }
-
-  .category-panel {
-    max-width: calc(100% - var(--spacing-sm) * 2);
-    border-width: 4px;
-  }
-
-  .category-label {
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
-    padding: var(--spacing-xs) var(--spacing-md);
-  }
-
-  .category-name {
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-
-  .letter-value {
-    font-size: clamp(6rem, 18vw, 12rem);
-    -webkit-text-stroke: clamp(2px, 0.6vw, 4px) #2b5b84;
-  }
-
-  .answer-input-section {
-    max-width: calc(100% - var(--spacing-sm) * 2);
-    padding: var(--spacing-md);
-  }
-
-  .answer-input {
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    padding: var(--spacing-md);
-  }
-
-  .game-container {
-    gap: var(--spacing-xl);
-    padding: var(--spacing-md) var(--spacing-sm);
-  }
-
-  .bottom-nav {
-    padding: var(--spacing-md) var(--spacing-sm);
-  }
-
-  .next-btn {
-    min-width: 160px;
-    padding: var(--spacing-sm) var(--spacing-xl);
-    border-width: 3px;
-  }
-
-  .next-text {
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
-  }
 }
 </style>
