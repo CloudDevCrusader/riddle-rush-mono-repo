@@ -327,6 +327,20 @@ Plans:
 7. Known bugs from STATE.md pending todos are resolved
 8. All unit tests pass, workspace:check passes
 
+**Plans:** 4 plans
+
+Plans:
+
+- [ ] 13-01-PLAN.md -- CSS deduplication, shared utilities, migrate credits.vue + round-start.vue to design system
+- [ ] 13-02-PLAN.md -- Figma token sync pipeline preparation
+- [ ] 13-03-PLAN.md -- Bug fixes (multiplayer round flow, dead code cleanup, typecheck investigation)
+- [ ] 13-04-PLAN.md -- Mockup CSS gap fixes across all pages + page/component animations
+
+**Details**:
+
+- **Wave 1 (Parallel):** Plans 01, 02, 03 -- CSS foundation, Figma prep, bug fixes (independent)
+- **Wave 2 (Sequential):** Plan 04 -- CSS gap fixes + animations (depends on Plan 01 for .page-shell class)
+
 ## Progress
 
 **Execution Order:**
@@ -347,4 +361,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 11. Modal Dialogs                  | 3/3            | Complete | 2026-02-16 |
 | 11.1. Scoring & Player Config      | 2/2            | Complete | 2026-02-16 |
 | 12. App Optimization & Refactoring | 10/10          | Complete | 2026-02-16 |
-| 13. Visual Polish & Bug Fixes      | 0/?            | Planned  | —          |
+| 13. Visual Polish & Bug Fixes      | 0/4            | Planned  | —          |
