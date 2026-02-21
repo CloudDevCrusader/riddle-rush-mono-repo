@@ -26,6 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11: Modal Dialogs** - Quit and pause overlays
 - [x] **Phase 11.1: Scoring & Player Config** - INSERTED: Score increment ±1, player count 2-10, leaderboard rank fixes
 - [x] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
+- [ ] **Phase 13: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 
 ## Phase Details
 
@@ -310,10 +311,26 @@ Plans:
 - **Wave 2 (Parallel):** Plans 02-08 - Testing, Terraform, Game Store refactoring
 - **Wave 3 (Polish):** Plans 09-10 - Visual audit and deployment automation
 
+### Phase 13: Visual Polish, Animations & Bug Fixes
+
+**Goal**: Achieve pixel-perfect CSS fidelity with mockups across all screens, prepare Figma sync pipeline, add smooth page/component animations, refactor duplicated code, and fix known bugs
+**Depends on**: Phase 12
+**Requirements**: POLISH-01, POLISH-02, POLISH-03, POLISH-04, POLISH-05
+**Success Criteria** (what must be TRUE):
+
+1. Every page with a mockup in docs/mockups/ visually matches the mockup CSS styling
+2. Pages without mockups (round-start, credits) follow the established design system consistently
+3. Figma token sync pipeline is prepared (CSS custom properties layer that Figma variables can override)
+4. Page transitions use smooth, consistent animations (not jarring cuts)
+5. Component mount/unmount animations feel polished (stagger, fade, slide)
+6. No duplicated styling code across pages (shared via design system or composables)
+7. Known bugs from STATE.md pending todos are resolved
+8. All unit tests pass, workspace:check passes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13
 
 | Phase                              | Plans Complete | Status   | Completed  |
 | ---------------------------------- | -------------- | -------- | ---------- |
@@ -330,3 +347,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 11. Modal Dialogs                  | 3/3            | Complete | 2026-02-16 |
 | 11.1. Scoring & Player Config      | 2/2            | Complete | 2026-02-16 |
 | 12. App Optimization & Refactoring | 10/10          | Complete | 2026-02-16 |
+| 13. Visual Polish & Bug Fixes      | 0/?            | Planned  | —          |
