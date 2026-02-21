@@ -49,7 +49,22 @@ export function useAssets() {
    */
   const preloadImage = (src: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const img = new Image()
+      let img: HTMLImageElement | null = null
+      try {
+        const Ctor = Image as unknown as new () => HTMLImageElement
+        img = typeof Ctor === 'function' ? new Ctor() : null
+      } catch {
+        try {
+          const Fn = Image as unknown as () => HTMLImageElement
+          img = typeof Fn === 'function' ? Fn() : null
+        } catch {
+          img = null
+        }
+      }
+      if (!img) {
+        resolve()
+        return
+      }
       img.onload = () => resolve()
       img.onerror = reject
       img.src = src

@@ -44,6 +44,16 @@ vi.stubGlobal('useGameStore', () => mockGameStore)
 const mockRouterPush = vi.fn()
 vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
 
+// Mock vue-router explicitly in case it's auto-imported
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    push: mockRouterPush,
+    replace: vi.fn(),
+    back: vi.fn(),
+  }),
+  useRoute: vi.fn(),
+}))
+
 const mockToastSuccess = vi.fn()
 const mockToastError = vi.fn()
 const mockToastInfo = vi.fn()
