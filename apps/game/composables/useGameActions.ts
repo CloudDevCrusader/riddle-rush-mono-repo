@@ -71,7 +71,7 @@ export function useGameActions() {
    * Share game score using Web Share API
    */
   const shareScore = async (score?: number) => {
-    const finalScore = score ?? gameStore.currentScore
+    const finalScore = score ?? gameStore.currentSession?.score ?? 0
 
     if (!navigator.share) {
       toast.info(t('share.not_supported', 'Sharing is not supported on this device'))
