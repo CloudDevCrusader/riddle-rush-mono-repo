@@ -372,3 +372,29 @@ tools/github/actions-runner/
 .superdesign/
 .windsurfrules
 trunk
+
+# OpenCode tool artifacts (DB and macOS duplicates)
+.opencode/*.db
+.opencode/*.db-shm
+.opencode/*.db-wal
+**/* 2.md
+**/* 2.js
+**/* 2.json
+**/VERSION 2
+
+# Playwright MCP debug screenshots
+.playwright-mcp/*.png
+
+# Turborepo local cache
+.turbo/cache/
+
+# Generated MCP export files (run scripts/export-mcp-*.js to regenerate)
+*-mcp-config.json
+*-mcp-enhanced.json
+mcp-export-summary.json
+opencode-mcp-*.json
+vibe-mcp-*.json
+opencode.json
+ENHANCED-*.md
+MCP-EXPORT-*.md
+MCP-INTEGRATION-*.md
