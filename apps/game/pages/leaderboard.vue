@@ -12,9 +12,12 @@
       <img src="~/assets/figma/you-win-1.png" class="leaderboard-title" alt="Leaderboard" />
       <div class="player-list">
         <div v-for="(player, index) in leaderboard" :key="player.id" class="player-item">
-          <img src="~/assets/figma/add-back-1.png" class="player-bg" alt="Player background" />
+          <img src="~/assets/figma/back-1-3.png" class="player-bg" alt="Player background" />
           <div class="player-info">
-            <img :src="getRankImage(index)" class="player-rank" :alt="`Rank ${index + 1}`" />
+            <div class="player-rank">
+              <img src="~/assets/figma/1-1.png" class="player-rank-bg" alt="Rank background" />
+              <span class="player-rank-text">{{ index + 1 }}</span>
+            </div>
             <span class="player-name">{{ player.name }}</span>
             <span class="player-score">{{ player.totalScore }}</span>
           </div>
@@ -54,14 +57,6 @@ const handleNextRound = async () => {
 
 const handleBack = () => {
   goHome()
-}
-
-const getRankImage = (index: number) => {
-  const rank = index + 1
-  if (rank >= 1 && rank <= 8) {
-    return `~/assets/figma/${rank}-1.png`
-  }
-  return '' // or a default image
 }
 
 useHead({
@@ -173,7 +168,25 @@ useHead({
 }
 
 .player-rank {
+  position: relative;
   width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-rank-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.player-rank-text {
+  position: relative;
+  z-index: 1;
+  font-size: 1.5rem;
+  color: #a5261f;
 }
 
 .ok-btn {
