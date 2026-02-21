@@ -1,0 +1,473 @@
+# Orb 'circleci/node@5.2' resolved to 'circleci/node@5.2.0'
+# Orb 'circleci/aws-cli@4.1' resolved to 'circleci/aws-cli@4.1.3'
+# Orb 'circleci/browser-tools@1.4' resolved to 'circleci/browser-tools@1.4.9'
+version: 2
+jobs:
+  deploy-development:
+    docker:
+      - image: cimg/node:20.18
+    working_directory: ~/project
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Setup pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.28.0 --activate
+            pnpm --version
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+      - run:
+          command: |-
+            #!/bin/sh
+            AWS_CLI_STR_AWS_CLI_VERSION="$(echo "${AWS_CLI_STR_AWS_CLI_VERSION}" | circleci env subst)"
+            AWS_CLI_EVAL_INSTALL_DIR="$(eval echo "${AWS_CLI_EVAL_INSTALL_DIR}" | circleci env subst)"
+            AWS_CLI_EVAL_BINARY_DIR="$(eval echo "${AWS_CLI_EVAL_BINARY_DIR}" | circleci env subst)"
+
+            eval "$SCRIPT_UTILS"
+            detect_os
+            set_sudo
+
+            # Install per platform
+            if [ "$SYS_ENV_PLATFORM" = "linux" ] || [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
+                eval "$SCRIPT_INSTALL_LINUX"
+            elif [ "$SYS_ENV_PLATFORM" = "windows" ]; then
+                eval "$SCRIPT_INSTALL_WINDOWS"
+            elif [ "$SYS_ENV_PLATFORM" = "macos" ]; then
+                eval "$SCRIPT_INSTALL_MACOS"
+            else
+                echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
+                echo "https://github.com/CircleCI-Public/aws-cli-orb/issues/new"
+                exit 1
+            fi
+
+            Toggle_Pager(){
+                # Toggle AWS Pager
+                if [ "$AWS_CLI_BOOL_DISABLE_PAGER" -eq 1 ]; then
+                    if [ -z "${AWS_PAGER+x}" ]; then
+                        echo 'export AWS_PAGER=""' >>"$BASH_ENV"
+                        echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
+                        echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
+                    fi
+                fi
+            }
+
+            if ! command -v aws >/dev/null 2>&1; then
+                Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
+            elif aws --version | awk '{print $2}' |grep "${AWS_CLI_STR_AWS_CLI_VERSION}"; then
+                echo "AWS CLI version ${AWS_CLI_STR_AWS_CLI_VERSION} already installed. Skipping installation"
+                exit 0
+            elif [ "$AWS_CLI_BOOL_OVERRIDE" -eq 1 ] || [ "${AWS_CLI_STR_AWS_CLI_VERSION}" != "latest" ]; then
+                Uninstall_AWS_CLI
+                Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
+            else
+                echo "AWS CLI is already installed, skipping installation."
+                aws --version
+            fi
+
+            Toggle_Pager
+          environment:
+            AWS_CLI_BOOL_DISABLE_PAGER: true
+            AWS_CLI_BOOL_OVERRIDE: false
+            AWS_CLI_EVAL_BINARY_DIR: /usr/local/bin
+            AWS_CLI_EVAL_INSTALL_DIR: /usr/local/aws-cli
+            AWS_CLI_STR_AWS_CLI_VERSION: latest
+            SCRIPT_INSTALL_LINUX: |-
+              #!/bin/sh
+              #shellcheck disable=SC1090
+              Install_AWS_CLI() {
+                  echo "Installing AWS CLI v2"
+                  cd /tmp || exit
+                  if [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
+                      apk update && apk upgrade && apk add -U curl
+                      apk --no-cache add binutils
+                      apk --no-cache add libcurl
+                      apk --no-cache upgrade libcurl
+                      apk --no-cache add aws-cli
+                  else
+                      if [ "$1" = "latest" ]; then
+                          version=""
+                      else
+                          version="-$1"
+                      fi
+
+                      PLATFORM=$(uname -m)
+                      curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-$PLATFORM$version.zip" -o "awscliv2.zip"
+                      unzip -q -o awscliv2.zip
+                      $SUDO ./aws/install -i "${AWS_CLI_EVAL_INSTALL_DIR}" -b "${AWS_CLI_EVAL_BINARY_DIR}"
+                      rm -r awscliv2.zip ./aws
+                  fi
+              }
+
+              Uninstall_AWS_CLI() {
+                  AWS_CLI_PATH=$(command -v aws)
+                  echo "$AWS_CLI_PATH"
+                  if [ -n "$AWS_CLI_PATH" ]; then
+                      EXISTING_AWS_VERSION=$(aws --version)
+                      echo "Uninstalling ${EXISTING_AWS_VERSION}"
+                      # shellcheck disable=SC2012
+                      if [ -L "$AWS_CLI_PATH" ]; then
+                          AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
+                      fi
+                      $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
+                  else
+                      echo "No AWS install found"
+                  fi
+              }
+            SCRIPT_INSTALL_MACOS: |-
+              #!/bin/sh
+              Install_AWS_CLI() {
+                  if [ "$1" = "latest" ]; then
+                      version=""
+                  else
+                      version="-$1"
+                  fi
+                  echo "Installing AWS CLI v2"
+                  cd /tmp || exit
+                  curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$version.pkg" -o "AWSCLIV2.pkg"
+                  $SUDO installer -pkg AWSCLIV2.pkg -target /
+                  rm AWSCLIV2.pkg
+              }
+
+              Uninstall_AWS_CLI() {
+                  AWS_CLI_PATH=$(command -v aws)
+                  echo "$AWS_CLI_PATH"
+                  if [ -n "$AWS_CLI_PATH" ]; then
+                      EXISTING_AWS_VERSION=$(aws --version)
+                      echo "Uninstalling ${EXISTING_AWS_VERSION}"
+                      # shellcheck disable=SC2012
+                      if [ -L "$AWS_CLI_PATH" ]; then
+                          AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
+                      fi
+                      $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
+                  else
+                      echo "No AWS install found"
+                  fi
+              }
+            SCRIPT_INSTALL_WINDOWS: |-
+              #!/bin/sh
+
+              Install_AWS_CLI(){
+                  if [ "$1" = "latest" ]; then
+                      version=""
+                  else
+                      version="$1"
+                  fi
+                  echo "Installing AWS CLI v2"
+                  cd /tmp || exit
+
+                  if ! command -v choco >/dev/null 2>&1; then
+                      echo "Chocolatey is required to install AWS"
+                      exit 1
+                  fi
+                  yes "Yes" | choco install -y awscli --version="$version"
+                  echo "Installing AWS CLI version $version"
+                  if echo "$1" | grep -e "^2\." -e "latest"; then
+                      echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLIV2\"" >> "$BASH_ENV"
+                  else
+                      echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLI/bin\"" >>"$BASH_ENV"
+                  fi
+              }
+
+              Uninstall_AWS_CLI() {
+                  if ! command -v choco >/dev/null 2>&1; then
+                      echo "Chocolatey is required to uninstall AWS"
+                      exit 1
+                  fi
+                  choco uninstall awscli
+              }
+            SCRIPT_UTILS: "# shellcheck disable=SC2148\ndetect_os() { \n  detected_platform=\"$(uname -s | tr '[:upper:]' '[:lower:]')\"\n\n  case \"$detected_platform\" in\n    linux*)\n        if grep \"Alpine\" /etc/issue >/dev/null 2>&1; then\n            printf '%s\\n' \"Detected OS: Alpine Linux.\"\n            SYS_ENV_PLATFORM=linux_alpine\n        else\n            printf '%s\\n' \"Detected OS: Linux.\"\n            SYS_ENV_PLATFORM=linux\n        fi  \n      ;;\n    darwin*)\n      printf '%s\\n' \"Detected OS: macOS.\"\n      SYS_ENV_PLATFORM=macos\n      ;;\n    msys*|cygwin*)\n      printf '%s\\n' \"Detected OS: Windows.\"\n      SYS_ENV_PLATFORM=windows\n      ;;\n    *)\n      printf '%s\\n' \"Unsupported OS: \\\"$detected_platform\\\".\"\n      exit 1\n      ;;\n  esac\n\n  export SYS_ENV_PLATFORM\n}\n\nset_sudo(){\n    if [ \"$SYS_ENV_PLATFORM\" = \"linux_alpine\" ]; then\n        if [ \"$ID\" = 0 ]; then export SUDO=\"\"; else export SUDO=\"sudo\"; fi\n    else\n        if [ \"$EUID\" = 0 ]; then export SUDO=\"\"; else export SUDO=\"sudo\"; fi\n    fi\n}"
+          name: Install AWS CLI - latest
+      - run:
+          command: "#!/bin/sh\n#shellcheck disable=SC1090\nAWS_CLI_STR_ACCESS_KEY_ID=\"$(echo \"\\$$AWS_CLI_STR_ACCESS_KEY_ID\" | circleci env subst)\"\nAWS_CLI_STR_SECRET_ACCESS_KEY=\"$(echo \"\\$$AWS_CLI_STR_SECRET_ACCESS_KEY\" | circleci env subst)\"\nAWS_CLI_STR_SESSION_TOKEN=\"$(echo \"$AWS_CLI_STR_SESSION_TOKEN\" | circleci env subst)\"\nAWS_CLI_STR_REGION=\"$(echo \"$AWS_CLI_STR_REGION\" | circleci env subst)\"\nAWS_CLI_STR_PROFILE_NAME=\"$(echo \"$AWS_CLI_STR_PROFILE_NAME\" | circleci env subst)\"\nAWS_CLI_BOOL_SET_AWS_ENV_VARS=\"$(echo \"$AWS_CLI_BOOL_SET_AWS_ENV_VARS\" | circleci env subst)\"\n\nif [ -z \"$AWS_CLI_STR_ACCESS_KEY_ID\" ] && [ -z \"${AWS_CLI_STR_SECRET_ACCESS_KEY}\" ] && [ \"$AWS_CLI_BOOL_SET_AWS_ENV_VARS\" = 0 ]; then \n    temp_file=\"/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys\"\n    . \"$temp_file\"\nelse \n    touch \"${BASH_ENV}\"\n    . \"${BASH_ENV}\"\nfi\n\naws configure set aws_access_key_id \\\n    \"$AWS_CLI_STR_ACCESS_KEY_ID\" \\\n    --profile \"$AWS_CLI_STR_PROFILE_NAME\"\n\naws configure set aws_secret_access_key \\\n    \"$AWS_CLI_STR_SECRET_ACCESS_KEY\" \\\n    --profile \"$AWS_CLI_STR_PROFILE_NAME\"\n\nif [ -n \"${AWS_CLI_STR_SESSION_TOKEN}\" ]; then\n    aws configure set aws_session_token \\\n        \"${AWS_CLI_STR_SESSION_TOKEN}\" \\\n        --profile \"$AWS_CLI_STR_PROFILE_NAME\"\nfi\n\nif [ \"$AWS_CLI_BOOL_CONFIG_DEFAULT_REGION\" -eq \"1\" ]; then\n    aws configure set default.region \"$AWS_CLI_STR_REGION\"\nfi\n\nif [ \"$AWS_CLI_BOOL_CONFIG_PROFILE_REGION\" -eq \"1\" ]; then\n    aws configure set region \"$AWS_CLI_STR_REGION\" \\\n        --profile \"$AWS_CLI_STR_PROFILE_NAME\"\nfi\n"
+          environment:
+            AWS_CLI_BOOL_CONFIG_DEFAULT_REGION: true
+            AWS_CLI_BOOL_CONFIG_PROFILE_REGION: true
+            AWS_CLI_BOOL_SET_AWS_ENV_VARS: true
+            AWS_CLI_STR_ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
+            AWS_CLI_STR_PROFILE_NAME: default
+            AWS_CLI_STR_REGION: ${AWS_REGION}
+            AWS_CLI_STR_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
+          name: Configure AWS Access Key ID
+      - run:
+          name: Deploy to AWS S3 + CloudFront (Development)
+          command: |
+            export AWS_S3_BUCKET=${AWS_S3_BUCKET_DEV}
+            export AWS_CLOUDFRONT_ID=${AWS_CLOUDFRONT_ID_DEV}
+            ./scripts/aws-deploy.sh development
+      - store_artifacts:
+          path: deployment-info.json
+  lint-and-typecheck:
+    docker:
+      - image: cimg/node:20.18
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Setup pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.28.0 --activate
+            pnpm --version
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+      - run:
+          name: Run linting
+          command: pnpm run lint
+      - run:
+          name: Run type check
+          command: pnpm run typecheck
+      - run:
+          name: Check dependency versions
+          command: pnpm run syncpack:check
+  flaky-test-detection:
+    docker:
+      - image: cimg/node:20.18
+    steps:
+      - checkout
+      - run:
+          name: Setup pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.28.0 --activate
+            pnpm --version
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+      - run:
+          name: Install Trunk CLI
+          command: |
+            curl -fsSLO --retry 3 https://trunk.io/releases/trunk && chmod +x ./trunk
+      - run:
+          name: Run tests with JUnit reporting
+          command: |
+            chmod +x scripts/run-tests-with-trunk.sh
+            ./scripts/run-tests-with-trunk.sh
+      - run:
+          name: Upload to Trunk for flaky test detection
+          command: |
+            if [ -n "${TRUNK_API_TOKEN}" ]; then
+              ./trunk flakytests upload \
+                --junit-paths "apps/game/test-results/*.xml" \
+                --org-url-slug cloudcrusaders \
+                --token "${TRUNK_API_TOKEN}"
+            else
+              echo "TRUNK_API_TOKEN not set, skipping upload"
+            fi
+      - store_test_results:
+          path: apps/game/test-results
+  test-unit:
+    docker:
+      - image: cimg/node:20.18
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Setup pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.28.0 --activate
+            pnpm --version
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+      - run:
+          name: Run unit tests
+          command: pnpm run test:unit
+      - store_test_results:
+          path: apps/game/test-results
+      - store_artifacts:
+          path: apps/game/coverage
+          destination: coverage
+  build-game:
+    docker:
+      - image: cimg/node:20.18
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Setup pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.28.0 --activate
+            pnpm --version
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+      - run:
+          name: Build game application
+          command: |
+            cd apps/game
+            pnpm run generate
+      - persist_to_workspace:
+          root: .
+          paths:
+            - apps/game/.output
+  verify-development:
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Setup pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.28.0 --activate
+            pnpm --version
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+      - run:
+          name: Wait for CloudFront propagation
+          command: sleep 60
+      - run:
+          name: Run E2E tests against development
+          command: |
+            export BASE_URL=https://dev.riddlerush.de
+            pnpm run test:e2e
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: playwright-report
+          destination: playwright-report
+  test-e2e:
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.57.0-noble
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Setup pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.28.0 --activate
+            pnpm --version
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+      - run:
+          name: Build application
+          command: |
+            cd apps/game
+            pnpm run generate
+      - run:
+          name: Run E2E tests
+          command: pnpm run test:e2e
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: playwright-report
+          destination: playwright-report
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - lint-and-typecheck
+      - test-unit:
+          requires:
+            - lint-and-typecheck
+          upstream:
+            lint-and-typecheck:
+              - success
+      - build-game:
+          requires:
+            - test-unit
+          upstream:
+            test-unit:
+              - success
+  e2e:
+    jobs:
+      - test-e2e: {}
+  deploy-dev:
+    jobs:
+      - build-game: {}
+      - deploy-development:
+          requires:
+            - build-game
+          context: aws-development
+          upstream:
+            build-game:
+              - success
+      - verify-development:
+          requires:
+            - deploy-development
+          upstream:
+            deploy-development:
+              - success
+  flaky-tests:
+    triggers:
+      - schedule:
+          cron: 0 0 * * 0
+          filters:
+            branches:
+              only: main
+    jobs:
+      - flaky-test-detection: {}

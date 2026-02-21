@@ -41,15 +41,14 @@ stages:
 before_script:
   # Conditionally enable corepack only if not already available
   - |
+    export PATH="$HOME/.local/bin:$PATH"
     if ! command -v pnpm &> /dev/null; then
       echo "pnpm not found, installing via corepack..."
-      corepack enable --install-directory ~/.local/bin 2>/dev/null \
-        || sudo corepack enable 2>/dev/null \
-        || corepack enable
-      corepack prepare pnpm@10.28.0 --activate
-      export PATH="$HOME/.local/bin:$PATH"
+      mkdir -p ~/.local/bin
+      corepack enable --install-directory ~/.local/bin
+      corepack prepare pnpm@10.28.2 --activate
     else
-      echo "pnpm already available, skipping corepack setup"
+      echo "pnpm already available: $(pnpm --version)"
     fi
   # Only install if node_modules is missing or outdated
   - |
@@ -259,7 +258,7 @@ deploy:aws:production:
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
     - export AWS_S3_BUCKET=$AWS_S3_BUCKET
     - export AWS_CLOUDFRONT_ID=$AWS_CLOUDFRONT_ID
-    - export AWS_REGION=${AWS_REGION:-eu-central-1
+    - export AWS_REGION=${AWS_REGION:-eu-central-1}
     - ./scripts/aws-deploy.sh production
   artifacts:
     paths:

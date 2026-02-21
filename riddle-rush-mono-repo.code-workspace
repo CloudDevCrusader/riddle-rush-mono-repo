@@ -35,5 +35,9 @@
     "path-intellisense.extensionOnImport": true,
     "circleci.persistedProjectSelection": ["circleci/NqFyu74yrheUgS5wD3ERxe/fhprrcv6zHAooUq6UK155"],
     "circleci.filters.branchFilter": "allBranches",
+    "nuxt.isNuxtApp": false,
+  },
+  "extensions": {
+    "recommendations": ["nuxtr.nuxt-vscode-extentions"],
   },
 }
