@@ -46,8 +46,7 @@ Object.assign(globalThis, {
 // Ensure Vue reactivity system is properly initialized before each test
 beforeEach(() => {
   // Create a minimal Vue app to ensure proper reactivity context
-  const app = createApp({})
-  app.unmount()
+  createApp({})
 
   // Reset mocks
   vi.clearAllMocks()
