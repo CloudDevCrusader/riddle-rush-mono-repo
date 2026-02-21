@@ -464,16 +464,7 @@ test.describe('Full 5-Round Game Workflow @slow', () => {
     }
 
     // Verify scores were applied correctly despite rapid clicking
-    const score0 = page.locator(
-      `[data-testid="results-player-entry-0"] [data-testid="score-display"]`
-    )
-    const score1 = page.locator(
-      `[data-testid="results-player-entry-1"] [data-testid="score-display"]`
-    )
-    const score2 = page.locator(
-      `[data-testid="results-player-entry-2"] [data-testid="score-display"]`
-    )
-
+    // Note: Score values are displayed in GameDisplay components without specific testids
     await page.waitForTimeout(500) // Let UI stabilize
 
     await confirmScoresAndWaitForDecision(page)
