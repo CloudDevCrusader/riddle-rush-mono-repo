@@ -3,6 +3,19 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 // Import after mocks are set up
 import { useGameActions } from '../../../composables/useGameActions'
 
+// Hoist mockRouterPush so it can be referenced inside the vi.mock factory below.
+// vi.mock is hoisted before imports, so variables used in its factory must also
+// be hoisted via vi.hoisted().
+const { mockRouterPush } = vi.hoisted(() => ({ mockRouterPush: vi.fn() }))
+
+// Mock vue-router at module level to intercept the auto-imported useRouter.
+// unplugin-auto-import transforms composables to use direct ES module imports,
+// so vi.stubGlobal alone is not sufficient — the module mock takes precedence.
+vi.mock('vue-router', () => ({
+  useRouter: vi.fn(() => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() })),
+  useRoute: vi.fn(() => ({ path: '/', params: {}, query: {} })),
+}))
+
 // --- Mock dependencies as globals (Nuxt auto-imports) ---
 
 const mockStartNewGame = vi.fn()
@@ -28,10 +41,8 @@ const mockGameStore = {
   },
 }
 
-// Stub Nuxt auto-imported globals
+// Stub Nuxt auto-imported globals (belt-and-suspenders alongside the module mock)
 vi.stubGlobal('useGameStore', () => mockGameStore)
-
-const mockRouterPush = vi.fn()
 vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
 
 const mockToastSuccess = vi.fn()
