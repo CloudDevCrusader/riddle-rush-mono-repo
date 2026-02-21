@@ -1,177 +1,21 @@
-# Agent Workflow Guide
+# AI Agent Workflow Guide
 
-This document defines the standard workflow for AI agents working on this codebase to ensure code quality, regular commits, and smooth collaboration.
-
-## 🚀 Task Runner: Turbo
-
-This monorepo uses **Turbo** for task orchestration:
-
-- **Parallel execution** - Runs tasks across projects simultaneously
-- **Smart caching** - Skips unchanged tasks for faster builds
-- **Dependency management** - Runs tasks in correct order
-- **Remote caching** - Share cache across team (when enabled)
-
-**Key Commands:**
-
-```bash
-turbo run build                        # Build all projects
-turbo run typecheck lint               # Run multiple tasks
-turbo run test --filter=@riddle-rush/game  # Target specific project
-pnpm run workspace:check               # Full validation (uses Turbo)
-```
-
-## 🎯 Core Principles
-
-1. **Make changes incrementally** - Small, focused commits are better than large dumps
-2. **Validate after every change** - Run lint + typecheck after each logical change
-3. **Commit frequently** - Commit after each successful validation
-4. **Document changes** - Update relevant docs when making changes
-5. **Test before commit** - Ensure tests pass for affected areas
-
----
-
-## 📋 Standard Workflow for All Changes
-
-**For detailed examples and troubleshooting, see:** [Agent Workflow Details](docs/development/AGENT-WORKFLOW.md)
-
-### 1. Before Starting Work
-
-```bash
-# Pull latest changes
-git pull origin main
-
-# Ensure dependencies are up to date
-pnpm install
-
-# Verify baseline
-pnpm run typecheck
-pnpm run lint
-pnpm run test:unit
-```
-
-### 2. Make Changes
-
-- Make **small, focused changes** (one feature/fix at a time)
-- Follow existing code patterns
-- Update tests when changing logic
-- Update documentation when changing behavior
-
-### 3. After Each Logical Change
-
-**Run quality checks (Turbo handles parallel execution):**
-
-```bash
-# Quick check (< 30 seconds)
-pnpm run typecheck
-pnpm run lint:fix
-pnpm run format
-
-# Full check (recommended - uses Turbo caching)
-pnpm run workspace:check  # Runs all checks in parallel
-
-# Or use Turbo directly for specific projects
-turbo run typecheck --filter=@riddle-rush/game
-```
-
-### 4. Commit Frequently
-
-**Commit after every logical unit of work**, not at the end of the session:
-
-```bash
-# Good - Small, focused commits
-git add apps/game/composables/useLodash.ts
-git commit -m "feat: add lodash composable with tree-shaking"
-
-git add apps/game/plugins/gtag.client.ts
-git commit -m "feat: add custom GA4 plugin"
-
-git add apps/game/nuxt.config.ts
-git commit -m "chore: enhance PWA caching strategies"
-```
-
-**Bad Practice:**
-
-```bash
-# Don't do this - too many unrelated changes
-git add .
-git commit -m "update stuff"
-```
-
----
-
-## Agent Workflow Checklist
-
-After **EVERY** significant change, agents MUST:
-
-### 1. **Validate Changes**
-
-```bash
-# Option 1: Full validation (recommended)
-pnpm run workspace:check  # Runs syncpack + typecheck + lint + python checks
-
-# Option 2: Quick validation
-pnpm run typecheck  # TypeScript errors?
-pnpm run lint:fix   # Auto-fix linting issues
-pnpm run format     # Format code
-```
-
-**Note:** All commands use Turbo for caching and parallel execution.
-
-### 2. **Verify Tests (if relevant)**
-
-```bash
-pnpm run test:unit     # For composable/store changes
-pnpm run test:e2e      # For UI/flow changes
-```
-
-### 3. **Commit Changes Regularly**
-
-**Commit after EVERY logical change:**
-
-- ✅ After adding a new feature/composable
-- ✅ After fixing a bug
-- ✅ After refactoring a file
-- ✅ After adding/updating tests
-- ✅ After documentation updates
-
-**Commit message format:**
-
-```
-<type>(<scope>): <subject>
-
-[optional body]
-[optional footer]
-```
-
-**Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`
-
-**Examples:**
-
-```bash
-git add apps/game/composables/useLodash.ts
-git commit -m "feat(composables): add useLodash composable with tree-shaking"
-
-git add apps/game/plugins/gtag.client.ts
-git commit -m "feat: add custom GA4 plugin for Nuxt 4"
-
-git add apps/game/nuxt.config.ts
-git commit -m "chore: enhance PWA caching strategies"
-```
-
-<function_calls>
-<invoke name="create">
-<parameter name="file_text"># AI Agent Workflow & Guidelines
-
-This document defines the workflow and best practices for AI agents (GitHub Copilot, Claude, Cursor, etc.) working on the Riddle Rush codebase.
+This document defines the standard workflow for AI agents working on the Riddle Rush codebase to ensure code quality, regular commits, and smooth collaboration.
 
 ## Table of Contents
 
-- [Core Workflow](#core-workflow)
-- [Change Validation Checklist](#change-validation-checklist)
-- [Commit Strategy](#commit-strategy)
-- [Task Breakdown Guidelines](#task-breakdown-guidelines)
-- [Quality Gates](#quality-gates)
-- [Common Workflows](#common-workflows)
+- [Core Principles](#core-principles)
+- [Project Overview](#project-overview)
+- [Essential Commands](#essential-commands)
+- [Development Workflow](#development-workflow)
+- [Code Organization & Patterns](#code-organization--patterns)
+- [Testing Strategy](#testing-strategy)
+- [Code Quality & Validation](#code-quality--validation)
+- [Commit Guidelines](#commit-guidelines)
+- [Deployment](#deployment)
+- [Important Gotchas](#important-gotchas)
+- [Tooling & Integrations](#tooling--integrations)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -179,10 +23,18 @@ This document defines the workflow and best practices for AI agents (GitHub Copi
 
 ### 1. **Validate After Every Change**
 
-After **ANY** code change, always run:
+After **ANY** code change, always run quality checks:
 
 ```bash
-pnpm run typecheck && pnpm run lint:fix && pnpm run format
+pnpm run workspace:check  # Syncpack + TypeScript + ESLint
+```
+
+Or run individually:
+
+```bash
+pnpm run typecheck    # TypeScript validation
+pnpm run lint:fix     # Auto-fix linting
+pnpm run format       # Format code
 ```
 
 ### 2. **Commit Frequently**
@@ -193,15 +45,188 @@ pnpm run typecheck && pnpm run lint:fix && pnpm run format
 
 ### 3. **Test Before Commit**
 
-Always run before committing:
+Always run relevant tests before committing:
 
 ```bash
-pnpm run workspace:check  # Runs syncpack, typecheck, and lint
+pnpm run test:unit    # For logic/composable/store changes
+pnpm run test:e2e     # For UI/flow changes
+```
+
+### 4. **Read Before Writing**
+
+- Read `.cursorrules` for code style guidelines
+- Read CLAUDE.md for architecture overview
+- Check existing files for patterns before creating new ones
+
+---
+
+## Project Overview
+
+This is a **pnpm monorepo** orchestrated by **Turborepo** containing "Riddle Rush" — a word guessing game.
+
+### Workspace Structure
+
+```
+riddle-rush-mono-repo/
+├── apps/
+│   ├── game/           # Nuxt 4 PWA (main game)
+│   ├── mobile/         # NativeScript Vue app
+│   ├── docs/           # Documentation (Nuxt Content)
+│   └── tolgee/         # Translation management
+├── packages/
+│   ├── config/         # Shared Vite/build configs
+│   ├── shared/         # Utilities, constants, routes
+│   ├── types/          # Shared TypeScript types
+│   └── riddle-cli/     # oclif-based CLI tool
+├── tools/              # AI agents, Python tools, integrations
+├── infrastructure/     # Terraform (AWS S3 + CloudFront)
+└── scripts/            # CI/CD, deployment, agent scripts
+```
+
+### Technology Stack
+
+- **Framework**: Nuxt 4 (client-side SPA with `ssr: false`)
+- **Package Manager**: pnpm 10.28.1 (enforced)
+- **Task Runner**: Turborepo
+- **Language**: TypeScript (strict mode)
+- **Styling**: UnoCSS, Flowbite, Tailwind CSS
+- **Testing**: Vitest (unit), Playwright (E2E)
+- **Database**: IndexedDB (client-side persistence)
+- **State Management**: Pinia
+
+---
+
+## Essential Commands
+
+### Development
+
+```bash
+# Development (root)
+pnpm run dev              # Start game dev server (via Turbo)
+pnpm run dev:all          # Start all apps in parallel
+
+# Game app specific (from apps/game/)
+pnpm run dev              # Nuxt dev at localhost:3000
+pnpm run dev:mobile       # Dev with --host 0.0.0.0 (mobile access)
+pnpm run dev:mobile-https # Dev with HTTPS for mobile testing
+pnpm run dev:debug        # Debug mode
+```
+
+### Build & Generate
+
+```bash
+# Root commands (via Turbo)
+pnpm run build            # Build all projects
+pnpm run generate         # Generate static site for game
+pnpm run generate:debug   # Generate with debug mode
+
+# Game app specific
+pnpm run build            # Build game app
+pnpm run build:debug      # Build with debug mode
+pnpm run preview          # Preview production build
+```
+
+### Testing
+
+```bash
+# Unit tests (Vitest) - via Turbo
+pnpm run test             # Run all tests
+pnpm run test:unit        # Run all unit tests
+pnpm run test:watch       # Watch mode
+pnpm run test:unit:coverage # With coverage report
+
+# From apps/game/
+pnpm run test:unit              # Run once
+pnpm run test:unit:coverage     # With coverage
+pnpm run test:watch             # Watch mode
+
+# E2E tests (Playwright) - via Turbo
+pnpm run test:e2e               # Headless
+pnpm run test:e2e:headed        # Show browser
+pnpm run test:e2e:ui            # Interactive UI
+pnpm run test:e2e:simple        # Simplified config
+pnpm run test:bdd               # BDD tests (generate + run)
+pnpm run test:bdd:headed        # BDD with visible browser
+pnpm run test:bdd:generate      # Generate BDD tests
+```
+
+### Code Quality
+
+```bash
+# All checks (recommended)
+pnpm run workspace:check  # Syncpack + TypeScript + ESLint
+
+# Auto-fix everything
+pnpm run workspace:fix    # Syncpack fix + lint fix + format
+
+# Individual checks
+pnpm run typecheck        # TypeScript across all packages (Turbo)
+pnpm run lint             # ESLint across all packages (Turbo)
+pnpm run lint:fix         # Auto-fix linting (Turbo)
+pnpm run format           # Prettier format (Turbo)
+pnpm run format:check     # Check formatting (Turbo)
+pnpm run syncpack:check   # Check dependency version consistency
+pnpm run syncpack:fix     # Fix version mismatches
+
+# Python checks (if needed)
+pnpm run python:lint
+pnpm run python:format
+pnpm run python:check
+```
+
+### Mobile (Capacitor/Android)
+
+```bash
+# From apps/game/
+pnpm run android:sync     # Build game + sync to Android
+pnpm run android:run      # Run on Android device/emulator
+pnpm run android:open     # Open in Android Studio
+```
+
+### Deployment
+
+#### AWS (S3 + CloudFront)
+
+```bash
+# Full deployment workflows
+pnpm run deploy:prod              # Deploy to production
+pnpm run deploy:dev               # Deploy to development
+
+# Infrastructure (Terraform)
+pnpm run infra:prod:init          # Init production Terraform
+pnpm run infra:prod:plan          # Plan production changes
+pnpm run infra:prod:apply         # Apply production changes
+pnpm run infra:dev:init           # Init development Terraform
+pnpm run infra:dev:plan           # Plan development changes
+pnpm run infra:dev:apply          # Apply development changes
+
+# Other
+pnpm run deploy:infrastructure    # Deploy app using existing infra
+pnpm run deploy:aws               # Direct AWS deployment (needs env vars)
+```
+
+#### Manual AWS Deployment
+
+```bash
+export AWS_S3_BUCKET=your-bucket-name
+export AWS_CLOUDFRONT_ID=E1234567890ABC
+export AWS_REGION=eu-central-1
+./scripts/aws-deploy.sh production
+```
+
+#### Vercel
+
+```bash
+# Via scripts
+./scripts/setup-vercel.sh
+
+# Or with env vars
+VERCEL_TOKEN=xxx VERCEL_ORG_ID=xxx VERCEL_PROJECT_ID=xxx npx vercel --prod
 ```
 
 ---
 
-## Agent Workflow
+## Development Workflow
 
 ### Pre-Work Checklist
 
@@ -209,76 +234,38 @@ pnpm run workspace:check  # Runs syncpack, typecheck, and lint
 # 1. Pull latest changes
 git pull origin main
 
-# 2. Check current status
-pnpm run workspace:check
+# 2. Ensure dependencies are up to date
+pnpm install
 
-# 3. Create feature branch (if applicable)
-git checkout -b feature/your-feature-name
+# 3. Verify baseline
+pnpm run workspace:check
 ```
 
-### During Development
-
-#### After ANY file change:
+### Standard Workflow
 
 ```bash
-# 1. Run quality checks
-pnpm run typecheck
-pnpm run lint:fix
+# 1. Plan the change
+git status
+git log --oneline -5
 
-# 2. If checks pass, commit immediately
+# 2. Make small, focused changes (one logical change at a time)
+
+# 3. Validate after each change
+pnpm run workspace:check  # Or run individually:
+                           # pnpm run typecheck && pnpm run lint:fix
+
+# 4. Fix any issues immediately
+pnpm run lint:fix && pnpm run format
+
+# 5. Stage changes
 git add .
+
+# 6. Commit with conventional message
 git commit -m "feat: descriptive message"
 
-# 3. Continue work
+# 7. Push regularly
+git push origin <branch-name>
 ```
-
-#### **Commit Frequency Guidelines:**
-
-- ✅ Commit after each logical unit of work
-- ✅ After fixing lint/type errors
-- ✅ After adding a new feature/function
-- ✅ After refactoring a component
-- ✅ Before switching context
-- ❌ Don't wait until "everything is perfect"
-
-### **Required Checks Before Commit:**
-
-```bash
-# Always run before committing
-pnpm run typecheck
-pnpm run lint
-pnpm run format
-
-# Or use the combined command
-pnpm run workspace:check
-```
-
-### **Workflow Template:**
-
-```bash
-# 1. Make your changes
-# 2. Run checks
-pnpm run workspace:check  # Includes typecheck + lint + syncpack
-
-# 3. If checks pass, stage changes
-git add .
-
-# 4. Commit with conventional commit message
-git commit -m "feat: add new feature"
-
-# 5. If checks fail, fix and try again
-pnpm run lint:fix
-pnpm run format
-```
-
-## Agent Workflow Integration
-
-For AI agents working on this repository:
-
-1. **After ANY code change**: Run `pnpm run workspace:check` (syncpack + typecheck + lint)
-2. **Commit frequency**: Commit after every logical change (not just at the end)
-3. **Commit message format**: Use Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`)
-4. **Pre-commit checks**: Husky runs linting automatically via lint-staged
 
 ### Agent Workflow Template
 
@@ -286,9 +273,11 @@ For AI agents working on this repository:
 # 1. Make changes to code
 # 2. Run quality checks
 pnpm run workspace:check  # Or: pnpm run typecheck && pnpm run lint
+
 # 3. If checks pass, commit immediately
 git add .
 git commit -m "feat: description of change"
+
 # 4. Continue with next task
 ```
 
@@ -314,145 +303,340 @@ git commit -m "fix: resolve type error"
 git commit -m "chore: update dependencies"
 ```
 
-Now let me create a comprehensive workflow document:
-
-<function_calls>
-<invoke name="create">
-<parameter name="file_text"># Agent Workflow Guidelines
-
-This document defines the standard workflow for AI agents working on this codebase. Following these guidelines ensures code quality, proper testing, and a clean commit history.
-
 ---
 
-## Table of Contents
+## Code Organization & Patterns
 
-- [Core Principles](#core-principles)
-- [Standard Workflow](#standard-workflow)
-- [Commit Guidelines](#commit-guidelines)
-- [Quality Checks](#quality-checks)
-- [Example Workflows](#example-workflows)
-- [Troubleshooting](#troubleshooting)
-
----
-
-## Core Principles
-
-### 1. **Small, Focused Changes**
-
-- Make incremental changes, not sweeping refactors
-- One logical change per commit
-- Easier to review, test, and rollback if needed
-
-### 2. **Commit Early, Commit Often**
-
-- Commit after completing each logical unit of work
-- Don't wait until everything is perfect
-- Target: **1-3 commits per major task**
-
-### 3. **Always Verify Before Committing**
-
-- Run quality checks after **every change**
-- Fix issues immediately
-- Never commit broken code
-
-### 4. **Clear Communication**
-
-- Use conventional commit messages
-- Update documentation with code changes
-- Leave TODO comments for future work
-
----
-
-## Standard Workflow
-
-### Step 1: Plan the Change
-
-Before making any changes:
+### Monorepo Structure
 
 ```bash
-# Check current status
-git status
-git log --oneline -5
+apps/           # Application code
+  game/         # Nuxt 4 PWA game
+  mobile/       # NativeScript Vue mobile
+  docs/         # Nuxt Content documentation
+  tolgee/       # Translation management
 
-# Pull latest changes
-git pull origin main
+packages/       # Shared packages
+  config/       # Shared Vite/build configs
+  shared/       # Utilities, constants, routes
+  types/        # Shared TypeScript types
+  riddle-cli/   # oclif CLI tool
+
+tools/          # AI agents, Python tools, integrations
+infrastructure/ # Terraform configs (AWS)
+scripts/        # Deployment and utility scripts
 ```
 
-**Actions:**
+### Workspace Packages
 
-- Review existing code
-- Identify affected files
-- Plan commit boundaries
+| Package               | Scope        | Purpose                                |
+| --------------------- | ------------ | -------------------------------------- |
+| `@riddle-rush/game`   | @riddle-rush | Nuxt 4 PWA — the main game application |
+| `@riddle-rush/shared` | @riddle-rush | Shared utilities, constants, routes    |
+| `@riddle-rush/types`  | @riddle-rush | Shared TypeScript types                |
+| `@riddle-rush/config` | @riddle-rush | Shared Vite/build configurations       |
 
-### Step 2: Make Changes
+### Import Patterns
 
-Focus on **one logical change** at a time:
+```typescript
+// Shared types
+import type { GameSession, Player } from '@riddle-rush/types'
 
-- ✅ Fix a single bug
-- ✅ Add one feature
-- ✅ Refactor one module
-- ❌ Fix bug + add feature + refactor (too much!)
+// Shared utilities
+import { SCORE_PER_CORRECT_ANSWER, MAX_PLAYERS } from '@riddle-rush/shared'
 
-### Step 3: Run Quality Checks
+// Shared config
+import { viteConfig } from '@riddle-rush/config/vite'
 
-**REQUIRED after every change:**
+// Internal workspace packages
+import { useIndexedDB } from '~/composables/useIndexedDB' // Auto-imported
+```
+
+### Vue/Nuxt Code Style
+
+```vue
+<script setup lang="ts">
+// Use Composition API with <script setup>
+// Composables are auto-imported (no need to import)
+
+const { t } = useI18n()
+const { $logger } = useNuxtApp()
+
+// Use Pinia stores for state management
+const gameStore = useGameStore()
+
+// Auto-import components from components/
+const GameButton = defineAsyncComponent(() => import('~/components/game/GameButton.vue'))
+</script>
+
+<template>
+  <div>
+    <!-- Template -->
+  </div>
+</template>
+```
+
+**Key Patterns:**
+
+- Use `usePageSetup()` composable in page components
+- Components are auto-imported from `components/` directory
+- No explicit imports needed for composables (auto-imported)
+- Always use `useRuntimeConfig().public.baseUrl` — never hardcode URLs
+
+### TypeScript Code Style
+
+```typescript
+// Use strict mode (enabled by default)
+// Prefer type inference where possible
+
+// Use interfaces for object shapes, types for unions/intersections
+interface Player {
+  id: string
+  name: string
+  score: number
+}
+
+type GameStatus = 'active' | 'completed' | 'error'
+
+// Export types from packages/types
+export type { GameSession } from '@riddle-rush/types'
+
+// Use workspace packages for shared code
+import { myUtil } from '@riddle-rush/shared'
+import type { MyType } from '@riddle-rush/types'
+```
+
+### File Organization
+
+**Within apps/game/:**
+
+```
+apps/game/
+├── assets/              # Static assets
+├── components/          # Vue components (auto-imported)
+│   ├── game/            # Game design components
+│   ├── layout/          # Layout components
+│   └── Base/            # Base UI components
+├── composables/         # Vue composables (auto-imported)
+├── layouts/             # Layout templates
+├── pages/               # Nuxt pages (auto-routed)
+├── plugins/             # Nuxt plugins
+├── public/              # Static public files
+├── scripts/             # Utility scripts
+├── stores/              # Pinia stores
+├── tests/               # Test files
+│   ├── unit/            # Unit tests
+│   └── e2e/             # E2E tests
+├── translations/        # i18n translations
+├── utils/               # Utility functions
+└── nuxt.config.ts       # Nuxt config
+```
+
+### Pinia Store Pattern
+
+```typescript
+import { defineStore } from 'pinia'
+import type { GameState } from '@riddle-rush/types/game'
+
+export const useGameStore = defineStore('game', {
+  state: (): GameState => ({
+    // Initialize state
+  }),
+
+  getters: {
+    // Computed properties
+    hasActiveSession: (state) => state.currentSession !== null,
+  },
+
+  actions: {
+    // Methods that mutate state
+    async loadCategories() {
+      // Implementation
+    },
+
+    // Must save to IndexedDB after mutations
+    async saveToDB() {
+      await useIndexedDB().saveGameSession(this.currentSession!)
+    },
+  },
+})
+```
+
+### Component Pattern
+
+```vue
+<script setup lang="ts">
+// Use defineProps with TypeScript interfaces
+interface Props {
+  title: string
+  count?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  count: 0,
+})
+
+// Use defineEmits for events
+interface Emits {
+  (e: 'update', value: string): void
+  (e: 'submit'): void
+}
+
+const emit = defineEmits<Emits>()
+</script>
+
+<template>
+  <!-- Use auto-imported components -->
+  <GameButton @click="emit('submit')">Submit</GameButton>
+</template>
+```
+
+---
+
+## Testing Strategy
+
+### Unit Tests (Vitest)
+
+**Location:** `apps/game/tests/unit/` or `*.spec.ts` in source files
+
+**Key Patterns:**
+
+```typescript
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { setActivePinia, createPinia } from 'pinia'
+import { useGameStore } from '~/stores/game'
+
+describe('useGameStore', () => {
+  beforeEach(() => {
+    // Initialize Pinia before each test
+    setActivePinia(createPinia())
+    // Reset store
+    const store = useGameStore()
+    store.$reset()
+  })
+
+  it('should have correct initial state', () => {
+    const store = useGameStore()
+    expect(store.currentSession).toBeNull()
+  })
+
+  it('should load categories', async () => {
+    const store = useGameStore()
+    await store.loadCategories()
+    expect(store.categories.length).toBeGreaterThan(0)
+  })
+})
+```
+
+**Coverage Thresholds:** 80% (lines, functions, branches, statements)
+
+### E2E Tests (Playwright)
+
+**Location:** `apps/game/tests/e2e/`
+
+**Key Patterns:**
+
+```typescript
+import { test, expect } from '@playwright/test'
+
+test('should complete a game round', async ({ page }) => {
+  await page.goto('/')
+  await page.click('[data-testid="start-game-btn"]')
+
+  // Use data-testid for language-agnostic testing
+  await expect(page.locator('[data-testid="category-display"]')).toBeVisible()
+  await page.fill('[data-testid="answer-input"]', 'Test Answer')
+  await page.click('[data-testid="submit-btn"]')
+
+  await expect(page.locator('[data-testid="score-display"]')).toBeVisible()
+})
+```
+
+**Test Projects:**
+
+- Desktop Chrome, Firefox
+- Mobile Chrome (Pixel 5)
+
+**Run Tests:**
 
 ```bash
-# Run all checks (recommended)
+pnpm run test:e2e           # Headless
+pnpm run test:e2e:headed    # Show browser
+pnpm run test:e2e:ui        # Interactive UI
+pnpm run test:e2e:simple    # Simplified config
+```
+
+### Testing Tips
+
+- Use `data-testid` attributes for testable elements
+- Test workspace packages independently
+- Run tests after each change before committing
+- Use `pnpm run test:unit` for fast feedback
+- Use `pnpm run test:e2e` for critical user flows
+
+---
+
+## Code Quality & Validation
+
+### Quality Gates
+
+Before **every commit**, ensure:
+
+```bash
+# All checks (recommended)
 pnpm run workspace:check
 
-# Or run individually:
-pnpm run typecheck    # TypeScript validation
-pnpm run lint         # ESLint checks
-pnpm run format       # Prettier formatting
-pnpm run test:unit    # Unit tests (if affected)
+# Individual checks
+pnpm run typecheck        # TypeScript compiles without errors
+pnpm run lint             # ESLint passes
+pnpm run format           # Code is formatted with Prettier
+pnpm run test:unit        # Unit tests pass (if relevant)
 ```
 
-**Fix any errors before proceeding!**
+### Pre-Commit Hooks (Husky)
 
-### Step 4: Stage & Review Changes
+Already configured in `.husky/pre-commit`:
 
-```bash
-# See what changed
-git status
-git diff
+- Runs lint-staged on modified files
+- Validates commit message format
+- Prevents committing with errors
 
-# Stage specific files
-git add <file1> <file2>
+### Lint-Staged Configuration
 
-# Or stage all changes
-git add .
+See `.lintstagedrc.json`:
 
-# Review staged changes
-git diff --staged
+```json
+{
+  "*.{js,ts,vue}": ["eslint --fix", "prettier --write"],
+  "*.{json,md,yml}": ["prettier --write"]
+}
 ```
 
-### Step 5: Commit
+### Syncpack Configuration
 
-```bash
-# Commit with conventional message
-git commit -m "feat: add color mode toggle"
+See `.syncpackrc.json`:
 
-# Or use interactive mode for longer messages
-git commit
-```
+- Exact versions for workspace packages (`@riddle-rush/**`)
+- Caret ranges (`^`) for external dependencies
+- Enforces consistent versions across all workspace `package.json` files
 
-See [Commit Guidelines](#commit-guidelines) below.
+### ESLint 9 (Flat Config)
 
-### Step 6: Push Regularly
+Root `eslint.config.mjs` using `@nuxt/eslint-config/flat`:
 
-Don't wait until the end of the day:
+- `@stylistic/semi`: no semicolons
+- `@stylistic/quotes`: single quotes
+- `@stylistic/comma-dangle`: always-multiline
+- `no-console`: warn (except `warn`, `error`)
+- `@typescript-eslint/no-unused-vars`: error (except `_`-prefixed)
+- Tests have relaxed rules (`no-console: off`, `no-explicit-any: off`)
 
-```bash
-# Push after each commit or every 2-3 commits
-git push origin <branch-name>
-```
+### TypeScript Configuration
 
-**Benefits:**
-
-- Backup your work
-- Enable collaboration
-- Trigger CI/CD checks
+- Strict mode enabled (`strict: true`)
+- Path mappings from root `tsconfig.json`
+- Workspace packages have proper type exports
+- Use workspace aliases: `@riddle-rush/shared`, `@riddle-rush/types`, `@riddle-rush/config`
 
 ---
 
@@ -482,6 +666,7 @@ git push origin <branch-name>
 | `perf`     | Performance improvement    | `perf: optimize image caching strategy`        |
 | `ci`       | CI/CD changes              | `ci: add typecheck to workflow`                |
 | `build`    | Build system changes       | `build: configure vite manual chunks`          |
+| `wip`      | Work in progress           | `wip: add new feature (in progress)`           |
 
 ### Commit Scope (Optional)
 
@@ -493,6 +678,7 @@ Indicates the area affected:
 - `types` - Type definitions
 - `ci` - CI/CD pipeline
 - `deps` - Dependencies
+- `mobile` - Mobile app changes
 
 **Examples:**
 
@@ -512,6 +698,7 @@ feat: add lodash composable with tree-shaking
 fix: prevent duplicate game sessions in IndexedDB
 docs: create agent workflow guidelines
 refactor: simplify analytics event tracking
+test: add unit tests for useLodash composable
 ```
 
 ❌ **Bad:**
@@ -541,280 +728,356 @@ changes
 
 ---
 
-## Quality Checks
+## Deployment
 
-### Pre-Commit Checklist
+### GitLab CI/CD Pipeline
 
-Before **every commit**, ensure:
+**Stages**: test → quality → build → deploy → verify
 
-- [ ] TypeScript compiles without errors
-- [ ] ESLint passes (or autofixed)
-- [ ] Code is formatted with Prettier
-- [ ] Relevant tests pass
-- [ ] No console.log statements (use useLogger)
-- [ ] Documentation updated if needed
+- Custom Docker image (`ci-build`) for faster builds (~40-50% speed improvement)
+- **Monorepo change detection** — only runs jobs for affected apps/packages
+- Pipeline runs on merge requests, manual triggers, version tags, and main/staging/development branches
 
-### Quick Check Commands
+**Branch Strategy:**
 
-```bash
-# Fastest - individual package
-cd apps/game
-pnpm run typecheck
-pnpm run lint
+- `main` → production (`https://riddlerush.de`)
+- `staging` → staging environment
+- `development` → dev environment
+- `tags` → AWS deployment (S3 + CloudFront)
 
-# Comprehensive - all packages
-pnpm run workspace:check
+### Deployment Workflow
 
-# Auto-fix issues
-pnpm run lint:fix
-pnpm run format
-```
-
-### Handling Failed Checks
-
-**TypeScript Errors:**
+#### Production (AWS S3 + CloudFront)
 
 ```bash
-# View errors
-pnpm run typecheck
+# Via scripts
+./scripts/deploy-prod.sh
 
-# Fix type issues, then verify
-pnpm run typecheck
+# Or with env vars
+export AWS_S3_BUCKET=your-bucket-name
+export AWS_CLOUDFRONT_ID=E1234567890ABC
+export AWS_REGION=eu-central-1
+pnpm run deploy:prod
 ```
 
-**Lint Errors:**
+#### Development/Staging
 
 ```bash
-# Auto-fix most issues
-pnpm run lint:fix
+# Via scripts
+./scripts/deploy-dev.sh
 
-# Manual fix for remaining issues
-pnpm run lint
+# Or with env vars
+export AWS_S3_BUCKET=dev-bucket
+export AWS_CLOUDFRONT_ID=DEV1234567890ABC
+export AWS_REGION=eu-central-1
+pnpm run deploy:dev
 ```
 
-**Test Failures:**
+#### Vercel
 
 ```bash
-# Run affected tests
-pnpm run test:unit
+# Setup
+./scripts/setup-vercel.sh
 
-# Fix issues, re-run
-pnpm run test:unit
+# Deploy to staging
+vercel --env NODE_ENV=staging
+
+# Deploy to production
+vercel --env NODE_ENV=production --prod
 ```
 
-**If checks fail:**
+### Post-Deployment
 
-1. Read error messages carefully
-2. Fix the issues
-3. Re-run checks
-4. Only commit when everything passes ✅
+After deployment, verify:
+
+1. ✅ Tests pass on deployed site (use `BASE_URL` env var)
+2. ✅ Lighthouse scores are good
+3. ✅ Performance metrics are acceptable
+4. ✅ Check deployment logs in GitLab CI/CD
 
 ---
 
-## Example Workflows
+## Important Gotchas
 
-### Example 1: Adding a New Feature
+### PWA & Service Worker
 
-```bash
-# 1. Pull latest code
-git pull origin main
+- Service Worker configured in `nuxt.config.ts` with `registerType: 'autoUpdate'`
+- Cache strategies:
+  - `CacheFirst` for game data (`/data/*.json`), fonts
+  - `NetworkFirst` for external APIs (PetScan) with 10s timeout
+- PWA icons in `public/` directory
+- Install prompt captured in game store via `beforeinstallprompt` event
 
-# 2. Create feature branch (optional)
-git checkout -b feat/color-mode-toggle
+### IndexedDB Persistence
 
-# 3. Make changes to add color mode
-# - Edit components/ColorModeToggle.vue
-# - Update composables/useColorMode.ts
+All store mutations affecting game state must call corresponding `save*ToDB()` methods in stores:
 
-# 4. Run quality checks
-pnpm run workspace:check
+```typescript
+// In store/game.ts
+export const useGameStore = defineStore('game', {
+  actions: {
+    async startNewSession(category: Category) {
+      this.currentSession = {
+        /* ... */
+      }
 
-# 5. Fix any issues
-pnpm run lint:fix
-pnpm run format
-
-# 6. Re-check
-pnpm run typecheck
-
-# 7. Stage and commit
-git add components/ColorModeToggle.vue composables/useColorMode.ts
-git commit -m "feat: add color mode toggle component"
-
-# 8. Push
-git push origin feat/color-mode-toggle
+      // IMPORTANT: Must save to IndexedDB
+      await useIndexedDB().saveGameSession(this.currentSession!)
+    },
+  },
+})
 ```
 
-### Example 2: Fixing Multiple Issues
+### Client-Only Code
 
-```bash
-# Fix bug #1 - Form validation
-# 1. Edit composables/useForm.ts
-# 2. Run checks
-pnpm run typecheck && pnpm run lint
-# 3. Commit
-git add composables/useForm.ts
-git commit -m "fix: correct email validation regex"
-git push
+Code using `window`, `localStorage`, IndexedDB must be wrapped in `onMounted` or client-only components:
 
-# Fix bug #2 - Navigation issue
-# 1. Edit composables/useNavigation.ts
-# 2. Run checks
-pnpm run typecheck && pnpm run lint
-# 3. Commit
-git add composables/useNavigation.ts
-git commit -m "fix: handle undefined gameId in navigation"
-git push
+```typescript
+// Wrong - throws error on server
+const windowWidth = window.innerWidth
+
+// Correct
+import { onMounted, ref } from 'vue'
+
+const windowWidth = ref(0)
+
+onMounted(() => {
+  windowWidth.value = window.innerWidth
+})
 ```
 
-### Example 3: Refactoring with Tests
+### Base URL Configuration
 
-```bash
-# 1. Refactor code
-# Edit: composables/useAnalytics.ts
+Always use `useRuntimeConfig().public.baseUrl` — never hardcode URLs:
 
-# 2. Update tests
-# Edit: tests/unit/use-analytics.spec.ts
+```typescript
+// Wrong
+const url = 'https://riddlerush.de'
 
-# 3. Run tests
-pnpm run test:unit -- use-analytics
-
-# 4. Run all checks
-pnpm run workspace:check
-
-# 5. Commit code and tests together
-git add composables/useAnalytics.ts tests/unit/use-analytics.spec.ts
-git commit -m "refactor: simplify analytics event tracking
-
-- Extract common logic to helper function
-- Add tests for new helper
-- Update existing tests"
-
-# 6. Push
-git push
+// Correct
+const {
+  public: { baseUrl },
+} = useRuntimeConfig()
+const url = `${baseUrl}/game`
 ```
 
-### Example 4: Documentation Update
+### Monorepo Package Imports
 
-```bash
-# 1. Update docs after code change
-# Edit: docs/PLUGINS.md
+- Use workspace aliases: `@riddle-rush/shared`, `@riddle-rush/types`, `@riddle-rush/config`
+- Don't use relative paths for shared code
+- Workspace packages must be independent (no circular dependencies)
 
-# 2. Format docs
-pnpm run format
+### Turbo & Caching
 
-# 3. Commit separately
-git add docs/PLUGINS.md
-git commit -m "docs: document lodash composable usage"
+- Turbo uses smart caching - unchanged tasks are skipped
+- Clear cache with `pnpm run clean` or `turbo run clean`
+- Inspect plugin available at `/__inspect/` during dev
+- Bundle visualization at `.vite/stats.html`
 
-# 4. Push
-git push
-```
+### Zenflow Worktrees
+
+This project uses **Zenflow** for task orchestration. Each task runs in an isolated git worktree:
+
+- **No `node_modules/`** — Dependencies are not installed. Run `pnpm install` first.
+- **No `.env` files** — Environment files are gitignored and must be copied from main worktree.
+- **No build artifacts** — `.nuxt/`, `.output/`, `dist/` do not exist until you build.
+- **Verification script runs automatically** after each agent turn — keep it passing.
+- Git hooks (husky) work in worktrees — commits are validated automatically.
+- Use `pnpm` (not `npm` or `yarn`) — enforced by `packageManager` field.
+- The worktree shares the same git history but has an independent working directory.
+
+### i18n Configuration
+
+- Default locale: `de` (German), available: `de`, `en`
+- Strategy: `no_prefix` (no locale in URL path)
+- `detectBrowserLanguage: false` — explicit selection only
+- Translation files: `locales/de.json`, `locales/en.json`
+- Use `useI18n().t()` for translations
+
+### Node Version
+
+Minimum Node version: **20**
+
+### Package Manager
+
+Must use **pnpm 10.28.1** (enforced via `packageManager` field in package.json). Use `pnpm` (not `npm` or `yarn`).
+
+---
+
+## Tooling & Integrations
+
+### Vite Plugins
+
+Located in `packages/config/vite.config.ts`:
+
+- Vite plugin checker (type-checking in browser)
+- Vite plugin inspect (debug panel)
+- Vite plugin dynamic prefetch
+- Vite plugin compression (gzip/brotli)
+- Rollup visualizer (bundle size)
+
+### MCP Servers
+
+Available servers (configured in `.mcp.json`):
+
+- `docker` (Docker Hub search + container management)
+- `nuxt-ui`, `nuxt` (Nuxt tooling)
+- `playwright` (Playwright automation)
+- `aws-docs` (AWS documentation)
+- `context7`, `browsermcp`, `nuxt-mcp-toolkit`
+- `git`, `gitlab` (Git integration)
+- `filesystem`
+
+### Python Tools
+
+Located in `tools/python/`:
+
+- Python MCP server for file operations
+- Ruff linting, Black formatting
+- Manages Python virtual environments
+
+### AI Agents
+
+Located in `tools/ai-agents/` and `.agents/`:
+
+- AI agent tooling and utilities
+- Skill system for Cursor (nuxt, pinia, vue, turborepo, etc.)
+
+### Asset Optimization
+
+Located in `tools/ai-agents/python/`:
+
+- Sharp-based image optimization
+- Automatic asset optimization for Nuxt 4
 
 ---
 
 ## Troubleshooting
 
-### Issue: "Too many changes, don't know what to commit"
+### Issue: "Module not found" or "Module alias not found"
 
-**Solution:** Use `git add -p` for interactive staging:
+**Solution:** Ensure you're using workspace package imports:
 
-```bash
-git add -p composables/useForm.ts
-# Choose which hunks to stage (y/n/s)
+```typescript
+import { foo } from '@riddle-rush/shared'
+import type { Bar } from '@riddle-rush/types'
 ```
 
-### Issue: "Forgot to run checks before committing"
+Don't use relative paths for shared code.
 
-**Solution:** Amend the commit:
+### Issue: "Cannot find module" during build
+
+**Solution:** Clear cache and rebuild:
 
 ```bash
-# Run checks
-pnpm run workspace:check
-
-# Fix issues
-pnpm run lint:fix
-
-# Amend previous commit
-git add .
-git commit --amend --no-edit
+pnpm run clean
+pnpm run build
 ```
 
-### Issue: "Need to split a large commit"
-
-**Solution:** Use interactive rebase:
+Or clear Turbo cache:
 
 ```bash
-# Reset last commit but keep changes
-git reset HEAD~1
-
-# Stage and commit in smaller chunks
-git add file1.ts
-git commit -m "feat: add feature part 1"
-
-git add file2.ts
-git commit -m "feat: add feature part 2"
+rm -rf .turbo/cache
+pnpm run build
 ```
 
-### Issue: "Committed broken code"
+### Issue: Tests failing with "activePinia is not a function"
 
-**Solution:** Fix immediately:
+**Solution:** Initialize Pinia in test setup:
 
-```bash
-# Fix the issues
-# Run checks
-pnpm run workspace:check
+```typescript
+import { setActivePinia, createPinia } from 'pinia'
 
-# Commit fix
-git add .
-git commit -m "fix: resolve type errors from previous commit"
+beforeEach(() => {
+  setActivePinia(createPinia())
+})
 ```
 
-### Issue: "Checks take too long"
+### Issue: TypeScript errors in stores but not in components
 
-**Solution:** Run scoped checks:
+**Solution:** Run typecheck with full cache cleared:
 
 ```bash
-# Check only affected package
-cd apps/game
+rm -rf node_modules/.vite .nuxt
 pnpm run typecheck
-pnpm run lint
-
-# Or use turbo filters
-pnpm run typecheck --filter=@riddle-rush/game
 ```
 
----
+### Issue: CI/CD failing with dependency version mismatches
 
-## Workflow Automation
+**Solution:** Run syncpack check:
 
-### Pre-commit Hooks (Husky)
+```bash
+pnpm run syncpack:check
+pnpm run syncpack:fix
+```
 
-Already configured in `.husky/pre-commit`:
+### Issue: Zenflow worktree has no dependencies
 
-- Runs lint-staged on modified files
-- Validates commit message format
-- Prevents committing with errors
+**Solution:** Dependencies should be auto-installed by Zenflow. If needed:
 
-### Lint-Staged Configuration
+```bash
+pnpm install
+```
 
-See `.lintstagedrc.json`:
+### Issue: "window is not defined" error
 
-```json
-{
-  "*.{js,ts,vue}": ["eslint --fix", "prettier --write"],
-  "*.{json,md,yml}": ["prettier --write"]
+**Solution:** Use `onMounted` or `onClientOnly` for client-side code:
+
+```typescript
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  // Client-side code here
+})
+```
+
+### Issue: Build taking too long
+
+**Solution:** Use Turbo caching:
+
+```bash
+pnpm run build  # Uses cache if nothing changed
+```
+
+Or skip unchanged tasks:
+
+```bash
+turbo run build --filter=@riddle-rush/game
+```
+
+### Issue: E2E tests failing on deployed site
+
+**Solution:** Set `BASE_URL` environment variable:
+
+```bash
+BASE_URL=https://riddlerush.de pnpm run test:e2e
+```
+
+Or modify Playwright config to use a custom base URL.
+
+### Issue: Service Worker not updating
+
+**Solution:** Force update by deleting service worker:
+
+```typescript
+// In browser console
+if ('caches' in window) {
+  caches.keys().then((names) => {
+    names.forEach((name) => caches.delete(name))
+  })
 }
 ```
 
-### CI/CD Integration
+Or wait for `autoUpdate` registration (usually takes a few minutes).
 
-After pushing, CI/CD automatically runs:
+### Issue: PWA not installable
 
-- Full workspace typecheck
-- Full workspace lint
-- All unit tests
-- E2E tests (on main branch)
-- Build verification
+**Solution:** Ensure:
+
+- PWA icons exist in `public/` directory
+- Service Worker is properly registered
+- Game store captures `beforeinstallprompt` event
+- App is served over HTTPS (or localhost)
 
 ---
 
@@ -835,6 +1098,7 @@ pnpm run lint                # Code quality
 pnpm run lint:fix            # Auto-fix lint
 pnpm run format              # Format code
 pnpm run test:unit           # Run tests
+pnpm run test:e2e            # E2E tests
 
 # 📦 Commit Types
 feat:     New feature
@@ -850,6 +1114,20 @@ style:    Formatting
 Small task:   1-2 commits
 Medium task:  3-5 commits
 Large task:   5-10 commits
+
+# 🚀 Dev Commands
+pnpm run dev              # Start game
+pnpm run build            # Build all
+pnpm run test             # Run tests
+pnpm run workspace:check  # Full validation
+
+# 📱 Mobile
+pnpm run android:sync     # Sync to Android
+pnpm run android:run      # Run on device
+
+# 🌍 Deployment
+pnpm run deploy:prod      # Deploy to production
+pnpm run deploy:dev       # Deploy to development
 ```
 
 ---
@@ -868,6 +1146,10 @@ Before claiming a task is complete:
 - [ ] All commits pushed
 - [ ] No broken code committed
 - [ ] Conventional commit messages used
+- [ ] IndexedDB persistence handled (if relevant)
+- [ ] Client-only code wrapped correctly
+- [ ] Base URL used instead of hardcoded URLs
+- [ ] No console.log statements (use useLogger)
 
 ---
 
@@ -875,49 +1157,4 @@ Before claiming a task is complete:
 
 ---
 
-## Zenflow Worktree Environment
-
-This project uses **Zenflow** for task orchestration. Zenflow creates a fresh **git worktree** for each task, meaning:
-
-- **No `node_modules/`** — Dependencies are not installed. Run `pnpm install` first.
-- **No `.env` files** — Environment files are gitignored and must be copied from your main worktree. Required files: `.env` (root) and `apps/game/.env`.
-- **No build artifacts** — `.nuxt/`, `.output/`, `dist/` do not exist until you build.
-
-### Zenflow Configuration
-
-Settings are in `.zenflow/settings.json`:
-
-| Setting               | Command                    | Purpose                        |
-| --------------------- | -------------------------- | ------------------------------ |
-| `setup_script`        | `pnpm install`             | Install all dependencies       |
-| `dev_script`          | `pnpm run dev`             | Start Nuxt dev server          |
-| `verification_script` | `pnpm run workspace:check` | Syncpack + TypeScript + ESLint |
-| `copy_files`          | `.env`, `apps/game/.env`   | Local config with secrets      |
-
-### Quick Start in a Zenflow Worktree
-
-```bash
-# 1. Dependencies are auto-installed by Zenflow, but if needed:
-pnpm install
-
-# 2. Verify environment is ready
-pnpm run workspace:check
-
-# 3. Start development
-pnpm run dev
-```
-
-### Important Notes for Agents in Worktrees
-
-- The **verification script runs automatically** after each agent turn — keep it passing
-- Git hooks (husky) work in worktrees — commits are validated automatically
-- Use `pnpm` (not `npm` or `yarn`) — enforced by `packageManager` field
-- The worktree shares the same git history but has an independent working directory
-
-**Last Updated:** January 2026
-
-<!-- AICODE:START -->
-
-@.claude/aicode-instructions.md
-
-<!-- AICODE:END -->
+**Last Updated:** February 2026
