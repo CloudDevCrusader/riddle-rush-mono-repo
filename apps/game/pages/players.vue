@@ -98,7 +98,7 @@ const startGame = () => {
     return
   }
 
-  const names = playerNames.value.slice(0, playerCount.value).map((name, index) => {
+  const names = playerNames.value.slice(0, playerCount.value).map((name: string, index: number) => {
     const trimmed = name.trim()
     return trimmed || placeholderForIndex(index)
   })
@@ -108,7 +108,7 @@ const startGame = () => {
     return
   }
 
-  const lowerCaseNames = names.map((name) => name.toLowerCase())
+  const lowerCaseNames = names.map((name: string) => name.toLowerCase())
   const hasDuplicateNames = new Set(lowerCaseNames).size !== lowerCaseNames.length
 
   if (hasDuplicateNames) {

@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { computed, reactive } from 'vue'
 
-// Import after mocks are set up
 import { useGameState } from '../../../composables/useGameState'
 
-// Ensure computed is available globally (Nuxt auto-import)
+const computed = <T>(getter: () => T) => ({ value: getter() })
+const reactive = <T extends object>(obj: T): T => obj
+
 vi.stubGlobal('computed', computed)
 
 // --- Mock store state (reactive for computed tracking) ---

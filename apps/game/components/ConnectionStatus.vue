@@ -6,14 +6,13 @@
       :style="{ backgroundColor: statusColor }"
       :title="statusText"
     >
-      <div class="pulse" v-if="connectionStatus === 'online'" />
+      <div v-if="connectionStatus === 'online'" class="pulse" />
     </div>
-    <span class="status-text" v-if="showText">{{ statusText }}</span>
+    <span v-if="showText" class="status-text">{{ statusText }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useWebSocket } from '~/composables/useWebSocket'
 
 defineProps<{

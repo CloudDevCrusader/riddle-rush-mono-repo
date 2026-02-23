@@ -22,13 +22,13 @@
           <span
             v-if="getItemIcon(item)"
             class="segment-icon"
-            :style="{ transform: `rotate(-${wheelRotation + index * angleStep}deg)` }"
+            :style="{ transform: `rotate(-${wheelRotation + Number(index) * angleStep}deg)` }"
           >
             {{ getItemIcon(item) }}
           </span>
           <span
             class="segment-text"
-            :style="{ transform: `rotate(-${wheelRotation + index * angleStep}deg)` }"
+            :style="{ transform: `rotate(-${wheelRotation + Number(index) * angleStep}deg)` }"
           >
             {{ getItemLabel(item) }}
           </span>
@@ -204,7 +204,7 @@ defineExpose({
 // Watch for external changes to modelValue
 watch(
   () => props.modelValue,
-  (newValue) => {
+  (newValue: T | null) => {
     selectedItem.value = newValue
   }
 )

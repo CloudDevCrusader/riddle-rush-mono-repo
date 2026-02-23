@@ -1,7 +1,5 @@
 import type { CategorySettings } from '@riddle-rush/types/game'
-import { ref } from 'vue'
 
-// Global audio context and settings
 let audioContext: AudioContext | null = null
 const masterVolume = ref(1.0)
 const isMuted = ref(false)

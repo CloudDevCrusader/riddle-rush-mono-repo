@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useGameStore } from '../../stores/game'
 import { createCategoryList } from '../utils/factories'
-import type { Category } from '@riddle-rush/types/game'
+import type { Category, Player } from '@riddle-rush/types/game'
 
 // Mock setup
 const mockSaveGameSession = vi.fn().mockResolvedValue(undefined)
@@ -510,7 +510,7 @@ describe('Game Store', () => {
       it('players getter returns all players', () => {
         const store = useGameStore()
         expect(store.players).toHaveLength(3)
-        expect(store.players.map((p) => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
+        expect(store.players.map((p: Player) => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
       })
 
       it('currentPlayerTurn returns first unsubmitted player', () => {
@@ -603,7 +603,7 @@ describe('Game Store', () => {
         await store.submitPlayerAnswer('invalid-id', 'Answer')
 
         // Should not throw error
-        expect(store.players.every((p) => !p.hasSubmitted)).toBe(true)
+        expect(store.players.every((p: Player) => !p.hasSubmitted)).toBe(true)
       })
     })
 
@@ -832,7 +832,7 @@ describe('Game Store', () => {
         await store.startNextRound()
 
         expect(store.players).toHaveLength(2)
-        expect(store.players.map((p) => p.name)).toEqual(['Alice', 'Bob'])
+        expect(store.players.map((p: Player) => p.name)).toEqual(['Alice', 'Bob'])
       })
     })
 
@@ -1374,7 +1374,7 @@ describe('Game Store', () => {
       const store = useGameStore()
       const leaderboard = store.leaderboard
 
-      expect(leaderboard.every((p) => p.isWinner === false)).toBe(true)
+      expect(leaderboard.every((p: { isWinner: boolean }) => p.isWinner === false)).toBe(true)
     })
 
     it('isWinner is true only for first place when game is completed', async () => {
@@ -1405,7 +1405,7 @@ describe('Game Store', () => {
       const leaderboard = store.leaderboard
 
       // No winner when all scores are 0
-      expect(leaderboard.every((p) => p.isWinner === false)).toBe(true)
+      expect(leaderboard.every((p: { isWinner: boolean }) => p.isWinner === false)).toBe(true)
     })
 
     it('rank is assigned correctly', () => {

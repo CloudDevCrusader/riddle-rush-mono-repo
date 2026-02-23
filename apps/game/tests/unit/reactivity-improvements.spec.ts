@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useGameStore } from '../../stores/game'
 import { createCategoryList } from '../utils/factories'
-import type { Category } from '@riddle-rush/types/game'
+import type { Category, Player } from '@riddle-rush/types/game'
 
 // Mock setup (same as game-store.spec.ts)
 const mockSaveGameSession = vi.fn().mockResolvedValue(undefined)
@@ -288,7 +288,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
       // All should have submitted
       expect(store.allPlayersSubmitted).toBe(true)
-      expect(store.players.every((p) => p.hasSubmitted)).toBe(true)
+      expect(store.players.every((p: Player) => p.hasSubmitted)).toBe(true)
     })
 
     it('updates leaderboard reactively after score changes', async () => {

@@ -1,4 +1,5 @@
 // Test setup file to ensure Vue reactivity system is properly initialized
+// @ts-expect-error Nuxt overrides vue module but createApp exists at runtime
 import { createApp } from 'vue'
 import { beforeEach, afterEach, vi } from 'vitest'
 import * as VueExports from 'vue'

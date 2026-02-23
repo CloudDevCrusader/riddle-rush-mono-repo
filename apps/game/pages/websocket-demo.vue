@@ -71,7 +71,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
 import { useWebSocket } from '~/composables/useWebSocket'
 
 const {

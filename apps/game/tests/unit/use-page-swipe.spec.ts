@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+// @ts-expect-error Nuxt overrides vue module but ref exists at runtime
 import { ref } from 'vue'
 
 // Create a mock for useSwipe BEFORE any modules import it

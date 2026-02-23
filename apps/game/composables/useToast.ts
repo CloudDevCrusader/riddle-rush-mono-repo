@@ -1,5 +1,3 @@
-import { reactive, computed } from 'vue'
-
 export type ToastType = 'success' | 'error' | 'info' | 'warning'
 
 export interface Toast {
@@ -44,7 +42,7 @@ export function useToast() {
   }
 
   const remove = (id: string) => {
-    const index = state.toasts.findIndex((t) => t.id === id)
+    const index = state.toasts.findIndex((t: Toast) => t.id === id)
     if (index !== -1) {
       state.toasts.splice(index, 1)
     }

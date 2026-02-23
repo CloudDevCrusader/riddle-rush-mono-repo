@@ -16,7 +16,7 @@
           <div class="player-info">
             <div class="player-rank">
               <img src="~/assets/figma/1-1.png" class="player-rank-bg" alt="Rank background" />
-              <span class="player-rank-text">{{ index + 1 }}</span>
+              <span class="player-rank-text">{{ Number(index) + 1 }}</span>
             </div>
             <span class="player-name">{{ player.name }}</span>
             <span class="player-score">{{ player.totalScore }}</span>

@@ -4,7 +4,6 @@
  */
 
 import { io, type Socket } from 'socket.io-client'
-import { ref, computed, onUnmounted } from 'vue'
 
 export const useWebSocket = () => {
   const socket = ref<Socket | null>(null)
@@ -67,32 +66,32 @@ export const useWebSocket = () => {
         connectionError.value = null
       })
 
-      socket.value.on('connected', (data) => {
+      socket.value.on('connected', (data: any) => {
         console.log('📡 Connection confirmed:', data)
       })
 
-      socket.value.on('disconnect', (reason) => {
+      socket.value.on('disconnect', (reason: string) => {
         console.log('❌ WebSocket disconnected:', reason)
         isConnected.value = false
         isConnecting.value = false
       })
 
-      socket.value.on('connect_error', (error) => {
+      socket.value.on('connect_error', (error: Error) => {
         console.error('🔴 Connection error:', error)
         isConnecting.value = false
         connectionError.value = error.message
       })
 
-      socket.value.on('reconnect', (attemptNumber) => {
+      socket.value.on('reconnect', (attemptNumber: number) => {
         console.log(`🔄 Reconnected after ${attemptNumber} attempts`)
       })
 
-      socket.value.on('reconnect_attempt', (attemptNumber) => {
+      socket.value.on('reconnect_attempt', (attemptNumber: number) => {
         console.log(`🔄 Reconnecting... (attempt ${attemptNumber})`)
         isConnecting.value = true
       })
 
-      socket.value.on('reconnect_error', (error) => {
+      socket.value.on('reconnect_error', (error: Error) => {
         console.error('🔴 Reconnection error:', error)
       })
 
@@ -103,27 +102,27 @@ export const useWebSocket = () => {
       })
 
       // Pong handler for connection monitoring
-      socket.value.on('pong', (data) => {
+      socket.value.on('pong', (data: { timestamp: number }) => {
         lastPongTime.value = data.timestamp
       })
 
       // Performance logged confirmation
-      socket.value.on('performanceLogged', (data) => {
+      socket.value.on('performanceLogged', (data: any) => {
         console.log('📊 Performance logged:', data)
       })
 
       // Leaderboard update confirmation
-      socket.value.on('leaderboardUpdateConfirm', (data) => {
+      socket.value.on('leaderboardUpdateConfirm', (data: any) => {
         console.log('🏆 Leaderboard updated:', data)
       })
 
       // Leaderboard updates from other users
-      socket.value.on('leaderboardUpdated', (data) => {
+      socket.value.on('leaderboardUpdated', (data: any) => {
         console.log('🏆 Leaderboard change:', data)
       })
 
       // User stats response
-      socket.value.on('userStats', (data) => {
+      socket.value.on('userStats', (data: any) => {
         console.log('📈 User stats:', data)
       })
     } catch (error) {

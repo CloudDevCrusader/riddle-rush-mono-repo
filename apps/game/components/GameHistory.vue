@@ -55,10 +55,12 @@
                   v-for="(player, index) in getSortedPlayers(game)"
                   :key="player.id"
                   class="player-score-row"
-                  :class="{ winner: index === 0 && game.status === 'completed' }"
+                  :class="{ winner: Number(index) === 0 && game.status === 'completed' }"
                 >
                   <span class="player-rank">{{
-                    index === 0 && game.status === 'completed' ? '👑' : `#${index + 1}`
+                    Number(index) === 0 && game.status === 'completed'
+                      ? '👑'
+                      : `#${Number(index) + 1}`
                   }}</span>
                   <span class="player-name">{{ player.name }}</span>
                   <span class="player-points">{{ player.totalScore }} pts</span>

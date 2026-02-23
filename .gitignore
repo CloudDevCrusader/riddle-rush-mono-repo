@@ -18,7 +18,8 @@ distros/
 y**/dist/
 playwright-report/
 **/playwright-report/
-
+.playwright-mcp/
+++/.playwright-mcp/
 # Trunk configuration
 .trunk-config
 
@@ -57,10 +58,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-apps/docs/.turbo/
-apps/docs/.output/
-apps/game/.output/
-apps/docs/.output/*.log
 **/.turbo/**
 
 # TypeScript build info
@@ -136,6 +133,7 @@ tools/claudia/
 forgejo*
 **/forgejo-*
 
+<<<<<<< Updated upstream
 .trigger
  Byte-compiled / optimized / DLL files
 __pycache__/
@@ -398,3 +396,16 @@ opencode.json
 ENHANCED-*.md
 MCP-EXPORT-*.md
 MCP-INTEGRATION-*.md
+=======
+# Vercel
+.vercel/
+**/.vercel/
+
+# IDE and tool configs (per-app)
+**/.cursor/
+**/.codex/
+**/.gemini/
+**/.zed/
+**/.mcp.json
+**/opencode.json
+>>>>>>> Stashed changes
