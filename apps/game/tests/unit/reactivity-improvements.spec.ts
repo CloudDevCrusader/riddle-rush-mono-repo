@@ -305,9 +305,11 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       // Verify initial order
       expect(store.leaderboard[0]!.name).toBe('Bob')
 
-      // Update scores (assignPlayerScore uses delta: new - old)
-      await store.assignPlayerScore(alice!.id, 200) // delta = 200-50 = +150, totalScore = 200
-      await store.assignPlayerScore(bob!.id, 100) // delta = 100-100 = 0, totalScore = 100
+      // Update scores using delta-based calculation
+      // Alice: delta = 200 - 50 = 150, total = 50 + 150 = 200
+      await store.assignPlayerScore(alice!.id, 200)
+      // Bob: delta = 100 - 100 = 0, total = 100 + 0 = 100
+      await store.assignPlayerScore(bob!.id, 100)
 
       // Verify order changed reactively
       expect(store.leaderboard[0]!.name).toBe('Alice')
