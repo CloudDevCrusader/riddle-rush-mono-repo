@@ -212,7 +212,15 @@ const handleHome = () => {
   // No additional logic needed
 }
 
-// Handle ESC key to pause
+// ESC key handler for pause — defined outside onMounted so cleanup can be
+// registered synchronously (onUnmounted must be called during setup, not
+// after an await inside onMounted where the component instance is lost).
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && !showPauseModal.value) {
+    showPauseModal.value = true
+  }
+}
+
 onMounted(async () => {
   // Load game session based on route parameter
   if (gameId.value) {
@@ -230,17 +238,11 @@ onMounted(async () => {
   }
 
   // Add ESC key listener for pause
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && !showPauseModal.value) {
-      showPauseModal.value = true
-    }
-  }
-
   window.addEventListener('keydown', handleKeyDown)
+})
 
-  onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeyDown)
-  })
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
 })
 
 useHead({
