@@ -101,7 +101,7 @@
             variant="secondary"
             size="lg"
             full-width
-            data-testid="finish-game"
+            data-testid="leaderboard-button"
             @click="handleFinishGame"
           >
             {{ t('scoring.leaderboard', 'Leaderboard') }}
