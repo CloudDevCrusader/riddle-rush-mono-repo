@@ -366,3 +366,4 @@ gha-creds-*.json
 
 # Claude agents
 claude/agents/
+.claude/agents/
