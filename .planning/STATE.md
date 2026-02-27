@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Infrastructure and tooling enhancements.
+**Current focus:** Post-release feature enhancements.
 
 ## Current Position
 
-Phase: 12 of 12 (App Optimization & Refactoring)
-Plan: 10 of 10 — Complete
-Status: MILESTONE COMPLETE - Executing ad-hoc tasks.
-Last activity: 2026-02-20 - Completed quick task 004: Update all dependencies
+Phase: 13 of 13 (Post-Round Flow)
+Plan: 1 of 1 — Complete
+Status: Phase complete
+Last activity: 2026-02-27 - Completed 13-01-PLAN.md
 
-Progress: [█████████████████████████████████] 100% (38/38 total plans complete)
+Progress: [████████████████████████████████████] 100% (39/39 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 38
+- Total plans completed: 39
 - Average duration: 3.3 min
-- Total execution time: ~1.9 hours
+- Total execution time: ~2 hours
 
 **By Phase:**
 
@@ -41,10 +41,11 @@ Progress: [███████████████████████
 | 11-modal-dialogs           | 3/3   | 9min  | 3min     |
 | 11.1-scoring-player-config | 2/2   | 14min | 7min     |
 | 12-app-optimization        | 10/10 | 44min | 4.4min   |
+| 13-post-round-flow         | 1/1   | 4min  | 4min     |
 
 **Recent Trend:**
 
-- Last 5 plans: 6min, 4min, 4min, 4min, 3min
+- Last 5 plans: 4min, 4min, 4min, 3min, 4min
 - Trend: Consistent ~3-8 min per plan
 
 _Updated after each plan completion_
@@ -56,8 +57,9 @@ _Updated after each plan completion_
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- **[New]** Syncpack v14 migration: use `lint`/`fix` commands, remove deprecated config properties.
-- **[New]** Use `@ts-expect-error` for cross-package vite/rollup Plugin type conflicts in monorepo.
+- **[New]** The post-round modal will have three choices: "Play Again", "New Game", and "View Leaderboard".
+- Syncpack v14 migration: use `lint`/`fix` commands, remove deprecated config properties.
+- Use `@ts-expect-error` for cross-package vite/rollup Plugin type conflicts in monorepo.
 - EC2 is more cost-effective than ECS Fargate for Tolgee hosting due to 24/7 uptime and persistent storage needs (avoids costly EFS/NAT Gateway).
 - Tolgee admin password and SSH keys will be managed via a local, gitignored `terraform.tfvars` file for security.
 - Terraform state for the `translation` environment will use the existing dev S3 bucket but a separate key path for isolation.
@@ -137,21 +139,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Completed Quick Task 4 (Update all dependencies)
+Last session: 2026-02-27
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None
-
-### Phase 12 Plans Status
-
-- **12-01**: Complete - E2E test resilience with data-testid selectors
-- **12-02**: Complete - Composable unit tests
-- **12-03**: Complete - Terraform project structure
-- **12-04**: Complete - Terraform modules (S3, CloudFront, DynamoDB)
-- **12-05**: Complete - Terraform modules (Lambda, API Gateway, WebSocket, CloudWatch)
-- **12-06**: Complete - Extract useCategoryManager and useSessionManager from game store
-- **12-07**: Complete - Extract usePlayerManager and useScoringEngine from game store
-- **12-08**: Complete - Extract usePersistence and useGameLifecycle from game store
-- **12-09**: (skipped or combined)
-- **12-10**: Complete - Deployment script enhancements (logging, backup, verify, rollback, post-deploy)
-
-**Phase 12 (App Optimization & Refactoring): COMPLETE** (10/10 plans complete)
