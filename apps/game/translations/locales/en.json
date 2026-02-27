@@ -245,6 +245,7 @@
     "finish_game": "Finish Game",
     "leaderboard": "Leaderboard",
     "next_round": "Next Round",
+    "play_another_round": "Would you like to play another round?",
     "post_round_prompt": "Do you want to play another round, or go to the leaderboard?",
     "player": "Player",
     "round_complete": "Round Complete!",

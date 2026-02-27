@@ -363,3 +363,6 @@ apps/tolgee/data/
 
 .gemini/
 gha-creds-*.json
+
+# Claude agents
+claude/agents/

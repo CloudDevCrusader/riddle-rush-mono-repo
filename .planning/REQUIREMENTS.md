@@ -40,6 +40,7 @@
 
 - [ ] **MODAL-01**: Quit Game modal matches `QUIT GAME.png` — red header bar with "QUIT GAME" title, "Are you sure you want to quit game?" text, red NO button, green YES button
 - [ ] **MODAL-02**: Pause modal matches `menu.png` — blue header "Game Paused", resume message, green Resume button, blue Restart button, orange Home button
+- [ ] **MODAL-03**: Post-round prompt modal — after all players score, ask to play another round or go to leaderboard
 
 ---
 
@@ -90,6 +91,7 @@
 | PAGE-08     | Phase 10 | Pending  |
 | MODAL-01    | Phase 11 | Pending  |
 | MODAL-02    | Phase 11 | Pending  |
+| MODAL-03    | Phase 13 | Pending  |
 
 ---
 

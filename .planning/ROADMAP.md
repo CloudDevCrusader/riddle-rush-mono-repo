@@ -26,6 +26,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11: Modal Dialogs** - Quit and pause overlays
 - [x] **Phase 11.1: Scoring & Player Config** - INSERTED: Score increment ±1, player count 2-10, leaderboard rank fixes
 - [x] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
+- [x] **Phase 13: Post-Round Next Step Modal** - Prompt to play another round or view leaderboard
+- [ ] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs
 
 ## Phase Details
 
@@ -310,6 +312,36 @@ Plans:
 - **Wave 2 (Parallel):** Plans 02-08 - Testing, Terraform, Game Store refactoring
 - **Wave 3 (Polish):** Plans 09-10 - Visual audit and deployment automation
 
+### Phase 13: Post-Round Next Step Modal
+
+**Goal**: Ensure a modal appears after all players are scored, asking whether to start another round or go to the leaderboard
+**Depends on**: Phase 9, Phase 11
+**Requirements**: MODAL-03
+**Success Criteria** (what must be TRUE):
+
+1. After all players have been played and points are set, a modal appears on the results flow
+2. Modal asks: "Do you want to play another round, or go to the leaderboard?"
+3. Choosing "Another round" starts the next round flow
+4. Choosing "Leaderboard" navigates to the leaderboard screen
+5. Modal does not appear prematurely (only after scoring is complete)
+
+**Plans**: 1 plan
+
+Plans:
+
+- [x] 13-01-PLAN.md — Confirm post-round decision modal copy and flow
+
+### Phase 14: Maintenance & Quality of Life
+
+**Goal**: Address pending technical debt, bugs, and internationalization tasks to improve codebase health and stability.
+**Depends on**: Phase 13
+**Success Criteria** (what must be TRUE):
+
+1. All user-facing text is replaced with i18n translation keys.
+2. The multiplayer bug causing round skips is identified and resolved.
+3. The game store's structure is reviewed, and its complexity is reduced where feasible.
+4. The intermittent `nuxi typecheck` error is investigated and fixed.
+
 ## Progress
 
 **Execution Order:**
@@ -330,3 +362,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 11. Modal Dialogs                  | 3/3            | Complete | 2026-02-16 |
 | 11.1. Scoring & Player Config      | 2/2            | Complete | 2026-02-16 |
 | 12. App Optimization & Refactoring | 10/10          | Complete | 2026-02-16 |
+| 13. Post-Round Next Step Modal     | 1/1            | Complete | 2026-02-27 |
+| 14. Maintenance & Quality of Life  | 0/0            | Pending  | —          |
