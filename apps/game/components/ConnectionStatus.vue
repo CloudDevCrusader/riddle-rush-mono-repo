@@ -6,13 +6,15 @@
       :style="{ backgroundColor: statusColor }"
       :title="statusText"
     >
-      <div v-if="connectionStatus === 'online'" class="pulse" />
+      <div class="pulse" v-if="connectionStatus === 'online'" />
     </div>
-    <span v-if="showText" class="status-text">{{ statusText }}</span>
+    <span class="status-text" v-if="showText">{{ statusText }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
+// @ts-expect-error Nuxt overrides vue module types but computed exists at runtime
+import { computed } from 'vue'
 import { useWebSocket } from '~/composables/useWebSocket'
 
 defineProps<{

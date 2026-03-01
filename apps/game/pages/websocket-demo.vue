@@ -71,6 +71,8 @@
 </template>
 
 <script setup lang="ts">
+// @ts-expect-error Nuxt overrides vue module types but ref/nextTick exist at runtime
+import { ref, nextTick } from 'vue'
 import { useWebSocket } from '~/composables/useWebSocket'
 
 const {

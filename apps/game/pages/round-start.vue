@@ -37,8 +37,8 @@
               ref="categoryWheelRef"
               v-model="selectedCategory"
               :items="displayCategories"
-              :get-item-key="(cat: Category, idx: number) => cat?.searchWord || idx"
-              :get-item-label="(cat: Category) => t(`categories.${cat.searchWord}`, cat.name)"
+              :get-item-key="(cat: any, idx: number) => cat?.searchWord || idx"
+              :get-item-label="(cat: any) => t(`categories.${cat.searchWord}`, cat.name)"
               :get-item-icon="getCategoryIcon"
               center-icon="🎯"
               @spin-complete="onCategoryComplete"
@@ -53,9 +53,9 @@
               ref="letterWheelRef"
               v-model="selectedLetter"
               :items="alphabet"
-              :get-item-key="getLetterKey"
-              :get-item-label="getLetterLabel"
-              :get-item-icon="getNoIcon"
+              :get-item-key="(letter: string, idx: number) => letter"
+              :get-item-label="(letter: string) => letter"
+              :get-item-icon="() => ''"
               center-icon="🎯"
               @spin-complete="onLetterComplete"
             />
@@ -202,12 +202,6 @@ onMounted(async () => {
 const getCategoryIcon = (category: Category): string => {
   return categoryIconMap[category.searchWord] || '📦'
 }
-
-const getCategoryKey = (cat: Category, idx: number): string | number => cat?.searchWord || idx
-const getCategoryLabel = (cat: Category): string => t(`categories.${cat.searchWord}`, cat.name)
-const getLetterKey = (letter: string, _idx: number): string => letter
-const getLetterLabel = (letter: string): string => letter
-const getNoIcon = (): string => ''
 
 const onCategoryComplete = (category: Category) => {
   selectedCategory.value = category

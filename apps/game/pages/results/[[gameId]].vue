@@ -1,45 +1,67 @@
 <template>
-  <div class="scoring-page">
-    <img src="~/assets/figma/background-1-8.png" class="scoring-bg" alt="background" />
-    <header class="scoring-header">
-      <img src="~/assets/figma/back-1.png" class="back-btn" alt="Back" @click="handleBack" />
-      <div class="coin-bar">
-        <img src="~/assets/figma/coin-bar-1.png" alt="Coin bar" />
-        <span class="coin-bar-text">100</span>
-      </div>
-    </header>
-    <div class="scoring-container">
-      <img src="~/assets/figma/scoring-1.png" class="scoring-title" alt="Scoring" />
-      <div class="player-list">
-        <div v-for="player in players" :key="player.id" class="player-item">
-          <img src="~/assets/figma/back-1-3.png" class="player-bg" alt="Player background" />
-          <div class="player-info">
-            <span class="player-name">{{ player.name }}</span>
-            <div class="score-controls">
-              <img
-                src="~/assets/figma/add-back-16.png"
-                class="score-btn"
-                alt="Decrement"
-                @click="decrementScore(player.id)"
-              />
-              <span class="score-value">{{ pendingScores.get(player.id) ?? 0 }}</span>
-              <img
-                src="~/assets/figma/add-2.png"
-                class="score-btn"
-                alt="Increment"
-                @click="incrementScore(player.id)"
-              />
-            </div>
+  <GameBackground>
+    <div class="scoring-page">
+      <GameHeader color="gold">
+        {{ t('scoring.title', 'Scoring') }}
+      </GameHeader>
+
+      <div class="scoring-page__list" data-testid="results-scores-container">
+        <div
+          v-for="(player, index) in players"
+          :key="player.id"
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 50 } }"
+          class="scoring-page__player-entry"
+          :data-testid="`results-player-entry-${index}`"
+        >
+          <GamePlayerCard
+            :player="player"
+            :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
+            :show-indicator="false"
+          />
+
+          <div class="scoring-page__score-controls">
+            <GameButton
+              variant="danger"
+              size="sm"
+              :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
+              data-testid="score-decrement"
+              @click="decrementScore(player.id)"
+            >
+              −
+            </GameButton>
+
+            <GameDisplay size="sm" :glow="false" class="scoring-page__score-value">
+              {{ pendingScores.get(player.id) ?? 0 }}
+            </GameDisplay>
+
+            <GameButton
+              variant="primary"
+              size="sm"
+              data-testid="score-increment"
+              @click="incrementScore(player.id)"
+            >
+              +
+            </GameButton>
           </div>
         </div>
       </div>
-      <img
-        src="~/assets/figma/next-2.png"
-        class="next-btn"
-        alt="Next"
+
+      <GameButton
+        variant="primary"
+        size="lg"
+        full-width
+        :loading="isConfirming"
+        class="scoring-page__button"
+        data-testid="confirm-scores"
         @click="handleConfirmScores"
-      />
+      >
+        {{ t('scoring.confirm_scores', 'Confirm Scores') }}
+      </GameButton>
     </div>
+
+    <!-- Leaderboard overlay (shown briefly after confirming scores) -->
     <PlayerLeaderboard
       :visible="showLeaderboard"
       :players="leaderboard"
@@ -48,6 +70,8 @@
       @close="handleLeaderboardDismiss"
       @continue="handleLeaderboardDismiss"
     />
+
+    <!-- Decision modal: next round or finish game -->
     <GameModal
       v-model="showDecisionModal"
       :title="t('scoring.round_complete', 'Round Complete!')"
@@ -55,8 +79,13 @@
       :close-on-escape="false"
     >
       <div class="decision-content">
-        <p class="decision-content__text">
-          {{ t('scoring.play_another_round', 'Would you like to play another round?') }}
+        <p class="decision-content__text" data-testid="results-post-round-prompt">
+          {{
+            t(
+              'scoring.post_round_prompt',
+              'Do you want to play another round, or go to the leaderboard?'
+            )
+          }}
         </p>
         <div class="decision-content__actions">
           <GameButton
@@ -72,22 +101,21 @@
             variant="secondary"
             size="lg"
             full-width
-            data-testid="finish-game"
+            data-testid="leaderboard-button"
             @click="handleFinishGame"
           >
-            {{ t('scoring.finish_game', 'Finish Game') }}
+            {{ t('scoring.leaderboard', 'Leaderboard') }}
           </GameButton>
         </div>
       </div>
     </GameModal>
-  </div>
+  </GameBackground>
 </template>
 
 <script setup lang="ts">
 import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
 const { t } = usePageSetup()
-const { goHome } = useNavigation()
 const { gameStore, players, leaderboard, currentRound } = useGameState()
 const { goToRoundStart, goToLeaderboard } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
@@ -167,10 +195,6 @@ const handleFinishGame = async () => {
   await goToLeaderboard()
 }
 
-const handleBack = () => {
-  goHome()
-}
-
 onUnmounted(() => {
   if (dismissTimer) {
     clearTimeout(dismissTimer)
@@ -189,122 +213,70 @@ useHead({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'assets/scss/design-system' as *;
+
 .scoring-page {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.scoring-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.scoring-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-}
-
-.back-btn {
-  width: 64px;
-  cursor: pointer;
-}
-
-.coin-bar {
-  position: relative;
-  width: 120px;
-}
-
-.coin-bar img {
-  width: 100%;
-}
-
-.coin-bar-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.scoring-container {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
-  gap: 1rem;
-}
-
-.scoring-title {
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl) var(--spacing-md);
   width: 100%;
-  max-width: 300px;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
-.player-list {
+.scoring-page__list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--spacing-lg);
   width: 100%;
-  max-width: 400px;
-  overflow-y: auto;
-  padding: 1rem;
+  max-width: 600px;
 }
 
-.player-item {
-  position: relative;
-  width: 100%;
-}
-
-.player-bg {
-  width: 100%;
-}
-
-.player-info {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.scoring-page__player-entry {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 80%;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
-.score-controls {
+.scoring-page__score-controls {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  gap: var(--spacing-md);
 }
 
-.score-btn {
-  width: 80px;
-  cursor: pointer;
+.scoring-page__score-value {
+  min-width: 60px;
+  text-align: center;
 }
 
-.score-value {
-  font-size: 1.5rem;
+.scoring-page__button {
+  max-width: 600px;
 }
 
-.next-btn {
-  width: 100%;
-  max-width: 300px;
-  cursor: pointer;
-  margin-top: auto;
+.decision-content {
+  text-align: center;
+}
+
+.decision-content__text {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.decision-content__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 640px) {
+  .scoring-page {
+    padding: var(--spacing-xl) var(--spacing-sm);
+    gap: var(--spacing-xl);
+  }
 }
 </style>
