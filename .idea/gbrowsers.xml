@@ -9,6 +9,14 @@
     {
       "name": "GBrowser Plugin for JetBrains IDEs | JetBrains Marketplace",
       "url": "https://plugins.jetbrains.com/"
+    },
+    {
+      "name": "IntelliJ IDEA Plugins and Themes | JetBrains Marketplace",
+      "url": "https://plugins.jetbrains.com/search?products=idea&search=vercel"
+    },
+    {
+      "name": "IntelliJ IDEA Plugins and Themes | JetBrains Marketplace",
+      "url": "https://plugins.jetbrains.com/search?excludeTags=internal&orderBy=rating"
     }
   ]
 }]]></component>

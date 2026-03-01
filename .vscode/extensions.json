@@ -14,7 +14,8 @@
     "nuxtr.nuxtr-vscode",
     "vitest.explorer",
     "antfu.vite",
-    "ms-playwright.playwright"
+    "ms-playwright.playwright",
+    "trunk.io"
   ],
   "unwantedRecommendations": ["octref.vetur", "hookyqr.beautify", "dbaeumer.jshint"]
 }
