@@ -19,11 +19,11 @@
           </div>
           <div class="stat-row">
             <span>Current Score:</span>
-            <span>{{ gameStore.currentSession?.score ?? 0 }}</span>
+            <span>{{ gameStore.currentScore }}</span>
           </div>
           <div class="stat-row">
             <span>Attempts:</span>
-            <span>{{ gameStore.currentSession?.attempts?.length ?? 0 }}</span>
+            <span>{{ gameStore.currentAttempts.length }}</span>
           </div>
           <div class="stat-row">
             <span>Categories Loaded:</span>
@@ -149,8 +149,8 @@ const exportDebugInfo = () => {
     timestamp: new Date().toISOString(),
     gameState: {
       hasSession: gameStore.hasActiveSession,
-      score: gameStore.currentSession?.score ?? 0,
-      attempts: gameStore.currentSession?.attempts?.length ?? 0,
+      score: gameStore.currentScore,
+      attempts: gameStore.currentAttempts.length,
       categories: gameStore.categories.length,
       history: gameStore.history.length,
     },

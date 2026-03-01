@@ -1,15 +1,78 @@
 <template>
   <div class="menu-page">
-    <img src="~/assets/figma/background-1-9.png" class="menu-bg" alt="background" />
-    <div class="container">
-      <img src="~/assets/figma/logo-1.png" class="logo-image" alt="Logo" />
-      <div class="menu-buttons">
-        <img src="~/assets/figma/play-1-1.png" alt="Play" @click="handlePlay" />
-        <img src="~/assets/figma/options-1.png" alt="Options" @click="wrappedGoToSettings" />
-        <img src="~/assets/figma/credits-1.png" alt="Credits" @click="wrappedGoToCredits" />
-        <img src="~/assets/figma/exit-1.png" alt="Exit" @click="handleExit" />
+    <GameBackground>
+      <!-- Main Container -->
+      <div class="container">
+        <!-- Logo -->
+        <div class="logo-container">
+          <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" class="logo-image" />
+        </div>
+
+        <!-- Menu Buttons -->
+        <div v-show="!showMenu" class="menu-buttons">
+          <GameButton
+            variant="primary"
+            size="lg"
+            full-width
+            data-testid="menu-start-button"
+            @click="handlePlay"
+          >
+            {{ t('menu.play', 'PLAY') }}
+          </GameButton>
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="menu-menu-button"
+            @click="toggleMenu"
+          >
+            {{ t('menu.menu', 'MENU') }}
+          </GameButton>
+          <GameButton
+            variant="warning"
+            size="lg"
+            full-width
+            data-testid="menu-settings-button"
+            @click="wrappedGoToSettings"
+          >
+            {{ t('menu.options', 'OPTIONS') }}
+          </GameButton>
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="menu-credits-button"
+            @click="wrappedGoToCredits"
+          >
+            {{ t('menu.credits', 'CREDITS') }}
+          </GameButton>
+        </div>
+
+        <!-- Menu Panel (when toggled) -->
+        <transition name="menu-fade">
+          <div v-if="showMenu" class="menu-panel">
+            <GameButton
+              variant="secondary"
+              size="md"
+              full-width
+              data-testid="menu-language-button"
+              @click="wrappedGoToLanguage"
+            >
+              🌐 {{ t('menu.language', 'Language') }}
+            </GameButton>
+            <GameButton
+              variant="secondary"
+              size="md"
+              full-width
+              data-testid="menu-panel-settings-button"
+              @click="wrappedGoToSettings"
+            >
+              ⚙️ {{ t('menu.settings', 'Settings') }}
+            </GameButton>
+          </div>
+        </transition>
       </div>
-    </div>
+    </GameBackground>
   </div>
 </template>
 
@@ -17,6 +80,12 @@
 const { router, baseUrl, toast, t } = usePageSetup()
 const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
 const route = useRoute()
+
+const showMenu = ref(false)
+
+const toggleMenu = () => {
+  showMenu.value = !showMenu.value
+}
 
 onMounted(() => {
   if (route.query.needsGame === 'true') {
@@ -26,23 +95,23 @@ onMounted(() => {
 })
 
 const handlePlay = () => {
+  showMenu.value = false
   goToPlayers()
 }
 
 const wrappedGoToSettings = () => {
+  showMenu.value = false
   goToSettings()
 }
 
 const wrappedGoToCredits = () => {
+  showMenu.value = false
   goToCredits()
 }
 
-const handleExit = () => {
-  // This is a bit tricky in a web environment.
-  // We can try to close the window, but it might not work in all browsers.
-  // A better approach would be to show a "Thanks for playing" message.
-  // For now, let's just log a message.
-  console.log('Exit button clicked')
+const wrappedGoToLanguage = () => {
+  showMenu.value = false
+  goToLanguage()
 }
 
 useHead({
@@ -58,52 +127,135 @@ useHead({
 
 <style scoped>
 .menu-page {
+  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
-  width: 100vw;
-  height: 100vh;
   overflow: hidden;
-}
-
-.menu-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .container {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  gap: 2rem;
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  gap: var(--spacing-3xl);
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-top: calc(var(--spacing-3xl) * -1);
 }
 
 .logo-image {
   width: clamp(250px, 40vw, 450px);
   height: auto;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
 }
 
 .menu-buttons {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: 400px;
 }
 
-.menu-buttons img {
-  width: clamp(200px, 30vw, 350px);
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+.menu-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border: 4px solid #ffaa00;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow:
+    0 12px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-xl);
+  min-width: 250px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
-.menu-buttons img:hover {
-  transform: scale(1.05);
+.menu-fade-enter-active,
+.menu-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.menu-fade-enter-from,
+.menu-fade-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    gap: var(--spacing-2xl);
+  }
+
+  .logo-image {
+    width: clamp(200px, 40vw, 380px);
+  }
+
+  .menu-buttons {
+    width: calc(100% - 2rem);
+    max-width: 400px;
+    gap: var(--spacing-sm);
+  }
+
+  .menu-panel {
+    width: 100%;
+    max-width: 350px;
+    padding: var(--spacing-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-xl) var(--spacing-lg);
+    gap: var(--spacing-xl);
+  }
+
+  .logo-image {
+    width: clamp(150px, 35vw, 250px);
+    margin-top: calc(var(--spacing-xl) * -1);
+  }
+
+  .menu-buttons {
+    width: calc(100% - 2rem);
+    max-width: 350px;
+    gap: var(--spacing-sm);
+  }
+
+  .menu-panel {
+    width: calc(100% - var(--spacing-sm) * 2);
+    max-width: 280px;
+    padding: var(--spacing-lg);
+    min-width: auto;
+  }
+}
+
+/* Pixel 7 / Pixel 7 Pro (412px - 480px width) */
+@media (min-width: 390px) and (max-width: 480px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    gap: var(--spacing-2xl);
+  }
+
+  .menu-buttons {
+    width: calc(100% - 3rem);
+    max-width: 360px;
+    gap: var(--spacing-md);
+  }
+
+  .logo-image {
+    width: clamp(180px, 38vw, 280px);
+  }
 }
 </style>

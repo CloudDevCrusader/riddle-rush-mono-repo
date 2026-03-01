@@ -51,25 +51,18 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="splash-page" @click="handleSkip">
-    <img src="~/assets/figma/background-1.png" class="splash-bg" alt="background" />
+    <GameBackground />
+
     <div class="splash-container">
-      <img src="~/assets/figma/logo-2.png" class="splash-logo" alt="Riddle Rush Logo" />
+      <GameHeader color="gold" class="splash-title"> RIDDLE RUSH </GameHeader>
+
       <div class="splash-loading">
-        <img src="~/assets/figma/loading-1.png" class="loading-text" alt="Loading..." />
         <div class="loading-bar">
-          <img
-            src="~/assets/figma/loading-down-1.png"
-            class="loading-bar-track"
-            alt="Loading bar track"
-          />
-          <div class="loading-bar-fill-container" :style="{ width: `${progress}%` }">
-            <img
-              src="~/assets/figma/loading-top-1.png"
-              class="loading-bar-fill"
-              alt="Loading bar fill"
-            />
+          <div class="loading-bar__track">
+            <div class="loading-bar__fill" :style="{ width: `${progress}%` }" />
           </div>
         </div>
+        <p class="loading-text">LOADING....</p>
       </div>
     </div>
   </div>
@@ -78,18 +71,12 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 .splash-page {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-}
-
-.splash-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .splash-container {
@@ -98,93 +85,63 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 1rem;
+  gap: var(--spacing-3xl);
+  width: 100%;
+  padding: var(--spacing-2xl);
 }
 
-.splash-logo {
-  width: 80%;
-  max-width: 400px;
-  margin-bottom: 20vh;
+.splash-title {
+  :deep(.game-header__title) {
+    font-size: var(--font-size-display);
+  }
 }
 
 .splash-loading {
   position: absolute;
-  bottom: 10vh;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: var(--spacing-3xl);
+  left: var(--spacing-xl);
+  right: var(--spacing-xl);
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90%;
+  gap: var(--spacing-md);
+}
+
+.loading-bar {
+  width: 100%;
   max-width: 500px;
+
+  &__track {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+  }
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-btn-orange-light), var(--color-btn-orange-dark));
+    border-radius: var(--radius-full);
+    transition: width 0.1s linear;
+  }
 }
 
 .loading-text {
-  width: 150px;
-  margin-bottom: 1rem;
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-white);
+  text-shadow: var(--text-shadow-embossed-white);
+  letter-spacing: 2px;
 }
 
-.loading-bar {
-  position: relative;
-  width: 100%;
-  height: 20px;
-}
-
-.loading-bar-track {
-  width: 100%;
-  height: 100%;
-}
-
-.loading-bar-fill-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  overflow: hidden;
-  transition: width 0.1s linear;
-}
-
-.loading-bar-fill {
-  width: 100%;
-  height: 100%;
-  // Since the container width is animated, the image width should be 100% of the container
-  // but we need to match the parent's (loading-bar) width.
-  // This is a bit tricky. Let's set a fixed width on the parent and use that.
-}
-
-// Let's refine the loading bar.
-.loading-bar {
-  width: 100%;
-  max-width: 500px; /* or whatever the image aspect ratio dictates */
-  position: relative;
-}
-
-.loading-bar-track,
-.loading-bar-fill {
-  display: block;
-  width: 100%;
-}
-
-.loading-bar-fill-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0%; /* Start at 0 */
-  height: 100%;
-  overflow: hidden;
-  transition: width 0.1s linear;
-}
-
-.loading-bar-fill {
-  /* This is tricky because the fill image needs to be as wide as the track image */
-  /* Let's try to set the width of the fill image to the width of the track image */
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100vw; /* This is a hack, but it might work */
-  max-width: 500px;
+@media (max-width: 768px) {
+  .splash-loading {
+    bottom: var(--spacing-2xl);
+    left: var(--spacing-lg);
+    right: var(--spacing-lg);
+  }
 }
 </style>

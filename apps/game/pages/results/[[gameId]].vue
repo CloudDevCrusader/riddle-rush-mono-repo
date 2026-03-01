@@ -55,13 +55,8 @@
       :close-on-escape="false"
     >
       <div class="decision-content">
-        <p class="decision-content__text" data-testid="results-post-round-prompt">
-          {{
-            t(
-              'scoring.post_round_prompt',
-              'Do you want to play another round, or go to the leaderboard?'
-            )
-          }}
+        <p class="decision-content__text">
+          {{ t('scoring.play_another_round', 'Would you like to play another round?') }}
         </p>
         <div class="decision-content__actions">
           <GameButton
@@ -77,10 +72,10 @@
             variant="secondary"
             size="lg"
             full-width
-            data-testid="leaderboard-button"
+            data-testid="finish-game"
             @click="handleFinishGame"
           >
-            {{ t('scoring.leaderboard', 'Leaderboard') }}
+            {{ t('scoring.finish_game', 'Finish Game') }}
           </GameButton>
         </div>
       </div>
