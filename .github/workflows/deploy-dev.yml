@@ -58,6 +58,11 @@ jobs:
       - name: Unit tests
         run: pnpm run test:unit
 
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1
+        with:
+          check-mode: all
+
   deploy:
     name: Deploy to Vercel (Development)
     needs: quality-checks
