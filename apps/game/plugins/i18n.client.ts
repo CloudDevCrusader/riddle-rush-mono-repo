@@ -85,7 +85,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Watch for locale changes and update settings
   watch(
     () => i18nGlobal.locale.value,
-    (newLocale) => {
+    (newLocale: string | undefined) => {
       if (!newLocale) return
 
       const persist = settingsStore.hasStoredSettings() && !skipLocalePersistence

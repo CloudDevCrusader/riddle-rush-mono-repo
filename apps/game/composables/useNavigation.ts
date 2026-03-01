@@ -77,10 +77,9 @@ export function useNavigation() {
     goHome: () => queueNavigation(ROUTES.HOME, true),
     goToPlayers: () => queueNavigation(ROUTES.PLAYERS, true),
     goToRoundStart: () => queueNavigation(ROUTES.ROUND_START, true),
-    goToGame: (gameId?: string) =>
-      queueNavigation(gameId ? getGameRoute(gameId) : ROUTES.GAME, true),
+    goToGame: (gameId?: string) => queueNavigation(gameId ? getGameRoute(gameId) : '/game', true),
     goToResults: (gameId?: string) =>
-      queueNavigation(gameId ? getResultsRoute(gameId) : ROUTES.RESULTS, true),
+      queueNavigation(gameId ? getResultsRoute(gameId) : '/results', true),
     goToLeaderboard: () => queueNavigation(ROUTES.LEADERBOARD, true),
     goToSettings: () => queueNavigation(ROUTES.SETTINGS, true),
     goToLanguage: () => queueNavigation(ROUTES.LANGUAGE, true),

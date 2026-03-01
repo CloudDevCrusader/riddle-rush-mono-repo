@@ -1,5 +1,3 @@
-import { ref } from 'vue'
-
 /**
  * Composable for managing modal state
  * Provides reusable modal logic with Vue 3 Composition API

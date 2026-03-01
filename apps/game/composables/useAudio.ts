@@ -1,18 +1,32 @@
 import type { CategorySettings } from '@riddle-rush/types/game'
-import { ref } from 'vue'
 
-// Global audio context and settings
 let audioContext: AudioContext | null = null
 const masterVolume = ref(1.0)
 const isMuted = ref(false)
 
 export function useAudio() {
   const initAudioContext = () => {
-    if (!audioContext && typeof window !== 'undefined') {
+    if (!audioContext) {
       const AudioContextClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      audioContext = new AudioContextClass()
+        (typeof window !== 'undefined'
+          ? (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext ||
+            (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+          : null) ||
+        (globalThis as unknown as { AudioContext?: typeof AudioContext }).AudioContext ||
+        (globalThis as unknown as { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext ||
+        null
+      try {
+        audioContext = AudioContextClass ? new AudioContextClass() : null
+      } catch {
+        try {
+          audioContext = AudioContextClass
+            ? (AudioContextClass as unknown as () => AudioContext)()
+            : null
+        } catch {
+          audioContext = null
+        }
+      }
     }
     return audioContext
   }
@@ -29,7 +43,7 @@ export function useAudio() {
     volume: number = 0.3
   ) => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     const effectiveVol = getEffectiveVolume(volume)
     if (effectiveVol === 0) return // Skip if muted
@@ -52,7 +66,7 @@ export function useAudio() {
 
   const playSuccess = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     // Play a triumphant major chord with harmonics for a richer sound
     const frequencies = [
@@ -81,7 +95,7 @@ export function useAudio() {
 
   const playError = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     const now = ctx.currentTime
 
@@ -121,7 +135,7 @@ export function useAudio() {
 
   const playClick = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     const now = ctx.currentTime
 
@@ -145,7 +159,7 @@ export function useAudio() {
 
   const playNewRound = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     // Play an exciting fanfare for new round - ascending major scale with flourish
     const notes = [
@@ -177,7 +191,7 @@ export function useAudio() {
 
   const playRoundComplete = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     const notes = [
       { freq: 392.0, delay: 0, duration: 0.15, vol: 0.2 }, // G4

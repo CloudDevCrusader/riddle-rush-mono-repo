@@ -63,7 +63,9 @@ export async function captureGameState(page: Page): Promise<GameStateSnapshot> {
 
   const stateData = await page.evaluate(() => {
     // Access Pinia stores from window (assumes stores are exposed for testing)
-    const pinia = (window as unknown as { __pinia__?: { state: { value: Record<string, unknown> } } }).__pinia__
+    const pinia = (
+      window as unknown as { __pinia__?: { state: { value: Record<string, unknown> } } }
+    ).__pinia__
     let gameStore: unknown = null
     let settingsStore: unknown = null
 
@@ -73,8 +75,18 @@ export async function captureGameState(page: Page): Promise<GameStateSnapshot> {
     }
 
     // Get current route from Vue Router if available
-    const app = (window as unknown as { __app__?: { config: { globalProperties: { $router?: { currentRoute: { value: { fullPath: string } } } } } } }).__app__
-    const route = app?.config?.globalProperties?.$router?.currentRoute?.value?.fullPath ?? window.location.pathname
+    const app = (
+      window as unknown as {
+        __app__?: {
+          config: {
+            globalProperties: { $router?: { currentRoute: { value: { fullPath: string } } } }
+          }
+        }
+      }
+    ).__app__
+    const route =
+      app?.config?.globalProperties?.$router?.currentRoute?.value?.fullPath ??
+      window.location.pathname
 
     // Capture storage
     const localStorage: Record<string, string> = {}
@@ -215,7 +227,10 @@ export async function captureBrowserMetrics(page: Page): Promise<BrowserMetrics>
     }
 
     // Get CLS from layout-shift entries
-    const layoutShiftEntries = performance.getEntriesByType('layout-shift') as (PerformanceEntry & { hadRecentInput?: boolean; value?: number })[]
+    const layoutShiftEntries = performance.getEntriesByType('layout-shift') as (PerformanceEntry & {
+      hadRecentInput?: boolean
+      value?: number
+    })[]
     let clsValue = 0
     for (const entry of layoutShiftEntries) {
       if (!entry.hadRecentInput && entry.value) {
@@ -240,7 +255,9 @@ export async function captureBrowserMetrics(page: Page): Promise<BrowserMetrics>
 
   // FID requires actual user interaction, try to get it from web-vitals if available
   const fidValue = await page.evaluate(() => {
-    const fidEntries = performance.getEntriesByType('first-input') as (PerformanceEntry & { processingStart?: number })[]
+    const fidEntries = performance.getEntriesByType('first-input') as (PerformanceEntry & {
+      processingStart?: number
+    })[]
     const fidEntry = fidEntries[0]
     if (fidEntry && fidEntry.processingStart !== undefined) {
       return fidEntry.processingStart - fidEntry.startTime
@@ -391,19 +408,13 @@ export async function generateDebugReport(
 /**
  * Compare two game states and identify differences
  */
-export function diffGameStates(
-  state1: GameStateSnapshot,
-  state2: GameStateSnapshot
-): StateDiff {
+export function diffGameStates(state1: GameStateSnapshot, state2: GameStateSnapshot): StateDiff {
   const changed: string[] = []
   const added: string[] = []
   const removed: string[] = []
 
   // Helper to flatten object for comparison
-  const flattenObject = (
-    obj: unknown,
-    prefix = ''
-  ): Record<string, unknown> => {
+  const flattenObject = (obj: unknown, prefix = ''): Record<string, unknown> => {
     const result: Record<string, unknown> = {}
 
     if (obj === null || obj === undefined) {

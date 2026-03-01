@@ -42,6 +42,14 @@
 - [ ] **MODAL-02**: Pause modal matches `menu.png` — blue header "Game Paused", resume message, green Resume button, blue Restart button, orange Home button
 - [ ] **MODAL-03**: Post-round prompt modal — after all players score, ask to play another round or go to leaderboard
 
+### Visual Polish & Refactoring
+
+- [ ] **POLISH-01**: Audit all pages against docs/mockups/ — map each mockup to its page, document CSS gaps (colors, spacing, shadows, borders, fonts)
+- [ ] **POLISH-02**: Prepare Figma sync pipeline — ensure design tokens flow through a CSS custom property layer that Figma variables can override (build on existing figma-tokens.generated.css pattern)
+- [ ] **POLISH-03**: Add smooth page transition animations — consistent enter/leave transitions, component mount stagger effects, eliminate jarring navigation cuts
+- [ ] **POLISH-04**: Refactor duplicated CSS/code — extract shared patterns into design system mixins or composables, eliminate copy-paste styling across pages
+- [ ] **POLISH-05**: Fix known bugs — multiplayer round flow bug (skipping last player), game store complexity, intermittent nuxi typecheck error, any visual regressions
+
 ---
 
 ## v2 Requirements (Deferred)

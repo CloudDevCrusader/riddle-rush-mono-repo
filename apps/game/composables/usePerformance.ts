@@ -3,8 +3,6 @@
  * Provides built-in performance monitoring for the application
  */
 
-import { ref } from 'vue'
-
 interface PerformanceMeasure {
   name: string
   duration: number
@@ -199,16 +197,17 @@ export const usePerformance = () => {
     const allMetrics = getAllMetrics()
 
     console.group('📊 Performance Report')
-
-    Object.entries(allMetrics).forEach(([name, metric]) => {
-      console.log(`\n${name}:`)
-      console.log(`  Count: ${metric.count}`)
-      console.log(`  Average: ${metric.average.toFixed(2)}ms`)
-      console.log(`  Min: ${metric.min.toFixed(2)}ms`)
-      console.log(`  Max: ${metric.max.toFixed(2)}ms`)
-      console.log(`  Last: ${metric.last.toFixed(2)}ms`)
-      console.log(`  Total: ${metric.total.toFixed(2)}ms`)
-    })
+    ;(Object.entries(allMetrics) as [string, PerformanceMetrics[string]][]).forEach(
+      ([name, metric]) => {
+        console.log(`\n${name}:`)
+        console.log(`  Count: ${metric.count}`)
+        console.log(`  Average: ${metric.average.toFixed(2)}ms`)
+        console.log(`  Min: ${metric.min.toFixed(2)}ms`)
+        console.log(`  Max: ${metric.max.toFixed(2)}ms`)
+        console.log(`  Last: ${metric.last.toFixed(2)}ms`)
+        console.log(`  Total: ${metric.total.toFixed(2)}ms`)
+      }
+    )
 
     const navTiming = getNavigationTiming()
     if (navTiming) {

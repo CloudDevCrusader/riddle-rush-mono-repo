@@ -28,6 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
 - [x] **Phase 13: Post-Round Next Step Modal** - Prompt to play another round or view leaderboard
 - [ ] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs
+- [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 
 ## Phase Details
 
@@ -342,10 +343,40 @@ Plans:
 3. The game store's structure is reviewed, and its complexity is reduced where feasible.
 4. The intermittent `nuxi typecheck` error is investigated and fixed.
 
+### Phase 15: Visual Polish, Animations & Bug Fixes
+
+**Goal**: Achieve pixel-perfect CSS fidelity with mockups across all screens, prepare Figma sync pipeline, add smooth page/component animations, refactor duplicated code, and fix known bugs
+**Depends on**: Phase 14
+**Requirements**: POLISH-01, POLISH-02, POLISH-03, POLISH-04, POLISH-05
+**Success Criteria** (what must be TRUE):
+
+1. Every page with a mockup in docs/mockups/ visually matches the mockup CSS styling
+2. Pages without mockups (round-start, credits) follow the established design system consistently
+3. Figma token sync pipeline is prepared (CSS custom properties layer that Figma variables can override)
+4. Page transitions use smooth, consistent animations (not jarring cuts)
+5. Component mount/unmount animations feel polished (stagger, fade, slide)
+6. No duplicated styling code across pages (shared via design system or composables)
+7. Known bugs from STATE.md pending todos are resolved
+8. All unit tests pass, workspace:check passes
+
+**Plans:** 4 plans
+
+Plans:
+
+- [ ] 15-01-PLAN.md -- CSS deduplication, shared utilities, migrate credits.vue + round-start.vue to design system
+- [ ] 15-02-PLAN.md -- Figma token sync pipeline preparation
+- [ ] 15-03-PLAN.md -- Bug fixes (multiplayer round flow, dead code cleanup, typecheck investigation)
+- [ ] 15-04-PLAN.md -- Mockup CSS gap fixes across all pages + page/component animations
+
+**Details**:
+
+- **Wave 1 (Parallel):** Plans 01, 02, 03 -- CSS foundation, Figma prep, bug fixes (independent)
+- **Wave 2 (Sequential):** Plan 04 -- CSS gap fixes + animations (depends on Plan 01 for .page-shell class)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13
 
 | Phase                              | Plans Complete | Status   | Completed  |
 | ---------------------------------- | -------------- | -------- | ---------- |
@@ -364,3 +395,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 12. App Optimization & Refactoring | 10/10          | Complete | 2026-02-16 |
 | 13. Post-Round Next Step Modal     | 1/1            | Complete | 2026-02-27 |
 | 14. Maintenance & Quality of Life  | 0/0            | Pending  | —          |
+| 15. Visual Polish & Bug Fixes      | 0/4            | Planned  | —          |

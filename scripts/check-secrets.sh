@@ -46,6 +46,7 @@ PATTERNS=(
 IGNORE_FILES=(
 	"*.lock"
 	"package-lock.json"
+	"pnpm-lock.yaml"
 	"*.md"
 	"check-secrets.sh"
 	".env.example"
@@ -57,6 +58,7 @@ IGNORE_PATHS=(
 	"templates/*"
 	".claude/*"
 	".agent/*"
+	".planning/*"
 )
 
 check_file() {

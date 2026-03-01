@@ -149,14 +149,14 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright
-        run: pnpm exec playwright install chromium
+        run: pnpm --filter @riddle-rush/game exec playwright install chromium
 
       - name: Run E2E tests
         env:
           BASE_URL: ${{ needs.deploy.outputs.url }}
           STAGE: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
         run: |
-          pnpm run test:e2e:deployed
+          pnpm run test:e2e
 
       - uses: actions/upload-artifact@v4
         if: always()

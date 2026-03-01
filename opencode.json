@@ -3,11 +3,7 @@
   "mcp": {
     "playwright-test": {
       "type": "local",
-      "command": [
-        "npx",
-        "playwright",
-        "run-test-mcp-server"
-      ],
+      "command": ["npx", "playwright", "run-test-mcp-server"],
       "enabled": true
     }
   },
@@ -87,6 +83,7 @@
         "playwright-test*browser_navigate_back": true,
         "playwright-test*browser_network_requests": true,
         "playwright-test*browser_press_key": true,
+        "playwright-test*browser_run_code": true,
         "playwright-test*browser_select_option": true,
         "playwright-test*browser_snapshot": true,
         "playwright-test*browser_take_screenshot": true,

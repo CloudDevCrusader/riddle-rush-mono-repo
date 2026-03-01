@@ -1,4 +1,6 @@
 // Test setup file to ensure Vue reactivity system is properly initialized
+// @ts-expect-error Nuxt overrides vue module but createApp exists at runtime
+import { createApp } from 'vue'
 import { beforeEach, afterEach, vi } from 'vitest'
 import * as VueExports from 'vue'
 import * as VueRouterExports from 'vue-router'
@@ -43,6 +45,10 @@ Object.assign(globalThis, {
 })
 
 beforeEach(() => {
+  // Create a minimal Vue app to ensure proper reactivity context
+  createApp({})
+
+  // Reset mocks
   vi.clearAllMocks()
 })
 

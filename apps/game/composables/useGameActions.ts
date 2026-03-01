@@ -58,7 +58,7 @@ export function useGameActions() {
     try {
       await gameStore.endGame()
       toast.success(t('game.game_ended', 'Game ended! Check your statistics.'))
-      router.push('/')
+      await router.push('/')
       return true
     } catch (error) {
       logger.error('Error ending game:', error)
@@ -71,7 +71,7 @@ export function useGameActions() {
    * Share game score using Web Share API
    */
   const shareScore = async (score?: number) => {
-    const finalScore = score ?? gameStore.currentScore
+    const finalScore = score ?? gameStore.currentSession?.score ?? 0
 
     if (!navigator.share) {
       toast.info(t('share.not_supported', 'Sharing is not supported on this device'))

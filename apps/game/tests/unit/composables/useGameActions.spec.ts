@@ -36,14 +36,34 @@ const mockGameStore = {
   get hasActiveSession() {
     return mockHasActiveSession
   },
-  get currentScore() {
-    return mockCurrentScore
+  get currentSession() {
+    return {
+      score: mockCurrentScore,
+      attempts: [],
+      id: '1',
+      status: 'active',
+      category: null,
+      letter: '',
+      players: [],
+      currentRound: 0,
+      roundHistory: [],
+    }
   },
 }
 
 // Stub Nuxt auto-imported globals (belt-and-suspenders alongside the module mock)
 vi.stubGlobal('useGameStore', () => mockGameStore)
 vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
+
+// Mock vue-router explicitly in case it's auto-imported
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    push: mockRouterPush,
+    replace: vi.fn(),
+    back: vi.fn(),
+  }),
+  useRoute: vi.fn(),
+}))
 
 const mockToastSuccess = vi.fn()
 const mockToastError = vi.fn()

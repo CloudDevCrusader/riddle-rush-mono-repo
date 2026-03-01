@@ -1,67 +1,45 @@
 <template>
-  <GameBackground>
-    <div class="scoring-page">
-      <GameHeader color="gold">
-        {{ t('scoring.title', 'Scoring') }}
-      </GameHeader>
-
-      <div class="scoring-page__list" data-testid="results-scores-container">
-        <div
-          v-for="(player, index) in players"
-          :key="player.id"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: index * 50 } }"
-          class="scoring-page__player-entry"
-          :data-testid="`results-player-entry-${index}`"
-        >
-          <GamePlayerCard
-            :player="player"
-            :label="`${t('scoring.player', 'Player')} ${index + 1}`"
-            :show-indicator="false"
-          />
-
-          <div class="scoring-page__score-controls">
-            <GameButton
-              variant="danger"
-              size="sm"
-              :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
-              data-testid="score-decrement"
-              @click="decrementScore(player.id)"
-            >
-              −
-            </GameButton>
-
-            <GameDisplay size="sm" :glow="false" class="scoring-page__score-value">
-              {{ pendingScores.get(player.id) ?? 0 }}
-            </GameDisplay>
-
-            <GameButton
-              variant="primary"
-              size="sm"
-              data-testid="score-increment"
-              @click="incrementScore(player.id)"
-            >
-              +
-            </GameButton>
+  <div class="scoring-page">
+    <img src="~/assets/figma/background-1-8.png" class="scoring-bg" alt="background" />
+    <header class="scoring-header">
+      <img src="~/assets/figma/back-1.png" class="back-btn" alt="Back" @click="handleBack" />
+      <div class="coin-bar">
+        <img src="~/assets/figma/coin-bar-1.png" alt="Coin bar" />
+        <span class="coin-bar-text">100</span>
+      </div>
+    </header>
+    <div class="scoring-container">
+      <img src="~/assets/figma/scoring-1.png" class="scoring-title" alt="Scoring" />
+      <div class="player-list">
+        <div v-for="player in players" :key="player.id" class="player-item">
+          <img src="~/assets/figma/back-1-3.png" class="player-bg" alt="Player background" />
+          <div class="player-info">
+            <span class="player-name">{{ player.name }}</span>
+            <div class="score-controls">
+              <img
+                src="~/assets/figma/add-back-16.png"
+                class="score-btn"
+                alt="Decrement"
+                @click="decrementScore(player.id)"
+              />
+              <span class="score-value">{{ pendingScores.get(player.id) ?? 0 }}</span>
+              <img
+                src="~/assets/figma/add-2.png"
+                class="score-btn"
+                alt="Increment"
+                @click="incrementScore(player.id)"
+              />
+            </div>
           </div>
         </div>
       </div>
-
-      <GameButton
-        variant="primary"
-        size="lg"
-        full-width
-        :loading="isConfirming"
-        class="scoring-page__button"
-        data-testid="confirm-scores"
+      <img
+        src="~/assets/figma/next-2.png"
+        class="next-btn"
+        alt="Next"
         @click="handleConfirmScores"
-      >
-        {{ t('scoring.confirm_scores', 'Confirm Scores') }}
-      </GameButton>
+      />
     </div>
-
-    <!-- Leaderboard overlay (shown briefly after confirming scores) -->
     <PlayerLeaderboard
       :visible="showLeaderboard"
       :players="leaderboard"
@@ -70,8 +48,6 @@
       @close="handleLeaderboardDismiss"
       @continue="handleLeaderboardDismiss"
     />
-
-    <!-- Decision modal: next round or finish game -->
     <GameModal
       v-model="showDecisionModal"
       :title="t('scoring.round_complete', 'Round Complete!')"
@@ -109,13 +85,14 @@
         </div>
       </div>
     </GameModal>
-  </GameBackground>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
 const { t } = usePageSetup()
+const { goHome } = useNavigation()
 const { gameStore, players, leaderboard, currentRound } = useGameState()
 const { goToRoundStart, goToLeaderboard } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
@@ -195,6 +172,10 @@ const handleFinishGame = async () => {
   await goToLeaderboard()
 }
 
+const handleBack = () => {
+  goHome()
+}
+
 onUnmounted(() => {
   if (dismissTimer) {
     clearTimeout(dismissTimer)
@@ -213,70 +194,122 @@ useHead({
 })
 </script>
 
-<style scoped lang="scss">
-@use 'assets/scss/design-system' as *;
-
+<style scoped>
 .scoring-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scoring-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scoring-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.back-btn {
+  width: 64px;
+  cursor: pointer;
+}
+
+.coin-bar {
+  position: relative;
+  width: 120px;
+}
+
+.coin-bar img {
+  width: 100%;
+}
+
+.coin-bar-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.scoring-container {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-2xl);
-  padding: var(--spacing-2xl) var(--spacing-md);
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
+  padding: 1rem;
+  gap: 1rem;
 }
 
-.scoring-page__list {
+.scoring-title {
+  width: 100%;
+  max-width: 300px;
+}
+
+.player-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: 1rem;
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
-.scoring-page__player-entry {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
+.player-item {
+  position: relative;
+  width: 100%;
 }
 
-.scoring-page__score-controls {
+.player-bg {
+  width: 100%;
+}
+
+.player-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
+  width: 80%;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
-.scoring-page__score-value {
-  min-width: 60px;
-  text-align: center;
-}
-
-.scoring-page__button {
-  max-width: 600px;
-}
-
-.decision-content {
-  text-align: center;
-}
-
-.decision-content__text {
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--spacing-xl);
-}
-
-.decision-content__actions {
+.score-controls {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
+  align-items: center;
+  gap: 1rem;
 }
 
-@media (max-width: 640px) {
-  .scoring-page {
-    padding: var(--spacing-xl) var(--spacing-sm);
-    gap: var(--spacing-xl);
-  }
+.score-btn {
+  width: 80px;
+  cursor: pointer;
+}
+
+.score-value {
+  font-size: 1.5rem;
+}
+
+.next-btn {
+  width: 100%;
+  max-width: 300px;
+  cursor: pointer;
+  margin-top: auto;
 }
 </style>

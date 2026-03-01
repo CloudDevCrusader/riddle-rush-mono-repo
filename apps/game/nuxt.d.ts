@@ -8,3 +8,11 @@ declare module '#build/pwa-icons/pwa-icons' {
     appleSplashScreen: Record<string, unknown>
   }
 }
+
+// vue-i18n global injection types
+// $t is injected globally via vue-i18n's globalInjection option in plugins/i18n.client.ts
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $t: (key: string, defaultMsg?: string) => string
+  }
+}

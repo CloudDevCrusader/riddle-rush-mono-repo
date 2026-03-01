@@ -68,7 +68,7 @@ const listStyles = computed(() => ({
 
         <!-- Numbered badge for ranks 4+ -->
         <div v-else class="game-scroll-list__badge">
-          {{ index + 1 }}
+          {{ Number(index) + 1 }}
         </div>
       </div>
 

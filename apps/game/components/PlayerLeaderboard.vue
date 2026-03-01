@@ -25,8 +25,8 @@
               class="player-row"
               :class="{
                 winner: player.isWinner,
-                'top-three': index < 3,
-                [`rank-${index + 1}`]: index < 3,
+                'top-three': Number(index) < 3,
+                [`rank-${Number(index) + 1}`]: Number(index) < 3,
               }"
             >
               <div class="rank">
@@ -34,7 +34,7 @@
                 <span v-else-if="index === 0">🥇</span>
                 <span v-else-if="index === 1">🥈</span>
                 <span v-else-if="index === 2">🥉</span>
-                <span v-else class="rank-number">{{ index + 1 }}</span>
+                <span v-else class="rank-number">{{ Number(index) + 1 }}</span>
               </div>
 
               <div class="player-info">
