@@ -129,6 +129,9 @@ importers:
       '@capacitor/status-bar':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.0.0)
+      '@intlify/core-base':
+        specifier: ^11.2.8
+        version: 11.2.8
       '@nuxtjs/i18n':
         specifier: ^10.2.3
         version: 10.2.3(@vercel/functions@3.3.4(@aws-sdk/credential-provider-web-identity@3.972.9))(@vue/compiler-dom@3.5.28)(aws4fetch@1.0.20)(db0@0.3.4(better-sqlite3@11.10.0))(eslint@10.0.2(jiti@2.6.1))(ioredis@5.9.3)(magicast@0.5.2)(rollup@4.59.0)(vue@3.5.28(typescript@5.9.3))

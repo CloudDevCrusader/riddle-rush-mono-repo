@@ -6,6 +6,7 @@
     "@capacitor/haptics": "^8.0.0",
     "@capacitor/keyboard": "^8.0.0",
     "@capacitor/status-bar": "^8.0.1",
+    "@intlify/core-base": "^11.2.8",
     "@nuxtjs/i18n": "^10.2.3",
     "@pinia/nuxt": "^0.11.3",
     "@riddle-rush/config": "workspace:*",
