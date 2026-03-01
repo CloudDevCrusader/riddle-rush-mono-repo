@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+// @ts-expect-error Nuxt overrides vue module types but computed/reactive exist at runtime
+import { computed, reactive } from 'vue'
 
 import { useGameState } from '../../../composables/useGameState'
-
-const computed = <T>(getter: () => T) => ({ value: getter() })
-const reactive = <T extends object>(obj: T): T => obj
 
 vi.stubGlobal('computed', computed)
 
