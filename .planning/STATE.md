@@ -114,6 +114,7 @@ Recent decisions affecting current work:
 - Review game store size (~352 lines) for further simplification and bug risk.
 - **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
 - **[New]** Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag).
+- **[New]** Refactor game mode to single source of truth with documented state flow chart.
 
 ### Completed Todos (2026-02-14)
 
