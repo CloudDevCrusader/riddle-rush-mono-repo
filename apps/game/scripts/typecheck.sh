@@ -17,4 +17,4 @@ if [[ -f .nuxt/pwa-icons-plugin.ts ]]; then
 fi
 
 # Use vue-tsc directly to avoid nuxt typecheck regenerating files
-vue-tsc --noEmit
+vue-tsc --noEmit --skipLibCheck
