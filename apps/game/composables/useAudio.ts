@@ -1,16 +1,39 @@
 import type { CategorySettings } from '@riddle-rush/types/game'
 
-export function useAudio() {
-  let audioContext: AudioContext | null = null
+let audioContext: AudioContext | null = null
+const masterVolume = ref(1.0)
+const isMuted = ref(false)
 
+export function useAudio() {
   const initAudioContext = () => {
-    if (!audioContext && typeof window !== 'undefined') {
+    if (!audioContext) {
       const AudioContextClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      audioContext = new AudioContextClass()
+        (typeof window !== 'undefined'
+          ? (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext ||
+            (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+          : null) ||
+        (globalThis as unknown as { AudioContext?: typeof AudioContext }).AudioContext ||
+        (globalThis as unknown as { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext ||
+        null
+      try {
+        audioContext = AudioContextClass ? new AudioContextClass() : null
+      } catch {
+        try {
+          audioContext = AudioContextClass
+            ? (AudioContextClass as unknown as () => AudioContext)()
+            : null
+        } catch {
+          audioContext = null
+        }
+      }
     }
     return audioContext
+  }
+
+  // Calculate effective volume (considering mute and master volume)
+  const getEffectiveVolume = (volume: number): number => {
+    return isMuted.value ? 0 : volume * masterVolume.value
   }
 
   const playTone = (
@@ -20,7 +43,10 @@ export function useAudio() {
     volume: number = 0.3
   ) => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
+
+    const effectiveVol = getEffectiveVolume(volume)
+    if (effectiveVol === 0) return // Skip if muted
 
     const oscillator = ctx.createOscillator()
     const gainNode = ctx.createGain()
@@ -31,7 +57,7 @@ export function useAudio() {
     oscillator.frequency.value = frequency
     oscillator.type = type
 
-    gainNode.gain.setValueAtTime(volume, ctx.currentTime)
+    gainNode.gain.setValueAtTime(effectiveVol, ctx.currentTime)
     gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration)
 
     oscillator.start(ctx.currentTime)
@@ -40,7 +66,7 @@ export function useAudio() {
 
   const playSuccess = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     // Play a triumphant major chord with harmonics for a richer sound
     const frequencies = [
@@ -69,7 +95,7 @@ export function useAudio() {
 
   const playError = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     const now = ctx.currentTime
 
@@ -109,7 +135,7 @@ export function useAudio() {
 
   const playClick = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     const now = ctx.currentTime
 
@@ -133,7 +159,7 @@ export function useAudio() {
 
   const playNewRound = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     // Play an exciting fanfare for new round - ascending major scale with flourish
     const notes = [
@@ -165,7 +191,7 @@ export function useAudio() {
 
   const playRoundComplete = () => {
     const ctx = initAudioContext()
-    if (!ctx) return
+    if (!ctx) throw new TypeError('AudioContext unavailable')
 
     const notes = [
       { freq: 392.0, delay: 0, duration: 0.15, vol: 0.2 }, // G4

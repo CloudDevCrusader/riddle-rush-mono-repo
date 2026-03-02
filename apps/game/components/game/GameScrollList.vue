@@ -2,7 +2,7 @@
 /**
  * GameScrollList Component
  *
- * Scrollable list with optional rank display (crowns 1-3, numbered badges 4-6).
+ * Scrollable list with optional rank display (crowns 1-3, numbered badges 4+).
  * Used for leaderboards, player lists, and other ranked content.
  *
  * Usage:
@@ -12,7 +12,7 @@
  */
 
 interface Props {
-  /** Display rank indicators (crowns 1-3, numbered 4-6) */
+  /** Display rank indicators (crowns 1-3, numbered 4+) */
   showRanks?: boolean
   /** Maximum height before scrolling */
   maxHeight?: string
@@ -36,7 +36,7 @@ const listStyles = computed(() => ({
       class="game-scroll-list__row"
       role="listitem"
     >
-      <!-- Rank indicator (crowns 1-3, numbers 4-6) -->
+      <!-- Rank indicator (crowns 1-3, numbers 4+) -->
       <div v-if="showRanks" class="game-scroll-list__rank">
         <!-- Crown for ranks 1-3 -->
         <svg
@@ -66,9 +66,9 @@ const listStyles = computed(() => ({
           <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 4h14v2H5v-2z" fill="currentColor" />
         </svg>
 
-        <!-- Numbered badge for ranks 4-6 -->
-        <div v-else-if="index < 6" class="game-scroll-list__badge">
-          {{ index + 1 }}
+        <!-- Numbered badge for ranks 4+ -->
+        <div v-else class="game-scroll-list__badge">
+          {{ Number(index) + 1 }}
         </div>
       </div>
 
@@ -171,7 +171,7 @@ const listStyles = computed(() => ({
     }
   }
 
-  // Numbered badge (ranks 4-6)
+  // Numbered badge (ranks 4+)
   &__badge {
     display: flex;
     align-items: center;

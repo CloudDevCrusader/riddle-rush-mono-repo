@@ -42,20 +42,40 @@ PATTERNS=(
 	'client[_-]?secret\s*[=:]\s*["\x27][a-zA-Z0-9_-]{16,}'
 )
 
-# Files to ignore
+# Files to ignore (basename patterns)
 IGNORE_FILES=(
 	"*.lock"
 	"package-lock.json"
+	"pnpm-lock.yaml"
 	"*.md"
 	"check-secrets.sh"
 	".env.example"
+	".env.*.example"
+)
+
+# Directory/path patterns to ignore
+IGNORE_PATHS=(
+	"templates/*"
+	".claude/*"
+	".agent/*"
+	".planning/*"
 )
 
 check_file() {
 	local file="$1"
 
-	# Skip ignored files
+	local basename
+	basename=$(basename "${file}")
+
+	# Skip ignored file patterns (match on basename)
 	for pattern in "${IGNORE_FILES[@]}"; do
+		if [[ ${basename} == ${pattern} ]]; then
+			return 0
+		fi
+	done
+
+	# Skip ignored path patterns (match on full path)
+	for pattern in "${IGNORE_PATHS[@]}"; do
 		if [[ ${file} == ${pattern} ]]; then
 			return 0
 		fi
@@ -65,7 +85,7 @@ check_file() {
 	[[ -f ${file} ]] || return 0
 
 	# Placeholder patterns to ignore (obvious fake credentials)
-	local placeholder_patterns='<YOUR_|YOUR_.*_HERE|REPLACE_ME|CHANGE_ME|EXAMPLE_'
+	local placeholder_patterns='<YOUR_|YOUR_.*_HERE|REPLACE_ME|CHANGE_ME|EXAMPLE_|your-.*-secret|your-.*-key|postgres:postgres@|user:password@|admin:admin@|root:root@|localhost|127\.0\.0\.1|example\.com|\.liquid:'
 
 	for pattern in "${PATTERNS[@]}"; do
 		# Get matching lines and filter out placeholders in one go

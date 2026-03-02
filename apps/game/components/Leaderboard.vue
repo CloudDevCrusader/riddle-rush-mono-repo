@@ -18,16 +18,21 @@
               v-for="(entry, index) in entries"
               :key="entry.sessionId"
               class="entry-row"
-              :class="{ 'top-three': index < 3, [`rank-${index + 1}`]: index < 3 }"
+              :class="{
+                'top-three': Number(index) < 3,
+                [`rank-${Number(index) + 1}`]: Number(index) < 3,
+              }"
             >
               <div class="rank">
                 <span v-if="index === 0">🥇</span>
                 <span v-else-if="index === 1">🥈</span>
                 <span v-else-if="index === 2">🥉</span>
-                <span v-else class="rank-number">{{ index + 1 }}</span>
+                <span v-else class="rank-number">{{ Number(index) + 1 }}</span>
               </div>
               <div class="entry-info">
-                <span class="category">{{ entry.category }}</span>
+                <span class="category">{{
+                  t(`categories.${entry.categoryKey}`, entry.category)
+                }}</span>
                 <span class="meta"
                   >{{ formatDuration(entry.duration) }} · {{ entry.correctAttempts }}/{{
                     entry.attempts

@@ -163,14 +163,14 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Check if user has visited a specific state
    */
   const hasVisitedState = (stateId: WorkflowStateId): boolean => {
-    return flow.value.history.some((state) => state.id === stateId)
+    return flow.value.history.some((state: StoryboardState) => state.id === stateId)
   }
 
   /**
    * Get state visit count
    */
   const getStateVisitCount = (stateId: WorkflowStateId): number => {
-    return flow.value.history.filter((state) => state.id === stateId).length
+    return flow.value.history.filter((state: StoryboardState) => state.id === stateId).length
   }
 
   /**
@@ -191,7 +191,9 @@ export default defineNuxtPlugin((nuxtApp) => {
    */
   const isFollowingGameFlow = (): boolean => {
     const gameFlow = getGameFlowPath()
-    const recentHistory = flow.value.history.slice(-gameFlow.length).map((s) => s.id)
+    const recentHistory = flow.value.history
+      .slice(-gameFlow.length)
+      .map((s: StoryboardState) => s.id)
 
     return gameFlow.every((stateId, index) => recentHistory[index] === stateId)
   }
@@ -201,7 +203,7 @@ export default defineNuxtPlugin((nuxtApp) => {
    */
   const getFlowCompletion = (): number => {
     const gameFlow = getGameFlowPath()
-    const visitedStates = new Set(flow.value.history.map((s) => s.id))
+    const visitedStates = new Set(flow.value.history.map((s: StoryboardState) => s.id))
     const completedStates = gameFlow.filter((stateId) => visitedStates.has(stateId))
 
     return Math.round((completedStates.length / gameFlow.length) * 100)

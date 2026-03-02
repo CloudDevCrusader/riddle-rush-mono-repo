@@ -17,13 +17,13 @@ const NETWORK_PRESETS = {
     uploadThroughput: (3 * 1024 * 1024) / 8,
     latency: 20,
   },
-  'offline': {
+  offline: {
     offline: true,
     downloadThroughput: 0,
     uploadThroughput: 0,
     latency: 0,
   },
-  'online': {
+  online: {
     offline: false,
     downloadThroughput: -1, // No throttling
     uploadThroughput: -1,
@@ -54,10 +54,7 @@ export function isMobileDevice(context: BrowserContext): boolean {
  * Wait for mobile touch layer to be ready
  * Ensures touch event handlers are registered and DOM is interactive
  */
-export async function waitForMobileTouchReady(
-  page: Page,
-  timeout: number = 10000,
-): Promise<void> {
+export async function waitForMobileTouchReady(page: Page, timeout: number = 10000): Promise<void> {
   // Wait for DOM to be fully loaded
   await page.waitForLoadState('domcontentloaded', { timeout })
 
@@ -65,35 +62,33 @@ export async function waitForMobileTouchReady(
   await page.waitForFunction(
     () => {
       // Check if touch events are supported
-      const touchSupported
-        = 'ontouchstart' in window
-          || navigator.maxTouchPoints > 0
-          || (navigator as any).msMaxTouchPoints > 0
+      const touchSupported =
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        (navigator as any).msMaxTouchPoints > 0
 
       // Check if document is interactive
-      const isInteractive
-        = document.readyState === 'interactive'
-          || document.readyState === 'complete'
+      const isInteractive =
+        document.readyState === 'interactive' || document.readyState === 'complete'
 
       // Check for any pending animations
-      const noAnimations
-        = document.getAnimations?.().filter(a => a.playState === 'running')
-          .length === 0
+      const noAnimations =
+        document.getAnimations?.().filter((a) => a.playState === 'running').length === 0
 
       return isInteractive && (touchSupported || noAnimations)
     },
-    { timeout },
+    { timeout }
   )
 
   // iOS Safari specific: wait for touch-action CSS to be applied
   await page.waitForFunction(
     () => {
       const interactiveElements = document.querySelectorAll(
-        'button, a, input, [role="button"], [tabindex]',
+        'button, a, input, [role="button"], [tabindex]'
       )
       return interactiveElements.length === 0 || interactiveElements.length > 0
     },
-    { timeout },
+    { timeout }
   )
 
   // Small delay for iOS Safari quirks with touch event registration
@@ -107,7 +102,7 @@ export async function waitForMobileTouchReady(
  */
 export async function simulateMobileNetwork(
   page: Page,
-  type: 'slow-3g' | '4g' | 'offline' | 'online',
+  type: 'slow-3g' | '4g' | 'offline' | 'online'
 ): Promise<void> {
   const preset = NETWORK_PRESETS[type]
 
@@ -141,11 +136,9 @@ export async function simulateMobileNetwork(
     })
   } catch (error) {
     // CDP might not be available in all browsers (e.g., WebKit)
-    console.warn(
-      `[Mobile] Network simulation not supported: ${(error as Error).message}`,
-    )
+    console.warn(`[Mobile] Network simulation not supported: ${(error as Error).message}`)
     throw new Error(
-      `Network simulation requires Chromium-based browser. Error: ${(error as Error).message}`,
+      `Network simulation requires Chromium-based browser. Error: ${(error as Error).message}`
     )
   }
 }
@@ -160,8 +153,8 @@ export async function verifyResponsiveLayout(
     mobile: number
     tablet: number
     desktop: number
-  },
-): Promise<{ viewport: string, issues: string[] }> {
+  }
+): Promise<{ viewport: string; issues: string[] }> {
   const issues: string[] = []
   const currentViewport = page.viewportSize()
 
@@ -200,10 +193,7 @@ export async function verifyResponsiveLayout(
     elements.forEach((el) => {
       const rect = el.getBoundingClientRect()
       if (rect.right > viewportWidth + 1 && rect.width > 0) {
-        const selector
-          = el.id
-            || el.className.toString().split(' ')[0]
-            || el.tagName.toLowerCase()
+        const selector = el.id || el.className.toString().split(' ')[0] || el.tagName.toLowerCase()
         if (!overflowing.includes(selector)) {
           overflowing.push(selector)
         }
@@ -214,9 +204,7 @@ export async function verifyResponsiveLayout(
   })
 
   if (overflowingElements.length > 0) {
-    issues.push(
-      `Elements extending beyond viewport: ${overflowingElements.join(', ')}`,
-    )
+    issues.push(`Elements extending beyond viewport: ${overflowingElements.join(', ')}`)
   }
 
   // Check for proper meta viewport tag
@@ -239,12 +227,10 @@ export async function verifyResponsiveLayout(
       const width = Number.parseInt(styles.width, 10)
 
       if (width > vw && styles.position !== 'fixed' && styles.position !== 'absolute') {
-        const selector
-          = el.id
-            || (el.className && typeof el.className === 'string'
-              ? el.className.split(' ')[0]
-              : '')
-            || el.tagName.toLowerCase()
+        const selector =
+          el.id ||
+          (el.className && typeof el.className === 'string' ? el.className.split(' ')[0] : '') ||
+          el.tagName.toLowerCase()
         if (selector && !issues.includes(selector)) {
           issues.push(selector)
         }
@@ -255,17 +241,13 @@ export async function verifyResponsiveLayout(
   }, width)
 
   if (fixedWidthIssues.length > 0) {
-    issues.push(
-      `Fixed-width elements wider than viewport: ${fixedWidthIssues.join(', ')}`,
-    )
+    issues.push(`Fixed-width elements wider than viewport: ${fixedWidthIssues.join(', ')}`)
   }
 
   // Check for text readability (font size >= 12px on mobile)
   if (viewportCategory === 'mobile' || viewportCategory === 'small-mobile') {
     const smallTextElements = await page.evaluate(() => {
-      const textElements = document.querySelectorAll(
-        'p, span, a, li, td, th, label, button',
-      )
+      const textElements = document.querySelectorAll('p, span, a, li, td, th, label, button')
       let smallCount = 0
 
       textElements.forEach((el) => {
@@ -281,7 +263,7 @@ export async function verifyResponsiveLayout(
 
     if (smallTextElements > 0) {
       issues.push(
-        `${smallTextElements} text elements have font-size < 12px (may be hard to read on mobile)`,
+        `${smallTextElements} text elements have font-size < 12px (may be hard to read on mobile)`
       )
     }
   }
@@ -299,10 +281,10 @@ export async function verifyResponsiveLayout(
  */
 export async function verifyTouchTargets(
   page: Page,
-  minSize: number = DEFAULT_MIN_TOUCH_SIZE,
+  minSize: number = DEFAULT_MIN_TOUCH_SIZE
 ): Promise<{
   valid: number
-  tooSmall: { selector: string, width: number, height: number }[]
+  tooSmall: { selector: string; width: number; height: number }[]
 }> {
   const result = await page.evaluate((minTouchSize) => {
     // Selectors for interactive elements
@@ -325,7 +307,7 @@ export async function verifyTouchTargets(
 
     const elements = document.querySelectorAll(interactiveSelectors)
     let validCount = 0
-    const tooSmall: { selector: string, width: number, height: number }[] = []
+    const tooSmall: { selector: string; width: number; height: number }[] = []
 
     elements.forEach((el) => {
       const rect = el.getBoundingClientRect()
@@ -335,10 +317,10 @@ export async function verifyTouchTargets(
 
       // Skip elements not in viewport
       if (
-        rect.bottom < 0
-        || rect.top > window.innerHeight
-        || rect.right < 0
-        || rect.left > window.innerWidth
+        rect.bottom < 0 ||
+        rect.top > window.innerHeight ||
+        rect.right < 0 ||
+        rect.left > window.innerWidth
       ) {
         return
       }
@@ -404,14 +386,12 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
           for (const rule of rules) {
             if (rule instanceof CSSStyleRule) {
               if (
-                rule.selectorText?.includes(':hover')
-                && !rule.selectorText?.includes(':focus')
-                && !rule.selectorText?.includes(':active')
+                rule.selectorText?.includes(':hover') &&
+                !rule.selectorText?.includes(':focus') &&
+                !rule.selectorText?.includes(':active')
               ) {
                 // Extract base selector
-                const baseSelector = rule.selectorText
-                  .replace(/:hover/g, '')
-                  .trim()
+                const baseSelector = rule.selectorText.replace(/:hover/g, '').trim()
                 if (baseSelector) {
                   hoverSelectors.add(baseSelector)
                 }
@@ -434,16 +414,16 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
           // Check if this element or children change visibility on hover
           const styles = window.getComputedStyle(el)
           if (
-            styles.display !== 'none'
-            && styles.visibility !== 'hidden'
-            && el.getAttribute('aria-haspopup')
+            styles.display !== 'none' &&
+            styles.visibility !== 'hidden' &&
+            el.getAttribute('aria-haspopup')
           ) {
-            const id
-              = el.id
-                || (el.className && typeof el.className === 'string'
-                  ? el.className.split(' ')[0]
-                  : '')
-                || el.tagName.toLowerCase()
+            const id =
+              el.id ||
+              (el.className && typeof el.className === 'string'
+                ? el.className.split(' ')[0]
+                : '') ||
+              el.tagName.toLowerCase()
             if (!hoverOnly.includes(id)) {
               hoverOnly.push(id)
             }
@@ -457,24 +437,21 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
     // Check for contextmenu-only handlers
     const allElements = document.querySelectorAll('*')
     allElements.forEach((el) => {
-      const hasContextMenu
-        = el.hasAttribute('oncontextmenu')
-          || (el as any)._contextMenuHandler !== undefined
+      const hasContextMenu =
+        el.hasAttribute('oncontextmenu') || (el as any)._contextMenuHandler !== undefined
 
       // Check if element has right-click but no alternative
       if (hasContextMenu) {
-        const hasAlternative
-          = el.hasAttribute('onclick')
-            || el.hasAttribute('onkeydown')
-            || el.hasAttribute('aria-haspopup')
+        const hasAlternative =
+          el.hasAttribute('onclick') ||
+          el.hasAttribute('onkeydown') ||
+          el.hasAttribute('aria-haspopup')
 
         if (!hasAlternative) {
-          const selector
-            = el.id
-              || (el.className && typeof el.className === 'string'
-                ? el.className.split(' ')[0]
-                : '')
-              || el.tagName.toLowerCase()
+          const selector =
+            el.id ||
+            (el.className && typeof el.className === 'string' ? el.className.split(' ')[0] : '') ||
+            el.tagName.toLowerCase()
           if (!rightClickOnly.includes(selector)) {
             rightClickOnly.push(selector)
           }
@@ -499,7 +476,7 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
 export function getDeviceInfo(context: BrowserContext): {
   isMobile: boolean
   hasTouch: boolean
-  viewport: { width: number, height: number }
+  viewport: { width: number; height: number }
   userAgent: string
 } {
   const pages = context.pages()
@@ -536,7 +513,7 @@ export function getDeviceInfo(context: BrowserContext): {
 export async function simulateTouchGesture(
   page: Page,
   gesture: 'tap' | 'swipe-left' | 'swipe-right' | 'pinch',
-  selector: string,
+  selector: string
 ): Promise<void> {
   const element = await page.waitForSelector(selector, { timeout: 5000 })
 
@@ -608,10 +585,12 @@ export async function simulateTouchGesture(
             element.dispatchEvent(touchEnd)
           }
         },
-        { startX, startY: centerY, endX, endY: centerY },
+        { startX, startY: centerY, endX, endY: centerY }
       )
 
-      console.log(`[Mobile] Swipe left gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`)
+      console.log(
+        `[Mobile] Swipe left gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`
+      )
       break
     }
 
@@ -661,10 +640,12 @@ export async function simulateTouchGesture(
             element.dispatchEvent(touchEnd)
           }
         },
-        { startX, startY: centerY, endX, endY: centerY },
+        { startX, startY: centerY, endX, endY: centerY }
       )
 
-      console.log(`[Mobile] Swipe right gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`)
+      console.log(
+        `[Mobile] Swipe right gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`
+      )
       break
     }
 
@@ -738,7 +719,7 @@ export async function simulateTouchGesture(
             target.dispatchEvent(touchEnd)
           }
         },
-        { centerX, centerY, boxWidth: box.width, boxHeight: box.height },
+        { centerX, centerY, boxWidth: box.width, boxHeight: box.height }
       )
 
       console.log(`[Mobile] Pinch gesture at (${centerX}, ${centerY})`)

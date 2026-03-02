@@ -2,14 +2,14 @@
   "name": "@riddle-rush/config",
   "version": "1.0.0",
   "dependencies": {
-    "vite": "^5.4.0"
+    "vite": "^7.3.1"
   },
   "devDependencies": {
-    "@nuxt/eslint": "^1.0.0",
-    "@nuxt/eslint-config": "^1.12.1",
-    "@types/node": "^22.19.5",
-    "eslint": "^9.39.2",
-    "prettier": "^3.7.4",
+    "@nuxt/eslint": "^1.15.1",
+    "@nuxt/eslint-config": "^1.15.1",
+    "@types/node": "^25.3.3",
+    "eslint": "^10.0.2",
+    "prettier": "^3.8.1",
     "typescript": "^5.9.3"
   },
   "exports": {
@@ -20,11 +20,11 @@
   },
   "main": "./index.ts",
   "peerDependencies": {
-    "rollup-plugin-visualizer": "^5.12.0",
+    "rollup-plugin-visualizer": "^7.0.0",
     "vite-plugin-checker": "^0.12.0",
     "vite-plugin-inspect": "^11.3.3",
-    "vite-plugin-vue-devtools": "^7.0.0",
-    "vue-tsc": "^2.0.0"
+    "vite-plugin-vue-devtools": "^8.0.6",
+    "vue-tsc": "^3.2.4"
   },
   "private": true,
   "scripts": {

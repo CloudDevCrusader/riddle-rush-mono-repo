@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { goHome } = useNavigation()
-const { t } = usePageSetup()
 
 const progress = ref(0)
 const canSkip = ref(false)
@@ -63,7 +62,7 @@ onBeforeUnmount(() => {
             <div class="loading-bar__fill" :style="{ width: `${progress}%` }" />
           </div>
         </div>
-        <p class="loading-text">{{ t('common.loading') }}</p>
+        <p class="loading-text">LOADING....</p>
       </div>
     </div>
   </div>

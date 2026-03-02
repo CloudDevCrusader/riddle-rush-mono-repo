@@ -1,7 +1,10 @@
+import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants'
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 import { filterSsrPlugins } from './utils/filter-ssr-plugins'
 import { withTrailingSlash } from 'ufo'
+import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema'
+import type { Manifest as ViteBundleManifest } from 'vue-bundle-renderer'
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -24,23 +27,22 @@ const resolvedBaseUrl = (() => {
 })()
 
 // Helper function to filter out problematic i18n plugins
-function filterProblematicPlugins(app: any) {
+function filterProblematicPlugins(app: NuxtAppSchema) {
   if (app.plugins && Array.isArray(app.plugins)) {
     const originalLength = app.plugins.length
-    app.plugins = app.plugins.filter((plugin: any) => {
-      const src = typeof plugin === 'string' ? plugin : plugin.src || plugin
+    app.plugins = app.plugins.filter((plugin: NuxtPlugin) => {
+      const src = plugin.src
       if (src && typeof src === 'string') {
-        // Remove problematic plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
+        // Remove SSR-only plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
+        // NOTE: Do NOT filter the preload plugin — it's required to load locale messages
         const isProblematicPlugin =
           src.includes('switch-locale-path-ssr') ||
           src.includes('i18n-ssr') ||
           src.includes('locale-detector-ssr') ||
           src.includes('route-locale-detect') ||
           src.includes('ssg-detect') ||
-          (src.includes('preload') && src.includes('i18n')) || // i18n:plugin:preload also causes circular dependency
           src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/preload')
+          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
 
         if (isProblematicPlugin) {
           // Only log in development to avoid cluttering production logs
@@ -93,9 +95,9 @@ export default defineNuxtConfig({
     dirs: ['stores', 'composables'],
   },
   devtools: {
-    enabled: process.env.NODE_ENV === 'development',
+    enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     timeline: {
-      enabled: process.env.NODE_ENV === 'development',
+      enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     },
   },
 
@@ -141,6 +143,12 @@ export default defineNuxtConfig({
       gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
       gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
       gtagId: process.env.GTAG_ID || '',
+      // Feature flags - simple booleans (override via NUXT_PUBLIC_FEATURE_ANSWER_INPUT=false)
+      featureAnswerInput: process.env.NUXT_PUBLIC_FEATURE_ANSWER_INPUT !== 'false',
+      // Game configuration - env vars override shared constants
+      minPlayers: Number(process.env.NUXT_PUBLIC_MIN_PLAYERS) || MIN_PLAYERS,
+      maxPlayers: Number(process.env.NUXT_PUBLIC_MAX_PLAYERS) || MAX_PLAYERS,
+      defaultPlayers: Number(process.env.NUXT_PUBLIC_DEFAULT_PLAYERS) || DEFAULT_PLAYERS,
       // Additional variables with safe Terraform fallback
       ...((): Record<string, string> => {
         const terraform = getTerraformOutputsFromEnv()
@@ -182,7 +190,6 @@ export default defineNuxtConfig({
         },
       },
       '/**': {
-        isr: 60,
         headers: {
           'cache-control': 'public, max-age=0, must-revalidate',
         },
@@ -193,7 +200,6 @@ export default defineNuxtConfig({
         },
       },
       '/assets/**': {
-        isr: true,
         headers: {
           'cache-control': 'public, max-age=31536000, immutable',
         },
@@ -217,18 +223,30 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // Resolve bare SCSS imports like `@use 'assets/scss/...'` during Vercel builds
+          // Sass @use doesn't understand Vite aliases (@/, ~/), so we add the app root
+          // as a load path so `assets/scss/...` resolves relative to the app directory
+          loadPaths: [new URL('.', import.meta.url).pathname],
+        },
+      },
+    },
     resolve: {
       preserveSymlinks: false, // Keep default behavior
       dedupe: ['vue'], // Deduplicate Vue to ensure a single instance
     },
     plugins: [
       // Filter out SSR plugins at build time (must be first)
+      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
+      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       ...(process.env.NODE_ENV === 'production'
-        ? (getBuildPlugins({ isDev: false }) as unknown as Plugin[])
-        : (getDevPlugins({ isDev: true }) as unknown as Plugin[])),
+        ? getBuildPlugins({ isDev: false })
+        : getDevPlugins({ isDev: true })),
     ],
     optimizeDeps: {
       include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
@@ -295,15 +313,14 @@ export default defineNuxtConfig({
         console.warn('Development mode: Ensuring proper plugin initialization order')
       }
     },
-    // Filter out problematic i18n plugins - use multiple hooks to ensure it works
-    'app:resolve': (app: any) => {
+    // Filter out problematic i18n plugins at app resolution stage
+    'app:resolve': (app: NuxtAppSchema) => {
       filterProblematicPlugins(app)
     },
-    'build:manifest': (manifest: any) => {
-      // Also filter at build manifest stage
-      if (manifest.app && manifest.app.plugins) {
-        filterProblematicPlugins(manifest.app)
-      }
+    // build:manifest receives the Vite/Webpack bundle manifest (asset map), not app plugins —
+    // plugin filtering is handled in app:resolve above. This hook is kept as a no-op placeholder.
+    'build:manifest': (_manifest: ViteBundleManifest) => {
+      // Plugin filtering is handled in app:resolve; bundle manifest has no plugin list.
     },
   },
 
@@ -319,21 +336,45 @@ export default defineNuxtConfig({
   },
 
   i18n: {
-    langDir: 'locales',
+    // @nuxtjs/i18n v10 resolves langDir and vueI18n relative to <rootDir>/<restructureDir>/
+    // The default restructureDir is "i18n", so all paths would be prefixed with i18n/.
+    // Set to '.' so paths resolve from the project root directly.
+    restructureDir: '.',
+    // langDir is intentionally omitted: messages are statically bundled via vueI18n/i18n.config.ts.
+    // Adding langDir + file properties would trigger runtime lazy-loading which conflicts with
+    // the static bundle and causes intermittent missing key race conditions (especially with PWA).
+    vueI18n: 'translations/i18n.config',
     defaultLocale: 'de',
     locales: [
-      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
-      { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
+      { code: 'en', iso: 'en-US', name: 'English' },
+      { code: 'de', iso: 'de-DE', name: 'Deutsch' },
     ],
     strategy: 'no_prefix',
+    // Completely disable browser language detection - handled by client plugin
     detectBrowserLanguage: {
       useCookie: true,
       fallbackLocale: 'en',
     },
+    // Disable the problematic SSR switch locale path plugin
     skipSettingLocaleOnNavigate: true,
+    // Completely disable SSR features for client-only app
+    differentDomains: false,
+    // Disable SSR-specific compilation
     compilation: {
       strictMessage: false,
       escapeHtml: false,
+    },
+    // Try to disable SSR plugin loading by using custom locale detector
+    // This might prevent SSR plugins from being registered
+    experimental: {
+      localeDetector: undefined, // Disable SSR locale detector
+    },
+    // Bundle configuration - ensure messages are included
+    bundle: {
+      compositionOnly: false,
+      runtimeOnly: false,
+      fullInstall: true,
+      dropMessageCompiler: false,
     },
   },
 
@@ -348,15 +389,6 @@ export default defineNuxtConfig({
       lg: 1024,
       xl: 1280,
       xxl: 1536,
-    },
-    // Explicitly use sharp for image processing
-    sharp: {
-      enabled: true,
-      // Advanced sharp options for better compression
-      quality: 80,
-      progressive: true,
-      withoutEnlargement: true,
-      withoutReduction: false,
     },
     providers: {
       ipx: {
@@ -494,13 +526,15 @@ export default defineNuxtConfig({
     workbox: {
       navigateFallback: '/',
       navigateFallbackAllowlist: [/^\/(?!api\/)/],
-      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
+      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2,json}'],
       // Allow larger files in debug/development builds (unminified code with sourcemaps)
       maximumFileSizeToCacheInBytes: isDebugBuild || isDev ? 5 * 1024 * 1024 : 2 * 1024 * 1024,
       // Performance: Optimize cache strategies
       cleanupOutdatedCaches: true,
       skipWaiting: true,
       clientsClaim: true,
+      // Runtime caching configuration
+      // Note: Cache names are dynamically managed by pwa-cache-version.client.ts plugin
       runtimeCaching: [
         {
           urlPattern: /^\/$/,
@@ -551,10 +585,6 @@ export default defineNuxtConfig({
           },
         },
       ],
-    },
-    devOptions: {
-      enabled: true,
-      type: 'module',
     },
   },
 

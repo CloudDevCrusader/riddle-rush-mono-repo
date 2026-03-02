@@ -1,334 +1,297 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-01-31
+**Analysis Date:** 2026-02-13
 
 ## Naming Patterns
 
 **Files:**
 
-- Vue components: PascalCase (e.g., `Button.vue`, `FortuneWheel.vue`) in `components/`
-- Composables: camelCase prefixed with `use` (e.g., `useLogger.ts`, `useIndexedDB.ts`) in `composables/`
-- Stores: camelCase (e.g., `game.ts`, `settings.ts`) in `stores/`, exported with `useStoreName()` convention
-- Utilities: camelCase (e.g., `constants.ts`) in `utils/`
-- Types: PascalCase interface names, plural for type collections (e.g., `GameSession`, `Player`) in `types/game.ts`
-- Test files: match source with `.spec.ts` or `.test.ts` suffix (e.g., `use-logger.spec.ts`, `game-store.spec.ts`)
+- Composables: `use{Feature}.ts` — camelCase with `use` prefix (e.g., `useToast.ts`, `useLocalStorage.ts`, `usePageSwipe.ts`)
+- Stores: `{name}.ts` — lowercase (e.g., `game.ts`, `settings.ts`)
+- Vue components: PascalCase `.vue` files (e.g., `GameHeader.vue`, `FortuneWheel.vue`, `SplashScreen.vue`)
+- Base components: `Base/{Name}.vue` — reusable primitives (e.g., `Base/Button.vue`, `Base/Modal.vue`, `Base/ImageButton.vue`)
+- Plugins: `{NN}.{name}.client.ts` — numbered prefix for load ordering, `.client.ts` suffix for client-only (e.g., `00.init-plugin-system.client.ts`)
+- Test files: `{use-feature}.spec.ts` — kebab-case matching the composable name (e.g., `use-toast.spec.ts`, `game-store.spec.ts`)
+- Type definitions: `{domain}.ts` — lowercase (e.g., `game.ts` in `packages/types/src/`)
+- Constants: `constants.ts` — single file in shared package
+- Routes: `routes.ts` — single file in shared package
 
 **Functions:**
 
-- camelCase (e.g., `fetchCategories()`, `submitAttempt()`)
-- Async functions use async/await, no callback patterns
-- Private utility functions declared with underscore or within module scope
-- Handler functions prefixed with `handle` (e.g., `handleClick()`, `handleChange()`)
-- Getter methods prefixed with `get` or exposed as properties in stores
+- Composables: `use{Feature}` — camelCase with `use` prefix (e.g., `useToast()`, `useLogger()`, `useForm()`)
+- Store definitions: `use{Name}Store` — follows Pinia convention (e.g., `useGameStore`)
+- Event handlers: `handle{Action}` — camelCase with `handle` prefix (e.g., `handleClick`, `handleChange`, `handleBlur`, `handleSubmit`)
+- Validation rules: `{ruleName}` — camelCase (e.g., `required`, `minLength`, `maxLength`, `email`)
+- Utility functions: camelCase (e.g., `randomLetter()`, `cloneSessionForHistory()`, `getRandomCategory()`)
 
 **Variables:**
 
-- camelCase for all local variables (e.g., `currentSession`, `playerName`)
-- Constants: UPPERCASE_SNAKE_CASE, centralized in `utils/constants.ts` and shared packages
-- Boolean variables prefixed with `is`, `has`, `should`, `can` (e.g., `hasActiveSession`, `isOnline`, `canInstall`)
-- Ref/reactive variables: use descriptive camelCase (e.g., `showMenu`, `isLoading`)
+- Reactive state: camelCase (e.g., `isSubmitting`, `toasts`, `currentSession`)
+- Constants: `UPPER_SNAKE_CASE` (e.g., `ALPHABET`, `SCORE_PER_CORRECT_ANSWER`, `DEFAULT_DISPLAYED_CATEGORIES`)
+- Mock variables in tests: `mock{Name}` prefix (e.g., `mockSaveGameSession`, `mockGetGameHistory`, `fetchMock`)
+- Private/internal: `_` prefix in unused parameters via eslint config (`argsIgnorePattern: '^_'`)
+- Booleans: `is{State}` or `has{State}` prefix (e.g., `isOnline`, `isSubmitting`, `hasActiveSession`, `categoriesLoaded`)
 
 **Types:**
 
-- Interface names: PascalCase (e.g., `GameSession`, `GameAttempt`, `Props`)
-- Type names: PascalCase (e.g., `GameState`, `BeforeInstallPromptEvent`)
-- Use interfaces for objects and props, type for unions and primitives
-- Generics: single letter or descriptive (e.g., `T`, `K`, `GameSessionType`)
+- Interfaces: PascalCase with `interface` keyword — no `I` prefix (e.g., `interface Category`, `interface GameSession`, `interface Player`)
+- Type aliases: PascalCase with `type` keyword (e.g., `type ToastType = 'success' | 'error' | 'info' | 'warning'`)
+- Props interfaces: `Props` — local to component (defined inline in `<script setup>`)
+- Generic type params: single uppercase letter (e.g., `<T>`, `<T extends Record<string, unknown>>`)
 
 ## Code Style
 
-**Formatting:**
+**Formatting (Prettier):**
 
-- Tool: Prettier with custom config in `.prettierrc`
-- Tab width: 2 spaces
-- Print width: 100 characters
-- Single quotes: enforced
-- Semicolons: never (statements don't end with semicolons)
-- Trailing commas: es5 (arrays/objects but not function params)
-- Bracket spacing: true (e.g., `{ foo: 'bar' }`)
-- Arrow function parens: always (e.g., `(a) => a + 1`)
-- Line endings: LF
-- Vue template script/style: not indented
+- Tool: Prettier (`.prettierrc` at root)
+- No semicolons (`"semi": false`)
+- Single quotes (`"singleQuote": true`)
+- 2-space indentation (`"tabWidth": 2`)
+- Trailing commas ES5 (`"trailingComma": "es5"`)
+- 100 char print width (`"printWidth": 100`)
+- Bracket spacing enabled (`"bracketSpacing": true`)
+- Always arrow parens (`"arrowParens": "always"`)
+- LF line endings (`"endOfLine": "lf"`)
+- No Vue script/style indentation (`"vueIndentScriptAndStyle": false`)
 
-**Linting:**
+**Linting (ESLint):**
 
-- Tool: ESLint with Nuxt config in `eslint.config.mjs`
-- Key rules enforced:
-  - `no-console`: warn (only `console.warn` and `console.error` allowed) - use `useLogger()` instead
-  - `prefer-const`: error (use const over let)
-  - `no-var`: error (use const/let only)
-  - `eqeqeq`: error always (use === not ==)
-  - `@typescript-eslint/no-explicit-any`: warn (avoid `any`, use generics)
-  - `@typescript-eslint/no-unused-vars`: error with pattern ignoring leading underscore (e.g., `_unused`)
-  - `vue/multi-word-component-names`: off (single-word components allowed)
-- Test files (tests/\*_/_.ts) have relaxed rules: no `no-console`, no `@typescript-eslint/no-explicit-any` restrictions
+- Tool: `@nuxt/eslint-config/flat` with stylistic and tooling features
+- Config files: `eslint.config.mjs` (root), `apps/game/eslint.config.mjs` (app-level overrides)
+- Key root rules:
+  - `@typescript-eslint/no-explicit-any`: `warn`
+  - `@typescript-eslint/no-unused-vars`: `error` (ignores `^_` patterns)
+  - `no-console`: `warn` (allows `console.warn` and `console.error`)
+  - `prefer-const`: `error`
+  - `no-var`: `error`
+  - `eqeqeq`: `error` (strict equality, except null comparisons)
+  - `@stylistic/semi`: `error` (never)
+  - `@stylistic/quotes`: `error` (single)
+  - `@stylistic/comma-dangle`: `error` (always-multiline)
+  - `@stylistic/brace-style`: `error` (1tbs)
+- Game app overrides (`apps/game/eslint.config.mjs`): Disables most `@stylistic/*` and `vue/*` formatting rules — Prettier handles formatting instead
+- Test file overrides: `no-console: 'off'`, `@typescript-eslint/no-explicit-any: 'off'`
+
+**Pre-commit Hooks:**
+
+- Husky + lint-staged (`.lintstagedrc.json`)
+- `*.{ts,tsx,vue}` → `eslint --fix` + `prettier --write`
+- `*.{js,jsx}` → `eslint --fix` + `prettier --write`
+- `*.{json,md,yml,yaml}` → `prettier --write`
+- `*.{css,scss}` → `prettier --write`
+
+**Dependency Management:**
+
+- Syncpack (`.syncpackrc.json`) enforces version consistency:
+  - Workspace packages (`@riddle-rush/**`): exact versions (no range)
+  - Other dependencies: caret range (`^`)
+- All workspace packages referenced as `workspace:*` in package.json
 
 ## Import Organization
 
 **Order:**
 
-1. Vue and framework imports (`vue`, `vue-router`, `pinia`, `@nuxtjs/i18n`)
-2. External packages (`idb`, `date-fns`, etc.)
-3. Internal imports from alias paths (`~`, `@`)
-   - Composables: `import { useX } from '~/composables/useX'`
-   - Stores: `import { useXStore } from '~/stores/x'`
-   - Types: `import type { X, Y } from '@riddle-rush/types/game'`
-   - Constants: `import { CONST_NAME } from '@riddle-rush/shared/constants'`
-4. Relative imports only when necessary (prefer alias paths)
+1. Node built-ins (`import { fileURLToPath, URL } from 'node:url'`)
+2. External packages (`import { defineStore } from 'pinia'`, `import { faker } from '@faker-js/faker'`)
+3. Workspace packages (`import { ALPHABET } from '@riddle-rush/shared/constants'`, `import type { Category } from '@riddle-rush/types/game'`)
+4. Local/relative imports (`import { useIndexedDB } from '../composables/useIndexedDB'`, `import { createCategoryList } from '../utils/factories'`)
 
 **Path Aliases:**
 
-- `~` or `@`: root of `apps/game/` directory
-- `@riddle-rush/shared/*`: shared package constants
-- `@riddle-rush/types/*`: type definitions package
+- `~` → project root (used in composable imports: `~/composables/useIndexedDB`)
+- `@` → project root (alternative alias, same target)
+- `@riddle-rush/shared` → `packages/shared` workspace package
+- `@riddle-rush/types` → `packages/types` workspace package
+- `@riddle-rush/config` → `packages/config` workspace package
 
-**Example:**
+**Type Imports:**
 
-```typescript
-import { defineStore } from 'pinia'
-import { useIndexedDB } from '~/composables/useIndexedDB'
-import { useLogger } from '~/composables/useLogger'
-import type { GameSession, Player } from '@riddle-rush/types/game'
-import { SCORE_PER_CORRECT_ANSWER } from '@riddle-rush/shared/constants'
-```
+- Use `import type { ... }` for type-only imports (e.g., `import type { Category, GameSession } from '@riddle-rush/types/game'`)
+- Separate type imports from value imports
+
+**Auto-imports:**
+
+- Vue (`ref`, `reactive`, `computed`, `watch`, etc.) — auto-imported via `unplugin-auto-import`
+- Vue Router (`useRoute`, `useRouter`) — auto-imported
+- Pinia (`defineStore`, `storeToRefs`) — auto-imported
+- Nuxt composables (`useRuntimeConfig`, `useNuxtApp`, `navigateTo`, `defineNuxtPlugin`) — auto-imported by Nuxt
 
 ## Error Handling
 
 **Patterns:**
 
-- Use `useLogger()` composable for all logging (in `composables/useLogger.ts`)
-- Wrap async operations in try-catch blocks
-- Log errors with context: `logger.error('Operation failed', error, { userId, action })`
-- Return null or empty collections on error, don't throw unless critical
-- For game-critical errors: use `toast` to show user-facing message
-- IndexedDB failures: log but continue (database is non-critical for MVP)
-
-**Example from game store:**
-
-```typescript
-async loadFromDB() {
+- Try/catch with graceful fallbacks — never let errors crash the UI:
+  ```typescript
   try {
-    const { getGameSession } = useIndexedDB()
-    const session = await getGameSession()
-    if (session) {
-      this.currentSession = session
-    }
-  } catch (error) {
-    const logger = useLogger()
-    logger.error('Error loading from IndexedDB:', error)
-    // Continue without persisted data
+    await onSubmit(values as T)
+    return true
+  } catch {
+    return false
+  } finally {
+    isSubmitting.value = false
   }
-}
-```
+  ```
+- Null/undefined guards with optional chaining: `store.currentSession?.category.name`
+- Non-null assertion (`!`) used sparingly and only when state is guaranteed (e.g., `store.currentSession!`)
+- Return `null` for "not found" cases (e.g., `getCategoryById` returns `null`, not `undefined`)
+- Throw descriptive `Error` objects for truly exceptional cases: `throw new Error('Failed to load game session')`
+- Async error boundaries: wrap async store actions in try/catch, log with `useLogger`, continue gracefully
+- IndexedDB errors: caught and logged, never propagated to UI
+
+**Structured Logging:**
+
+- Use `useLogger()` composable instead of `console.log` in production code
+- Logger provides `log`, `warn`, `error`, `debug`, `info` methods
+- Errors include context: timestamp, environment, appVersion, URL, userAgent
+- Development: all levels output to console
+- Production: only `warn` and `error` are tracked; sync to external monitoring
 
 ## Logging
 
-**Framework:** `useLogger()` composable wraps console with structured logging
+**Framework:** `useLogger` composable (`apps/game/composables/useLogger.ts`)
 
 **Patterns:**
 
-- Always use `const { log, warn, error, debug, info } = useLogger()`
-- Messages must be prefixed with context: `[LOG]`, `[WARN]`, `[ERROR]`, `[DEBUG]`, `[INFO]`
-- Log level defaults:
-  - `log()`: development only
-  - `warn()`: development only (also synced to error service in production)
-  - `error()`: always synced with context (timestamp, environment, appVersion, URL, userAgent)
-  - `debug()`: development only
-  - `info()`: development only
-- Error logs include context object with userId, action, etc.
-- Production builds remove console statements automatically
-
-**Example:**
-
-```typescript
-const { log, error } = useLogger()
-log('Game started')
-error('Category fetch failed', fetchError, {
-  userId: 'player1',
-  action: 'fetchCategories',
-})
-```
+- Import and destructure: `const { log, warn, error, debug } = useLogger()`
+- Error logging with context: `error('Failed to load', err, { component: 'GameStore' })`
+- Use `console.warn`/`console.error` directly only where `useLogger` is unavailable (e.g., setup files)
+- ESLint enforces: `no-console: warn` with `allow: ['warn', 'error']` — use `useLogger` for `log`/`debug`/`info`
 
 ## Comments
 
 **When to Comment:**
 
-- Complex algorithms or business logic (e.g., player scoring calculation)
-- Non-obvious workarounds (e.g., JSON clone instead of structural clone)
-- Cross-cutting concerns that aren't obvious from reading code
-- Do NOT comment obvious code (e.g., `// increment counter` above `i++`)
+- JSDoc block comments (`/** */`) on exported functions and composables describing purpose
+- Inline comments for non-obvious logic or workarounds
+- `// TODO:` for known issues to fix later (especially CI-related test skips)
+- `@ts-expect-error` with explanation when accessing internal APIs in tests
 
 **JSDoc/TSDoc:**
 
-- Used for composables, stores, and utility functions
-- Function comments document: purpose, params, return type
-- Include example usage for public APIs
-
-**Example:**
-
-```typescript
-/**
- * Structured logging utility for the game application
- * Provides consistent logging with levels and context
- *
- * @example
- * const { log, error } = useLogger()
- * error('Failed to load', err, { userId: '123' })
- */
-export const useLogger = () => { ... }
-```
+- Used on composable entry points and exported utility functions:
+  ```typescript
+  /**
+   * Composable for form handling with Vue 3 Composition API
+   * Provides validation, submission, and error handling
+   */
+  export function useForm<T extends Record<string, unknown>>(...) { }
+  ```
+- Used on individual methods within composables:
+  ```typescript
+  /**
+   * Validate a single field
+   */
+  const validateField = (fieldName: keyof T): boolean => {}
+  ```
+- Used on factory functions in tests:
+  ```typescript
+  /**
+   * Creates realistic player data for testing
+   */
+  export const createPlayer = (overrides: Partial<Player> = {}): Player => ({})
+  ```
 
 ## Function Design
 
-**Size:**
-
-- Keep functions small (preferably under 30 lines)
-- Extract complex logic to separate functions
-- One responsibility per function
+**Size:** Composables are typically 30–100 lines. Store definitions can be longer (200–400 lines) but are broken into logical sections (state, getters, actions).
 
 **Parameters:**
 
-- Maximum 3 parameters, use object destructuring for more
-- Use TypeScript interfaces for complex parameter objects
-- Provide default values where appropriate
+- Use options objects for 3+ parameters: `options: { timeout?: number; checkAssets?: boolean }`
+- Use `Partial<T>` overrides pattern for factory functions: `createCategory(overrides: Partial<Category> = {})`
+- Default parameters via `=` in function signature (e.g., `duration = 3000`)
 
 **Return Values:**
 
-- Be explicit about return types (use type annotations)
-- Async functions return `Promise<T>`
-- Void functions for state mutations
-- Use nullish returns for optional results (null/undefined, empty arrays/objects)
-
-**Example:**
-
-```typescript
-async submitPlayerAnswer(
-  playerId: string,
-  answer: string
-): Promise<void> {
-  if (!this.currentSession) return
-  // Implementation
-}
-```
+- Composables return an object of reactive refs and functions: `return { toasts, show, remove, clear }`
+- Use `readonly()` to prevent external mutation of state: `return { values: readonly(values), errors: readonly(errors) }`
+- Use `computed()` for derived state in return values: `isValid: computed(() => ...)`
+- Boolean returns for validation: `validateField() → boolean`
+- Store actions return `void` or the entity they created
 
 ## Module Design
 
 **Exports:**
 
-- Named exports preferred for functions and types
-- Default exports for Vue components and stores
-- Re-export types from shared packages
+- Named exports only — no default exports (except Vue components and config files)
+- Composables: `export function useToast()` or `export const useLogger = () =>`
+- Types: `export interface Category`, `export type ToastType`
+- Constants: `export const ALPHABET = ...`
+- Factories: `export const createCategory = (...) => ...`
 
 **Barrel Files:**
 
-- `composables/index.ts` or similar may aggregate related exports
-- Used when multiple related utilities need coordinated imports
-- Keep barrel files shallow (2-3 levels max)
+- Used in E2E helpers: `tests/e2e/helpers/index.ts` re-exports all helpers
+- Used in shared packages: `packages/types/src/index.ts`, `packages/shared/src/index.ts`
+- NOT used in composables directory — each composable is imported directly by path
 
-**Pinia Stores:**
-
-- One store per file (e.g., `game.ts` defines `useGameStore()`)
-- Stores include: state, getters, actions
-- Actions handle side effects (IndexedDB saves, API calls)
-- Getters compute derived state
-- No business logic in components; delegate to stores
-
-**Composables:**
-
-- Encapsulate reusable logic (e.g., form handling, data fetching)
-- Can be called multiple times to create independent instances
-- Return object with methods and computed values
-- Document with JSDoc
-
-**Example composable:**
-
-```typescript
-export const usePageSetup = () => {
-  const router = useRouter()
-  const { t } = useI18n()
-  const config = useRuntimeConfig()
-
-  const goHome = () => router.push('/')
-
-  return { router, t, goHome }
-}
-```
-
-## Vue Component Patterns
+## Vue Component Conventions
 
 **Script Setup:**
 
-- Use `<script setup lang="ts">` for all components
-- Define Props with `defineProps<Props>()` and interface
-- Define emits with `defineEmits<Events>()`
-- Use `withDefaults()` for prop defaults
+- Always use `<script setup lang="ts">`
+- Define props with `interface Props` + `withDefaults(defineProps<Props>(), { ... })`
+- Define emits with typed `defineEmits<{ eventName: [payload: Type] }>()`
+- Use `computed()` for derived template values (e.g., CSS class bindings)
 
 **Template:**
 
-- Use v-if/v-show appropriately (v-if removes from DOM, v-show hides with CSS)
-- Bind event handlers with camelCase: `@click`, `@change`
-- Use `:class` with computed classes for dynamic styling
-- Prefer scoped styles for component isolation
+- Use CSS class selectors, not inline styles
+- BEM-like class naming: `base-button`, `base-button--primary`, `base-button--disabled`
+- Slot-based composition for flexible components
 
-**Props Interface:**
+**Styles:**
 
-```typescript
-interface Props {
-  variant?: 'primary' | 'secondary'
-  size?: 'sm' | 'md' | 'lg'
-  disabled?: boolean
-}
+- Always `<style scoped>` — scoped CSS by default
+- Use CSS custom properties (design tokens) for all values:
+  - Spacing: `var(--spacing-sm)`, `var(--spacing-md)`, `var(--spacing-lg)`, `var(--spacing-xl)`
+  - Colors: `var(--color-primary)`, `var(--color-danger)`, `var(--color-white)`
+  - Typography: `var(--font-display)`, `var(--font-size-md)`, `var(--font-weight-bold)`
+  - Layout: `var(--radius-md)`, `var(--transition-base)`
+- Mobile-responsive with min-touch-target of 44px (`min-height: 44px` on interactive elements)
+- `-webkit-tap-highlight-color: transparent` on buttons for mobile
+- `user-select: none` on interactive elements
 
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'primary',
-  size: 'md',
-  disabled: false,
-})
-```
+## Pinia Store Conventions
 
-## Reactive Data Management
+**Definition:**
 
-**Use Pinia stores for:**
+- Use Options API pattern with `defineStore('name', { state, getters, actions })`:
+  ```typescript
+  export const useGameStore = defineStore('game', {
+    state: (): GameState => ({ ... }),
+    getters: { ... },
+    actions: { ... },
+  })
+  ```
+- State typed via explicit return type on state function: `state: (): GameState => ({...})`
+- Import composables at top of store file for use in actions
 
-- Game state (current session, players, scores)
-- Settings and user preferences
-- Global application state
+**State Initialization:**
 
-**Use component-local reactive for:**
+- `null` for optional references (e.g., `currentSession: null`)
+- Empty arrays for collections (e.g., `history: []`, `categories: []`)
+- Sensible defaults for primitives (e.g., `isOnline: true`, `displayedCategoryCount: 9`)
 
-- Form inputs and UI state
-- Component-specific animations
-- Temporary UI flags (showMenu, isLoading)
+## Workspace Package Conventions
 
-**Example - component-local:**
+**Shared Constants (`packages/shared/src/constants.ts`):**
 
-```typescript
-const showMenu = ref(false)
-const toggleMenu = () => {
-  showMenu.value = !showMenu.value
-}
-```
+- `UPPER_SNAKE_CASE` naming
+- Exported individually as named exports
+- Imported as: `import { ALPHABET, SCORE_PER_CORRECT_ANSWER } from '@riddle-rush/shared/constants'`
 
-**Example - store-managed:**
+**Shared Types (`packages/types/src/game.ts`):**
 
-```typescript
-const gameStore = useGameStore()
-// gameStore.currentSession is reactive
-// Update via actions: gameStore.submitAttempt()
-```
+- All game-related interfaces in one file
+- Import as: `import type { Category, GameSession } from '@riddle-rush/types/game'`
+- No implementation code — types only
 
-## Best Practices Checklist
+**Shared Routes (`packages/shared/src/routes.ts`):**
 
-- Always use `const` (never `var`, prefer `const` over `let`)
-- Use type annotations for function returns and complex variables
-- Import types with `type` keyword: `import type { X } from 'module'`
-- Use nullish coalescing (`??`) over logical OR for falsy values
-- Use optional chaining (`?.`) to safely access nested properties
-- Avoid nested ternaries; use if/else or switch statements
-- Use descriptive variable names over single letters (except loop counters)
-- Group related imports together
-- Always handle promises with async/await, not `.then()`
+- Type-safe route constants
+- Import as: `import { ROUTES } from '@riddle-rush/shared/routes'`
 
 ---
 
-_Convention analysis: 2026-01-31_
+_Convention analysis: 2026-02-13_

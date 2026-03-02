@@ -99,7 +99,7 @@ export class StorageService {
         }
       }
 
-      keysToRemove.forEach((key) => localStorage.removeItem(key))
+      keysToRemove.forEach(key => localStorage.removeItem(key))
       return true
     } catch (error) {
       console.error('Error clearing storage:', error)

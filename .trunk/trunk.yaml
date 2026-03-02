@@ -72,28 +72,28 @@ lint:
 
   enabled:
     - taplo@0.10.0
-    - ruff@0.14.14
+    - ruff@0.15.4
     - dotenv-linter@4.0.0
-    - actionlint@1.7.10
-    - eslint@9.39.2
+    - actionlint@1.7.11
+    - eslint@10.0.2
     - git-diff-check
     - hadolint@2.14.0
     - markdownlint@0.47.0
-    - oxipng@10.0.0
+    - oxipng@10.1.0
     - prettier@3.8.1
-    - renovate@43.0.9
+    - renovate@43.46.3
     - shellcheck@0.11.0
     - shfmt@3.6.0
-    - stylelint@17.1.0
+    - stylelint@17.4.0
     - svgo@4.0.0
-    - tflint@0.60.0
+    - tflint@0.61.0
     - yamllint@1.38.0
     # Python linting tools
     - ruff@0.6.4
     - black@26.1.0
-    - isort@7.0.0
+    - isort@8.0.1
     - mypy@1.19.1
-    - bandit@1.9.3
+    - bandit@1.9.4
 
   # Configure specific linters
   definitions:

@@ -2,22 +2,21 @@
 phase: 11-modal-dialogs
 plan: 02
 subsystem: ui
-tags: [vue, modal, quit-modal, v-model, game-button, composition]
+tags: [vue, modal, button, scss, quit-modal]
 
 # Dependency graph
 requires:
-  - phase: 11-01
-    provides: GameModal dismissal props and GameButton danger variant
+  - phase: 11-modal-dialogs
+    plan: 01
+    provides: GameModal dismissal control props and GameButton danger variant
 provides:
-  - QuitModal with GameModal composition pattern
-  - v-model pattern for modal visibility
-  - Disabled dismissal (no backdrop click, no escape key)
-affects: [11-03]
+  - QuitModal refactored to GameModal composition with danger variant
+affects: []
 
 # Tech tracking
 tech-stack:
   added: []
-  patterns: [modal composition, v-model pattern]
+  patterns: [component composition, v-model pattern, event forwarding]
 
 key-files:
   modified:
@@ -25,21 +24,23 @@ key-files:
     - apps/game/pages/game/[[gameId]].vue
 
 key-decisions:
-  - 'Use v-model pattern (modelValue) instead of visible prop for modal visibility'
-  - 'Emit update:modelValue alongside confirm/cancel for proper two-way binding'
+  - 'QuitModal composes from GameModal with variant=danger'
+  - 'Props changed from visible to modelValue (v-model pattern)'
+  - 'NO button uses danger variant (red), YES button uses primary variant (green)'
+  - 'Both backdrop and escape dismissal disabled for forced interaction'
 
 patterns-established:
-  - 'Modal composition: GameModal as base with variant and dismissal props'
-  - 'v-model pattern: modelValue + update:modelValue for parent-child sync'
+  - 'Modal composition: Specialized modals wrap GameModal with specific variant and props'
+  - 'Event forwarding: Emit both specific events (confirm/cancel) and update:modelValue'
 
 # Metrics
 duration: 3min
-completed: 2026-02-03
+completed: 2026-02-02
 ---
 
-# Phase 11 Plan 02: Quit Modal Summary
+# Phase 11 Plan 02: QuitModal Refactor Summary
 
-**QuitModal refactored to compose from GameModal with danger variant, v-model pattern, and disabled dismissal for confirmed quit actions**
+**QuitModal refactored to compose from GameModal with danger variant, disabled dismissal, and styled YES/NO buttons**
 
 ## Performance
 
@@ -51,36 +52,33 @@ completed: 2026-02-03
 
 ## Accomplishments
 
-- QuitModal now uses GameModal as base component with `variant="danger"`
-- Dismissal disabled via `closeOnBackdrop={false}` and `closeOnEscape={false}`
-- NO button uses `variant="danger"` (red) for visual warning
-- YES button uses `variant="primary"` (green) for confirmation
-- v-model pattern enables cleaner parent-child binding
-- Game page updated to use v-model for QuitModal visibility
+- QuitModal now composes from GameModal with `variant="danger"` (red header)
+- Props changed from `visible` to `modelValue` for v-model pattern
+- NO button styled as danger (red), YES button styled as primary (green)
+- Both `closeOnBackdrop` and `closeOnEscape` set to false for forced interaction
+- Game page updated to use v-model binding for QuitModal
+- Custom overlay/modal CSS removed — GameModal handles it
 
 ## Task Commits
 
 Each task was committed atomically:
 
-1. **Task 1: Refactor QuitModal to use GameModal composition** - `13e0ba2` (refactor)
-   - Includes both template/script refactoring and CSS styling in single commit
-
-**Note:** Tasks 1 and 2 were combined in a single commit as the CSS styling was part of the complete refactor.
+1. **Task 1+2: Refactor QuitModal to GameModal composition + styling** - `13e0ba2` (refactor)
 
 ## Files Created/Modified
 
-- `apps/game/components/QuitModal.vue` - Replaced custom modal with GameModal composition, v-model pattern, and scoped CSS for content
-- `apps/game/pages/game/[[gameId]].vue` - Updated to use v-model for QuitModal, simplified event handlers
+- `apps/game/components/QuitModal.vue` - Replaced custom implementation with GameModal composition
+- `apps/game/pages/game/[[gameId]].vue` - Updated QuitModal binding from `:visible` to `v-model`
 
 ## Decisions Made
 
-- Used v-model pattern (modelValue prop) instead of visible prop for consistency with Vue 3 conventions
-- Emit both specific events (confirm/cancel) and update:modelValue for flexibility
-- Combined GameButton danger/primary variants for clear NO/YES visual distinction
+- v-model pattern replaces visible prop for consistency with Vue 3 conventions
+- Danger variant gives red header matching QUIT GAME mockup
+- Both confirm and cancel events emitted alongside update:modelValue for flexibility
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+None — plan executed as written. Tasks 1 and 2 were combined into a single commit since both modify the same file.
 
 ## Issues Encountered
 
@@ -88,15 +86,14 @@ None
 
 ## User Setup Required
 
-None - no external service configuration required.
+None — no external service configuration required.
 
 ## Next Phase Readiness
 
-- Quit modal complete with all mockup requirements met
-- Same composition pattern ready for pause modal (11-03)
-- v-model pattern established for consistent modal API
+- QuitModal complete and matching mockup
+- Pattern established for PauseModal refactor (11-03)
 
 ---
 
 _Phase: 11-modal-dialogs_
-_Completed: 2026-02-03_
+_Completed: 2026-02-02_

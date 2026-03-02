@@ -7,5 +7,5 @@ declare let __DEV__: boolean
 Vue.config.silent = !__DEV__
 
 new Vue({
-  render: (h) => h('frame', [h(Home)]),
+  render: h => h('frame', [h(Home)]),
 }).$start()

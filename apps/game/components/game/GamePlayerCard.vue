@@ -57,7 +57,7 @@ const formatScore = (score: number): string => {
 </script>
 
 <style scoped lang="scss">
-@use '@/assets/scss/design-system' as *;
+@use 'assets/scss/design-system' as *;
 
 .game-player-card {
   display: flex;

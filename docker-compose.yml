@@ -13,7 +13,7 @@ services:
       - NODE_ENV=production
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:8080/health']
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:80/health']
       interval: 30s
       timeout: 3s
       retries: 3
@@ -32,7 +32,30 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=development
-    command: sh -c "corepack enable && corepack prepare pnpm@10.26.2 --activate && pnpm install && pnpm run dev --host"
+    command: sh -c "corepack enable && pnpm install && pnpm run dev --host"
     restart: unless-stopped
     profiles:
       - development
+
+  # Warp development environment - Node.js + Python with full tooling
+  warp-dev:
+    image: warpdotdev/dev-base:latest
+    container_name: riddle-rush-warp-dev
+    working_dir: /workspace/riddle-rush-mono-repo
+    volumes:
+      - .:/workspace/riddle-rush-mono-repo
+      - warp-node-modules:/workspace/riddle-rush-mono-repo/node_modules
+      - warp-pnpm-store:/root/.local/share/pnpm/store
+    ports:
+      - '3000:3000' # Nuxt dev server
+      - '24678:24678' # Nuxt DevTools
+    environment:
+      - NODE_ENV=development
+    command: bash -c "corepack enable && corepack install && pnpm install --frozen-lockfile && tail -f /dev/null"
+    restart: unless-stopped
+    profiles:
+      - warp
+
+volumes:
+  warp-node-modules:
+  warp-pnpm-store:

@@ -23,13 +23,13 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   size: 'md',
   glow: true,
-  tag: 'span'
+  tag: 'span',
 })
 
 const displayClasses = computed(() => [
   'game-display',
   `game-display--${props.size}`,
-  props.glow && 'game-display--glow'
+  props.glow && 'game-display--glow',
 ])
 </script>
 

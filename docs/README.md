@@ -2,7 +2,7 @@
 
 Welcome to the Riddle Rush documentation. This guide will help you understand the project structure, setup, and development workflow.
 
-## 📚 Documentation Index
+## Documentation Index
 
 ### Getting Started
 
@@ -12,10 +12,8 @@ Welcome to the Riddle Rush documentation. This guide will help you understand th
 
 ### Setup & Configuration
 
-- [Environment Setup](../MONOREPO_ENVIRONMENT_GUIDE.md) - Environment variables guide
 - [Terraform Setup](setup/TERRAFORM-SETUP.md) - Infrastructure as Code setup
 - [AI Agent Setup](setup/AGENT-SETUP.md) - Agent setup and config templates
-- [GitLab Feature Flags](GITLAB_FEATURE_FLAGS.md) - Feature flag configuration
 - [Plugins Configuration](PLUGINS.md) - Vite and Nuxt plugins guide
 
 ### Development
@@ -24,35 +22,30 @@ Welcome to the Riddle Rush documentation. This guide will help you understand th
 - [Testing](TESTING.md) - Testing strategy and guidelines
 - [Dependency Management](DEPENDENCY-MANAGEMENT.md) - Managing dependencies
 - [Known Issues](KNOWN-ISSUES.md) - Current limitations and workarounds
+- [Build Issues](BUILD-ISSUES.md) - Build troubleshooting
+- [Refactoring Guide](REFACTORING-GUIDE.md) - Code refactoring patterns
 
 ### Deployment
 
+- [Deployment Guide](DEPLOYMENT.md) - Core deployment reference
 - [AWS Deployment](deployment/AWS-DEPLOYMENT.md) - Deploy to AWS
+- [Vercel Deployment](VERCEL-DEPLOYMENT.md) - Deploy to Vercel
 - [Docker Deployment](deployment/DOCKER-DEPLOYMENT.md) - Containerized deployment
-- [GitLab Pages](deployment/GITLAB-PAGES-DEPLOYMENT.md) - Deploy to GitLab Pages
 
 ### Architecture
 
 - [Monorepo Structure](MONOREPO.md) - Monorepo architecture
-- [Infrastructure](INFRASTRUCTURE-SUMMARY.md) - Infrastructure overview
 - [Design System](DESIGN.md) - UI/UX design guidelines
+- [Game Workflow](WORKFLOW.md) - Game flow documentation
+- [Performance](PERFORMANCE.md) - Performance measurement
 
-### Workflow & Reports
-
-- [Workflow System Report](WORKFLOW_SYSTEM_REPORT.md) - Complete workflow analysis
-- [Project History](PROJECT-HISTORY.md) - Development timeline
-- [Code Analysis](CODE-ANALYSIS-REPORT.md) - Code quality metrics
-
-### Archive
-
-Historical documents and summaries are stored in [archive/](archive/) for reference.
-
-## 🚀 Quick Links
+## Quick Links
 
 - [Main README](../README.md) - Project overview
 - [Agent Workflow Guide](../AGENTS.md) - For AI agents working on this project
+- [Infrastructure README](../infrastructure/README.md) - Terraform infrastructure
 
-## 🆘 Need Help?
+## Need Help?
 
 - Check [Known Issues](KNOWN-ISSUES.md) for common problems
 - Review [Testing Guide](TESTING-GUIDE.md) for test-related issues

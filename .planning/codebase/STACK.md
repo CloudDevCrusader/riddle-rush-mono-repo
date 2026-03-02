@@ -1,190 +1,193 @@
 # Technology Stack
 
-**Analysis Date:** 2026-01-31
+**Analysis Date:** 2026-02-13
 
 ## Languages
 
 **Primary:**
 
-- TypeScript 5.9.3 - Used throughout the application (strict mode enabled)
-- Vue 3.5.26 - Reactive component framework
+- TypeScript 5.9.x - Application code, game logic, composables, stores, infrastructure lambdas, shared packages
+- Vue 3.5.x (SFC with `<script setup lang="ts">`) - UI components in `apps/game/`
 
 **Secondary:**
 
-- JavaScript (ES2020+) - Build tooling and configuration
-- SCSS - Styling in `assets/scss/design-system.scss`
-- JSON - Configuration and data files
+- JavaScript (ES Modules) - Lambda functions in `infrastructure/lambda/`, CloudFront functions
+- HCL (Terraform) - Infrastructure as Code in `infrastructure/`
+- SCSS - Design system tokens in `apps/game/assets/scss/design-system.scss`
+- Python 3.14 - AI tooling scripts in `tools/` (see `.python-version`)
 
 ## Runtime
 
 **Environment:**
 
-- Node.js 20.0.0 (minimum) - Specified in `package.json` engines
-- Browser (client-side focus) - PWA for modern browsers
+- Node.js >= 20.0.0 (enforced via `engines` in `package.json`)
+- Docker: `node:22-alpine` for builds, `nginx:1.27-alpine` for production serving
+- AWS Lambda: `nodejs20.x` (WebSocket handlers), `nodejs24.x` (error logs, cache control)
 
 **Package Manager:**
 
-- pnpm 10.28.1 - Required package manager
-- Lockfile: pnpm-lock.yaml (enforced via `packageManager` field)
+- pnpm 10.28.2 (enforced via `packageManager` field in root `package.json`)
+- Lockfile: `pnpm-lock.yaml` (present)
+- Workspace config: `pnpm-workspace.yaml`
+- `.npmrc` settings: `shamefully-hoist=true`, public hoisting for eslint/prettier/typescript
 
 ## Frameworks
 
 **Core:**
 
-- Nuxt 4.2.2 - Meta-framework for Vue (client-side SPA with SSR: false)
-- Vue 3.5.26 - Component library
-
-**State Management:**
-
-- Pinia 0.11.3 - Store management (via @pinia/nuxt module)
-
-**Internationalization:**
-
-- @nuxtjs/i18n 10.2.1 - i18n integration (German default, English available)
-- vue-i18n 11.1.0 - Translation engine
-
-**PWA & Offline:**
-
-- @vite-pwa/nuxt 1.1.0 - Progressive Web App support with Workbox
-- idb 8.0.3 - IndexedDB wrapper for data persistence
-
-**Build & Development:**
-
-- Vite (bundled with Nuxt 4) - Build tool
-- ESBuild - JavaScript minifier
-- @vitejs/plugin-vue 5.2.1 - Vue support in Vite
-- Turbo 2.7.3 - Monorepo build orchestration
+- Nuxt 4.3.x - Full-stack Vue framework, SPA mode (`ssr: false`), compatibility version 4
+- Vue 3.5.x - Reactive UI framework
+- Pinia 0.11.x (`@pinia/nuxt`) - State management
+- UnoCSS 66.x (`@unocss/nuxt`) - Atomic CSS engine with Tailwind Wind preset (`apps/game/uno.config.ts`)
+- Vite-PWA (`@vite-pwa/nuxt`) - Progressive Web App with Workbox service worker
 
 **Testing:**
 
-- Vitest 3.0.0 - Unit test runner (happy-dom environment)
-- @vitest/coverage-v8 3.0.0 - Code coverage
-- @playwright/test 1.49.1 - E2E test runner
-- Playwright 1.49.1 - Browser automation (Chrome, Firefox, Mobile Chrome)
+- Vitest 3.x - Unit testing (`apps/game/vitest.config.ts`)
+- Playwright 1.49.x - E2E testing, mobile-first (`apps/game/playwright.config.ts`)
+- happy-dom 15.x - DOM environment for unit tests
+- `@faker-js/faker` 9.x - Test data generation
+- `@nuxt/test-utils` 3.x - Nuxt-specific testing utilities
+
+**Build/Dev:**
+
+- Turbo 2.7.x - Monorepo task orchestration (`turbo.json`)
+- Vite 5.4.x - Build tool (via Nuxt)
+- esbuild - Minification in production
+- sharp 0.34.x - Image optimization at build time
+- Rollup - Bundle output (via Vite)
 
 ## Key Dependencies
 
 **Critical:**
 
-- socket.io-client 4.8.3 - WebSocket real-time communication
-- unleash-proxy-client 3.7.8 - GitLab Feature Flags (Unleash protocol)
-- lodash-es 4.17.22 - Utility library (tree-shaken)
+- `nuxt` ^4.3.0 - Core application framework (`apps/game/package.json`)
+- `vue` ^3.5.26 - UI reactivity and component system
+- `@pinia/nuxt` ^0.11.3 - Store management, deeply integrated
+- `idb` ^8.0.3 - IndexedDB wrapper for client-side persistence (`apps/game/composables/useIndexedDB.ts`)
+- `socket.io-client` ^4.8.3 - WebSocket real-time communication (`apps/game/composables/useWebSocket.ts`)
+- `unleash-proxy-client` ^3.7.8 - GitLab Feature Flags via Unleash protocol (`apps/game/plugins/gitlab-feature-flags.client.ts`)
 
-**Mobile & Native:**
+**Infrastructure:**
 
-- @capacitor/cli 8.0.0 - Mobile app framework
-- @capacitor/app 8.0.0 - App lifecycle management
-- @capacitor/haptics 8.0.0 - Haptic feedback
-- @capacitor/keyboard 8.0.0 - Keyboard handling
-- @capacitor/status-bar 8.0.0 - Status bar management
-- @capacitor/android 8.0.0 - Android native bridge
+- `@vueuse/nuxt` ^14.1.0 - Vue composition utilities
+- `@vueuse/motion` ^3.0.3 - Animation directives
+- `@nuxtjs/i18n` ^10.2.1 - Internationalization (de/en, `strategy: 'no_prefix'`)
+- `@nuxtjs/color-mode` ^4.0.0 - Light/dark theme switching
+- `@nuxtjs/device` ^4.0.0 - Device detection
+- `@nuxtjs/fontaine` ^0.5.0 - Font fallback optimization
+- `@nuxt/image` ^1.9.0 - Image optimization with sharp
+- `nuxt-security` ^2.5.0 - Security headers and CSP
+- `lodash-es` ^4.17.22 - Utility functions (tree-shaken via `apps/game/composables/useLodash.ts`)
+- `focus-trap` ^8.0.0 - Accessibility focus management
+- `redis` ^5.10.0 - Redis client (dependency declared, used for caching)
 
-**UI & Animation:**
+**Mobile:**
 
-- @vueuse/nuxt 14.1.0 - Vue composition utilities
-- @vueuse/motion 3.0.3 - Animation directives
-- @nuxtjs/fontaine 0.5.0 - Font optimization
-- @nuxtjs/color-mode 4.0.0 - Theme switching
-- @nuxtjs/device 4.0.0 - Device detection
-- @nuxt/image 1.9.0 - Image optimization
+- `@capacitor/app` ^8.0.0 - Native app shell (`apps/game/capacitor.config.ts`)
+- `@capacitor/haptics` ^8.0.0 - Haptic feedback
+- `@capacitor/keyboard` ^8.0.0 - Keyboard management
+- `@capacitor/status-bar` ^8.0.0 - Status bar customization
+- `@nativescript/core` ^9.0.0 - Alternative mobile runtime (`apps/mobile/`)
 
-**Security:**
+**AI/Tooling (root-level):**
 
-- nuxt-security 2.5.0 - Security headers (CSP, CORS, etc.)
-- zod 4.3.5 - Schema validation
+- `@langchain/openai` ^1.2.1 - LLM integration
+- `langchain` ^1.2.11 - LLM orchestration
+- `@trigger.dev/sdk` ^4.3.2 - Background job processing (`trigger.config.ts`)
+- `@e2b/code-interpreter` ^2.3.3 - Code sandbox execution
+- `@voltagent/core` ^2.2.0 - AI agent framework
+- `zod` ^4.3.5 - Runtime schema validation
 
-**Image Optimization:**
+**CLI:**
 
-- sharp 0.34.5 - Image processing
-- vite-plugin-imagemin 0.6.1 - Image compression
-- @vheemstra/vite-plugin-imagemin 2.2.1 - Enhanced compression
+- `@oclif/core` ^4 - CLI framework (`packages/riddle-cli/`)
 
-**Development Tools:**
+## Monorepo Structure
 
-- unplugin-auto-import 20.3.0 - Auto-import composables/stores
-- unplugin-vue-components 30.0.0 - Auto-import components
-- vite-plugin-checker 0.12.0 - TypeScript/ESLint during build
-- vite-plugin-vue-devtools 7.0.0 - Vue DevTools integration
-- vite-plugin-vue-inspector 5.3.2 - Component inspection
-- vite-plugin-compression 0.5.1 - gzip/brotli compression
-- vite-plugin-browserslist-useragent 0.6.2 - Browser compatibility
-- vite-plugin-dynamic-prefetch 0.1.5 - Dynamic import prefetching
-- vite-plugin-inspect 11.3.3 - Vite plugin inspection
-- rollup-plugin-visualizer 5.12.0 - Bundle analysis
+**Workspace Packages:**
 
-**Monorepo & Workspace:**
+| Package               | Path                   | Purpose                              |
+| --------------------- | ---------------------- | ------------------------------------ |
+| `@riddle-rush/game`   | `apps/game/`           | Main Nuxt PWA game application       |
+| `mobile`              | `apps/mobile/`         | NativeScript mobile app              |
+| `@riddle-rush/shared` | `packages/shared/`     | Shared constants, utils, routes      |
+| `@riddle-rush/types`  | `packages/types/`      | Shared TypeScript type definitions   |
+| `@riddle-rush/config` | `packages/config/`     | Shared ESLint, Vite, Prettier config |
+| `@riddle-rush/cli`    | `packages/riddle-cli/` | CLI tool (oclif)                     |
+| `infrastructure`      | `infrastructure/`      | Terraform IaC for AWS                |
 
-- Turbo 2.7.3 - Build orchestration
-- syncpack 13.0.4 - Dependency consistency
-- @pnpm/filter-workspace-packages 1.2.7 - Workspace filtering
+**Path Aliases (root `tsconfig.json`):**
 
-**Code Quality:**
+- `@riddle-rush/shared` -> `./packages/shared/src`
+- `@riddle-rush/types` -> `./packages/types/src`
+- `@riddle-rush/config` -> `./packages/config`
 
-- ESLint 9.39.2 - Linting
-- Prettier 3.7.4 - Code formatting
-- @nuxt/eslint 1.0.0 - Nuxt ESLint integration
-- husky 9.1.7 - Git hooks
-- lint-staged 15.5.2 - Pre-commit linting
+**Nuxt aliases (auto-configured):**
 
-**Testing Utilities:**
-
-- @nuxt/test-utils 3.23.0 - Nuxt testing helpers
-- @faker-js/faker 9.0.0 - Fake data generation
-- happy-dom 15.11.7 - Lightweight DOM for testing
-
-**TypeScript:**
-
-- typescript 5.9.3 - Language and type checking
-- vue-tsc 2.0.0 - Vue component type checking
-- @types/node 22.19.5 - Node.js types
-- @types/lodash-es 4.17.12 - Lodash types
+- `~/` and `@/` -> `apps/game/`
 
 ## Configuration
 
 **Environment:**
 
-- Nuxt runtimeConfig for runtime variables
-- Environment variables with NUXT*PUBLIC* prefix for client exposure
-- Support for CI/CD variable injection
+- `.env.example` (root) - Consolidated env var template (132 lines)
+- `.env.local` - Local development overrides (present, gitignored)
+- `apps/game/.env.example` - Game-specific env var template
+- `.env.aws.example` - AWS deployment-specific vars
+- Nuxt `runtimeConfig` in `apps/game/nuxt.config.ts` maps env vars to `config.public.*`
+
+**Key env var categories:**
+
+- Application: `NODE_ENV`, `APP_VERSION`, `BASE_URL`
+- Analytics: `GOOGLE_ANALYTICS_ID`, `GTAG_ID`
+- Monitoring: `CLOUDWATCH_ENDPOINT`, `CLOUDWATCH_API_KEY`, `SENTRY_DSN`
+- Feature Flags: `GITLAB_FEATURE_FLAGS_URL`, `GITLAB_FEATURE_FLAGS_TOKEN`
+- Translation: `VITE_APP_TOLGEE_API_URL`, `VITE_APP_TOLGEE_API_KEY`
+- AWS: `AWS_S3_BUCKET`, `AWS_REGION`, `AWS_CLOUDFRONT_ID`
+- AI Services: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `E2B_API_KEY`
 
 **Build:**
 
-- `nuxt.config.ts` - Main Nuxt configuration (strict TypeScript, SSR disabled)
-- `tsconfig.json` - TypeScript configuration with Nuxt extensions
-- `vitest.config.ts` - Unit test configuration
-- `playwright.config.ts` - E2E test configuration
-- `eslint.config.mjs` - ESLint rules
-- `prettier.config.js` (via root) - Code formatting
-- `capacitor.config.ts` - Capacitor Android build configuration
+- `turbo.json` - Task pipeline (build, dev, lint, typecheck, test)
+- `apps/game/nuxt.config.ts` - Main app build config (599 lines)
+- `apps/game/uno.config.ts` - UnoCSS/Tailwind utility config
+- `packages/config/vite.config.ts` - Shared Vite plugins (dev vs. build)
+- `apps/game/vitest.config.ts` - Unit test config
+- `apps/game/playwright.config.ts` - E2E test config (mobile-first: Pixel 5, iPhone 15, iPad Pro, Galaxy S9+)
 
-**Build Optimization:**
+**Code Quality:**
 
-- Production minification: esbuild
-- Development: unminified for debugging
-- CSS code splitting enabled
-- Workbox caching strategies: CacheFirst for assets, NetworkFirst for APIs
-- Image optimization via Sharp with webp/avif formats
+- `eslint.config.mjs` - Root ESLint flat config (Nuxt preset, strict rules)
+- `.prettierrc` - Prettier: no semi, single quotes, 100 print width, trailing comma es5
+- `.syncpackrc.json` - Dependency version sync across workspace
+- `.lintstagedrc.json` - Pre-commit linting (eslint + prettier on staged files)
+- `.husky/` - Git hooks (pre-commit via lint-staged)
+- `sonar-project.properties` - SonarCloud analysis config
+
+**Dependency Management:**
+
+- `renovate.json` - Automated dependency updates (minor/patch weekly, majors disabled)
+- `.changeset/config.json` - Version management with Changesets
 
 ## Platform Requirements
 
 **Development:**
 
-- Node.js >= 20.0.0
+- Node.js >= 20
 - pnpm >= 10.0.0
-- Git (for version control)
-- Docker/Docker Compose (optional, for CI simulation)
+- Git with Husky hooks
+- Optional: Terraform >= 1.5 (for infrastructure changes)
+- Optional: Python 3.14 (for AI tooling scripts)
+- Optional: Android SDK (for Capacitor mobile builds)
 
 **Production:**
 
-- Static hosting (AWS S3 + CloudFront recommended via Terraform)
-- Browser support: Modern browsers with ES2020, IndexedDB, Service Workers
-- No server-side runtime required (static SPA)
-
-**Mobile (Optional):**
-
-- Android SDK for native builds via Capacitor
-- Xcode for iOS builds via Capacitor
+- Primary: Vercel (static hosting via `vercel.json`, GitHub Actions deploy)
+- Secondary: AWS S3 + CloudFront (via GitLab CI, Terraform-managed)
+- Tertiary: Docker/nginx container (`Dockerfile`, `docker-compose.yml`)
+- Domain: `riddlerush.de` (AWS Route53 + CloudFront)
 
 ---
 
-_Stack analysis: 2026-01-31_
+_Stack analysis: 2026-02-13_

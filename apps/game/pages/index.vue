@@ -10,28 +10,64 @@
 
         <!-- Menu Buttons -->
         <div v-show="!showMenu" class="menu-buttons">
-          <GameButton variant="primary" size="lg" full-width @click="handlePlay">
-            {{ t('menu.play') }}
+          <GameButton
+            variant="primary"
+            size="lg"
+            full-width
+            data-testid="menu-start-button"
+            @click="handlePlay"
+          >
+            {{ t('menu.play', 'PLAY') }}
           </GameButton>
-          <GameButton variant="secondary" size="lg" full-width @click="toggleMenu">
-            {{ t('menu.menu') }}
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="menu-menu-button"
+            @click="toggleMenu"
+          >
+            {{ t('menu.menu', 'MENU') }}
           </GameButton>
-          <GameButton variant="warning" size="lg" full-width @click="wrappedGoToSettings">
-            {{ t('menu.options') }}
+          <GameButton
+            variant="warning"
+            size="lg"
+            full-width
+            data-testid="menu-settings-button"
+            @click="wrappedGoToSettings"
+          >
+            {{ t('menu.options', 'OPTIONS') }}
           </GameButton>
-          <GameButton variant="secondary" size="lg" full-width @click="wrappedGoToCredits">
-            {{ t('menu.credits') }}
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="menu-credits-button"
+            @click="wrappedGoToCredits"
+          >
+            {{ t('menu.credits', 'CREDITS') }}
           </GameButton>
         </div>
 
         <!-- Menu Panel (when toggled) -->
         <transition name="menu-fade">
           <div v-if="showMenu" class="menu-panel">
-            <GameButton variant="secondary" size="md" full-width @click="wrappedGoToLanguage">
-              🌐 {{ t('menu.language') }}
+            <GameButton
+              variant="secondary"
+              size="md"
+              full-width
+              data-testid="menu-language-button"
+              @click="wrappedGoToLanguage"
+            >
+              🌐 {{ t('menu.language', 'Language') }}
             </GameButton>
-            <GameButton variant="secondary" size="md" full-width @click="wrappedGoToSettings">
-              ⚙️ {{ t('menu.settings') }}
+            <GameButton
+              variant="secondary"
+              size="md"
+              full-width
+              data-testid="menu-panel-settings-button"
+              @click="wrappedGoToSettings"
+            >
+              ⚙️ {{ t('menu.settings', 'Settings') }}
             </GameButton>
           </div>
         </transition>
@@ -53,7 +89,7 @@ const toggleMenu = () => {
 
 onMounted(() => {
   if (route.query.needsGame === 'true') {
-    toast.warning(t('game.no_active_session'))
+    toast.warning(t('game.no_active_session', 'Please start a game first'))
     router.replace({ query: {} })
   }
 })

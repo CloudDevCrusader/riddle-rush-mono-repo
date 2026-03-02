@@ -1,7 +1,10 @@
 <template>
   <Page>
     <ActionBar>
-      <Label text="Home" class="font-bold text-lg" />
+      <Label
+        text="Home"
+        class="font-bold text-lg"
+      />
     </ActionBar>
 
     <GridLayout>

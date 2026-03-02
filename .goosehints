@@ -1,2 +1,4 @@
 1. The Design has been given, but be innovative, make the application as smooth as possible
 2. Use MCP, langchain and Sub agents to  achive context as high as possible
+3. Create apps in html, javascript, typescript and scss when possible. if using images try to find and use a imagemagick command or other tools, convert it to svg if it makes sence,
+NEVER run blocking server commands (node server.js, pnpm start, etc.) - provide commands for user to run separately.

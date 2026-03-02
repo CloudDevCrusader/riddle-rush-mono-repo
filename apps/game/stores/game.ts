@@ -1,17 +1,13 @@
 import { defineStore } from 'pinia'
-import { useIndexedDB } from '../composables/useIndexedDB'
-import { useStatistics } from '../composables/useStatistics'
-import { useLogger } from '../composables/useLogger'
 import { useCategoryEmoji } from '../composables/useCategoryEmoji'
-import { useLodashSync } from '../composables/useLodash'
-import {
-  ALPHABET,
-  SCORE_PER_CORRECT_ANSWER,
-  DEFAULT_DISPLAYED_CATEGORIES,
-} from '@riddle-rush/shared/constants'
+import { useCategoryManager } from '../composables/useCategoryManager'
+import { useSessionManager } from '../composables/useSessionManager'
+import { usePlayerManager } from '../composables/usePlayerManager'
+import { useScoringEngine } from '../composables/useScoringEngine'
+import { usePersistence } from '../composables/usePersistence'
+import { useGameLifecycle } from '../composables/useGameLifecycle'
+import { ALPHABET, DEFAULT_DISPLAYED_CATEGORIES } from '@riddle-rush/shared/constants'
 import type {
-  GameSession,
-  GameAttempt,
   GameState,
   Category,
   BeforeInstallPromptEvent,
@@ -25,20 +21,6 @@ const randomLetter = () => {
   }
   const index = Math.floor(Math.random() * ALPHABET.length)
   return ALPHABET.charAt(index).toLowerCase()
-}
-
-// Utility functions using synchronous lodash to avoid initialization issues
-const getRandomCategory = (categories: Category[]): Category | null => {
-  if (!categories.length) return null
-
-  const { shuffle } = useLodashSync()
-  const shuffled = shuffle(categories)
-  return shuffled[0] ?? null
-}
-
-const cloneSessionForHistory = (session: GameSession): GameSession => {
-  // Use JSON clone for session objects - faster and sufficient for our data structure
-  return JSON.parse(JSON.stringify(session)) as GameSession
 }
 
 export const useGameStore = defineStore('game', {
@@ -58,8 +40,6 @@ export const useGameStore = defineStore('game', {
 
   getters: {
     hasActiveSession: (state) => state.currentSession !== null,
-    currentScore: (state) => state.currentSession?.score ?? 0, // Legacy support
-    currentAttempts: (state) => state.currentSession?.attempts ?? [], // Legacy support
     canInstall: (state) => state.installPromptEvent !== null,
     currentCategory: (state) => state.currentSession?.category ?? null,
     currentLetter: (state) => state.currentSession?.letter ?? '',
@@ -74,203 +54,90 @@ export const useGameStore = defineStore('game', {
     players: (state) => state.currentSession?.players ?? [],
     currentRound: (state) => state.currentSession?.currentRound ?? 0,
     allPlayersSubmitted: (state) => {
-      const players = state.currentSession?.players ?? []
-      if (players.length === 0) return false
-      return players.every((p) => p.hasSubmitted)
+      const playerManager = usePlayerManager()
+      return playerManager.allPlayersSubmitted(state.currentSession?.players ?? [])
     },
     currentPlayerTurn: (state) => {
-      const players = state.currentSession?.players ?? []
-      return players.find((p) => !p.hasSubmitted) ?? null
+      const playerManager = usePlayerManager()
+      return playerManager.getCurrentPlayerTurn(state.currentSession?.players ?? [])
     },
     leaderboard(state): PlayerWithRank[] {
+      const playerManager = usePlayerManager()
       const players = state.currentSession?.players ?? []
-      if (players.length === 0) return []
-
-      // Memoize sorting - only recalculate if players or scores changed
-      const sorted = [...players].sort((a, b) => b.totalScore - a.totalScore)
-
       const isGameCompleted = state.currentSession?.status === 'completed'
-      const topScore = sorted[0]?.totalScore ?? 0
-
-      return sorted.map((player, index) => ({
-        ...player,
-        rank: index + 1,
-        isWinner: isGameCompleted && index === 0 && topScore > 0,
-      }))
+      return playerManager.buildLeaderboard(players, isGameCompleted ?? false)
     },
     isGameCompleted: (state) => state.currentSession?.status === 'completed',
     gameStatus: (state) => state.currentSession?.status ?? 'active',
   },
 
   actions: {
+    // Category actions
     async fetchCategories(force = false) {
-      // Return cached categories if already loaded
-      if (this.categoriesLoaded && !force) {
-        return this.categories
-      }
-
-      // Wait if already loading (race condition guard)
-      if (this.categoriesLoading) {
-        // Poll until loading is complete (max 10 seconds)
-        const maxAttempts = 100
-        for (let i = 0; i < maxAttempts; i++) {
-          await new Promise((resolve) => setTimeout(resolve, 100))
-          if (!this.categoriesLoading) {
-            return this.categories
-          }
-        }
-        throw new Error('Category loading timeout')
-      }
-
-      this.categoriesLoading = true
-
-      try {
-        const categories = await $fetch<Category[]>('/data/categories.json')
-
-        if (!categories || categories.length === 0) {
-          throw new Error('No categories found in data file')
-        }
-
-        this.categories = categories
-        this.categoriesLoaded = true
-        this.categoryLoadError = null
-
-        return categories
-      } catch (error) {
-        const logger = useLogger()
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load categories'
-        this.categoryLoadError = errorMessage
-        logger.error('Error fetching categories:', error)
-
-        // Don't throw if we have cached categories
-        if (this.categories.length > 0) {
-          logger.warn('Using cached categories due to fetch error')
-          return this.categories
-        }
-
-        throw new Error(errorMessage)
-      } finally {
-        this.categoriesLoading = false
-      }
+      const categoryManager = useCategoryManager()
+      return categoryManager.fetchCategories(this, force)
     },
-
     loadMoreCategories(step = 9) {
-      if (!this.hasMoreCategories) return
-
-      this.displayedCategoryCount = Math.min(
-        this.displayedCategoryCount + step,
-        this.categories.length
-      )
+      const categoryManager = useCategoryManager()
+      categoryManager.loadMoreCategories(this, step)
     },
-
     resetDisplayedCategories(count = 9) {
-      this.displayedCategoryCount = Math.min(count, this.categories.length || count)
+      const categoryManager = useCategoryManager()
+      categoryManager.resetDisplayedCategories(this, count)
     },
-
     getCategoryById(categoryId: number): Category | null {
-      return this.categories.find((category: Category) => category.id === categoryId) ?? null
+      const categoryManager = useCategoryManager()
+      return categoryManager.getCategoryById(this.categories, categoryId)
     },
-
     getRandomCategory(): Category | null {
-      if (!this.categories.length) return null
-
-      const index = Math.floor(Math.random() * this.categories.length)
-      return this.categories[index] ?? null
+      const categoryManager = useCategoryManager()
+      return categoryManager.getRandomCategory(this.categories)
     },
 
     generateLetter() {
       return randomLetter()
     },
 
+    // Session lifecycle
     async resumeOrStartNewGame() {
-      if (this.currentSession) {
-        return this.currentSession
-      }
-
+      if (this.currentSession) return this.currentSession
       return this.startNewGame()
     },
 
     async startNewGame() {
+      const categoryManager = useCategoryManager()
+      const sessionManager = useSessionManager()
+
       await this.fetchCategories()
-
-      const category = getRandomCategory(this.categories)
-
-      if (!category) {
-        throw new Error('Unable to start game without categories')
-      }
+      const category = categoryManager.getRandomCategory(this.categories)
+      if (!category) throw new Error('Unable to start game without categories')
 
       const letter = this.generateLetter()
-
-      // Check if we have players (multi-player mode) or use legacy single-player
       const hasPlayers = this.currentSession?.players && this.currentSession.players.length > 0
 
       if (hasPlayers) {
-        // Multi-player: start new round
         return this.startNextRound()
       } else {
-        // Legacy single-player mode
-        const session: GameSession = {
-          id: crypto.randomUUID(),
-          userId: 'default-user',
-          category: { ...category, letter },
-          letter,
-          startTime: Date.now(),
-          score: 0,
-          attempts: [],
-          players: [],
-          currentRound: 0,
-          roundHistory: [],
-          status: 'active',
-        }
-
+        const session = sessionManager.createSinglePlayerSession(category, letter)
         this.currentSession = session
         await this.saveSessionToDB()
         return session
       }
     },
 
-    async submitAttempt(term: string, found: boolean) {
-      if (!this.currentSession) return
-
-      const attempt: GameAttempt = {
-        term,
-        found,
-        timestamp: Date.now(),
-      }
-
-      // Legacy single-player support
-      if (!this.currentSession.attempts) {
-        this.currentSession.attempts = []
-      }
-      if (this.currentSession.score === undefined) {
-        this.currentSession.score = 0
-      }
-
-      this.currentSession.attempts.push(attempt)
-      if (found) {
-        this.currentSession.score += SCORE_PER_CORRECT_ANSWER
-      }
-
-      await this.saveSessionToDB()
-    },
-
     async endGame() {
       if (!this.currentSession) return
 
+      const sessionManager = useSessionManager()
+      const lifecycle = useGameLifecycle()
       const session = this.currentSession
+
       session.endTime = Date.now()
-      this.history.push(cloneSessionForHistory(session))
+      this.history.push(sessionManager.cloneSessionForHistory(session))
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
-
-      try {
-        const { updateStatistics } = useStatistics()
-        await updateStatistics(session)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error updating statistics on endGame:', error)
-      }
+      await lifecycle.updateStatisticsForSession(session)
 
       this.currentSession = null
     },
@@ -278,6 +145,7 @@ export const useGameStore = defineStore('game', {
     async completeGame() {
       if (!this.currentSession) return
 
+      const lifecycle = useGameLifecycle()
       const session = this.currentSession
 
       session.status = 'completed'
@@ -285,14 +153,7 @@ export const useGameStore = defineStore('game', {
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
-
-      try {
-        const { updateStatistics } = useStatistics()
-        await updateStatistics(session)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error updating statistics on completeGame:', error)
-      }
+      await lifecycle.updateStatisticsForSession(session)
 
       // Don't clear session - keep it so leaderboard can display winner
       return session
@@ -313,84 +174,45 @@ export const useGameStore = defineStore('game', {
     setOnlineStatus(status: boolean) {
       this.isOnline = status
     },
-
     setInstallPrompt(event: BeforeInstallPromptEvent | null) {
       this.installPromptEvent = event
     },
 
     async showInstallPrompt() {
       if (!this.installPromptEvent) return false
-
       await this.installPromptEvent.prompt()
       const { outcome } = await this.installPromptEvent.userChoice
-
-      if (outcome === 'accepted') {
-        this.installPromptEvent = null
-      }
-
+      if (outcome === 'accepted') this.installPromptEvent = null
       return outcome === 'accepted'
     },
 
+    // Persistence actions (delegate to usePersistence)
     async loadFromDB() {
-      try {
-        const { getGameSession, getGameHistory } = useIndexedDB()
+      const persistence = usePersistence()
 
-        const session = await getGameSession()
-        if (session) {
-          this.currentSession = session
-        }
+      const session = await persistence.loadSessionFromDB()
+      if (session) this.currentSession = session
 
-        const history = await getGameHistory()
-        if (history) {
-          this.history = history
-        }
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error loading from IndexedDB:', error)
-        // Continue without persisted data
-      }
+      const history = await persistence.loadHistoryFromDB()
+      if (history) this.history = history
     },
 
     async saveSessionToDB() {
       if (!this.currentSession) return
-
-      try {
-        const { saveGameSession } = useIndexedDB()
-        await saveGameSession(this.currentSession)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error saving session to IndexedDB:', error)
-        // Don't throw - allow game to continue even if save fails
-      }
+      const persistence = usePersistence()
+      await persistence.saveSessionToDB(this.currentSession)
     },
 
     async saveHistoryToDB() {
-      try {
-        const { saveGameHistory } = useIndexedDB()
-        await saveGameHistory(this.history)
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error saving history to IndexedDB:', error)
-        // Don't throw - allow game to continue even if save fails
-      }
+      const persistence = usePersistence()
+      await persistence.saveHistoryToDB(this.history)
     },
 
     async loadSessionById(sessionId: string) {
-      try {
-        const { getGameSessionById } = useIndexedDB()
-        const session = await getGameSessionById(sessionId)
-
-        if (!session) {
-          throw new Error(`Game session with ID ${sessionId} not found`)
-        }
-
-        this.currentSession = session
-        return session
-      } catch (error) {
-        const logger = useLogger()
-        logger.error('Error loading game session by ID:', error)
-        throw new Error('Failed to load game session')
-      }
+      const persistence = usePersistence()
+      const session = await persistence.loadSessionById(sessionId)
+      this.currentSession = session
+      return session
     },
 
     clearSession() {
@@ -404,53 +226,33 @@ export const useGameStore = defineStore('game', {
       customLetter?: string,
       customCategory?: Category
     ) {
-      await this.fetchCategories()
+      const categoryManager = useCategoryManager()
+      const sessionManager = useSessionManager()
+      const playerManager = usePlayerManager()
 
-      const category = customCategory || getRandomCategory(this.categories)
-      if (!category) {
-        throw new Error('Unable to start game without categories')
-      }
+      await this.fetchCategories()
+      const category = customCategory || categoryManager.getRandomCategory(this.categories)
+      if (!category) throw new Error('Unable to start game without categories')
 
       const letter = customLetter || this.generateLetter()
-
-      const players: Player[] = playerNames.map((name, index) => ({
-        id: crypto.randomUUID(),
-        name: name || `Player ${index + 1}`,
-        totalScore: 0,
-        currentRoundScore: 0,
-        currentRoundAnswer: undefined,
-        hasSubmitted: false,
-      }))
-
-      const session: GameSession = {
-        id: crypto.randomUUID(),
-        gameName,
-        players,
-        currentRound: 1,
-        category: { ...category, letter },
-        letter,
-        startTime: Date.now(),
-        status: 'active',
-        roundHistory: [],
-      }
+      const players = playerManager.createPlayers(playerNames)
+      const session = sessionManager.createSession(players, category, letter, gameName)
 
       this.currentSession = session
       await this.saveSessionToDB()
-
       return session
     },
 
     async submitPlayerAnswer(playerId: string, answer: string) {
       if (!this.currentSession) return
 
-      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      const playerManager = usePlayerManager()
+      const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
-      // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
-      player.currentRoundAnswer = answer
-      player.hasSubmitted = true
+      playerManager.submitPlayerAnswer(player, answer)
 
       await this.saveSessionToDB()
     },
@@ -458,20 +260,13 @@ export const useGameStore = defineStore('game', {
     async assignPlayerScore(playerId: string, points: number) {
       if (!this.currentSession) return
 
-      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      const playerManager = usePlayerManager()
+      const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
-      // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
-
-      // Only add to total score if the points are different from current round score
-      // This prevents duplicate additions when the same score is assigned multiple times
-      if (points !== player.currentRoundScore) {
-        player.totalScore += points
-      }
-
-      player.currentRoundScore = points
+      playerManager.assignPlayerScore(player, points)
 
       await this.saveSessionToDB()
     },
@@ -479,13 +274,13 @@ export const useGameStore = defineStore('game', {
     async updatePlayerAvatar(playerId: string, avatarUrl: string) {
       if (!this.currentSession) return
 
-      const playerIndex = this.currentSession.players.findIndex((p) => p.id === playerId)
+      const playerManager = usePlayerManager()
+      const playerIndex = playerManager.findPlayerIndex(this.currentSession.players, playerId)
       if (playerIndex === -1) return
 
-      // Update player using index to ensure reactivity
       const player = this.currentSession.players[playerIndex]
       if (!player) return
-      player.avatar = avatarUrl
+      playerManager.updatePlayerAvatar(player, avatarUrl)
 
       await this.saveSessionToDB()
     },
@@ -493,18 +288,8 @@ export const useGameStore = defineStore('game', {
     async completeRound() {
       if (!this.currentSession) return
 
-      const roundResult = {
-        roundNumber: this.currentSession.currentRound,
-        category: this.currentSession.category.name,
-        letter: this.currentSession.letter,
-        timestamp: Date.now(),
-        playerResults: this.currentSession.players.map((p) => ({
-          playerId: p.id,
-          playerName: p.name,
-          answer: p.currentRoundAnswer || '',
-          score: p.currentRoundScore,
-        })),
-      }
+      const lifecycle = useGameLifecycle()
+      const roundResult = lifecycle.buildRoundResult(this.currentSession)
 
       this.currentSession.roundHistory.push(roundResult)
       await this.saveSessionToDB()
@@ -513,43 +298,36 @@ export const useGameStore = defineStore('game', {
     async startNextRound(category?: Category, letter?: string) {
       if (!this.currentSession) return
 
-      // Use provided category and letter, or pick random ones
-      const selectedCategory = category || getRandomCategory(this.categories)
-      if (!selectedCategory) {
-        throw new Error('Unable to start round without categories')
-      }
+      const categoryManager = useCategoryManager()
+      const playerManager = usePlayerManager()
+
+      const selectedCategory = category || categoryManager.getRandomCategory(this.categories)
+      if (!selectedCategory) throw new Error('Unable to start round without categories')
 
       const selectedLetter = letter || this.generateLetter()
-
-      // Reset player round state
-      this.currentSession.players.forEach((player) => {
-        player.currentRoundScore = 0
-        player.currentRoundAnswer = undefined
-        player.hasSubmitted = false
-      })
+      playerManager.resetPlayerRoundState(this.currentSession.players)
 
       this.currentSession.currentRound += 1
       this.currentSession.category = { ...selectedCategory, letter: selectedLetter }
       this.currentSession.letter = selectedLetter
 
       await this.saveSessionToDB()
-
       return this.currentSession
     },
 
     async resetPlayerSubmissions() {
       if (!this.currentSession) return
 
-      this.currentSession.players.forEach((player) => {
-        player.hasSubmitted = false
-      })
+      const playerManager = usePlayerManager()
+      playerManager.resetPlayerSubmissions(this.currentSession.players)
 
       await this.saveSessionToDB()
     },
 
     getPlayerById(playerId: string): Player | null {
       if (!this.currentSession) return null
-      return this.currentSession.players.find((p) => p.id === playerId) ?? null
+      const playerManager = usePlayerManager()
+      return playerManager.getPlayerById(this.currentSession.players, playerId)
     },
   },
 })

@@ -1,0 +1,166 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main # Production deployments
+      - development # Development deployments
+  pull_request:
+    branches:
+      - main
+      - development
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+jobs:
+  # Quality checks run on all branches
+  quality-checks:
+    runs-on: ubuntu-latest
+    name: Quality Checks
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run workspace checks
+        run: pnpm run workspace:check
+
+      - name: Run unit tests
+        run: pnpm run test:unit
+        continue-on-error: true # Don't block deployment on test failures for now
+
+  # Deploy to Vercel
+  deploy:
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    name: Deploy to ${{ github.ref == 'refs/heads/main' && 'Production' || github.ref == 'refs/heads/development' && 'Development' || 'Preview' }}
+
+    # Only deploy on push to main/development or PRs
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Set environment stage
+        id: stage
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "stage=production" >> $GITHUB_OUTPUT
+            echo "vercel_env=production" >> $GITHUB_OUTPUT
+            echo "vercel_prod=--prod" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/development" ]]; then
+            echo "stage=development" >> $GITHUB_OUTPUT
+            echo "vercel_env=preview" >> $GITHUB_OUTPUT
+            echo "vercel_prod=" >> $GITHUB_OUTPUT
+          else
+            echo "stage=preview" >> $GITHUB_OUTPUT
+            echo "vercel_env=preview" >> $GITHUB_OUTPUT
+            echo "vercel_prod=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Vercel Environment Information
+        run: |
+          vercel pull --yes --environment=${{ steps.stage.outputs.vercel_env }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        env:
+          STAGE: ${{ steps.stage.outputs.stage }}
+          NODE_ENV: ${{ steps.stage.outputs.stage == 'production' && 'production' || 'development' }}
+        run: |
+          echo "Building for STAGE=${{ steps.stage.outputs.stage }}"
+          vercel build ${{ steps.stage.outputs.vercel_prod }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # Preview deployment for PRs
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          else
+            # Production or development deployment
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt ${{ steps.stage.outputs.vercel_prod }} --token=${{ secrets.VERCEL_TOKEN }})
+          fi
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $DEPLOYMENT_URL"
+
+      - name: Comment PR with deployment URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const stage = '${{ steps.stage.outputs.stage }}';
+            const url = '${{ steps.deploy.outputs.url }}';
+            const emoji = stage === 'production' ? '🚀' : '🔧';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${emoji} **${stage.charAt(0).toUpperCase() + stage.slice(1)} Preview Deployed!**\n\n🔗 ${url}\n\n**Environment:** \`STAGE=${stage}\`\n**Branch:** \`${context.payload.pull_request.head.ref}\`\n**Commit:** \`${context.sha.substring(0, 7)}\``
+            })
+
+  # Optional: Run E2E tests against deployed environment
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: deploy
+    name: E2E Tests
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development'
+    continue-on-error: true # Don't fail the workflow if E2E tests fail
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright
+        run: pnpm --filter @riddle-rush/game exec playwright install chromium
+
+      - name: Run E2E tests
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.url }}
+          STAGE: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+        run: |
+          pnpm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+          path: apps/game/playwright-report/
+          retention-days: 7

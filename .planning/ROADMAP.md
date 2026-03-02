@@ -24,6 +24,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Game Results** - Scoring and leaderboard pages
 - [x] **Phase 10: Settings Pages** - Options and language selection
 - [x] **Phase 11: Modal Dialogs** - Quit and pause overlays
+- [x] **Phase 11.1: Scoring & Player Config** - INSERTED: Score increment ±1, player count 2-10, leaderboard rank fixes
+- [x] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
+- [x] **Phase 13: Post-Round Next Step Modal** - Prompt to play another round or view leaderboard
+- [ ] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs
+- [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 
 ## Phase Details
 
@@ -250,21 +255,144 @@ Plans:
 - [x] 11-02-PLAN.md — Refactor QuitModal to use GameModal with danger variant
 - [x] 11-03-PLAN.md — Refactor PauseModal to CSS-first with stacked buttons
 
+### Phase 11.1: Scoring & Player Config (INSERTED)
+
+**Goal**: Adjust scoring increment to ±1 per button press, make player count limits configurable via runtime config (env vars), set defaults to 2-10 players with default 2, and ensure leaderboard displays correct scores and rank positions for up to 10 players
+**Depends on**: Phase 9 (Game Results)
+**Success Criteria** (what must be TRUE):
+
+1. Score +/- buttons on results page change score by 1 per press (not 10)
+2. Player count limits (min, max, default) are configurable via Nuxt runtime config / environment variables
+3. Default player range is 2-10 with default 2 (overridable per deployment)
+4. Read-only leaderboard page shows each player's correct total score and rank position
+5. GameScrollList rank badges display for positions 4-10 (not just 4-6)
+
+**Plans**: 2 plans
+
+Plans:
+
+- [x] 11.1-01-PLAN.md — Update scoring increment, player limits via runtime config, and shared constants
+- [x] 11.1-02-PLAN.md — Fix GameScrollList rank display for up to 10 players and verify leaderboard
+
+### Phase 12: App Optimization & Refactoring
+
+**Goal**: Prepare app for production v1.0.3 with comprehensive testing, optimized Terraform infrastructure, and proper deployment
+**Depends on**: Phase 11
+**Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03
+**Success Criteria** (what must be TRUE):
+
+1. All composables have unit tests with >75% coverage
+2. Integration tests cover WebSocket and IndexedDB flows
+3. E2E test suite passes with 100% success rate
+4. Terraform infrastructure refactored with reusable modules and validation
+5. CloudFront cache policies extracted to dedicated module
+6. Production bundle built and optimized (<5MB total)
+7. Lighthouse score >90 on all categories
+8. Version 1.0.3 deployed to production with monitoring
+9. Git tag v1.0.3 created and GitHub release published
+10. 24-hour production monitoring shows stability
+
+**Plans**: 10 plans
+
+Plans:
+
+- [ ] 12-01-PLAN.md — E2E test fixes with data-testid attributes
+- [ ] 12-02-PLAN.md — Unit tests for useAnswerCheck, useGameActions, useGameState
+- [ ] 12-03-PLAN.md — Unit tests for useStatistics, useAudio, useIndexedDB
+- [ ] 12-04-PLAN.md — Extract S3, CloudFront, DynamoDB Terraform modules
+- [ ] 12-05-PLAN.md — Extract Lambda, API Gateway, WebSocket, CloudWatch modules
+- [ ] 12-06-PLAN.md — Extract category and session management composables
+- [ ] 12-07-PLAN.md — Extract player and scoring management composables
+- [ ] 12-08-PLAN.md — Extract attempt, statistics, persistence composables
+- [ ] 12-09-PLAN.md — Visual audit of all game pages
+- [ ] 12-10-PLAN.md — Deployment script enhancements
+
+**Details**:
+
+- **Wave 1 (Blocking):** Plan 01 - E2E fixes establish safety net
+- **Wave 2 (Parallel):** Plans 02-08 - Testing, Terraform, Game Store refactoring
+- **Wave 3 (Polish):** Plans 09-10 - Visual audit and deployment automation
+
+### Phase 13: Post-Round Next Step Modal
+
+**Goal**: Ensure a modal appears after all players are scored, asking whether to start another round or go to the leaderboard
+**Depends on**: Phase 9, Phase 11
+**Requirements**: MODAL-03
+**Success Criteria** (what must be TRUE):
+
+1. After all players have been played and points are set, a modal appears on the results flow
+2. Modal asks: "Do you want to play another round, or go to the leaderboard?"
+3. Choosing "Another round" starts the next round flow
+4. Choosing "Leaderboard" navigates to the leaderboard screen
+5. Modal does not appear prematurely (only after scoring is complete)
+
+**Plans**: 1 plan
+
+Plans:
+
+- [x] 13-01-PLAN.md — Confirm post-round decision modal copy and flow
+
+### Phase 14: Maintenance & Quality of Life
+
+**Goal**: Address pending technical debt, bugs, and internationalization tasks to improve codebase health and stability.
+**Depends on**: Phase 13
+**Success Criteria** (what must be TRUE):
+
+1. All user-facing text is replaced with i18n translation keys.
+2. The multiplayer bug causing round skips is identified and resolved.
+3. The game store's structure is reviewed, and its complexity is reduced where feasible.
+4. The intermittent `nuxi typecheck` error is investigated and fixed.
+
+### Phase 15: Visual Polish, Animations & Bug Fixes
+
+**Goal**: Achieve pixel-perfect CSS fidelity with mockups across all screens, prepare Figma sync pipeline, add smooth page/component animations, refactor duplicated code, and fix known bugs
+**Depends on**: Phase 14
+**Requirements**: POLISH-01, POLISH-02, POLISH-03, POLISH-04, POLISH-05
+**Success Criteria** (what must be TRUE):
+
+1. Every page with a mockup in docs/mockups/ visually matches the mockup CSS styling
+2. Pages without mockups (round-start, credits) follow the established design system consistently
+3. Figma token sync pipeline is prepared (CSS custom properties layer that Figma variables can override)
+4. Page transitions use smooth, consistent animations (not jarring cuts)
+5. Component mount/unmount animations feel polished (stagger, fade, slide)
+6. No duplicated styling code across pages (shared via design system or composables)
+7. Known bugs from STATE.md pending todos are resolved
+8. All unit tests pass, workspace:check passes
+
+**Plans:** 4 plans
+
+Plans:
+
+- [ ] 15-01-PLAN.md -- CSS deduplication, shared utilities, migrate credits.vue + round-start.vue to design system
+- [ ] 15-02-PLAN.md -- Figma token sync pipeline preparation
+- [ ] 15-03-PLAN.md -- Bug fixes (multiplayer round flow, dead code cleanup, typecheck investigation)
+- [ ] 15-04-PLAN.md -- Mockup CSS gap fixes across all pages + page/component animations
+
+**Details**:
+
+- **Wave 1 (Parallel):** Plans 01, 02, 03 -- CSS foundation, Figma prep, bug fixes (independent)
+- **Wave 2 (Sequential):** Plan 04 -- CSS gap fixes + animations (depends on Plan 01 for .page-shell class)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13
 
-| Phase                     | Plans Complete | Status   | Completed  |
-| ------------------------- | -------------- | -------- | ---------- |
-| 1. Design Tokens          | 3/3            | Complete | 2026-01-31 |
-| 2. Design Utilities       | 2/2            | Complete | 2026-01-31 |
-| 3. Core Layout Components | 2/2            | Complete | 2026-02-01 |
-| 4. Interactive Components | 2/2            | Complete | 2026-02-01 |
-| 5. Structural Components  | 3/3            | Complete | 2026-02-01 |
-| 6. Splash & Navigation    | 2/2            | Complete | 2026-02-01 |
-| 7. Player Setup           | 2/2            | Complete | 2026-02-01 |
-| 8. Core Gameplay          | 2/2            | Complete | 2026-02-01 |
-| 9. Game Results           | 2/2            | Complete | 2026-02-01 |
-| 10. Settings Pages        | 2/2            | Complete | 2026-02-01 |
-| 11. Modal Dialogs         | 3/3            | Complete | 2026-02-03 |
+| Phase                              | Plans Complete | Status   | Completed  |
+| ---------------------------------- | -------------- | -------- | ---------- |
+| 1. Design Tokens                   | 3/3            | Complete | 2026-01-31 |
+| 2. Design Utilities                | 2/2            | Complete | 2026-01-31 |
+| 3. Core Layout Components          | 2/2            | Complete | 2026-02-01 |
+| 4. Interactive Components          | 2/2            | Complete | 2026-02-01 |
+| 5. Structural Components           | 3/3            | Complete | 2026-02-01 |
+| 6. Splash & Navigation             | 2/2            | Complete | 2026-02-01 |
+| 7. Player Setup                    | 2/2            | Complete | 2026-02-01 |
+| 8. Core Gameplay                   | 2/2            | Complete | 2026-02-01 |
+| 9. Game Results                    | 2/2            | Complete | 2026-02-01 |
+| 10. Settings Pages                 | 2/2            | Complete | 2026-02-01 |
+| 11. Modal Dialogs                  | 3/3            | Complete | 2026-02-16 |
+| 11.1. Scoring & Player Config      | 2/2            | Complete | 2026-02-16 |
+| 12. App Optimization & Refactoring | 10/10          | Complete | 2026-02-16 |
+| 13. Post-Round Next Step Modal     | 1/1            | Complete | 2026-02-27 |
+| 14. Maintenance & Quality of Life  | 0/0            | Pending  | —          |
+| 15. Visual Polish & Bug Fixes      | 0/4            | Planned  | —          |

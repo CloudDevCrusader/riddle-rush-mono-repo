@@ -17,7 +17,7 @@ exports.handler = async (event) => {
         Key: {
           connectionId,
         },
-      })
+      }),
     )
 
     console.log(`Connection removed: ${connectionId}`)

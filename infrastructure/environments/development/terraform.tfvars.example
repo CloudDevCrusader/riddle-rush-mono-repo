@@ -5,12 +5,11 @@
 project_name = "riddle-rush-pwa"
 aws_region   = "eu-central-1"
 
-# Leave empty for auto-generated name (will be: riddle-rush-pwa-development-ACCOUNT_ID)
+# Leave empty for auto-generated name (will be: riddle-rush-pwa-development)
 bucket_name = ""
 
-# Development custom domain (optional)
-# domain_names = ["dev.riddlerush.de"]
-# domain_name = "dev.riddlerush.de" # Deprecated, use domain_names
-# certificate_arn = ""
+# Development custom domain
+domain_names    = ["dev.riddlerush.de"]
+certificate_arn = "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/CERTIFICATE_ID"
 
 cloudfront_price_class = "PriceClass_100"

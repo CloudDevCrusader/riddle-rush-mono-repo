@@ -1,195 +1,287 @@
 # External Integrations
 
-**Analysis Date:** 2026-01-31
+**Analysis Date:** 2026-02-13
 
 ## APIs & External Services
 
-**Wikipedia Category Data:**
+**Analytics:**
 
-- PetScan API - Wikipedia category term extraction
-  - SDK/Client: Direct HTTP fetch
-  - URL: Configurable via `PETSCAN_API_URL` environment variable (default: https://petscan.wmflabs.org)
-  - Usage: `composables/useAnswerCheck.ts` - 5-minute cache for category terms
-  - Caching: Workbox runtime caching strategy (NetworkFirst with 10s timeout)
-
-**Real-time Communication:**
-
-- Socket.IO 4.8.3 - WebSocket/polling for multiplayer features
-  - Client: `socket.io-client` 4.8.3
-  - Implementation: `composables/useWebSocket.ts`
-  - Connection URL: `http://localhost:3000` (dev) or `window.location.origin` (production)
-  - Transports: WebSocket and polling fallback
-  - Reconnection: Enabled with exponential backoff (1s-5s delay, max 5 attempts)
+- Google Analytics 4 (GA4) - Page view and event tracking in production
+  - SDK/Client: Custom Nuxt plugin (no external dependency)
+  - Config: `apps/game/plugins/gtag.client.ts`
+  - Auth: `GTAG_ID` env var (GA4 measurement ID, e.g. `G-XXXXXXXXXX`)
+  - Behavior: Only loads in production when `GTAG_ID` is set; tracks route changes via `router.afterEach`
 
 **Feature Flags:**
 
-- GitLab Feature Flags (Unleash Protocol)
-  - Client: `unleash-proxy-client` 3.7.8
-  - Configuration: `plugins/gitlab-feature-flags.client.ts`
-  - URL: `GITLAB_FEATURE_FLAGS_URL` (format: https://gitlab.com/api/v4/feature_flags/unleash/:project_id)
-  - Auth: `GITLAB_FEATURE_FLAGS_TOKEN`
-  - Refresh interval: 30 seconds
-  - Fallback: Local settings store if not configured
-  - Composable: `composables/useFeatureFlags.ts`
-  - Tracked flags: `fortune-wheel`, `websocket`
+- GitLab Feature Flags (Unleash Protocol) - Remote feature toggle management
+  - SDK/Client: `unleash-proxy-client` ^3.7.8
+  - Config: `apps/game/plugins/gitlab-feature-flags.client.ts`
+  - Auth: `GITLAB_FEATURE_FLAGS_URL` (Unleash API URL), `GITLAB_FEATURE_FLAGS_TOKEN` (client key)
+  - Behavior: Polls every 30 seconds; falls back to local settings store if not configured
+  - Composable: `apps/game/composables/useFeatureFlags.ts` - wraps Unleash client with local fallback
+
+**Translation Management:**
+
+- Tolgee - Translation platform for i18n strings
+  - SDK/Client: `@tolgee/vue` ^6.2.7 (devDependency)
+  - Config: `.tolgeerc.json` (project ID: 27759, parser: vue, languages: de/en)
+  - Auth: `VITE_APP_TOLGEE_API_URL`, `VITE_APP_TOLGEE_API_KEY`
+  - CLI: Push/pull translations to/from `apps/game/i18n/locales/`
+
+**Error Monitoring:**
+
+- AWS CloudWatch (via custom API Gateway) - Client-side error log sync
+  - SDK/Client: Custom fetch-based implementation
+  - Config: `apps/game/composables/useErrorSync.ts`, `apps/game/plugins/error-sync.client.ts`
+  - Auth: `CLOUDWATCH_ENDPOINT` (API Gateway URL), `CLOUDWATCH_API_KEY` (API key)
+  - Behavior: Captures global errors, unhandled rejections, Vue errors, Pinia action errors; periodic batch sync
+  - Backend: `infrastructure/cloudwatch-api.tf` - API Gateway REST API + Lambda handler (`infrastructure/lambda/error-logs/index.js`)
+
+- Sentry (optional, not actively implemented) - Error tracking placeholder
+  - Auth: `SENTRY_DSN` env var (defined in `.env.example` but not consumed in code)
+
+- SonarCloud - Static code quality analysis
+  - Config: `sonar-project.properties`
+  - Auth: `SONAR_PROJECT_KEY`, `SONAR_ORGANIZATION` (CI/CD variables)
+  - Pipeline: `.gitlab-ci.yml` `sonarcloud-check` job
+
+**Real-time Communication:**
+
+- WebSocket (Socket.IO) - Real-time multiplayer connectivity
+  - SDK/Client: `socket.io-client` ^4.8.3
+  - Config: `apps/game/composables/useWebSocket.ts`, `apps/game/plugins/websocket.client.ts`
+  - Backend: AWS API Gateway WebSocket API + Lambda handlers (`infrastructure/websocket.tf`)
+  - Behavior: Auto-connect on app mount (if feature flag enabled), connection monitoring, visibility change handling
+  - Feature-gated: Controlled by `websocket` feature flag via `useFeatureFlags()`
+
+**External Data:**
+
+- PetScan (Wikimedia) - External data source
+  - Endpoint: `https://petscan.wmflabs.org` (defined in `.env.example`)
+  - Auth: None required (public API)
+
+**AI Services (tooling, not game runtime):**
+
+- OpenAI - LLM integration via `@langchain/openai`
+  - Auth: `OPENAI_API_KEY`
+  - Usage: AI tooling in `tools/langchain/`
+
+- Anthropic - LLM integration
+  - SDK/Client: `@anthropic-ai/claude-agent-sdk`
+  - Auth: `ANTHROPIC_API_KEY`
+
+- E2B - Code interpreter sandbox
+  - SDK/Client: `@e2b/code-interpreter`
+  - Auth: `E2B_API_KEY`
+
+- Trigger.dev - Background job processing
+  - SDK/Client: `@trigger.dev/sdk` ^4.3.2
+  - Config: `trigger.config.ts` (project: `proj_syppnyiedgjpwlyuomro`, dirs: `./src/trigger`)
+  - Max duration: 3600s, retries: 3 with exponential backoff
 
 ## Data Storage
 
-**Databases:**
+**Client-Side (Primary):**
 
-- IndexedDB (Client-side, offline-first)
-  - Connection: Direct browser IndexedDB API
-  - Client: `idb` 8.0.3 (wrapper library)
-  - Implementation: `composables/useIndexedDB.ts`
-  - Database name: `riddle-rush-db` (version 3)
-  - Stores:
-    - `gameSession` - Current active game session
-    - `gameSessionsById` - Sessions indexed by ID
-    - `gameHistory` - Completed sessions (indexed on `startTime`)
-    - `statistics` - Aggregated player statistics
-    - `leaderboard` - High scores (indexed on `score` and `timestamp`)
-    - `settings` - User preferences
-  - Purpose: Offline-first data persistence, local game state
+- IndexedDB - Main game data persistence (client-only SPA)
+  - Client: `idb` ^8.0.3 (IndexedDB promise wrapper)
+  - Implementation: `apps/game/composables/useIndexedDB.ts`
+  - Database: `riddle-rush-db` (version 3)
+  - Stores: `gameSession`, `gameSessionsById`, `gameHistory`, `statistics`, `leaderboard`, `settings`
+  - Singleton pattern with cached `dbInstance`
+
+- LocalStorage - Simple key-value persistence
+  - Implementation: `apps/game/composables/useLocalStorage.ts`
+  - Usage: Color mode preference (`riddle-rush-color-mode`), locale settings
+
+**Server-Side (AWS, Terraform-managed):**
+
+- AWS DynamoDB - NoSQL database for backend data
+  - Tables defined in `infrastructure/dynamodb.tf`:
+    - `{project}-users-{env}` - User profiles (hash: `userId`, GSIs: Email, CreatedAt, TTL enabled)
+    - `{project}-leaderboard-{env}` - Leaderboard scores (hash: `gameMode`, range: `score`, GSIs: UserScores, Timestamp)
+    - `{project}-performance-{env}` - Performance metrics (hash: `metricId`, range: `timestamp`, GSIs: UserMetrics, MetricName)
+    - `{project}-ws-connections-{env}` - WebSocket connection tracking (hash: `connectionId`, GSI: UserConnections)
+  - All tables: PAY_PER_REQUEST billing, DynamoDB Streams enabled, Point-in-Time Recovery, TTL
 
 **File Storage:**
 
-- Local filesystem only (Static assets via public directory)
-  - Public assets: `/public/` directory
-  - Game data: `/assets/data/` (JSON files for categories, questions, etc.)
-  - Icons/Images: PWA icons (pwa-192x192.png, pwa-512x512.png, etc.)
+- AWS S3 - Static website hosting and asset storage
+  - Config: `infrastructure/main.tf`
+  - Buckets: Website bucket (versioned, intelligent tiering), CloudFront logs bucket
+  - Transfer Acceleration enabled
+  - Public access blocked (CloudFront OAC for access)
 
 **Caching:**
 
-- Service Worker + Workbox (via @vite-pwa/nuxt)
-  - Purpose: Offline support and performance
-  - Strategies:
-    - **CacheFirst**: Images, fonts, Google Fonts
-    - **NetworkFirst**: Start URL, external APIs (10s timeout)
-  - Cache expiration: 30 days for images, 1 year for fonts
-  - Max file size for caching: 2MB (5MB in debug builds)
+- Redis - Server-side caching (dependency declared)
+  - Client: `redis` ^5.10.0 (in `apps/game/package.json`)
+  - Usage: Available for server-side caching but primarily a client-side SPA
+
+- Workbox Service Worker - Client-side caching
+  - Config: `apps/game/nuxt.config.ts` `pwa.workbox` section
+  - Strategies: NetworkFirst (start URL), CacheFirst (images, fonts, Google Fonts)
+  - Cache names: `start-url`, `images`, `fonts`, `google-fonts-stylesheets`, `google-fonts-webfonts`
+
+- CloudFront CDN - Edge caching
+  - Config: `infrastructure/main.tf` (custom cache policies for static assets vs HTML)
+  - Static assets: 1 year TTL with Brotli+Gzip
+  - HTML content: 5 min default TTL, 1 hour max
+  - Service worker: No cache
+  - Lambda@Edge for enhanced cache control headers
 
 ## Authentication & Identity
 
 **Auth Provider:**
 
-- Custom client-side (No central auth)
-  - Implementation: Player-based (no user accounts in MVP)
-  - Session ID: Auto-generated per game
-  - Player identification: Client-side only (no server persistence)
-
-**WebSocket User Identification:**
-
-- Auto-generated anonymous user IDs via Socket.IO
-  - Format: `user-` + 7-char random string
-  - Implementation: `composables/useWebSocket.ts`
-  - Purpose: Multiplayer real-time tracking
+- None (client-side only) - No server-side authentication implemented
+  - Implementation: Game sessions use locally-generated user IDs (`user-` + random string in `useWebSocket.ts`)
+  - Data persistence: All game data stored in IndexedDB on the client
+  - WebSocket auth: Connection tracked in DynamoDB but no authentication layer
 
 ## Monitoring & Observability
 
 **Error Tracking:**
 
-- CloudWatch (optional, AWS-native)
-  - Endpoint: `CLOUDWATCH_ENDPOINT` environment variable
-  - Auth: `CLOUDWATCH_API_KEY`
-  - Implementation: `composables/useErrorSync.ts`
-  - Sync interval: Periodic (every 30 seconds or on accumulation)
-  - Error types captured: Unhandled exceptions, promise rejections, custom errors
-  - Debug mode: `DEBUG_ERROR_SYNC` flag
+- CloudWatch (custom) - Client error sync via API Gateway
+  - API: `infrastructure/cloudwatch-api.tf` (REST API with API key auth)
+  - Lambda: `infrastructure/lambda/error-logs/index.js`
+  - Dashboard: `{project}-error-logs` CloudWatch dashboard
+  - Metrics: API request count, latency, 5XX errors, Lambda processing errors
+
+**Infrastructure Monitoring:**
+
+- CloudWatch Alarms - Automated alerting
+  - Config: `infrastructure/monitoring.tf`
+  - Alarms: CloudFront 5XX (>10%), 4XX (>20%), total error rate (>1% for 3 min), S3 bucket size (>1GB)
+  - Notifications: SNS topic `{project}-cloudfront-alarms`
+
+- CloudWatch Dashboards
+  - `{project}-cloudfront-monitoring` - Traffic, error rates, cache hit rate
+  - `{project}-error-logs` - API requests, latency, errors
+
+- Route53 Health Check - Endpoint monitoring
+  - Config: `infrastructure/monitoring.tf`
+  - Type: HTTPS check on CloudFront domain, 30s interval, latency measurement
 
 **Logs:**
 
-- Centralized logging composable
-  - Implementation: `composables/useLogger.ts`
-  - Output: Console (production builds have console statements removed via build step)
-  - Logging only in development mode
-  - Integration with error sync for CloudWatch
-
-**Analytics:**
-
-- Google Analytics 4 (GA4)
-  - ID: `GTAG_ID` (Google Analytics measurement ID)
-  - Implementation: `plugins/gtag.client.ts`
-  - Activation: Production environment only when GTAG_ID is configured
-  - Script: `https://www.googletagmanager.com/gtag/js?id=${gtagId}`
-  - Features:
-    - Page view tracking (on route changes)
-    - Custom event tracking via `composables/useAnalytics.ts`
-    - Anonymized IP tracking
-    - SameSite=None;Secure cookies
-  - Composable: `composables/useAnalytics.ts` for custom events
-  - Events: `game_start`, `answer_correct`, `answer_incorrect`, `round_complete`, etc.
+- Client: `apps/game/composables/useLogger.ts` (custom composable wrapping console)
+- Performance: `apps/game/composables/usePerformance.ts`, `apps/game/plugins/performance.client.ts`
+- AWS: CloudWatch Log Groups for Lambda functions (7-30 day retention)
 
 ## CI/CD & Deployment
 
-**Hosting:**
+**Hosting (Multi-Platform):**
 
-- AWS (Production)
-  - S3 bucket for static site hosting
-  - CloudFront CDN for global distribution
-  - Configuration via Terraform in `infrastructure/environments/production/`
-  - Environment variable: `AWS_S3_BUCKET`
+- Vercel - Primary hosting (GitHub-triggered)
+  - Config: `vercel.json`, `.github/workflows/deploy.yml`
+  - Preset: `vercel-static` (static site generation)
+  - Output: `apps/game/.output/public`
+  - Environments: production (main branch), development (development branch), preview (PRs)
 
-- GitLab Pages (Staging/Dev)
-  - Used for staging and development deployments
-  - Triggered via GitLab CI/CD pipeline
-  - `.gitlab-ci.yml` configuration
+- AWS S3 + CloudFront - Secondary hosting (GitLab-triggered)
+  - Config: `infrastructure/main.tf`, `.gitlab-ci.yml`
+  - Domain: `riddlerush.de` (production), `dev.riddlerush.de` (development)
+  - DNS: Route53 (`infrastructure/route53.tf`)
+  - WAF: AWS WAFv2 with managed rule sets (Common, KnownBadInputs)
+  - SSL: ACM certificate, TLS 1.2+ minimum
+  - HTTP/2 and HTTP/3 enabled
 
-**CI Pipeline:**
+- Docker/nginx - Container deployment option
+  - Config: `Dockerfile` (multi-stage), `docker-compose.yml`
+  - Production: nginx serving static files on port 80
+  - Development: Node.js dev server on port 3000
 
-- GitLab CI/CD
-  - Stages: test → quality → build → deploy → verify
-  - Change detection: Selective job runs based on file changes
-  - Docker image: Custom CI image (`ci-build`) for faster builds
-  - Jobs: Unit tests, SonarCloud analysis, builds, deployment, E2E verification
-  - Monorepo optimization: Only affected workspaces are tested/built
+- GitLab Pages - Documentation site
+  - Config: `.gitlab-ci.yml` `pages` job
+  - URL: `https://djdiox.gitlab.io/riddle-rush-nuxt-pwa`
 
-**Docker:**
+**CI Pipeline (GitLab CI):**
 
-- Custom Docker image: `ci-build`
-  - Purpose: Pre-installed dependencies for faster CI builds
-  - Usage: GitLab CI/CD pipeline
-  - Location: Not in source repo (built separately)
+- Config: `.gitlab-ci.yml`
+- Image: Custom CI image (`${CI_REGISTRY_IMAGE}/ci-build:latest`) or `node:20`
+- Stages: test -> quality -> build -> deploy -> verify
+- Jobs: `test` (unit), `sonarcloud-check`, `test:e2e` (manual), `build`, `build:docs`, `deploy:aws:production` (tags), `deploy:aws:dev`, `pages`, `verify:e2e:aws` (manual)
+- E2E image: `mcr.microsoft.com/playwright:v1.57.0-noble`
 
-- Playwright Docker: `mcr.microsoft.com/playwright:v1.57.0-noble`
-  - Purpose: E2E testing in CI
-  - Usage: `scripts/e2e-docker.sh`
+**CI Pipeline (GitHub Actions):**
+
+- `.github/workflows/deploy.yml` - Deploy to Vercel (quality checks -> build -> deploy -> optional E2E)
+- `.github/workflows/tests.yml` - Test runner with flaky test detection (UnfoldCI)
+- `.github/workflows/copilot-setup-steps.yml` - GitHub Copilot workspace setup
+- `.github/workflows/cleanup-deployments.yml` - Deployment cleanup
+
+**Infrastructure as Code:**
+
+- Terraform >= 1.5.0 - AWS infrastructure provisioning
+  - Config: `infrastructure/` directory
+  - Provider: AWS ~> 5.0, region: `eu-central-1`
+  - State: Local (`terraform.tfstate`), S3 backend available but commented out
+  - Modules: `lambda-ssr`, `s3-website`, `cloudfront`, `cloudfront-enhanced`
+  - Environments: `infrastructure/environments/{development,staging,production,docs}/`
+
+**Dependency Automation:**
+
+- Renovate - Automated dependency PRs
+  - Config: `renovate.json`
+  - Schedule: Weekly (Monday before 10am), minor/patch only, majors disabled
+  - Groups: Nuxt ecosystem, Vue ecosystem, Testing dependencies
+  - Limits: 3 concurrent PRs, 2 per hour
+
+- Changesets - Version management
+  - Config: `.changeset/config.json`
+  - Scripts: `changeset`, `changeset:version`, `changeset:publish`
 
 ## Environment Configuration
 
-**Required env vars:**
+**Required env vars (production):**
 
-- `NODE_ENV` - Application environment (development/production)
-- `BASE_URL` - Base path for asset loading
-- `GOOGLE_ANALYTICS_ID` - GA4 measurement ID (production only)
-- `AWS_S3_BUCKET` - S3 bucket name (production deployment)
-- `AWS_REGION` - AWS region (default: eu-central-1)
-- `AWS_CLOUDFRONT_ID` - CloudFront distribution ID (optional)
+- `GTAG_ID` - Google Analytics measurement ID
+- `AWS_S3_BUCKET` - S3 bucket name for deployment
+- `AWS_REGION` - AWS region (default: `eu-central-1`)
+- `AWS_CLOUDFRONT_ID` - CloudFront distribution ID
+- `CLOUDWATCH_ENDPOINT` - Error logs API endpoint
+- `CLOUDWATCH_API_KEY` - Error logs API key
 
 **Optional env vars:**
 
-- `CLOUDWATCH_ENDPOINT` - CloudWatch API endpoint
-- `CLOUDWATCH_API_KEY` - CloudWatch authentication key
-- `DEBUG_ERROR_SYNC` - Enable error sync debugging
-- `GITLAB_FEATURE_FLAGS_URL` - GitLab Feature Flags Unleash URL
-- `GITLAB_FEATURE_FLAGS_TOKEN` - GitLab Feature Flags auth token
-- `PETSCAN_API_URL` - PetScan Wikipedia API URL (default: https://petscan.wmflabs.org)
+- `GITLAB_FEATURE_FLAGS_URL` / `GITLAB_FEATURE_FLAGS_TOKEN` - Remote feature flags
+- `SENTRY_DSN` - Error tracking (not actively used)
+- `VITE_APP_TOLGEE_API_KEY` - Translation management CLI
+- `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` / `E2B_API_KEY` - AI tooling
+- `VERCEL_TOKEN` - Vercel deployment (GitHub Actions secret)
 
 **Secrets location:**
 
-- GitLab CI/CD variables (protected, masked)
-- .env file (local development only, not committed)
-- Terraform outputs (for AWS deployment)
+- Local: `.env.local` (gitignored)
+- GitLab CI: CI/CD variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `SONAR_PROJECT_KEY`, etc.)
+- GitHub Actions: Repository secrets (`VERCEL_TOKEN`, `TURBO_TOKEN`, `FLAKY_AUTOPILOT_KEY`)
+- AWS: API Gateway API key for CloudWatch error logs (Terraform-managed, sensitive output)
 
 ## Webhooks & Callbacks
 
 **Incoming:**
 
-- None (Static SPA, no server webhooks)
+- CloudWatch Error Logs API - POST `{api-gateway-url}/logs`
+  - Config: `infrastructure/cloudwatch-api.tf`
+  - Auth: API key required
+  - Lambda handler: `infrastructure/lambda/error-logs/index.js`
+
+- WebSocket API Gateway - `$connect`, `$disconnect`, `$default` routes
+  - Config: `infrastructure/websocket.tf`
+  - Lambda handlers: `infrastructure/lambda/websocket/{connect,disconnect,message}/index.js`
 
 **Outgoing:**
 
-- None (Client-side only, uses polling/WebSocket for real-time)
+- SNS Notifications - CloudWatch alarm notifications
+  - Topic: `{project}-cloudfront-alarms`
+  - Triggers: 5XX errors, 4XX errors, high error rate, bucket size
+
+- Renovate - Automated PRs for dependency updates
+  - Schedule: Weekly Monday mornings
 
 ---
 
-_Integration audit: 2026-01-31_
+_Integration audit: 2026-02-13_

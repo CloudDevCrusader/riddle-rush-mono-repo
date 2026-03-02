@@ -1,6 +1,21 @@
+output "bucket_name" {
+  description = "S3 bucket name"
+  value       = module.s3_website.bucket_id
+}
+
+output "cloudfront_distribution_id" {
+  description = "CloudFront distribution ID"
+  value       = module.cloudfront.distribution_id
+}
+
+output "cloudfront_domain_name" {
+  description = "CloudFront domain name"
+  value       = module.cloudfront.distribution_domain_name
+}
+
 output "website_url" {
   description = "Website URL"
-  value       = var.domain_name != "" ? "https://${var.domain_name}" : "https://${module.cloudfront.distribution_domain_name}"
+  value       = length(var.domain_names) > 0 ? "https://${var.domain_names[0]}" : "https://${module.cloudfront.distribution_domain_name}"
 }
 
 output "deploy_command" {

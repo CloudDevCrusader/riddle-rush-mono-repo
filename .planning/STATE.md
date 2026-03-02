@@ -5,45 +5,48 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Phase 11 - Modal Dialogs
+**Current focus:** Post-release feature enhancements.
 
 ## Current Position
 
-Phase: 11 of 11 (Modal Dialogs)
-Plan: 3 of 3 in current phase
+Phase: 13 of 13 (Post-Round Flow)
+Plan: 1 of 1 — Complete
 Status: Phase complete
-Last activity: 2026-02-03 — Completed 11-03-PLAN.md (Pause modal refactoring)
+Last activity: 2026-02-27 - Completed 13-01-PLAN.md
 
-Progress: [████████████████] 100% (25/25 plans complete)
+Progress: [████████████████████████████████████] 100% (39/39 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 23
-- Average duration: 3.2 min
-- Total execution time: ~1.3 hours
+- Total plans completed: 39
+- Average duration: 3.3 min
+- Total execution time: ~2 hours
 
 **By Phase:**
 
-| Phase                     | Plans | Total | Avg/Plan |
-| ------------------------- | ----- | ----- | -------- |
-| 01-design-tokens          | 3/3   | 20min | 7min     |
-| 02-design-utilities       | 2/2   | 5min  | 2.5min   |
-| 03-core-layout-components | 2/2   | 10min | 5min     |
-| 04-interactive-components | 2/2   | 5min  | 2.5min   |
-| 05-structural-components  | 3/3   | 20min | 7min     |
-| 06-splash-navigation      | 2/2   | 6min  | 3min     |
-| 07-player-setup           | 2/2   | 6min  | 3min     |
-| 08-core-gameplay          | 2/2   | 5min  | 2.5min   |
-| 09-game-results           | 2/2   | 7min  | 3.5min   |
-| 10-settings-pages         | 2/2   | 7min  | 3.5min   |
-| 11-modal-dialogs          | 3/3   | 8min  | 2.7min   |
+| Phase                      | Plans | Total | Avg/Plan |
+| -------------------------- | ----- | ----- | -------- |
+| 01-design-tokens           | 3/3   | 20min | 7min     |
+| 02-design-utilities        | 2/2   | 5min  | 2.5min   |
+| 03-core-layout-components  | 2/2   | 10min | 5min     |
+| 04-interactive-components  | 2/2   | 5min  | 2.5min   |
+| 05-structural-components   | 3/3   | 20min | 7min     |
+| 06-splash-navigation       | 2/2   | 6min  | 3min     |
+| 07-player-setup            | 2/2   | 6min  | 3min     |
+| 08-core-gameplay           | 2/2   | 5min  | 2.5min   |
+| 09-game-results            | 2/2   | 7min  | 3.5min   |
+| 10-settings-pages          | 2/2   | 7min  | 3.5min   |
+| 11-modal-dialogs           | 3/3   | 9min  | 3min     |
+| 11.1-scoring-player-config | 2/2   | 14min | 7min     |
+| 12-app-optimization        | 10/10 | 44min | 4.4min   |
+| 13-post-round-flow         | 1/1   | 4min  | 4min     |
 
 **Recent Trend:**
 
-- Last 5 plans: 4min, 4min, 4min, 3min, 3min
-- Trend: Consistent ~3-4 min per plan
+- Last 5 plans: 4min, 4min, 4min, 3min, 4min
+- Trend: Consistent ~3-8 min per plan
 
 _Updated after each plan completion_
 
@@ -54,6 +57,12 @@ _Updated after each plan completion_
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- **[New]** The post-round modal will have three choices: "Play Again", "New Game", and "View Leaderboard".
+- Syncpack v14 migration: use `lint`/`fix` commands, remove deprecated config properties.
+- Use `@ts-expect-error` for cross-package vite/rollup Plugin type conflicts in monorepo.
+- EC2 is more cost-effective than ECS Fargate for Tolgee hosting due to 24/7 uptime and persistent storage needs (avoids costly EFS/NAT Gateway).
+- Tolgee admin password and SSH keys will be managed via a local, gitignored `terraform.tfvars` file for security.
+- Terraform state for the `translation` environment will use the existing dev S3 bucket but a separate key path for isolation.
 - No coins anywhere (not part of game mechanics, designer included speculatively) — REMOVED: focus on game, placeholder acceptable
 - Keep text input on game page (required for multiplayer answer submission)
 - No pause button top-right (simplify game header)
@@ -87,14 +96,32 @@ Recent decisions affecting current work:
 - Emoji icons with muted variant at volume 0 for audio controls (10-01)
 - Emoji flags for language indicators instead of PNG images (10-02)
 - Staged selection pattern for language changes (apply on OK, not immediately) (10-02)
-- Use v-model pattern (modelValue) instead of visible prop for modal visibility (11-02)
-- Emit update:modelValue alongside confirm/cancel for proper two-way binding (11-02)
+- Modal dismissal props default to true for backward compatibility (11-01)
+- Danger variant uses same glossy-button mixin pattern as other variants (11-01)
+- Use v-else for unlimited rank badges instead of v-else-if with index guard (11.1-02)
+- SCORE_INCREMENT reduced from 10 to 1 for finer-grained scoring (11.1-01)
+- Player range expanded to 2-10 with default 2, configurable via env vars (11.1-01)
+- Player limits sourced from Nuxt runtimeConfig.public for env var overrides (11.1-01)
+- data-testid naming convention: {page}-{element}-{type} for E2E test resilience (12-01)
+- Dynamic data-testid via template literals for indexed elements (12-01)
+- Reusable E2E test helper functions for multi-step game flows (12-01)
+- Stateless composable extraction pattern: pass mutable state, composable returns pure functions (12-06)
 
 ### Pending Todos
 
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
-- Review game store size (~550 lines) for simplification and bug risk.
+- Review game store size (~352 lines) for further simplification and bug risk.
+- **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
+- **[New]** Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag).
+- **[New]** Refactor game mode to single source of truth with documented state flow chart.
+
+### Completed Todos (2026-02-14)
+
+- ~~Push pending commits to remote.~~ Done.
+- ~~Switch CI/CD from CircleCI to Vercel.~~ Done — removed CircleCI, fixed SCSS import paths, verified Vercel build succeeds.
+- ~~Add non-blocking GitHub Action for quality checks.~~ Done — replaced broken npm-based tests.yml with pnpm/turbo quality checks workflow.
+- ~~Fix Docker image build for pnpm monorepo.~~ Done (quick-001) — fixed workspace file layering, corepack auto-version, output path, health check port. Pushed to GitHub.
 
 ### Blockers/Concerns
 
@@ -103,18 +130,17 @@ Recent decisions affecting current work:
 - Safari gradient rendering may differ from Chrome (verify early)
 - Custom scrollbar styling may not work on all mobile browsers (graceful degradation)
 
+### Quick Tasks Completed
+
+| #   | Description                                         | Date       | Commit    | Directory                                                                                             |
+| --- | --------------------------------------------------- | ---------- | --------- | ----------------------------------------------------------------------------------------------------- |
+| 001 | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/) |
+| 002 | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)   |
+| 003 | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                     |
+| 004 | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                  |
+
 ## Session Continuity
 
-Last session: 2026-02-03
-Stopped at: Completed 11-03-PLAN.md (Pause modal refactoring) - PROJECT COMPLETE
+Last session: 2026-02-27
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None
-
-### Phase 11 Plans Status
-
-- **11-01**: Complete - GameModal dismissal control props and GameButton danger variant
-- **11-02**: Complete - Quit modal refactored to use GameModal composition
-- **11-03**: Complete - Pause modal refactored to CSS-first with GameModal
-
-**Phase 11 (Modal Dialogs): COMPLETE** (3/3 plans complete)
-
-**PROJECT STATUS: ALL 11 PHASES COMPLETE (25/25 plans)**

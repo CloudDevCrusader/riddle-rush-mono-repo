@@ -1,308 +1,384 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-01-31
+**Analysis Date:** 2026-02-13
 
 ## Directory Layout
 
 ```
 riddle-rush-mono-repo/
-├── apps/                        # Monorepo applications
-│   ├── game/                    # Main Riddle Rush game (Nuxt 4 PWA)
-│   ├── docs/                    # Documentation site (Nuxt 4)
-│   └── mobile/                  # Mobile app (Capacitor)
-├── packages/                    # Shared packages
-│   ├── types/                   # TypeScript type definitions
-│   ├── shared/                  # Constants, routes, utilities
-│   ├── config/                  # Vite/Nuxt configuration
-│   └── riddle-cli/              # Command-line tools
-├── infrastructure/              # Terraform AWS infrastructure
-│   ├── environments/            # Environment-specific configs
-│   ├── modules/                 # Terraform modules (S3, CloudFront)
-│   ├── cloudfront-functions/    # Lambda@Edge functions
-│   └── scripts/                 # Infrastructure helper scripts
-├── docs/                        # Project documentation (markdown)
-│   ├── setup/                   # Setup guides
-│   ├── deployment/              # Deployment documentation
-│   └── development/             # Development guides
-└── scripts/                     # Project-level scripts
+├── apps/                          # Application workspaces
+│   ├── game/                      # Primary Nuxt 4 SPA (the main product)
+│   │   ├── app.vue                # Root Vue component (splash, layout, global overlays)
+│   │   ├── assets/                # Static assets and SCSS
+│   │   │   ├── data/              # Game data files
+│   │   │   └── scss/              # Design system and effects
+│   │   │       ├── design-system.scss  # Global CSS variables and base styles
+│   │   │       └── effects/       # Animation/effect stylesheets
+│   │   ├── components/            # Vue components (auto-imported)
+│   │   │   ├── Base/              # Generic reusable components (Button, Modal, ImageButton)
+│   │   │   ├── game/              # Game-specific components (GameButton, GameDisplay, etc.)
+│   │   │   ├── layout/            # Layout components (GameBackground, GamePanel)
+│   │   │   └── *.vue              # Top-level components (Toast, Spinner, SplashScreen, etc.)
+│   │   ├── composables/           # Business logic composables (auto-imported)
+│   │   ├── layouts/               # Nuxt layouts (default, game, menu)
+│   │   ├── nuxt.config.ts         # Nuxt configuration (modules, Vite, PWA, i18n, etc.)
+│   │   ├── pages/                 # File-based routing
+│   │   │   ├── index.vue          # / (main menu)
+│   │   │   ├── players.vue        # /players
+│   │   │   ├── round-start.vue    # /round-start
+│   │   │   ├── game/              # /game/:gameId?
+│   │   │   │   └── [[gameId]].vue
+│   │   │   ├── results/           # /results/:gameId?
+│   │   │   │   └── [[gameId]].vue
+│   │   │   ├── leaderboard.vue    # /leaderboard
+│   │   │   ├── settings.vue       # /settings
+│   │   │   ├── language.vue       # /language
+│   │   │   ├── credits.vue        # /credits
+│   │   │   └── *.vue              # Utility pages (component-test, websocket-demo, splash)
+│   │   ├── plugins/               # Nuxt client-side plugins
+│   │   ├── public/                # Static files served at root (images, PWA icons, JSON data)
+│   │   ├── server/                # Nitro server plugins
+│   │   │   └── plugins/
+│   │   │       └── socket.ts      # Socket.IO server
+│   │   ├── stores/                # Pinia state stores
+│   │   ├── tests/                 # All tests for the game app
+│   │   │   ├── e2e/               # Playwright E2E tests
+│   │   │   ├── unit/              # Vitest unit tests
+│   │   │   └── utils/             # Test utilities/helpers
+│   │   ├── translations/          # i18n translation files
+│   │   │   └── locales/           # de.json, en.json
+│   │   ├── utils/                 # Utility functions (auto-imported)
+│   │   ├── playwright.config.ts   # Playwright E2E config
+│   │   ├── vitest.config.ts       # Vitest unit test config
+│   │   └── uno.config.ts          # UnoCSS configuration
+│   └── mobile/                    # NativeScript Vue mobile app (secondary, early stage)
+│       ├── app/                   # NativeScript app code
+│       ├── nativescript.config.ts
+│       └── package.json
+├── packages/                      # Shared workspace packages
+│   ├── types/                     # @riddle-rush/types — TypeScript interfaces
+│   │   └── src/
+│   │       ├── game.ts            # Core game types (GameSession, Player, Category, etc.)
+│   │       └── index.ts           # Re-exports
+│   ├── shared/                    # @riddle-rush/shared — Constants, routes, utils
+│   │   └── src/
+│   │       ├── constants.ts       # Game config constants (scores, timing, alphabet)
+│   │       ├── routes.ts          # Route path constants and helpers
+│   │       ├── utils.ts           # Shared utilities (currently placeholder)
+│   │       └── index.ts           # Re-exports
+│   ├── config/                    # @riddle-rush/config — Build and lint config
+│   │   ├── eslint.config.mjs      # Shared ESLint config
+│   │   ├── prettier.config.js     # Shared Prettier config
+│   │   ├── vite.config.ts         # Shared Vite plugin helpers
+│   │   ├── scripts/               # Build utility scripts
+│   │   └── index.ts               # Config exports
+│   └── riddle-cli/                # @riddle-rush/cli — oclif CLI tool
+│       ├── bin/                   # CLI binary entry
+│       └── src/                   # CLI command implementations
+├── services/                      # Standalone service classes (root-level, legacy)
+│   ├── GameService.ts             # Game business logic (static methods)
+│   └── StorageService.ts          # Storage abstractions (localStorage, IndexedDB)
+├── infrastructure/                # AWS Terraform IaC
+│   ├── main.tf                    # S3, CloudFront, WAF, cache policies
+│   ├── iam.tf                     # IAM roles and policies
+│   ├── route53.tf                 # DNS configuration
+│   ├── dynamodb.tf                # DynamoDB tables
+│   ├── websocket.tf               # WebSocket API Gateway
+│   ├── ssr-lambda.tf              # SSR Lambda configuration
+│   ├── monitoring.tf              # CloudWatch monitoring
+│   ├── dashboard.tf               # CloudWatch dashboards
+│   ├── cloudwatch-api.tf          # CloudWatch API endpoints
+│   ├── variables.tf               # Terraform variables
+│   ├── outputs.tf                 # Terraform outputs
+│   ├── versions.tf                # Provider version constraints
+│   ├── environments/              # Per-environment Terraform configs
+│   ├── modules/                   # Reusable Terraform modules
+│   ├── lambda/                    # Lambda function source code
+│   ├── cloudfront-functions/      # CloudFront function code (request-rewrite.js)
+│   └── scripts/                   # Infrastructure helper scripts
+├── scripts/                       # Root-level scripts (65+ shell/JS scripts)
+│   ├── aws-deploy.sh              # AWS deployment
+│   ├── deploy-*.sh                # Environment-specific deploys
+│   ├── ci-*.sh                    # CI pipeline scripts
+│   ├── agent-*.sh                 # AI agent workflow scripts
+│   ├── terraform-*.sh             # Terraform wrappers
+│   └── ...
+├── tools/                         # AI agent and tooling experiments
+│   ├── ai-agents/                 # Agent tool integrations
+│   ├── python/                    # Python tooling
+│   ├── fastmcp/                   # FastMCP server
+│   ├── langchain/                 # LangChain integrations
+│   └── ...
+├── docs/                          # Project documentation (50+ markdown files)
+├── middleware/                     # Root-level Nuxt middleware (game-active guard)
+├── .planning/                     # GSD planning documents
+├── openspec/                      # OpenSpec change artifacts
+├── specs/                         # Specification documents
+├── templates/                     # Project templates
+├── turbo.json                     # Turborepo task configuration
+├── pnpm-workspace.yaml            # pnpm workspace definition
+├── package.json                   # Root package.json
+├── eslint.config.mjs              # Root ESLint config
+├── vercel.json                    # Vercel deployment config
+├── docker-compose.yml             # Docker Compose for local dev
+├── Dockerfile                     # Docker build
+└── AGENTS.md                      # Agent workflow guidelines
 ```
 
 ## Directory Purposes
 
-**apps/game/:**
+**`apps/game/`:**
 
-- Purpose: Main game application - Nuxt 4 PWA with offline support
-- Contains: Vue pages, components, stores, composables, tests
-- Key files: `nuxt.config.ts`, `app.vue`, `package.json`
+- Purpose: The primary Nuxt 4 SPA — a multiplayer party word game
+- Contains: All Vue components, pages, composables, stores, plugins, styles, tests, and translations
+- Key files: `nuxt.config.ts` (main config), `app.vue` (root component), `stores/game.ts` (core state)
 
-**apps/game/pages/:**
+**`apps/mobile/`:**
 
-- Purpose: File-based route definitions (Nuxt convention)
-- Contains: 9 page components for game flow
-- Key files:
-  - `index.vue` - Main menu
-  - `players.vue` - Player setup
-  - `round-start.vue` - Category/letter selection
-  - `game/[[gameId]].vue` - Game page (optional gameId parameter)
-  - `results/[[gameId]].vue` - Results page
-  - `leaderboard.vue` - Leaderboard rankings
-  - `language.vue` - Language selection
-  - `settings.vue` - Game settings
-  - `credits.vue` - Credits page
+- Purpose: NativeScript Vue mobile app (early stage, not the primary focus)
+- Contains: NativeScript app entry, webpack config, TypeScript types
+- Key files: `app/app.ts`, `nativescript.config.ts`
 
-**apps/game/components/:**
+**`packages/types/`:**
 
-- Purpose: Reusable Vue components
-- Contains: 18 components for UI elements and features
-- Subdirectories:
-  - `Base/` - Base components (Button, ImageButton, Modal)
-  - Root level: Feature components (Spinner, Toast, DebugPanel, FortuneWheel, etc.)
+- Purpose: Shared TypeScript type definitions consumed by game app
+- Contains: Interface definitions for game entities
+- Key files: `src/game.ts` (all core game types)
 
-**apps/game/composables/:**
+**`packages/shared/`:**
 
-- Purpose: Reusable composition functions (Vue 3 composables)
-- Contains: 26 composables for game logic, data access, UI utilities
-- Key groupings:
-  - Game State: `useGameState.ts`, `useGameActions.ts`
-  - Data Persistence: `useIndexedDB.ts`, `useAnswerCheck.ts`
-  - Navigation: `useNavigation.ts`
-  - UI: `useToast.ts`, `useModal.ts`, `useLoading.ts`
-  - Settings: `useLocalStorage.ts`
-  - Analytics: `useAnalytics.ts`
-  - Audio: `useAudio.ts`
+- Purpose: Shared constants, route definitions, and utility functions
+- Contains: Game configuration values, route path constants, helper functions
+- Key files: `src/constants.ts`, `src/routes.ts`
 
-**apps/game/stores/:**
+**`packages/config/`:**
 
-- Purpose: Pinia state management stores
-- Contains: 2 stores for game and settings management
-- Key files:
-  - `game.ts` - Game sessions, players, categories, leaderboard
-  - `settings.ts` - User preferences, audio/music settings, language
+- Purpose: Shared build tooling configuration (ESLint, Prettier, Vite plugins)
+- Contains: Config files and Vite plugin helper functions
+- Key files: `eslint.config.mjs`, `vite.config.ts`, `prettier.config.js`
 
-**apps/game/layouts/:**
+**`packages/riddle-cli/`:**
 
-- Purpose: Nuxt layout components for page structure
-- Contains: 3 layouts
-- Key files:
-  - `default.vue` - Standard page layout with background, global loading
-  - `game.vue` - Game-specific layout
-  - `menu.vue` - Menu-specific layout
+- Purpose: oclif-based CLI for project management and agent workflows
+- Contains: CLI commands, binary entry point
+- Key files: `bin/run.js`, `src/` (commands)
 
-**apps/game/plugins/:**
+**`services/`:**
 
-- Purpose: Nuxt plugins for initialization
-- Contains: 1 critical initialization plugin
-- Key files: `00.init-plugin-system.client.ts` - Fixes plugin initialization order
+- Purpose: Root-level standalone service classes with static methods (legacy pattern)
+- Contains: `GameService.ts` (game logic), `StorageService.ts` (storage abstractions)
+- Note: Most of this logic is duplicated in composables. Consider migrating.
 
-**apps/game/utils/:**
+**`infrastructure/`:**
 
-- Purpose: Utility functions and helpers
-- Contains: 2 utility files
-- Key files:
-  - `constants.ts` - App-wide constants (scores, timing, API configs)
-  - `filter-ssr-plugins.ts` - SSR plugin filtering logic
+- Purpose: AWS infrastructure as code (Terraform)
+- Contains: `.tf` files for S3, CloudFront, WAF, Route53, DynamoDB, Lambda, IAM, monitoring
+- Key files: `main.tf` (core resources), `variables.tf`, `environments/`
 
-**apps/game/public/:**
+**`scripts/`:**
 
-- Purpose: Static assets
-- Contains: Images, audio, game data JSON files
-- Key subdirectories:
-  - `assets/` - Images for menu, game UI, alphabet
-  - `data/` - Game data (categories.json, offlineAnswers.json)
+- Purpose: Shell and JS scripts for CI/CD, deployment, agent workflows, and maintenance
+- Contains: 65+ scripts covering aws, terraform, docker, playwright, agent tooling
+- Key files: `aws-deploy.sh`, `ci-build.sh`, `agent-validate.sh`
 
-**apps/game/tests/:**
+**`tools/`:**
 
-- Purpose: Test files
-- Contains: Unit tests and E2E tests
-- Subdirectories:
-  - `unit/` - Vitest unit tests
-  - `e2e/` - Playwright E2E tests
-  - `utils/` - Test utilities and fixtures
+- Purpose: AI agent integrations and experimental tooling (LangChain, FastMCP, CrewAI, etc.)
+- Contains: Python and JS tools for AI agent workflows
+- Key files: `ai-agents/agent-tools.py`, `python/main.py`
 
-**apps/game/i18n/locales/:**
+**`docs/`:**
 
-- Purpose: Translation files
-- Contains: JSON translation files for supported languages
-- Key files: `de.json`, `en.json`
-
-**packages/types/src/:**
-
-- Purpose: Shared TypeScript type definitions
-- Contains: Core game types used across apps
-- Key files: `game.ts` - GameSession, Player, Category, GameState types
-
-**packages/shared/src/:**
-
-- Purpose: Shared constants and utilities
-- Contains: Constants, route definitions, shared functions
-- Key files:
-  - `routes.ts` - Route path constants
-  - `constants.ts` - Game constants (scores, timing, API params)
-  - `utils.ts` - Utility functions
-
-**packages/config/:**
-
-- Purpose: Build and dev configuration
-- Contains: Vite plugin configuration, build settings
-
-**infrastructure/:**
-
-- Purpose: Infrastructure as Code (Terraform)
-- Contains: AWS infrastructure definitions
-- Subdirectories:
-  - `environments/` - Environment-specific variables
-  - `modules/` - Reusable Terraform modules
-  - `scripts/` - Helper scripts for Terraform
+- Purpose: Comprehensive project documentation
+- Contains: 50+ markdown files covering deployment, development, testing, performance, plugins, architecture
+- Key files: `DEVELOPMENT.md`, `DEPLOYMENT.md`, `TESTING.md`, `PERFORMANCE.md`
 
 ## Key File Locations
 
 **Entry Points:**
 
-- `apps/game/app.vue` - Application root, initializes stores and listeners
-- `apps/game/nuxt.config.ts` - Nuxt configuration, module setup, build config
-- `apps/game/pages/index.vue` - Main menu, first user-facing page
+- `apps/game/app.vue`: Root Vue component — splash screen, layout wrapper, global state init
+- `apps/game/nuxt.config.ts`: Nuxt configuration — modules, Vite, PWA, i18n, security
+- `apps/game/pages/index.vue`: Main menu page (home route `/`)
+- `infrastructure/main.tf`: AWS infrastructure entry point
 
 **Configuration:**
 
-- `apps/game/nuxt.config.ts` - Nuxt framework configuration
-- `apps/game/tsconfig.json` - TypeScript configuration
-- `apps/game/vitest.config.ts` - Unit test configuration
-- `apps/game/playwright.config.ts` - E2E test configuration
-- `package.json` - Dependencies and scripts
+- `turbo.json`: Turborepo task definitions and caching rules
+- `pnpm-workspace.yaml`: Workspace package locations (`apps/*`, `packages/*`, `tools/*`)
+- `package.json` (root): Scripts, devDependencies, engine requirements
+- `vercel.json`: Vercel deployment and caching headers
+- `apps/game/nuxt.config.ts`: Game app Nuxt/Vite/module configuration
+- `apps/game/vitest.config.ts`: Vitest test runner configuration
+- `apps/game/playwright.config.ts`: Playwright E2E configuration
+- `apps/game/uno.config.ts`: UnoCSS (utility CSS) configuration
+- `eslint.config.mjs` (root): Root ESLint configuration
 
 **Core Logic:**
 
-- `apps/game/stores/game.ts` - Game state, session management (500+ lines)
-- `apps/game/stores/settings.ts` - Settings persistence
-- `apps/game/composables/useGameState.ts` - State proxy
-- `apps/game/composables/useGameActions.ts` - High-level game actions
-- `apps/game/composables/useIndexedDB.ts` - Database operations (300+ lines)
-- `apps/game/composables/useAnswerCheck.ts` - Answer validation (200+ lines)
+- `apps/game/stores/game.ts`: Central game state — sessions, players, rounds, history, categories
+- `apps/game/stores/settings.ts`: User preferences — sound, language, debug mode, feature toggles
+- `apps/game/composables/useGameActions.ts`: High-level game actions with error handling and UX feedback
+- `apps/game/composables/useGameState.ts`: Computed wrappers for common store getters
+- `apps/game/composables/useNavigation.ts`: Type-safe route navigation with loading indicators
+- `apps/game/composables/useIndexedDB.ts`: IndexedDB persistence layer (game sessions, history, stats, leaderboard)
+- `apps/game/composables/useAnswerCheck.ts`: Answer verification (PetScan API + offline data)
+- `apps/game/composables/useFeatureFlags.ts`: Feature flag system (GitLab Unleash + local fallback)
+- `apps/game/composables/useWebSocket.ts`: Socket.IO client for real-time features
+
+**Type Definitions:**
+
+- `packages/types/src/game.ts`: All core game interfaces (`GameSession`, `Player`, `Category`, `GameState`, `GameStatistics`, etc.)
+- `packages/shared/src/constants.ts`: Game configuration constants
+- `packages/shared/src/routes.ts`: Route path constants and helper functions
+
+**Styling:**
+
+- `apps/game/assets/scss/design-system.scss`: Global design system (CSS custom properties, base styles)
+- `apps/game/uno.config.ts`: UnoCSS utility class configuration
 
 **Testing:**
 
-- `apps/game/tests/unit/` - Vitest unit tests
-- `apps/game/tests/e2e/` - Playwright E2E tests
-- `apps/game/tests/utils/` - Test helper functions
+- `apps/game/tests/unit/`: Vitest unit tests (14 spec files)
+- `apps/game/tests/e2e/`: Playwright E2E tests (7 spec files)
+- `apps/game/tests/utils/`: Test helpers and utilities
 
-**Game Pages:**
+**Translations:**
 
-- `apps/game/pages/index.vue` - Main menu
-- `apps/game/pages/players.vue` - Player setup
-- `apps/game/pages/round-start.vue` - Category selection
-- `apps/game/pages/game/[[gameId]].vue` - Game play (core gameplay)
-- `apps/game/pages/results/[[gameId]].vue` - Round results
+- `apps/game/translations/locales/de.json`: German translations (default locale)
+- `apps/game/translations/locales/en.json`: English translations
 
 ## Naming Conventions
 
 **Files:**
 
-- Page components: PascalCase without prefix (e.g., `players.vue`, `leaderboard.vue`)
-- Composables: `use` prefix + camelCase (e.g., `useGameState.ts`, `useAnswerCheck.ts`)
-- Stores: camelCase without prefix (e.g., `game.ts`, `settings.ts`)
-- Components: PascalCase (e.g., `FortuneWheel.vue`, `DebugPanel.vue`)
-- Utilities: camelCase with purpose (e.g., `filter-ssr-plugins.ts`)
-- Layouts: camelCase (e.g., `default.vue`, `game.vue`, `menu.vue`)
+- Pages: `kebab-case.vue` (e.g., `round-start.vue`, `component-test.vue`)
+- Components: `PascalCase.vue` (e.g., `GameButton.vue`, `SplashScreen.vue`, `Toast.vue`)
+- Composables: `camelCase.ts` with `use` prefix (e.g., `useNavigation.ts`, `useGameState.ts`)
+- Stores: `camelCase.ts` (e.g., `game.ts`, `settings.ts`)
+- Plugins: `kebab-case.client.ts` with optional numeric prefix for ordering (e.g., `00.init-plugin-system.client.ts`, `gtag.client.ts`)
+- Tests (unit): `kebab-case.spec.ts` matching composable name (e.g., `use-navigation.spec.ts`)
+- Tests (e2e): `kebab-case.spec.ts` matching feature name (e.g., `game-complete-flow.spec.ts`)
+- Shared packages: `camelCase.ts` for source files
 
 **Directories:**
 
-- Composables: `composables/` (Nuxt auto-import convention)
-- Stores: `stores/` (Pinia auto-import convention)
-- Components: `components/` (Nuxt auto-import convention)
-- Pages: `pages/` (Nuxt file-based routing convention)
-- Layouts: `layouts/` (Nuxt auto-import convention)
-- Type definitions: `types/` for app-specific, `packages/types/` for shared
+- Component subdirectories: `PascalCase` (e.g., `Base/`, but also `game/`, `layout/` in lowercase)
+- Test subdirectories: `lowercase` (e.g., `unit/`, `e2e/`, `utils/`)
+- Infrastructure: `lowercase-kebab` (e.g., `cloudfront-functions/`, `state-bucket/`)
 
-**Variables & Functions:**
+**Package Names:**
 
-- Functions: camelCase (e.g., `saveGameSessionToDB()`, `startNewGame()`)
-- Constants: UPPER_SNAKE_CASE (e.g., `SCORE_PER_CORRECT_ANSWER`, `MAX_PLAYERS`)
-- Boolean flags: `is` or `has` prefix (e.g., `isGameCompleted`, `hasActiveSession`)
-- Refs/computed: camelCase (e.g., `currentScore`, `leaderboard`)
+- Scoped under `@riddle-rush/` (e.g., `@riddle-rush/game`, `@riddle-rush/types`, `@riddle-rush/shared`, `@riddle-rush/config`, `@riddle-rush/cli`)
+
+**Route Parameters:**
+
+- Optional catch-all: `[[paramName]].vue` (Nuxt double-bracket syntax)
 
 ## Where to Add New Code
 
-**New Game Feature (e.g., pause button):**
+**New Page:**
 
-- Component: `apps/game/components/PauseModal.vue` (or feature-specific component)
-- Store action: Add method to `apps/game/stores/game.ts`
-- Page integration: Add to relevant game page (e.g., `apps/game/pages/game/[[gameId]].vue`)
-- Composable: Create `apps/game/composables/usePause.ts` if complex logic
-- Tests: Add `apps/game/tests/unit/usePause.spec.ts` and `apps/game/tests/e2e/pause.spec.ts`
-- Translations: Add to `apps/game/i18n/locales/de.json` and `en.json`
+- Create: `apps/game/pages/{page-name}.vue`
+- Add route constant to `packages/shared/src/routes.ts`
+- Add navigation helper to `apps/game/composables/useNavigation.ts`
+- Add E2E test: `apps/game/tests/e2e/{page-name}.spec.ts`
 
-**New Composable/Helper:**
+**New Composable:**
 
-- Location: `apps/game/composables/useNewFeature.ts`
-- Import: Auto-imported by Nuxt convention
-- Usage: Available in all components/pages via `useNewFeature()`
-- Tests: Add `apps/game/tests/unit/useNewFeature.spec.ts`
-- Type safety: Define return types explicitly
+- Create: `apps/game/composables/use{Name}.ts`
+- Export a function named `use{Name}` that returns reactive state and methods
+- Auto-imported by Nuxt — no explicit import needed in pages/components
+- Add unit test: `apps/game/tests/unit/use-{name}.spec.ts`
+
+**New Component:**
+
+- Base/reusable: `apps/game/components/Base/{Name}.vue`
+- Game-specific: `apps/game/components/game/Game{Name}.vue`
+- Layout: `apps/game/components/layout/Game{Name}.vue`
+- Top-level: `apps/game/components/{Name}.vue`
+- Auto-imported by Nuxt (`pathPrefix: false`) — use component name directly in templates
+
+**New Pinia Store:**
+
+- Create: `apps/game/stores/{name}.ts`
+- Use `defineStore('{name}', { state, getters, actions })` pattern
+- Auto-imported by Nuxt
+
+**New Plugin:**
+
+- Create: `apps/game/plugins/{name}.client.ts`
+- Use numeric prefix for ordering if needed (e.g., `01.{name}.client.ts`)
+- Use `defineNuxtPlugin()` pattern
+
+**New Shared Type:**
+
+- Add to: `packages/types/src/game.ts` (or create new file in `packages/types/src/`)
+- Update `packages/types/package.json` exports if adding new file
+
+**New Shared Constant:**
+
+- Add to: `packages/shared/src/constants.ts`
 
 **New Utility Function:**
 
-- Shared across app: `apps/game/utils/newUtil.ts`
-- Shared across monorepo: `packages/shared/src/newUtil.ts`
-- Import: Manual import needed (not auto-imported)
-- Constants: Add to `packages/shared/src/constants.ts` if app-wide
+- Game-specific: `apps/game/utils/{name}.ts` (auto-imported by Nuxt)
+- Shared across apps: `packages/shared/src/utils.ts`
 
-**New Game Session Data:**
+**New Infrastructure Resource:**
 
-- IndexedDB schema change: Modify `useIndexedDB.ts` - increment `DB_VERSION`
-- Object store creation: Add to `getDB()` upgrade handler
-- Type definition: Update `packages/types/src/game.ts` - `GameSession` interface
-- Persistence: Ensure mutations call `saveGameSessionToDB()` in store
+- Add Terraform resource to appropriate `.tf` file in `infrastructure/`
+- Or create new `infrastructure/{resource-name}.tf`
 
-**New Translation:**
+**New Script:**
 
-- Files: `apps/game/i18n/locales/de.json` and `en.json`
-- Usage: `{{ $t('key.path', 'fallback text') }}` in templates
-- Key naming: Use dot notation for hierarchy (e.g., `game.score_updated`)
-
-**New Route:**
-
-- Page file: Create in `apps/game/pages/newPage.vue`
-- Route constant: Add to `packages/shared/src/routes.ts` - `ROUTES` object
-- Navigation helper: Add method to `useNavigation()` composable
-- Typing: Use `getGameRoute()` or `getResultsRoute()` for dynamic routes
+- Create: `scripts/{action-name}.sh` (or `.js`)
+- Add npm script alias in root `package.json`
 
 ## Special Directories
 
-**apps/game/.nuxt/:**
+**`apps/game/.nuxt/`:**
 
-- Purpose: Nuxt build artifacts
-- Generated: Yes (auto-generated by Nuxt)
-- Committed: No (in .gitignore)
-- Contains: Generated types, compiled files
+- Purpose: Nuxt build artifacts, auto-generated types, plugin stubs
+- Generated: Yes (by `nuxt prepare` / `nuxt dev`)
+- Committed: No (gitignored)
 
-**apps/game/.output/:**
+**`apps/game/.output/`:**
 
 - Purpose: Production build output
-- Generated: Yes (by `pnpm run generate`)
-- Committed: No (in .gitignore)
-- Contains: Static HTML files for deployment
+- Generated: Yes (by `nuxt build`)
+- Committed: No (gitignored)
 
-**apps/game/test-results/:**
+**`node_modules/`:**
 
-- Purpose: Playwright E2E test results
-- Generated: Yes (by E2E tests)
-- Committed: No (in .gitignore)
-- Contains: Screenshots, traces, reports
+- Purpose: Installed dependencies (hoisted by pnpm)
+- Generated: Yes (by `pnpm install`)
+- Committed: No (gitignored)
 
-**infrastructure/outputs-bucket/:**
+**`.planning/`:**
 
-- Purpose: Terraform state outputs storage
-- Generated: Yes (by Terraform)
-- Committed: No (in .gitignore)
-- Contains: Environment-specific infrastructure outputs
+- Purpose: GSD planning and codebase analysis documents
+- Generated: By GSD mapping tools
+- Committed: Yes
 
-**public/data/:**
+**`openspec/`:**
 
-- Purpose: Static game data served to client
-- Generated: Partially (some files generated by scripts)
-- Committed: Yes (version controlled)
-- Contains: `categories.json` (game categories), `offlineAnswers.json` (answer data)
+- Purpose: OpenSpec change artifacts for structured feature development
+- Generated: By OpenSpec workflow
+- Committed: Yes
+
+**`infrastructure/environments/`:**
+
+- Purpose: Per-environment Terraform variable overrides (development, production)
+- Generated: No (manually maintained)
+- Committed: Yes (but `.tfvars` with secrets are gitignored)
+
+**`.turbo/`:**
+
+- Purpose: Turborepo cache
+- Generated: Yes
+- Committed: No (gitignored)
 
 ---
 
-_Structure analysis: 2026-01-31_
+_Structure analysis: 2026-02-13_

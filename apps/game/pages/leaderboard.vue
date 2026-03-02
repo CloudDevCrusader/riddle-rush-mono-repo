@@ -1,23 +1,30 @@
 <template>
   <GameBackground>
-    <div class="leaderboard-page">
+    <div class="leaderboard-page" data-testid="leaderboard-container">
       <!-- Header -->
       <GameHeader variant="gold">
-        {{ t('leaderboard.title') }}
+        {{ t('leaderboard.title', 'Leaderboard') }}
       </GameHeader>
 
       <!-- Ranking subtitle panel -->
       <GamePanel variant="blue" padding="sm">
         <h2 class="leaderboard-page__subtitle">
-          {{ t('leaderboard.ranking') }}
+          {{ t('leaderboard.ranking', 'Ranking') }}
         </h2>
       </GamePanel>
 
       <!-- Ranked player list -->
       <GameScrollList :show-ranks="true" max-height="500px">
-        <div v-for="entry in leaderboard" :key="entry.id" class="leaderboard-row">
-          <span class="leaderboard-row__name">{{ entry.name }}</span>
-          <GameDisplay size="md" :glow="false">
+        <div
+          v-for="(entry, index) in leaderboard"
+          :key="entry.id"
+          class="leaderboard-row"
+          :data-testid="`leaderboard-entry-${index}`"
+        >
+          <span class="leaderboard-row__name" :data-testid="`leaderboard-player-name-${index}`">{{
+            entry.name
+          }}</span>
+          <GameDisplay size="md" :glow="false" :data-testid="`leaderboard-player-score-${index}`">
             {{ entry.totalScore }}
           </GameDisplay>
         </div>
@@ -25,11 +32,22 @@
 
       <!-- Navigation buttons -->
       <div class="leaderboard-page__actions">
-        <GameButton v-if="!isGameCompleted" variant="primary" size="lg" @click="handleNextRound">
-          {{ t('leaderboard.next_round') }}
+        <GameButton
+          v-if="!isGameCompleted"
+          variant="primary"
+          size="lg"
+          data-testid="leaderboard-next-round-button"
+          @click="handleNextRound"
+        >
+          {{ t('leaderboard.next_round', 'Next Round') }}
         </GameButton>
-        <GameButton variant="secondary" size="lg" @click="handleFinish">
-          {{ t('leaderboard.finish') }}
+        <GameButton
+          variant="secondary"
+          size="lg"
+          data-testid="leaderboard-finish-button"
+          @click="handleFinish"
+        >
+          {{ t('leaderboard.finish', 'OK') }}
         </GameButton>
       </div>
     </div>
@@ -53,7 +71,7 @@ const handleFinish = async () => {
   } catch (error) {
     const logger = useLogger()
     logger.error('Error finishing game:', error)
-    toast.error(t('leaderboard.finish_error'))
+    toast.error(t('leaderboard.finish_error', 'Failed to finish game. Please try again.'))
     isFinishing.value = false
   }
 }
@@ -64,7 +82,7 @@ const handleNextRound = async () => {
 }
 
 useHead({
-  title: t('leaderboard.title'),
+  title: 'Leaderboard',
   meta: [
     {
       name: 'description',

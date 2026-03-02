@@ -10,6 +10,9 @@ const mockGitLabClient = {
   getVariant: mockGetVariant,
 }
 
+// Mock runtimeConfig for featureAnswerInput tests
+let mockFeatureAnswerInput: boolean | undefined = true
+
 // Mock the composable directly to avoid Nuxt auto-import issues
 vi.mock('../../composables/useFeatureFlags', () => ({
   useFeatureFlags: () => {
@@ -50,9 +53,24 @@ vi.mock('../../composables/useFeatureFlags', () => ({
       })(),
     }
 
+    const isAnswerInputEnabled = {
+      value: (function () {
+        if (gitlabClient) {
+          try {
+            const gitlabEnabled = mockIsEnabled('answer-input')
+            if (!gitlabEnabled) return false
+          } catch {
+            // Fall through to config check
+          }
+        }
+        return mockFeatureAnswerInput !== false
+      })(),
+    }
+
     return {
       isEnabled,
       getVariant,
+      isAnswerInputEnabled,
       isFortuneWheelEnabled,
     }
   },
@@ -214,6 +232,47 @@ describe('useFeatureFlags (GitLab)', () => {
       expect(isEnabled('my-feature')).toBe(true)
       expect(isEnabled('another-flag')).toBe(true)
       expect(isEnabled('kebab-case-flag')).toBe(true)
+    })
+  })
+
+  describe('isAnswerInputEnabled', () => {
+    beforeEach(() => {
+      mockFeatureAnswerInput = true
+    })
+
+    it('should return true when runtimeConfig featureAnswerInput is true (default)', () => {
+      mockIsEnabled.mockReturnValue(true)
+      mockFeatureAnswerInput = true
+
+      const { isAnswerInputEnabled } = useFeatureFlags()
+
+      expect(isAnswerInputEnabled.value).toBe(true)
+    })
+
+    it('should return false when GitLab disables answer-input flag', () => {
+      mockIsEnabled.mockReturnValue(false)
+      mockFeatureAnswerInput = true
+
+      const { isAnswerInputEnabled } = useFeatureFlags()
+
+      expect(isAnswerInputEnabled.value).toBe(false)
+    })
+
+    it('should return false when runtimeConfig featureAnswerInput is false', () => {
+      mockIsEnabled.mockReturnValue(true)
+      mockFeatureAnswerInput = false
+
+      const { isAnswerInputEnabled } = useFeatureFlags()
+
+      // GitLab allows it but config says no
+      expect(isAnswerInputEnabled.value).toBe(false)
+    })
+
+    it('should be a ref-like object with a value property', () => {
+      const { isAnswerInputEnabled } = useFeatureFlags()
+
+      expect(isAnswerInputEnabled).toHaveProperty('value')
+      expect(typeof isAnswerInputEnabled.value).toBe('boolean')
     })
   })
 

@@ -1,7 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises'
 import path from 'node:path'
 
-const localesDir = path.resolve('apps/game/i18n/locales')
+const localesDir = path.resolve('apps/game/translations/locales')
 
 const flattenKeys = (value, prefix = '') => {
   if (value === null) return []

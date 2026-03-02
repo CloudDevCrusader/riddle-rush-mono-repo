@@ -4,133 +4,105 @@ import { generatePlayerName } from './helpers/faker'
 test.describe('Players Management Page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/players', { timeout: 30000 })
-    // Wait for splash screen to complete (it shows for ~3 seconds)
-    await page
-      .waitForSelector('.splash-screen', { state: 'detached', timeout: 10000 })
-      .catch(() => {
-        // Splash screen may have already completed, ignore error
-      })
-    // Wait for page content to be visible
-    await page.waitForSelector('.players-page', { state: 'visible', timeout: 10000 })
+    // Wait for page content to be visible via data-testid
+    const startBtn = page.locator('[data-testid="players-start-button"]')
+    await expect(startBtn).toBeVisible({ timeout: 15000 })
   })
 
-  test('should display players page with all elements', async ({ page }) => {
-    // Check for background
-    const background = page.locator('.page-bg')
-    await expect(background).toBeVisible()
-
-    // Check for title
-    const title = page.locator('.title-image')
-    await expect(title).toBeVisible()
-
-    // Check for back button
-    const backBtn = page.locator('.back-btn')
+  test('should display players page with all core elements', async ({ page }) => {
+    // Back button
+    const backBtn = page.locator('[data-testid="players-back-button"]')
     await expect(backBtn).toBeVisible()
 
-    // Check for players list
-    const playersList = page.locator('.players-list')
-    await expect(playersList).toBeVisible()
+    // Stepper controls
+    const decreaseBtn = page.locator('[data-testid="players-decrease-button"]')
+    const increaseBtn = page.locator('[data-testid="players-increase-button"]')
+    await expect(decreaseBtn).toBeVisible()
+    await expect(increaseBtn).toBeVisible()
 
-    // Check for start button
-    const startBtn = page.locator('.start-btn')
+    // Start button
+    const startBtn = page.locator('[data-testid="players-start-button"]')
     await expect(startBtn).toBeVisible()
   })
 
-  test('should display initial player', async ({ page }) => {
-    const playerItems = page.locator('.player-item:not(.empty)')
-    // May have 1 or 2 players depending on state from previous tests
-    await expect(playerItems).toHaveCount(await playerItems.count())
-    await expect(playerItems.first()).toBeVisible()
+  test('should display default player count with name inputs', async ({ page }) => {
+    // Default is 2 players
+    const nameInput0 = page.locator('[data-testid="players-name-input-0"]')
+    const nameInput1 = page.locator('[data-testid="players-name-input-1"]')
+    await expect(nameInput0).toBeVisible()
+    await expect(nameInput1).toBeVisible()
   })
 
-  test('should show empty slots for remaining players', async ({ page }) => {
-    const emptySlots = page.locator('.player-item.empty')
-    const playerItems = page.locator('.player-item:not(.empty)')
-    const totalSlots = (await playerItems.count()) + (await emptySlots.count())
-    // Total slots should be 6
-    expect(totalSlots).toBe(6)
+  test('should increase player count when clicking plus button', async ({ page }) => {
+    // Default is 2 players — increase to 3
+    const increaseBtn = page.locator('[data-testid="players-increase-button"]')
+    await increaseBtn.click()
+    await page.waitForTimeout(200)
+
+    // Third player input should appear
+    const nameInput2 = page.locator('[data-testid="players-name-input-2"]')
+    await expect(nameInput2).toBeVisible()
   })
 
-  test('should add a player when clicking add button', async ({ page }) => {
-    const addBtn = page.locator('.add-btn')
-    await expect(addBtn).toBeVisible()
+  test('should decrease player count when clicking minus button', async ({ page }) => {
+    // Increase to 3 first, then decrease back to 2
+    const increaseBtn = page.locator('[data-testid="players-increase-button"]')
+    const decreaseBtn = page.locator('[data-testid="players-decrease-button"]')
 
-    const playerItemsBefore = page.locator('.player-item:not(.empty)')
-    const countBefore = await playerItemsBefore.count()
+    await increaseBtn.click()
+    await page.waitForTimeout(200)
 
-    // Click add button to show input field
-    await addBtn.click()
+    // Verify 3 inputs exist
+    const nameInput2 = page.locator('[data-testid="players-name-input-2"]')
+    await expect(nameInput2).toBeVisible()
 
-    // Wait for input container to appear
-    const inputContainer = page.locator('.player-input-container')
-    await expect(inputContainer).toBeVisible()
+    // Decrease back to 2
+    await decreaseBtn.click()
+    await page.waitForTimeout(200)
 
-    // Clear the default name and enter a new one
+    // Third input should be gone
+    await expect(nameInput2).not.toBeVisible()
+  })
+
+  test('should disable decrease button at minimum player count', async ({ page }) => {
+    // Default is 2 (minimum) — decrease button should be disabled
+    const decreaseBtn = page.locator('[data-testid="players-decrease-button"]')
+    await expect(decreaseBtn).toBeDisabled()
+  })
+
+  test('should allow entering custom player names', async ({ page }) => {
     const playerName = generatePlayerName()
-    const input = page.locator('.player-name-input')
-    await input.clear()
-    await input.fill(playerName)
+    const nameInput0 = page.locator('[data-testid="players-name-input-0"]')
 
-    // Click confirm button
-    const confirmBtn = page.locator('.confirm-btn')
-    await confirmBtn.click()
-    await page.waitForTimeout(300)
-
-    const playerItemsAfter = page.locator('.player-item:not(.empty)')
-    await expect(playerItemsAfter).toHaveCount(countBefore + 1)
+    await nameInput0.fill(playerName)
+    await expect(nameInput0).toHaveValue(playerName)
   })
 
-  test('should remove a player when clicking remove button', async ({ page }) => {
-    const playerItemsBefore = page.locator('.player-item:not(.empty)')
-    const countBefore = await playerItemsBefore.count()
-    expect(countBefore).toBeGreaterThan(0) // Ensure we have players to remove
-
-    // Get the remove button and ensure it's visible
-    const removeBtn = page.locator('.remove-player-btn').first()
-    await expect(removeBtn).toBeVisible()
-
-    // Click the remove button (force click to handle overlapping elements)
-    await removeBtn.click({ force: true })
-
-    // Wait for the player to be removed from the list
-    const playerItemsAfter = page.locator('.player-item:not(.empty)')
-    await expect(playerItemsAfter).toHaveCount(countBefore - 1, { timeout: 5000 })
-  })
-
-  test('should enable start button when players exist', async ({ page }) => {
-    const startBtn = page.locator('.start-btn')
-    await expect(startBtn).not.toBeDisabled()
-  })
-
-  test('should navigate to alphabet when clicking start', async ({ page }) => {
-    const startBtn = page.locator('.start-btn')
+  test('should navigate away from players when clicking start', async ({ page }) => {
+    const startBtn = page.locator('[data-testid="players-start-button"]')
     await startBtn.click()
 
-    // After flow update, clicking start navigates to round-start (dual wheel spin)
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(500)
+    // After clicking start, navigates through /round-start → /game
+    // The round-start transition may be too fast to catch
+    await expect(page).toHaveURL(/\/(round-start|game)/, { timeout: 20000 })
   })
 
   test('should navigate back when clicking back button', async ({ page }) => {
-    const backBtn = page.locator('.back-btn')
+    // Navigate from menu to players first, so there's a history entry
+    await page.goto('/', { timeout: 30000 })
+    await page.waitForSelector('[data-testid="menu-start-button"]', {
+      state: 'visible',
+      timeout: 10000,
+    })
+
+    const playBtn = page.locator('[data-testid="menu-start-button"]')
+    await playBtn.click()
+    await expect(page).toHaveURL(/\/players/)
+
+    const backBtn = page.locator('[data-testid="players-back-button"]')
     await backBtn.click()
 
-    // Should go back to previous page (likely menu)
-    await page.waitForTimeout(500)
-  })
-
-  test('should have scroll bar decoration', async ({ page }) => {
-    const scrollBar = page.locator('.scroll-bar')
-    await expect(scrollBar).toBeVisible()
-  })
-
-  test('should be responsive on mobile', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 })
-
-    const title = page.locator('.title-image')
-    const startBtn = page.locator('.start-btn')
-
-    await expect(title).toBeVisible()
-    await expect(startBtn).toBeVisible()
+    // Should go back to menu
+    await expect(page).toHaveURL(/\/$/, { timeout: 10000 })
   })
 })

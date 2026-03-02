@@ -1,52 +1,6 @@
 # Enhanced CloudFront Module
 # Optimized for maximum performance with edge caching
 
-variable "bucket_regional_domain_name" {
-  description = "Regional domain name of the S3 bucket"
-  type        = string
-}
-
-variable "bucket_arn" {
-  description = "ARN of the S3 bucket"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment (development, staging, production)"
-  type        = string
-  default     = "development"
-}
-
-variable "domain_name" {
-  description = "Custom domain name for CloudFront (deprecated, use domain_names)"
-  type        = string
-  default     = ""
-}
-
-variable "domain_names" {
-  description = "List of custom domain names for CloudFront"
-  type        = list(string)
-  default     = []
-}
-
-variable "certificate_arn" {
-  description = "ACM certificate ARN for custom domain"
-  type        = string
-  default     = ""
-}
-
-variable "price_class" {
-  description = "CloudFront price class"
-  type        = string
-  default     = "PriceClass_100"
-}
-
-variable "enable_spa_rewrite_function" {
-  description = "Enable CloudFront function for SPA routing"
-  type        = bool
-  default     = false
-}
-
 # CloudFront Function for SPA routing (rewrite non-file paths to index.html)
 resource "aws_cloudfront_function" "request_rewrite" {
   count   = var.enable_spa_rewrite_function ? 1 : 0
@@ -155,8 +109,8 @@ resource "aws_cloudfront_distribution" "website" {
   price_class         = var.price_class
   is_ipv6_enabled     = true
 
-  # Enable automatic compression optimization
-  web_acl_id = "" # Can add WAF if needed
+  # WAF Web ACL - set via variable for CloudFront scope WAFs
+  web_acl_id = var.web_acl_arn
 
   # Support both domain_name (backward compatibility) and domain_names
   aliases = length(var.domain_names) > 0 ? var.domain_names : (var.domain_name != "" ? [var.domain_name] : [])
@@ -184,13 +138,6 @@ resource "aws_cloudfront_distribution" "website" {
     # Use our aggressive cache policy
     cache_policy_id = aws_cloudfront_cache_policy.static_assets_aggressive.id
 
-    min_ttl     = 0
-    default_ttl = 31536000 # 1 year
-    max_ttl     = 31536000 # 1 year
-
-    # Enable real-time metrics for monitoring
-    realtime_log_config_arn = "" # Can add if needed
-
     # Rewrite SPA routes before origin fetch (optional)
     dynamic "function_association" {
       for_each = var.enable_spa_rewrite_function ? [1] : []
@@ -211,10 +158,6 @@ resource "aws_cloudfront_distribution" "website" {
     compress               = true
 
     cache_policy_id = aws_cloudfront_cache_policy.html_edge_optimized.id
-
-    min_ttl     = 0
-    default_ttl = 60  # 1 minute at edge
-    max_ttl     = 300 # 5 minutes max
   }
 
   # Service Worker - No cache for immediate updates
@@ -227,10 +170,6 @@ resource "aws_cloudfront_distribution" "website" {
     compress               = true
 
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingOptimized
-
-    min_ttl     = 0
-    default_ttl = 0
-    max_ttl     = 60 # 1 minute max
   }
 
   # Workbox files - Short cache
@@ -243,10 +182,6 @@ resource "aws_cloudfront_distribution" "website" {
     compress               = true
 
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
-
-    min_ttl     = 0
-    default_ttl = 60  # 1 minute
-    max_ttl     = 300 # 5 minutes
   }
 
   # Data files - Medium cache with edge optimization
@@ -259,10 +194,6 @@ resource "aws_cloudfront_distribution" "website" {
     compress               = true
 
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
-
-    min_ttl     = 0
-    default_ttl = 300  # 5 minutes
-    max_ttl     = 1800 # 30 minutes
   }
 
   # API routes - Short cache for dynamic content
@@ -275,21 +206,25 @@ resource "aws_cloudfront_distribution" "website" {
     compress               = true
 
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
-
-    min_ttl     = 0
-    default_ttl = 10 # 10 seconds
-    max_ttl     = 60 # 1 minute
   }
 
   # Custom error responses for SPA routing - Edge optimized
-  custom_error_response {
-    error_code            = 404
-    response_code         = 200
-    response_page_path    = "/404.html"
-    error_caching_min_ttl = 10 # Faster error recovery
+  dynamic "custom_error_response" {
+    for_each = length(var.custom_error_responses) > 0 ? var.custom_error_responses : [
+      {
+        error_code            = 404
+        response_code         = 200
+        response_page_path    = "/404.html"
+        error_caching_min_ttl = 10
+      }
+    ]
+    content {
+      error_code            = custom_error_response.value.error_code
+      response_code         = custom_error_response.value.response_code
+      response_page_path    = custom_error_response.value.response_page_path
+      error_caching_min_ttl = custom_error_response.value.error_caching_min_ttl
+    }
   }
-
-  # Avoid serving index.html for missing assets (prevents SRI mismatches)
 
   # Viewer certificate with enhanced security
   dynamic "viewer_certificate" {
@@ -331,25 +266,4 @@ resource "aws_cloudfront_distribution" "website" {
     ManagedBy   = "Terraform"
     Optimized   = "EdgeCaching"
   }
-}
-
-# Outputs
-output "distribution_id" {
-  description = "ID of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.id
-}
-
-output "distribution_arn" {
-  description = "ARN of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.arn
-}
-
-output "distribution_domain_name" {
-  description = "Domain name of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.domain_name
-}
-
-output "distribution_hosted_zone_id" {
-  description = "Hosted zone ID of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.website.hosted_zone_id
 }

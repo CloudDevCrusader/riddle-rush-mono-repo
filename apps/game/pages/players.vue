@@ -7,7 +7,8 @@
             <button
               class="back-button"
               type="button"
-              :aria-label="t('common.back')"
+              data-testid="players-back-button"
+              :aria-label="t('common.back', 'Back')"
               @click="goBack"
             >
               ‹
@@ -22,6 +23,7 @@
               <button
                 class="stepper__button stepper__button--minus"
                 type="button"
+                data-testid="players-decrease-button"
                 :aria-label="t('players.decrease')"
                 :disabled="playerCount <= minPlayers"
                 @click="changePlayerCount(-1)"
@@ -29,13 +31,14 @@
                 –
               </button>
               <div class="stepper__count" aria-live="polite">
-                {{ t('players.count_label') }}: {{ playerCount }} / {{ MAX_PLAYERS }}
+                {{ t('players.count_label') }}: {{ playerCount }} / {{ maxPlayers }}
               </div>
               <button
                 class="stepper__button stepper__button--plus"
                 type="button"
+                data-testid="players-increase-button"
                 :aria-label="t('players.increase')"
-                :disabled="playerCount >= MAX_PLAYERS"
+                :disabled="playerCount >= maxPlayers"
                 @click="changePlayerCount(1)"
               >
                 +
@@ -53,6 +56,7 @@
                 v-model="playerNames[index]"
                 type="text"
                 class="player-row__input"
+                :data-testid="`players-name-input-${index}`"
                 :placeholder="placeholderForIndex(index)"
                 maxlength="20"
                 autocomplete="off"
@@ -65,6 +69,7 @@
             variant="primary"
             size="lg"
             full-width
+            data-testid="players-start-button"
             @click="startGame"
           >
             {{ t('players.start') }}
@@ -76,19 +81,18 @@
 </template>
 
 <script setup lang="ts">
-import { MAX_PLAYERS } from '@riddle-rush/shared/constants'
-
 const { t, goBack, toast } = usePageSetup()
 const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
 const runtimeConfig = useRuntimeConfig()
 
-const minPlayers = 1
-const playerCount = ref(4)
+const minPlayers = runtimeConfig.public.minPlayers as number
+const playerCount = ref(runtimeConfig.public.defaultPlayers as number)
 const playerNames = ref<string[]>([])
+const maxPlayers = computed(() => runtimeConfig.public.maxPlayers as number)
 const isLegacyStyle = computed(() => runtimeConfig.public?.playersMockupStyle === 'legacy')
 
-const clampPlayerCount = (value: number) => Math.min(MAX_PLAYERS, Math.max(minPlayers, value))
+const clampPlayerCount = (value: number) => Math.min(maxPlayers.value, Math.max(minPlayers, value))
 
 const syncPlayerList = (targetCount?: number) => {
   const nextCount = clampPlayerCount(targetCount ?? playerCount.value)
@@ -107,7 +111,7 @@ const changePlayerCount = (delta: number) => {
 
   if (nextCount === playerCount.value) {
     if (delta > 0) {
-      toast.info(t('players.max_players', [MAX_PLAYERS]))
+      toast.info(t('players.max_players', [maxPlayers.value]))
     }
     return
   }
@@ -116,7 +120,7 @@ const changePlayerCount = (delta: number) => {
 }
 
 const placeholderForIndex = (index: number) =>
-  t('players.placeholder', { number: index + 1 }) as string
+  (t('players.placeholder', { number: index + 1 }) as string) || `Player ${index + 1}`
 
 const startGame = () => {
   if (playerCount.value < minPlayers) {
@@ -124,7 +128,7 @@ const startGame = () => {
     return
   }
 
-  const names = playerNames.value.slice(0, playerCount.value).map((name, index) => {
+  const names = playerNames.value.slice(0, playerCount.value).map((name: string, index: number) => {
     const trimmed = name.trim()
     return trimmed || placeholderForIndex(index)
   })
@@ -134,7 +138,7 @@ const startGame = () => {
     return
   }
 
-  const lowerCaseNames = names.map((name) => name.toLowerCase())
+  const lowerCaseNames = names.map((name: string) => name.toLowerCase())
   const hasDuplicateNames = new Set(lowerCaseNames).size !== lowerCaseNames.length
 
   if (hasDuplicateNames) {
@@ -157,7 +161,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: t('players.description'),
+      content: t('players.description', 'Select players for the game'),
     },
   ],
 })
@@ -166,7 +170,7 @@ syncPlayerList(playerCount.value)
 </script>
 
 <style scoped lang="scss">
-@use '@/assets/scss/design-system' as *;
+@use 'assets/scss/design-system' as *;
 
 .players-page {
   width: 100%;

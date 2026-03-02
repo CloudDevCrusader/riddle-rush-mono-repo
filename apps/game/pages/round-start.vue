@@ -15,8 +15,8 @@
     <!-- Top Bar -->
     <div class="top-bar">
       <!-- Round Indicator -->
-      <div class="round-indicator">
-        <div class="round-text">{{ t('game.round') }} {{ currentRoundNumber }}</div>
+      <div class="round-indicator" data-testid="round-indicator">
+        <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
       </div>
     </div>
 
@@ -24,17 +24,21 @@
     <div class="container">
       <!-- Dual Wheels Phase (only shown if feature is enabled) -->
       <transition name="wheel-fade">
-        <div v-if="isFortuneWheelEnabled && !wheelsComplete" class="wheels-container">
+        <div
+          v-if="isFortuneWheelEnabled && !wheelsComplete"
+          class="wheels-container"
+          data-testid="round-wheels-container"
+        >
           <div class="wheel-wrapper">
             <div class="wheel-label">
-              {{ t('common.category') }}
+              {{ t('common.category', 'Category') }}
             </div>
             <FortuneWheel
               ref="categoryWheelRef"
               v-model="selectedCategory"
               :items="displayCategories"
-              :get-item-key="(cat, idx) => cat?.searchWord || idx"
-              :get-item-label="(cat) => t(`categories.${cat.searchWord}`, cat.name)"
+              :get-item-key="(cat: any, idx: number) => cat?.searchWord || idx"
+              :get-item-label="(cat: any) => t(`categories.${cat.searchWord}`, cat.name)"
               :get-item-icon="getCategoryIcon"
               center-icon="🎯"
               @spin-complete="onCategoryComplete"
@@ -43,14 +47,14 @@
 
           <div class="wheel-wrapper">
             <div class="wheel-label">
-              {{ t('common.letter') }}
+              {{ t('common.letter', 'Letter') }}
             </div>
             <FortuneWheel
               ref="letterWheelRef"
               v-model="selectedLetter"
               :items="alphabet"
-              :get-item-key="(letter, idx) => letter"
-              :get-item-label="(letter) => letter"
+              :get-item-key="(letter: string, idx: number) => letter"
+              :get-item-label="(letter: string) => letter"
               :get-item-icon="() => ''"
               center-icon="🎯"
               @spin-complete="onLetterComplete"
@@ -64,10 +68,11 @@
         <div
           v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
           class="results-display"
+          data-testid="round-results-display"
         >
-          <div class="result-item animate-scale-in">
+          <div class="result-item animate-scale-in" data-testid="round-category-display">
             <div class="result-label">
-              {{ t('common.category') }}
+              {{ t('common.category', 'Category') }}
             </div>
             <div class="result-value">
               <span class="result-icon">{{ selectedCategoryIcon }}</span>
@@ -77,9 +82,13 @@
 
           <div class="divider">×</div>
 
-          <div class="result-item animate-scale-in" style="animation-delay: 0.2s">
+          <div
+            class="result-item animate-scale-in"
+            style="animation-delay: 0.2s"
+            data-testid="round-letter-display"
+          >
             <div class="result-label">
-              {{ t('common.letter') }}
+              {{ t('common.letter', 'Letter') }}
             </div>
             <div class="result-value">
               <span class="result-text result-letter">{{ selectedLetter }}</span>
@@ -89,10 +98,10 @@
       </transition>
 
       <!-- Loading indicator -->
-      <div v-if="startingGame" class="loading-container">
+      <div v-if="startingGame" class="loading-container" data-testid="round-loading">
         <Spinner />
         <p class="loading-text">
-          {{ t('home.starting_game') }}
+          {{ t('home.starting_game', 'Starting game...') }}
         </p>
       </div>
     </div>
@@ -281,7 +290,7 @@ const startGame = async () => {
     logger.error('Failed to start game:', error)
     startingGame.value = false
     // Show error to user
-    toast.error(t('game.error_starting'))
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
   }
 }
 

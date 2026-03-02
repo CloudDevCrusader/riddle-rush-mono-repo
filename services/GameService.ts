@@ -32,7 +32,7 @@ export class GameService {
     category: Category,
     letter: string,
     players: Player[],
-    gameName?: string
+    gameName?: string,
   ): GameSession {
     return {
       id: crypto.randomUUID(),
@@ -66,7 +66,7 @@ export class GameService {
    */
   static validatePlayerName(
     name: string,
-    existingPlayers: Player[]
+    existingPlayers: Player[],
   ): {
     valid: boolean
     error?: string
@@ -80,7 +80,7 @@ export class GameService {
     }
 
     const isDuplicate = existingPlayers.some(
-      (p) => p.name.toLowerCase() === name.trim().toLowerCase()
+      p => p.name.toLowerCase() === name.trim().toLowerCase(),
     )
 
     if (isDuplicate) {
@@ -94,14 +94,14 @@ export class GameService {
    * Check if all players have submitted
    */
   static allPlayersSubmitted(players: Player[]): boolean {
-    return players.length > 0 && players.every((p) => p.hasSubmitted)
+    return players.length > 0 && players.every(p => p.hasSubmitted)
   }
 
   /**
    * Get current turn player
    */
   static getCurrentTurnPlayer(players: Player[]): Player | null {
-    return players.find((p) => !p.hasSubmitted) ?? null
+    return players.find(p => !p.hasSubmitted) ?? null
   }
 
   /**
@@ -131,7 +131,7 @@ export class GameService {
    */
   static getPlayerRank(player: Player, allPlayers: Player[]): number {
     const sorted = [...allPlayers].sort((a, b) => b.totalScore - a.totalScore)
-    return sorted.findIndex((p) => p.id === player.id) + 1
+    return sorted.findIndex(p => p.id === player.id) + 1
   }
 
   /**
@@ -215,7 +215,7 @@ export class GameService {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+            matrix[i - 1][j] + 1,
           )
         }
       }

@@ -66,6 +66,19 @@ export function useFeatureFlags() {
   })
 
   /**
+   * Check if answer input feature is enabled
+   */
+  const isAnswerInputEnabled = computed(() => {
+    if (gitlabClient) {
+      const gitlabEnabled = isEnabled('answer-input', false)
+      if (!gitlabEnabled) return false
+    }
+
+    const config = useRuntimeConfig()
+    return config.public.featureAnswerInput !== false
+  })
+
+  /**
    * Check if WebSocket feature is enabled
    */
   const isWebSocketEnabled = computed(() => {
@@ -83,6 +96,7 @@ export function useFeatureFlags() {
   return {
     isEnabled,
     getVariant,
+    isAnswerInputEnabled,
     isFortuneWheelEnabled,
     isWebSocketEnabled,
   }

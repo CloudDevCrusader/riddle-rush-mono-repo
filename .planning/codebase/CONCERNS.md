@@ -1,687 +1,281 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-01-31
+**Analysis Date:** 2026-02-13
 
 ## Tech Debt
 
-### 1. Error Handling Gaps (Critical)
+**Skipped Unit Tests (Game Store):**
 
-**Issue**: Multiple critical paths lack try-catch error handling
-**Files**:
+- Issue: 7+ unit tests in the game store spec are skipped with TODOs citing CI environment issues (Node 20 vs 24 differences, state pollution between tests, race conditions, timing-dependent failures)
+- Files: `apps/game/tests/unit/game-store.spec.ts`
+- Impact: Core game logic (session management, scoring, player operations) lacks automated regression coverage. Bugs in these areas go undetected until production.
+- Fix approach: Pin Node version in CI, isolate store state per test with `createPinia()` fresh instances, replace `setTimeout` assertions with `vi.advanceTimersByTime()`.
 
-- `apps/game/pages/game/[[gameId]].vue` - handleSubmit (line 207-235)
-- `apps/game/stores/game.ts` - fetchCategories, loadSessionById
-- `apps/game/composables/useIndexedDB.ts` - Database operations
+**Skipped E2E Tests (Results Page):**
 
-**Impact**:
+- Issue: 6+ E2E tests for the results page are skipped, covering score display, button interactions, and navigation flows
+- Files: `apps/game/tests/e2e/results.spec.ts`
+- Impact: No automated verification of the post-game experience — score rendering, replay flow, and navigation after game completion are all untested.
+- Fix approach: Fix the component mounting/rendering issues causing failures, ensure test fixtures provide complete game state.
 
-- Game crashes on network failures without user feedback
-- Category loading failures crash the app
-- IndexedDB errors silently fail without user notification
+**Empty Seed Test:**
 
-**Fix approach**:
+- Issue: `seed.spec.ts` at root is an empty placeholder with no test content
+- Files: `seed.spec.ts`
+- Impact: Clutters test runs, gives false confidence in test count
+- Fix approach: Either implement seeding tests or delete the file.
 
-- Wrap all async API calls in try-catch blocks
-- Add user-facing toast/modal error messages
-- Implement fallback mechanisms (cached data, localStorage)
-- Log errors to monitoring service
+**Duplicate Game Logic — GameService vs Store:**
 
----
+- Issue: `GameService.ts` duplicates logic already present in the game store (shuffling, player creation, score calculation, Levenshtein distance). Two sources of truth for core game mechanics.
+- Files: `services/GameService.ts`, `apps/game/stores/game.ts`
+- Impact: Changes to game logic must be made in two places. Divergence causes subtle scoring/matching bugs.
+- Fix approach: Consolidate all game logic into either the store or the service. If the service is meant to be portable, remove Nuxt alias imports (`~/types/game`) and have the store delegate to it.
 
-### 2. Console Statements in Production (High)
+**Static-Only Class Anti-Pattern:**
 
-**Issue**: Debug console.log/console.error statements left in code
-**Files**:
+- Issue: `StorageService.ts` uses a class with only static methods, requiring an eslint-disable for `no-extraneous-class`
+- Files: `services/StorageService.ts`
+- Impact: Unnecessary OOP overhead, harder to tree-shake, eslint rules suppressed
+- Fix approach: Convert to plain exported functions (`export function saveToStorage(...)`)
 
-- `apps/game/components/SettingsModal.vue` (lines with console.log)
-- `apps/game/components/StoryboardDevOverlay.vue`
-- `apps/game/composables/useErrorSync.ts`
-- `apps/game/composables/useLogger.ts`
-- `apps/game/app.vue`
+**Legacy Single-Player Code:**
 
-**Current State**: Production build should remove console statements via build config, but dev console statements remain in source
+- Issue: Scattered `// Legacy support` and `// Legacy single-player` comments indicate abandoned code paths that are still executed
+- Files: `apps/game/stores/game.ts` (multiple locations throughout the 555-line file)
+- Impact: Increases store complexity, confuses future developers about which code paths are active
+- Fix approach: Audit all legacy-commented code paths, remove dead code, ensure multiplayer-only paths are clean.
 
-**Impact**:
+**Unimplemented Wikipedia Search Provider:**
 
-- Development clutter in codebase
-- Potential information leakage in production if build config fails
-- Inconsistent with centralized logging pattern
+- Issue: Wikipedia is declared as a search provider in types but throws "not yet implemented" at runtime
+- Files: `apps/game/composables/useAnswerCheck.ts:148`, `packages/types/src/game.ts`
+- Impact: If a user somehow selects Wikipedia as provider, they get a runtime error instead of a graceful fallback
+- Fix approach: Either implement the Wikipedia provider or remove it from the type union and UI options.
 
-**Fix approach**:
+**Mock Database Response in Socket Server:**
 
-- Replace all direct console calls with `useLogger()` composable
-- Verify build removes console in production
-- Code review checklist to catch new console statements
+- Issue: `getUserStats` handler returns mock/stub data with comment "replace with actual database query"
+- Files: `apps/game/server/plugins/socket.ts`
+- Impact: User statistics are fabricated, not real. Any UI displaying stats shows incorrect data.
+- Fix approach: Connect to actual data store or remove the endpoint until implemented.
 
----
+**Incompatible Mobile App:**
 
-### 3. Unvalidated IndexedDB Initialization (High)
+- Issue: `apps/mobile` uses NativeScript with Vue 2 (`nativescript-vue: ^2.9.3`, `vue-template-compiler`) while the game app uses Vue 3 with Composition API
+- Files: `apps/mobile/package.json`, `apps/mobile/app/components/`
+- Impact: Mobile app cannot share any Vue components, composables, or stores with the game app. The two apps are effectively separate codebases despite being in the same monorepo.
+- Fix approach: Either upgrade mobile to NativeScript + Vue 3 or extract it to a separate repo.
 
-**Issue**: No fallback if IndexedDB fails or is unavailable
-**Files**: `apps/game/composables/useIndexedDB.ts` (lines 22-69)
+**Misplaced Root Dependencies:**
 
-**Current State**:
-
-- Function returns null on error (line 112, 124)
-- No attempt to use localStorage as fallback
-- Game silently fails to save progress
-
-**Impact**:
-
-- Players on restricted browsers/devices lose progress
-- Private browsing mode in some browsers blocks IndexedDB
-- No user notification of data loss
-
-**Fix approach**:
-
-- Implement localStorage fallback when IndexedDB unavailable
-- Add user notification when persistence fails
-- Store serialized objects with size awareness (localStorage is 5-10MB)
-- Add `isPersistenceAvailable()` method to check before critical operations
-
----
-
-### 4. Missing Input Validation (Medium)
-
-**Issue**: Player names and answers have incomplete validation
-**Files**:
-
-- `apps/game/pages/players.vue` (line 152-183)
-- `apps/game/pages/game/[[gameId]].vue` (line 198-205)
-
-**Current State**:
-
-- Sanitizes HTML (`<>` removal) but allows special characters
-- No XSS protection for displayed player names
-- Empty answer trimming but unclear skip semantics
-
-**Impact**:
-
-- Potential XSS through crafted player names (though v-text used)
-- Unclear game behavior on empty submissions
-- Special characters may break analytics or database
-
-**Fix approach**:
-
-- Implement stricter character whitelist (alphanumeric, spaces, common punctuation)
-- Validate against max/min length before display
-- Document skip vs. empty answer behavior clearly
-- Use Zod/Yup for runtime schema validation
-
----
-
-### 5. Missing Quit Confirmation Modal (Medium)
-
-**Issue**: Users can accidentally quit active game without warning
-**Files**:
-
-- `apps/game/pages/game/[[gameId]].vue` - handleBack (line 183-189)
-
-**Current State**:
-
-- Quit modal component exists (`LazyQuitModal`)
-- Modal appears on back button but no prevention of route changes
-- Navigation guard not implemented
-
-**Impact**:
-
-- Players lose progress accidentally
-- Back button navigates immediately on first click before modal appears
-- Race condition possible between click and modal show
-
-**Fix approach**:
-
-- Implement `onBeforeRouteLeave` navigation guard
-- Prevent route navigation until confirmation
-- Test modal appearance and route blocking
-
----
-
-### 6. Race Condition in Category Loading (Medium)
-
-**Issue**: Category loading has polling mechanism instead of proper async coordination
-**Files**: `apps/game/stores/game.ts` (line 106-123)
-
-**Current State**:
-
-- Poll loop with 100ms intervals, max 10 seconds
-- Returns immediately even if loading incomplete
-- No real promise-based coordination
-
-**Impact**:
-
-- Race conditions if multiple components fetch categories
-- 10-second timeout could silently fail
-- Inefficient polling wastes CPU
-
-**Fix approach**:
-
-- Use Pinia's built-in promise handling
-- Return the pending promise instead of polling
-- Add configurable timeout with error notification
-- Consider single-flight caching pattern
-
----
+- Issue: Root `package.json` includes heavy AI/agent dependencies (`langchain`, `@e2b/code-interpreter`, `@voltagent/core`, `@langchain/anthropic`) in production dependencies that are unrelated to the game
+- Files: `package.json` (root)
+- Impact: Inflated install times, confusing dependency graph, potential version conflicts
+- Fix approach: Move AI agent dependencies to a separate workspace package or devDependencies if only used for tooling.
 
 ## Known Bugs
 
-### 1. Letter Selection Not Persisted (Medium)
+**Potential Score Assignment Bug:**
 
-**Status**: Documented in MVP-TASKS.md line 466
-**Symptoms**: User selects letter on alphabet page, game ignores selection and generates random letter
-**Files**:
+- Symptoms: `assignPlayerScore` in the game store deduplicates score updates with `if (points !== player.currentRoundScore)` — this could silently discard legitimate score changes to the same numeric value (e.g., re-submitting after a correction)
+- Files: `apps/game/stores/game.ts` (within `assignPlayerScore` action)
+- Trigger: Two consecutive answer submissions that evaluate to the same point value
+- Workaround: None — the logic silently drops the update
 
-- `apps/game/pages/round-start.vue` - Fortune wheel
-- `apps/game/stores/game.ts` - loadSessionById action
+**Insecure and Non-Persistent User ID:**
 
-**Trigger**:
+- Symptoms: `useWebSocket.ts` generates userId with `Math.random().toString(36).substring(2, 15)` — not cryptographically secure and regenerated on every page load
+- Files: `apps/game/composables/useWebSocket.ts:16`
+- Trigger: Every new WebSocket connection creates a new identity
+- Workaround: None — users effectively lose their multiplayer identity on refresh
 
-1. Navigate to round-start (fortune wheel page)
-2. Select a letter (if alphabet selection page exists)
-3. Start game
-4. Observe random letter instead of selected
+**Category Loading Race Condition Guard:**
 
-**Workaround**: None - feature appears removed from MVP scope
-
----
-
-### 2. Menu Button (⋮) Non-Functional (Low)
-
-**Status**: Documented in MVP-TASKS.md line 469
-**Symptoms**: Menu button in game header exists but doesn't open menu
-**Files**: `apps/game/pages/game/[[gameId]].vue` (line 31-49)
-
-**Current State**: Pause button implemented instead
-
-**Trigger**: Click pause/menu button in game header
-
-**Workaround**: Use ESC key to pause or back button to quit
-
----
-
-### 3. i18n Translation Key Warnings (Low)
-
-**Status**: Documented in MVP-TASKS.md line 465
-**Symptoms**: Console warnings about missing translation keys
-**Files**: Multiple pages using `$t()` or `t()`
-
-**Trigger**: Reload game page
-
-**Workaround**: Restart development server
-
----
+- Symptoms: Category loading uses a polling loop with 100ms intervals up to 10 seconds (`while` loop checking `!categories.value?.length`) as a guard against race conditions
+- Files: `apps/game/stores/game.ts:114-123`
+- Trigger: When categories haven't loaded by the time game initialization runs
+- Workaround: The polling loop itself is the workaround — it masks a missing reactive dependency or initialization ordering issue
 
 ## Security Considerations
 
-### 1. XSS via Player Names and Answers (Medium)
+**CORS Wildcard on WebSocket Server:**
 
-**Risk**:
+- Risk: Socket.IO server accepts connections from any origin (`cors: { origin: '*' }`)
+- Files: `apps/game/server/plugins/socket.ts:10`
+- Current mitigation: None
+- Recommendations: Restrict to known origins (game domain, localhost for dev). Use environment variable for allowed origins.
 
-- Player names displayed in UI components
-- Answers submitted by players shown to other players
-- Potential for script injection if v-text not consistently used
+**Terraform State File Committed:**
 
-**Files**:
+- Risk: `terraform.tfstate` is committed to the repository. While currently nearly empty (181 bytes), this file can contain secrets (API keys, database passwords) as infrastructure grows.
+- Files: `terraform.tfstate`
+- Current mitigation: State is mostly empty
+- Recommendations: Add `terraform.tfstate` and `*.tfstate.backup` to `.gitignore`. Use remote state backend (S3 + DynamoDB).
 
-- `apps/game/pages/players.vue` (line 36)
-- `apps/game/pages/game/[[gameId]].vue` (line 85)
-- `apps/game/pages/results/[[gameId]].vue` - leaderboard display
+**Minimal XSS Sanitization:**
 
-**Current mitigation**:
+- Risk: Player name input sanitization only strips `<>` characters — does not handle attribute injection, unicode tricks, or encoded entities
+- Files: `apps/game/pages/game/[[gameId]].vue:188`
+- Current mitigation: Basic `<>` stripping
+- Recommendations: Use a proper sanitization library (e.g., DOMPurify) or enforce strict alphanumeric pattern validation on player names.
 
-- v-text used for player name display (safe)
-- Answer input sanitized to remove `<>` (line 200)
-- maxlength="50" on input
+**GA4 Plugin Uses innerHTML Pattern:**
 
-**Recommendations**:
+- Risk: `gtag.client.ts` injects Google Analytics config ID via script tag creation, using `(window as any).gtag` pattern
+- Files: `apps/game/plugins/gtag.client.ts`
+- Current mitigation: Config ID comes from runtime config, not user input
+- Recommendations: Use the official `@nuxtjs/gtag` module or ensure CSP headers allow inline scripts.
 
-- Implement strict character whitelist instead of blacklist
-- Use Content Security Policy headers
-- Add CSP nonce to inline scripts
-- Regular security audit of template rendering
-- Consider DOMPurify for user-generated content
+**Placeholder CloudWatch Endpoint Exposed:**
 
----
-
-### 2. IndexedDB Data Exposure (Low)
-
-**Risk**: Local game data accessible in browser DevTools/extensions
-**Impact**: Player scores, game history, leaderboard data exposed
-
-**Current mitigation**: Data stored only on device (no server)
-
-**Recommendations**:
-
-- Document privacy implications (no data sent to server)
-- Encrypt sensitive data in IndexedDB if needed
-- Add user privacy policy
-
----
-
-### 3. API Response Validation Missing (Medium)
-
-**Risk**: Wikipedia API/PetScan could return unexpected data structure
-**Files**:
-
-- `apps/game/composables/useAnswerCheck.ts` - API response handling
-- `apps/game/stores/game.ts` - fetchCategories (line 128)
-
-**Current mitigation**: Basic null checks
-
-**Recommendations**:
-
-- Add runtime schema validation (Zod/Yup)
-- Validate all external API responses
-- Handle malformed JSON gracefully
-- Add type-safe response mapping
-
----
+- Risk: `useErrorSync.ts` contains a hardcoded placeholder URL `'https://your-api-gateway.execute-api.region.amazonaws.com/prod/logs'` — if error sync is enabled, it sends error logs to a non-existent (or potentially squattable) endpoint
+- Files: `apps/game/composables/useErrorSync.ts:171`
+- Current mitigation: The endpoint likely returns 404, so errors are silently lost
+- Recommendations: Move endpoint to environment configuration, disable error sync until a real endpoint is configured.
 
 ## Performance Bottlenecks
 
-### 1. No Code Splitting (Medium)
+**Oversized Single-File Components:**
 
-**Problem**: All pages bundled together
-**Files**:
+- Problem: Several Vue SFCs exceed 500 lines with heavy inline styles and complex template logic
+- Files: `apps/game/pages/game/[[gameId]].vue` (912 lines), `apps/game/pages/round-start.vue` (627 lines), `apps/game/components/FortuneWheel.vue` (512 lines), `apps/game/components/SettingsModal.vue` (511 lines), `apps/game/components/StoryboardDevOverlay.vue` (529 lines)
+- Cause: All logic, template, and styles in a single file with no extraction to composables or child components
+- Improvement path: Extract composables for logic (e.g., `useFortuneWheel`, `useGamePage`), break into smaller child components, move styles to utility classes or extracted CSS.
 
-- Build configuration in `apps/game/nuxt.config.ts`
+**Unbatched IndexedDB Writes:**
 
-**Current capacity**: ~1.5MB uncompressed (estimated)
+- Problem: `saveSessionToDB()` is called on every player answer submission, triggering a full IndexedDB write each time
+- Files: `apps/game/stores/game.ts` (within answer submission flow), `apps/game/composables/useIndexedDB.ts`
+- Cause: No debouncing or batching of DB operations
+- Improvement path: Debounce `saveSessionToDB()` calls (e.g., 500ms), or batch writes at round/game boundaries.
 
-**Cause**:
+**Full History Rewrite on Save:**
 
-- All components imported statically
-- No route-based code splitting
-- Heavy dependencies in main bundle
+- Problem: `saveGameHistory` iterates and puts ALL history entries on every save, not just new/changed ones
+- Files: `apps/game/composables/useIndexedDB.ts` (within save logic)
+- Cause: No diffing or append-only pattern
+- Improvement path: Track which entries are new/dirty and only write those, or use an append-only pattern with a cursor.
 
-**Improvement path**:
+**JSON Deep Clone for Session History:**
 
-- Use `defineAsyncComponent()` for lazy-loaded components
-- Route-based code splitting via Nuxt auto-imports
-- Conditional imports for debug/development-only features
-- Monitor bundle size with `@nuxt/bundle-analyzer`
-
----
-
-### 2. No Image Optimization (Medium)
-
-**Problem**: Large PNG images not optimized
-**Files**:
-
-- `apps/game/public/assets/` - PNG files (mentioned in MVP-TASKS.md line 281)
-
-**Current capacity**: Some images >500KB
-
-**Cause**:
-
-- PNG format without compression
-- No WebP conversion
-- No lazy loading for below-fold images
-
-**Improvement path**:
-
-- Convert PNG to WebP with PNG fallback
-- Use Nuxt Image with automatic optimization
-- Implement lazy loading for non-critical images
-- Add image compression in build pipeline (TinyPNG/ImageOptim)
-
----
-
-### 3. IndexedDB Cursor Not Yielding (Low)
-
-**Problem**: Large history/leaderboard queries not paginated
-**Files**:
-
-- `apps/game/composables/useIndexedDB.ts` (line 151-170, 219-238)
-
-**Current capacity**: Limit parameter (default 50), but no offset support
-
-**Cause**:
-
-- Cursor implementation adequate but no pagination
-- Large datasets could cause UI jank
-
-**Improvement path**:
-
-- Add offset/limit parameters to getGameHistory and getLeaderboard
-- Use virtual scrolling for large lists
-- Add pagination controls in leaderboard view
-
----
+- Problem: Session history is copied using `JSON.parse(JSON.stringify(session))` — blocks the main thread for large sessions and silently drops non-serializable data (Dates, functions, undefined values)
+- Files: `apps/game/stores/game.ts`
+- Cause: Quick-and-dirty deep clone instead of using `structuredClone()` or a targeted copy
+- Improvement path: Use `structuredClone()` (available in all modern browsers and Node 17+) or create a typed `cloneSession()` utility.
 
 ## Fragile Areas
 
-### 1. Game Store Multi-Player Logic (High)
+**Plugin Initialization Order:**
 
-**Files**: `apps/game/stores/game.ts`
-**Why fragile**:
+- Files: `apps/game/plugins/00.init-plugin-system.client.ts`, `apps/game/nuxt.config.ts`
+- Why fragile: A plugin exists solely to work around `@nuxtjs/i18n` circular dependency. The Nuxt config also has a `filterProblematicPlugins` function that removes i18n SSR plugins at runtime. Both are undocumented ordering hacks.
+- Safe modification: Do not rename or reorder plugins without understanding the i18n initialization chain. Test SSR and client-side rendering after any plugin changes.
+- Test coverage: No tests cover plugin initialization order.
 
-- Complex player submission tracking
-- Attempts array management per player
-- Score calculation across multiple rounds
-- Leaderboard ranking computation (line 85-100)
+**SSR-Unsafe Composables:**
 
-**Safe modification**:
+- Files: `apps/game/composables/useLogger.ts:52`, `apps/game/composables/useErrorSync.ts`
+- Why fragile: `useLogger` references `window.location.href` and `navigator.userAgent` without SSR guards. `useErrorSync` uses `typeof useRuntimeConfig !== 'undefined'` as a runtime feature detection pattern. Both will crash or behave unpredictably during SSR.
+- Safe modification: Always wrap browser API access in `if (import.meta.client)` or `onMounted()` hooks. Test both SSR and CSR rendering paths.
+- Test coverage: No SSR-specific tests exist.
 
-- Write unit tests for each player action
-- Test with 1, 3, and 6 player scenarios
-- Verify attempt tracking in edge cases
+**IndexedDB Singleton in HMR:**
 
-**Test coverage gaps**:
+- Files: `apps/game/composables/useIndexedDB.ts`
+- Why fragile: Uses a module-level `let dbInstance` singleton. During HMR (hot module replacement) in development, the module re-executes but the old DB connection may still be open, causing "blocked" or "version change" errors.
+- Safe modification: Add HMR cleanup handler (`if (import.meta.hot) { import.meta.hot.dispose(() => dbInstance?.close()) }`) or use a Nuxt-managed provide/inject pattern.
+- Test coverage: Unit tests mock IndexedDB entirely, so this issue is invisible in tests.
 
-- Multi-player score calculation not fully tested
-- Player submission edge case (duplicate submission)
-- Rank calculation accuracy
+**Dual IndexedDB Connections:**
 
----
+- Files: `apps/game/composables/useIndexedDB.ts`, `apps/game/composables/useErrorSync.ts`
+- Why fragile: `useErrorSync` opens its own separate IndexedDB database (`ErrorLogs`) independent of the main game database. Two concurrent DB connections increase resource usage and can cause blocking during version upgrades.
+- Safe modification: Consolidate into a single database with multiple object stores, or ensure version management is coordinated.
+- Test coverage: Neither DB connection pattern is tested in integration.
 
-### 2. Fortune Wheel Component (Medium)
+**Misplaced Middleware:**
 
-**Files**: `apps/game/components/FortuneWheel.vue`
-**Why fragile**:
-
-- Physics calculations for rotation
-- Mobile/desktop coordinate handling
-- SVG rendering performance
-- Touch event handling
-
-**Safe modification**:
-
-- Only modify CSS transforms, not rotation logic
-- Test on multiple device sizes
-- Verify touch targets are adequate
-
-**Test coverage gaps**:
-
-- Mobile tap accuracy
-- Performance on low-end devices
-- Animation smoothness on various browsers
-
----
-
-### 3. PWA Service Worker Configuration (Medium)
-
-**Files**: `apps/game/nuxt.config.ts` (PWA config section)
-**Why fragile**:
-
-- Service worker cache strategy affects offline functionality
-- CacheFirst vs NetworkFirst trade-offs
-- Cache invalidation not explicit
-
-**Safe modification**:
-
-- Never change runtime cache strategy without testing offline mode
-- Always test with DevTools cache disabled
-- Verify fallback pages work offline
-
-**Test coverage gaps**:
-
-- Offline mode functionality
-- Cache invalidation after updates
-- Background sync for offline plays
-
----
+- Files: `middleware/game-active.global.ts` (at monorepo root)
+- Why fragile: Global middleware placed at monorepo root instead of `apps/game/middleware/`. Nuxt may not auto-register it correctly depending on the workspace configuration. If Nuxt's file-system routing doesn't scan the root `middleware/` directory, this middleware is silently ignored.
+- Safe modification: Move to `apps/game/middleware/game-active.global.ts`.
+- Test coverage: No tests verify middleware registration or behavior.
 
 ## Scaling Limits
 
-### 1. Player Leaderboard (Per-Session) (Low)
+**In-Memory WebSocket State:**
 
-**Current capacity**: 6 players (MAX_PLAYERS constant)
-**Limit**: Hardcoded in `apps/game/utils/constants.ts`
+- Current capacity: Single-server deployment with all WebSocket rooms held in memory
+- Limit: Cannot scale horizontally — adding a second server would split rooms, causing players to be invisible to each other
+- Scaling path: Add Redis adapter for Socket.IO (`@socket.io/redis-adapter`) to share state across instances.
 
-**Scaling path**:
+**IndexedDB Storage:**
 
-- Remove hardcoded limit or make configurable
-- Implement server-side leaderboards if needed
-- Add pagination for large leaderboards
-
----
-
-### 2. IndexedDB Storage (Low)
-
-**Current capacity**: ~50MB typical on desktop, 10-15MB on mobile
-**Limit**: Browser quota
-
-**Scaling path**:
-
-- Implement data archival (delete old game sessions)
-- Compress historical data
-- Add export/import feature for backup
-- Consider iCloud/Android backup integration for PWA
-
----
-
-### 3. Category Dataset (Low)
-
-**Current capacity**: Load all categories at startup (1000s expected)
-**Limit**: Memory usage, startup time
-
-**Scaling path**:
-
-- Lazy load categories in batches
-- Implement category search/filtering
-- Use pagination or virtual scrolling
-
----
+- Current capacity: Browser-dependent (typically 50MB-unlimited with user permission)
+- Limit: Game history grows unbounded — no cleanup or rotation strategy
+- Scaling path: Implement max history size with LRU eviction, or archive old sessions to server-side storage.
 
 ## Dependencies at Risk
 
-### 1. Deprecated Glob Package (Low)
+**NativeScript Vue 2 in Mobile App:**
 
-**Risk**: Glob versions prior to v9 are no longer supported
-**Impact**: Possible security vulnerabilities in transitive dependency
-**Current mitigation**: Indirect dependency, likely through build tools
+- Risk: Vue 2 reached end-of-life December 2023. `nativescript-vue ^2.9.3` has no path to Vue 3 without a full rewrite.
+- Impact: Mobile app cannot receive Vue security patches, cannot use any shared Vue 3 code from the game app
+- Migration plan: Evaluate NativeScript + Vue 3 compatibility, or consider alternative mobile frameworks (Capacitor, Expo).
 
-**Migration plan**:
+**Heavy AI Agent Dependencies at Root:**
 
-- Run `npm audit` regularly
-- Upgrade indirect dependencies via `syncpack:fix`
-- Monitor for major version bumps
-
----
-
-### 2. Unsupported Legacy Packages (Low)
-
-**Risk**: Package.lock shows deprecated packages
-**Current status**:
-
-- Some transitive dependencies marked deprecated
-- Not directly impacting game functionality
-
-**Migration plan**:
-
-- Run `pnpm update` and `pnpm audit`
-- Check for replacements (e.g., @npmcli/package-json instead of read-pkg)
-- Evaluate during maintenance cycles
-
----
+- Risk: `langchain`, `@langchain/anthropic`, `@e2b/code-interpreter`, `@voltagent/core` are fast-moving packages with frequent breaking changes
+- Impact: `pnpm install` is slower, dependency resolution conflicts possible with game dependencies
+- Migration plan: Isolate into a separate `packages/ai-tools` workspace or move to devDependencies.
 
 ## Missing Critical Features
 
-### 1. Error Boundary Component (Medium)
+**No Real User Statistics Backend:**
 
-**Problem**: No global error boundary to catch component rendering errors
-**Blocks**:
+- Problem: `getUserStats` returns mock data — there is no database or API for persisting user statistics across sessions
+- Blocks: Leaderboards, player progression, achievement systems, and any server-side game analytics
 
-- Users can't recover from component crashes
-- Full app crash possible if single component fails
+**No Error Reporting in Production:**
 
-**Implementation**:
+- Problem: CloudWatch endpoint in `useErrorSync` is a placeholder URL. No Sentry, Datadog, or other error tracking is configured.
+- Blocks: Visibility into production errors — bugs go undetected until users report them manually.
 
-- Create `ErrorBoundary.vue` component
-- Wrap app root in error boundary
-- Show user-friendly error page with retry button
+**No Authentication System:**
 
----
-
-### 2. Error Tracking Service (Medium)
-
-**Problem**: No centralized error tracking (console logging only)
-**Blocks**:
-
-- Can't monitor production errors
-- No error frequency analysis
-- Can't proactively fix issues
-
-**Implementation**:
-
-- Integrate Sentry, LogRocket, or similar
-- Track all unhandled errors
-- Add breadcrumb tracking for user actions
-- Set up error alerts
-
----
+- Problem: Players are identified only by in-memory names and random WebSocket IDs. No login, no persistent identity.
+- Blocks: Cross-session game history, multiplayer friend lists, saved preferences synced across devices.
 
 ## Test Coverage Gaps
 
-### 1. Error Handling Scenarios (Critical)
+**Untested Composables (11 of 26):**
 
-**Untested area**: Network errors, API timeouts, database failures
-**Files**:
+- What's not tested: `useGameActions`, `useGameState`, `useAnalytics`, `useStoryboard`, `useOptimizedImage`, `useAudio`, `useAnswerCheck`, `useColorMode`, `usePerformance`, `useDeviceCapabilities`, `useFeatureFlags`
+- Files: `apps/game/composables/useGameActions.ts`, `apps/game/composables/useGameState.ts`, `apps/game/composables/useAnalytics.ts`, `apps/game/composables/useStoryboard.ts`, `apps/game/composables/useOptimizedImage.ts`, `apps/game/composables/useAudio.ts`, `apps/game/composables/useAnswerCheck.ts`, `apps/game/composables/useColorMode.ts`, `apps/game/composables/usePerformance.ts`, `apps/game/composables/useDeviceCapabilities.ts`, `apps/game/composables/useFeatureFlags.ts`
+- Risk: Core gameplay composables (`useGameActions`, `useGameState`, `useAnswerCheck`) handle critical game logic — scoring, round management, answer validation — with zero test coverage
+- Priority: High for `useAnswerCheck` (fuzzy matching logic), `useGameActions` (state mutations), `useGameState` (derived state). Medium for others.
 
-- `apps/game/pages/game/[[gameId]].vue` - No error scenario tests
-- `apps/game/stores/game.ts` - No error path tests
-- `apps/game/composables/useAnswerCheck.ts` - No timeout tests
+**GameService Has No Tests:**
 
-**Risk**: Error paths crash app in production while tests pass
+- What's not tested: Levenshtein distance calculation, fuzzy answer matching, score computation, player creation helpers
+- Files: `services/GameService.ts`
+- Risk: Core scoring algorithm changes could break fairness without detection
+- Priority: High — this is the scoring engine
 
-**Priority**: High - Add before launch
-**Coverage**:
+**No Integration Tests:**
 
-- Mock network failures in E2E tests
-- Test Wikipedia API timeout (>10 seconds)
-- Test IndexedDB full quota errors
+- What's not tested: Store-to-composable interactions, plugin initialization chains, WebSocket message flows
+- Files: All stores, composables, and plugins
+- Risk: Individual units may pass but fail when composed. The plugin ordering hack (`00.init-plugin-system.client.ts`) is especially vulnerable.
+- Priority: Medium
 
----
+**Pervasive `as any` Casting (~50+ instances):**
 
-### 2. Edge Case Scenarios (High)
-
-**Untested area**: Empty inputs, 0 players, single player games
-**Files**:
-
-- `apps/game/pages/players.vue` - No 0-player test
-- `apps/game/pages/game/[[gameId]].vue` - No skip-all-rounds test
-- `apps/game/pages/results/[[gameId]].vue` - No zero-score scenarios
-
-**Risk**: App behaves unexpectedly in edge cases
-
-**Priority**: High - Add before launch
-**Coverage**:
-
-- 0 players attempting to start game
-- All players skip entire round
-- Single player game flow
-- Very long player names (20 chars)
+- What's not tested: Type safety at cast boundaries — the TypeScript compiler cannot verify correctness where `as any` is used
+- Files: `apps/game/composables/usePageSetup.ts`, `apps/game/composables/useErrorSync.ts:100`, `apps/game/plugins/error-sync.client.ts:7`, and ~47 other locations across source files
+- Risk: Runtime type errors in production that TypeScript should have caught at compile time
+- Priority: Medium — systematically replace with proper typing or `as unknown as TargetType` with runtime guards
 
 ---
 
-### 3. Offline Functionality (High)
-
-**Untested area**: PWA offline mode, service worker caching
-**Files**:
-
-- `tests/e2e/` - No offline tests
-
-**Risk**: App doesn't work offline despite PWA claims
-
-**Priority**: High - Key feature
-**Coverage**:
-
-- DevTools offline simulation
-- Cached assets still load
-- Can play offline
-- Progress saves offline
-- Comes online and syncs
-
----
-
-### 4. Mobile Responsiveness (Medium)
-
-**Untested area**: Touch handling, small viewport layouts
-**Files**:
-
-- `tests/e2e/helpers/mobile.ts` - Mobile helpers exist but may not cover all scenarios
-
-**Risk**: UI broken on actual mobile devices despite Playwright tests
-
-**Priority**: Medium - Should test before launch
-**Coverage**:
-
-- Various iPhone/Android screen sizes
-- Touch event handling (no mouse)
-- Scroll handling on small viewports
-- Input focus on mobile keyboards
-
----
-
-### 5. Localization Testing (Low)
-
-**Untested area**: German and English language switching
-**Files**:
-
-- `tests/e2e/` - No locale switching tests
-
-**Risk**: Missing translations not caught
-
-**Priority**: Low - Nice to have
-**Coverage**:
-
-- Both locales in E2E tests
-- All UI strings translated
-- No hardcoded English strings
-- Proper text direction if RTL added
-
----
-
-## Technical Debt Summary by Category
-
-| Area           | Count        | Priority | Estimated Effort |
-| -------------- | ------------ | -------- | ---------------- |
-| Error Handling | 4 items      | Critical | 8-12 hours       |
-| Testing Gaps   | 5 items      | High     | 16-20 hours      |
-| Code Quality   | 2 items      | Medium   | 4-6 hours        |
-| Security       | 3 items      | Medium   | 6-8 hours        |
-| Performance    | 3 items      | Medium   | 8-10 hours       |
-| Dependencies   | 2 items      | Low      | 2-4 hours        |
-| **Total**      | **19 items** |          | **44-60 hours**  |
-
----
-
-## Remediation Roadmap
-
-### Phase 1: Pre-Launch Critical (Before MVP Release)
-
-1. Implement try-catch in `handleSubmit()` (game.vue)
-2. Add error handling to category loading (game.ts)
-3. Implement error boundary component
-4. Add E2E tests for error scenarios
-5. Implement quit confirmation modal (component exists, need routing)
-6. Test offline functionality
-
-**Estimated**: 16 hours
-
-### Phase 2: Post-Launch Quick Wins (Week 1-2)
-
-1. Remove console.log statements
-2. Implement localStorage fallback for IndexedDB
-3. Add error tracking service
-4. Implement pagination for history/leaderboard
-5. Add input validation with Zod
-6. Code split lazy components
-
-**Estimated**: 20 hours
-
-### Phase 3: Optimization (Week 3-4)
-
-1. Image optimization and conversion to WebP
-2. Bundle size analysis and reduction
-3. Performance monitoring
-4. Accessibility audit (WCAG AA)
-5. Security audit and CSP headers
-
-**Estimated**: 16 hours
-
----
-
-_Concerns audit completed on 2026-01-31_
-_Sources: MVP-TASKS.md, codebase analysis, test coverage reports_
+_Concerns audit: 2026-02-13_

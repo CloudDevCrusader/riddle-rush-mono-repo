@@ -2,23 +2,27 @@
 # Stage 1: Build the application
 FROM node:22-alpine AS builder
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
-
-# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
+# Copy workspace configuration for dependency resolution
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
 
-# Install dependencies
+# Copy workspace package.json files needed for game build
+COPY apps/game/package.json ./apps/game/
+COPY packages/config/package.json ./packages/config/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/types/package.json ./packages/types/
+
+# Enable corepack and install pnpm (version from packageManager field)
+RUN corepack enable && corepack install
+
+# Install dependencies (frozen lockfile for reproducibility)
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
+# Copy full source code
 COPY . .
 
-# Build static site
-# Set BASE_URL to root for containerized deployment
+# Generate static site
 ENV BASE_URL=/
 ENV NODE_ENV=production
 RUN pnpm run generate
@@ -86,7 +90,7 @@ server {
 EOF
 
 # Copy built static files from builder
-COPY --from=builder /app/.output/public /usr/share/nginx/html
+COPY --from=builder /app/apps/game/.output/public /usr/share/nginx/html
 
 # Configure permissions for nginx user
 RUN chown -R nginx:nginx /usr/share/nginx/html && \

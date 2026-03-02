@@ -9,7 +9,13 @@
     "christian-kohler.path-intellisense",
     "formulahendry.auto-rename-tag",
     "naumovs.color-highlight",
-    "circleci.circleci"
+    "circleci.circleci",
+    "nuxtr.nuxt-vscode-extentions",
+    "nuxtr.nuxtr-vscode",
+    "vitest.explorer",
+    "antfu.vite",
+    "ms-playwright.playwright",
+    "trunk.io"
   ],
   "unwantedRecommendations": ["octref.vetur", "hookyqr.beautify", "dbaeumer.jshint"]
 }
