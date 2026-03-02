@@ -88,7 +88,7 @@
     "dev:mobile-https": "nuxt dev --https --host 0.0.0.0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate": "nuxt geneqrate",
+    "generate": "nuxt generate",
     "generate:debug": "nuxt generate --debug",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
