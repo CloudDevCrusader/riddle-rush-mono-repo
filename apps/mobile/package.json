@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@nativescript/core": "^9.0.15",
+    "@nativescript/core": "^9.0.16",
     "nativescript-vue": "^3.0.2"
   },
   "devDependencies": {
@@ -15,7 +15,7 @@
     "nativescript-vue-template-compiler": "^2.9.3",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3",
-    "vue": "^3.5.28",
+    "vue": "^3.5.29",
     "vue-loader": "^17.4.2",
     "vue-template-compiler": "^2.7.16"
   }

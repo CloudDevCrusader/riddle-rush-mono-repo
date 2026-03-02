@@ -3,8 +3,8 @@
   "version": "1.1.1",
   "dependencies": {
     "@capacitor/app": "^8.0.1",
-    "@capacitor/haptics": "^8.0.0",
-    "@capacitor/keyboard": "^8.0.0",
+    "@capacitor/haptics": "^8.0.1",
+    "@capacitor/keyboard": "^8.0.1",
     "@capacitor/status-bar": "^8.0.1",
     "@intlify/core-base": "^11.2.8",
     "@nuxtjs/i18n": "^10.2.3",
@@ -22,7 +22,7 @@
     "redis": "^5.11.0",
     "socket.io-client": "^4.8.3",
     "unleash-proxy-client": "^3.7.8",
-    "vue": "^3.5.28",
+    "vue": "^3.5.29",
     "vue-i18n": "^11.2.8"
   },
   "devDependencies": {
