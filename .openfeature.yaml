@@ -1,0 +1,52 @@
+# OpenFeature CLI Configuration
+# This file configures the OpenFeature CLI for your project.
+# For full documentation, visit: https://github.com/open-feature/cli#configuration
+
+# Global Configuration
+# Path to your flag manifest file (default: "flags.json")
+# manifest: "flags.json"
+
+# URL of your flag provider for the 'pull' and 'push' commands
+# Supports http://, https://, and file:// protocols (file:// only for pull)
+# provider: "https://your-flag-service.com/api/flags"
+
+# Authentication token for remote flag providers (if required)
+# authToken: "your-bearer-token"
+
+# Enable debug logging (default: false)
+# debug: false
+
+# Disable interactive prompts (default: false)
+# no-input: false
+
+# Command-Specific Configuration
+# Override global settings for specific commands
+
+# pull:
+#   provider: "https://api.example.com/flags"
+#   auth-token: "pull-specific-token"
+#   no-prompt: false
+
+# push:
+#   provider: "https://api.example.com/flags"
+#   auth-token: "push-specific-token"
+#   dry-run: false
+
+# generate:
+#   output: "generated"
+#
+#   # Language-specific generator options
+#   go:
+#     output: "go/flags"
+#     package-name: "openfeature"
+#
+#   typescript:
+#     output: "ts/flags"
+#
+#   csharp:
+#     output: "csharp/flags"
+#     namespace: "OpenFeature"
+#
+#   java:
+#     output: "java/flags"
+#     package-name: "com.example.openfeature"
