@@ -13,7 +13,7 @@
     "@nativescript/webpack": "^5.0.31",
     "@types/node": "^25.3.3",
     "nativescript-vue-template-compiler": "^2.9.3",
-    "tailwindcss": "^4.2.0",
+    "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
     "vue": "^3.5.28",
     "vue-loader": "^17.4.2",
