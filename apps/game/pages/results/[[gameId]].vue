@@ -15,11 +15,19 @@
           class="scoring-page__player-entry"
           :data-testid="`results-player-entry-${index}`"
         >
-          <GamePlayerCard
-            :player="player"
-            :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
-            :show-indicator="false"
-          />
+          <div class="scoring-page__player-header">
+            <span class="scoring-page__rank" data-testid="projected-rank">
+              #{{ projectedRanks.get(player.id) ?? Number(index) + 1 }}
+            </span>
+            <GamePlayerCard
+              :player="player"
+              :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
+              :show-indicator="false"
+            />
+            <span class="scoring-page__base-score" data-testid="base-score">
+              {{ player.totalScore }} {{ t('scoring.points', 'pts') }}
+            </span>
+          </div>
 
           <div class="scoring-page__score-controls">
             <GameButton
@@ -101,6 +109,15 @@
             variant="secondary"
             size="lg"
             full-width
+            data-testid="new-game-button"
+            @click="handleNewGame"
+          >
+            {{ t('scoring.new_game', 'New Game') }}
+          </GameButton>
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
             data-testid="leaderboard-button"
             @click="handleFinishGame"
           >
@@ -117,7 +134,7 @@ import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/share
 
 const { t } = usePageSetup()
 const { gameStore, players, leaderboard, currentRound } = useGameState()
-const { goToRoundStart, goToLeaderboard } = useNavigation()
+const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
 
 // Pending scores for each player (local state before confirming)
@@ -136,6 +153,20 @@ const isConfirming = ref(false)
 const showLeaderboard = ref(false)
 const showDecisionModal = ref(false)
 let dismissTimer: ReturnType<typeof setTimeout> | null = null
+
+// Projected ranks based on totalScore + pending scores
+const projectedRanks = computed(() => {
+  const ranked = [...players.value]
+    .map((p) => ({
+      id: p.id,
+      projected: p.totalScore + (pendingScores.get(p.id) ?? 0),
+    }))
+    .sort((a, b) => b.projected - a.projected)
+
+  const ranks = new Map<string, number>()
+  ranked.forEach((p, i) => ranks.set(p.id, i + 1))
+  return ranks
+})
 
 const incrementScore = (playerId: string) => {
   const current = pendingScores.get(playerId) ?? 0
@@ -189,6 +220,12 @@ const handleNextRound = async () => {
   await goToRoundStart()
 }
 
+const handleNewGame = async () => {
+  showDecisionModal.value = false
+  await gameStore.completeGame()
+  await goToPlayers()
+}
+
 const handleFinishGame = async () => {
   showDecisionModal.value = false
   await gameStore.completeGame()
@@ -239,6 +276,26 @@ useHead({
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+}
+
+.scoring-page__player-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.scoring-page__rank {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  color: var(--color-gold, #ffd700);
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.scoring-page__base-score {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted, #aaa);
+  white-space: nowrap;
 }
 
 .scoring-page__score-controls {

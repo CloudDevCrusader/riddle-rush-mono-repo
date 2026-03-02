@@ -76,7 +76,9 @@
 
       <!-- Player Answer Input (for multiplayer) -->
       <div
-        v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
+        v-if="
+          isAnswerInputEnabled && players.length > 0 && currentPlayerTurn && !allPlayersSubmitted
+        "
         class="answer-input-section"
       >
         <div class="player-turn-indicator" data-testid="game-player-turn">
@@ -164,6 +166,7 @@ const {
   currentPlayerTurn,
   allPlayersSubmitted,
 } = useGameState()
+const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
 const gameActions = useGameActions()
 const route = useRoute()

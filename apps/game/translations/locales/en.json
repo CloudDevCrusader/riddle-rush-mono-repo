@@ -246,9 +246,11 @@
     "error_saving": "Failed to save scores. Please try again.",
     "finish_game": "Finish Game",
     "leaderboard": "Leaderboard",
+    "new_game": "New Game",
     "next_round": "Next Round",
     "play_another_round": "Would you like to play another round?",
-    "post_round_prompt": "Do you want to play another round, or go to the leaderboard?",
+    "points": "pts",
+    "post_round_prompt": "What would you like to do next?",
     "player": "Player",
     "round_complete": "Round Complete!",
     "title": "Scoring"
