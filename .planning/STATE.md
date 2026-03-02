@@ -113,6 +113,7 @@ Recent decisions affecting current work:
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~352 lines) for further simplification and bug risk.
 - **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
+- **[New]** Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag).
 
 ### Completed Todos (2026-02-14)
 
