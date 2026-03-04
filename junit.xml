@@ -1,26 +1,762 @@
-<testsuites id="" name="" tests="10" failures="0" skipped="0" errors="0" time="32.085244">
-<testsuite name="scoring-flow.spec.ts" timestamp="2026-03-04T19:04:05.621Z" hostname="android-pixel5" tests="5" failures="0" skipped="0" time="64.966" errors="0">
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should show leaderboard overlay after confirming scores" classname="scoring-flow.spec.ts" time="10.811">
+<testsuites id="" name="" tests="174" failures="0" skipped="174" errors="0" time="0.14303299999999997">
+<testsuite name="credits.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="Credits Page › should load credits page successfully" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should auto-dismiss leaderboard and show decision modal" classname="scoring-flow.spec.ts" time="13.096">
+<testcase name="Credits Page › should display team credits" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to round-start when clicking Next Round" classname="scoring-flow.spec.ts" time="14.111">
+<testcase name="Credits Page › should have working back button" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to leaderboard when clicking Finish Game" classname="scoring-flow.spec.ts" time="13.854">
+<testcase name="Credits Page › should have working OK button" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should remain open when pressing Escape" classname="scoring-flow.spec.ts" time="13.094">
+<testcase name="Credits Page › should display coins UI element" classname="credits.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Credits Page › should have proper page styling" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
-<testsuite name="scoring-flow.spec.ts" timestamp="2026-03-04T19:04:05.621Z" hostname="ios-ipad-pro" tests="5" failures="0" skipped="0" time="68.161" errors="0">
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should show leaderboard overlay after confirming scores" classname="scoring-flow.spec.ts" time="11.534">
+<testsuite name="debug-console.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Debug Console Errors › should capture console errors and page content" classname="debug-console.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should auto-dismiss leaderboard and show decision modal" classname="scoring-flow.spec.ts" time="13.934">
+</testsuite>
+<testsuite name="full-game-workflow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="4" failures="0" skipped="4" time="0" errors="0">
+<testcase name="Full Multi-Round Game Workflow @slow › complete multi-round multiplayer game with 3 players and score accumulation" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to round-start when clicking Next Round" classname="scoring-flow.spec.ts" time="14.374">
+<testcase name="Full Multi-Round Game Workflow @slow › should preserve player names and turn order across multiple rounds" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to leaderboard when clicking Finish Game" classname="scoring-flow.spec.ts" time="14.734">
+<testcase name="Full Multi-Round Game Workflow @slow › should handle varying score distributions correctly" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should remain open when pressing Escape" classname="scoring-flow.spec.ts" time="13.585">
+<testcase name="Full Multi-Round Game Workflow @slow › should handle rapid scoring interactions without race conditions" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="game-complete-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Single Player Flow › should display game elements correctly" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow)" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should handle browser back button navigation" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › should preserve player names across rounds" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Reset Flow › should reset the game when choosing New Game" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="language.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Language Selection Page › should load language page successfully" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should display language options" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should show checkmark on selected language" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should allow selecting English" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should allow selecting German" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should switch between languages" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should have working OK button" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should confirm language selection with OK button" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should display flags correctly" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should have proper page styling" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Switching Behavior › uses browser language by default and persists selection" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Switching Behavior › respects ?lang query and preserves it when selecting a different locale" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="leaderboard.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="Leaderboard Page › should display leaderboard container" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display leaderboard entries" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display player names in entries" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display player scores in entries" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display finish button (game is completed)" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should not display next round button when game is completed" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should navigate to menu when clicking finish" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="offline.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="Offline Functionality › should work offline after initial load" classname="offline.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Offline Functionality › should show offline indicator when offline" classname="offline.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Offline Functionality › should restore online state" classname="offline.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="players.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Players Management Page › should display players page with all core elements" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should display default player count with name inputs" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should increase player count when clicking plus button" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should decrease player count when clicking minus button" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should disable decrease button at minimum player count" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should allow entering custom player names" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should navigate away from players when clicking start" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should navigate back when clicking back button" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="results.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="13" failures="0" skipped="13" time="0" errors="0">
+<testcase name="Results/Scoring Page › should display results page with all elements" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should display player entries with score controls" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should display increment and decrement buttons for each player" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should increase score when clicking increment button" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should decrease score when clicking decrement button" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should disable decrement button when score is 0" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should show leaderboard overlay after confirming scores" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should show decision modal after leaderboard auto-dismisses" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should navigate to round-start when clicking Next Round" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should navigate to leaderboard when clicking Finish Game" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should be responsive on mobile" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results Page - Multi-Player › should display all players in multi-player game" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results Page - Multi-Player › should allow independent score adjustment for each player" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="round-start.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="10" failures="0" skipped="10" time="0" errors="0">
+<testcase name="Round Start Page › should display round-start page with all elements" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should spin both wheels automatically" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should display selected category and letter after spinning" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should automatically navigate to game after selection" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should display round indicator" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should be responsive on mobile" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › should display &quot;Round 1&quot; on initial game start" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › should show &quot;Round 2&quot; after completing round 1 and clicking next round" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › page refresh should not increment round counter" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › navigating back to round-start during active game should not increment round" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="scoring-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should show leaderboard overlay after confirming scores" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should auto-dismiss leaderboard and show decision modal" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to round-start when clicking Next Round" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to leaderboard when clicking Finish Game" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should remain open when pressing Escape" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="scoring-multi-round.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="Scoring Workflow: Multi-Round and Edges › Multi-Round Score Accumulation › should accumulate scores across multiple rounds" classname="scoring-multi-round.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle single player game" classname="scoring-multi-round.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle zero scores confirmation" classname="scoring-multi-round.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="scoring-ui.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Scoring Workflow: Score Entry UI › should handle score entry correctly" classname="scoring-ui.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="translations-check.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="Translation Checks › should not show raw translation keys on home page" classname="translations-check.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Translation Checks › should show category in English and not as a key" classname="translations-check.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="credits.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="Credits Page › should load credits page successfully" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Credits Page › should display team credits" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Credits Page › should have working back button" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Credits Page › should have working OK button" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Credits Page › should display coins UI element" classname="credits.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Credits Page › should have proper page styling" classname="credits.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="debug-console.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Debug Console Errors › should capture console errors and page content" classname="debug-console.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="full-game-workflow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="4" failures="0" skipped="4" time="0" errors="0">
+<testcase name="Full Multi-Round Game Workflow @slow › complete multi-round multiplayer game with 3 players and score accumulation" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Full Multi-Round Game Workflow @slow › should preserve player names and turn order across multiple rounds" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Full Multi-Round Game Workflow @slow › should handle varying score distributions correctly" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Full Multi-Round Game Workflow @slow › should handle rapid scoring interactions without race conditions" classname="full-game-workflow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="game-complete-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Single Player Flow › should display game elements correctly" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow)" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should handle browser back button navigation" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › should preserve player names across rounds" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Complete Game Flow › Reset Flow › should reset the game when choosing New Game" classname="game-complete-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="language.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Language Selection Page › should load language page successfully" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should display language options" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should show checkmark on selected language" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should allow selecting English" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should allow selecting German" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should switch between languages" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should have working OK button" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should confirm language selection with OK button" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should display flags correctly" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Selection Page › should have proper page styling" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Switching Behavior › uses browser language by default and persists selection" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Language Switching Behavior › respects ?lang query and preserves it when selecting a different locale" classname="language.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="leaderboard.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="Leaderboard Page › should display leaderboard container" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display leaderboard entries" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display player names in entries" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display player scores in entries" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should display finish button (game is completed)" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should not display next round button when game is completed" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Leaderboard Page › should navigate to menu when clicking finish" classname="leaderboard.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="offline.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="Offline Functionality › should work offline after initial load" classname="offline.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Offline Functionality › should show offline indicator when offline" classname="offline.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Offline Functionality › should restore online state" classname="offline.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="players.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Players Management Page › should display players page with all core elements" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should display default player count with name inputs" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should increase player count when clicking plus button" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should decrease player count when clicking minus button" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should disable decrease button at minimum player count" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should allow entering custom player names" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should navigate away from players when clicking start" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Players Management Page › should navigate back when clicking back button" classname="players.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="results.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="13" failures="0" skipped="13" time="0" errors="0">
+<testcase name="Results/Scoring Page › should display results page with all elements" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should display player entries with score controls" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should display increment and decrement buttons for each player" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should increase score when clicking increment button" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should decrease score when clicking decrement button" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should disable decrement button when score is 0" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should show leaderboard overlay after confirming scores" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should show decision modal after leaderboard auto-dismisses" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should navigate to round-start when clicking Next Round" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should navigate to leaderboard when clicking Finish Game" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results/Scoring Page › should be responsive on mobile" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results Page - Multi-Player › should display all players in multi-player game" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Results Page - Multi-Player › should allow independent score adjustment for each player" classname="results.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="round-start.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="10" failures="0" skipped="10" time="0" errors="0">
+<testcase name="Round Start Page › should display round-start page with all elements" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should spin both wheels automatically" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should display selected category and letter after spinning" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should automatically navigate to game after selection" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should display round indicator" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Start Page › should be responsive on mobile" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › should display &quot;Round 1&quot; on initial game start" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › should show &quot;Round 2&quot; after completing round 1 and clicking next round" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › page refresh should not increment round counter" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Round Counter Logic › navigating back to round-start during active game should not increment round" classname="round-start.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="scoring-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should show leaderboard overlay after confirming scores" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should auto-dismiss leaderboard and show decision modal" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to round-start when clicking Next Round" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to leaderboard when clicking Finish Game" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should remain open when pressing Escape" classname="scoring-flow.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="scoring-multi-round.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="Scoring Workflow: Multi-Round and Edges › Multi-Round Score Accumulation › should accumulate scores across multiple rounds" classname="scoring-multi-round.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle single player game" classname="scoring-multi-round.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle zero scores confirmation" classname="scoring-multi-round.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="scoring-ui.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Scoring Workflow: Score Entry UI › should handle score entry correctly" classname="scoring-ui.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="translations-check.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="Translation Checks › should not show raw translation keys on home page" classname="translations-check.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Translation Checks › should show category in English and not as a key" classname="translations-check.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
 </testsuites>
