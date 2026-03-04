@@ -28,7 +28,7 @@ export function usePlayerManager() {
    */
   function createPlayers(playerNames: string[]): Player[] {
     return playerNames.map((name, index) => ({
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       name: name || `Player ${index + 1}`,
       totalScore: 0,
       currentRoundScore: 0,

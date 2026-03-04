@@ -36,7 +36,7 @@ export function useSessionManager() {
     gameName?: string
   ): GameSession {
     return {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       gameName,
       players,
       currentRound: 1,
@@ -57,7 +57,7 @@ export function useSessionManager() {
    */
   function createSinglePlayerSession(category: Category, letter: string): GameSession {
     return {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       userId: 'default-user',
       category: { ...category, letter },
       letter,
