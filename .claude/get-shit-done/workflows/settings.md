@@ -12,8 +12,9 @@ Read all files referenced by the invoking prompt's execution_context before star
 Ensure config exists and load current state:
 
 ```bash
-node ./.claude/get-shit-done/bin/gsd-tools.cjs config-ensure-section
-INIT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs state load)
+node "./.claude/get-shit-done/bin/gsd-tools.cjs" config-ensure-section
+INIT=$(node "./.claude/get-shit-done/bin/gsd-tools.cjs" state load)
+if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
 Creates `.planning/config.json` with defaults if missing and loads current config values.
@@ -25,14 +26,13 @@ cat .planning/config.json
 ```
 
 Parse current values (default to `true` if not present):
-
 - `workflow.research` — spawn researcher during plan-phase
 - `workflow.plan_check` — spawn plan checker during plan-phase
 - `workflow.verifier` — spawn verifier during execute-phase
-- `workflow.nyquist_validation` — validation architecture research during plan-phase
+- `workflow.nyquist_validation` — validation architecture research during plan-phase (default: true if absent)
 - `model_profile` — which model each agent uses (default: `balanced`)
 - `git.branching_strategy` — branching approach (default: `"none"`)
-  </step>
+</step>
 
 <step name="present_settings">
 Use AskUserQuestion with current values pre-selected:
@@ -106,7 +106,6 @@ AskUserQuestion([
   }
 ])
 ```
-
 </step>
 
 <step name="update_config">
@@ -156,11 +155,10 @@ mkdir -p ~/.gsd
 ```
 
 Write `~/.gsd/defaults.json` with:
-
 ```json
 {
   "mode": <current>,
-  "depth": <current>,
+  "granularity": <current>,
   "model_profile": <current>,
   "commit_docs": <current>,
   "parallelization": <current>,
@@ -174,7 +172,6 @@ Write `~/.gsd/defaults.json` with:
   }
 }
 ```
-
 </step>
 
 <step name="confirm">
@@ -204,16 +201,14 @@ Quick commands:
 - /gsd:plan-phase --skip-research — skip research
 - /gsd:plan-phase --skip-verify — skip plan check
 ```
-
 </step>
 
 </process>
 
 <success_criteria>
-
 - [ ] Current config read
 - [ ] User presented with 7 settings (profile + 5 workflow toggles + git branching)
 - [ ] Config updated with model_profile, workflow, and git sections
 - [ ] User offered to save as global defaults (~/.gsd/defaults.json)
 - [ ] Changes confirmed to user
-      </success_criteria>
+</success_criteria>

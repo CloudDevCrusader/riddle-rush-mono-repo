@@ -29,7 +29,8 @@ Exit.
 Load phase operation context:
 
 ```bash
-INIT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs init phase-op "${target}")
+INIT=$(node "./.claude/get-shit-done/bin/gsd-tools.cjs" init phase-op "${target}")
+if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
 Extract: `phase_found`, `phase_dir`, `phase_number`, `commit_docs`, `roadmap_exists`.
@@ -79,17 +80,16 @@ Wait for confirmation.
 **Delegate the entire removal operation to gsd-tools:**
 
 ```bash
-RESULT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs phase remove "${target}")
+RESULT=$(node "./.claude/get-shit-done/bin/gsd-tools.cjs" phase remove "${target}")
 ```
 
 If the phase has executed plans (SUMMARY.md files), gsd-tools will error. Use `--force` only if the user confirms:
 
 ```bash
-RESULT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs phase remove "${target}" --force)
+RESULT=$(node "./.claude/get-shit-done/bin/gsd-tools.cjs" phase remove "${target}" --force)
 ```
 
 The CLI handles:
-
 - Deleting the phase directory
 - Renumbering all subsequent directories (in reverse order to avoid conflicts)
 - Renaming all files inside renumbered directories (PLAN.md, SUMMARY.md, etc.)
@@ -103,7 +103,7 @@ Extract from result: `removed`, `directory_deleted`, `renamed_directories`, `ren
 Stage and commit the removal:
 
 ```bash
-node ./.claude/get-shit-done/bin/gsd-tools.cjs commit "chore: remove phase {target} ({original-phase-name})" --files .planning/
+node "./.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: remove phase {target} ({original-phase-name})" --files .planning/
 ```
 
 The commit message preserves the historical record of what was removed.
@@ -132,7 +132,6 @@ Would you like to:
 
 ---
 ```
-
 </step>
 
 </process>
@@ -144,7 +143,7 @@ Would you like to:
 - Don't manually renumber — use `gsd-tools phase remove` which handles all renumbering
 - Don't add "removed phase" notes to STATE.md — git commit is the record
 - Don't modify completed phase directories
-  </anti_patterns>
+</anti_patterns>
 
 <success_criteria>
 Phase removal is complete when:
@@ -153,4 +152,4 @@ Phase removal is complete when:
 - [ ] `gsd-tools phase remove` executed successfully
 - [ ] Changes committed with descriptive message
 - [ ] User informed of changes
-      </success_criteria>
+</success_criteria>

@@ -7,6 +7,7 @@
  */
 
 import type { GameSession, Category, Player } from '@riddle-rush/types/game'
+import { generateUUID } from '~/utils/uuid'
 
 /**
  * Composable providing game session lifecycle utilities.

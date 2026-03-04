@@ -13,16 +13,38 @@ Detect whether GSD is installed locally or globally by checking both locations a
 
 ```bash
 # Check local first (takes priority only if valid)
-# Paths templated at install time for runtime compatibility
-LOCAL_VERSION_FILE="./.claude/get-shit-done/VERSION"
-LOCAL_MARKER_FILE="./.claude/get-shit-done/workflows/update.md"
-GLOBAL_VERSION_FILE="$HOME/.claude/get-shit-done/VERSION"
-GLOBAL_MARKER_FILE="$HOME/.claude/get-shit-done/workflows/update.md"
+# Detect runtime config directory (supports Claude, OpenCode, Gemini)
+LOCAL_VERSION_FILE="" LOCAL_MARKER_FILE="" LOCAL_DIR=""
+for dir in .claude .config/opencode .opencode .gemini; do
+  if [ -f "./$dir/get-shit-done/VERSION" ]; then
+    LOCAL_VERSION_FILE="./$dir/get-shit-done/VERSION"
+    LOCAL_MARKER_FILE="./$dir/get-shit-done/workflows/update.md"
+    LOCAL_DIR="$(cd "./$dir" 2>/dev/null && pwd)"
+    break
+  fi
+done
+GLOBAL_VERSION_FILE="" GLOBAL_MARKER_FILE="" GLOBAL_DIR=""
+for dir in .claude .config/opencode .opencode .gemini; do
+  if [ -f "$HOME/$dir/get-shit-done/VERSION" ]; then
+    GLOBAL_VERSION_FILE="$HOME/$dir/get-shit-done/VERSION"
+    GLOBAL_MARKER_FILE="$HOME/$dir/get-shit-done/workflows/update.md"
+    GLOBAL_DIR="$(cd "$HOME/$dir" 2>/dev/null && pwd)"
+    break
+  fi
+done
 
-if [ -f "$LOCAL_VERSION_FILE" ] && [ -f "$LOCAL_MARKER_FILE" ] && grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' "$LOCAL_VERSION_FILE"; then
+# Only treat as LOCAL if the resolved paths differ (prevents misdetection when CWD=$HOME)
+IS_LOCAL=false
+if [ -n "$LOCAL_VERSION_FILE" ] && [ -f "$LOCAL_VERSION_FILE" ] && [ -f "$LOCAL_MARKER_FILE" ] && grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' "$LOCAL_VERSION_FILE"; then
+  if [ -z "$GLOBAL_DIR" ] || [ "$LOCAL_DIR" != "$GLOBAL_DIR" ]; then
+    IS_LOCAL=true
+  fi
+fi
+
+if [ "$IS_LOCAL" = true ]; then
   cat "$LOCAL_VERSION_FILE"
   echo "LOCAL"
-elif [ -f "$GLOBAL_VERSION_FILE" ] && [ -f "$GLOBAL_MARKER_FILE" ] && grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' "$GLOBAL_VERSION_FILE"; then
+elif [ -n "$GLOBAL_VERSION_FILE" ] && [ -f "$GLOBAL_VERSION_FILE" ] && [ -f "$GLOBAL_MARKER_FILE" ] && grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' "$GLOBAL_VERSION_FILE"; then
   cat "$GLOBAL_VERSION_FILE"
   echo "GLOBAL"
 else
@@ -31,13 +53,11 @@ fi
 ```
 
 Parse output:
-
 - If last line is "LOCAL": local install is valid; installed version is first line; use `--local`
 - If last line is "GLOBAL": local missing/invalid, global install is valid; installed version is first line; use `--global`
 - If "UNKNOWN": proceed to install step (treat as version 0.0.0)
 
 **If VERSION file missing:**
-
 ```
 ## GSD Update
 
@@ -59,7 +79,6 @@ npm view get-shit-done-cc version 2>/dev/null
 ```
 
 **If npm check fails:**
-
 ```
 Couldn't check for updates (offline or npm unavailable).
 
@@ -73,7 +92,6 @@ Exit.
 Compare installed vs latest:
 
 **If installed == latest:**
-
 ```
 ## GSD Update
 
@@ -86,7 +104,6 @@ You're already on the latest version.
 Exit.
 
 **If installed > latest:**
-
 ```
 ## GSD Update
 
@@ -144,7 +161,6 @@ If you've modified any GSD files directly, they'll be automatically backed up to
 ```
 
 Use AskUserQuestion:
-
 - Question: "Proceed with update?"
 - Options:
   - "Yes, update now"
@@ -157,13 +173,11 @@ Use AskUserQuestion:
 Run the update using the install type detected in step 1:
 
 **If LOCAL install:**
-
 ```bash
 npx -y get-shit-done-cc@latest --local
 ```
 
 **If GLOBAL install (or unknown):**
-
 ```bash
 npx -y get-shit-done-cc@latest --global
 ```
@@ -172,19 +186,15 @@ Capture output. If install fails, show error and exit.
 
 Clear the update cache so statusline indicator disappears:
 
-**If LOCAL install:**
-
 ```bash
-rm -f ./.claude/cache/gsd-update-check.json
+# Clear update cache across all runtime directories
+for dir in .claude .config/opencode .opencode .gemini; do
+  rm -f "./$dir/cache/gsd-update-check.json"
+  rm -f "$HOME/$dir/cache/gsd-update-check.json"
+done
 ```
 
-**If GLOBAL install:**
-
-```bash
-rm -f ./.claude/cache/gsd-update-check.json
-```
-
-(Paths are templated at install time for runtime compatibility)
+The SessionStart hook (`gsd-check-update.js`) writes to the detected runtime's cache directory, so all paths must be cleared to prevent stale update indicators.
 </step>
 
 <step name="display_result">
@@ -199,8 +209,8 @@ Format completion message (changelog was already shown in confirmation step):
 
 [View full changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
 ```
-
 </step>
+
 
 <step name="check_local_patches">
 After update completes, check if the installer detected and backed up any locally modified files:
@@ -219,7 +229,6 @@ Run /gsd:reapply-patches to merge your modifications into the new version.
 </process>
 
 <success_criteria>
-
 - [ ] Installed version read correctly
 - [ ] Latest version checked via npm
 - [ ] Update skipped if already current
@@ -228,4 +237,4 @@ Run /gsd:reapply-patches to merge your modifications into the new version.
 - [ ] User confirmation obtained
 - [ ] Update executed successfully
 - [ ] Restart reminder shown
-      </success_criteria>
+</success_criteria>
