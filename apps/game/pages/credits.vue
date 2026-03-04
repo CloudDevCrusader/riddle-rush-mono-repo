@@ -59,13 +59,14 @@
 const { baseUrl, goBack } = usePageSetup()
 const runtimeConfig = useRuntimeConfig()
 const appVersion = runtimeConfig.public.appVersion
+const { t } = useI18n()
 
 useHead({
-  title: 'Riddle Rush - Credits',
+  title: t('credits.title'),
   meta: [
     {
       name: 'description',
-      content: 'Meet the team behind Riddle Rush',
+      content: t('credits.description'),
     },
   ],
 })

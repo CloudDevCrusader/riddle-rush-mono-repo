@@ -238,6 +238,7 @@ const startGame = async () => {
   try {
     const hasSession = !!gameStore.currentSession
     const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
+    let createdSessionId: string | undefined
 
     // Determine if this is initial setup or a new round
     // Initial setup: no session OR pending players from players page
@@ -245,12 +246,13 @@ const startGame = async () => {
       // This is initial setup - create new session with players
       const playerNames = hasPendingPlayers ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
 
-      await gameStore.setupPlayers(
+      const session = await gameStore.setupPlayers(
         playerNames,
         undefined,
         selectedLetter.value,
         selectedCategory.value
       )
+      createdSessionId = session.id
 
       // Clear pending state
       gameStore.pendingPlayerNames = []
@@ -276,7 +278,7 @@ const startGame = async () => {
     }
 
     // Navigate to game with game ID
-    const gameId = gameStore.currentSession?.id
+    const gameId = createdSessionId ?? gameStore.currentSession?.id
     if (gameId) {
       await goToGame(gameId)
     } else {

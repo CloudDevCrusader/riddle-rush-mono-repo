@@ -97,7 +97,7 @@ export const useWebSocket = () => {
 
       socket.value.on('reconnect_failed', () => {
         console.error('🔴 Reconnection failed')
-        connectionError.value = 'Failed to reconnect'
+        connectionError.value = useNuxtApp().$i18n.t('websocket.reconnect_failed')
         isConnecting.value = false
       })
 
@@ -128,7 +128,8 @@ export const useWebSocket = () => {
     } catch (error) {
       console.error('Failed to initialize socket:', error)
       isConnecting.value = false
-      connectionError.value = error instanceof Error ? error.message : 'Connection failed'
+      connectionError.value =
+        error instanceof Error ? error.message : useNuxtApp().$i18n.t('websocket.connection_failed')
     }
   }
 

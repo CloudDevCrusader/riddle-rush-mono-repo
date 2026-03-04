@@ -28,6 +28,8 @@ import { generatePlayerNames, setFakerSeed } from './helpers/faker'
 async function navigateToPlayersPage(page: Page) {
   await page.goto('/', { timeout: 30000 })
 
+  await hideDevtools(page)
+
   const playBtn = page.locator('[data-testid="menu-start-button"]')
   await expect(playBtn).toBeVisible({ timeout: 15000 })
   await playBtn.click()
@@ -108,10 +110,30 @@ async function submitThreePlayerAnswers(page: Page, answers?: string[]) {
 async function navigateToResults(page: Page) {
   const nextBtn = page.locator('[data-testid="next-button"]')
   await expect(nextBtn).toBeVisible({ timeout: 8000 })
-  await nextBtn.dispatchEvent('click')
+
+  const gameMatch = page.url().match(/\/game\/([^/?#]+)/)
+  const gameId = gameMatch?.[1] ?? null
+
+  await page.evaluate(() => {
+    const button = document.querySelector('[data-testid="next-button"]')
+    if (button instanceof HTMLButtonElement) {
+      button.click()
+    }
+  })
 
   await expect(page).toHaveURL(/\/results/, { timeout: 8000 })
   await page.waitForLoadState('networkidle')
+
+  await page.evaluate(async (id) => {
+    const pinia = (window as any).__pinia__
+    const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+    if (gameStore?.loadFromDB) {
+      await gameStore.loadFromDB()
+    }
+    if (id && gameStore?.loadSessionById) {
+      await gameStore.loadSessionById(id)
+    }
+  }, gameId)
 
   await page.waitForFunction(
     () => {
@@ -222,6 +244,13 @@ async function returnToMenuFromLeaderboard(page: Page) {
   // Verify menu is fully loaded
   const playBtn = page.locator('[data-testid="menu-start-button"]')
   await expect(playBtn).toBeVisible({ timeout: 15000 })
+}
+
+async function hideDevtools(page: Page) {
+  await page.addStyleTag({
+    content:
+      '#nuxt-devtools-container, nuxt-devtools-frame { display: none !important; pointer-events: none !important; }',
+  })
 }
 
 /**

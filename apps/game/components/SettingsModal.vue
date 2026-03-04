@@ -27,7 +27,7 @@
               <img :src="`${baseUrl}assets/settings/Sound.png`" alt="Sound" class="control-icon" />
             </div>
             <div class="control-content">
-              <div class="control-label">sound</div>
+              <div class="control-label">{{ t('settings.sound') }}</div>
               <div class="slider-container">
                 <input
                   v-model.number="soundVolume"
@@ -51,7 +51,7 @@
               <img :src="`${baseUrl}assets/settings/Music.png`" alt="Music" class="control-icon" />
             </div>
             <div class="control-content">
-              <div class="control-label">Music</div>
+              <div class="control-label">{{ t('settings.music') }}</div>
               <div class="slider-container">
                 <input
                   v-model.number="musicVolume"
@@ -80,6 +80,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 defineProps<{
   modelValue: boolean
 }>()
@@ -92,6 +94,7 @@ const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
 const settingsStore = useSettingsStore()
 const router = useRouter()
+const { t } = useI18n()
 
 const soundVolume = ref(settingsStore.soundVolume)
 const musicVolume = ref(settingsStore.musicVolume)

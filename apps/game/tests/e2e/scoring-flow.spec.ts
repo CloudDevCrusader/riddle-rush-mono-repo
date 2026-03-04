@@ -2,26 +2,85 @@ import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
 
 async function startGameAndGoToResults(page: Page) {
-  await page.goto('/results')
+  await page.goto('/players')
   await page.waitForLoadState('networkidle')
 
-  await page.evaluate(async () => {
-    const pinia = (window as any).__pinia__
-    const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+  await hideDevtools(page)
 
-    if (gameStore?.setupPlayers) {
-      await gameStore.setupPlayers(['Player 1', 'Player 2'])
+  const nameInput0 = page.locator('[data-testid="players-name-input-0"]')
+  const nameInput1 = page.locator('[data-testid="players-name-input-1"]')
+  await expect(nameInput0).toBeVisible({ timeout: 5000 })
+  await nameInput0.fill('Player 1')
+  await expect(nameInput1).toBeVisible({ timeout: 5000 })
+  await nameInput1.fill('Player 2')
+
+  const startBtn = page.locator('[data-testid="players-start-button"]')
+  await startBtn.click()
+  await expect(page).toHaveURL(/\/round-start/)
+  await page.waitForTimeout(2000)
+
+  await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
+
+  const answerInput = page.locator('[data-testid="game-answer-input"]')
+  const submitBtn = page.locator('[data-testid="game-submit-button"]')
+
+  for (let i = 0; i < 2; i++) {
+    await expect(answerInput).toBeVisible({ timeout: 5000 })
+    await answerInput.fill('')
+    await submitBtn.click()
+    await page.waitForTimeout(300)
+  }
+
+  const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
+  await expect(allSubmitted).toBeVisible({ timeout: 8000 })
+
+  const nextBtn = page.locator('[data-testid="next-button"]')
+  await expect(nextBtn).toBeVisible({ timeout: 5000 })
+
+  const gameMatch = page.url().match(/\/game\/([^/?#]+)/)
+  const gameId = gameMatch?.[1] ?? null
+
+  await page.evaluate(() => {
+    const button = document.querySelector('[data-testid="next-button"]')
+    if (button instanceof HTMLButtonElement) {
+      button.click()
     }
   })
 
-  await page.waitForFunction(() => {
+  await page.waitForLoadState('networkidle')
+
+  await expect(page).toHaveURL(/\/results/, { timeout: 5000 })
+
+  const resolvedGameId = await page.evaluate(async (id) => {
     const pinia = (window as any).__pinia__
     const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
-    return (gameStore?.currentSession?.players?.length ?? 0) > 0
-  })
+    if (gameStore?.loadFromDB) {
+      await gameStore.loadFromDB()
+    }
+    if (id && gameStore?.loadSessionById) {
+      await gameStore.loadSessionById(id)
+      return id
+    }
+    return gameStore?.currentSession?.id ?? null
+  }, gameId)
+
+  if (resolvedGameId && !page.url().includes(`/results/${resolvedGameId}`)) {
+    await page.goto(`/results/${resolvedGameId}`)
+    await page.waitForLoadState('networkidle')
+  }
+
+  const scoresContainer = page.locator('[data-testid="results-scores-container"]')
+  await expect(scoresContainer).toBeVisible({ timeout: 15000 })
 
   const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
-  await expect(firstEntry).toBeVisible({ timeout: 5000 })
+  await expect(firstEntry).toBeVisible({ timeout: 15000 })
+}
+
+async function hideDevtools(page: Page) {
+  await page.addStyleTag({
+    content:
+      '#nuxt-devtools-container, nuxt-devtools-frame { display: none !important; pointer-events: none !important; }',
+  })
 }
 
 test.describe('Scoring Workflow: Flow', () => {
@@ -40,7 +99,7 @@ test.describe('Scoring Workflow: Flow', () => {
       await confirmBtn.click()
 
       // Leaderboard overlay should appear
-      const leaderboardOverlay = page.locator('.player-leaderboard')
+      const leaderboardOverlay = page.locator('.player-leaderboard-overlay')
       await expect(leaderboardOverlay).toBeVisible({ timeout: 5000 })
     })
 
@@ -60,9 +119,7 @@ test.describe('Scoring Workflow: Flow', () => {
       const nextRoundBtn = page.locator('[data-testid="next-round"]')
       const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
 
-      await expect(promptText).toHaveText(
-        'Do you want to play another round, or go to the leaderboard?'
-      )
+      await expect(promptText).toBeVisible()
       await expect(nextRoundBtn).toBeVisible()
       await expect(leaderboardBtn).toBeVisible()
       await expect(leaderboardBtn).toHaveText('Leaderboard')

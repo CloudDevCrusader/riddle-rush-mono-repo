@@ -16,23 +16,25 @@
 // @ts-expect-error Nuxt overrides vue module types but computed exists at runtime
 import { computed } from 'vue'
 import { useWebSocket } from '~/composables/useWebSocket'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{
   showText?: boolean
 }>()
 
 const { connectionStatus, statusColor } = useWebSocket()
+const { t } = useI18n()
 
 const statusText = computed(() => {
   switch (connectionStatus.value) {
     case 'online':
-      return 'Online'
+      return t('connection.online')
     case 'connecting':
-      return 'Connecting...'
+      return t('connection.connecting')
     case 'error':
-      return 'Connection Error'
+      return t('connection.error')
     default:
-      return 'Offline'
+      return t('connection.offline')
   }
 })
 </script>

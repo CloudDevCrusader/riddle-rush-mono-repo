@@ -132,22 +132,19 @@
 
 <script setup lang="ts">
 import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
+import type { Player } from '@riddle-rush/types/game'
 
 const { t } = usePageSetup()
 const { gameStore, players, leaderboard, currentRound } = useGameState()
 const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
 const { isAnswerInputEnabled } = useFeatureFlags()
+const route = useRoute()
 
 // Pending scores for each player (local state before confirming)
 const pendingScores = reactive(new Map<string, number>())
 
-// Initialize all player scores to 0 on mount
-onMounted(() => {
-  for (const player of players.value) {
-    pendingScores.set(player.id, 0)
-  }
-})
+const gameId = computed(() => route.params.gameId as string | undefined)
 
 const isConfirming = ref(false)
 
@@ -233,6 +230,29 @@ const handleFinishGame = async () => {
   await gameStore.completeGame()
   await goToLeaderboard()
 }
+
+watch(
+  players,
+  (nextPlayers: Player[]) => {
+    for (const player of nextPlayers) {
+      if (!pendingScores.has(player.id)) {
+        pendingScores.set(player.id, 0)
+      }
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(async () => {
+  const id = gameId.value
+  if (id && gameStore.currentSession?.id !== id) {
+    try {
+      await gameStore.loadSessionById(id)
+    } catch {
+      await gameStore.loadFromDB()
+    }
+  }
+})
 
 onUnmounted(() => {
   if (dismissTimer) {

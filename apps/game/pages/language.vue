@@ -100,11 +100,11 @@ const updateLanguageQuery = async (lang: LocaleCode) => {
 }
 
 useHead({
-  title: 'Language Selection',
+  title: t('language.title'),
   meta: [
     {
       name: 'description',
-      content: 'Choose your preferred language',
+      content: t('language.description'),
     },
   ],
 })

@@ -1,7 +1,10 @@
+@use 'sass:math';
+
 @function mockup-clamp($px, $min-scale: 0.86, $max-scale: 1.04, $base-width: 1080) {
   $min: $px * $min-scale;
   $max: $px * $max-scale;
-  $preferred: calc(#{$px} * (100vw / #{$base-width}));
+  $unitless: math.div($px, 1px);
+  $preferred: calc(#{$unitless} * 100vw / #{$base-width});
 
   @return clamp(#{$min}, #{$preferred}, #{$max});
 }

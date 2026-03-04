@@ -249,7 +249,7 @@ const handleNext = async () => {
   }
 
   // Navigate to results with game ID
-  const currentGameId = gameStore.currentSession?.id
+  const currentGameId = gameStore.currentSession?.id ?? gameId.value
   if (currentGameId) {
     goToResults(currentGameId)
   } else {

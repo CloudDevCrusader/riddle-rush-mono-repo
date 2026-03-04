@@ -197,6 +197,42 @@
   "offline": {
     "warning": "You are offline. Some features may not work."
   },
+  "connection": {
+    "online": "Online",
+    "connecting": "Connecting...",
+    "error": "Connection Error",
+    "offline": "Offline"
+  },
+  "websocket": {
+    "reconnect_failed": "Failed to reconnect",
+    "connection_failed": "Connection failed",
+    "not_connected": "Not connected"
+  },
+  "common": {
+    "close": "Close",
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "settings": {
+    "title": "Settings",
+    "sound": "Sound",
+    "music": "Music",
+    "language": "Language",
+    "theme": "Theme",
+    "dark_mode": "Dark Mode",
+    "light_mode": "Light Mode",
+    "system_default": "System Default"
+  },
+  "language": {
+    "title": "Language Selection",
+    "description": "Choose your preferred language",
+    "select_prompt": "Select Language"
+  },
+  "credits": {
+    "title": "Riddle Rush - Credits",
+    "description": "Meet the team behind Riddle Rush"
+  },
   "pause": {
     "home": "Home",
     "message": "Game is paused, press resume to continue",
