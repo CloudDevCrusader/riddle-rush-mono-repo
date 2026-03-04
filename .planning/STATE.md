@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 13 of 13 (Post-Round Flow)
 Plan: 1 of 1 — Complete
 Status: Phase complete
-Last activity: 2026-03-04 - Completed quick task 005: Fix crypto.randomUUID TypeError on Safari
+Last activity: 2026-03-04 - Completed quick task 006: Hide answer display when feature flag disabled
 
 Progress: [████████████████████████████████████] 100% (39/39 total plans complete)
 
@@ -139,9 +139,10 @@ Recent decisions affecting current work:
 | 003 | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                     |
 | 004 | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                  |
 | 005 | Fix crypto.randomUUID TypeError on Safari           | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/) |
+| 006 | Hide answer display when feature flag disabled      | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/) |
 
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed quick-005-PLAN.md
+Stopped at: Completed quick-006-PLAN.md
 Resume file: None
