@@ -97,5 +97,6 @@
     "playwright-tools@claude-settings": true,
     "voltagent-lang@voltagent-subagents": true
   },
-  "outputStyle": "Explanatory"
+  "outputStyle": "Explanatory",
+  "prefersReducedMotion": true
 }

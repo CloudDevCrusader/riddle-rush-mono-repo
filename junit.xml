@@ -1,20 +1,12 @@
-<testsuites id="" name="" tests="174" failures="0" skipped="174" errors="0" time="0.14303299999999997">
-<testsuite name="credits.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="6" failures="0" skipped="6" time="0" errors="0">
-<testcase name="Credits Page › should load credits page successfully" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuites id="" name="" tests="87" failures="57" skipped="1" errors="0" time="502.153212">
+<testsuite name="credits.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="6" failures="0" skipped="1" time="40.019" errors="0">
+<testcase name="Credits Page › should load credits page successfully" classname="credits.spec.ts" time="7.862">
 </testcase>
-<testcase name="Credits Page › should display team credits" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Credits Page › should display team credits" classname="credits.spec.ts" time="7.924">
 </testcase>
-<testcase name="Credits Page › should have working back button" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Credits Page › should have working back button" classname="credits.spec.ts" time="8.509">
 </testcase>
-<testcase name="Credits Page › should have working OK button" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Credits Page › should have working OK button" classname="credits.spec.ts" time="7.852">
 </testcase>
 <testcase name="Credits Page › should display coins UI element" classname="credits.spec.ts" time="0">
 <properties>
@@ -24,739 +16,2076 @@
 <skipped>
 </skipped>
 </testcase>
-<testcase name="Credits Page › should have proper page styling" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Credits Page › should have proper page styling" classname="credits.spec.ts" time="7.872">
 </testcase>
 </testsuite>
-<testsuite name="debug-console.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="1" failures="0" skipped="1" time="0" errors="0">
-<testcase name="Debug Console Errors › should capture console errors and page content" classname="debug-console.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="debug-console.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="1" failures="0" skipped="0" time="4.197" errors="0">
+<testcase name="Debug Console Errors › should capture console errors and page content" classname="debug-console.spec.ts" time="4.197">
+<system-out>
+<![CDATA[
+=== CONSOLE MESSAGES ===
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[warning] [Vue warn]: Directive "motion-slide-left" has already been registered in target app.
+[warning] [Vue warn]: Directive "motion-slide-right" has already been registered in target app.
+[warning] [Vue warn]: Directive "motion-fade" has already been registered in target app.
+[warning] [WARN] [Feature Flags] GitLab Feature Flags not configured. Using fallback to local settings.
+[log] [LOG] Performance mark: app-init-start
+[log] [LOG] Performance tools available at window.__performance__
+[log] [PWA Cache] Version Check {version: 1.1.1, currentVersion: null}
+[log] [PWA Cache] First install, initialized cache version {version: 1.1.1}
+[warning] [Vue warn]: onUnmounted is called when there is no active component instance to be associated with. Lifecycle injection APIs can only be used during execution of setup(). If you are using async setup(), make sure to register lifecycle hooks before the first await statement.
+[log] [LOG] Performance mark: vue-setup-start
+[info] <Suspense> is an experimental feature and its API will likely change.
+[log] [LOG] Performance measure: app-init = 7.90ms
+[log] [LOG] App mounted
+[log] 🔌 WebSocket feature disabled - skipping auto-connect
+[warning] [nuxt] Your project has pages but the `<NuxtPage />` component has not been used. You might be using the `<RouterView />` component instead, which will not work correctly in Nuxt. You can set `pages: false` in `nuxt.config` if you do not wish to use the Nuxt `vue-router` integration.
+[warning] [nuxt] Your project has layouts but the `<NuxtLayout />` component has not been used.
+[debug] [vite] hot updated: /__uno.css
+[debug] [vite] hot updated: /__uno.css
+[debug] [vite] hot updated: /__uno.css
+[debug] [vite] hot updated: /__uno.css
+[debug] [vite] hot updated: /__uno.css
+[debug] [vite] hot updated: /__uno.css
+[warning] [WARN] Failed to measure performance: page-transition SyntaxError: Failed to execute 'measure' on 'Performance': The mark 'page-transition-start' does not exist.
+    at measure (http://localhost:3000/_nuxt/composables/usePerformance.ts:28:19)
+    at http://localhost:3000/_nuxt/plugins/performance.client.ts:20:5
+    at http://localhost:3000/_nuxt/@fs/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs?v=92dd34f9:48:66
+    at http://localhost:3000/_nuxt/@fs/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs?v=92dd34f9:48:56
+    at async onResolve (http://localhost:3000/_nuxt/@fs/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/nuxt@4.3.1_@parcel+watcher@2.5.6_@types+node@25.3.3_@vercel+functions@3.3.4_@aws-sdk+cr_5097bf4c9d668a83001e1b589893fda9/node_modules/nuxt/dist/pages/runtime/page.js?v=92dd34f9:147:21)
+
+=== CONSOLE ERRORS ===
+
+=== PAGE HTML (first 2000 chars) ===
+<!DOCTYPE html><html class="light" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"><title>Riddle Rush - Credits</title><link rel="modulepreload" as="script" crossorigin="" href="/_nuxt/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/nuxt@4.3.1_@parcel+watcher@2.5.6_@types+node@25.3.3_@vercel+functions@3.3.4_@aws-sdk+cr_5097bf4c9d668a83001e1b589893fda9/node_modules/nuxt/dist/app/entry.async.js"><script type="module" src="/_nuxt/@vite/client" crossorigin=""></script><script type="module" src="/_nuxt/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/nuxt@4.3.1_@parcel+watcher@2.5.6_@types+node@25.3.3_@vercel+functions@3.3.4_@aws-sdk+cr_5097bf4c9d668a83001e1b589893fda9/node_modules/nuxt/dist/app/entry.async.js" crossorigin=""></script><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><script id="unhead:payload" type="application/json">{"title":"Riddle Rush - Fun Party Game"}</script><script>"use strict";(()=>{const t=window,e=document.documentElement,c=["dark","light"],n=getStorageValue("localStorage","riddle-rush-color-mode")||"light";let i=n==="system"?u():n;const r=e.getAttribute("data-color-mode-forced");r&&(i=r),l(i),t["__NUXT_COLOR_MODE__"]={preference:n,value:i,getColorScheme:u,addColorScheme:l,removeColorScheme:d};function l(o){const s=""+o+"",a="theme";e.classList?e.classList.add(s):e.className+=" "+s,a&&e.setAttribute("data-"+a,o)}function d(o){const s=""+o+"",a="theme";e.classList?e.classList.remove(s):e.className=e.className.replace(new RegExp(s,"g"),""),a&&e.removeAttribute("data-"+a)}function f(o){return t.matchMedia("(prefers-color-scheme"+o+")")}function u(){if(t.matchMedia&&f("").media!=="not all"){for(const o of c)if(f(":"+o).matches)return o}return"light"}})()
+
+=== #__nuxt content ===
+<div id="app" class="app-container"><div class="main-content splash-fade-enter-active splash-fade-enter-to"><div data-v-433a9abd="" class="layout-container"><!-- Connection Status Indicator --><!--v-if--><!-- Background Image (if provided by page) --><!--v-if--><!-- Main Content --><div data-v-433a9abd="" class="page-content"><div data-v-78ad16e9="" class="credits-page"><!-- Background Image --><img data-v-78ad16e9="" src="/assets/main-menu/BACKGROUND.png" alt="Background" class="page-bg"><!-- Back Button --><button data-v-78ad16e9="" class="back-btn tap-highlight no-select"><img data-v-78ad16e9="" src="/assets/language/back.png" alt="Back"></button><!-- Main Container --><div data-v-78ad16e9="" class="container"><!-- Title --><div data-v-78ad16e9="" class="title-container animate-fade-in"><img data-v-78ad16e9="" src="/assets/main-menu/CREDITS.png" alt="CREDITS" class="title-image"></div><!-- Credits Panel --><div data-v-78ad16e9="" class="credits-panel animate-scale-in"><!-- Game Design --><div class="credit-section" data-v-78ad16e9=""><h2 class="section-heading" data-v-78ad16e9="">Game Design</h2><div class="credit-box" data-v-78ad16e9=""><span class="credit-name" data-v-78ad16e9="">Tobi</span><span class="credit-divider" data-v-78ad16e9=""></span><span class="credit-name" data-v-78ad16e9="">Sophia</span></div></div><!-- Programming --><div data-v-78ad16e9="" class="credit-section"><h2 data-v-78ad16e9="" class="section-heading">Programming</h2><div data-v-78ad16e9="" class="credit-box"><span data-v-78ad16e9="" class="credit-name">Markus</span></div></div><!-- Art --><div data-v-78ad16e9="" class="credit-section"><h2 data-v-78ad16e9="" class="section-heading">Art</h2><div data-v-78ad16e9="" class="credit-box"><span data-v-78ad16e9="" class="credit-name">Sarmad Ali</span></div></div><!-- Version --><div data-v-78ad16e9="" class="version-info">v1.1.1</div></div><!-- OK Button --><button data-v-78ad16e9="" class="ok-btn tap-highlight no-select animate-slide-up"><img data-v-78ad16e9="" src="/assets/leaderboard/ok.png" alt="OK"></button></div></div></div><!-- Global Loading Overlay --><!--v-if--><div data-v-433a9abd="" class="footer"><div data-v-433a9abd="" class="version-tag">v1.1.1 (development)</div></div></div><div data-v-3fc632e9="" class="toast-container"></div><!--v-if--><!--teleport start--><!--teleport end--></div></div>
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="full-game-workflow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="4" failures="0" skipped="4" time="0" errors="0">
-<testcase name="Full Multi-Round Game Workflow @slow › complete multi-round multiplayer game with 3 players and score accumulation" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="full-game-workflow.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="4" failures="4" skipped="0" time="98.521" errors="0">
+<testcase name="Full Multi-Round Game Workflow @slow › complete multi-round multiplayer game with 3 players and score accumulation" classname="full-game-workflow.spec.ts" time="28.596">
+<failure message="full-game-workflow.spec.ts:291:3 complete multi-round multiplayer game with 3 players and score accumulation" type="FAILURE">
+<![CDATA[  [android-pixel5] › full-game-workflow.spec.ts:291:3 › Full Multi-Round Game Workflow @slow › complete multi-round multiplayer game with 3 players and score accumulation 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      136 |   }, gameId)
+      137 |
+    > 138 |   await page.waitForFunction(
+          |              ^
+      139 |     () => {
+      140 |       const pinia = (window as any).__pinia__
+      141 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:138:14)
+        at playCompleteRound (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:276:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:321:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/full-game-workflow-Full-Mu-ab7c3-yers-and-score-accumulation-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/full-game-workflow-Full-Mu-ab7c3-yers-and-score-accumulation-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[🎮 Starting comprehensive multi-round game test...
+👥 Players: [ [32m'Colin'[39m, [32m'Laurie'[39m, [32m'Nelle'[39m ]
+⚙️ Setting up 3-player game...
+Playing Round 1...
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-ab7c3-yers-and-score-accumulation-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-ab7c3-yers-and-score-accumulation-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Full Multi-Round Game Workflow @slow › should preserve player names and turn order across multiple rounds" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Full Multi-Round Game Workflow @slow › should preserve player names and turn order across multiple rounds" classname="full-game-workflow.spec.ts" time="14.654">
+<failure message="full-game-workflow.spec.ts:383:3 should preserve player names and turn order across multiple rounds" type="FAILURE">
+<![CDATA[  [android-pixel5] › full-game-workflow.spec.ts:383:3 › Full Multi-Round Game Workflow @slow › should preserve player names and turn order across multiple rounds 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('[data-testid="game-player-name"]')
+    Expected: "Alice"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" with timeout 5000ms
+      - waiting for locator('[data-testid="game-player-name"]')
+
+
+      395 |       // Verify first player's name is displayed
+      396 |       const turnName = page.locator('[data-testid="game-player-name"]')
+    > 397 |       await expect(turnName).toHaveText(playerNames[0]!)
+          |                              ^
+      398 |
+      399 |       // Submit answers and check turn progression
+      400 |       const answerInput = page.locator('[data-testid="game-answer-input"]')
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:397:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/full-game-workflow-Full-Mu-77a36-rder-across-multiple-rounds-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/full-game-workflow-Full-Mu-77a36-rder-across-multiple-rounds-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[Testing name preservation with players: [ [32m'Alice'[39m, [32m'Bob'[39m, [32m'Charlie'[39m ]
+Round 1: Checking player turn order...
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-77a36-rder-across-multiple-rounds-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-77a36-rder-across-multiple-rounds-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Full Multi-Round Game Workflow @slow › should handle varying score distributions correctly" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Full Multi-Round Game Workflow @slow › should handle varying score distributions correctly" classname="full-game-workflow.spec.ts" time="27.727">
+<failure message="full-game-workflow.spec.ts:435:3 should handle varying score distributions correctly" type="FAILURE">
+<![CDATA[  [android-pixel5] › full-game-workflow.spec.ts:435:3 › Full Multi-Round Game Workflow @slow › should handle varying score distributions correctly 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      136 |   }, gameId)
+      137 |
+    > 138 |   await page.waitForFunction(
+          |              ^
+      139 |     () => {
+      140 |       const pinia = (window as any).__pinia__
+      141 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:138:14)
+        at playCompleteRound (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:276:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:454:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/full-game-workflow-Full-Mu-d6410-ore-distributions-correctly-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/full-game-workflow-Full-Mu-d6410-ore-distributions-correctly-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[Round 1 with extreme scores: [ [33m10[39m, [33m0[39m, [33m5[39m ]
+Playing Round 1...
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-d6410-ore-distributions-correctly-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-d6410-ore-distributions-correctly-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Full Multi-Round Game Workflow @slow › should handle rapid scoring interactions without race conditions" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="game-complete-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="12" failures="0" skipped="12" time="0" errors="0">
-<testcase name="Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Single Player Flow › should display game elements correctly" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow)" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Navigation › should handle browser back button navigation" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Player Flow › should preserve player names across rounds" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Reset Flow › should reset the game when choosing New Game" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="language.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="12" failures="0" skipped="12" time="0" errors="0">
-<testcase name="Language Selection Page › should load language page successfully" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should display language options" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should show checkmark on selected language" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should allow selecting English" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should allow selecting German" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should switch between languages" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should have working OK button" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should confirm language selection with OK button" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should display flags correctly" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should have proper page styling" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Switching Behavior › uses browser language by default and persists selection" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Switching Behavior › respects ?lang query and preserves it when selecting a different locale" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="leaderboard.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="7" failures="0" skipped="7" time="0" errors="0">
-<testcase name="Leaderboard Page › should display leaderboard container" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display leaderboard entries" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display player names in entries" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display player scores in entries" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display finish button (game is completed)" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should not display next round button when game is completed" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should navigate to menu when clicking finish" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Full Multi-Round Game Workflow @slow › should handle rapid scoring interactions without race conditions" classname="full-game-workflow.spec.ts" time="27.544">
+<failure message="full-game-workflow.spec.ts:472:3 should handle rapid scoring interactions without race conditions" type="FAILURE">
+<![CDATA[  [android-pixel5] › full-game-workflow.spec.ts:472:3 › Full Multi-Round Game Workflow @slow › should handle rapid scoring interactions without race conditions 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      136 |   }, gameId)
+      137 |
+    > 138 |   await page.waitForFunction(
+          |              ^
+      139 |     () => {
+      140 |       const pinia = (window as any).__pinia__
+      141 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:138:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/full-game-workflow.spec.ts:482:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/full-game-workflow-Full-Mu-9eeb6-ons-without-race-conditions-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/full-game-workflow-Full-Mu-9eeb6-ons-without-race-conditions-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[Testing rapid scoring interactions...
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-9eeb6-ons-without-race-conditions-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/full-game-workflow-Full-Mu-9eeb6-ons-without-race-conditions-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="offline.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="3" failures="0" skipped="3" time="0" errors="0">
-<testcase name="Offline Functionality › should work offline after initial load" classname="offline.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="game-complete-flow.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="12" failures="8" skipped="0" time="188.956" errors="0">
+<testcase name="Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page" classname="game-complete-flow.spec.ts" time="25.439">
+<failure message="game-complete-flow.spec.ts:207:5 should complete full game flow from menu to game page" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:207:5 › Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /\/game/
+    Received string:  "http://localhost:3000/players"
+    Timeout: 20000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 20000ms
+        2 × unexpected value "http://localhost:3000/players"
+        2 × waiting for" http://localhost:3000/players" navigation to finish...
+          - navigated to "http://localhost:3000/players"
+        22 × unexpected value "http://localhost:3000/players"
+
+
+      25 |   // Wait for game to start (goes through /round-start → /game)
+      26 |   // The round-start transition may be too fast to catch, so wait for /game directly
+    > 27 |   await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
+         |                      ^
+      28 |   await page.waitForTimeout(500)
+      29 | }
+      30 |
+        at navigateToGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:27:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:208:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-ba455-flow-from-menu-to-game-page-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-ba455-flow-from-menu-to-game-page-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-ba455-flow-from-menu-to-game-page-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-ba455-flow-from-menu-to-game-page-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Offline Functionality › should show offline indicator when offline" classname="offline.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Complete Game Flow › Single Player Flow › should display game elements correctly" classname="game-complete-flow.spec.ts" time="7.55">
 </testcase>
-<testcase name="Offline Functionality › should restore online state" classname="offline.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow)" classname="game-complete-flow.spec.ts" time="7.622">
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard" classname="game-complete-flow.spec.ts" time="19.597">
+<failure message="game-complete-flow.spec.ts:244:5 should navigate through full scoring flow to leaderboard" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:244:5 › Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      109 |   }, gameId)
+      110 |
+    > 111 |   await page.waitForFunction(
+          |              ^
+      112 |     () => {
+      113 |       const pinia = (window as any).__pinia__
+      114 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:111:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:251:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-99967-scoring-flow-to-leaderboard-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-99967-scoring-flow-to-leaderboard-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-99967-scoring-flow-to-leaderboard-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-99967-scoring-flow-to-leaderboard-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish" classname="game-complete-flow.spec.ts" time="19.545">
+<failure message="game-complete-flow.spec.ts:266:5 should return to menu from leaderboard when clicking finish" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:266:5 › Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      109 |   }, gameId)
+      110 |
+    > 111 |   await page.waitForFunction(
+          |              ^
+      112 |     () => {
+      113 |       const pinia = (window as any).__pinia__
+      114 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:111:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:269:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-b2c35-rboard-when-clicking-finish-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-b2c35-rboard-when-clicking-finish-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-b2c35-rboard-when-clicking-finish-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-b2c35-rboard-when-clicking-finish-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Game Flow › Navigation › should handle browser back button navigation" classname="game-complete-flow.spec.ts" time="6.151">
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round" classname="game-complete-flow.spec.ts" time="19.387">
+<failure message="game-complete-flow.spec.ts:303:5 complete multi-player game: 3 players through full round" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:303:5 › Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      109 |   }, gameId)
+      110 |
+    > 111 |   await page.waitForFunction(
+          |              ^
+      112 |     () => {
+      113 |       const pinia = (window as any).__pinia__
+      114 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:111:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:326:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-abeca--players-through-full-round-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-abeca--players-through-full-round-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-abeca--players-through-full-round-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-abeca--players-through-full-round-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted" classname="game-complete-flow.spec.ts" time="8.144">
+</testcase>
+<testcase name="Complete Game Flow › Multi-Player Flow › should preserve player names across rounds" classname="game-complete-flow.spec.ts" time="19.343">
+<failure message="game-complete-flow.spec.ts:380:5 should preserve player names across rounds" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:380:5 › Complete Game Flow › Multi-Player Flow › should preserve player names across rounds 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      109 |   }, gameId)
+      110 |
+    > 111 |   await page.waitForFunction(
+          |              ^
+      112 |     () => {
+      113 |       const pinia = (window as any).__pinia__
+      114 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:111:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:389:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-9724b--player-names-across-rounds-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-9724b--player-names-across-rounds-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-9724b--player-names-across-rounds-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-9724b--player-names-across-rounds-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion" classname="game-complete-flow.spec.ts" time="18.6">
+<failure message="game-complete-flow.spec.ts:414:5 should play 2 rounds with accumulating scores and declare champion" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:414:5 › Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      109 |   }, gameId)
+      110 |
+    > 111 |   await page.waitForFunction(
+          |              ^
+      112 |     () => {
+      113 |       const pinia = (window as any).__pinia__
+      114 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:111:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:422:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-97b4d-scores-and-declare-champion-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-97b4d-scores-and-declare-champion-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-97b4d-scores-and-declare-champion-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-97b4d-scores-and-declare-champion-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds" classname="game-complete-flow.spec.ts" time="18.823">
+<failure message="game-complete-flow.spec.ts:452:5 should correctly calculate cumulative scores across 2 rounds" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:452:5 › Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      109 |   }, gameId)
+      110 |
+    > 111 |   await page.waitForFunction(
+          |              ^
+      112 |     () => {
+      113 |       const pinia = (window as any).__pinia__
+      114 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:111:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:460:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-d525d-tive-scores-across-2-rounds-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-d525d-tive-scores-across-2-rounds-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-d525d-tive-scores-across-2-rounds-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-d525d-tive-scores-across-2-rounds-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Game Flow › Reset Flow › should reset the game when choosing New Game" classname="game-complete-flow.spec.ts" time="18.755">
+<failure message="game-complete-flow.spec.ts:485:5 should reset the game when choosing New Game" type="FAILURE">
+<![CDATA[  [android-pixel5] › game-complete-flow.spec.ts:485:5 › Complete Game Flow › Reset Flow › should reset the game when choosing New Game 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      109 |   }, gameId)
+      110 |
+    > 111 |   await page.waitForFunction(
+          |              ^
+      112 |     () => {
+      113 |       const pinia = (window as any).__pinia__
+      114 |       const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+        at navigateToResults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:111:14)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:492:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/game-complete-flow-Complet-654f0-game-when-choosing-New-Game-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/game-complete-flow-Complet-654f0-game-when-choosing-New-Game-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-654f0-game-when-choosing-New-Game-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/game-complete-flow-Complet-654f0-game-when-choosing-New-Game-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="players.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="8" failures="0" skipped="8" time="0" errors="0">
-<testcase name="Players Management Page › should display players page with all core elements" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="language.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="12" failures="10" skipped="0" time="90.655" errors="0">
+<testcase name="Language Selection Page › should load language page successfully" classname="language.spec.ts" time="5.36">
+<failure message="language.spec.ts:4:3 should load language page successfully" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:4:3 › Language Selection Page › should load language page successfully 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]').first()
+
+
+      12 |       .locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]')
+      13 |       .first()
+    > 14 |     await expect(titleImage).toBeVisible({ timeout: 5000 })
+         |                              ^
+      15 |   })
+      16 |
+      17 |   test('should display language options', async ({ page }) => {
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:14:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-26f99--language-page-successfully-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-26f99--language-page-successfully-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-26f99--language-page-successfully-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-26f99--language-page-successfully-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Players Management Page › should display default player count with name inputs" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Language Selection Page › should display language options" classname="language.spec.ts" time="6.339">
+<failure message="language.spec.ts:17:3 should display language options" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:17:3 › Language Selection Page › should display language options 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.language-option').filter({ hasText: /ENGLISH/i })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.language-option').filter({ hasText: /ENGLISH/i })
+
+
+      23 |     // Check for English option
+      24 |     const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    > 25 |     await expect(englishOption).toBeVisible()
+         |                                 ^
+      26 |
+      27 |     // Check for German option
+      28 |     const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:25:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-ded40-ld-display-language-options-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-ded40-ld-display-language-options-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-ded40-ld-display-language-options-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-ded40-ld-display-language-options-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Players Management Page › should increase player count when clicking plus button" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Language Selection Page › should show checkmark on selected language" classname="language.spec.ts" time="1.817">
 </testcase>
-<testcase name="Players Management Page › should decrease player count when clicking minus button" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Language Selection Page › should allow selecting English" classname="language.spec.ts" time="9.366">
+<failure message="language.spec.ts:54:3 should allow selecting English" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:54:3 › Language Selection Page › should allow selecting English 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.language-option').filter({ hasText: /ENGLISH/i })
+
+
+      59 |     // Click on English option
+      60 |     const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    > 61 |     await englishOption.click()
+         |                         ^
+      62 |
+      63 |     // Wait for state update
+      64 |     await page.waitForTimeout(300)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:61:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-9456a-uld-allow-selecting-English-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-9456a-uld-allow-selecting-English-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-9456a-uld-allow-selecting-English-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-9456a-uld-allow-selecting-English-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Players Management Page › should disable decrease button at minimum player count" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Language Selection Page › should allow selecting German" classname="language.spec.ts" time="9.204">
+<failure message="language.spec.ts:70:3 should allow selecting German" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:70:3 › Language Selection Page › should allow selecting German 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.language-option').filter({ hasText: /GERMAN/i })
+
+
+      75 |     // Click on German option
+      76 |     const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
+    > 77 |     await germanOption.click()
+         |                        ^
+      78 |
+      79 |     // Wait for state update
+      80 |     await page.waitForTimeout(300)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:77:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-d1047-ould-allow-selecting-German-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-d1047-ould-allow-selecting-German-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-d1047-ould-allow-selecting-German-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-d1047-ould-allow-selecting-German-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Players Management Page › should allow entering custom player names" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Language Selection Page › should switch between languages" classname="language.spec.ts" time="9.377">
+<failure message="language.spec.ts:86:3 should switch between languages" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:86:3 › Language Selection Page › should switch between languages 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.language-option').filter({ hasText: /ENGLISH/i })
+
+
+      91 |     // Click English
+      92 |     const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    > 93 |     await englishOption.click()
+         |                         ^
+      94 |     await page.waitForTimeout(200)
+      95 |
+      96 |     // English should be selected
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:93:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-9669c-ld-switch-between-languages-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-9669c-ld-switch-between-languages-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-9669c-ld-switch-between-languages-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-9669c-ld-switch-between-languages-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Players Management Page › should navigate away from players when clicking start" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Language Selection Page › should have working OK button" classname="language.spec.ts" time="11.831">
+<failure message="language.spec.ts:108:3 should have working OK button" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:108:3 › Language Selection Page › should have working OK button 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.language-option').filter({ hasText: /ENGLISH/i })
+
+
+      113 |     // Select a language first
+      114 |     const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    > 115 |     await englishOption.click()
+          |                         ^
+      116 |     await page.waitForTimeout(200)
+      117 |
+      118 |     // Look for OK button (OK button contains an image, not text)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:115:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-721cf-ould-have-working-OK-button-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-721cf-ould-have-working-OK-button-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-721cf-ould-have-working-OK-button-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-721cf-ould-have-working-OK-button-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Players Management Page › should navigate back when clicking back button" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Language Selection Page › should confirm language selection with OK button" classname="language.spec.ts" time="11.437">
+<failure message="language.spec.ts:134:3 should confirm language selection with OK button" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:134:3 › Language Selection Page › should confirm language selection with OK button 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.language-option').filter({ hasText: /ENGLISH/i })
+
+
+      139 |     // Select English
+      140 |     const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    > 141 |     await englishOption.click()
+          |                         ^
+      142 |     await page.waitForTimeout(200)
+      143 |
+      144 |     // Verify English is selected
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:141:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-8ebef-ge-selection-with-OK-button-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-8ebef-ge-selection-with-OK-button-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-8ebef-ge-selection-with-OK-button-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-8ebef-ge-selection-with-OK-button-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Language Selection Page › should display flags correctly" classname="language.spec.ts" time="3.557">
+<failure message="language.spec.ts:158:3 should display flags correctly" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:158:3 › Language Selection Page › should display flags correctly 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 0
+
+      163 |     // Check for flag containers
+      164 |     const flagContainers = page.locator('.flag-container')
+    > 165 |     expect(await flagContainers.count()).toBe(2)
+          |                                          ^
+      166 |
+      167 |     // Check that flags are visible
+      168 |     for (let i = 0; i < (await flagContainers.count()); i++) {
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:165:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Selectio-769ee-uld-display-flags-correctly-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Selectio-769ee-uld-display-flags-correctly-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-769ee-uld-display-flags-correctly-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Selectio-769ee-uld-display-flags-correctly-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Language Selection Page › should have proper page styling" classname="language.spec.ts" time="3.429">
+</testcase>
+<testcase name="Language Switching Behavior › uses browser language by default and persists selection" classname="language.spec.ts" time="9.649">
+<failure message="language.spec.ts:201:3 uses browser language by default and persists selection" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:201:3 › Language Switching Behavior › uses browser language by default and persists selection 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.options-btn')
+
+
+      203 |     await page.goto('/', { waitUntil: 'networkidle' })
+      204 |
+    > 205 |     await page.locator('.options-btn').click()
+          |                                        ^
+      206 |
+      207 |     const languageItem = page.locator('.menu-item').filter({ hasText: 'Language' })
+      208 |     const settingsItem = page.locator('.menu-item').filter({ hasText: 'Settings' })
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:205:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Switchin-89134-ault-and-persists-selection-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Switchin-89134-ault-and-persists-selection-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Switchin-89134-ault-and-persists-selection-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Switchin-89134-ault-and-persists-selection-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Language Switching Behavior › respects ?lang query and preserves it when selecting a different locale" classname="language.spec.ts" time="9.289">
+<failure message="language.spec.ts:230:3 respects ?lang query and preserves it when selecting a different locale" type="FAILURE">
+<![CDATA[  [android-pixel5] › language.spec.ts:230:3 › Language Switching Behavior › respects ?lang query and preserves it when selecting a different locale 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.options-btn')
+
+
+      234 |     await page.goto('/?lang=de', { waitUntil: 'networkidle' })
+      235 |
+    > 236 |     await page.locator('.options-btn').click()
+          |                                        ^
+      237 |     const germanMenuItem = page.locator('.menu-item').filter({ hasText: 'Sprache' })
+      238 |     await expect(germanMenuItem).toBeVisible()
+      239 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/language.spec.ts:236:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/language-Language-Switchin-95417-electing-a-different-locale-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/language-Language-Switchin-95417-electing-a-different-locale-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/language-Language-Switchin-95417-electing-a-different-locale-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/language-Language-Switchin-95417-electing-a-different-locale-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="results.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="13" failures="0" skipped="13" time="0" errors="0">
-<testcase name="Results/Scoring Page › should display results page with all elements" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="leaderboard.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="7" failures="7" skipped="0" time="186.573" errors="0">
+<testcase name="Leaderboard Page › should display leaderboard container" classname="leaderboard.spec.ts" time="25.75">
+<failure message="leaderboard.spec.ts:55:3 should display leaderboard container" type="FAILURE">
+<![CDATA[  [android-pixel5] › leaderboard.spec.ts:55:3 › Leaderboard Page › should display leaderboard container 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="finish-game"]')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for locator('[data-testid="finish-game"]')
+
+
+      45 |     // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+      46 |     const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    > 47 |     await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+         |                                 ^
+      48 |     await finishGameBtn.click()
+      49 |
+      50 |     // Now we should be on the leaderboard page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/leaderboard.spec.ts:47:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/leaderboard-Leaderboard-Pa-322cb-splay-leaderboard-container-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/leaderboard-Leaderboard-Pa-322cb-splay-leaderboard-container-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-322cb-splay-leaderboard-container-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-322cb-splay-leaderboard-container-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Results/Scoring Page › should display player entries with score controls" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Leaderboard Page › should display leaderboard entries" classname="leaderboard.spec.ts" time="26.632">
+<failure message="leaderboard.spec.ts:60:3 should display leaderboard entries" type="FAILURE">
+<![CDATA[  [android-pixel5] › leaderboard.spec.ts:60:3 › Leaderboard Page › should display leaderboard entries 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="finish-game"]')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for locator('[data-testid="finish-game"]')
+
+
+      45 |     // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+      46 |     const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    > 47 |     await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+         |                                 ^
+      48 |     await finishGameBtn.click()
+      49 |
+      50 |     // Now we should be on the leaderboard page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/leaderboard.spec.ts:47:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/leaderboard-Leaderboard-Pa-063a3-display-leaderboard-entries-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/leaderboard-Leaderboard-Pa-063a3-display-leaderboard-entries-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-063a3-display-leaderboard-entries-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-063a3-display-leaderboard-entries-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Results/Scoring Page › should display increment and decrement buttons for each player" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Leaderboard Page › should display player names in entries" classname="leaderboard.spec.ts" time="26.379">
+<failure message="leaderboard.spec.ts:69:3 should display player names in entries" type="FAILURE">
+<![CDATA[  [android-pixel5] › leaderboard.spec.ts:69:3 › Leaderboard Page › should display player names in entries 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="finish-game"]')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for locator('[data-testid="finish-game"]')
+
+
+      45 |     // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+      46 |     const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    > 47 |     await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+         |                                 ^
+      48 |     await finishGameBtn.click()
+      49 |
+      50 |     // Now we should be on the leaderboard page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/leaderboard.spec.ts:47:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/leaderboard-Leaderboard-Pa-7f981-lay-player-names-in-entries-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/leaderboard-Leaderboard-Pa-7f981-lay-player-names-in-entries-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-7f981-lay-player-names-in-entries-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-7f981-lay-player-names-in-entries-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Results/Scoring Page › should increase score when clicking increment button" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Leaderboard Page › should display player scores in entries" classname="leaderboard.spec.ts" time="26.143">
+<failure message="leaderboard.spec.ts:77:3 should display player scores in entries" type="FAILURE">
+<![CDATA[  [android-pixel5] › leaderboard.spec.ts:77:3 › Leaderboard Page › should display player scores in entries 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="finish-game"]')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for locator('[data-testid="finish-game"]')
+
+
+      45 |     // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+      46 |     const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    > 47 |     await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+         |                                 ^
+      48 |     await finishGameBtn.click()
+      49 |
+      50 |     // Now we should be on the leaderboard page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/leaderboard.spec.ts:47:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/leaderboard-Leaderboard-Pa-294e0-ay-player-scores-in-entries-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/leaderboard-Leaderboard-Pa-294e0-ay-player-scores-in-entries-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-294e0-ay-player-scores-in-entries-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-294e0-ay-player-scores-in-entries-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Results/Scoring Page › should decrease score when clicking decrement button" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Leaderboard Page › should display finish button (game is completed)" classname="leaderboard.spec.ts" time="25.929">
+<failure message="leaderboard.spec.ts:85:3 should display finish button (game is completed)" type="FAILURE">
+<![CDATA[  [android-pixel5] › leaderboard.spec.ts:85:3 › Leaderboard Page › should display finish button (game is completed) 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="finish-game"]')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for locator('[data-testid="finish-game"]')
+
+
+      45 |     // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+      46 |     const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    > 47 |     await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+         |                                 ^
+      48 |     await finishGameBtn.click()
+      49 |
+      50 |     // Now we should be on the leaderboard page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/leaderboard.spec.ts:47:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/leaderboard-Leaderboard-Pa-922d3-h-button-game-is-completed--android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/leaderboard-Leaderboard-Pa-922d3-h-button-game-is-completed--android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-922d3-h-button-game-is-completed--android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-922d3-h-button-game-is-completed--android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Results/Scoring Page › should disable decrement button when score is 0" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Leaderboard Page › should not display next round button when game is completed" classname="leaderboard.spec.ts" time="27.631">
+<failure message="leaderboard.spec.ts:91:3 should not display next round button when game is completed" type="FAILURE">
+<![CDATA[  [android-pixel5] › leaderboard.spec.ts:91:3 › Leaderboard Page › should not display next round button when game is completed 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="finish-game"]')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for locator('[data-testid="finish-game"]')
+
+
+      45 |     // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+      46 |     const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    > 47 |     await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+         |                                 ^
+      48 |     await finishGameBtn.click()
+      49 |
+      50 |     // Now we should be on the leaderboard page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/leaderboard.spec.ts:47:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/leaderboard-Leaderboard-Pa-f61d1-tton-when-game-is-completed-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/leaderboard-Leaderboard-Pa-f61d1-tton-when-game-is-completed-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-f61d1-tton-when-game-is-completed-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-f61d1-tton-when-game-is-completed-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Results/Scoring Page › should show leaderboard overlay after confirming scores" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should show decision modal after leaderboard auto-dismisses" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should navigate to round-start when clicking Next Round" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should navigate to leaderboard when clicking Finish Game" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should be responsive on mobile" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results Page - Multi-Player › should display all players in multi-player game" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results Page - Multi-Player › should allow independent score adjustment for each player" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Leaderboard Page › should navigate to menu when clicking finish" classname="leaderboard.spec.ts" time="28.109">
+<failure message="leaderboard.spec.ts:97:3 should navigate to menu when clicking finish" type="FAILURE">
+<![CDATA[  [android-pixel5] › leaderboard.spec.ts:97:3 › Leaderboard Page › should navigate to menu when clicking finish 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="finish-game"]')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for locator('[data-testid="finish-game"]')
+
+
+      45 |     // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
+      46 |     const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    > 47 |     await expect(finishGameBtn).toBeVisible({ timeout: 15000 })
+         |                                 ^
+      48 |     await finishGameBtn.click()
+      49 |
+      50 |     // Now we should be on the leaderboard page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/leaderboard.spec.ts:47:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/leaderboard-Leaderboard-Pa-2bfdf-o-menu-when-clicking-finish-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/leaderboard-Leaderboard-Pa-2bfdf-o-menu-when-clicking-finish-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-2bfdf-o-menu-when-clicking-finish-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/leaderboard-Leaderboard-Pa-2bfdf-o-menu-when-clicking-finish-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="round-start.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="10" failures="0" skipped="10" time="0" errors="0">
-<testcase name="Round Start Page › should display round-start page with all elements" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="offline.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="3" failures="1" skipped="0" time="21.309" errors="0">
+<testcase name="Offline Functionality › should work offline after initial load" classname="offline.spec.ts" time="5.899">
+<failure message="offline.spec.ts:4:3 should work offline after initial load" type="FAILURE">
+<![CDATA[  [android-pixel5] › offline.spec.ts:4:3 › Offline Functionality › should work offline after initial load 
+
+    Error: page.reload: net::ERR_INTERNET_DISCONNECTED
+    Call log:
+      - waiting for navigation until "load"
+
+
+      14 |
+      15 |     // Reload page
+    > 16 |     await page.reload()
+         |                ^
+      17 |
+      18 |     // Page should still load from cache
+      19 |     await expect(page.locator('body')).toBeVisible()
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/offline.spec.ts:16:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/offline-Offline-Functional-91c72--offline-after-initial-load-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/offline-Offline-Functional-91c72--offline-after-initial-load-android-pixel5/test-failed-1.png]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Round Start Page › should spin both wheels automatically" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Offline Functionality › should show offline indicator when offline" classname="offline.spec.ts" time="7.554">
 </testcase>
-<testcase name="Round Start Page › should display selected category and letter after spinning" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should automatically navigate to game after selection" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should display round indicator" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should be responsive on mobile" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › should display &quot;Round 1&quot; on initial game start" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › should show &quot;Round 2&quot; after completing round 1 and clicking next round" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › page refresh should not increment round counter" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › navigating back to round-start during active game should not increment round" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Offline Functionality › should restore online state" classname="offline.spec.ts" time="7.856">
 </testcase>
 </testsuite>
-<testsuite name="scoring-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="5" failures="0" skipped="5" time="0" errors="0">
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should show leaderboard overlay after confirming scores" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="players.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="8" failures="0" skipped="0" time="83.685" errors="0">
+<testcase name="Players Management Page › should display players page with all core elements" classname="players.spec.ts" time="7.461">
 </testcase>
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should auto-dismiss leaderboard and show decision modal" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Players Management Page › should display default player count with name inputs" classname="players.spec.ts" time="9.016">
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to round-start when clicking Next Round" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Players Management Page › should increase player count when clicking plus button" classname="players.spec.ts" time="9.023">
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to leaderboard when clicking Finish Game" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Players Management Page › should decrease player count when clicking minus button" classname="players.spec.ts" time="9.12">
 </testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should remain open when pressing Escape" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Players Management Page › should disable decrease button at minimum player count" classname="players.spec.ts" time="10.596">
+</testcase>
+<testcase name="Players Management Page › should allow entering custom player names" classname="players.spec.ts" time="10.489">
+</testcase>
+<testcase name="Players Management Page › should navigate away from players when clicking start" classname="players.spec.ts" time="8.687">
+</testcase>
+<testcase name="Players Management Page › should navigate back when clicking back button" classname="players.spec.ts" time="19.293">
 </testcase>
 </testsuite>
-<testsuite name="scoring-multi-round.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="3" failures="0" skipped="3" time="0" errors="0">
-<testcase name="Scoring Workflow: Multi-Round and Edges › Multi-Round Score Accumulation › should accumulate scores across multiple rounds" classname="scoring-multi-round.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="results.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="13" failures="13" skipped="0" time="390.377" errors="0">
+<testcase name="Results/Scoring Page › should display results page with all elements" classname="results.spec.ts" time="15.041">
+<failure message="results.spec.ts:25:3 should display results page with all elements" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:25:3 › Results/Scoring Page › should display results page with all elements 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-e43d8-ults-page-with-all-elements-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-e43d8-ults-page-with-all-elements-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-e43d8-ults-page-with-all-elements-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-e43d8-ults-page-with-all-elements-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle single player game" classname="scoring-multi-round.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Results/Scoring Page › should display player entries with score controls" classname="results.spec.ts" time="14.935">
+<failure message="results.spec.ts:43:3 should display player entries with score controls" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:43:3 › Results/Scoring Page › should display player entries with score controls 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-f0598-entries-with-score-controls-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-f0598-entries-with-score-controls-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-f0598-entries-with-score-controls-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-f0598-entries-with-score-controls-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle zero scores confirmation" classname="scoring-multi-round.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Results/Scoring Page › should display increment and decrement buttons for each player" classname="results.spec.ts" time="12.228">
+<failure message="results.spec.ts:60:3 should display increment and decrement buttons for each player" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:60:3 › Results/Scoring Page › should display increment and decrement buttons for each player 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-80d83-ent-buttons-for-each-player-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-80d83-ent-buttons-for-each-player-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-80d83-ent-buttons-for-each-player-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-80d83-ent-buttons-for-each-player-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should increase score when clicking increment button" classname="results.spec.ts" time="11.539">
+<failure message="results.spec.ts:69:3 should increase score when clicking increment button" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:69:3 › Results/Scoring Page › should increase score when clicking increment button 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-ff2dd-n-clicking-increment-button-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-ff2dd-n-clicking-increment-button-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-ff2dd-n-clicking-increment-button-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-ff2dd-n-clicking-increment-button-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should decrease score when clicking decrement button" classname="results.spec.ts" time="12.976">
+<failure message="results.spec.ts:86:3 should decrease score when clicking decrement button" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:86:3 › Results/Scoring Page › should decrease score when clicking decrement button 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-9490a-n-clicking-decrement-button-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-9490a-n-clicking-decrement-button-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-9490a-n-clicking-decrement-button-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-9490a-n-clicking-decrement-button-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should disable decrement button when score is 0" classname="results.spec.ts" time="32.107">
+<failure message="results.spec.ts:109:3 should disable decrement button when score is 0" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:109:3 › Results/Scoring Page › should disable decrement button when score is 0 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-0f532-ment-button-when-score-is-0-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-0f532-ment-button-when-score-is-0-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-0f532-ment-button-when-score-is-0-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-0f532-ment-button-when-score-is-0-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should show leaderboard overlay after confirming scores" classname="results.spec.ts" time="31.897">
+<failure message="results.spec.ts:117:3 should show leaderboard overlay after confirming scores" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:117:3 › Results/Scoring Page › should show leaderboard overlay after confirming scores 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-0b216-lay-after-confirming-scores-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-0b216-lay-after-confirming-scores-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-0b216-lay-after-confirming-scores-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-0b216-lay-after-confirming-scores-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should show decision modal after leaderboard auto-dismisses" classname="results.spec.ts" time="41.555">
+<failure message="results.spec.ts:127:3 should show decision modal after leaderboard auto-dismisses" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:127:3 › Results/Scoring Page › should show decision modal after leaderboard auto-dismisses 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-c3921--leaderboard-auto-dismisses-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-c3921--leaderboard-auto-dismisses-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-c3921--leaderboard-auto-dismisses-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-c3921--leaderboard-auto-dismisses-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should navigate to round-start when clicking Next Round" classname="results.spec.ts" time="46.515">
+<failure message="results.spec.ts:143:3 should navigate to round-start when clicking Next Round" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:143:3 › Results/Scoring Page › should navigate to round-start when clicking Next Round 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-abc4f-rt-when-clicking-Next-Round-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-abc4f-rt-when-clicking-Next-Round-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-abc4f-rt-when-clicking-Next-Round-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-abc4f-rt-when-clicking-Next-Round-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should navigate to leaderboard when clicking Finish Game" classname="results.spec.ts" time="45.477">
+<failure message="results.spec.ts:158:3 should navigate to leaderboard when clicking Finish Game" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:158:3 › Results/Scoring Page › should navigate to leaderboard when clicking Finish Game 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Pa-a992c-d-when-clicking-Finish-Game-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Pa-a992c-d-when-clicking-Finish-Game-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-a992c-d-when-clicking-Finish-Game-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Pa-a992c-d-when-clicking-Finish-Game-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results/Scoring Page › should be responsive on mobile" classname="results.spec.ts" time="39.274">
+<failure message="results.spec.ts:173:3 should be responsive on mobile" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:173:3 › Results/Scoring Page › should be responsive on mobile ─
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      10 |     // Start game with default player to initialize store
+      11 |     const startBtn = page.locator('.start-btn')
+    > 12 |     await startBtn.click()
+         |                    ^
+      13 |     await expect(page).toHaveURL(/\/round-start/)
+      14 |     await page.waitForTimeout(2000)
+      15 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:12:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Scoring-Page-should-be-responsive-on-mobile-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Scoring-Page-should-be-responsive-on-mobile-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Page-should-be-responsive-on-mobile-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Scoring-Page-should-be-responsive-on-mobile-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results Page - Multi-Player › should display all players in multi-player game" classname="results.spec.ts" time="39.415">
+<failure message="results.spec.ts:228:3 should display all players in multi-player game" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:228:3 › Results Page - Multi-Player › should display all players in multi-player game 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.add-btn')
+
+
+      196 |     })
+      197 |     const addBtn = page.locator('.add-btn')
+    > 198 |     await addBtn.click()
+          |                  ^
+      199 |     await page.waitForTimeout(300)
+      200 |
+      201 |     // Start game
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:198:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Page---Mul-e6eac-layers-in-multi-player-game-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Page---Mul-e6eac-layers-in-multi-player-game-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Page---Mul-e6eac-layers-in-multi-player-game-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Page---Mul-e6eac-layers-in-multi-player-game-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Results Page - Multi-Player › should allow independent score adjustment for each player" classname="results.spec.ts" time="47.418">
+<failure message="results.spec.ts:235:3 should allow independent score adjustment for each player" type="FAILURE">
+<![CDATA[  [android-pixel5] › results.spec.ts:235:3 › Results Page - Multi-Player › should allow independent score adjustment for each player 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.add-btn')
+
+
+      196 |     })
+      197 |     const addBtn = page.locator('.add-btn')
+    > 198 |     await addBtn.click()
+          |                  ^
+      199 |     await page.waitForTimeout(300)
+      200 |
+      201 |     // Start game
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:198:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/results-Results-Page---Mul-ae506--adjustment-for-each-player-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/results-Results-Page---Mul-ae506--adjustment-for-each-player-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/results-Results-Page---Mul-ae506--adjustment-for-each-player-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/results-Results-Page---Mul-ae506--adjustment-for-each-player-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="scoring-ui.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="1" failures="0" skipped="1" time="0" errors="0">
-<testcase name="Scoring Workflow: Score Entry UI › should handle score entry correctly" classname="scoring-ui.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="round-start.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="10" failures="10" skipped="0" time="316.669" errors="0">
+<testcase name="Round Start Page › should display round-start page with all elements" classname="round-start.spec.ts" time="45.118">
+<failure message="round-start.spec.ts:26:3 should display round-start page with all elements" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:26:3 › Round Start Page › should display round-start page with all elements 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      17 |
+      18 |     const startBtn = page.locator('.start-btn')
+    > 19 |     await startBtn.click()
+         |                    ^
+      20 |     await page.waitForTimeout(500)
+      21 |
+      22 |     // Should navigate to round-start
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:19:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Start-Pa-ee94f-tart-page-with-all-elements-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Start-Pa-ee94f-tart-page-with-all-elements-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-ee94f-tart-page-with-all-elements-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-ee94f-tart-page-with-all-elements-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Start Page › should spin both wheels automatically" classname="round-start.spec.ts" time="48.606">
+<failure message="round-start.spec.ts:44:3 should spin both wheels automatically" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:44:3 › Round Start Page › should spin both wheels automatically 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      17 |
+      18 |     const startBtn = page.locator('.start-btn')
+    > 19 |     await startBtn.click()
+         |                    ^
+      20 |     await page.waitForTimeout(500)
+      21 |
+      22 |     // Should navigate to round-start
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:19:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Start-Pa-d9480-n-both-wheels-automatically-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Start-Pa-d9480-n-both-wheels-automatically-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-d9480-n-both-wheels-automatically-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-d9480-n-both-wheels-automatically-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Start Page › should display selected category and letter after spinning" classname="round-start.spec.ts" time="31.971">
+<failure message="round-start.spec.ts:57:3 should display selected category and letter after spinning" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:57:3 › Round Start Page › should display selected category and letter after spinning 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      17 |
+      18 |     const startBtn = page.locator('.start-btn')
+    > 19 |     await startBtn.click()
+         |                    ^
+      20 |     await page.waitForTimeout(500)
+      21 |
+      22 |     // Should navigate to round-start
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:19:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Start-Pa-8d8ad-y-and-letter-after-spinning-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Start-Pa-8d8ad-y-and-letter-after-spinning-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-8d8ad-y-and-letter-after-spinning-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-8d8ad-y-and-letter-after-spinning-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Start Page › should automatically navigate to game after selection" classname="round-start.spec.ts" time="32.031">
+<failure message="round-start.spec.ts:70:3 should automatically navigate to game after selection" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:70:3 › Round Start Page › should automatically navigate to game after selection 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      17 |
+      18 |     const startBtn = page.locator('.start-btn')
+    > 19 |     await startBtn.click()
+         |                    ^
+      20 |     await page.waitForTimeout(500)
+      21 |
+      22 |     // Should navigate to round-start
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:19:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Start-Pa-f2f6a-ate-to-game-after-selection-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Start-Pa-f2f6a-ate-to-game-after-selection-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-f2f6a-ate-to-game-after-selection-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Pa-f2f6a-ate-to-game-after-selection-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Start Page › should display round indicator" classname="round-start.spec.ts" time="30.006">
+<failure message="round-start.spec.ts:80:3 should display round indicator" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:80:3 › Round Start Page › should display round indicator ──
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      17 |
+      18 |     const startBtn = page.locator('.start-btn')
+    > 19 |     await startBtn.click()
+         |                    ^
+      20 |     await page.waitForTimeout(500)
+      21 |
+      22 |     // Should navigate to round-start
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:19:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Start-Page-should-display-round-indicator-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Start-Page-should-display-round-indicator-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Page-should-display-round-indicator-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Page-should-display-round-indicator-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Start Page › should be responsive on mobile" classname="round-start.spec.ts" time="34.391">
+<failure message="round-start.spec.ts:85:3 should be responsive on mobile" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:85:3 › Round Start Page › should be responsive on mobile ──
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      17 |
+      18 |     const startBtn = page.locator('.start-btn')
+    > 19 |     await startBtn.click()
+         |                    ^
+      20 |     await page.waitForTimeout(500)
+      21 |
+      22 |     // Should navigate to round-start
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:19:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Start-Page-should-be-responsive-on-mobile-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Start-Page-should-be-responsive-on-mobile-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Page-should-be-responsive-on-mobile-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Start-Page-should-be-responsive-on-mobile-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Counter Logic › should display &quot;Round 1&quot; on initial game start" classname="round-start.spec.ts" time="33.989">
+<failure message="round-start.spec.ts:105:3 should display &quot;Round 1&quot; on initial game start" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:105:3 › Round Counter Logic › should display "Round 1" on initial game start 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      109 |
+      110 |     const startBtn = page.locator('.start-btn')
+    > 111 |     await startBtn.click()
+          |                    ^
+      112 |
+      113 |     // Should navigate to round-start
+      114 |     await expect(page).toHaveURL(/\/round-start/)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:111:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Counter--306df-und-1-on-initial-game-start-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Counter--306df-und-1-on-initial-game-start-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--306df-und-1-on-initial-game-start-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--306df-und-1-on-initial-game-start-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Counter Logic › should show &quot;Round 2&quot; after completing round 1 and clicking next round" classname="round-start.spec.ts" time="20.807">
+<failure message="round-start.spec.ts:122:3 should show &quot;Round 2&quot; after completing round 1 and clicking next round" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:122:3 › Round Counter Logic › should show "Round 2" after completing round 1 and clicking next round 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      128 |
+      129 |     const startBtn = page.locator('.start-btn')
+    > 130 |     await startBtn.click()
+          |                    ^
+      131 |     await expect(page).toHaveURL(/\/round-start/)
+      132 |
+      133 |     // Wait for automatic navigation to game
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:130:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Counter--085c9-d-1-and-clicking-next-round-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Counter--085c9-d-1-and-clicking-next-round-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--085c9-d-1-and-clicking-next-round-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--085c9-d-1-and-clicking-next-round-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Counter Logic › page refresh should not increment round counter" classname="round-start.spec.ts" time="20.468">
+<failure message="round-start.spec.ts:187:3 page refresh should not increment round counter" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:187:3 › Round Counter Logic › page refresh should not increment round counter 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      191 |
+      192 |     const startBtn = page.locator('.start-btn')
+    > 193 |     await startBtn.click()
+          |                    ^
+      194 |
+      195 |     // Wait for round-start page
+      196 |     await expect(page).toHaveURL(/\/round-start/)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:193:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Counter--15628-not-increment-round-counter-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Counter--15628-not-increment-round-counter-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--15628-not-increment-round-counter-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--15628-not-increment-round-counter-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Round Counter Logic › navigating back to round-start during active game should not increment round" classname="round-start.spec.ts" time="19.282">
+<failure message="round-start.spec.ts:213:3 navigating back to round-start during active game should not increment round" type="FAILURE">
+<![CDATA[  [android-pixel5] › round-start.spec.ts:213:3 › Round Counter Logic › navigating back to round-start during active game should not increment round 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      219 |
+      220 |     const startBtn = page.locator('.start-btn')
+    > 221 |     await startBtn.click()
+          |                    ^
+      222 |     await expect(page).toHaveURL(/\/round-start/)
+      223 |
+      224 |     // Wait for automatic navigation to game page
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/round-start.spec.ts:221:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/round-start-Round-Counter--5a07d--should-not-increment-round-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/round-start-Round-Counter--5a07d--should-not-increment-round-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--5a07d--should-not-increment-round-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/round-start-Round-Counter--5a07d--should-not-increment-round-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="translations-check.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="android-pixel5" tests="2" failures="0" skipped="2" time="0" errors="0">
-<testcase name="Translation Checks › should not show raw translation keys on home page" classname="translations-check.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="scoring-flow.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="5" failures="0" skipped="0" time="136.095" errors="0">
+<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should show leaderboard overlay after confirming scores" classname="scoring-flow.spec.ts" time="20.745">
 </testcase>
-<testcase name="Translation Checks › should show category in English and not as a key" classname="translations-check.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should auto-dismiss leaderboard and show decision modal" classname="scoring-flow.spec.ts" time="23.616">
 </testcase>
-</testsuite>
-<testsuite name="credits.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="6" failures="0" skipped="6" time="0" errors="0">
-<testcase name="Credits Page › should load credits page successfully" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to round-start when clicking Next Round" classname="scoring-flow.spec.ts" time="34.327">
 </testcase>
-<testcase name="Credits Page › should display team credits" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to leaderboard when clicking Finish Game" classname="scoring-flow.spec.ts" time="35.277">
 </testcase>
-<testcase name="Credits Page › should have working back button" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Credits Page › should have working OK button" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Credits Page › should display coins UI element" classname="credits.spec.ts" time="0">
-<properties>
-<property name="skip" value="">
-</property>
-</properties>
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Credits Page › should have proper page styling" classname="credits.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Scoring Workflow: Flow › Decision Modal › should remain open when pressing Escape" classname="scoring-flow.spec.ts" time="22.13">
 </testcase>
 </testsuite>
-<testsuite name="debug-console.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="1" failures="0" skipped="1" time="0" errors="0">
-<testcase name="Debug Console Errors › should capture console errors and page content" classname="debug-console.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="scoring-multi-round.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="3" failures="3" skipped="0" time="70.304" errors="0">
+<testcase name="Scoring Workflow: Multi-Round and Edges › Multi-Round Score Accumulation › should accumulate scores across multiple rounds" classname="scoring-multi-round.spec.ts" time="26.59">
+<failure message="scoring-multi-round.spec.ts:6:5 should accumulate scores across multiple rounds" type="FAILURE">
+<![CDATA[  [android-pixel5] › scoring-multi-round.spec.ts:6:5 › Scoring Workflow: Multi-Round and Edges › Multi-Round Score Accumulation › should accumulate scores across multiple rounds 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.add-btn')
+
+
+      14 |       })
+      15 |       const addBtn = page.locator('.add-btn')
+    > 16 |       await addBtn.click()
+         |                    ^
+      17 |       await page.waitForTimeout(300)
+      18 |
+      19 |       const startBtn = page.locator('.start-btn')
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/scoring-multi-round.spec.ts:16:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/scoring-multi-round-Scorin-17285-ores-across-multiple-rounds-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/scoring-multi-round-Scorin-17285-ores-across-multiple-rounds-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/scoring-multi-round-Scorin-17285-ores-across-multiple-rounds-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/scoring-multi-round-Scorin-17285-ores-across-multiple-rounds-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle single player game" classname="scoring-multi-round.spec.ts" time="25.924">
+<failure message="scoring-multi-round.spec.ts:105:5 should handle single player game" type="FAILURE">
+<![CDATA[  [android-pixel5] › scoring-multi-round.spec.ts:105:5 › Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle single player game 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      108 |
+      109 |       const startBtn = page.locator('.start-btn')
+    > 110 |       await startBtn.click()
+          |                      ^
+      111 |       await expect(page).toHaveURL(/\/round-start/)
+      112 |       await page.waitForTimeout(2000)
+      113 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/scoring-multi-round.spec.ts:110:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/scoring-multi-round-Scorin-4d3f9-d-handle-single-player-game-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/scoring-multi-round-Scorin-4d3f9-d-handle-single-player-game-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/scoring-multi-round-Scorin-4d3f9-d-handle-single-player-game-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/scoring-multi-round-Scorin-4d3f9-d-handle-single-player-game-android-pixel5/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle zero scores confirmation" classname="scoring-multi-round.spec.ts" time="17.79">
+<failure message="scoring-multi-round.spec.ts:129:5 should handle zero scores confirmation" type="FAILURE">
+<![CDATA[  [android-pixel5] › scoring-multi-round.spec.ts:129:5 › Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle zero scores confirmation 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.start-btn')
+
+
+      132 |
+      133 |       const startBtn = page.locator('.start-btn')
+    > 134 |       await startBtn.click()
+          |                      ^
+      135 |       await expect(page).toHaveURL(/\/round-start/)
+      136 |       await page.waitForTimeout(2000)
+      137 |
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/scoring-multi-round.spec.ts:134:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/scoring-multi-round-Scorin-3e537-le-zero-scores-confirmation-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/scoring-multi-round-Scorin-3e537-le-zero-scores-confirmation-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/scoring-multi-round-Scorin-3e537-le-zero-scores-confirmation-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/scoring-multi-round-Scorin-3e537-le-zero-scores-confirmation-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="full-game-workflow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="4" failures="0" skipped="4" time="0" errors="0">
-<testcase name="Full Multi-Round Game Workflow @slow › complete multi-round multiplayer game with 3 players and score accumulation" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Full Multi-Round Game Workflow @slow › should preserve player names and turn order across multiple rounds" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Full Multi-Round Game Workflow @slow › should handle varying score distributions correctly" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Full Multi-Round Game Workflow @slow › should handle rapid scoring interactions without race conditions" classname="full-game-workflow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="game-complete-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="12" failures="0" skipped="12" time="0" errors="0">
-<testcase name="Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Single Player Flow › should display game elements correctly" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow)" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Navigation › should handle browser back button navigation" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Player Flow › should preserve player names across rounds" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Complete Game Flow › Reset Flow › should reset the game when choosing New Game" classname="game-complete-flow.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="scoring-ui.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="1" failures="1" skipped="0" time="20.835" errors="0">
+<testcase name="Scoring Workflow: Score Entry UI › should handle score entry correctly" classname="scoring-ui.spec.ts" time="20.835">
+<failure message="scoring-ui.spec.ts:47:3 should handle score entry correctly" type="FAILURE">
+<![CDATA[  [android-pixel5] › scoring-ui.spec.ts:47:3 › Scoring Workflow: Score Entry UI › should handle score entry correctly 
+
+    TimeoutError: locator.click: Timeout 8000ms exceeded.
+    Call log:
+      - waiting for locator('.add-btn')
+
+
+      14 |     })
+      15 |     const addBtn = page.locator('.add-btn')
+    > 16 |     await addBtn.click()
+         |                  ^
+      17 |     await expect(page.locator('[data-testid="player-name-input-1"]')).toBeVisible()
+      18 |
+      19 |     // Start game
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/scoring-ui.spec.ts:16:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/scoring-ui-Scoring-Workflo-39dee-andle-score-entry-correctly-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/scoring-ui-Scoring-Workflo-39dee-andle-score-entry-correctly-android-pixel5/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|apps/game/test-results/scoring-ui-Scoring-Workflo-39dee-andle-score-entry-correctly-android-pixel5/test-failed-1.png]]
+
+[[ATTACHMENT|apps/game/test-results/scoring-ui-Scoring-Workflo-39dee-andle-score-entry-correctly-android-pixel5/error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="language.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="12" failures="0" skipped="12" time="0" errors="0">
-<testcase name="Language Selection Page › should load language page successfully" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="translations-check.spec.ts" timestamp="2026-03-04T22:58:39.783Z" hostname="android-pixel5" tests="2" failures="0" skipped="0" time="30.976" errors="0">
+<testcase name="Translation Checks › should not show raw translation keys on home page" classname="translations-check.spec.ts" time="6.555">
 </testcase>
-<testcase name="Language Selection Page › should display language options" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should show checkmark on selected language" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should allow selecting English" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should allow selecting German" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should switch between languages" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should have working OK button" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should confirm language selection with OK button" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should display flags correctly" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Selection Page › should have proper page styling" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Switching Behavior › uses browser language by default and persists selection" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Language Switching Behavior › respects ?lang query and preserves it when selecting a different locale" classname="language.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="leaderboard.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="7" failures="0" skipped="7" time="0" errors="0">
-<testcase name="Leaderboard Page › should display leaderboard container" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display leaderboard entries" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display player names in entries" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display player scores in entries" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should display finish button (game is completed)" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should not display next round button when game is completed" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Leaderboard Page › should navigate to menu when clicking finish" classname="leaderboard.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="offline.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="3" failures="0" skipped="3" time="0" errors="0">
-<testcase name="Offline Functionality › should work offline after initial load" classname="offline.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Offline Functionality › should show offline indicator when offline" classname="offline.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Offline Functionality › should restore online state" classname="offline.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="players.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="8" failures="0" skipped="8" time="0" errors="0">
-<testcase name="Players Management Page › should display players page with all core elements" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Players Management Page › should display default player count with name inputs" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Players Management Page › should increase player count when clicking plus button" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Players Management Page › should decrease player count when clicking minus button" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Players Management Page › should disable decrease button at minimum player count" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Players Management Page › should allow entering custom player names" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Players Management Page › should navigate away from players when clicking start" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Players Management Page › should navigate back when clicking back button" classname="players.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="results.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="13" failures="0" skipped="13" time="0" errors="0">
-<testcase name="Results/Scoring Page › should display results page with all elements" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should display player entries with score controls" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should display increment and decrement buttons for each player" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should increase score when clicking increment button" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should decrease score when clicking decrement button" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should disable decrement button when score is 0" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should show leaderboard overlay after confirming scores" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should show decision modal after leaderboard auto-dismisses" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should navigate to round-start when clicking Next Round" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should navigate to leaderboard when clicking Finish Game" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results/Scoring Page › should be responsive on mobile" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results Page - Multi-Player › should display all players in multi-player game" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Results Page - Multi-Player › should allow independent score adjustment for each player" classname="results.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="round-start.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="10" failures="0" skipped="10" time="0" errors="0">
-<testcase name="Round Start Page › should display round-start page with all elements" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should spin both wheels automatically" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should display selected category and letter after spinning" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should automatically navigate to game after selection" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should display round indicator" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Start Page › should be responsive on mobile" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › should display &quot;Round 1&quot; on initial game start" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › should show &quot;Round 2&quot; after completing round 1 and clicking next round" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › page refresh should not increment round counter" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Round Counter Logic › navigating back to round-start during active game should not increment round" classname="round-start.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="scoring-flow.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="5" failures="0" skipped="5" time="0" errors="0">
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should show leaderboard overlay after confirming scores" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Scoring Workflow: Flow › Leaderboard Overlay › should auto-dismiss leaderboard and show decision modal" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to round-start when clicking Next Round" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should navigate to leaderboard when clicking Finish Game" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Scoring Workflow: Flow › Decision Modal › should remain open when pressing Escape" classname="scoring-flow.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="scoring-multi-round.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="3" failures="0" skipped="3" time="0" errors="0">
-<testcase name="Scoring Workflow: Multi-Round and Edges › Multi-Round Score Accumulation › should accumulate scores across multiple rounds" classname="scoring-multi-round.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle single player game" classname="scoring-multi-round.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Scoring Workflow: Multi-Round and Edges › Edge Cases › should handle zero scores confirmation" classname="scoring-multi-round.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="scoring-ui.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="1" failures="0" skipped="1" time="0" errors="0">
-<testcase name="Scoring Workflow: Score Entry UI › should handle score entry correctly" classname="scoring-ui.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="translations-check.spec.ts" timestamp="2026-03-04T19:42:19.243Z" hostname="ios-ipad-pro" tests="2" failures="0" skipped="2" time="0" errors="0">
-<testcase name="Translation Checks › should not show raw translation keys on home page" classname="translations-check.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Translation Checks › should show category in English and not as a key" classname="translations-check.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Translation Checks › should show category in English and not as a key" classname="translations-check.spec.ts" time="24.421">
+<system-out>
+<![CDATA[Detected category name: FEMALE NAME
+]]>
+</system-out>
 </testcase>
 </testsuite>
 </testsuites>
