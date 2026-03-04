@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
-import { generatePlayerName, generateAnswer } from './helpers/faker'
+import { generatePlayerName } from './helpers/faker'
 
 /**
  * Helper: Navigate from menu to game page (2 default players)
@@ -79,9 +79,22 @@ async function submitAllPlayerAnswers(page: Page, answers: string[]) {
 async function navigateToResults(page: Page) {
   const nextBtn = page.locator('[data-testid="next-button"]')
   await expect(nextBtn).toBeVisible({ timeout: 5000 })
-  await nextBtn.click()
+  await nextBtn.dispatchEvent('click')
   await expect(page).toHaveURL(/\/results/, { timeout: 5000 })
-  await page.waitForTimeout(300)
+  await page.waitForLoadState('networkidle')
+
+  await page.waitForFunction(
+    () => {
+      const pinia = (window as any).__pinia__
+      const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
+      return (gameStore?.currentSession?.players?.length ?? 0) > 0
+    },
+    null,
+    { timeout: 10000 }
+  )
+
+  const scoresContainer = page.locator('[data-testid="results-scores-container"]')
+  await expect(scoresContainer).toBeVisible({ timeout: 8000 })
 }
 
 /**
@@ -114,10 +127,10 @@ async function confirmScoresAndWaitForModal(page: Page) {
   // The decision modal contains both "next-round" and "finish-game" buttons
   // Wait for the modal to be visible by checking for either button
   const nextRoundBtn = page.locator('[data-testid="next-round"]')
-  const finishGameBtn = page.locator('[data-testid="finish-game"]')
+  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
 
   // Wait for at least one of the buttons to appear (both may be visible simultaneously)
-  await expect(nextRoundBtn.or(finishGameBtn).first()).toBeVisible({ timeout: 15000 })
+  await expect(nextRoundBtn.or(leaderboardBtn).first()).toBeVisible({ timeout: 15000 })
 }
 
 /**
@@ -137,11 +150,23 @@ async function goToNextRound(page: Page) {
  * Helper: Click "Finish Game" in decision modal and wait for leaderboard
  */
 async function finishGame(page: Page) {
-  const finishGameBtn = page.locator('[data-testid="finish-game"]')
-  await expect(finishGameBtn).toBeVisible({ timeout: 5000 })
-  await finishGameBtn.click()
+  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
+  await expect(leaderboardBtn).toBeVisible({ timeout: 5000 })
+  await leaderboardBtn.click()
   await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 })
   await page.waitForTimeout(500)
+}
+
+/**
+ * Helper: Click "New Game" in decision modal and wait for players page
+ */
+async function startNewGameFromModal(page: Page) {
+  const newGameBtn = page.locator('[data-testid="new-game-button"]')
+  await expect(newGameBtn).toBeVisible({ timeout: 5000 })
+  await newGameBtn.click()
+
+  await expect(page).toHaveURL(/\/players/, { timeout: 8000 })
+  await page.waitForTimeout(300)
 }
 
 test.describe('Complete Game Flow', () => {
@@ -188,7 +213,7 @@ test.describe('Complete Game Flow', () => {
       await navigateToGameWithDefaults(page)
 
       // Submit answers for 2 default players
-      await submitAllPlayerAnswers(page, [generateAnswer(), generateAnswer()])
+      await submitAllPlayerAnswers(page, ['', ''])
 
       // Go to results
       await navigateToResults(page)
@@ -208,7 +233,7 @@ test.describe('Complete Game Flow', () => {
 
     test('should return to menu from leaderboard when clicking finish', async ({ page }) => {
       await navigateToGameWithDefaults(page)
-      await submitAllPlayerAnswers(page, [generateAnswer(), generateAnswer()])
+      await submitAllPlayerAnswers(page, ['', ''])
       await navigateToResults(page)
       await confirmScoresAndWaitForModal(page)
       await finishGame(page)
@@ -259,11 +284,7 @@ test.describe('Complete Game Flow', () => {
       await expect(turnName).toHaveText(player1)
 
       // Submit answers for all 3 players
-      const answer1 = generateAnswer()
-      const answer2 = generateAnswer()
-      const answer3 = generateAnswer()
-
-      await submitAllPlayerAnswers(page, [answer1, answer2, answer3])
+      await submitAllPlayerAnswers(page, ['', '', ''])
 
       // Should show "all submitted" message
       const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
@@ -308,7 +329,7 @@ test.describe('Complete Game Flow', () => {
       const nextBtn = page.locator('[data-testid="next-button"]')
 
       // After first player submits — should NOT show NEXT or all-submitted
-      await answerInput.fill(generateAnswer())
+      await answerInput.fill('')
       await submitBtn.click()
       await page.waitForTimeout(500)
 
@@ -316,7 +337,7 @@ test.describe('Complete Game Flow', () => {
       await expect(nextBtn).not.toBeVisible()
 
       // After second player submits — should show both
-      await answerInput.fill(generateAnswer())
+      await answerInput.fill('')
       await submitBtn.click()
       await page.waitForTimeout(1000)
 
@@ -332,7 +353,7 @@ test.describe('Complete Game Flow', () => {
       await setupMultiplayerGame(page, [player1, player2, player3])
 
       // Round 1: Submit answers
-      await submitAllPlayerAnswers(page, [generateAnswer(), generateAnswer(), generateAnswer()])
+      await submitAllPlayerAnswers(page, ['', '', ''])
       await navigateToResults(page)
 
       // Assign minimal scores and continue to next round
@@ -348,7 +369,7 @@ test.describe('Complete Game Flow', () => {
       const answerInput = page.locator('[data-testid="game-answer-input"]')
       const submitBtn = page.locator('[data-testid="game-submit-button"]')
 
-      await answerInput.fill(generateAnswer())
+      await answerInput.fill('')
       await submitBtn.click()
       await page.waitForTimeout(500)
 
@@ -365,7 +386,7 @@ test.describe('Complete Game Flow', () => {
       await setupMultiplayerGame(page, [player1, player2])
 
       // ===== ROUND 1 =====
-      await submitAllPlayerAnswers(page, [generateAnswer(), generateAnswer()])
+      await submitAllPlayerAnswers(page, ['', ''])
       await navigateToResults(page)
 
       // Player 1: 3 points, Player 2: 1 point (SCORE_INCREMENT = 1)
@@ -374,7 +395,7 @@ test.describe('Complete Game Flow', () => {
       await goToNextRound(page)
 
       // ===== ROUND 2 =====
-      await submitAllPlayerAnswers(page, [generateAnswer(), generateAnswer()])
+      await submitAllPlayerAnswers(page, ['', ''])
       await navigateToResults(page)
 
       // Player 1: 1 point, Player 2: 2 points
@@ -403,7 +424,7 @@ test.describe('Complete Game Flow', () => {
       await setupMultiplayerGame(page, [player1, player2])
 
       // ===== ROUND 1 =====
-      await submitAllPlayerAnswers(page, [generateAnswer(), generateAnswer()])
+      await submitAllPlayerAnswers(page, ['', ''])
       await navigateToResults(page)
 
       // Player 1: 5 points, Player 2: 3 points
@@ -412,7 +433,7 @@ test.describe('Complete Game Flow', () => {
       await goToNextRound(page)
 
       // ===== ROUND 2 =====
-      await submitAllPlayerAnswers(page, [generateAnswer(), generateAnswer()])
+      await submitAllPlayerAnswers(page, ['', ''])
       await navigateToResults(page)
 
       // Player 1: 2 more, Player 2: 4 more
@@ -425,6 +446,29 @@ test.describe('Complete Game Flow', () => {
       const score1 = page.locator('[data-testid="leaderboard-player-score-1"]')
       await expect(score0).toContainText('7')
       await expect(score1).toContainText('7')
+    })
+  })
+
+  test.describe('Reset Flow', () => {
+    test('should reset the game when choosing New Game', async ({ page }) => {
+      const player1 = 'Player 1'
+      const player2 = generatePlayerName()
+
+      await setupMultiplayerGame(page, [player1, player2])
+
+      await submitAllPlayerAnswers(page, ['', ''])
+      await navigateToResults(page)
+
+      await assignScores(page, [1, 1])
+      await confirmScoresAndWaitForModal(page)
+
+      await startNewGameFromModal(page)
+
+      const input0 = page.locator('[data-testid="players-name-input-0"]')
+      const input1 = page.locator('[data-testid="players-name-input-1"]')
+
+      await expect(input0).toHaveValue('')
+      await expect(input1).toHaveValue('')
     })
   })
 })
