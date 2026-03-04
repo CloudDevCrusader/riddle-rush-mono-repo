@@ -7,7 +7,7 @@
       <div class="game-player-card__name">
         {{ player.name }}
       </div>
-      <div v-if="player.currentRoundAnswer" class="game-player-card__answer">
+      <div v-if="showAnswer && player.currentRoundAnswer" class="game-player-card__answer">
         {{ player.currentRoundAnswer }}
       </div>
     </div>
@@ -35,11 +35,14 @@ interface Props {
   label?: string
   /** Whether to show score indicator */
   showIndicator?: boolean
+  /** Whether to show the player's answer */
+  showAnswer?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   label: undefined,
   showIndicator: true,
+  showAnswer: true,
 })
 
 const indicatorVariant = computed(() => {

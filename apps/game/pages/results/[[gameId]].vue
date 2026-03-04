@@ -23,6 +23,7 @@
               :player="player"
               :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
               :show-indicator="false"
+              :show-answer="isAnswerInputEnabled"
             />
             <span class="scoring-page__base-score" data-testid="base-score">
               {{ player.totalScore }} {{ t('scoring.points', 'pts') }}
@@ -136,6 +137,7 @@ const { t } = usePageSetup()
 const { gameStore, players, leaderboard, currentRound } = useGameState()
 const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
+const { isAnswerInputEnabled } = useFeatureFlags()
 
 // Pending scores for each player (local state before confirming)
 const pendingScores = reactive(new Map<string, number>())

@@ -32,7 +32,7 @@
               />
               <div class="player-details">
                 <span class="player-name">{{ player.name }}</span>
-                <span class="player-answer">"{{ player.answer }}"</span>
+                <span v-if="isAnswerInputEnabled" class="player-answer">"{{ player.answer }}"</span>
               </div>
             </div>
             <span class="player-score">{{ player.score }}</span>
@@ -103,6 +103,7 @@ import { SCORE_INCREMENT, NAVIGATION_DELAY_MS } from '@riddle-rush/shared/consta
 const { baseUrl, toast, t, goBack } = usePageSetup()
 const { goToGame, goToLeaderboard: navigateToLeaderboard } = useNavigation()
 const { gameStore, players } = useGameState()
+const { isAnswerInputEnabled } = useFeatureFlags()
 const route = useRoute()
 
 // Handle game ID from route parameter
