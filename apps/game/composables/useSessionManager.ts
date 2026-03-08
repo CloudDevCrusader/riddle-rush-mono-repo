@@ -41,6 +41,7 @@ export function useSessionManager() {
       gameName,
       players,
       currentRound: 1,
+      currentPlayerIndex: 0,
       category: { ...category, letter },
       letter,
       startTime: Date.now(),
@@ -67,6 +68,7 @@ export function useSessionManager() {
       attempts: [],
       players: [],
       currentRound: 0,
+      currentPlayerIndex: 0,
       roundHistory: [],
       status: 'active',
     }

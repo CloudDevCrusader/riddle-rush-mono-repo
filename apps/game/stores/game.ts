@@ -59,7 +59,10 @@ export const useGameStore = defineStore('game', {
     },
     currentPlayerTurn: (state) => {
       const playerManager = usePlayerManager()
-      return playerManager.getCurrentPlayerTurn(state.currentSession?.players ?? [])
+      return playerManager.getCurrentPlayerTurn(
+        state.currentSession?.players ?? [],
+        state.currentSession?.currentPlayerIndex ?? 0
+      )
     },
     leaderboard(state): PlayerWithRank[] {
       const playerManager = usePlayerManager()
@@ -253,6 +256,10 @@ export const useGameStore = defineStore('game', {
       const player = this.currentSession.players[playerIndex]
       if (!player) return
       playerManager.submitPlayerAnswer(player, answer)
+      this.currentSession.currentPlayerIndex = playerManager.advancePlayerIndex(
+        this.currentSession.currentPlayerIndex,
+        this.currentSession.players.length
+      )
 
       await this.saveSessionToDB()
     },
@@ -306,6 +313,7 @@ export const useGameStore = defineStore('game', {
 
       const selectedLetter = letter || this.generateLetter()
       playerManager.resetPlayerRoundState(this.currentSession.players)
+      this.currentSession.currentPlayerIndex = 0
 
       this.currentSession.currentRound += 1
       this.currentSession.category = { ...selectedCategory, letter: selectedLetter }
@@ -320,6 +328,7 @@ export const useGameStore = defineStore('game', {
 
       const playerManager = usePlayerManager()
       playerManager.resetPlayerSubmissions(this.currentSession.players)
+      this.currentSession.currentPlayerIndex = 0
 
       await this.saveSessionToDB()
     },

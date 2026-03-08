@@ -24,6 +24,7 @@ export function createCorruptedSession(): Partial<GameSession> {
     letter: 'A',
     players: [],
     currentRound: 1,
+    currentPlayerIndex: 0,
     roundHistory: [],
   }
 }
@@ -57,6 +58,7 @@ export function createExpiredSession(): GameSession {
       },
     ],
     currentRound: 1,
+    currentPlayerIndex: 0,
     roundHistory: [],
   }
 }
@@ -88,6 +90,7 @@ export function createMismatchedSession(actualId: string, _expectedId: string): 
       },
     ],
     currentRound: 1,
+    currentPlayerIndex: 0,
     roundHistory: [],
   }
 }
@@ -126,6 +129,7 @@ export function createValidSession(sessionId: string = 'valid-session-test'): Ga
       },
     ],
     currentRound: 1,
+    currentPlayerIndex: 0,
     roundHistory: [],
   }
 }
@@ -166,6 +170,7 @@ export function createCompletedSession(): GameSession {
       },
     ],
     currentRound: 3,
+    currentPlayerIndex: 0,
     roundHistory: [
       {
         roundNumber: 1,

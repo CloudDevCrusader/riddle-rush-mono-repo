@@ -44,6 +44,7 @@ export interface GameSession {
   gameName?: string
   players: Player[]
   currentRound: number
+  currentPlayerIndex: number
   category: Category
   letter: string
   startTime: number

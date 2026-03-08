@@ -146,13 +146,27 @@ export function usePlayerManager() {
   }
 
   /**
-   * Get the first player who hasn't submitted their answer yet.
+   * Get the current player by index.
+   * Returns null when the index is out of bounds (all turns done).
    *
    * @param players - Array of players to check
-   * @returns The first non-submitted player, or null if all have submitted
+   * @param currentPlayerIndex - The index of the current player
+   * @returns The player at the given index, or null if index is out of bounds
    */
-  function getCurrentPlayerTurn(players: Player[]): Player | null {
-    return players.find((p) => !p.hasSubmitted) ?? null
+  function getCurrentPlayerTurn(players: Player[], currentPlayerIndex: number): Player | null {
+    return players[currentPlayerIndex] ?? null
+  }
+
+  /**
+   * Advance the player index by 1.
+   * Does NOT wrap — when index >= playerCount, the getter returns null (all turns done).
+   *
+   * @param currentIndex - The current player index
+   * @param _playerCount - The total number of players (reserved for future use)
+   * @returns The next player index
+   */
+  function advancePlayerIndex(currentIndex: number, _playerCount: number): number {
+    return currentIndex + 1
   }
 
   /**
@@ -177,6 +191,7 @@ export function usePlayerManager() {
     resetPlayerRoundState,
     buildLeaderboard,
     getCurrentPlayerTurn,
+    advancePlayerIndex,
     allPlayersSubmitted,
   }
 }
