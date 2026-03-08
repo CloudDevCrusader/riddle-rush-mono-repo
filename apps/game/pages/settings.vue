@@ -33,8 +33,7 @@
 </template>
 
 <script setup lang="ts">
-const { t } = usePageSetup()
-const router = useRouter()
+const { t, router } = usePageSetup()
 const settingsStore = useSettingsStore()
 
 // Local refs for slider values

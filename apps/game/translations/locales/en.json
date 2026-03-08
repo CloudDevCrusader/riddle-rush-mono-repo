@@ -208,12 +208,6 @@
     "connection_failed": "Connection failed",
     "not_connected": "Not connected"
   },
-  "common": {
-    "close": "Close",
-    "back": "Back",
-    "cancel": "Cancel",
-    "confirm": "Confirm"
-  },
   "settings": {
     "title": "Settings",
     "sound": "Sound",

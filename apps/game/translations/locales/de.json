@@ -208,12 +208,6 @@
     "connection_failed": "Verbindung fehlgeschlagen",
     "not_connected": "Nicht verbunden"
   },
-  "common": {
-    "close": "Schließen",
-    "back": "Zurück",
-    "cancel": "Abbrechen",
-    "confirm": "Bestätigen"
-  },
   "settings": {
     "title": "Einstellungen",
     "sound": "Sound",
