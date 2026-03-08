@@ -156,7 +156,7 @@
 
 <script setup lang="ts">
 const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
-const { goToResults } = useNavigation()
+const { goToResults, goToPlayers } = useNavigation()
 const {
   gameStore,
   currentCategory,
@@ -292,7 +292,6 @@ const handleResume = () => {
 const handleRestart = () => {
   // Modal already handles abandonGame and sets showPauseModal to false
   // Navigate to players page to start new game
-  const { goToPlayers } = useNavigation()
   goToPlayers()
 }
 
