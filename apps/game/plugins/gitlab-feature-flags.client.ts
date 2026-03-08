@@ -16,11 +16,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Only initialize if both URL and token are configured
   if (!gitlabConfig.url || !gitlabConfig.clientKey) {
-    if (import.meta.dev) {
-      logger.warn(
-        '[Feature Flags] GitLab Feature Flags not configured. Using fallback to local settings.'
-      )
-    }
+    logger.info(
+      '[Feature Flags] GitLab Feature Flags not configured — falling back to runtimeConfig/local settings only.'
+    )
     nuxtApp.provide('featureFlags', null)
     return
   }

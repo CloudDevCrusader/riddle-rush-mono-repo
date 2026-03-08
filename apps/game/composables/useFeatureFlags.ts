@@ -14,8 +14,12 @@ export function useFeatureFlags() {
    * Check if a feature flag is enabled
    */
   const isEnabled = (flagName: string, defaultValue = false): boolean => {
-    if (!gitlabClient) {
-      // Fallback to local setting if GitLab is not configured
+    // Priority: runtime config overrides → GitLab → local settings → default
+    try {
+      if (gitlabClient) {
+        return gitlabClient.isEnabled(flagName)
+      }
+
       const settingsStore = useSettingsStore()
       if (flagName === 'fortune-wheel') {
         return settingsStore.fortuneWheelEnabled
@@ -23,16 +27,12 @@ export function useFeatureFlags() {
       if (flagName === 'websocket') {
         return settingsStore.websocketEnabled
       }
-      return defaultValue
-    }
-
-    try {
-      return gitlabClient.isEnabled(flagName)
     } catch (error) {
       const logger = useLogger()
       logger.warn(`Failed to check feature flag ${flagName}:`, error)
-      return defaultValue
     }
+
+    return defaultValue
   }
 
   /**
@@ -77,7 +77,7 @@ export function useFeatureFlags() {
     }
 
     if (gitlabClient) {
-      const gitlabEnabled = isEnabled('answer-input', false)
+      const gitlabEnabled = isEnabled('answer-input', true)
       if (!gitlabEnabled) return false
     }
 
