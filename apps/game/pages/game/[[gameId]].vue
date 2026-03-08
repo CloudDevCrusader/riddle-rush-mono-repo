@@ -224,9 +224,9 @@ const submitAnswer = async () => {
     await gameStore.submitPlayerAnswer(player.id, answer)
 
     if (answer) {
-      toast.success(t('game.answer_submitted', `Answer submitted for ${player.name}`))
+      toast.success(t('game.answer_submitted', [player.name]))
     } else {
-      toast.info(t('game.answer_skipped', `${player.name} skipped their turn`))
+      toast.info(t('game.answer_skipped', [player.name]))
     }
 
     playerAnswer.value = ''

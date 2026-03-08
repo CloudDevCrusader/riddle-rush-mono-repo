@@ -216,6 +216,7 @@ const handleConfirmScores = async () => {
     dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS)
   } catch {
     // Score saving failed — allow the user to retry
+  } finally {
     isConfirming.value = false
   }
 }

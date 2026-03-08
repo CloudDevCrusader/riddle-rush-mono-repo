@@ -106,7 +106,7 @@ export function useGameActions() {
   ) => {
     try {
       await gameStore.setupPlayers(playerNames, gameName, customLetter)
-      toast.success(t('game.multiplayer_setup', `Game started with ${playerNames.length} players!`))
+      toast.success(t('game.multiplayer_setup', [playerNames.length]))
       return true
     } catch (error) {
       logger.error('Error setting up multiplayer game:', error)

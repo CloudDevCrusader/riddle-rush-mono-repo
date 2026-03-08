@@ -148,11 +148,14 @@ export const useGameStore = defineStore('game', {
     async completeGame() {
       if (!this.currentSession) return
 
+      const sessionManager = useSessionManager()
       const lifecycle = useGameLifecycle()
       const session = this.currentSession
 
       session.status = 'completed'
       session.endTime = Date.now()
+
+      this.history.push(sessionManager.cloneSessionForHistory(session))
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()
