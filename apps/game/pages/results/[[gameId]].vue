@@ -26,7 +26,7 @@
               :show-answer="isAnswerInputEnabled"
             />
             <span class="scoring-page__base-score" data-testid="base-score">
-              {{ player.totalScore }} {{ t('scoring.points', 'pts') }}
+              {{ pendingScores.get(player.id) ?? 0 }} {{ t('scoring.points', 'pts') }}
             </span>
           </div>
 

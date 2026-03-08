@@ -57,7 +57,7 @@
           class="category-label-image"
           loading="lazy"
         />
-        <div class="category-label">CATEGORY</div>
+        <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
         <div class="category-name">
           {{
             currentCategory
@@ -148,7 +148,7 @@
           class="next-icon"
           loading="lazy"
         />
-        <span class="next-text">NEXT</span>
+        <span class="next-text">{{ t('common.next') }}</span>
       </button>
     </div>
   </div>

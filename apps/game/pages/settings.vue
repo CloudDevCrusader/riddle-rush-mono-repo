@@ -8,7 +8,7 @@
             <span class="back-btn__arrow">&#8592;</span>
           </button>
         </template>
-        OPTIONS
+        {{ t('menu.options') }}
       </GameHeader>
 
       <!-- Settings Panel -->
@@ -16,13 +16,13 @@
         <!-- Sound slider -->
         <div class="slider-row">
           <GameSlider v-model="soundVolume" icon="🔊" muted-icon="🔇" @change="handleSoundChange" />
-          <span class="slider-label">Sound</span>
+          <span class="slider-label">{{ t('settings.sound') }}</span>
         </div>
 
         <!-- Music slider -->
         <div class="slider-row">
           <GameSlider v-model="musicVolume" icon="🎵" muted-icon="🔇" @change="handleMusicChange" />
-          <span class="slider-label">Music</span>
+          <span class="slider-label">{{ t('settings.music') }}</span>
         </div>
       </GamePanel>
 
@@ -33,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = usePageSetup()
 const router = useRouter()
 const settingsStore = useSettingsStore()
 
@@ -97,11 +98,11 @@ onUnmounted(() => {
 })
 
 useHead({
-  title: 'Settings',
+  title: t('settings.title'),
   meta: [
     {
       name: 'description',
-      content: 'Game settings',
+      content: t('settings.title'),
     },
   ],
 })
