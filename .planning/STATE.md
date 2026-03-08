@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 13 of 13 (Post-Round Flow)
 Plan: 1 of 1 — Complete
 Status: Phase complete
-Last activity: 2026-03-08 - Completed quick task 007: Fix page reload on game start causing wrong player selection
+Last activity: 2026-03-08 - Completed quick task 008: Fix i18n and score display bugs
 
 Progress: [████████████████████████████████████] 100% (39/39 total plans complete)
 
@@ -141,11 +141,12 @@ Recent decisions affecting current work:
 | 005 | Fix crypto.randomUUID TypeError on Safari           | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/) |
 | 006 | Hide answer display when feature flag disabled      | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/) |
 | 007 | Fix page reload on game start causing wrong player  | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)     |
+| 008 | Fix i18n and score display bugs                     | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                       |
 
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Completed quick-007-PLAN.md
+Stopped at: Completed quick-008 (i18n + score display bugs)
 Resume file: None
 
 ### Deployment: development
