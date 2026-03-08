@@ -144,6 +144,13 @@ const route = useRoute()
 // Pending scores for each player (local state before confirming)
 const pendingScores = reactive(new Map<string, number>())
 
+const syncPendingScores = (nextPlayers: Player[]) => {
+  pendingScores.clear()
+  for (const player of nextPlayers) {
+    pendingScores.set(player.id, player.currentRoundScore ?? 0)
+  }
+}
+
 const gameId = computed(() => route.params.gameId as string | undefined)
 
 const isConfirming = ref(false)
@@ -175,10 +182,9 @@ const incrementScore = (playerId: string) => {
 
 const decrementScore = (playerId: string) => {
   const current = pendingScores.get(playerId) ?? 0
-  if (current > 0) {
-    pendingScores.set(playerId, current - SCORE_INCREMENT)
-    void playClick()
-  }
+  // Allow negative adjustments to reflect point deductions
+  pendingScores.set(playerId, current - SCORE_INCREMENT)
+  void playClick()
 }
 
 const handleLeaderboardDismiss = () => {
@@ -234,11 +240,7 @@ const handleFinishGame = async () => {
 watch(
   players,
   (nextPlayers: Player[]) => {
-    for (const player of nextPlayers) {
-      if (!pendingScores.has(player.id)) {
-        pendingScores.set(player.id, 0)
-      }
-    }
+    syncPendingScores(nextPlayers)
   },
   { immediate: true }
 )

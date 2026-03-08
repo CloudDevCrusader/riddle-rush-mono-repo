@@ -8,6 +8,8 @@ export function useFeatureFlags() {
   const { $featureFlags } = useNuxtApp()
   const gitlabClient = $featureFlags as UnleashClient | null
 
+  const config = useRuntimeConfig()
+
   /**
    * Check if a feature flag is enabled
    */
@@ -69,13 +71,17 @@ export function useFeatureFlags() {
    * Check if answer input feature is enabled
    */
   const isAnswerInputEnabled = computed(() => {
+    // Runtime config boolean takes precedence
+    if (config.public.featureAnswerInput === false) {
+      return false
+    }
+
     if (gitlabClient) {
       const gitlabEnabled = isEnabled('answer-input', false)
       if (!gitlabEnabled) return false
     }
 
-    const config = useRuntimeConfig()
-    return config.public.featureAnswerInput !== false
+    return true
   })
 
   /**

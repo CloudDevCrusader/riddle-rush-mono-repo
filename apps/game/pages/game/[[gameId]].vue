@@ -177,6 +177,7 @@ const gameId = computed(() => route.params.gameId as string | undefined)
 const playerAnswer = ref('')
 const showPauseModal = ref(false)
 const showQuitModal = ref(false)
+const hasAutoSubmittedAnswers = ref(false)
 
 const formattedRound = computed(() => {
   const round = currentRound.value || 1
@@ -241,6 +242,24 @@ const submitAnswer = async () => {
   }
 }
 
+const autoSubmitEmptyAnswersIfDisabled = async () => {
+  if (hasAutoSubmittedAnswers.value) return
+  if (isAnswerInputEnabled.value) return
+  if (!players.value.length) return
+  if (allPlayersSubmitted.value) {
+    hasAutoSubmittedAnswers.value = true
+    return
+  }
+
+  for (const player of players.value) {
+    if (!player.hasSubmitted) {
+      await gameStore.submitPlayerAnswer(player.id, '')
+    }
+  }
+
+  hasAutoSubmittedAnswers.value = true
+}
+
 const handleNext = async () => {
   // In round-based flow, NEXT goes to results/scoring screen
   if (players.value.length > 0 && !allPlayersSubmitted.value) {
@@ -256,6 +275,14 @@ const handleNext = async () => {
     goToResults()
   }
 }
+
+watch(
+  [isAnswerInputEnabled, players, allPlayersSubmitted],
+  async () => {
+    await autoSubmitEmptyAnswersIfDisabled()
+  },
+  { immediate: true }
+)
 
 const handleResume = () => {
   // Modal already sets showPauseModal to false via v-model
