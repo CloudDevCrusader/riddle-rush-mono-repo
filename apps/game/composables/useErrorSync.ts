@@ -69,7 +69,9 @@ export const useErrorSync = () => {
         await syncErrorsToCloudWatch()
       }
     } catch (syncError) {
-      console.error('Failed to sync error log:', syncError)
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Failed to sync error log:', syncError)
+      }
       // If syncing fails, we'll rely on the offline queue
     }
   }
@@ -87,7 +89,7 @@ export const useErrorSync = () => {
 
       // Add cause property if it exists (ES2022+ feature)
       if ('cause' in error) {
-        ;(errorData as any).cause = error.cause
+        ;(errorData as Record<string, unknown>).cause = error.cause
       }
 
       return JSON.stringify(errorData)
@@ -97,7 +99,7 @@ export const useErrorSync = () => {
 
   // Export for testing
   if (process.env.NODE_ENV === 'test') {
-    ;(useErrorSync as any).formatError = formatError
+    ;(useErrorSync as unknown as Record<string, unknown>).formatError = formatError
   }
 
   /**
@@ -118,14 +120,18 @@ export const useErrorSync = () => {
       await store.put(errorLog)
       await tx.done
     } catch (error) {
-      console.error('Failed to store error locally:', error)
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Failed to store error locally:', error)
+      }
       // Fallback to localStorage if IndexedDB fails
       try {
         const existingErrors = JSON.parse(localStorage.getItem('errorLogsQueue') || '[]')
         existingErrors.push(errorLog)
         localStorage.setItem('errorLogsQueue', JSON.stringify(existingErrors))
       } catch (fallbackError) {
-        console.error('Failed to store error in localStorage:', fallbackError)
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Failed to store error in localStorage:', fallbackError)
+        }
       }
     }
   }
@@ -152,7 +158,9 @@ export const useErrorSync = () => {
           await clearTx.store.clear()
         }
       } catch (indexedDBError) {
-        console.warn('IndexedDB not available, trying localStorage:', indexedDBError)
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('IndexedDB not available, trying localStorage:', indexedDBError)
+        }
         // Fallback to localStorage
         const storedErrors = localStorage.getItem('errorLogsQueue')
         if (storedErrors) {
@@ -188,9 +196,13 @@ export const useErrorSync = () => {
         throw new Error(`CloudWatch sync failed: ${response.status} ${response.statusText}`)
       }
 
-      console.log(`Successfully synced ${errorsToSync.length} error logs to CloudWatch`)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Successfully synced ${errorsToSync.length} error logs to CloudWatch`)
+      }
     } catch (error) {
-      console.error('Failed to sync errors to CloudWatch:', error)
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Failed to sync errors to CloudWatch:', error)
+      }
       // Errors will remain in storage and be retried later
     }
   }

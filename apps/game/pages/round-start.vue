@@ -113,7 +113,7 @@ import type { Category } from '@riddle-rush/types/game'
 import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
 const { baseUrl, toast, t } = usePageSetup()
-const { goToGame } = useNavigation()
+const { goToGame, goToPlayers } = useNavigation()
 const { gameStore } = useGameState()
 const { isFortuneWheelEnabled } = useFeatureFlags()
 
@@ -244,7 +244,12 @@ const startGame = async () => {
     // Initial setup: no session OR pending players from players page
     if (!hasSession || hasPendingPlayers) {
       // This is initial setup - create new session with players
-      const playerNames = hasPendingPlayers ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
+      if (!hasPendingPlayers) {
+        // No players configured — redirect to player setup instead of creating a ghost session
+        await goToPlayers()
+        return
+      }
+      const playerNames = gameStore.pendingPlayerNames
 
       const session = await gameStore.setupPlayers(
         playerNames,

@@ -56,13 +56,12 @@ export function useFeatureFlags() {
    * Check if fortune wheel feature is enabled
    */
   const isFortuneWheelEnabled = computed(() => {
-    // First check GitLab Feature Flags
+    // GitLab is authoritative when available
     if (gitlabClient) {
-      const gitlabEnabled = isEnabled('fortune-wheel', false)
-      if (gitlabEnabled) return true
+      return isEnabled('fortune-wheel', false)
     }
 
-    // Fallback to local settings
+    // Only use local settings when no GitLab client is configured
     const settingsStore = useSettingsStore()
     return settingsStore.fortuneWheelEnabled
   })
@@ -88,13 +87,12 @@ export function useFeatureFlags() {
    * Check if WebSocket feature is enabled
    */
   const isWebSocketEnabled = computed(() => {
-    // First check GitLab Feature Flags
+    // GitLab is authoritative when available
     if (gitlabClient) {
-      const gitlabEnabled = isEnabled('websocket', false)
-      if (gitlabEnabled) return true
+      return isEnabled('websocket', false)
     }
 
-    // Fallback to local settings
+    // Only use local settings when no GitLab client is configured
     const settingsStore = useSettingsStore()
     return settingsStore.websocketEnabled
   })

@@ -39,6 +39,20 @@ const onSplashComplete = () => {
   showSplash.value = false
 }
 
+// Named handlers for proper cleanup
+const handleOnline = () => gameStore.setOnlineStatus(true)
+const handleOffline = () => gameStore.setOnlineStatus(false)
+const handleInstallPrompt = (e: Event) => {
+  e.preventDefault()
+  gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
+}
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+    e.preventDefault()
+    settingsStore.toggleDebugMode()
+  }
+}
+
 onMounted(async () => {
   // Load persisted state
   await gameStore.loadFromDB()
@@ -51,28 +65,28 @@ onMounted(async () => {
       try {
         await setLocale(savedLanguage as 'de' | 'en')
       } catch (error) {
-        console.error('Failed to set saved language:', error)
+        const logger = useLogger()
+        logger.error('Failed to set saved language:', error)
       }
     }
   }
 
   // Monitor online status
-  window.addEventListener('online', () => gameStore.setOnlineStatus(true))
-  window.addEventListener('offline', () => gameStore.setOnlineStatus(false))
+  window.addEventListener('online', handleOnline)
+  window.addEventListener('offline', handleOffline)
 
   // PWA install prompt
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault()
-    gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
-  })
+  window.addEventListener('beforeinstallprompt', handleInstallPrompt)
 
   // Debug mode shortcut: Ctrl+Shift+D
-  window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-      e.preventDefault()
-      settingsStore.toggleDebugMode()
-    }
-  })
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('online', handleOnline)
+  window.removeEventListener('offline', handleOffline)
+  window.removeEventListener('beforeinstallprompt', handleInstallPrompt)
+  window.removeEventListener('keydown', handleKeydown)
 })
 
 useHead({
