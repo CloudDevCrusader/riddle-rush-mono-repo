@@ -217,6 +217,15 @@ describe('Settings Store', () => {
       store.toggleFortuneWheel()
       expect(store.fortuneWheelEnabled).toBe(false)
     })
+
+    it('toggleAnswerInput flips state', () => {
+      const store = useSettingsStore()
+      expect(store.answerInputEnabled).toBe(false)
+      store.toggleAnswerInput()
+      expect(store.answerInputEnabled).toBe(true)
+      store.toggleAnswerInput()
+      expect(store.answerInputEnabled).toBe(false)
+    })
   })
 
   describe('Reset to Defaults', () => {

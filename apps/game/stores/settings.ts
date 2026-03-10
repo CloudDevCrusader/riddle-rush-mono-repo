@@ -14,6 +14,7 @@ export interface GameSettings {
   language: string
   fortuneWheelEnabled: boolean
   websocketEnabled: boolean
+  answerInputEnabled: boolean
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -29,6 +30,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   language: 'de',
   fortuneWheelEnabled: false,
   websocketEnabled: false,
+  answerInputEnabled: false,
 }
 
 const STORAGE_KEY = 'game-settings'
@@ -42,6 +44,7 @@ export const useSettingsStore = defineStore('settings', {
     shouldShowLeaderboard: (state) => state.leaderboardEnabled && state.showLeaderboardAfterRound,
     isFortuneWheelEnabled: (state) => state.fortuneWheelEnabled,
     isWebSocketEnabled: (state) => state.websocketEnabled,
+    isAnswerInputEnabled: (state) => state.answerInputEnabled,
   },
 
   actions: {
@@ -98,6 +101,11 @@ export const useSettingsStore = defineStore('settings', {
 
     toggleWebSocket() {
       this.websocketEnabled = !this.websocketEnabled
+      this.saveSettings()
+    },
+
+    toggleAnswerInput() {
+      this.answerInputEnabled = !this.answerInputEnabled
       this.saveSettings()
     },
 

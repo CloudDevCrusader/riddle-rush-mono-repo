@@ -1,4 +1,5 @@
 import { UnleashClient } from 'unleash-proxy-client'
+import { attachUnleashListener } from '~/composables/useFeatureFlags'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
@@ -37,6 +38,9 @@ export default defineNuxtPlugin((nuxtApp) => {
         logger.info('[Feature Flags] GitLab client ready')
       })
     }
+
+    // Wire up Vue reactivity bridge before start() so 'ready' is never missed
+    attachUnleashListener(unleashClient)
 
     // Start the client
     unleashClient.start()
