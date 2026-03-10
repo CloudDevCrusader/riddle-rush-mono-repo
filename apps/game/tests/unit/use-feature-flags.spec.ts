@@ -55,15 +55,16 @@ vi.mock('../../composables/useFeatureFlags', () => ({
 
     const isAnswerInputEnabled = {
       value: (function () {
+        // Mirror real priority: runtimeConfig → GitLab → local settings
+        if (mockFeatureAnswerInput === false) return false
         if (gitlabClient) {
           try {
-            const gitlabEnabled = mockIsEnabled('answer-input')
-            if (!gitlabEnabled) return false
+            return mockIsEnabled('answer-input')
           } catch {
-            // Fall through to config check
+            return true
           }
         }
-        return mockFeatureAnswerInput !== false
+        return mockSettingsStore.answerInputEnabled ?? false
       })(),
     }
 
@@ -79,6 +80,7 @@ vi.mock('../../composables/useFeatureFlags', () => ({
 // Mock useSettingsStore for tests that need it
 const mockSettingsStore = {
   fortuneWheelEnabled: true,
+  answerInputEnabled: false,
 }
 
 vi.mock('../../stores/settings', () => ({

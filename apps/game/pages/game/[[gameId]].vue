@@ -177,6 +177,13 @@ const playerAnswer = ref('')
 const showPauseModal = ref(false)
 const showQuitModal = ref(false)
 
+// Clear stale input when flag toggles off mid-session
+watch(isAnswerInputEnabled, (enabled: boolean) => {
+  if (!enabled) {
+    playerAnswer.value = ''
+  }
+})
+
 const formattedRound = computed(() => {
   const round = currentRound.value || 1
   return round.toString().padStart(2, '0')

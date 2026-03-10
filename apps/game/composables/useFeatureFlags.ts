@@ -11,19 +11,28 @@ import type { UnleashClient } from 'unleash-proxy-client'
 const flagVersion = ref(0)
 let attachedClient: UnleashClient | null = null
 
+// Stable reference so the same function can be passed to both on() and off()
+const bump = () => {
+  flagVersion.value++
+}
+
 /**
  * Attach Unleash event listeners that bridge into Vue reactivity.
  * Idempotent per client instance — safe to call multiple times.
+ * Cleans up listeners from previous client on replacement (HMR).
  * Should be called from the plugin before `client.start()` to avoid
  * missing the initial `ready` event.
  */
 export function attachUnleashListener(client: UnleashClient) {
   if (attachedClient === client) return
-  attachedClient = client
 
-  const bump = () => {
-    flagVersion.value++
+  // Clean up listeners from the previous client instance
+  if (attachedClient) {
+    attachedClient.off('update', bump)
+    attachedClient.off('ready', bump)
   }
+
+  attachedClient = client
   client.on('update', bump)
   client.on('ready', bump)
 }
@@ -125,7 +134,9 @@ export function useFeatureFlags() {
       return isEnabled('answer-input', true)
     }
 
-    // Only use local settings when no GitLab client is configured
+    // No GitLab configured: fall back to local settings store.
+    // NOTE: answerInputEnabled defaults to false in the store, so answer input
+    // is hidden in local dev unless toggled via console or debug panel.
     const settingsStore = useSettingsStore()
     return settingsStore.answerInputEnabled
   })
