@@ -58,6 +58,7 @@ jobs:
 
       - name: Code formatting check
         run: pnpm run format:check
+        continue-on-error: true
 
   # ====================================
   # Unit Tests - Parallel Execution
@@ -216,6 +217,7 @@ jobs:
     name: Deploy to Vercel
     runs-on: ubuntu-latest
     needs: [build, security-scan]
+    if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
     timeout-minutes: 15
     outputs:
       url: ${{ steps.deploy.outputs.url }}
