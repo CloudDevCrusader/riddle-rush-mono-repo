@@ -71,10 +71,10 @@ This is a **pnpm monorepo** orchestrated by **Turborepo** containing "Riddle Rus
 
 - PWA with offline support and installable on devices
 - IndexedDB persistence for game sessions and history
-- Multi-player support (up to 6 players)
+- Multi-player support (2-10 players, configurable)
 - i18n support (German default, English available)
 - Comprehensive testing (Vitest unit tests + Playwright E2E tests)
-- GitLab CI/CD with automated deployment
+- GitHub Actions CI/CD with automated deployment
 - AWS deployment support (S3 + CloudFront)
 - Android mobile builds via Capacitor
 - Game design system with themed components
@@ -82,30 +82,23 @@ This is a **pnpm monorepo** orchestrated by **Turborepo** containing "Riddle Rus
 ### Monorepo Structure
 
 ```
-riddle-rush-monorepo/
+riddle-rush-mono-repo/
 ├── apps/
-│   ├── game/              # 🎮 Main Nuxt 4 PWA (the core game)
-│   └── mobile/            # 📱 NativeScript Vue mobile app
+│   ├── game/              # 🎮 Main Nuxt 4 PWA (core gameplay)
+│   ├── mobile/            # 📱 NativeScript Vue mobile app
+│   └── tolgee/            # 🌐 Tolgee localization service
 ├── packages/
 │   ├── config/            # ⚙️  Shared Vite/build configurations
 │   ├── shared/            # 🔧 Shared utilities, constants, routes
 │   ├── types/             # 📝 Shared TypeScript type definitions
-│   └── riddle-cli/        # 🖥️  CLI tool (oclif-based)
+│   └── riddle-cli/        # 🖥️  CLI tool package
 ├── tools/                 # 🤖 AI agents, Python tools, integrations
-│   ├── python/            # Python MCP server
-│   ├── ai-agents/         # AI agent tooling
-│   ├── composio/          # Composio integration
-│   ├── fastmcp/           # FastMCP integration
-│   ├── langchain/         # LangChain tools
-│   └── voltagent/         # VoltAgent integration
+├── docs/                  # 📚 Documentation and guides
 ├── infrastructure/        # 🏗️  Terraform (AWS S3 + CloudFront)
-├── docs/                  # 📚 Documentation
-├── scripts/               # 🔨 CI/CD, deployment, agent scripts
-├── turbo.json             # Turborepo task configuration
-├── pnpm-workspace.yaml    # Workspace package definitions
-├── eslint.config.mjs      # ESLint 9 flat config (root)
-├── .syncpackrc.json       # Dependency version sync rules
-└── .changeset/            # Changeset version management
+├── scripts/               # 🔨 CI/CD, deployment, and utility scripts
+├── .planning/             # 📋 Phased planning state and summaries
+├── specs/                 # 📐 Specifications and design docs
+└── openspec/              # 🧩 OpenSpec artifacts
 ```
 
 ### Workspace Packages
@@ -123,7 +116,7 @@ riddle-rush-monorepo/
 
 - **Nuxt 4** (not Nuxt 3) — client-side SPA with `ssr: false`
 - **Turborepo** — task orchestration with smart caching
-- **pnpm 10.28.2** — package manager (enforced via `packageManager` field)
+- **pnpm 10.30.3** — package manager (enforced via `packageManager` field)
 - **Node ≥ 20** — runtime requirement
 - **ESLint 9** — flat config with `@nuxt/eslint-config/flat`
 - **Syncpack** — dependency version consistency across workspace
@@ -369,34 +362,40 @@ The app uses a **phased game design system** with dedicated component categories
 
 ### Composables
 
-| Composable            | Purpose                                               |
-| --------------------- | ----------------------------------------------------- |
-| `useIndexedDB()`      | All database operations                               |
-| `useStatistics()`     | Aggregate stats from game sessions                    |
-| `useAnalytics()`      | Google Analytics tracking                             |
-| `useAudio()`          | Sound effects management                              |
-| `useAnswerCheck()`    | Validate answers against category terms (5-min cache) |
-| `usePageSetup()`      | Common page utilities (router, t, baseUrl, toast)     |
-| `useLogger()`         | Centralized logging (dev-only, stripped in prod)      |
-| `useNavigation()`     | Page navigation helpers                               |
-| `useGameState()`      | Game state management                                 |
-| `useGameActions()`    | Game action dispatchers                               |
-| `useForm()`           | Form handling utilities                               |
-| `useModal()`          | Modal state management                                |
-| `useToast()`          | Toast notification system                             |
-| `useLoading()`        | Loading state management                              |
-| `useAssets()`         | Asset URL resolution                                  |
-| `useOptimizedImage()` | Image optimization helpers                            |
-| `useLodash()`         | Tree-shaken Lodash utilities                          |
-| `useFeatureFlags()`   | Unleash feature flag client                           |
-| `useWebSocket()`      | Socket.io WebSocket integration                       |
-| `usePerformance()`    | Performance monitoring                                |
-| `useLocalStorage()`   | LocalStorage wrapper                                  |
-| `usePageSwipe()`      | Swipe gesture handling                                |
-| `useMenu()`           | Menu state management                                 |
-| `useCategoryEmoji()`  | Category-to-emoji mapping                             |
-| `useErrorSync()`      | Error synchronization                                 |
-| `useStoryboard()`     | Storyboard development overlay                        |
+| Composable             | Purpose                                               |
+| ---------------------- | ----------------------------------------------------- |
+| `useIndexedDB()`       | All database operations                               |
+| `useStatistics()`      | Aggregate stats from game sessions                    |
+| `useAnalytics()`       | Google Analytics tracking                             |
+| `useAudio()`           | Sound effects management                              |
+| `useAnswerCheck()`     | Validate answers against category terms (5-min cache) |
+| `usePageSetup()`       | Common page utilities (router, t, baseUrl, toast)     |
+| `useLogger()`          | Centralized logging (dev-only, stripped in prod)      |
+| `useNavigation()`      | Page navigation helpers                               |
+| `useGameState()`       | Game state management                                 |
+| `useGameActions()`     | Game action dispatchers                               |
+| `useForm()`            | Form handling utilities                               |
+| `useModal()`           | Modal state management                                |
+| `useToast()`           | Toast notification system                             |
+| `useLoading()`         | Loading state management                              |
+| `useAssets()`          | Asset URL resolution                                  |
+| `useOptimizedImage()`  | Image optimization helpers                            |
+| `useLodash()`          | Tree-shaken Lodash utilities                          |
+| `useFeatureFlags()`    | Unleash feature flag client                           |
+| `useWebSocket()`       | Socket.io WebSocket integration                       |
+| `usePerformance()`     | Performance monitoring                                |
+| `useLocalStorage()`    | LocalStorage wrapper                                  |
+| `usePageSwipe()`       | Swipe gesture handling                                |
+| `useMenu()`            | Menu state management                                 |
+| `useCategoryEmoji()`   | Category-to-emoji mapping                             |
+| `useErrorSync()`       | Error synchronization                                 |
+| `useStoryboard()`      | Storyboard development overlay                        |
+| `useCategoryManager()` | Category selection and round category orchestration   |
+| `useGameLifecycle()`   | Start/end/reset game lifecycle orchestration          |
+| `usePersistence()`     | Session/history persistence orchestration             |
+| `usePlayerManager()`   | Player ordering, turn progression, and selection      |
+| `useScoringEngine()`   | Scoring rules and score calculation helpers           |
+| `useSessionManager()`  | Active session creation and transition handling       |
 
 ### Shared Packages
 
@@ -485,13 +484,13 @@ Root-only tasks (prefixed `//`): `workspace:check`, `workspace:fix`, `syncpack:c
 
 ---
 
-## GitLab CI/CD Pipeline
+## GitHub Actions CI/CD
 
 **Stages**: test → quality → build → deploy → verify
 
 - Custom Docker image (`ci-build`) for faster builds (~40-50% speed improvement)
 - **Monorepo change detection** — only runs jobs for affected apps/packages (40-60% CI time savings)
-- Pipeline runs on merge requests, manual triggers, version tags, and main/staging/development branches
+- Workflow runs on pull requests and pushes to key branches
 
 **Branch Strategy**:
 
@@ -539,7 +538,7 @@ BASE_URL=/
 GOOGLE_ANALYTICS_ID=    # Optional
 ```
 
-### CI/CD Variables (GitLab)
+### CI/CD Variables
 
 - `GOOGLE_ANALYTICS_ID`, `BASE_URL` — App config
 - `SONAR_TOKEN`, `SONAR_PROJECT_KEY`, `SONAR_ORGANIZATION` — SonarCloud
@@ -563,7 +562,7 @@ GOOGLE_ANALYTICS_ID=    # Optional
 - **No Server**: Static site only — no server API routes in production
 - **Client-only**: Code using `window`, `localStorage`, IndexedDB must be wrapped in `onMounted` or client-only components
 - **Base URL**: Always use `useRuntimeConfig().public.baseUrl` — never hardcode URLs
-- **Package Manager**: Must use `pnpm` (not npm/yarn). Version: `pnpm@10.28.2`
+- **Package Manager**: Must use `pnpm` (not npm/yarn). Version: `pnpm@10.30.3`
 - **Nuxt Version**: Nuxt 4 (not Nuxt 3)
 - **Node Version**: Node ≥ 20
 - **Workspace packages**: Import shared code via `@riddle-rush/types`, `@riddle-rush/shared`, `@riddle-rush/config`
