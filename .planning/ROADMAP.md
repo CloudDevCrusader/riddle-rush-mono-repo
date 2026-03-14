@@ -29,6 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 13: Post-Round Next Step Modal** - Prompt to play another round or view leaderboard
 - [ ] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs
 - [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
+- [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
 
 ## Phase Details
 
@@ -373,26 +374,55 @@ Plans:
 - **Wave 1 (Parallel):** Plans 01, 02, 03 -- CSS foundation, Figma prep, bug fixes (independent)
 - **Wave 2 (Sequential):** Plan 04 -- CSS gap fixes + animations (depends on Plan 01 for .page-shell class)
 
+### Phase 17: Repo Cleanup, Documentation & Optimization
+
+**Goal**: Clean up repository structure, improve documentation coverage, identify and implement refactoring and optimization opportunities. Large improvements tracked as todos for future phases.
+**Depends on**: Phase 15
+**Requirements**: CLEAN-01, CLEAN-02, CLEAN-03, CLEAN-04, CLEAN-05, CLEAN-06
+
+**Success Criteria** (what must be TRUE):
+
+1. Repository structure is clean — no orphaned files, outdated configs, or unused dependencies
+2. Documentation is up-to-date — CLAUDE.md, README.md, and docs/ reflect current codebase state
+3. Dead code and unused exports are identified and removed
+4. Dependency audit completed — outdated/vulnerable packages updated or replaced
+5. Build and bundle size optimized where quick wins exist
+6. Large refactoring opportunities documented as todos in STATE.md for future work
+
+**Plans:** 3 plans
+
+Plans:
+
+- [ ] 17-01-PLAN.md — Remove orphaned root files and AI tool config dirs from git tracking, update .gitignore
+- [ ] 17-02-PLAN.md — Install Knip for dead code detection, remove stale CI configs and orphaned dirs
+- [ ] 17-03-PLAN.md — Update CLAUDE.md and README.md to match current codebase, archive stale docs
+
+**Details**:
+
+- **Wave 1 (Parallel):** Plans 01, 02 — File cleanup and Knip setup (independent)
+- **Wave 2 (Sequential):** Plan 03 — Documentation updates (depends on 01, 02 for accurate post-cleanup state)
+
 ## Progress
 
 **Execution Order:**
 Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13
 
-| Phase                              | Plans Complete | Status   | Completed  |
-| ---------------------------------- | -------------- | -------- | ---------- |
-| 1. Design Tokens                   | 3/3            | Complete | 2026-01-31 |
-| 2. Design Utilities                | 2/2            | Complete | 2026-01-31 |
-| 3. Core Layout Components          | 2/2            | Complete | 2026-02-01 |
-| 4. Interactive Components          | 2/2            | Complete | 2026-02-01 |
-| 5. Structural Components           | 3/3            | Complete | 2026-02-01 |
-| 6. Splash & Navigation             | 2/2            | Complete | 2026-02-01 |
-| 7. Player Setup                    | 2/2            | Complete | 2026-02-01 |
-| 8. Core Gameplay                   | 2/2            | Complete | 2026-02-01 |
-| 9. Game Results                    | 2/2            | Complete | 2026-02-01 |
-| 10. Settings Pages                 | 2/2            | Complete | 2026-02-01 |
-| 11. Modal Dialogs                  | 3/3            | Complete | 2026-02-16 |
-| 11.1. Scoring & Player Config      | 2/2            | Complete | 2026-02-16 |
-| 12. App Optimization & Refactoring | 10/10          | Complete | 2026-02-16 |
-| 13. Post-Round Next Step Modal     | 1/1            | Complete | 2026-02-27 |
-| 14. Maintenance & Quality of Life  | 0/0            | Pending  | —          |
-| 15. Visual Polish & Bug Fixes      | 0/4            | Planned  | —          |
+| Phase                                 | Plans Complete | Status   | Completed  |
+| ------------------------------------- | -------------- | -------- | ---------- |
+| 1. Design Tokens                      | 3/3            | Complete | 2026-01-31 |
+| 2. Design Utilities                   | 2/2            | Complete | 2026-01-31 |
+| 3. Core Layout Components             | 2/2            | Complete | 2026-02-01 |
+| 4. Interactive Components             | 2/2            | Complete | 2026-02-01 |
+| 5. Structural Components              | 3/3            | Complete | 2026-02-01 |
+| 6. Splash & Navigation                | 2/2            | Complete | 2026-02-01 |
+| 7. Player Setup                       | 2/2            | Complete | 2026-02-01 |
+| 8. Core Gameplay                      | 2/2            | Complete | 2026-02-01 |
+| 9. Game Results                       | 2/2            | Complete | 2026-02-01 |
+| 10. Settings Pages                    | 2/2            | Complete | 2026-02-01 |
+| 11. Modal Dialogs                     | 3/3            | Complete | 2026-02-16 |
+| 11.1. Scoring & Player Config         | 2/2            | Complete | 2026-02-16 |
+| 12. App Optimization & Refactoring    | 10/10          | Complete | 2026-02-16 |
+| 13. Post-Round Next Step Modal        | 1/1            | Complete | 2026-02-27 |
+| 14. Maintenance & Quality of Life     | 0/0            | Pending  | —          |
+| 15. Visual Polish & Bug Fixes         | 0/4            | Planned  | —          |
+| 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
