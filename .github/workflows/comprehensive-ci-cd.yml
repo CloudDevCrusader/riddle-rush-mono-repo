@@ -174,13 +174,14 @@ jobs:
     name: Deploy to Vercel
     runs-on: ubuntu-latest
     needs: [build, security-scan]
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     timeout-minutes: 15
     continue-on-error: true
     outputs:
       url: ${{ steps.deploy.outputs.url }}
 
     environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || 'preview' }}
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
@@ -208,10 +209,6 @@ jobs:
             echo "stage=production" >> $GITHUB_OUTPUT
             echo "vercel_env=production" >> $GITHUB_OUTPUT
             echo "vercel_prod=--prod" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/development" ]]; then
-            echo "stage=development" >> $GITHUB_OUTPUT
-            echo "vercel_env=preview" >> $GITHUB_OUTPUT
-            echo "vercel_prod=" >> $GITHUB_OUTPUT
           else
             echo "stage=preview" >> $GITHUB_OUTPUT
             echo "vercel_env=preview" >> $GITHUB_OUTPUT
