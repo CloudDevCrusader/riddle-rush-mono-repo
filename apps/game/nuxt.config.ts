@@ -239,11 +239,9 @@ export default defineNuxtConfig({
     },
     plugins: [
       // Filter out SSR plugins at build time (must be first)
-      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
-      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       ...(process.env.NODE_ENV === 'production'
         ? getBuildPlugins({ isDev: false })
         : getDevPlugins({ isDev: true })),
