@@ -9,20 +9,20 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 
 ## Current Position
 
-Phase: 13 of 13 (Post-Round Flow)
-Plan: 1 of 1 — Complete
+Phase: 17 of 17 (Repo Cleanup & Docs Optimization)
+Plan: 3 of 3 — Complete
 Status: Phase complete
-Last activity: 2026-03-08 - Completed quick task 008: Fix i18n and score display bugs
+Last activity: 2026-03-14 - Completed 17-03-PLAN.md
 
-Progress: [████████████████████████████████████] 100% (39/39 total plans complete)
+Progress: [█████████████████████████████████░░░] 91% (41/45 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 39
-- Average duration: 3.3 min
-- Total execution time: ~2 hours
+- Total plans completed: 41
+- Average duration: 3.4 min
+- Total execution time: ~2h 11min
 
 **By Phase:**
 
@@ -58,6 +58,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
 - **[New]** The post-round modal will have three choices: "Play Again", "New Game", and "View Leaderboard".
+- **[New]** Documentation canonicalized to current repo state: CLAUDE.md + README.md now mirror real scripts, structure, and CI setup (17-03).
+- **[New]** Root `docs/nuxt.config.ts` and `docs/pages/[...slug].vue` removed as stale docs app remnants after repo cleanup (17-03).
+- **[New]** pnpm reference standardized to `pnpm@10.30.3` in project guidance docs to match `packageManager` (17-03).
 - Syncpack v14 migration: use `lint`/`fix` commands, remove deprecated config properties.
 - Use `@ts-expect-error` for cross-package vite/rollup Plugin type conflicts in monorepo.
 - EC2 is more cost-effective than ECS Fargate for Tolgee hosting due to 24/7 uptime and persistent storage needs (avoids costly EFS/NAT Gateway).
@@ -145,8 +148,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-08
-Stopped at: Completed quick-008 (i18n + score display bugs)
+Last session: 2026-03-14T22:43:05Z
+Stopped at: Completed 17-03-PLAN.md
 Resume file: None
 
 ### Deployment: development
