@@ -30,6 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs
 - [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 - [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
+- [ ] **Phase 18: Enable fortune-wheel as default review/refactor if implementation works and looks good** - Enable fortune wheel by default and validate/refactor implementation quality
 
 ## Phase Details
 
@@ -402,10 +403,26 @@ Plans:
 - **Wave 1 (Parallel):** Plans 01, 02 — File cleanup and Knip setup (independent)
 - **Wave 2 (Sequential):** Plan 03 — Documentation updates (depends on 01, 02 for accurate post-cleanup state)
 
+### Phase 18: Enable fortune-wheel as default review/refactor if implementation works and looks good
+
+**Goal:** Make fortune-wheel the default round-start experience across local fallback and GitLab-flagged environments, then verify behavior/UX quality and document the finalized precedence contract.
+**Depends on:** Phase 17
+**Plans:** 2 plans
+
+Plans:
+
+- [ ] 18-01-PLAN.md — Enable fortune-wheel default at fallback + precedence layer and align unit tests
+- [ ] 18-02-PLAN.md — Harden round-start E2E + docs/state contract and perform human UX verification
+
+**Details:**
+
+- **Wave 1:** Plan 01 — implement default semantics in settings/feature-flag resolution and lock with unit tests
+- **Wave 2:** Plan 02 — validate default behavior end-to-end, update docs/state, and confirm visual quality checkpoint
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18
 
 | Phase                                 | Plans Complete | Status   | Completed  |
 | ------------------------------------- | -------------- | -------- | ---------- |
@@ -426,3 +443,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 14. Maintenance & Quality of Life     | 0/0            | Pending  | —          |
 | 15. Visual Polish & Bug Fixes         | 0/4            | Planned  | —          |
 | 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
+| 18. Fortune Wheel Default & Review    | 0/2            | Planned  | —          |
