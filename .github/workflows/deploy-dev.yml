@@ -24,8 +24,8 @@ concurrency:
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '10.30.3'
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID || vars.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || vars.VERCEL_PROJECT_ID }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   quality-checks:
@@ -64,7 +64,6 @@ jobs:
   deploy:
     name: Deploy to Vercel (Development)
     needs: quality-checks
-    if: ${{ secrets.VERCEL_TOKEN != '' && (secrets.VERCEL_ORG_ID != '' || vars.VERCEL_ORG_ID != '') && (secrets.VERCEL_PROJECT_ID != '' || vars.VERCEL_PROJECT_ID != '') }}
     runs-on: ubuntu-latest
     environment:
       name: development
