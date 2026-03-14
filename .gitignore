@@ -192,3 +192,28 @@ MCP-INTEGRATION-*.md
 **/.mcp.json
 **/opencode.json
 .aider*
+
+# Orphaned/stale root files
+config.json
+junit.xml
+package-lock.json
+debug-500-main-menu.png
+terraform.tfstate
+uv.lock
+pyproject-old.toml
+seed.spec.ts
+nuxt.config.terraform.ts
+trigger.config.ts
+mcp-config.yaml
+flags.json
+stagewise.json
+.eslintignore
+.gitignore.monorepo
+
+# AI tool dot-files
+.cursorrules
+.vibemodes
+.roomodes
+.goosehints
+.aiignore
+.brew-packages

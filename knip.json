@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["main.py"],
+      "ignoreDependencies": [
+        "@anthropic-ai/claude-agent-sdk",
+        "@composio/claude-agent-sdk",
+        "@composio/core",
+        "@e2b/code-interpreter",
+        "@langchain/openai",
+        "@voltagent/core",
+        "@voltagent/mcp-server",
+        "ai",
+        "langchain",
+        "@trigger.dev/sdk",
+        "@composio/openai",
+        "@pnpm/filter-workspace-packages"
+      ]
+    },
+    "apps/game": {
+      "entry": ["app.vue", "nuxt.config.ts"],
+      "project": ["**/*.{ts,vue}"],
+      "ignore": ["**/*.spec.ts", "**/*.test.ts", "tests/**"]
+    },
+    "packages/*": {}
+  }
+}
