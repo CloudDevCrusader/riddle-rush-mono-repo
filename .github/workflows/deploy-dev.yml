@@ -61,6 +61,7 @@ jobs:
   deploy:
     name: Deploy to AWS (Development)
     needs: quality-checks
+    if: always()
     runs-on: ubuntu-latest
     environment:
       name: development

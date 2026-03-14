@@ -47,8 +47,8 @@ jobs:
     needs: quality-checks
     name: Deploy to ${{ github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
 
-    # Only deploy on push to main or PRs
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    # Only deploy on push to main or PRs; run even if checks fail
+    if: always() && (github.event_name == 'push' || github.event_name == 'pull_request')
 
     continue-on-error: true
     outputs:
