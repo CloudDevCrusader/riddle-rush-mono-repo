@@ -195,7 +195,6 @@ terraform.tfstate
 uv.lock
 pyproject-old.toml
 seed.spec.ts
-nuxt.config.terraform.ts
 trigger.config.ts
 mcp-config.yaml
 flags.json
