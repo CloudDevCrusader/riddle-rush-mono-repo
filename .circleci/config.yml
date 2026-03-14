@@ -14,8 +14,8 @@ jobs:
       - run:
           name: Setup pnpm
           command: |
-            corepack enable
-            corepack prepare pnpm@10.28.0 --activate
+            sudo corepack enable
+            corepack prepare pnpm@10.30.3 --activate
             pnpm --version
       - restore_cache:
           keys:
@@ -218,8 +218,8 @@ jobs:
       - run:
           name: Setup pnpm
           command: |
-            corepack enable
-            corepack prepare pnpm@10.28.0 --activate
+            sudo corepack enable
+            corepack prepare pnpm@10.30.3 --activate
             pnpm --version
       - restore_cache:
           keys:
@@ -250,8 +250,8 @@ jobs:
       - run:
           name: Setup pnpm
           command: |
-            corepack enable
-            corepack prepare pnpm@10.28.0 --activate
+            sudo corepack enable
+            corepack prepare pnpm@10.30.3 --activate
             pnpm --version
       - restore_cache:
           keys:
@@ -296,8 +296,8 @@ jobs:
       - run:
           name: Setup pnpm
           command: |
-            corepack enable
-            corepack prepare pnpm@10.28.0 --activate
+            sudo corepack enable
+            corepack prepare pnpm@10.30.3 --activate
             pnpm --version
       - restore_cache:
           keys:
@@ -328,8 +328,8 @@ jobs:
       - run:
           name: Setup pnpm
           command: |
-            corepack enable
-            corepack prepare pnpm@10.28.0 --activate
+            sudo corepack enable
+            corepack prepare pnpm@10.30.3 --activate
             pnpm --version
       - restore_cache:
           keys:
@@ -361,8 +361,8 @@ jobs:
       - run:
           name: Setup pnpm
           command: |
-            corepack enable
-            corepack prepare pnpm@10.28.0 --activate
+            sudo corepack enable
+            corepack prepare pnpm@10.30.3 --activate
             pnpm --version
       - restore_cache:
           keys:
@@ -398,8 +398,8 @@ jobs:
       - run:
           name: Setup pnpm
           command: |
-            corepack enable
-            corepack prepare pnpm@10.28.0 --activate
+            sudo corepack enable
+            corepack prepare pnpm@10.30.3 --activate
             pnpm --version
       - restore_cache:
           keys:
