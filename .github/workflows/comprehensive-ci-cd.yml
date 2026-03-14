@@ -281,31 +281,47 @@ jobs:
     name: Deploy Documentation
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && hashFiles('apps/docs/package.json') != ''
+    if: github.ref == 'refs/heads/main'
     timeout-minutes: 10
     continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check docs project
+        id: docs
+        run: |
+          if [[ -f "apps/docs/package.json" ]]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "### ℹ️ Docs deployment skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "apps/docs/package.json not found in this checkout." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Setup pnpm
+        if: steps.docs.outputs.exists == 'true'
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
+        if: steps.docs.outputs.exists == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - name: Install dependencies
+        if: steps.docs.outputs.exists == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Build documentation
+        if: steps.docs.outputs.exists == 'true'
         run: |
           cd apps/docs
           pnpm run generate
 
       - name: Deploy to GitHub Pages
+        if: steps.docs.outputs.exists == 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
