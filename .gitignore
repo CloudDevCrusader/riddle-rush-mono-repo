@@ -149,15 +149,10 @@ claude/agents/
 tools/github/actions-runner/
 
 # Editor/tool-specific files
-.cursor/
-.superdesign/
 .windsurfrules
 trunk
 
-# OpenCode tool artifacts (DB and macOS duplicates)
-.opencode/*.db
-.opencode/*.db-shm
-.opencode/*.db-wal
+# macOS duplicates
 **/* 2.md
 **/* 2.js
 **/* 2.json
@@ -185,8 +180,6 @@ MCP-INTEGRATION-*.md
 **/.vercel/
 
 # IDE and tool configs (per-app)
-**/.cursor/
-**/.codex/
 **/.gemini/
 **/.zed/
 **/.mcp.json
@@ -217,3 +210,31 @@ stagewise.json
 .goosehints
 .aiignore
 .brew-packages
+
+# AI tool configs (keep .agent/ and .agents/ which are project-used)
+.ai/
+.augment/
+.cline/
+.codebuddy/
+.codex/
+.continue/
+.crush/
+.cursor/
+.grok/
+.junie/
+.kilocode/
+.kiro/
+.mcpjam/
+.old.gemeni/
+.opencode/
+.openhands/
+.pi/
+.qoder/
+.qwen/
+.superdesign/
+.tdad/
+.trae/
+.vibe/
+.windsurf/
+.zencoder/
+.aider.tags.cache.v4/
