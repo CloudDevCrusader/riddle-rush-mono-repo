@@ -252,9 +252,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-
       - name: Set environment stage
         id: stage
         run: |
@@ -268,10 +265,27 @@ jobs:
             echo "vercel_prod=" >> $GITHUB_OUTPUT
           fi
 
+      - name: Check Vercel credentials
+        id: vercel_credentials
+        run: |
+          if [[ -n "${{ secrets.VERCEL_TOKEN }}" && -n "${{ secrets.VERCEL_ORG_ID }}" && -n "${{ secrets.VERCEL_PROJECT_ID }}" ]]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "### ⚠️ Vercel deployment skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "Missing one or more required secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Install Vercel CLI
+        if: steps.vercel_credentials.outputs.ready == 'true'
+        run: npm install -g vercel@latest
+
       - name: Pull Vercel Environment
+        if: steps.vercel_credentials.outputs.ready == 'true'
         run: vercel pull --yes --environment=${{ steps.stage.outputs.vercel_env }} --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build for Vercel
+        if: steps.vercel_credentials.outputs.ready == 'true'
         env:
           STAGE: ${{ steps.stage.outputs.stage }}
           NODE_ENV: ${{ steps.stage.outputs.stage == 'production' && 'production' || 'development' }}
@@ -279,6 +293,7 @@ jobs:
 
       - name: Deploy to Vercel
         id: deploy
+        if: steps.vercel_credentials.outputs.ready == 'true'
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
@@ -289,7 +304,7 @@ jobs:
           echo "Deployed to: $DEPLOYMENT_URL"
 
       - name: Comment PR with deployment URL
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.vercel_credentials.outputs.ready == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -319,8 +334,9 @@ jobs:
     name: Deploy Documentation
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && hashFiles('apps/docs/package.json') != ''
     timeout-minutes: 10
+    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
