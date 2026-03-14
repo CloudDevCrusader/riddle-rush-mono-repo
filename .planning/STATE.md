@@ -9,12 +9,13 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 
 ## Current Position
 
-Phase: 17 of 17 (Repo Cleanup & Docs Optimization)
-Plan: 3 of 3 — Complete
-Status: Phase complete
-Last activity: 2026-03-14 - Completed 17-01-PLAN.md
+Phase: 18 of 18 (Enable fortune-wheel as default review/refactor if implementation works and looks good)
+Plan: 1 of 2 — In progress
+Status: In progress
+Last activity: 2026-03-14 - Completed 18-01-PLAN.md
+Next Phase: 18-02 — Harden round-start E2E + docs/state contract and human UX verification
 
-Progress: [██████████████████████████████████░░] 93% (42/45 total plans complete)
+Progress: [███████████████████████████████████░] 96% (43/45 total plans complete)
 
 ## Performance Metrics
 
@@ -52,6 +53,10 @@ _Updated after each plan completion_
 
 ## Accumulated Context
 
+### Roadmap Evolution
+
+- Phase 18 added: enable fortune-wheel as default review/refactor if implementation works and looks good
+
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
@@ -59,6 +64,8 @@ Recent decisions affecting current work:
 
 - **[New]** Repo cleanup commands for stale/orphaned files must use guarded `git rm --cached`/`git mv` checks so previously-untracked targets do not fail execution (17-01).
 - **[New]** `.gitignore` AI config section now explicitly preserves `.agent/` and `.agents/` with negated rules while ignoring non-essential AI tool directories (17-01).
+- **[New]** Fortune wheel local fallback default is now enabled (`settings.fortuneWheelEnabled = true`) when no GitLab client is configured (18-01).
+- **[New]** Feature-flag precedence remains GitLab-first, with explicit fortune-wheel fallback default (`isEnabled('fortune-wheel', true)`) to document intended behavior (18-01).
 - **[New]** The post-round modal will have three choices: "Play Again", "New Game", and "View Leaderboard".
 - **[New]** Documentation canonicalized to current repo state: CLAUDE.md + README.md now mirror real scripts, structure, and CI setup (17-03).
 - **[New]** Root `docs/nuxt.config.ts` and `docs/pages/[...slug].vue` removed as stale docs app remnants after repo cleanup (17-03).
@@ -150,8 +157,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-14T22:51:28Z
-Stopped at: Completed 17-01-PLAN.md
+Last session: 2026-03-14T23:48:06Z
+Stopped at: Completed 18-01-PLAN.md
 Resume file: None
 
 ### Deployment: development
