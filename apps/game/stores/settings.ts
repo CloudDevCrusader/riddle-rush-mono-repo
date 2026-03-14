@@ -28,7 +28,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   musicVolume: 75,
   offlineMode: false,
   language: 'de',
-  fortuneWheelEnabled: false,
+  fortuneWheelEnabled: true,
   websocketEnabled: false,
   answerInputEnabled: false,
 }

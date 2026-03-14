@@ -110,7 +110,7 @@ export function useFeatureFlags() {
 
     // GitLab is authoritative when available
     if (gitlabClient) {
-      return isEnabled('fortune-wheel', false)
+      return isEnabled('fortune-wheel', true)
     }
 
     // Only use local settings when no GitLab client is configured
