@@ -1,16 +1,9 @@
 {
   "mcpServers": {
-    "playwright-test": {
-      "command": "npx",
-      "args": ["playwright", "run-test-mcp-server"]
-    },
-      "args": ["-y", "@agiflowai/one-mcp", "mcp-serve"]
->>>>>>> main
-    }
-=======
-=======
-      "args": ["-y", "@agiflowai/one-mcp", "mcp-serve"]
->>>>>>> main
+    "dev-to": {
+      "source": "npx -y @dev-dot-to/mcp-server",
+      "tools": ["*"],
+      "description": "Dev.to article publishing, content management, and community features"
     }
   }
 }
