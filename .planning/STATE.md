@@ -12,9 +12,9 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 17 of 17 (Repo Cleanup & Docs Optimization)
 Plan: 3 of 3 — Complete
 Status: Phase complete
-Last activity: 2026-03-14 - Completed 17-03-PLAN.md
+Last activity: 2026-03-14 - Completed 17-01-PLAN.md
 
-Progress: [█████████████████████████████████░░░] 91% (41/45 total plans complete)
+Progress: [██████████████████████████████████░░] 93% (42/45 total plans complete)
 
 ## Performance Metrics
 
@@ -57,6 +57,8 @@ _Updated after each plan completion_
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- **[New]** Repo cleanup commands for stale/orphaned files must use guarded `git rm --cached`/`git mv` checks so previously-untracked targets do not fail execution (17-01).
+- **[New]** `.gitignore` AI config section now explicitly preserves `.agent/` and `.agents/` with negated rules while ignoring non-essential AI tool directories (17-01).
 - **[New]** The post-round modal will have three choices: "Play Again", "New Game", and "View Leaderboard".
 - **[New]** Documentation canonicalized to current repo state: CLAUDE.md + README.md now mirror real scripts, structure, and CI setup (17-03).
 - **[New]** Root `docs/nuxt.config.ts` and `docs/pages/[...slug].vue` removed as stale docs app remnants after repo cleanup (17-03).
@@ -148,8 +150,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-14T22:43:05Z
-Stopped at: Completed 17-03-PLAN.md
+Last session: 2026-03-14T22:51:28Z
+Stopped at: Completed 17-01-PLAN.md
 Resume file: None
 
 ### Deployment: development
