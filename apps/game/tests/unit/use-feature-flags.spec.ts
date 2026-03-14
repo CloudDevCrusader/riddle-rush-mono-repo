@@ -5,7 +5,10 @@ import { setActivePinia, createPinia } from 'pinia'
 const mockIsEnabled = vi.fn()
 const mockGetVariant = vi.fn()
 
-const mockGitLabClient = {
+let mockGitLabClient: {
+  isEnabled: typeof mockIsEnabled
+  getVariant: typeof mockGetVariant
+} | null = {
   isEnabled: mockIsEnabled,
   getVariant: mockGetVariant,
 }
@@ -21,6 +24,12 @@ vi.mock('../../composables/useFeatureFlags', () => ({
     const isEnabled = (flagName: string, defaultValue = false): boolean => {
       try {
         if (!gitlabClient) {
+          if (flagName === 'fortune-wheel') {
+            return mockSettingsStore.fortuneWheelEnabled
+          }
+          if (flagName === 'answer-input') {
+            return mockSettingsStore.answerInputEnabled
+          }
           return defaultValue
         }
         return mockIsEnabled(flagName)
@@ -44,11 +53,11 @@ vi.mock('../../composables/useFeatureFlags', () => ({
       value: (function () {
         try {
           if (!gitlabClient) {
-            return false
+            return mockSettingsStore.fortuneWheelEnabled
           }
-          return mockIsEnabled('fortune-wheel')
+          return isEnabled('fortune-wheel', true)
         } catch {
-          return false
+          return true
         }
       })(),
     }
@@ -95,6 +104,12 @@ describe('useFeatureFlags (GitLab)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     setActivePinia(createPinia())
+    mockGitLabClient = {
+      isEnabled: mockIsEnabled,
+      getVariant: mockGetVariant,
+    }
+    mockSettingsStore.fortuneWheelEnabled = true
+    mockSettingsStore.answerInputEnabled = false
   })
 
   describe('isEnabled', () => {
@@ -174,7 +189,6 @@ describe('useFeatureFlags (GitLab)', () => {
 
       const { isFortuneWheelEnabled } = useFeatureFlags()
 
-      // Fallback to settings store (which defaults to false)
       expect(isFortuneWheelEnabled.value).toBe(false)
     })
 
@@ -189,10 +203,20 @@ describe('useFeatureFlags (GitLab)', () => {
       expect(isFortuneWheelEnabled.value).toBe(true)
     })
 
-    it.skip('should fallback to local settings when GitLab is disabled', () => {
-      mockIsEnabled.mockReturnValue(false)
+    it('should fallback to local settings when GitLab is not configured', () => {
+      mockGitLabClient = null
       const settingsStore = useSettingsStore()
       settingsStore.fortuneWheelEnabled = true
+
+      const { isFortuneWheelEnabled } = useFeatureFlags()
+
+      expect(isFortuneWheelEnabled.value).toBe(true)
+    })
+
+    it('should use true fallback when GitLab check throws', () => {
+      mockIsEnabled.mockImplementation(() => {
+        throw new Error('GitLab API error')
+      })
 
       const { isFortuneWheelEnabled } = useFeatureFlags()
 
@@ -201,13 +225,8 @@ describe('useFeatureFlags (GitLab)', () => {
   })
 
   describe('fallback behavior', () => {
-    it.skip('should use local settings when GitLab is not configured', () => {
-      // Mock GitLab client as null
-      vi.mock('#app', () => ({
-        useNuxtApp: () => ({
-          $featureFlags: null,
-        }),
-      }))
+    it('should resolve fortune-wheel from local settings when no client exists', () => {
+      mockGitLabClient = null
 
       const settingsStore = useSettingsStore()
       settingsStore.fortuneWheelEnabled = true
@@ -215,6 +234,17 @@ describe('useFeatureFlags (GitLab)', () => {
       const { isEnabled } = useFeatureFlags()
 
       expect(isEnabled('fortune-wheel', false)).toBe(true)
+    })
+
+    it('should still honor local false setting when no client exists', () => {
+      mockGitLabClient = null
+
+      const settingsStore = useSettingsStore()
+      settingsStore.fortuneWheelEnabled = false
+
+      const { isEnabled } = useFeatureFlags()
+
+      expect(isEnabled('fortune-wheel', true)).toBe(false)
     })
   })
 

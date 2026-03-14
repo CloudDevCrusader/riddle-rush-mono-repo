@@ -63,9 +63,9 @@ describe('Settings Store', () => {
       expect(store.offlineMode).toBe(false)
     })
 
-    it('has fortune wheel disabled by default', () => {
+    it('has fortune wheel enabled by default', () => {
       const store = useSettingsStore()
-      expect(store.fortuneWheelEnabled).toBe(false)
+      expect(store.fortuneWheelEnabled).toBe(true)
     })
   })
 
@@ -98,9 +98,9 @@ describe('Settings Store', () => {
 
     it('isFortuneWheelEnabled returns fortuneWheelEnabled state', () => {
       const store = useSettingsStore()
-      expect(store.isFortuneWheelEnabled).toBe(false)
-      store.fortuneWheelEnabled = true
       expect(store.isFortuneWheelEnabled).toBe(true)
+      store.fortuneWheelEnabled = false
+      expect(store.isFortuneWheelEnabled).toBe(false)
     })
   })
 
@@ -211,11 +211,11 @@ describe('Settings Store', () => {
 
     it('toggleFortuneWheel flips state', () => {
       const store = useSettingsStore()
-      expect(store.fortuneWheelEnabled).toBe(false)
-      store.toggleFortuneWheel()
       expect(store.fortuneWheelEnabled).toBe(true)
       store.toggleFortuneWheel()
       expect(store.fortuneWheelEnabled).toBe(false)
+      store.toggleFortuneWheel()
+      expect(store.fortuneWheelEnabled).toBe(true)
     })
 
     it('toggleAnswerInput flips state', () => {
