@@ -214,6 +214,8 @@ stagewise.json
 .brew-packages
 
 # AI tool configs (keep .agent/ and .agents/ which are project-used)
+!.agent/
+!.agents/
 .ai/
 .augment/
 .cline/
