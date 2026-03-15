@@ -66,6 +66,7 @@ Recent decisions affecting current work:
 - **[New]** `.gitignore` AI config section now explicitly preserves `.agent/` and `.agents/` with negated rules while ignoring non-essential AI tool directories (17-01).
 - **[New]** Fortune wheel local fallback default is now enabled (`settings.fortuneWheelEnabled = true`) when no GitLab client is configured (18-01).
 - **[New]** Feature-flag precedence remains GitLab-first, with explicit fortune-wheel fallback default (`isEnabled('fortune-wheel', true)`) to document intended behavior (18-01).
+- **[New]** Round-start contract finalized: fortune wheel is the default user path; immediate random start is fallback-only when the wheel flag resolves disabled (GitLab authoritative when configured, local settings fallback otherwise) (18-02).
 - **[New]** The post-round modal will have three choices: "Play Again", "New Game", and "View Leaderboard".
 - **[New]** Documentation canonicalized to current repo state: CLAUDE.md + README.md now mirror real scripts, structure, and CI setup (17-03).
 - **[New]** Root `docs/nuxt.config.ts` and `docs/pages/[...slug].vue` removed as stale docs app remnants after repo cleanup (17-03).

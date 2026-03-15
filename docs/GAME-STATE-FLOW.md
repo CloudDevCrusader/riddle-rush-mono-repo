@@ -14,7 +14,7 @@ stateDiagram-v2
 
     Players --> RoundStart: START GAME (>= 2 players)
 
-    RoundStart --> Game: Category + letter selected (wheel spin or random)
+    RoundStart --> Game: Category + letter selected (wheel by default; random only when wheel flag is disabled)
 
     Game --> Scoring: All players submitted (NEXT button)
 
@@ -40,6 +40,14 @@ stateDiagram-v2
 | Show/hide modals                 | Local refs in page components                       | No        |
 | Feature flags                    | `useFeatureFlags()` composable + `runtimeConfig`    | No        |
 | User settings                    | `stores/settings.ts`                                | IndexedDB |
+
+## Round-Start Contract (Phase 18)
+
+- `RoundStart` uses the **fortune-wheel flow by default**.
+- The wheel path is controlled by `useFeatureFlags().isFortuneWheelEnabled`.
+- Feature-flag precedence is unchanged: **GitLab/Unleash is authoritative when configured**.
+- Local `settings.fortuneWheelEnabled` is used only as fallback when no GitLab client is available.
+- The random immediate-start branch is a fallback path and only runs when the wheel flag resolves to disabled.
 
 ## Score Flow
 
