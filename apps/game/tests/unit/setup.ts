@@ -1,15 +1,7 @@
-// Test setup file to ensure Vue reactivity system is properly initialized
-// @ts-expect-error Nuxt overrides vue module but createApp exists at runtime
-import { createApp } from 'vue'
+// Basic test setup for Vue/Nuxt applications
 import { beforeEach, afterEach, vi } from 'vitest'
-import * as VueExports from 'vue'
-import * as VueRouterExports from 'vue-router'
-import * as PiniaExports from 'pinia'
 
-// Make Vue, VueRouter, and Pinia exports globally available
-Object.assign(globalThis, VueExports, VueRouterExports, PiniaExports)
-
-// Mock common Nuxt composables
+// Nuxt composable mocks
 const mockUseRuntimeConfig = vi.fn(() => ({
   public: {
     baseUrl: '/',
@@ -33,10 +25,12 @@ const mockUseRouter = vi.fn(() => ({
 }))
 
 const mockUseNuxtApp = vi.fn(() => ({
-  $i18n: {},
+  $i18n: {
+    t: (key: string) => key,
+  },
 }))
 
-// Make Nuxt composables globally available
+// Global mock setup
 Object.assign(globalThis, {
   useRuntimeConfig: mockUseRuntimeConfig,
   useRoute: mockUseRoute,
@@ -45,14 +39,12 @@ Object.assign(globalThis, {
 })
 
 beforeEach(() => {
-  // Create a minimal Vue app to ensure proper reactivity context
-  createApp({})
-
-  // Reset mocks
   vi.clearAllMocks()
 })
 
-// Clean up after each test
 afterEach(() => {
-  // Any cleanup can go here
+  vi.clearAllTimers()
+  vi.clearAllMocks()
 })
+
+export default { createTestContext: () => ({}) }
