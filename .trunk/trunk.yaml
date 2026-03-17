@@ -7,7 +7,7 @@ cli:
 plugins:
   sources:
     - id: trunk
-      ref: v1.7.5
+      ref: v1.7.6
       uri: https://github.com/trunk-io/plugins
 # Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
 runtimes:
@@ -71,17 +71,18 @@ lint:
     - checkov
 
   enabled:
+    - ruff@0.15.6
     - taplo@0.10.0
-    - ruff@0.15.4
+    - ruff@0.15.6
     - dotenv-linter@4.0.0
     - actionlint@1.7.11
-    - eslint@10.0.2
+    - eslint@10.0.3
     - git-diff-check
     - hadolint@2.14.0
     - markdownlint@0.48.0
     - oxipng@10.1.0
     - prettier@3.8.1
-    - renovate@43.55.0
+    - renovate@43.76.5
     - shellcheck@0.11.0
     - shfmt@3.6.0
     - stylelint@17.4.0
@@ -90,7 +91,7 @@ lint:
     - yamllint@1.38.0
     # Python linting tools
     - ruff@0.6.4
-    - black@26.1.0
+    - black@26.3.1
     - isort@8.0.1
     - mypy@1.19.1
     - bandit@1.9.4
@@ -140,3 +141,11 @@ actions:
     - trunk-fmt-pre-commit
   enabled:
     - trunk-upgrade-available
+tools:
+  enabled:
+    - trunk-toolbox@0.5.4
+    - pnpm@8.6.1
+    - ts-node@10.9.2
+    - terraform@1.1.4
+  runtimes:
+    - python

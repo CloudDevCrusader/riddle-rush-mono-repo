@@ -434,6 +434,14 @@ body {
   -webkit-touch-callout: none;
 }
 
+.page-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
 // ============================================
 // GRID & FLEXBOX UTILITIES
 // ============================================
@@ -649,6 +657,17 @@ body {
   from {
     opacity: 0;
     transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -939,4 +958,14 @@ body {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-semibold);
   line-height: 1.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
