@@ -52,12 +52,12 @@
 
 ### State Management Migration (Pinia to Zustand)
 
-- [ ] **MIGRATE-01**: Game store state and actions work via Zustand — raw store at stores/gameStore.ts with all getters and actions
-- [ ] **MIGRATE-02**: Settings store works via Zustand with persist-only middleware — no manual load/save methods
+- [x] **MIGRATE-01**: Game store state and actions work via Zustand — raw store at stores/gameStore.ts with all getters and actions
+- [x] **MIGRATE-02**: Settings store works via Zustand with persist-only middleware — no manual load/save methods
 - [ ] **MIGRATE-03**: All consumer files (composables, components, plugins, pages) import from focused Zustand hooks
 - [ ] **MIGRATE-04**: Pinia fully removed — no @pinia/nuxt module, no pinia package, no old store files
 - [ ] **MIGRATE-05**: All unit tests rewritten for Zustand — use store.setState() for isolation, no Pinia setup
-- [ ] **MIGRATE-06**: localStorage migration from old Pinia format to Zustand persist envelope format
+- [x] **MIGRATE-06**: localStorage migration from old Pinia format to Zustand persist envelope format
 - [ ] **MIGRATE-07**: Feature flags and E2E test helpers work with Zustand stores
 
 ---
@@ -110,12 +110,12 @@
 | MODAL-01    | Phase 11 | Pending  |
 | MODAL-02    | Phase 11 | Pending  |
 | MODAL-03    | Phase 13 | Pending  |
-| MIGRATE-01  | Phase 19 | Pending  |
-| MIGRATE-02  | Phase 19 | Pending  |
+| MIGRATE-01  | Phase 19 | Complete |
+| MIGRATE-02  | Phase 19 | Complete |
 | MIGRATE-03  | Phase 19 | Pending  |
 | MIGRATE-04  | Phase 19 | Pending  |
 | MIGRATE-05  | Phase 19 | Pending  |
-| MIGRATE-06  | Phase 19 | Pending  |
+| MIGRATE-06  | Phase 19 | Complete |
 | MIGRATE-07  | Phase 19 | Pending  |
 
 ---
