@@ -31,6 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 - [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
 - [ ] **Phase 18: Enable fortune-wheel as default review/refactor if implementation works and looks good** - Enable fortune wheel by default and validate/refactor implementation quality
+- [ ] **Phase 19: Move from Pinia to Zustand** - Complete Pinia-to-Zustand state management migration
 
 ## Phase Details
 
@@ -419,10 +420,29 @@ Plans:
 - **Wave 1:** Plan 01 — implement default semantics in settings/feature-flag resolution and lock with unit tests
 - **Wave 2:** Plan 02 — validate default behavior end-to-end, update docs/state, and confirm visual quality checkpoint
 
+### Phase 19: Move from Pinia to Zustand
+
+**Goal:** Complete the Pinia-to-Zustand state management migration: move Zustand stores from nested directory to stores/ root, split monolithic Vue wrapper into focused reactive hooks, swap all consumer imports, remove Pinia entirely, and rewrite tests for Zustand isolation.
+**Depends on:** Phase 18
+**Requirements**: MIGRATE-01, MIGRATE-02, MIGRATE-03, MIGRATE-04, MIGRATE-05, MIGRATE-06, MIGRATE-07
+**Plans:** 3 plans
+
+Plans:
+
+- [ ] 19-01-PLAN.md — Move raw Zustand stores to stores/ root, create focused Vue hooks with reactivity bridge, create localStorage migration utility
+- [ ] 19-02-PLAN.md — Big-bang consumer cutover to focused hooks, remove Pinia entirely, delete old stores
+- [ ] 19-03-PLAN.md — Rewrite unit tests for Zustand, create migration test, clean up E2E helpers
+
+**Details:**
+
+- **Wave 1:** Plan 01 — Create new store files, hooks, and migration utility (foundation)
+- **Wave 2:** Plan 02 — Swap all consumers, remove Pinia package and config, delete old files
+- **Wave 3:** Plan 03 — Rewrite tests for Zustand isolation, add migration test, update E2E helpers
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18 -> 19
 
 | Phase                                 | Plans Complete | Status   | Completed  |
 | ------------------------------------- | -------------- | -------- | ---------- |
@@ -444,3 +464,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 15. Visual Polish & Bug Fixes         | 0/4            | Planned  | —          |
 | 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
 | 18. Fortune Wheel Default & Review    | 0/2            | Planned  | —          |
+| 19. Pinia to Zustand Migration        | 0/3            | Planned  | —          |

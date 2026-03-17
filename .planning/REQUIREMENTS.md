@@ -50,6 +50,16 @@
 - [ ] **POLISH-04**: Refactor duplicated CSS/code — extract shared patterns into design system mixins or composables, eliminate copy-paste styling across pages
 - [ ] **POLISH-05**: Fix known bugs — multiplayer round flow bug (skipping last player), game store complexity, intermittent nuxi typecheck error, any visual regressions
 
+### State Management Migration (Pinia to Zustand)
+
+- [ ] **MIGRATE-01**: Game store state and actions work via Zustand — raw store at stores/gameStore.ts with all getters and actions
+- [ ] **MIGRATE-02**: Settings store works via Zustand with persist-only middleware — no manual load/save methods
+- [ ] **MIGRATE-03**: All consumer files (composables, components, plugins, pages) import from focused Zustand hooks
+- [ ] **MIGRATE-04**: Pinia fully removed — no @pinia/nuxt module, no pinia package, no old store files
+- [ ] **MIGRATE-05**: All unit tests rewritten for Zustand — use store.setState() for isolation, no Pinia setup
+- [ ] **MIGRATE-06**: localStorage migration from old Pinia format to Zustand persist envelope format
+- [ ] **MIGRATE-07**: Feature flags and E2E test helpers work with Zustand stores
+
 ---
 
 ## v2 Requirements (Deferred)
@@ -100,7 +110,14 @@
 | MODAL-01    | Phase 11 | Pending  |
 | MODAL-02    | Phase 11 | Pending  |
 | MODAL-03    | Phase 13 | Pending  |
+| MIGRATE-01  | Phase 19 | Pending  |
+| MIGRATE-02  | Phase 19 | Pending  |
+| MIGRATE-03  | Phase 19 | Pending  |
+| MIGRATE-04  | Phase 19 | Pending  |
+| MIGRATE-05  | Phase 19 | Pending  |
+| MIGRATE-06  | Phase 19 | Pending  |
+| MIGRATE-07  | Phase 19 | Pending  |
 
 ---
 
-_Last updated: 2026-01-31_
+_Last updated: 2026-03-17_
