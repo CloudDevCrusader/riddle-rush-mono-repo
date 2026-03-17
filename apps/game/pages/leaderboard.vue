@@ -57,7 +57,7 @@
 <script setup lang="ts">
 const { t, toast } = usePageSetup()
 const { goHome, goToRoundStart } = useNavigation()
-const { gameStore, leaderboard, isGameCompleted } = useGameState()
+const { gameSession, leaderboard, isGameCompleted } = useGameState()
 
 const isFinishing = ref(false)
 
@@ -66,7 +66,7 @@ const handleFinish = async () => {
 
   isFinishing.value = true
   try {
-    await gameStore.endGame()
+    await gameSession.endGame()
     await goHome()
   } catch (error) {
     const logger = useLogger()

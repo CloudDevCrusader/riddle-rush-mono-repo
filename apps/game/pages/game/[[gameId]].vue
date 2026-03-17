@@ -157,7 +157,7 @@
 const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
 const { goToResults, goToPlayers } = useNavigation()
 const {
-  gameStore,
+  gameSession,
   currentCategory,
   currentLetter,
   currentRound,
@@ -165,6 +165,7 @@ const {
   currentPlayerTurn,
   allPlayersSubmitted,
 } = useGameState()
+const playerActions = usePlayerActions()
 const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
 const gameActions = useGameActions()
@@ -194,7 +195,7 @@ const goHome = () => {
 }
 
 const handleBack = () => {
-  if (gameStore.hasActiveSession) {
+  if (gameSession.hasActiveSession.value) {
     showQuitModal.value = true
   } else {
     goHome()
@@ -226,7 +227,7 @@ const submitAnswer = async () => {
   try {
     // Allow empty answers (player can skip their turn)
     const answer = playerAnswer.value.trim() || ''
-    await gameStore.submitPlayerAnswer(player.id, answer)
+    await playerActions.submitPlayerAnswer(player.id, answer)
 
     if (answer) {
       toast.success(t('game.answer_submitted', [player.name]))
@@ -255,7 +256,7 @@ const handleNext = async () => {
   }
 
   // Navigate to results with game ID
-  const currentGameId = gameStore.currentSession?.id ?? gameId.value
+  const currentGameId = gameSession.currentSession.value?.id ?? gameId.value
   if (currentGameId) {
     goToResults(currentGameId)
   } else {
@@ -284,14 +285,14 @@ onMounted(async () => {
   // Load game session based on route parameter
   if (gameId.value) {
     try {
-      await gameStore.loadSessionById(gameId.value)
+      await gameSession.loadSessionById(gameId.value)
     } catch (error) {
       logger.error('Failed to load game session:', error)
       toast.error(t('game.error_loading', 'Failed to load game session'))
       // Fallback to starting a new game
       await gameActions.resumeOrStartGame()
     }
-  } else if (!gameStore.hasActiveSession) {
+  } else if (!gameSession.hasActiveSession.value) {
     // No game ID in route and no active session - start new game
     await gameActions.resumeOrStartGame()
   }

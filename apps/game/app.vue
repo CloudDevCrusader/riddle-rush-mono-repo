@@ -18,8 +18,9 @@
 import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 
 const route = useRoute()
-const gameStore = useGameStore()
-const settingsStore = useSettingsStore()
+const gameSession = useGameSession()
+const settings = useSettings()
+const installPrompt = useInstallPrompt()
 const { setLocale } = useI18n()
 
 // Force route update by using full route path
@@ -40,27 +41,26 @@ const onSplashComplete = () => {
 }
 
 // Named handlers for proper cleanup
-const handleOnline = () => gameStore.setOnlineStatus(true)
-const handleOffline = () => gameStore.setOnlineStatus(false)
+const handleOnline = () => gameSession.setOnlineStatus(true)
+const handleOffline = () => gameSession.setOnlineStatus(false)
 const handleInstallPrompt = (e: Event) => {
   e.preventDefault()
-  gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
+  installPrompt.setInstallPrompt(e as BeforeInstallPromptEvent)
 }
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.ctrlKey && e.shiftKey && e.key === 'D') {
     e.preventDefault()
-    settingsStore.toggleDebugMode()
+    settings.toggleDebugMode()
   }
 }
 
 onMounted(async () => {
-  // Load persisted state
-  await gameStore.loadFromDB()
-  settingsStore.loadSettings()
+  // Load persisted state from IndexedDB
+  await gameSession.loadFromDB()
 
   // Set the saved language preference
-  if (settingsStore.hasStoredSettings()) {
-    const savedLanguage = settingsStore.getLanguage()
+  if (settings.hasStoredSettings()) {
+    const savedLanguage = settings.getLanguage()
     if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
       try {
         await setLocale(savedLanguage as 'de' | 'en')

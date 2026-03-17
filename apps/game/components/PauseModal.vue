@@ -40,7 +40,7 @@
 <script setup lang="ts">
 const { t } = usePageSetup()
 const { goHome } = useNavigation()
-const { gameStore } = useGameState()
+const { gameSession } = useGameState()
 
 interface Props {
   modelValue: boolean
@@ -66,16 +66,16 @@ const handleResume = () => {
 }
 
 const handleRestart = async () => {
-  if (gameStore.hasActiveSession) {
-    await gameStore.abandonGame()
+  if (gameSession.hasActiveSession.value) {
+    await gameSession.abandonGame()
   }
   emit('restart')
   isVisible.value = false
 }
 
 const handleHome = async () => {
-  if (gameStore.hasActiveSession) {
-    await gameStore.abandonGame()
+  if (gameSession.hasActiveSession.value) {
+    await gameSession.abandonGame()
   }
   emit('home')
   isVisible.value = false

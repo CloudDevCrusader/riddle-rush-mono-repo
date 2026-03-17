@@ -34,11 +34,11 @@
 
 <script setup lang="ts">
 const { t, router } = usePageSetup()
-const settingsStore = useSettingsStore()
+const settings = useSettings()
 
 // Local refs for slider values
-const soundVolume = ref(settingsStore.soundVolume)
-const musicVolume = ref(settingsStore.musicVolume)
+const soundVolume = ref(settings.soundVolume.value)
+const musicVolume = ref(settings.musicVolume.value)
 
 // Preview sound throttling
 let lastSoundPreviewTime = 0
@@ -46,8 +46,8 @@ const SOUND_PREVIEW_THROTTLE = 500 // ms
 
 // Handle sound volume change
 const handleSoundChange = (value: number) => {
-  settingsStore.updateSetting('soundVolume', value)
-  settingsStore.updateSetting('soundEnabled', value > 0)
+  settings.updateSetting('soundVolume', value)
+  settings.updateSetting('soundEnabled', value > 0)
 
   // Play preview sound (throttled)
   const now = Date.now()
@@ -60,8 +60,8 @@ const handleSoundChange = (value: number) => {
 
 // Handle music volume change
 const handleMusicChange = (value: number) => {
-  settingsStore.updateSetting('musicVolume', value)
-  settingsStore.updateSetting('musicEnabled', value > 0)
+  settings.updateSetting('musicVolume', value)
+  settings.updateSetting('musicEnabled', value > 0)
 }
 
 // Navigate back
@@ -81,11 +81,10 @@ const handleEscape = (event: KeyboardEvent) => {
   }
 }
 
-// Load settings on mount
+// Sync local refs with settings on mount
 onMounted(() => {
-  settingsStore.loadSettings()
-  soundVolume.value = settingsStore.soundVolume
-  musicVolume.value = settingsStore.musicVolume
+  soundVolume.value = settings.soundVolume.value
+  musicVolume.value = settings.musicVolume.value
 
   // Add escape key listener
   window.addEventListener('keydown', handleEscape)

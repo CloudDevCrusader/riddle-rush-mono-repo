@@ -104,5 +104,6 @@ export function useSettings() {
     resetToDefaults: settingsStore.getState().resetToDefaults,
     setLanguage: settingsStore.getState().setLanguage,
     getLanguage: settingsStore.getState().getLanguage,
+    hasStoredSettings: settingsStore.getState().hasStoredSettings,
   }
 }

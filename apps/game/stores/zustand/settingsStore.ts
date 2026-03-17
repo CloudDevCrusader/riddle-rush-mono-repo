@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useLogger } from '../../composables/useLogger'
 
 export interface GameSettings {
   maxPlayersPerGame: number
@@ -35,7 +36,7 @@ const DEFAULT_SETTINGS: GameSettings = {
 
 const STORAGE_KEY = 'game-settings'
 
-export const settingsStore = create<
+export const useSettingsStore = create<
   GameSettings & {
     // Getters
     isDebugMode: boolean
@@ -46,6 +47,8 @@ export const settingsStore = create<
     isAnswerInputEnabled: boolean
 
     // Actions
+    loadSettings: () => void
+    saveSettings: () => void
     updateSetting: <K extends keyof GameSettings>(key: K, value: GameSettings[K]) => void
     toggleDebugMode: () => void
     toggleLeaderboard: () => void
@@ -55,7 +58,7 @@ export const settingsStore = create<
     toggleAnswerInput: () => void
     setOfflineMode: (enabled: boolean) => void
     resetToDefaults: () => void
-    setLanguage: (lang: string) => void
+    setLanguage: (lang: string, persist?: boolean) => void
     getLanguage: () => string
     hasStoredSettings: () => boolean
   }
@@ -86,44 +89,105 @@ export const settingsStore = create<
       },
 
       // Actions
+      loadSettings: () => {
+        if (typeof window === 'undefined') return
+
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY)
+          if (stored) {
+            const parsed = JSON.parse(stored)
+            set({ ...DEFAULT_SETTINGS, ...parsed })
+          }
+        } catch (e) {
+          const logger = useLogger()
+          logger.warn('Failed to load settings:', e)
+        }
+      },
+
+      saveSettings: () => {
+        if (typeof window === 'undefined') return
+
+        try {
+          const currentState = get()
+          // Extract only the settings properties (not getters/actions)
+          const settingsToSave = {
+            maxPlayersPerGame: currentState.maxPlayersPerGame,
+            showLeaderboardAfterRound: currentState.showLeaderboardAfterRound,
+            leaderboardEnabled: currentState.leaderboardEnabled,
+            debugMode: currentState.debugMode,
+            soundEnabled: currentState.soundEnabled,
+            soundVolume: currentState.soundVolume,
+            musicEnabled: currentState.musicEnabled,
+            musicVolume: currentState.musicVolume,
+            offlineMode: currentState.offlineMode,
+            language: currentState.language,
+            fortuneWheelEnabled: currentState.fortuneWheelEnabled,
+            websocketEnabled: currentState.websocketEnabled,
+            answerInputEnabled: currentState.answerInputEnabled,
+          }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(settingsToSave))
+        } catch (e) {
+          const logger = useLogger()
+          logger.warn('Failed to save settings:', e)
+        }
+      },
+
       updateSetting: <K extends keyof GameSettings>(key: K, value: GameSettings[K]) => {
         set({ [key]: value } as unknown as Partial<GameSettings>)
+        get().saveSettings()
       },
 
       toggleDebugMode: () => {
-        set({ debugMode: !get().debugMode })
+        const newValue = !get().debugMode
+        set({ debugMode: newValue })
+        get().saveSettings()
       },
 
       toggleLeaderboard: () => {
-        set({ leaderboardEnabled: !get().leaderboardEnabled })
+        const newValue = !get().leaderboardEnabled
+        set({ leaderboardEnabled: newValue })
+        get().saveSettings()
       },
 
       toggleSound: () => {
-        set({ soundEnabled: !get().soundEnabled })
+        const newValue = !get().soundEnabled
+        set({ soundEnabled: newValue })
+        get().saveSettings()
       },
 
       toggleFortuneWheel: () => {
-        set({ fortuneWheelEnabled: !get().fortuneWheelEnabled })
+        const newValue = !get().fortuneWheelEnabled
+        set({ fortuneWheelEnabled: newValue })
+        get().saveSettings()
       },
 
       toggleWebSocket: () => {
-        set({ websocketEnabled: !get().websocketEnabled })
+        const newValue = !get().websocketEnabled
+        set({ websocketEnabled: newValue })
+        get().saveSettings()
       },
 
       toggleAnswerInput: () => {
-        set({ answerInputEnabled: !get().answerInputEnabled })
+        const newValue = !get().answerInputEnabled
+        set({ answerInputEnabled: newValue })
+        get().saveSettings()
       },
 
       setOfflineMode: (enabled: boolean) => {
         set({ offlineMode: enabled })
+        get().saveSettings()
       },
 
       resetToDefaults: () => {
         set(DEFAULT_SETTINGS)
+        get().saveSettings()
       },
 
-      setLanguage: (lang: string) => {
+      setLanguage: (lang: string, persist = true) => {
         set({ language: lang })
+        if (persist) {
+          get().saveSettings()
+        }
       },
 
       getLanguage: () => {
@@ -137,6 +201,8 @@ export const settingsStore = create<
     }),
     {
       name: STORAGE_KEY,
+      // Disable default persistence since we handle it manually
+      // This allows us to control exactly what gets saved
       partialize: (state) => ({
         maxPlayersPerGame: state.maxPlayersPerGame,
         showLeaderboardAfterRound: state.showLeaderboardAfterRound,

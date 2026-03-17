@@ -27,9 +27,24 @@ const mockSettingsStoreState = reactive({
   language: 'de',
 })
 
-// Stub Nuxt auto-imported globals
-vi.stubGlobal('useGameStore', () => mockGameStoreState)
-vi.stubGlobal('useSettingsStore', () => mockSettingsStoreState)
+// Stub Nuxt auto-imported hooks used by useGameState
+vi.stubGlobal('useGameSession', () => ({
+  currentCategory: computed(() => mockGameStoreState.currentCategory),
+  currentLetter: computed(() => mockGameStoreState.currentLetter),
+  currentRound: computed(() => mockGameStoreState.currentRound),
+  players: computed(() => mockGameStoreState.players),
+  currentPlayerTurn: computed(() => mockGameStoreState.currentPlayerTurn),
+  allPlayersSubmitted: computed(() => mockGameStoreState.allPlayersSubmitted),
+  isGameCompleted: computed(() => mockGameStoreState.isGameCompleted),
+  leaderboard: computed(() => mockGameStoreState.leaderboard),
+  hasActiveSession: computed(() => mockGameStoreState.hasActiveSession),
+  gameStatus: computed(() => mockGameStoreState.gameStatus),
+}))
+vi.stubGlobal('useSettings', () => ({
+  soundEnabled: computed(() => mockSettingsStoreState.soundEnabled),
+  debugMode: computed(() => mockSettingsStoreState.debugMode),
+  language: computed(() => mockSettingsStoreState.language),
+}))
 
 describe('useGameState', () => {
   beforeEach(() => {
@@ -55,11 +70,11 @@ describe('useGameState', () => {
   // Store references
   // ──────────────────────────────────────────
   describe('store references', () => {
-    it('should expose gameStore and settingsStore directly', () => {
+    it('should expose gameSession and settings directly', () => {
       const state = useGameState()
 
-      expect(state.gameStore).toBe(mockGameStoreState)
-      expect(state.settingsStore).toBe(mockSettingsStoreState)
+      expect(state.gameSession).toBeDefined()
+      expect(state.settings).toBeDefined()
     })
   })
 
@@ -196,12 +211,12 @@ describe('useGameState', () => {
   // Return shape
   // ──────────────────────────────────────────
   describe('return value', () => {
-    it('should return all 12 properties (2 stores + 10 computeds)', () => {
+    it('should return all 12 properties (2 hooks + 10 computeds)', () => {
       const state = useGameState()
 
-      // Direct store references
-      expect(state).toHaveProperty('gameStore')
-      expect(state).toHaveProperty('settingsStore')
+      // Direct hook references
+      expect(state).toHaveProperty('gameSession')
+      expect(state).toHaveProperty('settings')
 
       // Computed properties (each is a ComputedRef)
       const computedKeys = [
@@ -227,7 +242,7 @@ describe('useGameState', () => {
     it('should not include extra unexpected properties', () => {
       const state = useGameState()
       const keys = Object.keys(state)
-      expect(keys).toHaveLength(12) // 2 stores + 10 computeds
+      expect(keys).toHaveLength(12) // 2 hooks + 10 computeds
     })
   })
 

@@ -135,7 +135,8 @@ import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/share
 import type { Player } from '@riddle-rush/types/game'
 
 const { t } = usePageSetup()
-const { gameStore, players, leaderboard, currentRound } = useGameState()
+const { gameSession, players, leaderboard, currentRound } = useGameState()
+const playerActions = usePlayerActions()
 const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
 const { isAnswerInputEnabled } = useFeatureFlags()
@@ -203,11 +204,11 @@ const handleConfirmScores = async () => {
   try {
     // Assign scores for all players
     for (const [playerId, score] of pendingScores) {
-      await gameStore.assignPlayerScore(playerId, score)
+      await playerActions.assignPlayerScore(playerId, score)
     }
 
     // Complete the round (records round history)
-    await gameStore.completeRound()
+    await playerActions.completeRound()
 
     void playScoreIncrease()
 
@@ -228,13 +229,13 @@ const handleNextRound = async () => {
 
 const handleNewGame = async () => {
   showDecisionModal.value = false
-  await gameStore.completeGame()
+  await gameSession.completeGame()
   await goToPlayers()
 }
 
 const handleFinishGame = async () => {
   showDecisionModal.value = false
-  await gameStore.completeGame()
+  await gameSession.completeGame()
   await goToLeaderboard()
 }
 
@@ -248,11 +249,11 @@ watch(
 
 onMounted(async () => {
   const id = gameId.value
-  if (id && gameStore.currentSession?.id !== id) {
+  if (id && gameSession.currentSession.value?.id !== id) {
     try {
-      await gameStore.loadSessionById(id)
+      await gameSession.loadSessionById(id)
     } catch {
-      await gameStore.loadFromDB()
+      await gameSession.loadFromDB()
     }
   }
 })

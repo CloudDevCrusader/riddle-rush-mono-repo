@@ -57,7 +57,7 @@
 <script setup lang="ts">
 const { goBack, router } = usePageSetup()
 const { locale, setLocale, t } = useI18n()
-const { settingsStore } = useGameState()
+const settings = useSettings()
 const route = useRoute()
 
 // Stage selection locally (does not apply until OK pressed)
@@ -72,7 +72,7 @@ const selectLanguage = (lang: LocaleCode) => {
 const confirmSelection = async () => {
   try {
     // Save language preference first
-    settingsStore.setLanguage(selectedLocale.value as LocaleCode)
+    settings.setLanguage(selectedLocale.value as LocaleCode)
 
     // Set the locale
     await setLocale(selectedLocale.value as LocaleCode)

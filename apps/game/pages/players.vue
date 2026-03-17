@@ -83,7 +83,7 @@
 <script setup lang="ts">
 const { t, goBack, toast } = usePageSetup()
 const { goToRoundStart } = useNavigation()
-const { gameStore } = useGameState()
+const { gameSession } = useGameState()
 const runtimeConfig = useRuntimeConfig()
 
 const minPlayers = runtimeConfig.public.minPlayers as number
@@ -146,7 +146,7 @@ const startGame = () => {
     return
   }
 
-  gameStore.pendingPlayerNames = names
+  gameSession.setPendingPlayerNames(names)
   toast.success(t('players.ready', { 0: names.length }))
   goToRoundStart()
 }

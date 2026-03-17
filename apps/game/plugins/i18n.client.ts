@@ -2,12 +2,18 @@
  * Nuxt i18n locale setup
  * Uses @nuxtjs/i18n's instance for locale persistence and detection.
  */
+import { settingsStore } from '~/stores/settingsStore'
 
 type LocaleCode = 'de' | 'en'
 const supportedLocales = new Set<LocaleCode>(['de', 'en'])
 
+interface I18nInstance {
+  locale: { value: string }
+  global?: I18nInstance
+}
+
 export default defineNuxtPlugin((nuxtApp) => {
-  const i18n = (nuxtApp as { $i18n?: any }).$i18n
+  const i18n = (nuxtApp as unknown as { $i18n?: I18nInstance }).$i18n
   const i18nGlobal = i18n?.global ?? i18n
 
   if (!i18nGlobal?.locale?.value) return
@@ -31,11 +37,13 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   const resolveRouteLocale = (): LocaleCode | null => {
-    const router = nuxtApp.$router as any
+    const router = nuxtApp.$router as
+      | { currentRoute?: { value?: { query?: Record<string, string | string[] | undefined> } } }
+      | undefined
     const route = router?.currentRoute?.value
     if (!route) return null
 
-    const rawLang = route.query.lang
+    const rawLang = route?.query?.lang
     const langCandidate = Array.isArray(rawLang) ? rawLang[0] : rawLang
     if (!langCandidate) return null
 
@@ -47,11 +55,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     return null
   }
 
-  // Load settings and set initial locale
-  const settingsStore = useSettingsStore()
-  const hasStoredSettings = settingsStore.hasStoredSettings()
-  settingsStore.loadSettings()
-  const storedLanguage = settingsStore.getLanguage()
+  // Read settings directly from the raw Zustand store (plugin context, no Vue scope)
+  const state = settingsStore.getState()
+  const hasStoredSettings = state.hasStoredSettings()
+  const storedLanguage = state.getLanguage()
 
   let skipLocalePersistence = false
 
@@ -88,8 +95,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     (newLocale: string | undefined) => {
       if (!newLocale) return
 
-      const persist = settingsStore.hasStoredSettings() && !skipLocalePersistence
-      settingsStore.setLanguage(newLocale as string, persist)
+      const persist = settingsStore.getState().hasStoredSettings() && !skipLocalePersistence
+      if (persist) {
+        settingsStore.getState().setLanguage(newLocale)
+      }
       skipLocalePersistence = false
     }
   )

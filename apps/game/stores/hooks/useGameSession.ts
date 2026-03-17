@@ -86,5 +86,7 @@ export function useGameSession() {
     loadSessionById: gameStore.getState().loadSessionById,
     setupPlayers: gameStore.getState().setupPlayers,
     generateLetter: gameStore.getState().generateLetter,
+    setOnlineStatus: gameStore.getState().setOnlineStatus,
+    setPendingPlayerNames: (names: string[]) => gameStore.setState({ pendingPlayerNames: names }),
   }
 }

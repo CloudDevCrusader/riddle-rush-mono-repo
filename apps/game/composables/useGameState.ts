@@ -1,36 +1,25 @@
 /**
  * Game state composable
- * Provides centralized access to commonly used game store computeds
+ * Provides centralized access to commonly used game state computeds
  * Reduces duplication across pages
  */
 export function useGameState() {
-  const gameStore = useGameStore()
-  const settingsStore = useSettingsStore()
-
-  // Common computeds from game store
-  const currentCategory = computed(() => gameStore.currentCategory)
-  const currentLetter = computed(() => gameStore.currentLetter)
-  const currentRound = computed(() => gameStore.currentRound)
-  const players = computed(() => gameStore.players)
-  const currentPlayerTurn = computed(() => gameStore.currentPlayerTurn)
-  const allPlayersSubmitted = computed(() => gameStore.allPlayersSubmitted)
-  const isGameCompleted = computed(() => gameStore.isGameCompleted)
-  const leaderboard = computed(() => gameStore.leaderboard)
-  const hasActiveSession = computed(() => gameStore.hasActiveSession)
-  const gameStatus = computed(() => gameStore.gameStatus)
+  const gameSession = useGameSession()
+  const settings = useSettings()
 
   return {
-    gameStore,
-    settingsStore,
-    currentCategory,
-    currentLetter,
-    currentRound,
-    players,
-    currentPlayerTurn,
-    allPlayersSubmitted,
-    isGameCompleted,
-    leaderboard,
-    hasActiveSession,
-    gameStatus,
+    gameSession,
+    settings,
+    // Spread commonly used game session computeds for convenience
+    currentCategory: gameSession.currentCategory,
+    currentLetter: gameSession.currentLetter,
+    currentRound: gameSession.currentRound,
+    players: gameSession.players,
+    currentPlayerTurn: gameSession.currentPlayerTurn,
+    allPlayersSubmitted: gameSession.allPlayersSubmitted,
+    isGameCompleted: gameSession.isGameCompleted,
+    leaderboard: gameSession.leaderboard,
+    hasActiveSession: gameSession.hasActiveSession,
+    gameStatus: gameSession.gameStatus,
   }
 }

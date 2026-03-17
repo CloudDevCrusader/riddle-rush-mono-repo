@@ -4,7 +4,8 @@ import { useLogger } from './useLogger'
  * Composable for common game actions with error handling and user feedback
  */
 export function useGameActions() {
-  const gameStore = useGameStore()
+  const gameSession = useGameSession()
+  const playerActions = usePlayerActions()
   const router = useRouter()
   const toast = useToast()
   const audio = useAudio()
@@ -16,7 +17,7 @@ export function useGameActions() {
    */
   const startNewGame = async () => {
     try {
-      await gameStore.startNewGame()
+      await gameSession.startNewGame()
       audio.playNewRound()
       toast.success(t('game.new_round_started', 'New round started!'))
       return true
@@ -31,10 +32,10 @@ export function useGameActions() {
    * Resume existing game or start new one
    */
   const resumeOrStartGame = async () => {
-    const hadSession = gameStore.hasActiveSession
+    const hadSession = gameSession.hasActiveSession.value
 
     try {
-      await gameStore.resumeOrStartNewGame()
+      await gameSession.resumeOrStartNewGame()
 
       if (!hadSession) {
         audio.playNewRound()
@@ -56,7 +57,7 @@ export function useGameActions() {
    */
   const endGame = async () => {
     try {
-      await gameStore.endGame()
+      await gameSession.endGame()
       toast.success(t('game.game_ended', 'Game ended! Check your statistics.'))
       await router.push('/')
       return true
@@ -71,7 +72,7 @@ export function useGameActions() {
    * Share game score using Web Share API
    */
   const shareScore = async (score?: number) => {
-    const finalScore = score ?? gameStore.currentSession?.score ?? 0
+    const finalScore = score ?? gameSession.currentSession.value?.score ?? 0
 
     if (!navigator.share) {
       toast.info(t('share.not_supported', 'Sharing is not supported on this device'))
@@ -105,7 +106,7 @@ export function useGameActions() {
     customLetter?: string
   ) => {
     try {
-      await gameStore.setupPlayers(playerNames, gameName, customLetter)
+      await gameSession.setupPlayers(playerNames, gameName, customLetter)
       toast.success(t('game.multiplayer_setup', [playerNames.length]))
       return true
     } catch (error) {
@@ -120,7 +121,7 @@ export function useGameActions() {
    */
   const startNextRound = async () => {
     try {
-      await gameStore.startNextRound()
+      await playerActions.startNextRound()
       audio.playNewRound()
       toast.success(t('game.next_round', 'Next round started!'))
       return true

@@ -92,12 +92,12 @@ const emit = defineEmits<{
 
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
-const settingsStore = useSettingsStore()
+const settings = useSettings()
 const router = useRouter()
 const { t } = useI18n()
 
-const soundVolume = ref(settingsStore.soundVolume)
-const musicVolume = ref(settingsStore.musicVolume)
+const soundVolume = ref(settings.soundVolume.value)
+const musicVolume = ref(settings.musicVolume.value)
 
 const handleOverlayClick = (event: MouseEvent) => {
   // Only close if clicking directly on overlay (not on card content)
@@ -118,13 +118,13 @@ const closeModal = () => {
 }
 
 const updateSoundVolume = () => {
-  settingsStore.updateSetting('soundVolume', soundVolume.value)
-  settingsStore.updateSetting('soundEnabled', soundVolume.value > 0)
+  settings.updateSetting('soundVolume', soundVolume.value)
+  settings.updateSetting('soundEnabled', soundVolume.value > 0)
 }
 
 const updateMusicVolume = () => {
-  settingsStore.updateSetting('musicVolume', musicVolume.value)
-  settingsStore.updateSetting('musicEnabled', musicVolume.value > 0)
+  settings.updateSetting('musicVolume', musicVolume.value)
+  settings.updateSetting('musicEnabled', musicVolume.value > 0)
 }
 
 // Handle escape key
@@ -134,11 +134,10 @@ const handleEscape = (event: KeyboardEvent) => {
   }
 }
 
-// Load settings on mount
+// Sync local refs with settings on mount
 onMounted(() => {
-  settingsStore.loadSettings()
-  soundVolume.value = settingsStore.soundVolume
-  musicVolume.value = settingsStore.musicVolume
+  soundVolume.value = settings.soundVolume.value
+  musicVolume.value = settings.musicVolume.value
 
   // Add escape key listener
   window.addEventListener('keydown', handleEscape)

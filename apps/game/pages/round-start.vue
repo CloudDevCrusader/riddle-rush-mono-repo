@@ -112,9 +112,13 @@
 import type { Category } from '@riddle-rush/types/game'
 import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
+import { gameStore as rawGameStore } from '~/stores/gameStore'
+
 const { baseUrl, toast, t } = usePageSetup()
 const { goToGame, goToPlayers } = useNavigation()
-const { gameStore } = useGameState()
+const gameSession = useGameSession()
+const categories = useCategories()
+const playerActions = usePlayerActions()
 const { isFortuneWheelEnabled } = useFeatureFlags()
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
@@ -159,9 +163,9 @@ const selectedCategoryName = computed(() => {
 
 const currentRoundNumber = computed(() => {
   // No session yet = first round setup
-  if (!gameStore.currentSession) return 1
+  const session = gameSession.currentSession.value
+  if (!session) return 1
 
-  const session = gameStore.currentSession
   // Check if current round has been completed (saved to roundHistory)
   const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
 
@@ -172,8 +176,8 @@ const currentRoundNumber = computed(() => {
 
 onMounted(async () => {
   // Fetch all categories
-  await gameStore.fetchCategories()
-  const allCategories = gameStore.categories
+  await categories.fetchCategories()
+  const allCategories = categories.categories.value
 
   // If fortune wheel is disabled, skip directly to game
   if (!isFortuneWheelEnabled.value) {
@@ -236,8 +240,8 @@ const startGame = async () => {
   startingGame.value = true
 
   try {
-    const hasSession = !!gameStore.currentSession
-    const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
+    const hasSession = gameSession.hasActiveSession.value
+    const hasPendingPlayers = gameSession.pendingPlayerNames.value.length > 0
     let createdSessionId: string | undefined
 
     // Determine if this is initial setup or a new round
@@ -249,9 +253,9 @@ const startGame = async () => {
         await goToPlayers()
         return
       }
-      const playerNames = gameStore.pendingPlayerNames
+      const playerNames = gameSession.pendingPlayerNames.value
 
-      const session = await gameStore.setupPlayers(
+      const session = await gameSession.setupPlayers(
         playerNames,
         undefined,
         selectedLetter.value,
@@ -259,31 +263,30 @@ const startGame = async () => {
       )
       createdSessionId = session.id
 
-      // Clear pending state
-      gameStore.pendingPlayerNames = []
-      gameStore.selectedLetter = null
+      // Clear pending state via raw store (direct mutation)
+      rawGameStore.setState({ pendingPlayerNames: [], selectedLetter: null })
     } else {
       // Session exists - check if current round is completed
-      const session = gameStore.currentSession
+      const session = gameSession.currentSession.value
       if (!session) return // Safety check
 
       const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
 
       if (isCurrentRoundCompleted) {
         // Current round completed - start new round (increment counter)
-        await gameStore.startNextRound(selectedCategory.value, selectedLetter.value)
+        await playerActions.startNextRound(selectedCategory.value, selectedLetter.value)
       } else {
         // Refresh during same round - update category/letter but don't increment round
         session.category = { ...selectedCategory.value, letter: selectedLetter.value }
         session.letter = selectedLetter.value
         // Reset player submissions for fair restart on refresh
-        await gameStore.resetPlayerSubmissions()
-        await gameStore.saveSessionToDB()
+        await playerActions.resetPlayerSubmissions()
+        await gameSession.saveSessionToDB()
       }
     }
 
     // Navigate to game with game ID
-    const gameId = createdSessionId ?? gameStore.currentSession?.id
+    const gameId = createdSessionId ?? gameSession.currentSession.value?.id
     if (gameId) {
       await goToGame(gameId)
     } else {
