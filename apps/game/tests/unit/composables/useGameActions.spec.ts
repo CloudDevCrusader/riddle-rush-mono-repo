@@ -4,16 +4,15 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { useGameActions } from '../../../composables/useGameActions'
 
 // Hoist mockRouterPush so it can be referenced inside the vi.mock factory below.
-// vi.mock is hoisted before imports, so variables used in its factory must also
-// be hoisted via vi.hoisted().
 const { mockRouterPush } = vi.hoisted(() => ({ mockRouterPush: vi.fn() }))
 
-// Mock vue-router at module level to intercept the auto-imported useRouter.
-// unplugin-auto-import transforms composables to use direct ES module imports,
-// so vi.stubGlobal alone is not sufficient — the module mock takes precedence.
 vi.mock('vue-router', () => ({
-  useRouter: vi.fn(() => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() })),
-  useRoute: vi.fn(() => ({ path: '/', params: {}, query: {} })),
+  useRouter: () => ({
+    push: mockRouterPush,
+    replace: vi.fn(),
+    back: vi.fn(),
+  }),
+  useRoute: vi.fn(),
 }))
 
 // --- Mock dependencies as globals (Nuxt auto-imports) ---
@@ -24,46 +23,35 @@ const mockEndGame = vi.fn()
 const mockSetupPlayers = vi.fn()
 const mockStartNextRound = vi.fn()
 
-let mockHasActiveSession = false
-let mockCurrentScore = 42
+const mockHasActiveSession = { value: false }
+const mockCurrentSession: { value: Record<string, unknown> | null } = {
+  value: {
+    score: 42,
+    attempts: [],
+    id: '1',
+    status: 'active',
+    category: null,
+    letter: '',
+    players: [],
+    currentRound: 0,
+    roundHistory: [],
+  },
+}
 
-const mockGameStore = {
+vi.stubGlobal('useGameSession', () => ({
   startNewGame: mockStartNewGame,
   resumeOrStartNewGame: mockResumeOrStartNewGame,
   endGame: mockEndGame,
   setupPlayers: mockSetupPlayers,
-  startNextRound: mockStartNextRound,
-  get hasActiveSession() {
-    return mockHasActiveSession
-  },
-  get currentSession() {
-    return {
-      score: mockCurrentScore,
-      attempts: [],
-      id: '1',
-      status: 'active',
-      category: null,
-      letter: '',
-      players: [],
-      currentRound: 0,
-      roundHistory: [],
-    }
-  },
-}
-
-// Stub Nuxt auto-imported globals (belt-and-suspenders alongside the module mock)
-vi.stubGlobal('useGameStore', () => mockGameStore)
-vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
-
-// Mock vue-router explicitly in case it's auto-imported
-vi.mock('vue-router', () => ({
-  useRouter: () => ({
-    push: mockRouterPush,
-    replace: vi.fn(),
-    back: vi.fn(),
-  }),
-  useRoute: vi.fn(),
+  hasActiveSession: mockHasActiveSession,
+  currentSession: mockCurrentSession,
 }))
+
+vi.stubGlobal('usePlayerActions', () => ({
+  startNextRound: mockStartNextRound,
+}))
+
+vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
 
 const mockToastSuccess = vi.fn()
 const mockToastError = vi.fn()
@@ -106,8 +94,18 @@ vi.mock('~/composables/useLogger', () => ({
 describe('useGameActions', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockHasActiveSession = false
-    mockCurrentScore = 42
+    mockHasActiveSession.value = false
+    mockCurrentSession.value = {
+      score: 42,
+      attempts: [],
+      id: '1',
+      status: 'active',
+      category: null,
+      letter: '',
+      players: [],
+      currentRound: 0,
+      roundHistory: [],
+    }
   })
 
   // ──────────────────────────────────────────
@@ -144,7 +142,7 @@ describe('useGameActions', () => {
   // ──────────────────────────────────────────
   describe('resumeOrStartGame', () => {
     it('should play audio and show welcome toast when no prior session exists', async () => {
-      mockHasActiveSession = false
+      mockHasActiveSession.value = false
       mockResumeOrStartNewGame.mockResolvedValue(undefined)
       const { resumeOrStartGame } = useGameActions()
 
@@ -159,7 +157,7 @@ describe('useGameActions', () => {
     })
 
     it('should show resumed toast and skip audio when session exists', async () => {
-      mockHasActiveSession = true
+      mockHasActiveSession.value = true
       mockResumeOrStartNewGame.mockResolvedValue(undefined)
       const { resumeOrStartGame } = useGameActions()
 
@@ -250,7 +248,7 @@ describe('useGameActions', () => {
     })
 
     it('should share with store score when no score argument provided', async () => {
-      mockCurrentScore = 99
+      mockCurrentSession.value = { ...mockCurrentSession.value!, score: 99 }
       const shareFn = vi.fn().mockResolvedValue(undefined)
       Object.defineProperty(globalThis, 'navigator', {
         value: { ...originalNavigator, share: shareFn },
