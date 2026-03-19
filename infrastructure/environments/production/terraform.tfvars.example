@@ -14,3 +14,23 @@ domain_names    = ["riddlerush.de"]
 certificate_arn = "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/YOUR_CERT_ID"
 
 cloudfront_price_class = "PriceClass_100"
+
+# Bitwarden Secrets Management
+# Uncomment and configure to use Bitwarden for secrets
+# bitwarden_client_id = "your_client_id"
+# bitwarden_client_secret = "set-via-env"
+# bitwarden_email = "your_email@example.com"
+# bitwarden_password = "your_password"
+
+# Map of secret names to Bitwarden secret IDs
+# Example:
+# bitwarden_secret_ids = {
+#   "database_password" = "bitwarden-secret-id-1"
+#   "api_key"          = "bitwarden-secret-id-2"
+#   "smtp_password"    = "bitwarden-secret-id-3"
+# }
+
+# Example with placeholder values
+bitwarden_secret_ids = {
+  "example_secret" = "replace-with-actual-bitwarden-secret-id"
+}

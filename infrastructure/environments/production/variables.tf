@@ -38,3 +38,38 @@ variable "cloudfront_price_class" {
     error_message = "Price class must be one of: PriceClass_100, PriceClass_200, PriceClass_All"
   }
 }
+
+# Bitwarden Secrets Management
+variable "bitwarden_client_id" {
+  description = "Bitwarden client ID for API access"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "bitwarden_client_secret" {
+  description = "Bitwarden client secret for API access"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "bitwarden_email" {
+  description = "Bitwarden account email"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "bitwarden_password" {
+  description = "Bitwarden account password"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "bitwarden_secret_ids" {
+  description = "Map of secret names to Bitwarden secret IDs"
+  type        = map(string)
+  default     = {}
+}

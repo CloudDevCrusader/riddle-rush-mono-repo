@@ -201,6 +201,81 @@ Key variables (see `variables.tf`):
 - `certificate_arn` - ACM certificate ARN (optional)
 - `region` - AWS region
 
+### Bitwarden Secrets Management
+
+The production environment supports Bitwarden for secrets management:
+
+- `bitwarden_client_id` - Bitwarden client ID for API access
+- `bitwarden_client_secret` - Bitwarden client secret for API access
+- `bitwarden_email` - Bitwarden account email
+- `bitwarden_password` - Bitwarden account password
+- `bitwarden_secret_ids` - Map of secret names to Bitwarden secret IDs
+
+## Bitwarden Integration
+
+### Configuration
+
+To use Bitwarden for secrets management:
+
+1. **Install the Bitwarden CLI**:
+
+   ```bash
+   npm install -g @bitwarden/cli
+   ```
+
+2. **Login to Bitwarden**:
+
+   ```bash
+   bw login
+   ```
+
+3. **Set up environment variables**:
+
+   ```bash
+   export BITWARDEN_CLIENT_ID="your_client_id"
+   export BITWARDEN_CLIENT_SECRET="your_client_secret"
+   export BITWARDEN_EMAIL="your_email@example.com"
+   export BITWARDEN_PASSWORD="your_password"
+   ```
+
+4. **Configure Terraform variables**:
+   ```hcl
+   bitwarden_secret_ids = {
+     "database_password" = "bitwarden-secret-id-1"
+     "api_key"          = "bitwarden-secret-id-2"
+   }
+   ```
+
+### Usage in Terraform
+
+```hcl
+# Access secrets in your configuration
+resource "aws_db_instance" "example" {
+  password = local.secrets["database_password"]
+}
+
+# Or use directly from the data source
+data "bitwarden_secrets" "db_password" {
+  id = var.bitwarden_secret_ids["database_password"]
+}
+```
+
+### Best Practices
+
+1. **Never commit secrets** to version control
+2. **Use environment variables** for Bitwarden credentials
+3. **Rotate secrets regularly** and update Bitwarden vault
+4. **Limit access** to Bitwarden secrets using vault permissions
+5. **Audit access** to secrets using Bitwarden access logs
+
+## Secrets Management Workflow
+
+1. **Store secrets in Bitwarden**: Add all sensitive values to your Bitwarden vault
+2. **Note secret IDs**: Record the Bitwarden secret IDs for each secret
+3. **Configure Terraform**: Map secret names to Bitwarden IDs in `bitwarden_secret_ids`
+4. **Run Terraform**: Secrets are automatically retrieved during `terraform apply`
+5. **Access secrets**: Use `local.secrets["secret_name"]` in your configuration
+
 ## Outputs
 
 After deployment, outputs include:
@@ -244,5 +319,6 @@ The Terraform configuration replicates the CloudFormation template:
 ## Resources
 
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+- [Terraform Bitwarden Provider](https://bitwarden.com/help/terraform-provider/)
 - [tfenv](https://github.com/tfutils/tfenv)
 - [terraformer](https://github.com/GoogleCloudPlatform/terraformer)

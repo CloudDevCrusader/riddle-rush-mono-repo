@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    bitwarden = {
+      source  = "maxlaverse/bitwarden"
+      version = "~> 0.5"
+    }
   }
 
   backend "s3" {
@@ -35,6 +39,13 @@ provider "aws" {
   }
 }
 
+# Bitwarden provider for secrets management
+provider "bitwarden" {
+  # Configuration will be provided via environment variables:
+  # BITWARDEN_CLIENT_ID, BITWARDEN_CLIENT_SECRET, BITWARDEN_EMAIL, BITWARDEN_PASSWORD
+  # Or via Terraform variables
+}
+
 # Provider for us-east-1 resources (WAF for CloudFront, WAF log group)
 provider "aws" {
   alias  = "us_east_1"
@@ -52,9 +63,22 @@ provider "aws" {
 # Data source to get current AWS account ID
 data "aws_caller_identity" "current" {}
 
+# Bitwarden secrets data source
+# Retrieve secrets from Bitwarden vault
+data "bitwarden_secret" "secrets" {
+  for_each = var.bitwarden_secret_ids
+  id       = each.value
+}
+
 locals {
   bucket_name = var.bucket_name != "" ? var.bucket_name : "${var.project_name}-production-${data.aws_caller_identity.current.account_id}"
   name_prefix = "${var.project_name}-production"
+
+  # Extract secrets from Bitwarden data source
+  secrets = {
+    for name, secret_id in var.bitwarden_secret_ids :
+    name => data.bitwarden_secret.secrets[secret_id].value
+  }
 }
 
 # =============================================================================
@@ -439,4 +463,11 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx" {
     DistributionId = module.cloudfront.distribution_id
     Region         = "Global"
   }
+}
+
+# Output retrieved secrets (sensitive, will be masked in output)
+output "bitwarden_secrets" {
+  description = "Secrets retrieved from Bitwarden"
+  value       = local.secrets
+  sensitive   = true
 }
