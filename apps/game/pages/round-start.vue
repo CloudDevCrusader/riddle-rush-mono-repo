@@ -302,11 +302,11 @@ const startGame = async () => {
 }
 
 useHead({
-  title: 'Round Start',
+  title: t('game.round_start_title'),
   meta: [
     {
       name: 'description',
-      content: 'Spinning for category and letter',
+      content: t('game.round_start_description'),
     },
   ],
 })

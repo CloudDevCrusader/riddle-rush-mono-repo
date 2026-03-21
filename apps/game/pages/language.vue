@@ -2,7 +2,7 @@
   <GameBackground>
     <div class="language-page">
       <!-- Back button -->
-      <button class="back-btn" aria-label="Go back" @click="goBack">
+      <button class="back-btn" :aria-label="t('common.back')" @click="goBack">
         <span class="back-icon">&#x2190;</span>
       </button>
 

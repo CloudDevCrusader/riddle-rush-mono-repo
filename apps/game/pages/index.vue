@@ -115,11 +115,11 @@ const wrappedGoToLanguage = () => {
 }
 
 useHead({
-  title: 'Main Menu',
+  title: t('home.page_title'),
   meta: [
     {
       name: 'description',
-      content: 'Game main menu',
+      content: t('app.description'),
     },
   ],
 })

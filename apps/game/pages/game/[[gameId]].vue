@@ -13,7 +13,7 @@
       >
         <img
           :src="`${baseUrl}assets/alphabets/back.png`"
-          alt="Back"
+          :alt="t('common.back')"
           class="back-icon"
           loading="eager"
         />
@@ -27,7 +27,7 @@
       <!-- Pause Button -->
       <button
         class="pause-btn tap-highlight no-select"
-        aria-label="Pause game"
+        :aria-label="t('game.pause')"
         data-testid="game-pause-button"
         @click="showPauseModal = true"
       >
@@ -62,7 +62,7 @@
           {{
             currentCategory
               ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
-              : 'LOADING...'
+              : t('common.loading')
           }}
         </div>
       </div>
@@ -311,12 +311,11 @@ onMounted(async () => {
 })
 
 useHead({
-  title: 'Riddle Rush - Game',
+  title: t('game.page_title'),
   meta: [
     {
       name: 'description',
-      content:
-        'An exciting word guessing game for friends and family. Play offline, perfect for game nights!',
+      content: t('game.meta_description'),
     },
   ],
 })
