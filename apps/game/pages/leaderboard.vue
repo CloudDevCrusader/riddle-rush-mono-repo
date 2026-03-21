@@ -82,11 +82,11 @@ const handleNextRound = async () => {
 }
 
 useHead({
-  title: 'Leaderboard',
+  title: t('leaderboard.title'),
   meta: [
     {
       name: 'description',
-      content: 'Game leaderboard',
+      content: t('leaderboard.description'),
     },
   ],
 })

@@ -173,6 +173,7 @@
     "category": "Category",
     "clear": "Clear",
     "current_standings": "Current Standings",
+    "description": "Game leaderboard",
     "empty": "No entries yet. Play some rounds!",
     "finish": "Finish",
     "finish_error": "Error finishing game",
