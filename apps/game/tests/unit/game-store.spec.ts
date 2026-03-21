@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useGameStore } from '../../stores/game'
+import { gameStore } from '../../stores/gameStore'
 import { createCategoryList } from '../utils/factories'
 import type { Category, Player } from '@riddle-rush/types/game'
 
@@ -38,13 +37,19 @@ describe('Game Store', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.clearAllTimers()
-    const pinia = createPinia()
-    setActivePinia(pinia)
-    // Force reset all stores
-    // @ts-expect-error: Accessing internal Pinia API for test cleanup
-
-    pinia._s.forEach((store: any) => {
-      store.$reset()
+    // Reset Zustand store state
+    gameStore.setState({
+      currentSession: null,
+      history: [],
+      categories: [],
+      categoriesLoaded: false,
+      categoriesLoading: false,
+      displayedCategoryCount: 9,
+      categoryLoadError: null,
+      selectedLetter: null,
+      isOnline: true,
+      installPromptEvent: null,
+      pendingPlayerNames: [],
     })
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
@@ -61,58 +66,58 @@ describe('Game Store', () => {
 
   describe('Initial State', () => {
     it('has null currentSession on init', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.currentSession).toBeNull()
     })
 
     it('is online by default', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.isOnline).toBe(true)
     })
 
     it('has empty history on init', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.history).toEqual([])
     })
 
     it('has empty categories on init', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categories).toEqual([])
     })
 
     it('categories not loaded on init', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoriesLoaded).toBe(false)
     })
 
     it('default displayed category count is 9', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.displayedCategoryCount).toBe(9) // DEFAULT_DISPLAYED_CATEGORIES
     })
 
     it('hasActiveSession is false when no session', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.hasActiveSession).toBe(false)
     })
   })
 
   describe('Category Fetching', () => {
     it('fetches categories', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       expect(fetchMock).toHaveBeenCalled()
       expect(store.categories).toEqual(mockCategories)
     })
 
     it('sets categoriesLoaded after fetch', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       expect(store.categoriesLoaded).toBe(true)
     })
 
     it.skip('does not refetch if already loaded', async () => {
       // TODO: Fix mock in CI environment (Node 20 vs 24 difference)
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       await store.fetchCategories()
       expect(fetchMock).toHaveBeenCalledTimes(1)
@@ -120,7 +125,7 @@ describe('Game Store', () => {
 
     it.skip('refetches when force=true', async () => {
       // TODO: Fix mock in CI environment (Node 20 vs 24 difference)
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       await store.fetchCategories(true)
       expect(fetchMock).toHaveBeenCalledTimes(2)
@@ -129,13 +134,13 @@ describe('Game Store', () => {
     it.skip('handles API error gracefully', async () => {
       // TODO: Fix mock in CI environment (Node 20 vs 24 difference)
       fetchMock.mockRejectedValueOnce(new Error('Network error'))
-      const store = useGameStore()
+      const store = gameStore.getState()
       await expect(store.fetchCategories()).rejects.toThrow('Network error')
       expect(store.categoriesLoaded).toBe(false)
     })
 
     it('limits displayed categories', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       expect(store.displayedCategories.length).toBeLessThanOrEqual(9)
     })
@@ -144,35 +149,35 @@ describe('Game Store', () => {
   describe('Category Lookup', () => {
     it.skip('finds category by id', async () => {
       // TODO: Fix category data mismatch in CI
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       const target = mockCategories[3]!
       expect(store.getCategoryById(target.id)).toEqual(target)
     })
 
     it('returns null for unknown id', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       expect(store.getCategoryById(999999)).toBeNull()
     })
 
     it.skip('returns null when categories empty', () => {
       // TODO: Fix state pollution in CI
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.getCategoryById(1)).toBeNull()
     })
   })
 
   describe('Load More Categories', () => {
     it('increases displayed count by 9', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       store.categories = createCategoryList(30)
       store.loadMoreCategories()
       expect(store.displayedCategoryCount).toBe(18)
     })
 
     it('caps at total category count', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       store.categories = createCategoryList(5)
       store.displayedCategoryCount = 9 // DEFAULT_DISPLAYED_CATEGORIES
       store.loadMoreCategories()
@@ -182,7 +187,7 @@ describe('Game Store', () => {
 
   describe('Start New Game', () => {
     it('creates session with category', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const session = await store.startNewGame()
       expect(session).toBeDefined()
       expect(session?.category).toBeDefined()
@@ -190,25 +195,25 @@ describe('Game Store', () => {
     })
 
     it('sets currentSession', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       expect(store.currentSession).not.toBeNull()
     })
 
     it('initializes score to 0', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       expect(store.currentSession?.score).toBe(0)
     })
 
     it('initializes empty attempts', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       expect(store.currentSession?.attempts).toEqual([])
     })
 
     it('sets startTime', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const before = Date.now()
       await store.startNewGame()
       const after = Date.now()
@@ -217,20 +222,20 @@ describe('Game Store', () => {
     })
 
     it('persists session to IndexedDB', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       expect(mockSaveGameSession).toHaveBeenCalledTimes(1)
     })
 
     it('selects a random category', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       expect(store.currentSession?.category).toBeDefined()
       expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
     })
 
     it('hasActiveSession becomes true', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       expect(store.hasActiveSession).toBe(true)
     })
@@ -238,7 +243,7 @@ describe('Game Store', () => {
 
   describe('End Game', () => {
     beforeEach(async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       // Create a session with some test data
       if (store.currentSession) {
@@ -255,44 +260,44 @@ describe('Game Store', () => {
     })
 
     it('clears currentSession', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.endGame()
       expect(store.currentSession).toBeNull()
     })
 
     it('sets hasActiveSession to false', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.endGame()
       expect(store.hasActiveSession).toBe(false)
     })
 
     it.skip('adds session to history', async () => {
       // TODO: Fix history state pollution in CI
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.endGame()
       expect(store.history).toHaveLength(1)
     })
 
     it('preserves score in history', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.endGame()
       expect(store.history[0]!.score).toBe(10)
     })
 
     it('calls saveGameHistory', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.endGame()
       expect(mockSaveGameHistory).toHaveBeenCalledTimes(1)
     })
 
     it('calls updateStatistics', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.endGame()
       expect(mockUpdateStatistics).toHaveBeenCalledTimes(1)
     })
 
     it('does not throw if updateStatistics fails', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       mockUpdateStatistics.mockRejectedValueOnce(new Error('stats failed'))
 
       await expect(store.endGame()).resolves.toBeUndefined()
@@ -301,14 +306,14 @@ describe('Game Store', () => {
 
     it.skip('sets endTime on session', async () => {
       // TODO: Fix timing race condition in CI
-      const store = useGameStore()
+      const store = gameStore.getState()
       const before = Date.now()
       await store.endGame()
       expect(store.history[0]!.endTime).toBeGreaterThanOrEqual(before)
     })
 
     it('does nothing without active session', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       store.currentSession = null
       await store.endGame()
       expect(mockSaveGameHistory).not.toHaveBeenCalled()
@@ -317,13 +322,13 @@ describe('Game Store', () => {
 
   describe('Online Status', () => {
     it('sets offline', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       store.setOnlineStatus(false)
       expect(store.isOnline).toBe(false)
     })
 
     it('sets online', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       store.setOnlineStatus(false)
       store.setOnlineStatus(true)
       expect(store.isOnline).toBe(true)
@@ -332,89 +337,89 @@ describe('Game Store', () => {
 
   describe('Category Emoji', () => {
     it('returns emoji for Weiblicher Vorname', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Weiblicher Vorname')).toBe('👩')
     })
 
     it('returns emoji for Männlicher Vorname', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Männlicher Vorname')).toBe('👨')
     })
 
     it('returns emoji for Blumen', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Blumen')).toBe('🌸')
     })
 
     it('returns emoji for Mountains oder Hills', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Mountains oder Hills')).toBe('🏔️')
     })
 
     it('returns emoji for Gewässer oder See', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Gewässer oder See')).toBe('💧')
     })
 
     it('returns emoji for Maschine', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Maschine')).toBe('⚙️')
     })
 
     it('returns emoji for Begriff aus der Technik', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Begriff aus der Technik')).toBe('🔧')
     })
 
     it('returns emoji for Begriff aus der Raumfahrt', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Begriff aus der Raumfahrt')).toBe('🚀')
     })
 
     it('returns emoji for Wort mit Endung -heit', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Wort mit Endung -heit')).toBe('📝')
     })
 
     it('returns emoji for Farbe', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Farbe')).toBe('🎨')
     })
 
     it('returns emoji for Erfinder Entdecker oder Gelehrter', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Erfinder Entdecker oder Gelehrter')).toBe('💡')
     })
 
     it('returns emoji for Komponist oder Sänger', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Komponist oder Sänger')).toBe('🎼')
     })
 
     it('returns default for unknown', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('Random Category')).toBe('🎯')
     })
 
     it('returns default for null', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji(null)).toBe('🎯')
     })
 
     it('returns default for undefined', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji(undefined)).toBe('🎯')
     })
 
     it('returns default for empty string', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       expect(store.categoryEmoji('')).toBe('🎯')
     })
   })
 
   describe('Resume or Start New Game', () => {
     it('returns existing session if active', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.startNewGame()
       const existing = store.currentSession
       const result = await store.resumeOrStartNewGame()
@@ -422,13 +427,13 @@ describe('Game Store', () => {
     })
 
     it('starts new game if no session', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.resumeOrStartNewGame()
       expect(store.hasActiveSession).toBe(true)
     })
 
     it('uses random category', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.fetchCategories()
       await store.resumeOrStartNewGame()
       expect(store.currentSession?.category).toBeDefined()
@@ -439,7 +444,7 @@ describe('Game Store', () => {
   describe('Multi-Player Mode', () => {
     describe('Setup Players', () => {
       it('creates game session with players', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const playerNames = ['Alice', 'Bob', 'Charlie']
         const session = await store.setupPlayers(playerNames)
 
@@ -451,7 +456,7 @@ describe('Game Store', () => {
       })
 
       it('initializes players with zero scores', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Player 1', 'Player 2'])
 
         const players = store.players
@@ -464,7 +469,7 @@ describe('Game Store', () => {
       })
 
       it('uses default names when empty strings provided', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['', '', 'Charlie'])
 
         expect(store.players[0]?.name).toBe('Player 1')
@@ -473,21 +478,21 @@ describe('Game Store', () => {
       })
 
       it('sets currentRound to 1', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Player 1', 'Player 2'])
 
         expect(store.currentRound).toBe(1)
       })
 
       it('sets optional game name', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Player 1'], 'Test Game')
 
         expect(store.currentSession?.gameName).toBe('Test Game')
       })
 
       it('generates category and letter', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Player 1'])
 
         expect(store.currentCategory).toBeDefined()
@@ -498,23 +503,23 @@ describe('Game Store', () => {
 
     describe('Multi-Player Getters', () => {
       beforeEach(async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
       })
 
       it('players exist after setup', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         expect(store.players.length).toBeGreaterThan(0)
       })
 
       it('players getter returns all players', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         expect(store.players).toHaveLength(3)
         expect(store.players.map((p: Player) => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
       })
 
       it('currentPlayerTurn returns first unsubmitted player', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const currentPlayer = store.currentPlayerTurn
 
         expect(currentPlayer).toBeDefined()
@@ -523,12 +528,12 @@ describe('Game Store', () => {
       })
 
       it('allPlayersSubmitted returns false initially', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         expect(store.allPlayersSubmitted).toBe(false)
       })
 
       it('allPlayersSubmitted returns true when all submitted', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
 
         for (const player of store.players) {
           await store.submitPlayerAnswer(player.id, 'Answer')
@@ -538,7 +543,7 @@ describe('Game Store', () => {
       })
 
       it('leaderboard returns players sorted by totalScore', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const [alice, bob, charlie] = store.players
 
         if (alice && bob && charlie) {
@@ -560,12 +565,12 @@ describe('Game Store', () => {
 
     describe('Submit Player Answer', () => {
       beforeEach(async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
       })
 
       it('saves player answer', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -577,7 +582,7 @@ describe('Game Store', () => {
       })
 
       it('persists to database', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -588,7 +593,7 @@ describe('Game Store', () => {
       })
 
       it('updates currentPlayerTurn to next player', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -599,7 +604,7 @@ describe('Game Store', () => {
       })
 
       it('handles invalid player ID gracefully', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.submitPlayerAnswer('invalid-id', 'Answer')
 
         // Should not throw error
@@ -609,12 +614,12 @@ describe('Game Store', () => {
 
     describe('Assign Player Score', () => {
       beforeEach(async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
       })
 
       it('updates current round score', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -625,7 +630,7 @@ describe('Game Store', () => {
       })
 
       it('0→10: totalScore increases by 10', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -637,7 +642,7 @@ describe('Game Store', () => {
       })
 
       it('10→20: totalScore increases by 10 (not 20)', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -651,7 +656,7 @@ describe('Game Store', () => {
       })
 
       it('20→10: totalScore decreases by 10', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -665,7 +670,7 @@ describe('Game Store', () => {
       })
 
       it('10→10: totalScore unchanged (delta = 0)', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -679,7 +684,7 @@ describe('Game Store', () => {
       })
 
       it('replaces score correctly when adjusting up then down', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -695,7 +700,7 @@ describe('Game Store', () => {
       })
 
       it('persists to database', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -706,7 +711,7 @@ describe('Game Store', () => {
       })
 
       it('does nothing for invalid player ID', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         mockSaveGameSession.mockClear()
 
         await store.assignPlayerScore('invalid-id', 50)
@@ -715,7 +720,7 @@ describe('Game Store', () => {
       })
 
       it('does nothing without active session', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         store.currentSession = null
         mockSaveGameSession.mockClear()
 
@@ -727,7 +732,7 @@ describe('Game Store', () => {
 
     describe('Complete Round', () => {
       beforeEach(async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -740,14 +745,14 @@ describe('Game Store', () => {
       })
 
       it('adds round to history', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.completeRound()
 
         expect(store.currentSession?.roundHistory).toHaveLength(1)
       })
 
       it('saves round results with player answers and scores', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.completeRound()
 
         const round = store.currentSession?.roundHistory[0]
@@ -759,7 +764,7 @@ describe('Game Store', () => {
       })
 
       it('includes round metadata', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const category = store.currentCategory
         const letter = store.currentLetter
 
@@ -775,7 +780,7 @@ describe('Game Store', () => {
 
     describe('Start Next Round', () => {
       beforeEach(async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -788,14 +793,14 @@ describe('Game Store', () => {
       })
 
       it('increments round number', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.startNextRound()
 
         expect(store.currentRound).toBe(2)
       })
 
       it('generates new category and letter', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const oldCategory = store.currentCategory?.id
         const oldLetter = store.currentLetter
 
@@ -809,7 +814,7 @@ describe('Game Store', () => {
       })
 
       it('resets player round state', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.startNextRound()
 
         for (const player of store.players) {
@@ -820,7 +825,7 @@ describe('Game Store', () => {
       })
 
       it('preserves total scores', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const [alice, bob] = store.players
 
         await store.startNextRound()
@@ -830,7 +835,7 @@ describe('Game Store', () => {
       })
 
       it('keeps same players', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.startNextRound()
 
         expect(store.players).toHaveLength(2)
@@ -840,7 +845,7 @@ describe('Game Store', () => {
 
     describe('Reset Player Submissions', () => {
       beforeEach(async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         for (const player of store.players) {
@@ -849,7 +854,7 @@ describe('Game Store', () => {
       })
 
       it('clears all hasSubmitted flags', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.resetPlayerSubmissions()
 
         for (const player of store.players) {
@@ -858,7 +863,7 @@ describe('Game Store', () => {
       })
 
       it('persists to database', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         mockSaveGameSession.mockClear()
 
         await store.resetPlayerSubmissions()
@@ -869,12 +874,12 @@ describe('Game Store', () => {
 
     describe('Get Player By ID', () => {
       beforeEach(async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
       })
 
       it('returns player when ID matches', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const alice = store.players[0]
 
         if (alice) {
@@ -885,14 +890,14 @@ describe('Game Store', () => {
       })
 
       it('returns null when ID not found', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         const found = store.getPlayerById('invalid-id')
 
         expect(found).toBeNull()
       })
 
       it('returns null when no session', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         store.clearSession()
 
         const found = store.getPlayerById('any-id')
@@ -903,7 +908,7 @@ describe('Game Store', () => {
 
     describe('Multi-Player with startNewGame', () => {
       it('starts new round when players exist', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const oldRound = store.currentRound
@@ -913,7 +918,7 @@ describe('Game Store', () => {
       })
 
       it('starts legacy single-player when no players', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.startNewGame()
 
         expect(store.players).toHaveLength(0)
@@ -925,7 +930,7 @@ describe('Game Store', () => {
   describe('Round Counter Logic', () => {
     describe('isCurrentRoundCompleted helper logic', () => {
       it('round is NOT completed when roundHistory is empty and currentRound is 1', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         // After setup: currentRound = 1, roundHistory = []
@@ -940,7 +945,7 @@ describe('Game Store', () => {
       })
 
       it('round IS completed after completeRound is called', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -962,7 +967,7 @@ describe('Game Store', () => {
       })
 
       it('round is NOT completed after startNextRound', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -985,7 +990,7 @@ describe('Game Store', () => {
       })
 
       it('round IS completed after second round completeRound', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -1016,7 +1021,7 @@ describe('Game Store', () => {
 
     describe('Round number display scenarios', () => {
       it('should show round 1 on initial setup (no session)', () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         // No session exists
         expect(store.currentSession).toBeNull()
 
@@ -1026,7 +1031,7 @@ describe('Game Store', () => {
       })
 
       it('should show round 1 after setupPlayers (round not completed)', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         // Display logic: if round NOT completed, show currentRound
@@ -1037,7 +1042,7 @@ describe('Game Store', () => {
       })
 
       it('should show round 2 after round 1 is completed', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -1055,7 +1060,7 @@ describe('Game Store', () => {
       })
 
       it('should show round 2 after startNextRound (round 2 not completed)', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -1076,7 +1081,7 @@ describe('Game Store', () => {
 
     describe('Game start scenarios', () => {
       it('initial setup: pendingPlayerNames triggers setupPlayers', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
 
         // Simulate coming from players page
         store.pendingPlayerNames = ['Alice', 'Bob']
@@ -1097,7 +1102,7 @@ describe('Game Store', () => {
       })
 
       it('next round: session exists and round completed triggers startNextRound', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -1124,7 +1129,7 @@ describe('Game Store', () => {
       })
 
       it('refresh during round: session exists but round NOT completed - no increment', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         // Simulate refresh - session exists but round not completed
@@ -1146,7 +1151,7 @@ describe('Game Store', () => {
       })
 
       it('refresh after partial answers: should not increment round', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         // One player submits
@@ -1173,7 +1178,7 @@ describe('Game Store', () => {
     })
 
     it('should load session by ID', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const mockSession = {
         id: '123e4567-e89b-12d3-a456-426614174000',
         category: mockCategories[0],
@@ -1198,7 +1203,7 @@ describe('Game Store', () => {
     })
 
     it('should throw error when session not found', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const gameId = 'non-existent-id'
 
       mockGetGameSessionById.mockResolvedValue(null)
@@ -1207,7 +1212,7 @@ describe('Game Store', () => {
     })
 
     it('should handle IndexedDB errors', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const gameId = '123e4567-e89b-12d3-a456-426614174000'
 
       mockGetGameSessionById.mockRejectedValue(new Error('Database error'))
@@ -1216,7 +1221,7 @@ describe('Game Store', () => {
     })
 
     it('should load session with UUID format', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const uuidGameId = '550e8400-e29b-41d4-a716-446655440000'
       const mockSession = {
         id: uuidGameId,
@@ -1239,12 +1244,12 @@ describe('Game Store', () => {
 
       const result = await store.loadSessionById(uuidGameId)
 
-      expect(result.id).toBe(uuidGameId)
-      expect(result.players).toHaveLength(2)
+      expect(result!.id).toBe(uuidGameId)
+      expect(result!.players).toHaveLength(2)
     })
 
     it('should throw descriptive error with session ID', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const gameId = 'test-game-123'
 
       mockGetGameSessionById.mockResolvedValue(null)
@@ -1260,7 +1265,7 @@ describe('Game Store', () => {
 
   describe('Complete Game', () => {
     beforeEach(async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.setupPlayers(['Alice', 'Bob'])
 
       const [alice, bob] = store.players
@@ -1274,14 +1279,14 @@ describe('Game Store', () => {
     })
 
     it('sets status to completed', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.completeGame()
 
       expect(store.currentSession?.status).toBe('completed')
     })
 
     it('sets endTime', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const before = Date.now()
 
       await store.completeGame()
@@ -1292,7 +1297,7 @@ describe('Game Store', () => {
     })
 
     it('keeps session for leaderboard display', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.completeGame()
 
       // Session should NOT be cleared (unlike endGame)
@@ -1301,7 +1306,7 @@ describe('Game Store', () => {
     })
 
     it('returns the completed session', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const result = await store.completeGame()
 
       expect(result).toBeDefined()
@@ -1309,7 +1314,7 @@ describe('Game Store', () => {
     })
 
     it('persists to database', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       mockSaveGameSession.mockClear()
       mockSaveGameHistory.mockClear()
 
@@ -1320,7 +1325,7 @@ describe('Game Store', () => {
     })
 
     it('calls updateStatistics', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       mockUpdateStatistics.mockClear()
 
       await store.completeGame()
@@ -1329,7 +1334,7 @@ describe('Game Store', () => {
     })
 
     it('does nothing without active session', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       store.currentSession = null
       mockSaveGameSession.mockClear()
 
@@ -1339,7 +1344,7 @@ describe('Game Store', () => {
     })
 
     it('isGameCompleted getter returns true after completeGame', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
 
       expect(store.isGameCompleted).toBe(false)
 
@@ -1349,7 +1354,7 @@ describe('Game Store', () => {
     })
 
     it('gameStatus getter returns completed after completeGame', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
 
       expect(store.gameStatus).toBe('active')
 
@@ -1361,7 +1366,7 @@ describe('Game Store', () => {
 
   describe('Leaderboard Winner Logic', () => {
     beforeEach(async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       const [alice, bob, charlie] = store.players
@@ -1373,14 +1378,14 @@ describe('Game Store', () => {
     })
 
     it('isWinner is false for all players when game is active', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const leaderboard = store.leaderboard
 
       expect(leaderboard.every((p: { isWinner: boolean }) => p.isWinner === false)).toBe(true)
     })
 
     it('isWinner is true only for first place when game is completed', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.completeGame()
 
       const leaderboard = store.leaderboard
@@ -1395,7 +1400,7 @@ describe('Game Store', () => {
     })
 
     it('isWinner is false when top score is 0', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
 
       // Reset all scores to 0
       for (const player of store.players) {
@@ -1411,7 +1416,7 @@ describe('Game Store', () => {
     })
 
     it('rank is assigned correctly', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const leaderboard = store.leaderboard
 
       expect(leaderboard[0]?.rank).toBe(1)
@@ -1420,7 +1425,7 @@ describe('Game Store', () => {
     })
 
     it('players are sorted by totalScore descending', () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       const leaderboard = store.leaderboard
 
       expect(leaderboard[0]?.name).toBe('Bob')

@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
 
 // Mock GitLab Feature Flags client (uses Unleash protocol)
 const mockIsEnabled = vi.fn()
@@ -98,12 +97,11 @@ vi.mock('../../stores/settings', () => ({
 
 // Import after mocks are set up
 const { useFeatureFlags } = await import('../../composables/useFeatureFlags')
-const { useSettingsStore } = await import('../../stores/settings')
+const { settingsStore } = await import('../../stores/settingsStore')
 
 describe('useFeatureFlags (GitLab)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    setActivePinia(createPinia())
     mockGitLabClient = {
       isEnabled: mockIsEnabled,
       getVariant: mockGetVariant,
@@ -194,8 +192,8 @@ describe('useFeatureFlags (GitLab)', () => {
 
     it('should use GitLab value over local settings', () => {
       mockIsEnabled.mockReturnValue(true)
-      const settingsStore = useSettingsStore()
-      settingsStore.fortuneWheelEnabled = false
+      const store = settingsStore.getState()
+      store.fortuneWheelEnabled = false
 
       const { isFortuneWheelEnabled } = useFeatureFlags()
 
@@ -205,8 +203,8 @@ describe('useFeatureFlags (GitLab)', () => {
 
     it('should fallback to local settings when GitLab is not configured', () => {
       mockGitLabClient = null
-      const settingsStore = useSettingsStore()
-      settingsStore.fortuneWheelEnabled = true
+      const store = settingsStore.getState()
+      store.fortuneWheelEnabled = true
 
       const { isFortuneWheelEnabled } = useFeatureFlags()
 
@@ -228,8 +226,8 @@ describe('useFeatureFlags (GitLab)', () => {
     it('should resolve fortune-wheel from local settings when no client exists', () => {
       mockGitLabClient = null
 
-      const settingsStore = useSettingsStore()
-      settingsStore.fortuneWheelEnabled = true
+      const store = settingsStore.getState()
+      store.fortuneWheelEnabled = true
 
       const { isEnabled } = useFeatureFlags()
 
@@ -239,8 +237,8 @@ describe('useFeatureFlags (GitLab)', () => {
     it('should still honor local false setting when no client exists', () => {
       mockGitLabClient = null
 
-      const settingsStore = useSettingsStore()
-      settingsStore.fortuneWheelEnabled = false
+      const store = settingsStore.getState()
+      store.fortuneWheelEnabled = false
 
       const { isEnabled } = useFeatureFlags()
 

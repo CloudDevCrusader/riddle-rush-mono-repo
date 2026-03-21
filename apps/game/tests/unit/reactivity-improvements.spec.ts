@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useGameStore } from '../../stores/game'
+import { gameStore } from '../../stores/gameStore'
 import { createCategoryList } from '../utils/factories'
 import type { Category, Player } from '@riddle-rush/types/game'
 
@@ -35,10 +34,20 @@ describe('Reactivity Improvements - Player State Mutations', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.clearAllTimers()
-    const pinia = createPinia()
-    setActivePinia(pinia)
-    // @ts-expect-error: Accessing internal Pinia API for test cleanup
-    pinia._s.forEach((store: any) => store.$reset())
+    // Reset Zustand store state
+    gameStore.setState({
+      currentSession: null,
+      history: [],
+      categories: [],
+      categoriesLoaded: false,
+      categoriesLoading: false,
+      displayedCategoryCount: 9,
+      categoryLoadError: null,
+      selectedLetter: null,
+      isOnline: true,
+      installPromptEvent: null,
+      pendingPlayerNames: [],
+    })
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
     fetchMock.mockClear()
@@ -54,7 +63,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
   describe('Index-based Player Mutations', () => {
     describe('submitPlayerAnswer - Reactivity via Index', () => {
       it('updates player at correct index when submitting answer', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = store.players[0]!.id
@@ -79,7 +88,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('properly triggers currentPlayerTurn reactive update', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = store.players[0]!.id
@@ -95,7 +104,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('ensures reactivity works with allPlayersSubmitted getter', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -115,7 +124,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
     describe('assignPlayerScore - Reactivity via Index', () => {
       it('updates player score at correct index', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = store.players[0]!.id
@@ -134,7 +143,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('accumulates total score correctly with multiple rounds', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const aliceId = store.players[0]!.id
@@ -154,7 +163,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('maintains leaderboard ranking after score updates', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const alice = store.players[0]!
@@ -175,7 +184,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
     describe('updatePlayerAvatar - Reactivity via Index', () => {
       it('updates avatar at correct player index', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = store.players[0]!.id
@@ -195,7 +204,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('persists avatar updates to database', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice'])
 
         const alice = store.players[0]!
@@ -210,7 +219,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
     describe('Complex Multiplayer Workflow', () => {
       it('handles complete round with multiple players correctly', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const [alice, bob, charlie] = store.players
@@ -240,7 +249,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('supports multiple rounds with proper state reset', async () => {
-        const store = useGameStore()
+        const store = gameStore.getState()
         await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = store.players
@@ -274,7 +283,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
   describe('Edge Cases - Reactivity', () => {
     it('handles rapid consecutive updates without race conditions', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       const [alice, bob, charlie] = store.players
@@ -292,7 +301,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
     })
 
     it('updates leaderboard reactively after score changes', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       const [alice, bob, charlie] = store.players
@@ -319,7 +328,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
     })
 
     it('handles update of nonexistent player gracefully', async () => {
-      const store = useGameStore()
+      const store = gameStore.getState()
       await store.setupPlayers(['Alice', 'Bob'])
 
       const initialState = JSON.stringify(store.players)

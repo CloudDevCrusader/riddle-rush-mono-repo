@@ -1,43 +1,49 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useLoading, useLoadingStore } from '../../composables/useLoading'
+import { loadingStore } from '../../stores/loadingStore'
+import { useLoading } from '../../stores/hooks/useLoading'
 
-describe('useLoadingStore', () => {
+describe('loadingStore', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
+    // Reset loading store state
+    loadingStore.setState({
+      isLoading: false,
+      loadingCount: 0,
+      progress: 0,
+      showProgress: false,
+    })
   })
 
   describe('initial state', () => {
     it('should start with loading disabled', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       expect(store.isLoading).toBe(false)
     })
 
     it('should start with zero loading count', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       expect(store.loadingCount).toBe(0)
     })
 
     it('should start with zero progress', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       expect(store.progress).toBe(0)
     })
 
     it('should start with progress hidden', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       expect(store.showProgress).toBe(false)
     })
   })
 
   describe('showLoading', () => {
     it('should enable loading', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.showLoading()
       expect(store.isLoading).toBe(true)
     })
 
     it('should increment loading count', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.showLoading()
       expect(store.loadingCount).toBe(1)
       store.showLoading()
@@ -45,14 +51,14 @@ describe('useLoadingStore', () => {
     })
 
     it('should reset progress', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.setProgress(50)
       store.showLoading()
       expect(store.progress).toBe(0)
     })
 
     it('should hide progress indicator', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.setProgress(50)
       store.showLoading()
       expect(store.showProgress).toBe(false)
@@ -61,7 +67,7 @@ describe('useLoadingStore', () => {
 
   describe('hideLoading', () => {
     it('should decrement loading count', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.showLoading()
       store.showLoading()
       expect(store.loadingCount).toBe(2)
@@ -71,20 +77,20 @@ describe('useLoadingStore', () => {
     })
 
     it('should disable loading when count reaches zero', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.showLoading()
       store.hideLoading()
       expect(store.isLoading).toBe(false)
     })
 
     it('should not go below zero', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.hideLoading()
       expect(store.loadingCount).toBe(0)
     })
 
     it('should keep loading enabled for nested calls', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.showLoading()
       store.showLoading()
       store.hideLoading()
@@ -93,7 +99,7 @@ describe('useLoadingStore', () => {
     })
 
     it('should reset progress when fully hidden', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.showLoading()
       store.setProgress(75)
       store.hideLoading()
@@ -101,7 +107,7 @@ describe('useLoadingStore', () => {
     })
 
     it('should hide progress indicator when fully hidden', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.showLoading()
       store.setProgress(75)
       store.hideLoading()
@@ -111,19 +117,19 @@ describe('useLoadingStore', () => {
 
   describe('setProgress', () => {
     it('should set progress value', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.setProgress(50)
       expect(store.progress).toBe(50)
     })
 
     it('should show progress indicator', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.setProgress(50)
       expect(store.showProgress).toBe(true)
     })
 
     it('should clamp progress to 0-100 range', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.setProgress(-10)
       expect(store.progress).toBe(0)
 
@@ -132,7 +138,7 @@ describe('useLoadingStore', () => {
     })
 
     it('should accept boundary values', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.setProgress(0)
       expect(store.progress).toBe(0)
 
@@ -141,7 +147,7 @@ describe('useLoadingStore', () => {
     })
 
     it('should accept fractional values', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
       store.setProgress(33.33)
       expect(store.progress).toBe(33.33)
     })
@@ -149,7 +155,7 @@ describe('useLoadingStore', () => {
 
   describe('nested loading calls', () => {
     it('should handle multiple show/hide correctly', () => {
-      const store = useLoadingStore()
+      const store = loadingStore.getState()
 
       store.showLoading() // count: 1
       expect(store.isLoading).toBe(true)
@@ -174,7 +180,13 @@ describe('useLoadingStore', () => {
 
 describe('useLoading', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
+    // Reset loading store state
+    loadingStore.setState({
+      isLoading: false,
+      loadingCount: 0,
+      progress: 0,
+      showProgress: false,
+    })
   })
 
   describe('composable wrapper', () => {

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useSettingsStore } from '../../stores/settings'
+import { settingsStore } from '../../stores/settingsStore'
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -25,7 +24,8 @@ describe('Settings Store', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorageMock.clear()
-    setActivePinia(createPinia())
+    // Reset Zustand store to defaults
+    settingsStore.getState().resetToDefaults()
   })
 
   afterEach(() => {
@@ -34,58 +34,58 @@ describe('Settings Store', () => {
 
   describe('Initial State', () => {
     it('has default maxPlayersPerGame of 4', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.maxPlayersPerGame).toBe(4)
     })
 
     it('has showLeaderboardAfterRound enabled', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.showLeaderboardAfterRound).toBe(true)
     })
 
     it('has leaderboard enabled', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.leaderboardEnabled).toBe(true)
     })
 
     it('has debug mode disabled', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.debugMode).toBe(false)
     })
 
     it('has sound enabled', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.soundEnabled).toBe(true)
     })
 
     it('has offline mode disabled', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.offlineMode).toBe(false)
     })
 
     it('has fortune wheel enabled by default', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.fortuneWheelEnabled).toBe(true)
     })
   })
 
   describe('Getters', () => {
     it('isDebugMode returns debugMode state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.isDebugMode).toBe(false)
       store.debugMode = true
       expect(store.isDebugMode).toBe(true)
     })
 
     it('isLeaderboardEnabled returns leaderboardEnabled state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.isLeaderboardEnabled).toBe(true)
       store.leaderboardEnabled = false
       expect(store.isLeaderboardEnabled).toBe(false)
     })
 
     it('shouldShowLeaderboard requires both flags', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.shouldShowLeaderboard).toBe(true)
 
       store.leaderboardEnabled = false
@@ -97,81 +97,24 @@ describe('Settings Store', () => {
     })
 
     it('isFortuneWheelEnabled returns fortuneWheelEnabled state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.isFortuneWheelEnabled).toBe(true)
       store.fortuneWheelEnabled = false
       expect(store.isFortuneWheelEnabled).toBe(false)
     })
   })
 
-  describe('Load Settings', () => {
-    it('loads settings from localStorage', () => {
-      localStorageMock.getItem.mockReturnValueOnce(
-        JSON.stringify({
-          debugMode: true,
-          soundEnabled: false,
-        })
-      )
-
-      const store = useSettingsStore()
-      store.loadSettings()
-
-      expect(store.debugMode).toBe(true)
-      expect(store.soundEnabled).toBe(false)
-    })
-
-    it('uses defaults for missing keys', () => {
-      localStorageMock.getItem.mockReturnValueOnce(
-        JSON.stringify({
-          debugMode: true,
-        })
-      )
-
-      const store = useSettingsStore()
-      store.loadSettings()
-
-      expect(store.debugMode).toBe(true)
-      expect(store.maxPlayersPerGame).toBe(4)
-    })
-
-    it('handles invalid JSON gracefully', () => {
-      localStorageMock.getItem.mockReturnValueOnce('invalid json')
-
-      const store = useSettingsStore()
-      expect(() => store.loadSettings()).not.toThrow()
-      expect(store.debugMode).toBe(false)
-    })
-
-    it('handles missing localStorage gracefully', () => {
-      localStorageMock.getItem.mockReturnValueOnce(null)
-
-      const store = useSettingsStore()
-      expect(() => store.loadSettings()).not.toThrow()
-    })
-  })
-
-  describe('Save Settings', () => {
-    it('saves settings to localStorage', () => {
-      const store = useSettingsStore()
-      store.debugMode = true
-      store.saveSettings()
-
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'game-settings',
-        expect.stringContaining('"debugMode":true')
-      )
-    })
-  })
+  // Note: Load/Save Settings tests removed - Zustand persist middleware handles this automatically
 
   describe('Update Setting', () => {
     it('updates specific setting', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       store.updateSetting('maxPlayersPerGame', 8)
       expect(store.maxPlayersPerGame).toBe(8)
     })
 
     it('saves after update', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       store.updateSetting('debugMode', true)
       expect(localStorageMock.setItem).toHaveBeenCalled()
     })
@@ -179,7 +122,7 @@ describe('Settings Store', () => {
 
   describe('Toggle Actions', () => {
     it('toggleDebugMode flips state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.debugMode).toBe(false)
       store.toggleDebugMode()
       expect(store.debugMode).toBe(true)
@@ -188,21 +131,21 @@ describe('Settings Store', () => {
     })
 
     it('toggleLeaderboard flips state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.leaderboardEnabled).toBe(true)
       store.toggleLeaderboard()
       expect(store.leaderboardEnabled).toBe(false)
     })
 
     it('toggleSound flips state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.soundEnabled).toBe(true)
       store.toggleSound()
       expect(store.soundEnabled).toBe(false)
     })
 
     it('setOfflineMode sets specific value', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       store.setOfflineMode(true)
       expect(store.offlineMode).toBe(true)
       store.setOfflineMode(false)
@@ -210,7 +153,7 @@ describe('Settings Store', () => {
     })
 
     it('toggleFortuneWheel flips state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.fortuneWheelEnabled).toBe(true)
       store.toggleFortuneWheel()
       expect(store.fortuneWheelEnabled).toBe(false)
@@ -219,7 +162,7 @@ describe('Settings Store', () => {
     })
 
     it('toggleAnswerInput flips state', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       expect(store.answerInputEnabled).toBe(false)
       store.toggleAnswerInput()
       expect(store.answerInputEnabled).toBe(true)
@@ -230,7 +173,7 @@ describe('Settings Store', () => {
 
   describe('Reset to Defaults', () => {
     it('resets all settings', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       store.debugMode = true
       store.soundEnabled = false
       store.maxPlayersPerGame = 10
@@ -243,7 +186,7 @@ describe('Settings Store', () => {
     })
 
     it('saves after reset', () => {
-      const store = useSettingsStore()
+      const store = settingsStore.getState()
       store.debugMode = true
       vi.clearAllMocks()
 
