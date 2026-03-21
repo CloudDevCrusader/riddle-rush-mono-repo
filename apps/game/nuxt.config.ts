@@ -91,7 +91,7 @@ export default defineNuxtConfig({
   ],
 
   imports: {
-    dirs: ['stores', 'composables'],
+    dirs: ['stores', 'stores/hooks', 'composables'],
   },
   devtools: {
     enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',

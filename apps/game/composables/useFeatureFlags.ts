@@ -1,4 +1,5 @@
 import type { UnleashClient } from 'unleash-proxy-client'
+import { settingsStore } from '~/stores/settingsStore'
 
 /**
  * Module-level reactive bridge between the Unleash EventEmitter and Vue's
@@ -67,15 +68,15 @@ export function useFeatureFlags() {
         return gitlabClient.isEnabled(flagName)
       }
 
-      const settingsStore = useSettingsStore()
+      const state = settingsStore.getState()
       if (flagName === 'fortune-wheel') {
-        return settingsStore.fortuneWheelEnabled
+        return state.fortuneWheelEnabled
       }
       if (flagName === 'websocket') {
-        return settingsStore.websocketEnabled
+        return state.websocketEnabled
       }
       if (flagName === 'answer-input') {
-        return settingsStore.answerInputEnabled
+        return state.answerInputEnabled
       }
     } catch (error) {
       const logger = useLogger()
@@ -114,8 +115,8 @@ export function useFeatureFlags() {
     }
 
     // Only use local settings when no GitLab client is configured
-    const settingsStore = useSettingsStore()
-    return settingsStore.fortuneWheelEnabled
+    const state = settingsStore.getState()
+    return state.fortuneWheelEnabled
   })
 
   /**
@@ -137,8 +138,8 @@ export function useFeatureFlags() {
     // No GitLab configured: fall back to local settings store.
     // NOTE: answerInputEnabled defaults to false in the store, so answer input
     // is hidden in local dev unless toggled via console or debug panel.
-    const settingsStore = useSettingsStore()
-    return settingsStore.answerInputEnabled
+    const state = settingsStore.getState()
+    return state.answerInputEnabled
   })
 
   /**
@@ -153,8 +154,8 @@ export function useFeatureFlags() {
     }
 
     // Only use local settings when no GitLab client is configured
-    const settingsStore = useSettingsStore()
-    return settingsStore.websocketEnabled
+    const state = settingsStore.getState()
+    return state.websocketEnabled
   })
 
   return {

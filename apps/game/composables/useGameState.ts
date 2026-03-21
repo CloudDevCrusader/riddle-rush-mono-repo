@@ -4,33 +4,32 @@
  * Reduces duplication across pages
  */
 export function useGameState() {
-  const gameStore = useGameStore()
-  const settingsStore = useSettingsStore()
+  const gameSession = useGameSession()
+  const settingsHook = useSettings()
+  const categories = useCategories()
+  const playerActions = usePlayerActions()
 
-  // Common computeds from game store
-  const currentCategory = computed(() => gameStore.currentCategory)
-  const currentLetter = computed(() => gameStore.currentLetter)
-  const currentRound = computed(() => gameStore.currentRound)
-  const players = computed(() => gameStore.players)
-  const currentPlayerTurn = computed(() => gameStore.currentPlayerTurn)
-  const allPlayersSubmitted = computed(() => gameStore.allPlayersSubmitted)
-  const isGameCompleted = computed(() => gameStore.isGameCompleted)
-  const leaderboard = computed(() => gameStore.leaderboard)
-  const hasActiveSession = computed(() => gameStore.hasActiveSession)
-  const gameStatus = computed(() => gameStore.gameStatus)
-
+  // Return combined API with all actions for backward compatibility
   return {
-    gameStore,
-    settingsStore,
-    currentCategory,
-    currentLetter,
-    currentRound,
-    players,
-    currentPlayerTurn,
-    allPlayersSubmitted,
-    isGameCompleted,
-    leaderboard,
-    hasActiveSession,
-    gameStatus,
+    // Backward compatibility: return hooks as "store" objects
+    // gameStore now provides ALL actions from all hooks
+    gameStore: {
+      ...gameSession,
+      ...categories,
+      ...playerActions,
+    },
+    settingsStore: settingsHook,
+
+    // Convenience: destructured common computed refs
+    currentCategory: gameSession.currentCategory,
+    currentLetter: gameSession.currentLetter,
+    currentRound: gameSession.currentRound,
+    players: gameSession.players,
+    currentPlayerTurn: gameSession.currentPlayerTurn,
+    allPlayersSubmitted: gameSession.allPlayersSubmitted,
+    isGameCompleted: gameSession.isGameCompleted,
+    leaderboard: gameSession.leaderboard,
+    hasActiveSession: gameSession.hasActiveSession,
+    gameStatus: gameSession.gameStatus,
   }
 }
