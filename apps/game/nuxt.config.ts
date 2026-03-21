@@ -4,7 +4,6 @@ import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 import { filterSsrPlugins } from './utils/filter-ssr-plugins'
 import { withTrailingSlash } from 'ufo'
 import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema'
-import type { Manifest as ViteBundleManifest } from 'vue-bundle-renderer'
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -314,11 +313,6 @@ export default defineNuxtConfig({
     // Filter out problematic i18n plugins at app resolution stage
     'app:resolve': (app: NuxtAppSchema) => {
       filterProblematicPlugins(app)
-    },
-    // build:manifest receives the Vite/Webpack bundle manifest (asset map), not app plugins —
-    // plugin filtering is handled in app:resolve above. This hook is kept as a no-op placeholder.
-    'build:manifest': (_manifest: ViteBundleManifest) => {
-      // Plugin filtering is handled in app:resolve; bundle manifest has no plugin list.
     },
   },
 
