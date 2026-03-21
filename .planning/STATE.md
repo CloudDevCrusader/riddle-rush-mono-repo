@@ -187,8 +187,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-21T22:22:10.929Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-03-21T23:11:57.000Z
+Stopped at: Session resumed, proceeding to show base points in scoring view
 Resume file: None
 
 ### Deployment: development

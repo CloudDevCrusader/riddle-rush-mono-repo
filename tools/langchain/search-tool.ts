@@ -2,7 +2,7 @@ import { tool } from 'langchain'
 import { TavilySearch } from '@langchain/tavily'
 import { z } from 'zod'
 
-const internetSearch = tool(
+export const internetSearch = tool(
   async ({
     query,
     maxResults = 5,
@@ -27,11 +27,7 @@ const internetSearch = tool(
     description: 'Run a web search',
     schema: z.object({
       query: z.string().describe('The search query'),
-      maxResults: z
-        .number()
-        .optional()
-        .default(5)
-        .describe('Maximum number of results to return'),
+      maxResults: z.number().optional().default(5).describe('Maximum number of results to return'),
       topic: z
         .enum(['general', 'news', 'finance'])
         .optional()
@@ -43,5 +39,5 @@ const internetSearch = tool(
         .default(false)
         .describe('Whether to include raw content'),
     }),
-  },
+  }
 )
