@@ -64,6 +64,7 @@
   },
   "credits": {
     "art": "Art",
+    "description": "Lernen Sie das Team hinter Riddle Rush kennen",
     "game_design": "Spieldesign",
     "programming": "Programmierung",
     "title": "CREDITS"
@@ -113,20 +114,23 @@
     "incorrect": "Leider falsch",
     "incorrect_answer": "Falsch",
     "loading": "Wird geladen...",
+    "meta_description": "Ein aufregendes Wort-Ratespiel für Freunde und Familie. Offline spielbar, perfekt für Spielabende!",
     "multiplayer_setup": "Spiel mit {0} Spielern gestartet!",
     "new_round": "Neue Runde",
     "new_round_started": "Neue Runde gestartet!",
     "next_round": "Nächste Runde gestartet!",
     "no_active_session": "Bitte starte zuerst ein Spiel",
     "no_player": "Kein aktiver Spieler gefunden",
-    "meta_description": "Ein aufregendes Wort-Ratespiel für Freunde und Familie. Offline spielbar, perfekt für Spielabende!",
     "other_answers": "Weitere Lösungen:",
     "page_title": "Riddle Rush - Spiel",
+    "pause": "Spiel pausieren",
     "players": "Spieler",
     "quitConfirmation": "Bist du sicher, dass du das Spiel beenden möchtest?",
     "quitGame": "SPIEL BEENDEN",
     "resumed": "Spiel fortgesetzt!",
     "round": "Runde",
+    "round_start_description": "Dreht für Kategorie und Buchstabe",
+    "round_start_title": "Rundenstart",
     "score": "Punkte",
     "skip": "Überspringen",
     "starts_with": "Beginnt mit",
@@ -151,14 +155,17 @@
     "about_link": "Über das Spiel",
     "category_description": "Kategorien werden zufällig pro Runde ausgewählt",
     "category_title": "Verfügbare Kategorien",
-    "loading_categories": "Kategorien werden geladen...",
     "load_more": "Mehr Kategorien",
+    "loading_categories": "Kategorien werden geladen...",
     "offline_badge": "Offline spielbar",
+    "page_title": "Hauptmenü",
     "quick_start": "Schnellstart",
     "starting_game": "Spiel wird gestartet..."
   },
   "language": {
-    "title": "SPRACHE"
+    "description": "Wählen Sie Ihre bevorzugte Sprache",
+    "select_prompt": "Sprache auswählen",
+    "title": "Sprachauswahl"
   },
   "leaderboard": {
     "avatar_error": "Fehler beim Aktualisieren des Avatars. Bitte versuche es erneut.",
@@ -209,23 +216,24 @@
     "not_connected": "Nicht verbunden"
   },
   "settings": {
-    "title": "Einstellungen",
-    "sound": "Sound",
-    "music": "Musik",
-    "language": "Sprache",
-    "theme": "Design",
     "dark_mode": "Dunkelmodus",
+    "debug": "Debug-Modus",
+    "language": "Sprache",
+    "language_changed": "Sprache geändert",
+    "leaderboard": "Bestenliste anzeigen",
+    "leaderboard_disabled": "Bestenliste deaktiviert",
+    "leaderboard_enabled": "Bestenliste aktiviert",
     "light_mode": "Hellmodus",
-    "system_default": "Systemstandard"
-  },
-  "language": {
-    "title": "Sprachauswahl",
-    "description": "Wählen Sie Ihre bevorzugte Sprache",
-    "select_prompt": "Sprache auswählen"
-  },
-  "credits": {
-    "title": "Riddle Rush - Credits",
-    "description": "Lernen Sie das Team hinter Riddle Rush kennen"
+    "maxPlayers": "Max. Spieler",
+    "music": "Musik",
+    "reset": "Zurücksetzen",
+    "reset_success": "Einstellungen auf Standard zurückgesetzt",
+    "sound": "Sound",
+    "sound_disabled": "Sound deaktiviert",
+    "sound_enabled": "Sound aktiviert",
+    "system_default": "Systemstandard",
+    "theme": "Design",
+    "title": "Einstellungen"
   },
   "pause": {
     "home": "Startseite",
@@ -258,7 +266,7 @@
     "ready": "{0} Spieler bereit!",
     "ready_set_go": "Bereit, los, geht's! \uD83D\uDE80",
     "removed": "{0} entfernt",
-    "showtime": "Vorstellung beginnt! ⭐",
+    "showtime": "Vorstellung beginnt! \u2B50",
     "start": "Spiel starten",
     "title": "Spieler"
   },
@@ -279,25 +287,11 @@
     "new_game": "Neues Spiel",
     "next_round": "Nächste Runde",
     "play_another_round": "Möchtet ihr noch eine Runde spielen?",
+    "player": "Spieler",
     "points": "Pkt",
     "post_round_prompt": "Wie wollt ihr weitermachen?",
-    "player": "Spieler",
     "round_complete": "Runde abgeschlossen!",
     "title": "Punktevergabe"
-  },
-  "settings": {
-    "debug": "Debug-Modus",
-    "language_changed": "Sprache geändert",
-    "leaderboard": "Bestenliste anzeigen",
-    "leaderboard_disabled": "Bestenliste deaktiviert",
-    "leaderboard_enabled": "Bestenliste aktiviert",
-    "maxPlayers": "Max. Spieler",
-    "reset": "Zurücksetzen",
-    "reset_success": "Einstellungen auf Standard zurückgesetzt",
-    "sound": "Sound",
-    "sound_disabled": "Sound deaktiviert",
-    "sound_enabled": "Sound aktiviert",
-    "title": "Einstellungen"
   },
   "share": {
     "error": "Fehler beim Teilen des Punktestands",
