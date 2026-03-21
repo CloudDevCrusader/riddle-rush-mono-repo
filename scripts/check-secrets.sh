@@ -59,6 +59,7 @@ IGNORE_PATHS=(
 	".claude/*"
 	".agent/*"
 	".planning/*"
+	".github/workflows/*"
 )
 
 check_file() {

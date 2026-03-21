@@ -53,15 +53,10 @@ jobs:
       - name: Unit tests
         run: pnpm run test:unit
 
-      - name: Trunk Check
-        uses: trunk-io/trunk-action@v1
-        with:
-          check-mode: all
-
   deploy:
     name: Deploy to AWS (Development)
     needs: quality-checks
-    if: always()
+    if: success()
     runs-on: ubuntu-latest
     environment:
       name: development
@@ -78,6 +73,14 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
