@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
+milestone: v1.0.3
 milestone_name: milestone
 status: executing
-stopped_at: Completed 19-01-PLAN.md
-last_updated: '2026-03-17T05:23:15.270Z'
-last_activity: 2026-03-17 - Completed 19-01-PLAN.md
+stopped_at: Completed 14-02-PLAN.md
+last_updated: '2026-03-21T22:19:02.630Z'
+last_activity: 2026-03-21
 progress:
   total_phases: 20
   completed_phases: 15
-  total_plans: 50
-  completed_plans: 44
+  total_plans: 53
+  completed_plans: 45
   percent: 88
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 19 of 19 (Move from Pinia to Zustand)
-Plan: 2 of 3 — Next
+Plan: 3 of 3 — Next
 Status: In progress
-Last activity: 2026-03-17 - Completed 19-01-PLAN.md
+Last activity: 2026-03-21
 Next Plan: 19-02 — Consumer import swap (big-bang cutover)
 
 Progress: [████████░░] 88% (44/50 total plans complete)
@@ -67,6 +67,7 @@ Progress: [████████░░] 88% (44/50 total plans complete)
 
 _Updated after each plan completion_
 | Phase 19 P01 | 9min | 2 tasks | 15 files |
+| Phase 14-02 P02 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -140,6 +141,7 @@ Recent decisions affecting current work:
 - [Phase 19]: Use #imports instead of 'vue' for Vue reactivity in Nuxt auto-import context
 - [Phase 19]: Settings store persist-only: removed manual loadSettings/saveSettings, persist middleware handles all
 - [Phase 19]: subscribe+version pattern for Zustand-Vue reactivity bridge (ref counter + computed getState)
+- [Phase 14-02]: Added .github/workflows/\* to secret scanner ignore paths to prevent false positives on GitHub Actions template refs
 
 ### Pending Todos
 
@@ -179,8 +181,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-17T05:23:15.268Z
-Stopped at: Completed 19-01-PLAN.md
+Last session: 2026-03-21T22:19:02.627Z
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
 
 ### Deployment: development

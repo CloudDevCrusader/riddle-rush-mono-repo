@@ -347,12 +347,12 @@ Plans:
 4. The intermittent `nuxi typecheck` error is investigated and fixed.
 5. GitHub Actions CI/CD workflows reviewed and improved — deploy-dev.yml quality gate fixed, pnpm cache added, comprehensive-ci-cd.yml duplicate removed.
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 
 - [ ] 14-01-PLAN.md — i18n completeness: replace hardcoded strings, merge duplicate locale sections
-- [ ] 14-02-PLAN.md — CI/CD improvements: fix deploy-dev.yml quality gate, delete duplicate workflow
+- [x] 14-02-PLAN.md — CI/CD improvements: fix deploy-dev.yml quality gate, delete duplicate workflow
 - [ ] 14-03-PLAN.md — Multiplayer bug investigation + fix, typecheck error fix, game store assessment
 
 ### Phase 15: Visual Polish, Animations & Bug Fixes
@@ -469,7 +469,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 11.1. Scoring & Player Config         | 2/2            | Complete    | 2026-02-16 |
 | 12. App Optimization & Refactoring    | 10/10          | Complete    | 2026-02-16 |
 | 13. Post-Round Next Step Modal        | 1/1            | Complete    | 2026-02-27 |
-| 14. Maintenance & Quality of Life     | 0/3            | Pending     | —          |
+| 14. Maintenance & Quality of Life     | 1/3            | In Progress |            |
 | 15. Visual Polish & Bug Fixes         | 0/4            | Planned     | —          |
 | 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned     | —          |
 | 18. Fortune Wheel Default & Review    | 0/2            | Planned     | —          |
