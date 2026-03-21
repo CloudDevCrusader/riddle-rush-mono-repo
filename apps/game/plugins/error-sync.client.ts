@@ -2,7 +2,6 @@
  * Error Sync Plugin
  * Initializes global error handling and synchronization
  */
-import type { Pinia } from 'pinia'
 
 export default defineNuxtPlugin((nuxtApp: any) => {
   const { syncErrorLog, setupPeriodicSync } = useErrorSync()
@@ -69,27 +68,6 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         type: 'vue_error',
         component: instance?.$options?.name || 'unknown',
         info,
-      })
-    }
-
-    // Pinia error handler
-    const pinia = nuxtApp.$pinia as Pinia
-    if (pinia) {
-      pinia.use(({ store }: { store: any }) => {
-        store.$onAction((action: any) => {
-          const after = action.after
-          action.after = (result: unknown) => {
-            after?.(result)
-          }
-          const onError = action.onError
-          action.onError = (err: unknown) => {
-            syncErrorLog('error', `Pinia action error: ${action.name}`, err, {
-              type: 'pinia_error',
-              store: store.$id,
-            })
-            onError?.(err)
-          }
-        })
       })
     }
   }

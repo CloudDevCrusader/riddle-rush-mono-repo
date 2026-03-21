@@ -1,5 +1,4 @@
 import { ROUTES, getGameRoute, getResultsRoute } from '@riddle-rush/shared/routes'
-import { useLoading } from './useLoading'
 import { useLodash } from './useLodash'
 import type { DebouncedFunc } from './useLodash'
 

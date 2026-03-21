@@ -64,9 +64,8 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
 
 export default defineNuxtConfig({
   modules: [
-    '@pinia/nuxt', // Load Pinia first since stores are used everywhere
-    '@nuxtjs/i18n', // Load i18n early but after Pinia
-    '@unocss/nuxt', // Load UnoCSS after Pinia/i18n, before PWA
+    '@nuxtjs/i18n', // Load i18n early
+    '@unocss/nuxt', // Load UnoCSS after i18n, before PWA
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
@@ -246,7 +245,7 @@ export default defineNuxtConfig({
         : getDevPlugins({ isDev: true })),
     ],
     optimizeDeps: {
-      include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
+      include: ['@vueuse/core', '@vueuse/motion', 'lodash-es'],
       exclude: ['vue-demi'],
       esbuildOptions: {
         // Ensure lodash-es is tree-shaken properly
@@ -295,7 +294,7 @@ export default defineNuxtConfig({
     typeCheck: false,
     tsConfig: {
       compilerOptions: {
-        types: ['@pinia/nuxt', '@nuxtjs/i18n'],
+        types: ['@nuxtjs/i18n'],
       },
     },
   },
