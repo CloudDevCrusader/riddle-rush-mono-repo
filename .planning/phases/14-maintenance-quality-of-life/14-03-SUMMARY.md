@@ -65,7 +65,7 @@ Each task was committed atomically:
 
 Task 2 produced no code changes (investigation-only, findings documented below).
 
-**Plan metadata:** (pending)
+**Plan metadata:** `21a4b06c1` (docs: complete plan)
 
 ## Files Created/Modified
 
