@@ -280,6 +280,7 @@
     "your_score": "Your Score"
   },
   "scoring": {
+    "base_score": "Score",
     "confirm_scores": "Confirm Scores",
     "description": "View round scoring results",
     "error_saving": "Failed to save scores. Please try again.",

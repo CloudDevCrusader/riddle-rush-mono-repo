@@ -241,6 +241,7 @@
     "your_score": "Dein Score"
   },
   "scoring": {
+    "base_score": "Punktestand",
     "confirm_scores": "Punkte bestätigen",
     "description": "Rundenergebnisse ansehen",
     "error_saving": "Fehler beim Speichern der Punkte. Bitte erneut versuchen.",
