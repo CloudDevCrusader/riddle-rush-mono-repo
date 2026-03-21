@@ -27,7 +27,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11.1: Scoring & Player Config** - INSERTED: Score increment ±1, player count 2-10, leaderboard rank fixes
 - [x] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
 - [x] **Phase 13: Post-Round Next Step Modal** - Prompt to play another round or view leaderboard
-- [ ] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs
+- [x] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs (completed 2026-03-21)
 - [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 - [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
 - [ ] **Phase 18: Enable fortune-wheel as default review/refactor if implementation works and looks good** - Enable fortune wheel by default and validate/refactor implementation quality
@@ -347,11 +347,11 @@ Plans:
 4. The intermittent `nuxi typecheck` error is investigated and fixed.
 5. GitHub Actions CI/CD workflows reviewed and improved — deploy-dev.yml quality gate fixed, pnpm cache added, comprehensive-ci-cd.yml duplicate removed.
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 
-- [ ] 14-01-PLAN.md — i18n completeness: replace hardcoded strings, merge duplicate locale sections
+- [x] 14-01-PLAN.md — i18n completeness: replace hardcoded strings, merge duplicate locale sections
 - [x] 14-02-PLAN.md — CI/CD improvements: fix deploy-dev.yml quality gate, delete duplicate workflow
 - [x] 14-03-PLAN.md — Multiplayer bug investigation + fix, typecheck error fix, game store assessment
 
@@ -469,7 +469,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 11.1. Scoring & Player Config         | 2/2            | Complete    | 2026-02-16 |
 | 12. App Optimization & Refactoring    | 10/10          | Complete    | 2026-02-16 |
 | 13. Post-Round Next Step Modal        | 1/1            | Complete    | 2026-02-27 |
-| 14. Maintenance & Quality of Life     | 2/3            | In Progress |            |
+| 14. Maintenance & Quality of Life     | 3/3            | Complete    | 2026-03-21 |
 | 15. Visual Polish & Bug Fixes         | 0/4            | Planned     | —          |
 | 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned     | —          |
 | 18. Fortune Wheel Default & Review    | 0/2            | Planned     | —          |
