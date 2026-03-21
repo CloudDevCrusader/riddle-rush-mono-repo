@@ -8,15 +8,16 @@ allowed-tools:
   - Write
   - AskUserQuestion
 ---
+
 <objective>
 Validate `.planning/` directory integrity and report actionable issues. Checks for missing files, invalid configurations, inconsistent state, and orphaned plans.
 </objective>
 
 <execution_context>
-@./.claude/get-shit-done/workflows/health.md
+@/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/workflows/health.md
 </execution_context>
 
 <process>
-Execute the health workflow from @./.claude/get-shit-done/workflows/health.md end-to-end.
+Execute the health workflow from @/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/workflows/health.md end-to-end.
 Parse --repair flag from arguments and pass to workflow.
 </process>

@@ -1,7 +1,7 @@
 ---
 name: gsd:validate-phase
 description: Retroactively audit and fill Nyquist validation gaps for a completed phase
-argument-hint: "[phase number]"
+argument-hint: '[phase number]'
 allowed-tools:
   - Read
   - Write
@@ -12,6 +12,7 @@ allowed-tools:
   - Task
   - AskUserQuestion
 ---
+
 <objective>
 Audit Nyquist validation coverage for a completed phase. Three states:
 - (A) VALIDATION.md exists — audit and fill gaps
@@ -22,7 +23,7 @@ Output: updated VALIDATION.md + generated test files.
 </objective>
 
 <execution_context>
-@./.claude/get-shit-done/workflows/validate-phase.md
+@/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/workflows/validate-phase.md
 </execution_context>
 
 <context>
@@ -30,6 +31,6 @@ Phase: $ARGUMENTS — optional, defaults to last completed phase.
 </context>
 
 <process>
-Execute @./.claude/get-shit-done/workflows/validate-phase.md.
+Execute @/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/workflows/validate-phase.md.
 Preserve all workflow gates.
 </process>

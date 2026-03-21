@@ -88,7 +88,8 @@
       "Bash(file:*)",
       "Bash(git check-ignore:*)",
       "Bash(pnpm --filter @riddle-rush/game run typecheck:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

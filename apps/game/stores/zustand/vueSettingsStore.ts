@@ -1,8 +1,8 @@
-import { useSettingsStore as useZustandSettingsStore } from './settingsStore'
+import { settingsStore } from '../settingsStore'
 import { computed } from '#imports'
 
 export function useSettingsStore() {
-  const store = useZustandSettingsStore()
+  const store = settingsStore()
 
   return {
     // State
@@ -29,8 +29,6 @@ export function useSettingsStore() {
     isAnswerInputEnabled: computed(() => store.isAnswerInputEnabled),
 
     // Actions
-    loadSettings: store.loadSettings,
-    saveSettings: store.saveSettings,
     updateSetting: store.updateSetting,
     toggleDebugMode: store.toggleDebugMode,
     toggleLeaderboard: store.toggleLeaderboard,
@@ -42,8 +40,7 @@ export function useSettingsStore() {
     resetToDefaults: store.resetToDefaults,
     setLanguage: store.setLanguage,
     getLanguage: store.getLanguage,
-    hasStoredSettings: store.hasStoredSettings,
   }
 }
 
-export type { GameSettings } from './settingsStore'
+export type { GameSettings } from '../settingsStore'

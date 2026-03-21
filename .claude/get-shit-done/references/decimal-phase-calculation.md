@@ -6,10 +6,11 @@ Calculate the next decimal phase number for urgent insertions.
 
 ```bash
 # Get next decimal phase after phase 6
-node "./.claude/get-shit-done/bin/gsd-tools.cjs" phase next-decimal 6
+node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" phase next-decimal 6
 ```
 
 Output:
+
 ```json
 {
   "found": true,
@@ -20,6 +21,7 @@ Output:
 ```
 
 With existing decimals:
+
 ```json
 {
   "found": true,
@@ -32,32 +34,33 @@ With existing decimals:
 ## Extract Values
 
 ```bash
-DECIMAL_INFO=$(node "./.claude/get-shit-done/bin/gsd-tools.cjs" phase next-decimal "${AFTER_PHASE}")
+DECIMAL_INFO=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" phase next-decimal "${AFTER_PHASE}")
 DECIMAL_PHASE=$(printf '%s\n' "$DECIMAL_INFO" | jq -r '.next')
 BASE_PHASE=$(printf '%s\n' "$DECIMAL_INFO" | jq -r '.base_phase')
 ```
 
 Or with --raw flag:
+
 ```bash
-DECIMAL_PHASE=$(node "./.claude/get-shit-done/bin/gsd-tools.cjs" phase next-decimal "${AFTER_PHASE}" --raw)
+DECIMAL_PHASE=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" phase next-decimal "${AFTER_PHASE}" --raw)
 # Returns just: 06.1
 ```
 
 ## Examples
 
-| Existing Phases | Next Phase |
-|-----------------|------------|
-| 06 only | 06.1 |
-| 06, 06.1 | 06.2 |
-| 06, 06.1, 06.2 | 06.3 |
-| 06, 06.1, 06.3 (gap) | 06.4 |
+| Existing Phases      | Next Phase |
+| -------------------- | ---------- |
+| 06 only              | 06.1       |
+| 06, 06.1             | 06.2       |
+| 06, 06.1, 06.2       | 06.3       |
+| 06, 06.1, 06.3 (gap) | 06.4       |
 
 ## Directory Naming
 
 Decimal phase directories use the full decimal number:
 
 ```bash
-SLUG=$(node "./.claude/get-shit-done/bin/gsd-tools.cjs" generate-slug "$DESCRIPTION" --raw)
+SLUG=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" generate-slug "$DESCRIPTION" --raw)
 PHASE_DIR=".planning/phases/${DECIMAL_PHASE}-${SLUG}"
 mkdir -p "$PHASE_DIR"
 ```
