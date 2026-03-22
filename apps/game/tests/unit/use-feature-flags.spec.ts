@@ -29,6 +29,9 @@ vi.mock('../../composables/useFeatureFlags', () => ({
           if (flagName === 'answer-input') {
             return mockSettingsStore.answerInputEnabled
           }
+          if (flagName === 'websocket') {
+            return mockSettingsStore.websocketEnabled
+          }
           return defaultValue
         }
         return mockIsEnabled(flagName)
@@ -81,6 +84,14 @@ vi.mock('../../composables/useFeatureFlags', () => ({
       getVariant,
       isAnswerInputEnabled,
       isFortuneWheelEnabled,
+      isWebSocketEnabled: {
+        value: (function () {
+          if (!gitlabClient) {
+            return mockSettingsStore.websocketEnabled
+          }
+          return isEnabled('websocket', false)
+        })(),
+      },
     }
   },
 }))
@@ -88,6 +99,7 @@ vi.mock('../../composables/useFeatureFlags', () => ({
 const mockSettingsStore = {
   fortuneWheelEnabled: true,
   answerInputEnabled: false,
+  websocketEnabled: false,
 }
 
 // Import after mocks are set up
@@ -102,6 +114,7 @@ describe('useFeatureFlags (GitLab)', () => {
     }
     mockSettingsStore.fortuneWheelEnabled = true
     mockSettingsStore.answerInputEnabled = false
+    mockSettingsStore.websocketEnabled = false
   })
 
   describe('isEnabled', () => {
@@ -234,6 +247,14 @@ describe('useFeatureFlags (GitLab)', () => {
 
       expect(isEnabled('fortune-wheel', true)).toBe(false)
     })
+
+    it('should keep fortune wheel enabled by default when local is untouched', () => {
+      mockGitLabClient = null
+
+      const { isFortuneWheelEnabled } = useFeatureFlags()
+
+      expect(isFortuneWheelEnabled.value).toBe(true)
+    })
   })
 
   describe('feature flag names', () => {
@@ -313,6 +334,26 @@ describe('useFeatureFlags (GitLab)', () => {
 
       // GitLab can have environment-specific rollouts
       expect(isEnabled('staging-only-feature')).toBe(true)
+    })
+  })
+
+  describe('isWebSocketEnabled', () => {
+    it('should fallback to local settings when no client exists', () => {
+      mockGitLabClient = null
+      mockSettingsStore.websocketEnabled = true
+
+      const { isWebSocketEnabled } = useFeatureFlags()
+
+      expect(isWebSocketEnabled.value).toBe(true)
+    })
+
+    it('should use GitLab value when client exists', () => {
+      mockSettingsStore.websocketEnabled = true
+      mockIsEnabled.mockImplementation((flagName: string) => flagName !== 'websocket')
+
+      const { isWebSocketEnabled } = useFeatureFlags()
+
+      expect(isWebSocketEnabled.value).toBe(false)
     })
   })
 })
