@@ -141,7 +141,8 @@ export default defineNuxtConfig({
       gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
       gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
       gtagId: process.env.GTAG_ID || '',
-      // Feature flags - simple booleans (override via NUXT_PUBLIC_FEATURE_ANSWER_INPUT=false)
+      // Feature-flag contract: runtime config can only force-disable answer input.
+      // Precedence in useFeatureFlags.ts is: runtime force-disable -> GitLab -> local settings -> default.
       featureAnswerInput: process.env.NUXT_PUBLIC_FEATURE_ANSWER_INPUT !== 'false',
       // Game configuration - env vars override shared constants
       minPlayers: Number(process.env.NUXT_PUBLIC_MIN_PLAYERS) || MIN_PLAYERS,

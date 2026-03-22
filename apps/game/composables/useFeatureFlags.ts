@@ -48,6 +48,50 @@ export function useFeatureFlags() {
 
   const config = useRuntimeConfig()
 
+  const logger = useLogger()
+
+  type ManagedFlag = 'fortune-wheel' | 'answer-input' | 'websocket'
+  type SettingsFlagKey = 'fortuneWheelEnabled' | 'answerInputEnabled' | 'websocketEnabled'
+
+  interface ResolveManagedFlagOptions {
+    flagName: ManagedFlag
+    settingsKey: SettingsFlagKey
+    defaultValue: boolean
+    runtimeForceDisabled?: boolean
+  }
+
+  /**
+   * Single feature-flag resolution contract used by all managed flags.
+   *
+   * Precedence (highest to lowest):
+   * 1) Runtime force-disable (only for answer-input, via featureAnswerInput=false)
+   * 2) GitLab/Unleash (authoritative when client is configured)
+   * 3) Local persisted settings store (fallback when GitLab is unavailable)
+   * 4) Static default (safety fallback for unexpected states/errors)
+   */
+  const resolveManagedFlag = ({
+    flagName,
+    settingsKey,
+    defaultValue,
+    runtimeForceDisabled = false,
+  }: ResolveManagedFlagOptions): boolean => {
+    if (runtimeForceDisabled) {
+      return false
+    }
+
+    try {
+      if (gitlabClient) {
+        return gitlabClient.isEnabled(flagName)
+      }
+
+      const localValue = settingsStore.getState()[settingsKey]
+      return typeof localValue === 'boolean' ? localValue : defaultValue
+    } catch (error) {
+      logger.warn(`Failed to resolve feature flag ${flagName}:`, error)
+      return defaultValue
+    }
+  }
+
   // Lazy fallback: attach listener if the plugin didn't already
   if (gitlabClient) {
     attachUnleashListener(gitlabClient)
@@ -62,24 +106,38 @@ export function useFeatureFlags() {
    * (isFortuneWheelEnabled, isAnswerInputEnabled, isWebSocketEnabled).
    */
   const isEnabled = (flagName: string, defaultValue = false): boolean => {
-    // Priority: runtime config overrides → GitLab → local settings → default
+    if (flagName === 'fortune-wheel') {
+      return resolveManagedFlag({
+        flagName,
+        settingsKey: 'fortuneWheelEnabled',
+        defaultValue,
+      })
+    }
+
+    if (flagName === 'answer-input') {
+      return resolveManagedFlag({
+        flagName,
+        settingsKey: 'answerInputEnabled',
+        defaultValue,
+        // Runtime config override is intentionally supported only for answer input,
+        // so E2E/dev can hard-disable this UI path regardless of remote/local flags.
+        runtimeForceDisabled: config.public.featureAnswerInput === false,
+      })
+    }
+
+    if (flagName === 'websocket') {
+      return resolveManagedFlag({
+        flagName,
+        settingsKey: 'websocketEnabled',
+        defaultValue,
+      })
+    }
+
     try {
       if (gitlabClient) {
         return gitlabClient.isEnabled(flagName)
       }
-
-      const state = settingsStore.getState()
-      if (flagName === 'fortune-wheel') {
-        return state.fortuneWheelEnabled
-      }
-      if (flagName === 'websocket') {
-        return state.websocketEnabled
-      }
-      if (flagName === 'answer-input') {
-        return state.answerInputEnabled
-      }
     } catch (error) {
-      const logger = useLogger()
       logger.warn(`Failed to check feature flag ${flagName}:`, error)
     }
 
@@ -97,7 +155,6 @@ export function useFeatureFlags() {
     try {
       return gitlabClient.getVariant(flagName)
     } catch (error) {
-      const logger = useLogger()
       logger.warn(`Failed to get variant for ${flagName}:`, error)
       return { name: 'disabled', enabled: false }
     }
@@ -108,15 +165,7 @@ export function useFeatureFlags() {
    */
   const isFortuneWheelEnabled = computed(() => {
     void flagVersion.value // reactive dependency: re-run when flags update
-
-    // GitLab is authoritative when available
-    if (gitlabClient) {
-      return isEnabled('fortune-wheel', true)
-    }
-
-    // Only use local settings when no GitLab client is configured
-    const state = settingsStore.getState()
-    return state.fortuneWheelEnabled
+    return isEnabled('fortune-wheel', true)
   })
 
   /**
@@ -124,22 +173,7 @@ export function useFeatureFlags() {
    */
   const isAnswerInputEnabled = computed(() => {
     void flagVersion.value // reactive dependency: re-run when flags update
-
-    // Runtime config boolean takes precedence
-    if (config.public.featureAnswerInput === false) {
-      return false
-    }
-
-    // GitLab is authoritative when available
-    if (gitlabClient) {
-      return isEnabled('answer-input', true)
-    }
-
-    // No GitLab configured: fall back to local settings store.
-    // NOTE: answerInputEnabled defaults to false in the store, so answer input
-    // is hidden in local dev unless toggled via console or debug panel.
-    const state = settingsStore.getState()
-    return state.answerInputEnabled
+    return isEnabled('answer-input', true)
   })
 
   /**
@@ -147,15 +181,7 @@ export function useFeatureFlags() {
    */
   const isWebSocketEnabled = computed(() => {
     void flagVersion.value // reactive dependency: re-run when flags update
-
-    // GitLab is authoritative when available
-    if (gitlabClient) {
-      return isEnabled('websocket', false)
-    }
-
-    // Only use local settings when no GitLab client is configured
-    const state = settingsStore.getState()
-    return state.websocketEnabled
+    return isEnabled('websocket', false)
   })
 
   return {
