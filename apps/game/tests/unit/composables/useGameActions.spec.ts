@@ -27,43 +27,39 @@ const mockStartNextRound = vi.fn()
 let mockHasActiveSession = false
 let mockCurrentScore = 42
 
-const mockGameStore = {
+const mockGameSession = {
   startNewGame: mockStartNewGame,
   resumeOrStartNewGame: mockResumeOrStartNewGame,
   endGame: mockEndGame,
   setupPlayers: mockSetupPlayers,
-  startNextRound: mockStartNextRound,
   get hasActiveSession() {
-    return mockHasActiveSession
+    return { value: mockHasActiveSession }
   },
   get currentSession() {
     return {
-      score: mockCurrentScore,
-      attempts: [],
-      id: '1',
-      status: 'active',
-      category: null,
-      letter: '',
-      players: [],
-      currentRound: 0,
-      roundHistory: [],
+      value: {
+        score: mockCurrentScore,
+        attempts: [],
+        id: '1',
+        status: 'active',
+        category: null,
+        letter: '',
+        players: [],
+        currentRound: 0,
+        roundHistory: [],
+      },
     }
   },
 }
 
-// Stub Nuxt auto-imported globals (belt-and-suspenders alongside the module mock)
-vi.stubGlobal('useGameStore', () => mockGameStore)
-vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
+const mockPlayerActions = {
+  startNextRound: mockStartNextRound,
+}
 
-// Mock vue-router explicitly in case it's auto-imported
-vi.mock('vue-router', () => ({
-  useRouter: () => ({
-    push: mockRouterPush,
-    replace: vi.fn(),
-    back: vi.fn(),
-  }),
-  useRoute: vi.fn(),
-}))
+// Stub Nuxt auto-imported globals (belt-and-suspenders alongside the module mock)
+vi.stubGlobal('useGameSession', () => mockGameSession)
+vi.stubGlobal('usePlayerActions', () => mockPlayerActions)
+vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
 
 const mockToastSuccess = vi.fn()
 const mockToastError = vi.fn()

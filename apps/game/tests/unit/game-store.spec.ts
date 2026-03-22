@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { gameStore } from '../../stores/gameStore'
+import { usePlayerManager } from '../../composables/usePlayerManager'
 import { createCategoryList } from '../utils/factories'
 import type { Category, Player } from '@riddle-rush/types/game'
 
@@ -31,26 +32,44 @@ vi.mock('~/composables/useStatistics', () => ({
 const fetchMock = vi.fn()
 vi.stubGlobal('$fetch', fetchMock as unknown as typeof $fetch)
 
+const getSession = () => gameStore.getState().currentSession
+const getPlayers = () => getSession()?.players ?? []
+const getCurrentRound = () => getSession()?.currentRound ?? 0
+const getCurrentPlayerTurn = () => {
+  const playerManager = usePlayerManager()
+  return playerManager.getCurrentPlayerTurn(getPlayers(), getSession()?.currentPlayerIndex ?? 0)
+}
+const areAllPlayersSubmitted = () => {
+  const playerManager = usePlayerManager()
+  return playerManager.allPlayersSubmitted(getPlayers())
+}
+const getLeaderboard = () => {
+  const playerManager = usePlayerManager()
+  return playerManager.buildLeaderboard(
+    getPlayers(),
+    (getSession()?.status ?? 'active') === 'completed'
+  )
+}
+
 describe('Game Store', () => {
   let mockCategories: Category[]
 
   beforeEach(() => {
     vi.clearAllMocks()
     vi.clearAllTimers()
-    // Reset Zustand store state
-    gameStore.setState({
-      currentSession: null,
-      history: [],
-      categories: [],
-      categoriesLoaded: false,
-      categoriesLoading: false,
-      displayedCategoryCount: 9,
-      categoryLoadError: null,
-      selectedLetter: null,
-      isOnline: true,
-      installPromptEvent: null,
-      pendingPlayerNames: [],
-    })
+    // Reset Zustand store state without replacing getters
+    const state = gameStore.getState()
+    state.currentSession = null
+    state.history = []
+    state.categories = []
+    state.categoriesLoaded = false
+    state.categoriesLoading = false
+    state.displayedCategoryCount = 9
+    state.categoryLoadError = null
+    state.selectedLetter = null
+    state.isOnline = true
+    state.installPromptEvent = null
+    state.pendingPlayerNames = []
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
     fetchMock.mockClear()
@@ -97,7 +116,7 @@ describe('Game Store', () => {
 
     it('hasActiveSession is false when no session', () => {
       const store = gameStore.getState()
-      expect(store.hasActiveSession).toBe(false)
+      expect(store.hasActiveSession()).toBe(false)
     })
   })
 
@@ -177,78 +196,69 @@ describe('Game Store', () => {
     })
 
     it('caps at total category count', () => {
-      const store = gameStore.getState()
-      store.categories = createCategoryList(5)
-      store.displayedCategoryCount = 9 // DEFAULT_DISPLAYED_CATEGORIES
-      store.loadMoreCategories()
-      expect(store.displayedCategories.length).toBe(5)
+      gameStore.getState().categories = createCategoryList(5)
+      gameStore.getState().displayedCategoryCount = 9 // DEFAULT_DISPLAYED_CATEGORIES
+      gameStore.getState().loadMoreCategories()
+      expect(gameStore.getState().displayedCategories.length).toBe(5)
     })
   })
 
   describe('Start New Game', () => {
     it('creates session with category', async () => {
-      const store = gameStore.getState()
-      const session = await store.startNewGame()
+      const session = await gameStore.getState().startNewGame()
       expect(session).toBeDefined()
       expect(session?.category).toBeDefined()
       expect(session?.category.name.length).toBeGreaterThan(0)
     })
 
     it('sets currentSession', async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
-      expect(store.currentSession).not.toBeNull()
+      await gameStore.getState().startNewGame()
+      expect(gameStore.getState().currentSession).not.toBeNull()
     })
 
     it('initializes score to 0', async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
-      expect(store.currentSession?.score).toBe(0)
+      const session = await gameStore.getState().startNewGame()
+      expect(session?.score).toBe(0)
     })
 
     it('initializes empty attempts', async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
-      expect(store.currentSession?.attempts).toEqual([])
+      const session = await gameStore.getState().startNewGame()
+      expect(session?.attempts).toEqual([])
     })
 
     it('sets startTime', async () => {
-      const store = gameStore.getState()
       const before = Date.now()
-      await store.startNewGame()
+      const session = await gameStore.getState().startNewGame()
       const after = Date.now()
-      expect(store.currentSession?.startTime).toBeGreaterThanOrEqual(before)
-      expect(store.currentSession?.startTime).toBeLessThanOrEqual(after)
+      expect(session?.startTime).toBeGreaterThanOrEqual(before)
+      expect(session?.startTime).toBeLessThanOrEqual(after)
     })
 
     it('persists session to IndexedDB', async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
+      await gameStore.getState().startNewGame()
       expect(mockSaveGameSession).toHaveBeenCalledTimes(1)
     })
 
     it('selects a random category', async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
-      expect(store.currentSession?.category).toBeDefined()
-      expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
+      const session = await gameStore.getState().startNewGame()
+      expect(session?.category).toBeDefined()
+      expect(mockCategories.some((cat) => cat.id === session?.category.id)).toBe(true)
     })
 
     it('hasActiveSession becomes true', async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
-      expect(store.hasActiveSession).toBe(true)
+      await gameStore.getState().startNewGame()
+      expect(getSession()).not.toBeNull()
     })
   })
 
   describe('End Game', () => {
     beforeEach(async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
+      await gameStore.getState().startNewGame()
       // Create a session with some test data
-      if (store.currentSession) {
-        store.currentSession.score = 10
-        store.currentSession.attempts = [
+      const session = gameStore.getState().currentSession
+      if (session) {
+        session.score = 10
+        session.attempts = [
           {
             term: 'answer',
             found: true,
@@ -260,15 +270,13 @@ describe('Game Store', () => {
     })
 
     it('clears currentSession', async () => {
-      const store = gameStore.getState()
-      await store.endGame()
-      expect(store.currentSession).toBeNull()
+      await gameStore.getState().endGame()
+      expect(gameStore.getState().currentSession).toBeNull()
     })
 
     it('sets hasActiveSession to false', async () => {
-      const store = gameStore.getState()
-      await store.endGame()
-      expect(store.hasActiveSession).toBe(false)
+      await gameStore.getState().endGame()
+      expect(gameStore.getState().hasActiveSession()).toBe(false)
     })
 
     it.skip('adds session to history', async () => {
@@ -279,29 +287,25 @@ describe('Game Store', () => {
     })
 
     it('preserves score in history', async () => {
-      const store = gameStore.getState()
-      await store.endGame()
-      expect(store.history[0]!.score).toBe(10)
+      await gameStore.getState().endGame()
+      expect(gameStore.getState().history[0]!.score).toBe(10)
     })
 
     it('calls saveGameHistory', async () => {
-      const store = gameStore.getState()
-      await store.endGame()
+      await gameStore.getState().endGame()
       expect(mockSaveGameHistory).toHaveBeenCalledTimes(1)
     })
 
     it('calls updateStatistics', async () => {
-      const store = gameStore.getState()
-      await store.endGame()
+      await gameStore.getState().endGame()
       expect(mockUpdateStatistics).toHaveBeenCalledTimes(1)
     })
 
     it('does not throw if updateStatistics fails', async () => {
-      const store = gameStore.getState()
       mockUpdateStatistics.mockRejectedValueOnce(new Error('stats failed'))
 
-      await expect(store.endGame()).resolves.toBeUndefined()
-      expect(store.currentSession).toBeNull()
+      await expect(gameStore.getState().endGame()).resolves.toBeUndefined()
+      expect(gameStore.getState().currentSession).toBeNull()
     })
 
     it.skip('sets endTime on session', async () => {
@@ -313,25 +317,22 @@ describe('Game Store', () => {
     })
 
     it('does nothing without active session', async () => {
-      const store = gameStore.getState()
-      store.currentSession = null
-      await store.endGame()
+      gameStore.getState().currentSession = null
+      await gameStore.getState().endGame()
       expect(mockSaveGameHistory).not.toHaveBeenCalled()
     })
   })
 
   describe('Online Status', () => {
     it('sets offline', () => {
-      const store = gameStore.getState()
-      store.setOnlineStatus(false)
-      expect(store.isOnline).toBe(false)
+      gameStore.getState().setOnlineStatus(false)
+      expect(gameStore.getState().isOnline).toBe(false)
     })
 
     it('sets online', () => {
-      const store = gameStore.getState()
-      store.setOnlineStatus(false)
-      store.setOnlineStatus(true)
-      expect(store.isOnline).toBe(true)
+      gameStore.getState().setOnlineStatus(false)
+      gameStore.getState().setOnlineStatus(true)
+      expect(gameStore.getState().isOnline).toBe(true)
     })
   })
 
@@ -419,34 +420,30 @@ describe('Game Store', () => {
 
   describe('Resume or Start New Game', () => {
     it('returns existing session if active', async () => {
-      const store = gameStore.getState()
-      await store.startNewGame()
-      const existing = store.currentSession
-      const result = await store.resumeOrStartNewGame()
+      await gameStore.getState().startNewGame()
+      const existing = gameStore.getState().currentSession
+      const result = await gameStore.getState().resumeOrStartNewGame()
       expect(result).toBe(existing)
     })
 
     it('starts new game if no session', async () => {
-      const store = gameStore.getState()
-      await store.resumeOrStartNewGame()
-      expect(store.hasActiveSession).toBe(true)
+      await gameStore.getState().resumeOrStartNewGame()
+      expect(getSession()).not.toBeNull()
     })
 
     it('uses random category', async () => {
-      const store = gameStore.getState()
-      await store.fetchCategories()
-      await store.resumeOrStartNewGame()
-      expect(store.currentSession?.category).toBeDefined()
-      expect(mockCategories.some((cat) => cat.id === store.currentSession?.category.id)).toBe(true)
+      await gameStore.getState().fetchCategories()
+      const session = await gameStore.getState().resumeOrStartNewGame()
+      expect(session?.category).toBeDefined()
+      expect(mockCategories.some((cat) => cat.id === session?.category.id)).toBe(true)
     })
   })
 
   describe('Multi-Player Mode', () => {
     describe('Setup Players', () => {
       it('creates game session with players', async () => {
-        const store = gameStore.getState()
         const playerNames = ['Alice', 'Bob', 'Charlie']
-        const session = await store.setupPlayers(playerNames)
+        const session = await gameStore.getState().setupPlayers(playerNames)
 
         expect(session).toBeDefined()
         expect(session?.players).toHaveLength(3)
@@ -456,10 +453,9 @@ describe('Game Store', () => {
       })
 
       it('initializes players with zero scores', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Player 1', 'Player 2'])
+        const session = await gameStore.getState().setupPlayers(['Player 1', 'Player 2'])
 
-        const players = store.players
+        const players = session.players
         expect(players[0]?.totalScore).toBe(0)
         expect(players[0]?.currentRoundScore).toBe(0)
         expect(players[0]?.hasSubmitted).toBe(false)
@@ -469,58 +465,52 @@ describe('Game Store', () => {
       })
 
       it('uses default names when empty strings provided', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['', '', 'Charlie'])
+        const session = await gameStore.getState().setupPlayers(['', '', 'Charlie'])
 
-        expect(store.players[0]?.name).toBe('Player 1')
-        expect(store.players[1]?.name).toBe('Player 2')
-        expect(store.players[2]?.name).toBe('Charlie')
+        expect(session.players[0]?.name).toBe('Player 1')
+        expect(session.players[1]?.name).toBe('Player 2')
+        expect(session.players[2]?.name).toBe('Charlie')
       })
 
       it('sets currentRound to 1', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Player 1', 'Player 2'])
+        const session = await gameStore.getState().setupPlayers(['Player 1', 'Player 2'])
 
-        expect(store.currentRound).toBe(1)
+        expect(session.currentRound).toBe(1)
       })
 
       it('sets optional game name', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Player 1'], 'Test Game')
+        const session = await gameStore.getState().setupPlayers(['Player 1'], 'Test Game')
 
-        expect(store.currentSession?.gameName).toBe('Test Game')
+        expect(session.gameName).toBe('Test Game')
       })
 
       it('generates category and letter', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Player 1'])
+        const session = await gameStore.getState().setupPlayers(['Player 1'])
 
-        expect(store.currentCategory).toBeDefined()
-        expect(store.currentLetter).toBeDefined()
-        expect(store.currentLetter?.length).toBe(1)
+        expect(session.category).toBeDefined()
+        expect(session.letter).toBeDefined()
+        expect(session.letter?.length).toBe(1)
       })
     })
 
     describe('Multi-Player Getters', () => {
+      let session: NonNullable<ReturnType<typeof getSession>>
+
       beforeEach(async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
+        session = await gameStore.getState().setupPlayers(['Alice', 'Bob', 'Charlie'])
       })
 
       it('players exist after setup', () => {
-        const store = gameStore.getState()
-        expect(store.players.length).toBeGreaterThan(0)
+        expect(session.players.length).toBeGreaterThan(0)
       })
 
       it('players getter returns all players', () => {
-        const store = gameStore.getState()
-        expect(store.players).toHaveLength(3)
-        expect(store.players.map((p: Player) => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
+        expect(session.players).toHaveLength(3)
+        expect(session.players.map((p: Player) => p.name)).toEqual(['Alice', 'Bob', 'Charlie'])
       })
 
       it('currentPlayerTurn returns first unsubmitted player', () => {
-        const store = gameStore.getState()
-        const currentPlayer = store.currentPlayerTurn
+        const currentPlayer = getCurrentPlayerTurn()
 
         expect(currentPlayer).toBeDefined()
         expect(currentPlayer?.name).toBe('Alice')
@@ -528,30 +518,26 @@ describe('Game Store', () => {
       })
 
       it('allPlayersSubmitted returns false initially', () => {
-        const store = gameStore.getState()
-        expect(store.allPlayersSubmitted).toBe(false)
+        expect(areAllPlayersSubmitted()).toBe(false)
       })
 
       it('allPlayersSubmitted returns true when all submitted', async () => {
-        const store = gameStore.getState()
-
-        for (const player of store.players) {
-          await store.submitPlayerAnswer(player.id, 'Answer')
+        for (const player of session.players) {
+          await gameStore.getState().submitPlayerAnswer(player.id, 'Answer')
         }
 
-        expect(store.allPlayersSubmitted).toBe(true)
+        expect(areAllPlayersSubmitted()).toBe(true)
       })
 
       it('leaderboard returns players sorted by totalScore', async () => {
-        const store = gameStore.getState()
-        const [alice, bob, charlie] = store.players
+        const [alice, bob, charlie] = gameStore.getState().players
 
         if (alice && bob && charlie) {
-          await store.assignPlayerScore(alice.id, 100)
-          await store.assignPlayerScore(bob.id, 200)
-          await store.assignPlayerScore(charlie.id, 150)
+          await gameStore.getState().assignPlayerScore(alice.id, 100)
+          await gameStore.getState().assignPlayerScore(bob.id, 200)
+          await gameStore.getState().assignPlayerScore(charlie.id, 150)
 
-          const leaderboard = store.leaderboard
+          const leaderboard = getLeaderboard()
 
           expect(leaderboard[0]?.name).toBe('Bob')
           expect(leaderboard[0]?.totalScore).toBe(200)
@@ -565,197 +551,192 @@ describe('Game Store', () => {
 
     describe('Submit Player Answer', () => {
       beforeEach(async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
       })
 
       it('saves player answer', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.submitPlayerAnswer(alice.id, 'Test Answer')
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Test Answer')
 
-          expect(alice.currentRoundAnswer).toBe('Test Answer')
-          expect(alice.hasSubmitted).toBe(true)
+          const updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.currentRoundAnswer).toBe('Test Answer')
+          expect(updatedPlayer?.hasSubmitted).toBe(true)
         }
       })
 
       it('persists to database', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.submitPlayerAnswer(alice.id, 'Test Answer')
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Test Answer')
 
           expect(mockSaveGameSession).toHaveBeenCalled()
         }
       })
 
       it('updates currentPlayerTurn to next player', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.submitPlayerAnswer(alice.id, 'Alice Answer')
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Alice Answer')
 
-          expect(store.currentPlayerTurn?.name).toBe('Bob')
+          expect(gameStore.getState().currentPlayerTurn?.name).toBe('Bob')
         }
       })
 
       it('handles invalid player ID gracefully', async () => {
-        const store = gameStore.getState()
-        await store.submitPlayerAnswer('invalid-id', 'Answer')
+        await gameStore.getState().submitPlayerAnswer('invalid-id', 'Answer')
 
         // Should not throw error
-        expect(store.players.every((p: Player) => !p.hasSubmitted)).toBe(true)
+        expect(gameStore.getState().players.every((p: Player) => !p.hasSubmitted)).toBe(true)
       })
     })
 
     describe('Assign Player Score', () => {
       beforeEach(async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
       })
 
       it('updates current round score', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.assignPlayerScore(alice.id, 50)
+          await gameStore.getState().assignPlayerScore(alice.id, 50)
 
-          expect(alice.currentRoundScore).toBe(50)
+          const updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.currentRoundScore).toBe(50)
         }
       })
 
       it('0→10: totalScore increases by 10', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
           expect(alice.totalScore).toBe(0)
-          await store.assignPlayerScore(alice.id, 10)
-          expect(alice.totalScore).toBe(10)
-          expect(alice.currentRoundScore).toBe(10)
+          await gameStore.getState().assignPlayerScore(alice.id, 10)
+          const updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(10)
+          expect(updatedPlayer?.currentRoundScore).toBe(10)
         }
       })
 
       it('10→20: totalScore increases by 10 (not 20)', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.assignPlayerScore(alice.id, 10)
-          expect(alice.totalScore).toBe(10)
+          await gameStore.getState().assignPlayerScore(alice.id, 10)
+          let updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(10)
 
-          await store.assignPlayerScore(alice.id, 20)
-          expect(alice.totalScore).toBe(20)
-          expect(alice.currentRoundScore).toBe(20)
+          await gameStore.getState().assignPlayerScore(alice.id, 20)
+          updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(20)
+          expect(updatedPlayer?.currentRoundScore).toBe(20)
         }
       })
 
       it('20→10: totalScore decreases by 10', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.assignPlayerScore(alice.id, 20)
-          expect(alice.totalScore).toBe(20)
+          await gameStore.getState().assignPlayerScore(alice.id, 20)
+          let updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(20)
 
-          await store.assignPlayerScore(alice.id, 10)
-          expect(alice.totalScore).toBe(10)
-          expect(alice.currentRoundScore).toBe(10)
+          await gameStore.getState().assignPlayerScore(alice.id, 10)
+          updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(10)
+          expect(updatedPlayer?.currentRoundScore).toBe(10)
         }
       })
 
       it('10→10: totalScore unchanged (delta = 0)', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.assignPlayerScore(alice.id, 10)
-          expect(alice.totalScore).toBe(10)
+          await gameStore.getState().assignPlayerScore(alice.id, 10)
+          let updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(10)
 
-          await store.assignPlayerScore(alice.id, 10)
-          expect(alice.totalScore).toBe(10)
-          expect(alice.currentRoundScore).toBe(10)
+          await gameStore.getState().assignPlayerScore(alice.id, 10)
+          updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(10)
+          expect(updatedPlayer?.currentRoundScore).toBe(10)
         }
       })
 
       it('replaces score correctly when adjusting up then down', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.assignPlayerScore(alice.id, 50)
-          expect(alice.totalScore).toBe(50)
+          await gameStore.getState().assignPlayerScore(alice.id, 50)
+          let updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(50)
 
           // Delta-based score update: when updating from 50 to 30, delta = 30 - 50 = -20
           // Total score: 50 + (-20) = 30
-          await store.assignPlayerScore(alice.id, 30)
-          expect(alice.totalScore).toBe(30)
-          expect(alice.currentRoundScore).toBe(30)
+          await gameStore.getState().assignPlayerScore(alice.id, 30)
+          updatedPlayer = gameStore.getState().players[0]
+          expect(updatedPlayer?.totalScore).toBe(30)
+          expect(updatedPlayer?.currentRoundScore).toBe(30)
         }
       })
 
       it('persists to database', async () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          await store.assignPlayerScore(alice.id, 50)
+          await gameStore.getState().assignPlayerScore(alice.id, 50)
 
           expect(mockSaveGameSession).toHaveBeenCalled()
         }
       })
 
       it('does nothing for invalid player ID', async () => {
-        const store = gameStore.getState()
         mockSaveGameSession.mockClear()
 
-        await store.assignPlayerScore('invalid-id', 50)
+        await gameStore.getState().assignPlayerScore('invalid-id', 50)
 
         expect(mockSaveGameSession).not.toHaveBeenCalled()
       })
 
       it('does nothing without active session', async () => {
-        const store = gameStore.getState()
-        store.currentSession = null
+        gameStore.getState().currentSession = null
         mockSaveGameSession.mockClear()
 
-        await store.assignPlayerScore('any-id', 50)
+        await gameStore.getState().assignPlayerScore('any-id', 50)
 
         expect(mockSaveGameSession).not.toHaveBeenCalled()
       })
     })
 
     describe('Complete Round', () => {
-      beforeEach(async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+      let session: NonNullable<ReturnType<typeof getSession>>
 
-        const [alice, bob] = store.players
+      beforeEach(async () => {
+        session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = session.players
         if (alice && bob) {
-          await store.submitPlayerAnswer(alice.id, 'Alice Answer')
-          await store.submitPlayerAnswer(bob.id, 'Bob Answer')
-          await store.assignPlayerScore(alice.id, 100)
-          await store.assignPlayerScore(bob.id, 50)
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Alice Answer')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Bob Answer')
+          await gameStore.getState().assignPlayerScore(alice.id, 100)
+          await gameStore.getState().assignPlayerScore(bob.id, 50)
         }
       })
 
       it('adds round to history', async () => {
-        const store = gameStore.getState()
-        await store.completeRound()
+        await gameStore.getState().completeRound()
 
-        expect(store.currentSession?.roundHistory).toHaveLength(1)
+        expect(gameStore.getState().currentSession?.roundHistory).toHaveLength(1)
       })
 
       it('saves round results with player answers and scores', async () => {
-        const store = gameStore.getState()
-        await store.completeRound()
+        await gameStore.getState().completeRound()
 
-        const round = store.currentSession?.roundHistory[0]
+        const round = getSession()?.roundHistory[0]
         expect(round?.playerResults).toHaveLength(2)
         expect(round?.playerResults[0]?.answer).toBe('Alice Answer')
         expect(round?.playerResults[0]?.score).toBe(100)
@@ -764,13 +745,12 @@ describe('Game Store', () => {
       })
 
       it('includes round metadata', async () => {
-        const store = gameStore.getState()
-        const category = store.currentCategory
-        const letter = store.currentLetter
+        const category = session.category
+        const letter = session.letter
 
-        await store.completeRound()
+        await gameStore.getState().completeRound()
 
-        const round = store.currentSession?.roundHistory[0]
+        const round = getSession()?.roundHistory[0]
         expect(round?.roundNumber).toBe(1)
         expect(round?.category).toBe(category?.name)
         expect(round?.letter).toBe(letter)
@@ -779,45 +759,44 @@ describe('Game Store', () => {
     })
 
     describe('Start Next Round', () => {
-      beforeEach(async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+      let session: NonNullable<ReturnType<typeof getSession>>
 
-        const [alice, bob] = store.players
+      beforeEach(async () => {
+        session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+
+        const [alice, bob] = session.players
         if (alice && bob) {
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
-          await store.submitPlayerAnswer(bob.id, 'Answer 2')
-          await store.assignPlayerScore(alice.id, 100)
-          await store.assignPlayerScore(bob.id, 50)
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+          await gameStore.getState().assignPlayerScore(alice.id, 100)
+          await gameStore.getState().assignPlayerScore(bob.id, 50)
         }
       })
 
       it('increments round number', async () => {
-        const store = gameStore.getState()
-        await store.startNextRound()
+        await gameStore.getState().startNextRound()
 
-        expect(store.currentRound).toBe(2)
+        expect(getCurrentRound()).toBe(2)
       })
 
       it('generates new category and letter', async () => {
-        const store = gameStore.getState()
-        const oldCategory = store.currentCategory?.id
-        const oldLetter = store.currentLetter
+        const oldCategory = session.category.id
+        const oldLetter = session.letter
 
-        await store.startNextRound()
+        await gameStore.getState().startNextRound()
 
-        const newCategory = store.currentCategory?.id
-        const newLetter = store.currentLetter
+        const updatedSession = getSession()
+        const newCategory = updatedSession?.category.id
+        const newLetter = updatedSession?.letter
 
         // Either different category or different letter
         expect(newCategory !== oldCategory || newLetter !== oldLetter).toBe(true)
       })
 
       it('resets player round state', async () => {
-        const store = gameStore.getState()
-        await store.startNextRound()
+        await gameStore.getState().startNextRound()
 
-        for (const player of store.players) {
+        for (const player of getPlayers()) {
           expect(player.currentRoundScore).toBe(0)
           expect(player.currentRoundAnswer).toBeUndefined()
           expect(player.hasSubmitted).toBe(false)
@@ -825,48 +804,43 @@ describe('Game Store', () => {
       })
 
       it('preserves total scores', async () => {
-        const store = gameStore.getState()
-        const [alice, bob] = store.players
+        await gameStore.getState().startNextRound()
 
-        await store.startNextRound()
-
-        expect(alice?.totalScore).toBe(100)
-        expect(bob?.totalScore).toBe(50)
+        const updatedPlayers = getPlayers()
+        expect(updatedPlayers[0]?.totalScore).toBe(100)
+        expect(updatedPlayers[1]?.totalScore).toBe(50)
       })
 
       it('keeps same players', async () => {
-        const store = gameStore.getState()
-        await store.startNextRound()
+        await gameStore.getState().startNextRound()
 
-        expect(store.players).toHaveLength(2)
-        expect(store.players.map((p: Player) => p.name)).toEqual(['Alice', 'Bob'])
+        const updatedPlayers = getPlayers()
+        expect(updatedPlayers).toHaveLength(2)
+        expect(updatedPlayers.map((p: Player) => p.name)).toEqual(['Alice', 'Bob'])
       })
     })
 
     describe('Reset Player Submissions', () => {
       beforeEach(async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        for (const player of store.players) {
-          await store.submitPlayerAnswer(player.id, 'Answer')
+        for (const player of gameStore.getState().players) {
+          await gameStore.getState().submitPlayerAnswer(player.id, 'Answer')
         }
       })
 
       it('clears all hasSubmitted flags', async () => {
-        const store = gameStore.getState()
-        await store.resetPlayerSubmissions()
+        await gameStore.getState().resetPlayerSubmissions()
 
-        for (const player of store.players) {
+        for (const player of gameStore.getState().players) {
           expect(player.hasSubmitted).toBe(false)
         }
       })
 
       it('persists to database', async () => {
-        const store = gameStore.getState()
         mockSaveGameSession.mockClear()
 
-        await store.resetPlayerSubmissions()
+        await gameStore.getState().resetPlayerSubmissions()
 
         expect(mockSaveGameSession).toHaveBeenCalled()
       })
@@ -874,33 +848,29 @@ describe('Game Store', () => {
 
     describe('Get Player By ID', () => {
       beforeEach(async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
       })
 
       it('returns player when ID matches', () => {
-        const store = gameStore.getState()
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
 
         if (alice) {
-          const found = store.getPlayerById(alice.id)
+          const found = gameStore.getState().getPlayerById(alice.id)
           expect(found).toBe(alice)
           expect(found?.name).toBe('Alice')
         }
       })
 
       it('returns null when ID not found', () => {
-        const store = gameStore.getState()
-        const found = store.getPlayerById('invalid-id')
+        const found = gameStore.getState().getPlayerById('invalid-id')
 
         expect(found).toBeNull()
       })
 
       it('returns null when no session', () => {
-        const store = gameStore.getState()
-        store.clearSession()
+        gameStore.getState().clearSession()
 
-        const found = store.getPlayerById('any-id')
+        const found = gameStore.getState().getPlayerById('any-id')
 
         expect(found).toBeNull()
       })
@@ -908,21 +878,19 @@ describe('Game Store', () => {
 
     describe('Multi-Player with startNewGame', () => {
       it('starts new round when players exist', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        const oldRound = store.currentRound
-        await store.startNewGame()
+        const oldRound = session.currentRound
+        await gameStore.getState().startNewGame()
 
-        expect(store.currentRound).toBe(oldRound + 1)
+        expect(getCurrentRound()).toBe(oldRound + 1)
       })
 
       it('starts legacy single-player when no players', async () => {
-        const store = gameStore.getState()
-        await store.startNewGame()
+        const session = await gameStore.getState().startNewGame()
 
-        expect(store.players).toHaveLength(0)
-        expect(store.currentSession).toBeDefined()
+        expect(session?.players).toHaveLength(0)
+        expect(gameStore.getState().currentSession).toBeDefined()
       })
     })
   })
@@ -930,212 +898,215 @@ describe('Game Store', () => {
   describe('Round Counter Logic', () => {
     describe('isCurrentRoundCompleted helper logic', () => {
       it('round is NOT completed when roundHistory is empty and currentRound is 1', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+
+        const session = gameStore.getState().currentSession
 
         // After setup: currentRound = 1, roundHistory = []
-        expect(store.currentSession?.currentRound).toBe(1)
-        expect(store.currentSession?.roundHistory.length).toBe(0)
+        expect(session?.currentRound).toBe(1)
+        expect(session?.roundHistory.length).toBe(0)
 
         // isCurrentRoundCompleted = roundHistory.length >= currentRound = 0 >= 1 = false
-        const isCompleted =
-          (store.currentSession?.roundHistory.length ?? 0) >=
-          (store.currentSession?.currentRound ?? 0)
+        const isCompleted = (session?.roundHistory.length ?? 0) >= (session?.currentRound ?? 0)
         expect(isCompleted).toBe(false)
       })
 
       it('round IS completed after completeRound is called', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        const [alice, bob] = store.players
+        const [alice, bob] = session.players
         if (alice && bob) {
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
-          await store.submitPlayerAnswer(bob.id, 'Answer 2')
-          await store.completeRound()
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+          await gameStore.getState().completeRound()
         }
 
+        const sessionState = gameStore.getState().currentSession
+
         // After completeRound: currentRound = 1, roundHistory = [round1]
-        expect(store.currentSession?.currentRound).toBe(1)
-        expect(store.currentSession?.roundHistory.length).toBe(1)
+        expect(sessionState?.currentRound).toBe(1)
+        expect(sessionState?.roundHistory.length).toBe(1)
 
         // isCurrentRoundCompleted = roundHistory.length >= currentRound = 1 >= 1 = true
         const isCompleted =
-          (store.currentSession?.roundHistory.length ?? 0) >=
-          (store.currentSession?.currentRound ?? 0)
+          (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0)
         expect(isCompleted).toBe(true)
       })
 
       it('round is NOT completed after startNextRound', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        const [alice, bob] = store.players
+        const [alice, bob] = session.players
         if (alice && bob) {
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
-          await store.submitPlayerAnswer(bob.id, 'Answer 2')
-          await store.completeRound()
-          await store.startNextRound()
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+          await gameStore.getState().completeRound()
+          await gameStore.getState().startNextRound()
         }
 
+        const sessionState = gameStore.getState().currentSession
+
         // After startNextRound: currentRound = 2, roundHistory = [round1]
-        expect(store.currentSession?.currentRound).toBe(2)
-        expect(store.currentSession?.roundHistory.length).toBe(1)
+        expect(sessionState?.currentRound).toBe(2)
+        expect(sessionState?.roundHistory.length).toBe(1)
 
         // isCurrentRoundCompleted = roundHistory.length >= currentRound = 1 >= 2 = false
         const isCompleted =
-          (store.currentSession?.roundHistory.length ?? 0) >=
-          (store.currentSession?.currentRound ?? 0)
+          (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0)
         expect(isCompleted).toBe(false)
       })
 
       it('round IS completed after second round completeRound', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        const [alice, bob] = store.players
+        const [alice, bob] = session.players
         if (alice && bob) {
           // Round 1
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
-          await store.submitPlayerAnswer(bob.id, 'Answer 2')
-          await store.completeRound()
-          await store.startNextRound()
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+          await gameStore.getState().completeRound()
+          await gameStore.getState().startNextRound()
 
           // Round 2
-          await store.submitPlayerAnswer(alice.id, 'Answer 3')
-          await store.submitPlayerAnswer(bob.id, 'Answer 4')
-          await store.completeRound()
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 3')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 4')
+          await gameStore.getState().completeRound()
         }
 
+        const sessionState = gameStore.getState().currentSession
+
         // After second completeRound: currentRound = 2, roundHistory = [round1, round2]
-        expect(store.currentSession?.currentRound).toBe(2)
-        expect(store.currentSession?.roundHistory.length).toBe(2)
+        expect(sessionState?.currentRound).toBe(2)
+        expect(sessionState?.roundHistory.length).toBe(2)
 
         // isCurrentRoundCompleted = roundHistory.length >= currentRound = 2 >= 2 = true
         const isCompleted =
-          (store.currentSession?.roundHistory.length ?? 0) >=
-          (store.currentSession?.currentRound ?? 0)
+          (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0)
         expect(isCompleted).toBe(true)
       })
     })
 
     describe('Round number display scenarios', () => {
       it('should show round 1 on initial setup (no session)', () => {
-        const store = gameStore.getState()
         // No session exists
-        expect(store.currentSession).toBeNull()
+        expect(gameStore.getState().currentSession).toBeNull()
 
         // Display logic: return 1 when no session
-        const displayRound = store.currentSession ? store.currentSession.currentRound : 1
+        const displayRound = gameStore.getState().currentSession
+          ? gameStore.getState().currentSession!.currentRound
+          : 1
         expect(displayRound).toBe(1)
       })
 
       it('should show round 1 after setupPlayers (round not completed)', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
         // Display logic: if round NOT completed, show currentRound
-        const session = store.currentSession!
+        const session = gameStore.getState().currentSession!
         const isCompleted = session.roundHistory.length >= session.currentRound
         const displayRound = isCompleted ? session.currentRound + 1 : session.currentRound
         expect(displayRound).toBe(1)
       })
 
       it('should show round 2 after round 1 is completed', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        const [alice, bob] = store.players
+        const [alice, bob] = session.players
         if (alice && bob) {
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
-          await store.submitPlayerAnswer(bob.id, 'Answer 2')
-          await store.completeRound()
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+          await gameStore.getState().completeRound()
         }
 
         // Display logic: if round IS completed, show currentRound + 1
-        const session = store.currentSession!
-        const isCompleted = session.roundHistory.length >= session.currentRound
-        const displayRound = isCompleted ? session.currentRound + 1 : session.currentRound
+        const currentSession = gameStore.getState().currentSession!
+        const isCompleted = currentSession.roundHistory.length >= currentSession.currentRound
+        const displayRound = isCompleted
+          ? currentSession.currentRound + 1
+          : currentSession.currentRound
         expect(displayRound).toBe(2)
       })
 
       it('should show round 2 after startNextRound (round 2 not completed)', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        const [alice, bob] = store.players
+        const [alice, bob] = session.players
         if (alice && bob) {
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
-          await store.submitPlayerAnswer(bob.id, 'Answer 2')
-          await store.completeRound()
-          await store.startNextRound()
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+          await gameStore.getState().completeRound()
+          await gameStore.getState().startNextRound()
         }
 
         // Display logic: after startNextRound, round 2 is NOT completed
-        const session = store.currentSession!
-        const isCompleted = session.roundHistory.length >= session.currentRound
-        const displayRound = isCompleted ? session.currentRound + 1 : session.currentRound
-        expect(displayRound).toBe(2)
+        const currentSession2 = gameStore.getState().currentSession!
+        const isCompleted2 = currentSession2.roundHistory.length >= currentSession2.currentRound
+        const displayRound2 = isCompleted2
+          ? currentSession2.currentRound + 1
+          : currentSession2.currentRound
+        expect(displayRound2).toBe(2)
       })
     })
 
     describe('Game start scenarios', () => {
       it('initial setup: pendingPlayerNames triggers setupPlayers', async () => {
-        const store = gameStore.getState()
-
         // Simulate coming from players page
-        store.pendingPlayerNames = ['Alice', 'Bob']
+        gameStore.getState().pendingPlayerNames = ['Alice', 'Bob']
 
         // The round-start page logic
-        const hasSession = !!store.currentSession
-        const hasPendingPlayers = store.pendingPlayerNames.length > 0
+        const hasSession = !!gameStore.getState().currentSession
+        const hasPendingPlayers = gameStore.getState().pendingPlayerNames.length > 0
 
         expect(hasSession).toBe(false)
         expect(hasPendingPlayers).toBe(true)
 
         // This would trigger setupPlayers
-        await store.setupPlayers(store.pendingPlayerNames)
-        store.pendingPlayerNames = []
+        const session = await gameStore
+          .getState()
+          .setupPlayers(gameStore.getState().pendingPlayerNames)
+        gameStore.getState().pendingPlayerNames = []
 
-        expect(store.currentSession?.currentRound).toBe(1)
-        expect(store.players).toHaveLength(2)
+        expect(session.currentRound).toBe(1)
+        expect(session.players).toHaveLength(2)
       })
 
       it('next round: session exists and round completed triggers startNextRound', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-        const [alice, bob] = store.players
+        const session = getSession()
+        if (!session) throw new Error('Session not created')
+
+        const [alice, bob] = session.players
         if (alice && bob) {
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
-          await store.submitPlayerAnswer(bob.id, 'Answer 2')
-          await store.completeRound()
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+          await gameStore.getState().completeRound()
         }
 
         // The round-start page logic for next round
-        const hasSession = !!store.currentSession
-        const hasPendingPlayers = store.pendingPlayerNames.length > 0
-        const session = store.currentSession!
-        const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+        const hasSession = !!gameStore.getState().currentSession
+        const hasPendingPlayers = gameStore.getState().pendingPlayerNames.length > 0
+        const currentSession = gameStore.getState().currentSession!
+        const isCurrentRoundCompleted =
+          currentSession.roundHistory.length >= currentSession.currentRound
 
         expect(hasSession).toBe(true)
         expect(hasPendingPlayers).toBe(false)
         expect(isCurrentRoundCompleted).toBe(true)
 
         // This should trigger startNextRound
-        await store.startNextRound()
+        await gameStore.getState().startNextRound()
 
-        expect(store.currentSession?.currentRound).toBe(2)
+        expect(gameStore.getState().currentSession?.currentRound).toBe(2)
       })
 
       it('refresh during round: session exists but round NOT completed - no increment', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
         // Simulate refresh - session exists but round not completed
-        const hasSession = !!store.currentSession
-        const hasPendingPlayers = store.pendingPlayerNames.length > 0
-        const session = store.currentSession!
+        const hasSession = !!gameStore.getState().currentSession
+        const hasPendingPlayers = gameStore.getState().pendingPlayerNames.length > 0
+        const session = gameStore.getState().currentSession!
         const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
 
         expect(hasSession).toBe(true)
@@ -1144,28 +1115,27 @@ describe('Game Store', () => {
 
         // On refresh, should NOT call startNextRound
         // Instead, just reset submissions
-        await store.resetPlayerSubmissions()
+        await gameStore.getState().resetPlayerSubmissions()
 
         // Round should still be 1
-        expect(store.currentSession?.currentRound).toBe(1)
+        expect(gameStore.getState().currentSession?.currentRound).toBe(1)
       })
 
       it('refresh after partial answers: should not increment round', async () => {
-        const store = gameStore.getState()
-        await store.setupPlayers(['Alice', 'Bob'])
+        await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
         // One player submits
-        const alice = store.players[0]
+        const alice = gameStore.getState().players[0]
         if (alice) {
-          await store.submitPlayerAnswer(alice.id, 'Answer 1')
+          await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
         }
 
         // Simulate refresh
-        const session = store.currentSession!
+        const session = gameStore.getState().currentSession!
         const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
 
         expect(isCurrentRoundCompleted).toBe(false)
-        expect(store.currentSession?.currentRound).toBe(1)
+        expect(gameStore.getState().currentSession?.currentRound).toBe(1)
       })
     })
   })
@@ -1178,7 +1148,6 @@ describe('Game Store', () => {
     })
 
     it('should load session by ID', async () => {
-      const store = gameStore.getState()
       const mockSession = {
         id: '123e4567-e89b-12d3-a456-426614174000',
         category: mockCategories[0],
@@ -1195,33 +1164,34 @@ describe('Game Store', () => {
 
       mockGetGameSessionById.mockResolvedValue(mockSession)
 
-      const result = await store.loadSessionById(mockSession.id)
+      const result = await gameStore.getState().loadSessionById(mockSession.id)
 
       expect(mockGetGameSessionById).toHaveBeenCalledWith(mockSession.id)
       expect(result).toEqual(mockSession)
-      expect(store.currentSession).toEqual(mockSession)
+      expect(gameStore.getState().currentSession).toEqual(mockSession)
     })
 
     it('should throw error when session not found', async () => {
-      const store = gameStore.getState()
       const gameId = 'non-existent-id'
 
       mockGetGameSessionById.mockResolvedValue(null)
 
-      await expect(store.loadSessionById(gameId)).rejects.toThrow('Failed to load game session')
+      await expect(gameStore.getState().loadSessionById(gameId)).rejects.toThrow(
+        'Failed to load game session'
+      )
     })
 
     it('should handle IndexedDB errors', async () => {
-      const store = gameStore.getState()
       const gameId = '123e4567-e89b-12d3-a456-426614174000'
 
       mockGetGameSessionById.mockRejectedValue(new Error('Database error'))
 
-      await expect(store.loadSessionById(gameId)).rejects.toThrow('Failed to load game session')
+      await expect(gameStore.getState().loadSessionById(gameId)).rejects.toThrow(
+        'Failed to load game session'
+      )
     })
 
     it('should load session with UUID format', async () => {
-      const store = gameStore.getState()
       const uuidGameId = '550e8400-e29b-41d4-a716-446655440000'
       const mockSession = {
         id: uuidGameId,
@@ -1242,20 +1212,19 @@ describe('Game Store', () => {
 
       mockGetGameSessionById.mockResolvedValue(mockSession)
 
-      const result = await store.loadSessionById(uuidGameId)
+      const result = await gameStore.getState().loadSessionById(uuidGameId)
 
       expect(result!.id).toBe(uuidGameId)
       expect(result!.players).toHaveLength(2)
     })
 
     it('should throw descriptive error with session ID', async () => {
-      const store = gameStore.getState()
       const gameId = 'test-game-123'
 
       mockGetGameSessionById.mockResolvedValue(null)
 
       try {
-        await store.loadSessionById(gameId)
+        await gameStore.getState().loadSessionById(gameId)
         expect.fail('Should have thrown an error')
       } catch (error: any) {
         expect(error.message).toContain('Failed to load game session')
@@ -1265,130 +1234,137 @@ describe('Game Store', () => {
 
   describe('Complete Game', () => {
     beforeEach(async () => {
-      const store = gameStore.getState()
-      await store.setupPlayers(['Alice', 'Bob'])
+      await gameStore.getState().setupPlayers(['Alice', 'Bob'])
 
-      const [alice, bob] = store.players
+      const session = getSession()
+      if (!session) throw new Error('Session not created')
+
+      const [alice, bob] = session.players
       if (alice && bob) {
-        await store.submitPlayerAnswer(alice.id, 'Answer 1')
-        await store.submitPlayerAnswer(bob.id, 'Answer 2')
-        await store.assignPlayerScore(alice.id, 100)
-        await store.assignPlayerScore(bob.id, 50)
-        await store.completeRound()
+        await gameStore.getState().submitPlayerAnswer(alice.id, 'Answer 1')
+        await gameStore.getState().submitPlayerAnswer(bob.id, 'Answer 2')
+        await gameStore.getState().assignPlayerScore(alice.id, 100)
+        await gameStore.getState().assignPlayerScore(bob.id, 50)
+        await gameStore.getState().completeRound()
       }
     })
 
     it('sets status to completed', async () => {
-      const store = gameStore.getState()
-      await store.completeGame()
+      await gameStore.getState().completeGame()
 
-      expect(store.currentSession?.status).toBe('completed')
+      expect(gameStore.getState().currentSession?.status).toBe('completed')
     })
 
     it('sets endTime', async () => {
-      const store = gameStore.getState()
       const before = Date.now()
 
-      await store.completeGame()
+      await gameStore.getState().completeGame()
 
       const after = Date.now()
-      expect(store.currentSession?.endTime).toBeGreaterThanOrEqual(before)
-      expect(store.currentSession?.endTime).toBeLessThanOrEqual(after)
+      expect(gameStore.getState().currentSession?.endTime).toBeGreaterThanOrEqual(before)
+      expect(gameStore.getState().currentSession?.endTime).toBeLessThanOrEqual(after)
     })
 
     it('keeps session for leaderboard display', async () => {
-      const store = gameStore.getState()
-      await store.completeGame()
+      const state1 = gameStore.getState()
+      console.log('Before completeGame - state:', {
+        currentSession: state1.currentSession,
+        hasActiveSession: state1.hasActiveSession,
+        getter_call: state1.currentSession !== null,
+      })
+
+      await gameStore.getState().completeGame()
+
+      const state2 = gameStore.getState()
+      console.log('After completeGame - state:', {
+        currentSession: state2.currentSession,
+        status: state2.currentSession?.status,
+        hasActiveSession: state2.hasActiveSession,
+        getter_call: state2.currentSession !== null,
+      })
 
       // Session should NOT be cleared (unlike endGame)
-      expect(store.currentSession).not.toBeNull()
-      expect(store.hasActiveSession).toBe(true)
+      expect(gameStore.getState().currentSession).not.toBeNull()
+      expect(gameStore.getState().hasActiveSession()).toBe(true)
     })
 
     it('returns the completed session', async () => {
-      const store = gameStore.getState()
-      const result = await store.completeGame()
+      const result = await gameStore.getState().completeGame()
 
       expect(result).toBeDefined()
       expect(result?.status).toBe('completed')
     })
 
     it('persists to database', async () => {
-      const store = gameStore.getState()
       mockSaveGameSession.mockClear()
       mockSaveGameHistory.mockClear()
 
-      await store.completeGame()
+      await gameStore.getState().completeGame()
 
       expect(mockSaveGameSession).toHaveBeenCalled()
       expect(mockSaveGameHistory).toHaveBeenCalled()
     })
 
     it('calls updateStatistics', async () => {
-      const store = gameStore.getState()
       mockUpdateStatistics.mockClear()
 
-      await store.completeGame()
+      await gameStore.getState().completeGame()
 
       expect(mockUpdateStatistics).toHaveBeenCalled()
     })
 
     it('does nothing without active session', async () => {
-      const store = gameStore.getState()
-      store.currentSession = null
+      gameStore.getState().currentSession = null
       mockSaveGameSession.mockClear()
 
-      await store.completeGame()
+      await gameStore.getState().completeGame()
 
       expect(mockSaveGameSession).not.toHaveBeenCalled()
     })
 
     it('isGameCompleted getter returns true after completeGame', async () => {
-      const store = gameStore.getState()
+      expect(gameStore.getState().isGameCompleted()).toBe(false)
 
-      expect(store.isGameCompleted).toBe(false)
+      await gameStore.getState().completeGame()
 
-      await store.completeGame()
-
-      expect(store.isGameCompleted).toBe(true)
+      expect(gameStore.getState().isGameCompleted()).toBe(true)
     })
 
     it('gameStatus getter returns completed after completeGame', async () => {
-      const store = gameStore.getState()
+      expect(gameStore.getState().gameStatus()).toBe('active')
 
-      expect(store.gameStatus).toBe('active')
+      await gameStore.getState().completeGame()
 
-      await store.completeGame()
-
-      expect(store.gameStatus).toBe('completed')
+      expect(gameStore.getState().gameStatus()).toBe('completed')
     })
   })
 
   describe('Leaderboard Winner Logic', () => {
     beforeEach(async () => {
-      const store = gameStore.getState()
-      await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
+      await gameStore.getState().setupPlayers(['Alice', 'Bob', 'Charlie'])
 
-      const [alice, bob, charlie] = store.players
+      const session = getSession()
+      if (!session) throw new Error('Session not created')
+
+      const [alice, bob, charlie] = session.players
+
       if (alice && bob && charlie) {
-        await store.assignPlayerScore(alice.id, 100)
-        await store.assignPlayerScore(bob.id, 200)
-        await store.assignPlayerScore(charlie.id, 150)
+        await gameStore.getState().assignPlayerScore(alice.id, 100)
+        await gameStore.getState().assignPlayerScore(bob.id, 200)
+        await gameStore.getState().assignPlayerScore(charlie.id, 150)
       }
     })
 
     it('isWinner is false for all players when game is active', () => {
-      const store = gameStore.getState()
-      const leaderboard = store.leaderboard
+      const leaderboard = getLeaderboard()
 
       expect(leaderboard.every((p: { isWinner: boolean }) => p.isWinner === false)).toBe(true)
     })
 
     it('isWinner is true only for first place when game is completed', async () => {
-      const store = gameStore.getState()
-      await store.completeGame()
+      await gameStore.getState().completeGame()
 
-      const leaderboard = store.leaderboard
+      const leaderboard = getLeaderboard()
 
       // Bob has highest score (200) and should be winner
       expect(leaderboard[0]?.name).toBe('Bob')
@@ -1400,24 +1376,21 @@ describe('Game Store', () => {
     })
 
     it('isWinner is false when top score is 0', async () => {
-      const store = gameStore.getState()
-
       // Reset all scores to 0
-      for (const player of store.players) {
-        await store.assignPlayerScore(player.id, 0)
+      for (const player of getPlayers()) {
+        await gameStore.getState().assignPlayerScore(player.id, 0)
       }
 
-      await store.completeGame()
+      await gameStore.getState().completeGame()
 
-      const leaderboard = store.leaderboard
+      const leaderboard = getLeaderboard()
 
       // No winner when all scores are 0
       expect(leaderboard.every((p: { isWinner: boolean }) => p.isWinner === false)).toBe(true)
     })
 
     it('rank is assigned correctly', () => {
-      const store = gameStore.getState()
-      const leaderboard = store.leaderboard
+      const leaderboard = getLeaderboard()
 
       expect(leaderboard[0]?.rank).toBe(1)
       expect(leaderboard[1]?.rank).toBe(2)
@@ -1425,8 +1398,7 @@ describe('Game Store', () => {
     })
 
     it('players are sorted by totalScore descending', () => {
-      const store = gameStore.getState()
-      const leaderboard = store.leaderboard
+      const leaderboard = getLeaderboard()
 
       expect(leaderboard[0]?.name).toBe('Bob')
       expect(leaderboard[0]?.totalScore).toBe(200)

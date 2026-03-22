@@ -37,6 +37,9 @@ const createGameSessionMock = () => ({
 
 // Stub Nuxt auto-imported globals
 vi.stubGlobal('useGameSession', createGameSessionMock)
+vi.stubGlobal('useSettings', () => ({}))
+vi.stubGlobal('useCategories', () => ({}))
+vi.stubGlobal('usePlayerActions', () => ({}))
 
 describe('useGameState', () => {
   beforeEach(() => {
@@ -213,7 +216,23 @@ describe('useGameState', () => {
     it('should not include extra unexpected properties', () => {
       const state = useGameState()
       const keys = Object.keys(state)
-      expect(keys).toHaveLength(10) // 10 computeds only
+      expect(keys).toHaveLength(12)
+      expect(keys).toEqual(
+        expect.arrayContaining([
+          'gameStore',
+          'settingsStore',
+          'currentCategory',
+          'currentLetter',
+          'currentRound',
+          'players',
+          'currentPlayerTurn',
+          'allPlayersSubmitted',
+          'isGameCompleted',
+          'leaderboard',
+          'hasActiveSession',
+          'gameStatus',
+        ])
+      )
     })
   })
 

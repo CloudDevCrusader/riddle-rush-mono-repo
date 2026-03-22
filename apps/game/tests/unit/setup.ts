@@ -30,16 +30,44 @@ const mockUseNuxtApp = vi.fn(() => ({
   },
 }))
 
+const mockUseI18n = vi.fn(() => ({
+  t: (key: string, fallback?: string | Record<string, unknown>) =>
+    typeof fallback === 'string' ? fallback : key,
+}))
+
+const localStorageMock = (() => {
+  const store = new Map<string, string>()
+  return {
+    getItem: vi.fn((key: string) => (store.has(key) ? store.get(key)! : null)),
+    setItem: vi.fn((key: string, value: string) => {
+      store.set(key, value)
+    }),
+    removeItem: vi.fn((key: string) => {
+      store.delete(key)
+    }),
+    clear: vi.fn(() => {
+      store.clear()
+    }),
+    key: vi.fn((index: number) => Array.from(store.keys())[index] ?? null),
+    get length() {
+      return store.size
+    },
+  }
+})()
+
 // Global mock setup
 Object.assign(globalThis, {
   useRuntimeConfig: mockUseRuntimeConfig,
   useRoute: mockUseRoute,
   useRouter: mockUseRouter,
   useNuxtApp: mockUseNuxtApp,
+  useI18n: mockUseI18n,
+  localStorage: localStorageMock,
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
+  localStorageMock.clear()
 })
 
 afterEach(() => {

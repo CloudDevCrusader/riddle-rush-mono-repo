@@ -85,19 +85,13 @@ vi.mock('../../composables/useFeatureFlags', () => ({
   },
 }))
 
-// Mock useSettingsStore for tests that need it
 const mockSettingsStore = {
   fortuneWheelEnabled: true,
   answerInputEnabled: false,
 }
 
-vi.mock('../../stores/settings', () => ({
-  useSettingsStore: () => mockSettingsStore,
-}))
-
 // Import after mocks are set up
 const { useFeatureFlags } = await import('../../composables/useFeatureFlags')
-const { settingsStore } = await import('../../stores/settingsStore')
 
 describe('useFeatureFlags (GitLab)', () => {
   beforeEach(() => {
@@ -192,8 +186,7 @@ describe('useFeatureFlags (GitLab)', () => {
 
     it('should use GitLab value over local settings', () => {
       mockIsEnabled.mockReturnValue(true)
-      const store = settingsStore.getState()
-      store.fortuneWheelEnabled = false
+      mockSettingsStore.fortuneWheelEnabled = false
 
       const { isFortuneWheelEnabled } = useFeatureFlags()
 
@@ -203,8 +196,7 @@ describe('useFeatureFlags (GitLab)', () => {
 
     it('should fallback to local settings when GitLab is not configured', () => {
       mockGitLabClient = null
-      const store = settingsStore.getState()
-      store.fortuneWheelEnabled = true
+      mockSettingsStore.fortuneWheelEnabled = true
 
       const { isFortuneWheelEnabled } = useFeatureFlags()
 
@@ -226,8 +218,7 @@ describe('useFeatureFlags (GitLab)', () => {
     it('should resolve fortune-wheel from local settings when no client exists', () => {
       mockGitLabClient = null
 
-      const store = settingsStore.getState()
-      store.fortuneWheelEnabled = true
+      mockSettingsStore.fortuneWheelEnabled = true
 
       const { isEnabled } = useFeatureFlags()
 
@@ -237,8 +228,7 @@ describe('useFeatureFlags (GitLab)', () => {
     it('should still honor local false setting when no client exists', () => {
       mockGitLabClient = null
 
-      const store = settingsStore.getState()
-      store.fortuneWheelEnabled = false
+      mockSettingsStore.fortuneWheelEnabled = false
 
       const { isEnabled } = useFeatureFlags()
 

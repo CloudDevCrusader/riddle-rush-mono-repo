@@ -194,7 +194,7 @@ const goHome = () => {
 }
 
 const handleBack = () => {
-  if (gameStore.hasActiveSession) {
+  if (gameStore.hasActiveSession()) {
     showQuitModal.value = true
   } else {
     goHome()
@@ -291,7 +291,7 @@ onMounted(async () => {
       // Fallback to starting a new game
       await gameActions.resumeOrStartGame()
     }
-  } else if (!gameStore.hasActiveSession) {
+  } else if (!gameStore.hasActiveSession()) {
     // No game ID in route and no active session - start new game
     await gameActions.resumeOrStartGame()
   }

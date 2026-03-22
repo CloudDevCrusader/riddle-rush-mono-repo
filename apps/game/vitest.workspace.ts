@@ -11,6 +11,7 @@ export default [
       alias: {
         '~': fileURLToPath(new URL('./', import.meta.url)),
         '@': fileURLToPath(new URL('./', import.meta.url)),
+        '#imports': fileURLToPath(new URL('./tests/unit/nuxt-imports.ts', import.meta.url)),
       },
     },
     test: {

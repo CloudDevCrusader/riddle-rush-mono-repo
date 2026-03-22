@@ -34,15 +34,15 @@ export function useGameSession() {
     // Getters
     hasActiveSession: computed(() => {
       void version.value
-      return gameStore.getState().hasActiveSession
+      return gameStore.getState().hasActiveSession()
     }),
     isGameCompleted: computed(() => {
       void version.value
-      return gameStore.getState().isGameCompleted
+      return gameStore.getState().isGameCompleted()
     }),
     gameStatus: computed(() => {
       void version.value
-      return gameStore.getState().gameStatus
+      return gameStore.getState().gameStatus()
     }),
     currentRound: computed(() => {
       void version.value

@@ -37,143 +37,126 @@ describe('loadingStore', () => {
 
   describe('showLoading', () => {
     it('should enable loading', () => {
-      const store = loadingStore.getState()
-      store.showLoading()
-      expect(store.isLoading).toBe(true)
+      loadingStore.getState().showLoading()
+      expect(loadingStore.getState().isLoading).toBe(true)
     })
 
     it('should increment loading count', () => {
-      const store = loadingStore.getState()
-      store.showLoading()
-      expect(store.loadingCount).toBe(1)
-      store.showLoading()
-      expect(store.loadingCount).toBe(2)
+      loadingStore.getState().showLoading()
+      expect(loadingStore.getState().loadingCount).toBe(1)
+      loadingStore.getState().showLoading()
+      expect(loadingStore.getState().loadingCount).toBe(2)
     })
 
     it('should reset progress', () => {
-      const store = loadingStore.getState()
-      store.setProgress(50)
-      store.showLoading()
-      expect(store.progress).toBe(0)
+      loadingStore.getState().setProgress(50)
+      loadingStore.getState().showLoading()
+      expect(loadingStore.getState().progress).toBe(0)
     })
 
     it('should hide progress indicator', () => {
-      const store = loadingStore.getState()
-      store.setProgress(50)
-      store.showLoading()
-      expect(store.showProgress).toBe(false)
+      loadingStore.getState().setProgress(50)
+      loadingStore.getState().showLoading()
+      expect(loadingStore.getState().showProgress).toBe(false)
     })
   })
 
   describe('hideLoading', () => {
     it('should decrement loading count', () => {
-      const store = loadingStore.getState()
-      store.showLoading()
-      store.showLoading()
-      expect(store.loadingCount).toBe(2)
+      loadingStore.getState().showLoading()
+      loadingStore.getState().showLoading()
+      expect(loadingStore.getState().loadingCount).toBe(2)
 
-      store.hideLoading()
-      expect(store.loadingCount).toBe(1)
+      loadingStore.getState().hideLoading()
+      expect(loadingStore.getState().loadingCount).toBe(1)
     })
 
     it('should disable loading when count reaches zero', () => {
-      const store = loadingStore.getState()
-      store.showLoading()
-      store.hideLoading()
-      expect(store.isLoading).toBe(false)
+      loadingStore.getState().showLoading()
+      loadingStore.getState().hideLoading()
+      expect(loadingStore.getState().isLoading).toBe(false)
     })
 
     it('should not go below zero', () => {
-      const store = loadingStore.getState()
-      store.hideLoading()
-      expect(store.loadingCount).toBe(0)
+      loadingStore.getState().hideLoading()
+      expect(loadingStore.getState().loadingCount).toBe(0)
     })
 
     it('should keep loading enabled for nested calls', () => {
-      const store = loadingStore.getState()
-      store.showLoading()
-      store.showLoading()
-      store.hideLoading()
-      expect(store.isLoading).toBe(true)
-      expect(store.loadingCount).toBe(1)
+      loadingStore.getState().showLoading()
+      loadingStore.getState().showLoading()
+      loadingStore.getState().hideLoading()
+      expect(loadingStore.getState().isLoading).toBe(true)
+      expect(loadingStore.getState().loadingCount).toBe(1)
     })
 
     it('should reset progress when fully hidden', () => {
-      const store = loadingStore.getState()
-      store.showLoading()
-      store.setProgress(75)
-      store.hideLoading()
-      expect(store.progress).toBe(0)
+      loadingStore.getState().showLoading()
+      loadingStore.getState().setProgress(75)
+      loadingStore.getState().hideLoading()
+      expect(loadingStore.getState().progress).toBe(0)
     })
 
     it('should hide progress indicator when fully hidden', () => {
-      const store = loadingStore.getState()
-      store.showLoading()
-      store.setProgress(75)
-      store.hideLoading()
-      expect(store.showProgress).toBe(false)
+      loadingStore.getState().showLoading()
+      loadingStore.getState().setProgress(75)
+      loadingStore.getState().hideLoading()
+      expect(loadingStore.getState().showProgress).toBe(false)
     })
   })
 
   describe('setProgress', () => {
     it('should set progress value', () => {
-      const store = loadingStore.getState()
-      store.setProgress(50)
-      expect(store.progress).toBe(50)
+      loadingStore.getState().setProgress(50)
+      expect(loadingStore.getState().progress).toBe(50)
     })
 
     it('should show progress indicator', () => {
-      const store = loadingStore.getState()
-      store.setProgress(50)
-      expect(store.showProgress).toBe(true)
+      loadingStore.getState().setProgress(50)
+      expect(loadingStore.getState().showProgress).toBe(true)
     })
 
     it('should clamp progress to 0-100 range', () => {
-      const store = loadingStore.getState()
-      store.setProgress(-10)
-      expect(store.progress).toBe(0)
+      loadingStore.getState().setProgress(-10)
+      expect(loadingStore.getState().progress).toBe(0)
 
-      store.setProgress(150)
-      expect(store.progress).toBe(100)
+      loadingStore.getState().setProgress(150)
+      expect(loadingStore.getState().progress).toBe(100)
     })
 
     it('should accept boundary values', () => {
-      const store = loadingStore.getState()
-      store.setProgress(0)
-      expect(store.progress).toBe(0)
+      loadingStore.getState().setProgress(0)
+      expect(loadingStore.getState().progress).toBe(0)
 
-      store.setProgress(100)
-      expect(store.progress).toBe(100)
+      loadingStore.getState().setProgress(100)
+      expect(loadingStore.getState().progress).toBe(100)
     })
 
     it('should accept fractional values', () => {
-      const store = loadingStore.getState()
-      store.setProgress(33.33)
-      expect(store.progress).toBe(33.33)
+      loadingStore.getState().setProgress(33.33)
+      expect(loadingStore.getState().progress).toBe(33.33)
     })
   })
 
   describe('nested loading calls', () => {
     it('should handle multiple show/hide correctly', () => {
-      const store = loadingStore.getState()
+      loadingStore.getState().showLoading() // count: 1
+      expect(loadingStore.getState().isLoading).toBe(true)
 
-      store.showLoading() // count: 1
-      expect(store.isLoading).toBe(true)
+      loadingStore.getState().showLoading() // count: 2
+      expect(loadingStore.getState().isLoading).toBe(true)
 
-      store.showLoading() // count: 2
-      expect(store.isLoading).toBe(true)
+      loadingStore.getState().showLoading() // count: 3
+      expect(loadingStore.getState().isLoading).toBe(true)
 
-      store.showLoading() // count: 3
-      expect(store.isLoading).toBe(true)
+      loadingStore.getState().hideLoading() // count: 2
+      expect(loadingStore.getState().isLoading).toBe(true)
 
-      store.hideLoading() // count: 2
-      expect(store.isLoading).toBe(true)
+      loadingStore.getState().hideLoading() // count: 1
+      expect(loadingStore.getState().isLoading).toBe(true)
 
-      store.hideLoading() // count: 1
-      expect(store.isLoading).toBe(true)
-
-      store.hideLoading() // count: 0
-      expect(store.isLoading).toBe(false)
+      loadingStore.getState().hideLoading() // count: 0
+      expect(loadingStore.getState().isLoading).toBe(false)
     })
   })
 })

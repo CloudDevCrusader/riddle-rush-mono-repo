@@ -25,7 +25,7 @@ const randomLetter = () => {
 export const gameStore = create<
   GameState & {
     // Getters
-    hasActiveSession: boolean
+    hasActiveSession: () => boolean
     canInstall: boolean
     currentCategory: Category | null
     currentLetter: string
@@ -37,8 +37,8 @@ export const gameStore = create<
     allPlayersSubmitted: boolean
     currentPlayerTurn: Player | null
     leaderboard: PlayerWithRank[]
-    isGameCompleted: boolean
-    gameStatus: string
+    isGameCompleted: () => boolean
+    gameStatus: () => string
 
     // Actions
     fetchCategories: (force?: boolean) => Promise<Category[]>
@@ -94,7 +94,7 @@ export const gameStore = create<
   pendingPlayerNames: [],
 
   // Getters
-  get hasActiveSession() {
+  hasActiveSession() {
     return get().currentSession !== null
   },
   get canInstall() {
@@ -139,10 +139,10 @@ export const gameStore = create<
     const isGameCompleted = get().currentSession?.status === 'completed'
     return playerManager.buildLeaderboard(players, isGameCompleted ?? false)
   },
-  get isGameCompleted() {
+  isGameCompleted() {
     return get().currentSession?.status === 'completed'
   },
-  get gameStatus() {
+  gameStatus() {
     return get().currentSession?.status ?? 'active'
   },
 
