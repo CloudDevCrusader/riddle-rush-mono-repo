@@ -28,27 +28,28 @@ let mockHasActiveSession = false
 let mockCurrentScore = 42
 
 const mockGameSession = {
+  // Actions
   startNewGame: mockStartNewGame,
   resumeOrStartNewGame: mockResumeOrStartNewGame,
   endGame: mockEndGame,
   setupPlayers: mockSetupPlayers,
-  get hasActiveSession() {
-    return { value: mockHasActiveSession }
+
+  // Computed properties (simplified for testing)
+  currentSession: {
+    score: mockCurrentScore,
+    attempts: [],
+    id: '1',
+    status: 'active',
+    category: null,
+    letter: '',
+    players: [],
+    currentRound: 0,
+    roundHistory: [],
   },
-  get currentSession() {
-    return {
-      value: {
-        score: mockCurrentScore,
-        attempts: [],
-        id: '1',
-        status: 'active',
-        category: null,
-        letter: '',
-        players: [],
-        currentRound: 0,
-        roundHistory: [],
-      },
-    }
+  hasActiveSession: {
+    get value() {
+      return mockHasActiveSession
+    },
   },
 }
 
@@ -56,8 +57,12 @@ const mockPlayerActions = {
   startNextRound: mockStartNextRound,
 }
 
+// Mock the useGameSession composable
+vi.mock('~/stores/hooks/useGameSession', () => ({
+  useGameSession: vi.fn(() => mockGameSession),
+}))
+
 // Stub Nuxt auto-imported globals (belt-and-suspenders alongside the module mock)
-vi.stubGlobal('useGameSession', () => mockGameSession)
 vi.stubGlobal('usePlayerActions', () => mockPlayerActions)
 vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
 

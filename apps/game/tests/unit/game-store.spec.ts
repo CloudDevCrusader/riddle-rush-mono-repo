@@ -57,7 +57,11 @@ describe('Game Store', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.clearAllTimers()
-    // Reset Zustand store state without replacing getters
+    // Reset Zustand store data properties for test isolation.
+    // Note: We mutate the state object directly rather than using setState()
+    // because the store uses JS getter properties (e.g., get displayedCategories).
+    // setState() spreads state, which evaluates getters into static values and
+    // breaks lazy computation. Direct mutation preserves getter behavior.
     const state = gameStore.getState()
     state.currentSession = null
     state.history = []
@@ -1226,8 +1230,8 @@ describe('Game Store', () => {
       try {
         await gameStore.getState().loadSessionById(gameId)
         expect.fail('Should have thrown an error')
-      } catch (error: any) {
-        expect(error.message).toContain('Failed to load game session')
+      } catch (error: unknown) {
+        expect((error as Error).message).toContain('Failed to load game session')
       }
     })
   })

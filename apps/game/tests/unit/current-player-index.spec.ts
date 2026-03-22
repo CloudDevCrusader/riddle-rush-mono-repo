@@ -35,7 +35,8 @@ describe('currentPlayerIndex - Index-based Player Turn Tracking', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.clearAllTimers()
-    // Reset Zustand store state without replacing getters
+    // Reset Zustand store data properties for test isolation.
+    // Direct mutation preserves JS getter properties on the store.
     const state = gameStore.getState()
     state.currentSession = null
     state.history = []

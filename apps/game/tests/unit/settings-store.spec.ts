@@ -8,12 +8,29 @@ const localStorageMock = globalThis.localStorage as Storage & {
   clear: ReturnType<typeof vi.fn>
 }
 
+// Default settings state for test isolation
+const defaultSettingsState = {
+  maxPlayersPerGame: 4,
+  showLeaderboardAfterRound: true,
+  leaderboardEnabled: true,
+  debugMode: false,
+  soundEnabled: true,
+  soundVolume: 75,
+  musicEnabled: true,
+  musicVolume: 75,
+  offlineMode: false,
+  language: 'de',
+  fortuneWheelEnabled: true,
+  websocketEnabled: false,
+  answerInputEnabled: false,
+}
+
 describe('Settings Store', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorageMock.clear()
-    // Reset Zustand store to defaults
-    settingsStore.getState().resetToDefaults()
+    // Reset Zustand store state using setState for proper isolation
+    settingsStore.setState(defaultSettingsState)
   })
 
   afterEach(() => {

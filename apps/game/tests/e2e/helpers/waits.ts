@@ -11,19 +11,19 @@ const POLL_INTERVAL = 100
 async function logGameDebugInfo(page: Page, context: string): Promise<void> {
   try {
     const debugInfo = await page.evaluate(() => {
-      const pinia = (window as any).__pinia__
-      if (!pinia) {
-        return { error: 'Pinia store not found' }
+      const zustand = (window as any).__zustand__
+      if (!zustand) {
+        return { error: 'Zustand store not found' }
       }
 
-      const gameStore = pinia._s?.get('game') || pinia.state?.value?.game
-      const roundStore = pinia._s?.get('round') || pinia.state?.value?.round
+      const gameStore = zustand.game
+      const gameState = gameStore?.getState()
 
       return {
-        gameState: gameStore?.state || gameStore?.gameState || 'unknown',
-        currentRound: roundStore?.currentRound || gameStore?.currentRound || 0,
-        players: roundStore?.players?.length || gameStore?.players?.length || 0,
-        roundState: roundStore?.state || roundStore?.roundState || 'unknown',
+        gameState: gameState?.currentSession?.status || 'unknown',
+        currentRound: gameState?.currentSession?.currentRound || 0,
+        players: gameState?.currentSession?.players?.length || 0,
+        isOnline: gameState?.isOnline || false,
         timestamp: Date.now(),
       }
     })
@@ -61,14 +61,15 @@ export async function waitForGameState(
   try {
     await page.waitForFunction(
       (state: string) => {
-        const pinia = (window as any).__pinia__
-        if (!pinia) return false
+        const zustand = (window as any).__zustand__
+        if (!zustand) return false
 
-        // Try multiple ways to access the game store
-        const gameStore = pinia._s?.get('game') || pinia.state?.value?.game
-        if (!gameStore) return false
+        const gameStore = zustand.game
+        const gameState = gameStore?.getState()
 
-        const currentState = gameStore.state || gameStore.gameState
+        if (!gameState) return false
+
+        const currentState = gameState.currentSession?.status || 'unknown'
         return currentState === state
       },
       targetState,
@@ -98,13 +99,13 @@ export async function waitForRoundTransition(
   try {
     // First, capture the current round number
     const initialRound = await page.evaluate(() => {
-      const pinia = (window as any).__pinia__
-      if (!pinia) return 0
+      const zustand = (window as any).__zustand__
+      if (!zustand) return 0
 
-      const gameStore = pinia._s?.get('game') || pinia.state?.value?.game
-      const roundStore = pinia._s?.get('round') || pinia.state?.value?.round
+      const gameStore = zustand.game
+      const gameState = gameStore?.getState()
 
-      return roundStore?.currentRound || gameStore?.currentRound || 0
+      return gameState?.currentSession?.currentRound || 0
     })
 
     console.log(`[waitForRoundTransition] Current round: ${initialRound}`)
@@ -112,13 +113,13 @@ export async function waitForRoundTransition(
     // Wait for round number to change
     await page.waitForFunction(
       (prevRound: number) => {
-        const pinia = (window as any).__pinia__
-        if (!pinia) return false
+        const zustand = (window as any).__zustand__
+        if (!zustand) return false
 
-        const gameStore = pinia._s?.get('game') || pinia.state?.value?.game
-        const roundStore = pinia._s?.get('round') || pinia.state?.value?.round
+        const gameStore = zustand.game
+        const gameState = gameStore?.getState()
 
-        const currentRound = roundStore?.currentRound || gameStore?.currentRound || 0
+        const currentRound = gameState?.currentSession?.currentRound || 0
         return currentRound > prevRound
       },
       initialRound,
@@ -126,10 +127,10 @@ export async function waitForRoundTransition(
     )
 
     const newRound = await page.evaluate(() => {
-      const pinia = (window as any).__pinia__
-      const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
-      const roundStore = pinia?._s?.get('round') || pinia?.state?.value?.round
-      return roundStore?.currentRound || gameStore?.currentRound || 0
+      const zustand = (window as any).__zustand__
+      const gameStore = zustand?.game
+      const gameState = gameStore?.getState()
+      return gameState?.currentSession?.currentRound || 0
     })
 
     console.log(
@@ -379,9 +380,9 @@ export async function waitForPageReady(
           }
         }
 
-        // Check for Pinia being ready
-        const pinia = (window as any).__pinia__
-        if (pinia && pinia._s && pinia._s.size > 0) {
+        // Check for Zustand being ready
+        const zustand = (window as any).__zustand__
+        if (zustand && zustand.game) {
           return true
         }
 
@@ -443,23 +444,22 @@ export async function waitForRoundComplete(
   try {
     await page.waitForFunction(
       () => {
-        const pinia = (window as any).__pinia__
-        if (!pinia) return false
+        const zustand = (window as any).__zustand__
+        if (!zustand) return false
 
-        const gameStore = pinia._s?.get('game') || pinia.state?.value?.game
-        const roundStore = pinia._s?.get('round') || pinia.state?.value?.round
+        const gameStore = zustand.game
+        const gameState = gameStore?.getState()
 
         // Check various round completion indicators
-        const roundState = roundStore?.state || roundStore?.roundState || gameStore?.roundState
-        if (roundState === 'complete' || roundState === 'completed' || roundState === 'ended') {
-          return true
-        }
+        const session = gameState?.currentSession
+        if (!session) return false
 
         // Check if all players have submitted
-        const players = roundStore?.players || gameStore?.players || []
-        const submissions = roundStore?.submissions || gameStore?.submissions || []
+        const players = session.players || []
+        const allSubmitted =
+          players.length > 0 && players.every((player: any) => player.hasSubmitted)
 
-        if (players.length > 0 && submissions.length >= players.length) {
+        if (allSubmitted) {
           return true
         }
 
@@ -527,12 +527,13 @@ export async function waitForResultsRendered(
         )
         if (scoreElements.length === 0) return false
 
-        // Check Pinia state
-        const pinia = (window as any).__pinia__
-        if (pinia) {
-          const gameStore = pinia._s?.get('game') || pinia.state?.value?.game
-          const state = gameStore?.state || gameStore?.gameState
-          if (state === 'results' || state === 'finished' || state === 'ended') {
+        // Check Zustand state
+        const zustand = (window as any).__zustand__
+        if (zustand) {
+          const gameStore = zustand.game
+          const gameState = gameStore?.getState()
+          const state = gameState?.currentSession?.status
+          if (state === 'completed' || state === 'finished') {
             return true
           }
         }
@@ -577,23 +578,19 @@ export async function getRoundState(
   page: Page
 ): Promise<{ round: number; state: string; players: number }> {
   const result = await page.evaluate(() => {
-    const pinia = (window as any).__pinia__
+    const zustand = (window as any).__zustand__
 
-    if (!pinia) {
-      return { round: 0, state: 'unknown', players: 0, error: 'Pinia not found' }
+    if (!zustand) {
+      return { round: 0, state: 'unknown', players: 0, error: 'Zustand not found' }
     }
 
-    const gameStore = pinia._s?.get('game') || pinia.state?.value?.game
-    const roundStore = pinia._s?.get('round') || pinia.state?.value?.round
+    const gameStore = zustand.game
+    const gameState = gameStore?.getState()
 
-    const round = roundStore?.currentRound || gameStore?.currentRound || 0
-    const state =
-      roundStore?.state ||
-      roundStore?.roundState ||
-      gameStore?.state ||
-      gameStore?.gameState ||
-      'unknown'
-    const players = roundStore?.players?.length || gameStore?.players?.length || 0
+    const session = gameState?.currentSession
+    const round = session?.currentRound || 0
+    const state = session?.status || 'unknown'
+    const players = session?.players?.length || 0
 
     return { round, state, players }
   })
@@ -618,15 +615,9 @@ export async function waitForWebSocketConnection(
     await page.waitForFunction(
       () => {
         // Check for common WebSocket state indicators
-        const pinia = (window as any).__pinia__
-        if (pinia) {
-          const socketStore =
-            pinia._s?.get('socket') || pinia._s?.get('websocket') || pinia.state?.value?.socket
-          if (socketStore) {
-            const connected =
-              socketStore.connected || socketStore.isConnected || socketStore.status === 'connected'
-            if (connected) return true
-          }
+        const zustand = (window as any).__zustand__
+        if (zustand) {
+          // Zustand doesn't have a separate socket store, check window socket directly
         }
 
         // Check for global socket instance
