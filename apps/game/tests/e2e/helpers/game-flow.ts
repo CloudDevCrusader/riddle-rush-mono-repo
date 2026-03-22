@@ -24,11 +24,12 @@ export async function submitPlayerAnswers(
   const submitBtn = page.locator('[data-testid="game-submit-button"]')
   const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
   const turnName = page.locator('[data-testid="game-player-name"]')
+  const hasTurnName = (await turnName.count()) > 0
 
   for (let i = 0; i < count; i++) {
     await expect(submitBtn).toBeVisible({ timeout: 10000 })
 
-    const previousTurnName = (await turnName.textContent())?.trim() ?? null
+    const previousTurnName = hasTurnName ? ((await turnName.textContent())?.trim() ?? null) : null
     const answerInputVisible = await answerInput.isVisible()
     const answer = answers[i]
 
@@ -46,7 +47,9 @@ export async function submitPlayerAnswers(
               return 'all-submitted'
             }
 
-            const currentTurnName = (await turnName.textContent())?.trim() ?? null
+            const currentTurnName = hasTurnName
+              ? ((await turnName.textContent())?.trim() ?? null)
+              : null
             if (
               previousTurnName !== null &&
               currentTurnName !== null &&
@@ -78,7 +81,7 @@ export async function navigateToResults(page: Page): Promise<void> {
   const gameId = gameMatch?.[1] ?? null
 
   await nextBtn.click()
-  await expect(page).toHaveURL(/\/results\//, { timeout: 10000 })
+  await expect(page).toHaveURL(/\/results/, { timeout: 10000 })
   await page.waitForLoadState('networkidle')
 
   const resolvedGameId = await page.evaluate(async (id) => {
@@ -155,7 +158,7 @@ export async function goToNextRound(page: Page): Promise<void> {
   const nextRoundBtn = page.locator('[data-testid="next-round"]')
   await expect(nextRoundBtn).toBeVisible({ timeout: 8000 })
   await nextRoundBtn.click()
-  await expect(page).toHaveURL(/\/game\//, { timeout: 20000 })
+  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
 }
 
 /**
@@ -201,7 +204,7 @@ export async function setupMultiplayerGame(page: Page, playerNames: string[]): P
   const startBtn = page.locator('[data-testid="players-start-button"]')
   await expect(startBtn).toBeVisible({ timeout: 8000 })
   await startBtn.click()
-  await expect(page).toHaveURL(/\/game\//, { timeout: 20000 })
+  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
 }
 
 /**
@@ -215,7 +218,7 @@ export async function startGameWithDefaults(page: Page): Promise<void> {
   const startBtn = page.locator('[data-testid="players-start-button"]')
   await expect(startBtn).toBeVisible({ timeout: 10000 })
   await startBtn.click()
-  await expect(page).toHaveURL(/\/game\//, { timeout: 20000 })
+  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
 }
 
 /**

@@ -1,47 +1,9 @@
 import { test, expect } from '@playwright/test'
-import { generatePlayerName, generateAnswer } from './helpers/faker'
+import { startGameAndGoToResults } from './helpers/game-flow'
 
 test.describe('Scoring Workflow: Score Entry UI', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up a game with multiple players
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-
-    // Add a second player
-    const player2Name = generatePlayerName()
-    page.once('dialog', async (dialog) => {
-      await dialog.accept(player2Name)
-    })
-    const addBtn = page.locator('.add-btn')
-    await addBtn.click()
-    await expect(page.locator('[data-testid="player-name-input-1"]')).toBeVisible()
-
-    // Start game
-    const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
-
-    // Wait for game to start
-    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
-    const answerInput = page.locator('.answer-input')
-    await expect(answerInput).toBeVisible()
-
-    // Submit answers for both players
-    const submitBtn = page.locator('.submit-answer-btn')
-
-    await answerInput.fill(generateAnswer())
-    await submitBtn.click()
-    await expect(page.getByText(/Answer submitted for/)).toBeVisible()
-
-    await answerInput.fill(generateAnswer())
-    await submitBtn.click()
-    await expect(page.getByText('All players have submitted!')).toBeVisible()
-
-    // Navigate to results page
-    const nextBtn = page.locator('[data-testid="next-button"]')
-    await nextBtn.click()
-    await expect(page).toHaveURL(/\/results/)
+    await startGameAndGoToResults(page, 2)
   })
 
   test('should handle score entry correctly', async ({ page }) => {
