@@ -1,243 +1,373 @@
-# Phase 18: Enable fortune-wheel as default review/refactor if implementation works and looks good - Research
+# Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring - Research
 
-**Researched:** 2026-03-15
-**Domain:** Game flow default-mode behavior, feature flag precedence, round-start UX quality
-**Confidence:** HIGH (repo-specific behavior), MEDIUM (visual-quality assessment criteria needs runtime verification)
-
-## User Constraints
-
-No `*-CONTEXT.md` exists for Phase 18, so there are no locked decisions from `/gsd-discuss-phase`.
-
-- Locked decisions: none provided
-- Claude's discretion: full planning discretion within roadmap/STATE constraints
-- Deferred ideas: none explicitly provided for this phase
+**Researched:** 2026-03-22
+**Domain:** Build warnings resolution, Nuxt auto-import deduplication, E2E test architecture, post-Zustand migration cleanup
+**Confidence:** HIGH
 
 ## Summary
 
-Phase 18 is primarily a **default-behavior and quality-gate phase**, not a new feature build. The fortune wheel already exists and is integrated in `round-start.vue`; current behavior is controlled by `useFeatureFlags().isFortuneWheelEnabled`. When disabled, the app skips wheel UI and starts game immediately with random category/letter. When enabled, two wheels auto-spin, show result state briefly, then transition to game.
+Phase 18 covers four interconnected workstreams that emerged after Phase 19 (Pinia to Zustand migration): (1) enabling fortune wheel as default, (2) fixing build warnings, (3) reworking the E2E test suite, and (4) post-Zustand cleanup. Research reveals that the fortune wheel is already enabled as the default (`fortuneWheelEnabled: true` in settingsStore, `isEnabled('fortune-wheel', true)` fallback in useFeatureFlags) -- this was completed during the earlier Phase 18 partial execution. The remaining work centers on concrete, auditable issues.
 
-The critical planning insight is that "default" is currently split across **two control planes**:
+The most impactful issue is **19 duplicated import warnings** generated during `nuxi typecheck`. These stem from Nuxt's auto-import scanning `stores/`, `stores/hooks/`, and their barrel files (`index.ts`), which causes the same exports to be discovered from multiple paths simultaneously. The fix is structural: remove the barrel `index.ts` re-exports (since Nuxt auto-imports make them unnecessary) or exclude the `stores` directory from auto-import scanning.
 
-1. local settings default (`stores/settings.ts`) and
-2. GitLab Unleash remote flags (`plugins/gitlab-feature-flags.client.ts` + `useFeatureFlags.ts`).
-   If GitLab client is configured, GitLab is authoritative. So changing local default alone will not guarantee wheel-default in deployed environments.
+The E2E test suite has **three systemic issues**: (1) 96 `waitForTimeout()` calls creating timing fragility, (2) massively duplicated helper functions across 4+ spec files (hideDevtools, navigateToResults, setupMultiplayerGame each defined 2-3 times), and (3) several tests depend on `answerInput` visibility which is behind the `isAnswerInputEnabled` feature flag (default: false), causing guaranteed failures when that flag is off. The E2E helpers infrastructure (`tests/e2e/helpers/`) is well-structured for Zustand (using `__zustand__` window global) and does NOT need migration -- the helpers were already updated during Phase 19.
 
-**Primary recommendation:** Plan Phase 18 as a staged rollout with explicit go/no-go quality criteria, then implement default change at the true source of authority (GitLab flag state and/or code fallback rules), with regression coverage for round flow, scoring flow, and refresh/resume behavior.
+**Primary recommendation:** Structure this phase as: (1) fix duplicated imports via store barrel file cleanup, (2) consolidate E2E helpers into the shared helpers directory, (3) fix E2E answer-input assumptions, (4) address remaining minor cleanup items.
 
 ## Standard Stack
 
-The established implementation stack for this domain:
-
 ### Core
 
-| Library/Module                                 | Purpose                             | Why Standard Here                                                                |
-| ---------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------- |
-| Nuxt 4 SPA (`apps/game`)                       | Page flow and UI rendering          | Existing architecture is client-only (`ssr: false`) and all game flow lives here |
-| Pinia (`stores/settings.ts`, `stores/game.ts`) | Local defaults + game session state | Existing single state mechanism used across gameplay                             |
-| Unleash via GitLab (`unleash-proxy-client`)    | Remote feature flags                | Already integrated and authoritative when configured                             |
-| Playwright + Vitest                            | Behavior safety net                 | Existing unit + E2E suite already includes wheel-related assumptions             |
+| Library    | Version           | Purpose                     | Why Standard                         |
+| ---------- | ----------------- | --------------------------- | ------------------------------------ |
+| Zustand    | ^5.0.12 (current) | State management            | Already migrated in Phase 19         |
+| Nuxt 4     | (project version) | Framework with auto-imports | Source of duplicated import warnings |
+| Playwright | (project config)  | E2E testing                 | Existing E2E infrastructure          |
+| Vitest     | (project config)  | Unit testing                | 734 tests all passing                |
 
 ### Supporting
 
-| Module                        | Purpose                                      | When to Use                           |
-| ----------------------------- | -------------------------------------------- | ------------------------------------- |
-| `useFeatureFlags.ts`          | Central flag resolution and precedence       | Any wheel default/flag logic change   |
-| `pages/round-start.vue`       | Wheel vs random branch and transition timing | Any UX/default flow change            |
-| `components/FortuneWheel.vue` | Wheel spin mechanics and visuals             | Refactor only if quality issues found |
-| `docs/GAME-STATE-FLOW.md`     | Source of truth for documented transitions   | Update if flow semantics change       |
-
-### Alternatives Considered
-
-| Instead of                     | Could Use                             | Tradeoff                                                                                         |
-| ------------------------------ | ------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Existing feature-flag pipeline | New custom toggle system              | Not justified; increases state complexity and conflicts with pending TODO to simplify mode state |
-| Round-start flow branch        | New dedicated game-mode router branch | Adds architecture complexity before resolving single-source-of-truth concerns                    |
+| Library               | Version   | Purpose                                      | When to Use                    |
+| --------------------- | --------- | -------------------------------------------- | ------------------------------ |
+| `@riddle-rush/shared` | workspace | Shared constants (WHEEL_FADE_DELAY_MS, etc.) | Fortune wheel timing constants |
 
 ## Architecture Patterns
 
-### Pattern 1: Feature-flag precedence for mode decisions
+### Pattern 1: Nuxt Auto-Import Directory Scanning
 
-**What:** `useFeatureFlags()` resolves `isFortuneWheelEnabled` with GitLab client priority, then local settings fallback.
+**What:** `nuxt.config.ts` configures `imports.dirs: ['stores', 'stores/hooks', 'composables']`. Nuxt scans these directories and auto-imports all named exports. When `stores/index.ts` re-exports from `stores/settingsStore.ts` AND both files are in the scanned `stores/` directory, Nuxt sees the same export from two paths.
 
-**When to use:** Any decision that claims "fortune wheel is default".
+**Root cause of 19 warnings:**
 
-**Verified behavior:**
+```
+stores/index.ts        re-exports -> settingsStore, gameStore, loadingStore, migrateFromPinia
+stores/index.ts        re-exports -> useGameSession, useCategories, usePlayerActions, useInstallPrompt, useSettings, useLoading, GameSettings
+stores/hooks/index.ts  re-exports -> same hooks + GameSettings
+```
 
-- `useFeatureFlags.ts`: if GitLab client exists, `isEnabled('fortune-wheel', false)` is used.
-- Local `settingsStore.fortuneWheelEnabled` is only authoritative when GitLab is not configured.
+Each re-export creates a collision with the original source file that Nuxt also discovers.
 
-### Pattern 2: Round-start bifurcation is the true mode switch
+**Fix approach:** Remove `stores/index.ts` barrel file. Nuxt auto-imports make it unnecessary -- consumers never need to write `import { gameStore } from '~/stores'` because Nuxt auto-imports `gameStore` directly from `stores/gameStore.ts`. The barrel file only exists for non-Nuxt contexts (tests, plugins), which use explicit imports anyway.
 
-**What:** `pages/round-start.vue` contains explicit branch:
+Similarly, `stores/hooks/index.ts` barrel can be removed since Nuxt auto-imports from the `stores/hooks/` directory.
 
-- disabled wheel -> choose random category+letter -> `startGame()` immediately
-- enabled wheel -> render dual wheels -> auto-spin -> result reveal -> `startGame()`
+**Warning:** The `plugins/zustand.ts` file uses explicit imports (`from '~/stores/gameStore'`), not auto-imports. This is correct and will continue working.
 
-**When to use:** Defining acceptance criteria and regression tests for mode default.
+### Pattern 2: E2E Shared Helpers Architecture
 
-### Pattern 3: Multi-round lifecycle tied to store roundHistory/currentRound
+**What:** The project already has a well-organized `tests/e2e/helpers/` directory with 7 modules (index.ts, waits.ts, assets.ts, diagnostics.ts, faker.ts, mobile.ts, realtime.ts). However, common game-flow operations (navigateToResults, setupMultiplayerGame, submitAllPlayerAnswers, hideDevtools, assignScores, confirmScoresAndWaitForModal) are defined locally in each spec file instead of in the shared helpers.
 
-**What:** `startGame()` in round-start chooses between initial setup, refresh recovery, and true next-round increment.
+**Current duplication:**
 
-**When to use:** Any refactor touching wheel-default must preserve round increment semantics and refresh behavior.
+- `hideDevtools()` -- defined in 3 spec files identically
+- `navigateToResults()` -- defined in 3 spec files with near-identical code
+- `setupMultiplayerGame()` -- defined in 2 spec files
+- `submitAllPlayerAnswers()` -- defined in 2 spec files
+- `assignScores()` / `assignScoresToPlayers()` -- defined in 2 spec files
+- `confirmScoresAndWaitForModal()` -- defined in 2 spec files
+- `goToNextRound()` / `continueToNextRound()` -- defined in 2 spec files
+- `finishGame()` / `finishGameFromModal()` -- defined in 2 spec files
 
-### Recommended project touchpoints for this phase
+**Fix approach:** Create a new `tests/e2e/helpers/game-flow.ts` module that exports all these shared operations, then update spec files to import from helpers.
 
-1. `apps/game/composables/useFeatureFlags.ts`
-2. `apps/game/stores/settings.ts`
-3. `apps/game/pages/round-start.vue`
-4. `apps/game/tests/unit/settings-store.spec.ts`
-5. `apps/game/tests/unit/use-feature-flags.spec.ts`
-6. `apps/game/tests/e2e/round-start.spec.ts` (+ related flow specs)
-7. `docs/GAME-STATE-FLOW.md` / `CLAUDE.md` (if behavior contract changes)
+### Pattern 3: Feature-Flag-Aware E2E Tests
+
+**What:** The game page's answer input field is behind `v-if="isAnswerInputEnabled"` (feature flag, default: false). Multiple E2E tests expect `[data-testid="game-answer-input"]` to be visible and attempt to `.fill()` it. These tests will fail when the answer-input flag is disabled.
+
+**Affected tests:**
+
+- `scoring-flow.spec.ts` -- `await expect(answerInput).toBeVisible()` + `fill('')`
+- `scoring-ui.spec.ts` -- `page.locator('.answer-input')` + `fill()`
+- `scoring-multi-round.spec.ts` -- same pattern
+- `leaderboard.spec.ts` -- same pattern
+- `game-complete-flow.spec.ts` -- `submitAllPlayerAnswers` fills input
+- `full-game-workflow.spec.ts` -- `submitThreePlayerAnswers` fills input
+
+**Fix approach:** The submit button (`[data-testid="game-submit-button"]`) is always visible regardless of the feature flag. Tests should:
+
+1. Check if the answer input exists before filling
+2. Always click the submit button (it works even without input when flag is off)
+3. The shared helper should handle this branching logic once
+
+### Pattern 4: Fortune Wheel Default is Already Enabled
+
+**What:** The fortune wheel is already the default. From Phase 18's earlier partial execution:
+
+- `settingsStore.ts` line 31: `fortuneWheelEnabled: true` (local default)
+- `useFeatureFlags.ts` line 114: `isEnabled('fortune-wheel', true)` (GitLab fallback default)
+
+**Remaining work:** Verify this is working correctly in the E2E tests. The `round-start.spec.ts` test already asserts wheel-default flow (line 54: `await expect(wheelsContainer).toBeVisible()`).
+
+### Anti-Patterns to Avoid
+
+- **waitForTimeout as a sync mechanism:** 96 instances across E2E tests. Replace with explicit state waits (`waitForSelector`, `waitForFunction`, Playwright's auto-waiting).
+- **Duplicated local helpers:** Defining the same function in multiple spec files instead of sharing.
+- **Barrel re-exports in Nuxt auto-import dirs:** Causes duplicated import warnings.
 
 ## Don't Hand-Roll
 
-| Problem                       | Don't Build                              | Use Instead                                                          | Why                                                                       |
-| ----------------------------- | ---------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| "Default mode" config         | New parallel config object for game mode | Existing `useFeatureFlags()` + settings store                        | Avoids duplicate state ownership and conflicts with pending refactor TODO |
-| Mode transition orchestration | New navigation state machine             | Existing `round-start.vue` + `gameStore.startNextRound/setupPlayers` | Current flow already encodes transition rules and DB persistence          |
-| Flag transport                | Custom remote flag fetcher               | Existing GitLab Unleash plugin                                       | Already integrated, tested, and environment-aware                         |
-
-**Key insight:** The lowest-risk path is to tighten and clarify current flag/default precedence rather than introducing any new mode system.
+| Problem                         | Don't Build                  | Use Instead                          | Why                                |
+| ------------------------------- | ---------------------------- | ------------------------------------ | ---------------------------------- |
+| E2E game flow helpers           | Local functions in each spec | Shared `helpers/game-flow.ts` module | Already have helper infrastructure |
+| Store auto-imports              | Custom import management     | Nuxt's built-in `imports.dirs`       | Framework handles it               |
+| Feature flag branching in tests | Per-test conditionals        | Shared helper with flag detection    | Single point of change             |
 
 ## Common Pitfalls
 
-### Pitfall 1: Changing only local default does not change deployed default
+### Pitfall 1: Removing barrel file breaks explicit imports in tests/plugins
 
-**What goes wrong:** `fortuneWheelEnabled: true` in settings appears correct locally, but production still follows GitLab remote result.
+**What goes wrong:** Removing `stores/index.ts` breaks any file that does `import { gameStore } from '~/stores'` or `import { settingsStore } from '~/stores'`.
 
-**Why it happens:** `useFeatureFlags.ts` gives GitLab authority when client exists.
+**Why it happens:** Plugins and test files use explicit imports, not Nuxt auto-imports.
 
-**How to avoid:** Include explicit rollout task for GitLab flag state and environment mapping (dev/staging/prod).
+**How to avoid:** Before removing barrel files, grep for all explicit imports of `from '~/stores'` or `from '~/stores/hooks'` and update them to import from the specific source file (e.g., `from '~/stores/gameStore'`).
 
-### Pitfall 2: "Works and looks good" is underspecified
+**Warning signs:** TypeScript compilation errors in plugins/ or tests/ after removing barrel files.
 
-**What goes wrong:** Default flips without clear UX quality baseline (timing, responsiveness, visual consistency), causing subjective review loops.
+### Pitfall 2: E2E tests assume answer input is visible
 
-**How to avoid:** Add measurable gate criteria (mobile/desktop rendering, spin duration perception, no jank, no blocked flow).
+**What goes wrong:** Tests fail with "Element not visible" when `isAnswerInputEnabled` is false (its default).
 
-### Pitfall 3: E2E fragility around round-start timing/selectors
+**Why it happens:** The input has `v-if="isAnswerInputEnabled"` but E2E tests don't check the flag.
 
-**What goes wrong:** Tests flake because round-start can transition quickly and some tests rely on timing/specific classes.
+**How to avoid:** E2E submit helper should check for input existence before attempting to fill, and always click the submit button.
 
-**How to avoid:** Prefer stable `data-testid` hooks and branch-aware assertions (round-start or immediate game) where intended.
+### Pitfall 3: Fortune wheel timing in E2E creates race conditions
 
-### Pitfall 4: Regressing round counter semantics during refactor
+**What goes wrong:** Tests expecting `/round-start` URL may miss it because the wheel completes and navigates to `/game` too quickly, or too slowly for the timeout.
 
-**What goes wrong:** Refresh/back to round-start accidentally increments rounds.
+**Why it happens:** Fortune wheel spin duration + transition delays = variable total time.
 
-**How to avoid:** Preserve current checks using `roundHistory.length >= currentRound` and keep explicit regression tests.
+**How to avoid:** Use `await expect(page).toHaveURL(/\/(round-start|game)/)` pattern (already used in `players.spec.ts` line 87) instead of strict `/round-start` assertion.
+
+### Pitfall 4: `__zustand__` only exposed in dev mode
+
+**What goes wrong:** E2E tests that use `page.evaluate(() => window.__zustand__)` fail when running against production builds.
+
+**Why it happens:** `plugins/zustand.ts` line 21: `if (import.meta.dev && import.meta.client)`.
+
+**How to avoid:** E2E tests currently run against dev server (`pnpm run dev`) so this works. If CI runs against built output, the `__zustand__` helpers will silently fail. Consider exposing in test mode too, or making helpers graceful when `__zustand__` is absent.
 
 ## Code Examples
 
-### Current mode gate in round-start
+### Duplicated Import Warning Root Cause
 
-```ts
-// apps/game/pages/round-start.vue
-if (!isFortuneWheelEnabled.value) {
-  const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
-  const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
-  selectedCategory.value = randomCategory ?? null
-  selectedLetter.value = randomLetter ?? null
-  await startGame()
-  return
-}
+```typescript
+// nuxt.config.ts -- this config causes the warnings
+imports: {
+  dirs: ['stores', 'stores/hooks', 'composables'],
+},
+
+// stores/index.ts -- barrel that re-exports (creates duplicates)
+export { gameStore } from './gameStore'        // Nuxt also finds gameStore in stores/gameStore.ts
+export { settingsStore } from './settingsStore' // Nuxt also finds settingsStore in stores/settingsStore.ts
+export { useGameSession, ... } from './hooks'   // Nuxt also finds these in stores/hooks/*.ts
 ```
 
-### Current flag precedence contract
+### Fix: Remove barrel re-exports
 
-```ts
-// apps/game/composables/useFeatureFlags.ts
-const isFortuneWheelEnabled = computed(() => {
-  if (gitlabClient) {
-    return isEnabled('fortune-wheel', false)
+```typescript
+// After fix: stores/index.ts should only contain non-auto-importable exports
+// Or be removed entirely. Plugins use explicit paths:
+
+// plugins/zustand.ts (already uses direct imports)
+import { gameStore } from '~/stores/gameStore'
+import { settingsStore } from '~/stores/settingsStore'
+import { loadingStore } from '~/stores/loadingStore'
+import { migrateFromPinia } from '~/stores/migrate'
+```
+
+### E2E Shared Helper Pattern
+
+```typescript
+// tests/e2e/helpers/game-flow.ts
+import type { Page } from '@playwright/test'
+import { expect } from '@playwright/test'
+
+export async function hideDevtools(page: Page) {
+  await page.addStyleTag({
+    content:
+      '#nuxt-devtools-container, nuxt-devtools-frame { display: none !important; pointer-events: none !important; }',
+  })
+}
+
+export async function submitPlayerAnswers(page: Page, count: number, answers?: string[]) {
+  const submitBtn = page.locator('[data-testid="game-submit-button"]')
+
+  for (let i = 0; i < count; i++) {
+    // Answer input may not be visible (feature flag controlled)
+    const answerInput = page.locator('[data-testid="game-answer-input"]')
+    const isInputVisible = await answerInput.isVisible().catch(() => false)
+
+    if (isInputVisible && answers?.[i] !== undefined) {
+      await answerInput.fill(answers[i]!)
+    }
+
+    await expect(submitBtn).toBeEnabled({ timeout: 5000 })
+    await submitBtn.click()
+
+    if (i < count - 1) {
+      await page.waitForTimeout(500) // Allow turn transition
+    }
   }
-  const settingsStore = useSettingsStore()
-  return settingsStore.fortuneWheelEnabled
-})
-```
-
-### Current local default (not authoritative with GitLab)
-
-```ts
-// apps/game/stores/settings.ts
-const DEFAULT_SETTINGS = {
-  fortuneWheelEnabled: false,
-  websocketEnabled: false,
-  answerInputEnabled: false,
 }
 ```
 
-## Planning Guidance for Phase 18
+## Detailed Warning Audit
 
-Recommended plan shape (prescriptive):
+### Duplicated Import Warnings (19 unique, repeated twice = 38 total output lines)
 
-1. **Baseline audit + acceptance gate definition**
-   - Define "works and looks good" criteria with measurable checks (flow correctness + visual quality + responsiveness).
-   - Validate current wheel behavior against those criteria in local/dev env.
+| Export Name        | Source A (ignored)                                                                                      | Source B (used)                    | Fix                      |
+| ------------------ | ------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------ |
+| `gameStore`        | `stores/gameStore.ts`                                                                                   | `stores/index.ts`                  | Remove from index.ts     |
+| `settingsStore`    | `stores/index.ts`                                                                                       | `stores/settingsStore.ts`          | Remove from index.ts     |
+| `loadingStore`     | `stores/index.ts`                                                                                       | `stores/loadingStore.ts`           | Remove from index.ts     |
+| `migrateFromPinia` | `stores/index.ts`                                                                                       | `stores/migrate.ts`                | Remove from index.ts     |
+| `GameSettings`     | `stores/index.ts` / `stores/settingsStore.ts` / `stores/hooks/index.ts` / `stores/hooks/useSettings.ts` | Last wins                          | Remove from all barrels  |
+| `useGameSession`   | `stores/index.ts` / `stores/hooks/index.ts`                                                             | `stores/hooks/useGameSession.ts`   | Remove from both barrels |
+| `useCategories`    | `stores/index.ts` / `stores/hooks/index.ts`                                                             | `stores/hooks/useCategories.ts`    | Remove from both barrels |
+| `usePlayerActions` | `stores/index.ts` / `stores/hooks/index.ts`                                                             | `stores/hooks/usePlayerActions.ts` | Remove from both barrels |
+| `useInstallPrompt` | `stores/index.ts` / `stores/hooks/index.ts`                                                             | `stores/hooks/useInstallPrompt.ts` | Remove from both barrels |
+| `useSettings`      | `stores/index.ts` / `stores/hooks/index.ts`                                                             | `stores/hooks/useSettings.ts`      | Remove from both barrels |
+| `useLoading`       | `stores/index.ts` / `stores/hooks/index.ts`                                                             | `stores/hooks/useLoading.ts`       | Remove from both barrels |
 
-2. **Default enable implementation at real authority layer(s)**
-   - Decide and implement default enable path across both local fallback and GitLab-configured environments.
-   - If GitLab is used in target environments, include operational step to set `fortune-wheel` default on remote.
+### ESLint Warnings
 
-3. **Refactor only if quality audit fails**
-   - Scope limited to issues proven by audit (e.g., timing constants, wheel UX clarity, duplicated logic).
-   - Avoid broad game-mode redesign in this phase; track large refactor separately (already pending TODO).
+None. `pnpm run lint` passes cleanly with zero warnings.
 
-4. **Regression test hardening**
-   - Update/expand unit tests around settings/feature-flag precedence.
-   - Update E2E around round-start behavior with stable selectors and deterministic expectations.
+### TypeScript Errors
 
-5. **Docs/state alignment**
-   - Update flow docs if effective default semantics changed.
-   - Reflect decisions in `.planning/STATE.md` and phase summaries.
+None. `pnpm run typecheck` passes (only warnings, no errors).
+
+### Unit Test Status
+
+All 734 tests pass, 7 skipped. No failures.
+
+## E2E Test Rework Audit
+
+### Files Requiring Rework
+
+| File                          | Issues                                                                   | Priority        |
+| ----------------------------- | ------------------------------------------------------------------------ | --------------- | --- |
+| `scoring-flow.spec.ts`        | Assumes answer input visible; `waitForTimeout(2000)` after round-start   | HIGH            |
+| `scoring-ui.spec.ts`          | Uses `.answer-input` CSS class selector (fragile); assumes input visible | HIGH            |
+| `scoring-multi-round.spec.ts` | Assumes answer input visible; strict `/round-start` URL assertions       | HIGH            |
+| `leaderboard.spec.ts`         | Assumes answer input visible; fills input with text                      | HIGH            |
+| `game-complete-flow.spec.ts`  | Assumes answer input visible; duplicated navigateToResults helper        | MEDIUM          |
+| `full-game-workflow.spec.ts`  | Assumes answer input visible; duplicated helpers                         | MEDIUM          |
+| `results.spec.ts`             | Strict `/round-start` URL assertion; old patterns                        | MEDIUM          |
+| `round-start.spec.ts`         | Already updated for wheel-default; serial mode may cause slowness        | LOW             |
+| `players.spec.ts`             | Already handles `/round-start                                            | game/` flexibly | LOW |
+| `credits.spec.ts`             | No game flow; isolated test                                              | LOW             |
+| `debug-console.spec.ts`       | No game flow; isolated test                                              | LOW             |
+| `language.spec.ts`            | No game flow; isolated test                                              | LOW             |
+| `offline.spec.ts`             | No game flow; isolated test                                              | LOW             |
+| `translations-check.spec.ts`  | Already handles round-start                                              | game flexibly   | LOW |
+
+### Systemic Issues to Fix
+
+1. **96 `waitForTimeout()` calls** -- Replace with explicit state waits where possible
+2. **3 copies of `hideDevtools()`** -- Move to shared helper
+3. **3 copies of `navigateToResults()`** -- Move to shared helper
+4. **Answer input assumption** -- Fix in shared helper, update all consumers
+5. **`__zustand__` exposure is dev-only** -- Document limitation or extend to test builds
+
+## Post-Zustand Cleanup Audit
+
+### Pinia References Remaining
+
+| Location                                | Type                                     | Action                                                           |
+| --------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------- |
+| `stores/migrate.ts`                     | Migration utility (`migrateFromPinia()`) | KEEP -- needed for users upgrading from old Pinia-based versions |
+| `plugins/zustand.ts`                    | Calls `migrateFromPinia()`               | KEEP -- one-time migration on startup                            |
+| `tests/unit/settings-migration.spec.ts` | Tests for migration                      | KEEP -- validates migration works                                |
+
+**No old Pinia patterns remain in app code.** No `defineStore`, `useSettingsStore`, `useGameStore`, `storeToRefs`, `setActivePinia`, `createPinia`, or `@pinia/nuxt` references exist in pages, components, composables, or plugins. The `pinia` package is not in any `package.json`.
+
+### Store Pattern Issues
+
+1. **`stores/index.ts` barrel file** -- Causes warnings, should be removed (see above)
+2. **`stores/hooks/index.ts` barrel file** -- Same issue, should be removed
+3. **Action references bound at hook creation time:** In `useSettings.ts` lines 96-106, actions are bound via `settingsStore.getState().updateSetting` etc. at composable creation time. This is a known Zustand pattern that works because actions are stable references, but it's worth documenting the pattern for future maintainers.
 
 ## Open Questions
 
-1. **Target environment authority for "default"**
-   - What we know: GitLab is authoritative when configured.
-   - Unclear: Which environments in active deployment actually provide GitLab flag config today.
-   - Recommendation: Include an explicit environment matrix task in planning.
+1. **E2E test pass rate currently**
+   - What we know: Unit tests all pass. E2E tests have structural issues (answer input assumption, timing).
+   - What's unclear: Exact current E2E pass rate (would require running full suite against dev server).
+   - Recommendation: Plan should include E2E run as first task to establish baseline, then fix.
 
-2. **Quality bar definition for "looks good"**
-   - What we know: No explicit requirement IDs exist for phase 18.
-   - Unclear: Exact visual/performance threshold for acceptance.
-   - Recommendation: Define objective checklist at plan start (screen sizes, transition duration, no clipping/jank).
+2. **Whether to keep or remove Pinia migration utility**
+   - What we know: `migrateFromPinia()` handles one-time localStorage format upgrade.
+   - What's unclear: Whether any production users still have old Pinia format.
+   - Recommendation: Keep for now. It's lightweight (50 lines) and runs once. Can be removed in a future cleanup phase.
 
-3. **Whether to expose wheel toggle in Settings UI**
-   - What we know: Settings store has toggle action, settings page currently does not expose it.
-   - Unclear: Should users retain manual override post-default change.
-   - Recommendation: Treat as discretionary subtask only if required by product intent; otherwise keep hidden and controlled via flags.
+3. **`__zustand__` exposure for CI E2E tests**
+   - What we know: Currently dev-only (`import.meta.dev`). CI uses dev server.
+   - What's unclear: Future CI changes might switch to built output.
+   - Recommendation: Consider `import.meta.dev || import.meta.env.PLAYWRIGHT_TEST_BASE_URL` or similar.
+
+## Validation Architecture
+
+### Test Framework
+
+| Property           | Value                                                            |
+| ------------------ | ---------------------------------------------------------------- |
+| Framework          | Vitest + Playwright                                              |
+| Config files       | `apps/game/vitest.config.ts`, `apps/game/playwright.config.ts`   |
+| Quick run command  | `pnpm run test`                                                  |
+| Full suite command | `pnpm run workspace:check && pnpm run test && pnpm run test:e2e` |
+
+### Phase Requirements to Test Map
+
+| Behavior                        | Test Type   | Automated Command                                       | Status                |
+| ------------------------------- | ----------- | ------------------------------------------------------- | --------------------- |
+| Zero duplicated import warnings | build check | `pnpm run typecheck 2>&1 \| grep -c "WARN"` should be 0 | Currently 19 warnings |
+| Fortune wheel is default        | E2E         | `round-start.spec.ts` already validates                 | PASS                  |
+| All unit tests pass             | unit        | `pnpm run test`                                         | PASS (734/734)        |
+| E2E suite passes reliably       | E2E         | `pnpm run test:e2e`                                     | Needs rework          |
+| `workspace:check` clean         | integration | `pnpm run workspace:check`                              | PASS (warnings only)  |
+
+### Sampling Rate
+
+- **Per task commit:** `pnpm run workspace:check`
+- **Per wave merge:** `pnpm run test && pnpm run workspace:check`
+- **Phase gate:** Full suite green before `/gsd:verify-work`
+
+### Wave 0 Gaps
+
+- [ ] `tests/e2e/helpers/game-flow.ts` -- consolidated game flow helpers (does not exist yet)
+- None other -- existing test infrastructure covers all requirements
 
 ## Sources
 
 ### Primary (HIGH confidence)
 
-- `apps/game/pages/round-start.vue` - actual wheel/default branch and startup flow
-- `apps/game/composables/useFeatureFlags.ts` - flag precedence contract
-- `apps/game/plugins/gitlab-feature-flags.client.ts` - GitLab Unleash initialization/authority conditions
-- `apps/game/stores/settings.ts` - local default values
-- `apps/game/stores/game.ts` - round lifecycle and persistence-sensitive transitions
-- `docs/GAME-STATE-FLOW.md` - documented state-machine expectations
-- `.planning/STATE.md` - phase sequencing and pending refactor concerns
-- `.planning/ROADMAP.md` - Phase 18 intent and dependency context
+- `apps/game/nuxt.config.ts` lines 92-94 -- auto-import dirs configuration causing warnings
+- `apps/game/stores/index.ts` -- barrel file with re-exports (duplicated import source)
+- `apps/game/stores/hooks/index.ts` -- barrel file with re-exports (duplicated import source)
+- `apps/game/stores/settingsStore.ts` line 31 -- `fortuneWheelEnabled: true` (already default)
+- `apps/game/composables/useFeatureFlags.ts` line 114 -- `isEnabled('fortune-wheel', true)` (already default)
+- `apps/game/pages/game/[[gameId]].vue` line 88 -- `v-if="isAnswerInputEnabled"` (controls input visibility)
+- `apps/game/plugins/zustand.ts` line 21 -- `__zustand__` exposure is dev-only
+- `apps/game/tests/e2e/helpers/waits.ts` -- already uses `__zustand__` (Zustand-compatible)
+- `pnpm run workspace:check` output -- 19 duplicated import warnings, 0 errors, 0 lint warnings
+- `pnpm run test` output -- 734 passed, 7 skipped, 0 failed
 
 ### Secondary (MEDIUM confidence)
 
-- `apps/game/tests/e2e/round-start.spec.ts`
-- `apps/game/tests/e2e/translations-check.spec.ts`
-- `apps/game/tests/unit/settings-store.spec.ts`
-- `apps/game/tests/unit/use-feature-flags.spec.ts`
+- E2E spec file analysis (14 spec files reviewed for patterns, duplication, and feature flag assumptions)
+- `grep` analysis confirming zero remaining old Pinia patterns in app source code
 
 ## Metadata
 
 **Confidence breakdown:**
 
 - Standard stack: HIGH - directly derived from active repo implementation
-- Architecture patterns: HIGH - confirmed in runtime flow code
-- Pitfalls: HIGH - inferred from concrete precedence and test structure
-- Quality gate recommendations: MEDIUM - requires runtime visual validation to finalize
+- Architecture patterns: HIGH - confirmed via source code analysis and build output
+- Warning audit: HIGH - based on actual `workspace:check` and `typecheck` output
+- E2E rework: HIGH - based on direct file analysis, specific line references
+- Pitfalls: HIGH - derived from concrete code patterns and known feature flag behavior
 
-**Research date:** 2026-03-15
-**Valid until:** 2026-04-14 (or until feature-flag architecture/default semantics change)
+**Research date:** 2026-03-22
+**Valid until:** 2026-04-22 (stable; no external dependency changes expected)
