@@ -52,11 +52,6 @@ interface ZustandWindow {
   __gameEventReceived__?: Record<string, boolean>
 }
 
-/** Helper to cast window to the extended type inside page.evaluate() */
-function getTypedWindow(): ZustandWindow {
-  return window as unknown as ZustandWindow
-}
-
 /**
  * Debug helper - logs current game state for troubleshooting
  */

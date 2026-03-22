@@ -1,17 +1,8 @@
-import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { migrateFromPinia } from '../../stores/migrate'
 
-// Mock localStorage with both Storage interface and mock methods accessible
-interface MockStorage {
-  getItem: Mock<(key: string) => string | null>
-  setItem: Mock<(key: string, value: string) => void>
-  removeItem: Mock<(key: string) => void>
-  clear: Mock<() => void>
-  readonly length: number
-  key: Mock<(index: number) => string | null>
-}
-
-const mockLocalStorage: MockStorage = {
+// Mock localStorage — untyped vi.fn() gives full Mock API (.mockReturnValue, .mock.calls)
+const mockLocalStorage = {
   getItem: vi.fn(),
   setItem: vi.fn(),
   removeItem: vi.fn(),
@@ -172,8 +163,7 @@ describe('migrateFromPinia', () => {
     it('returns early when window is undefined', () => {
       // Delete window object
       const originalWindow = globalThis.window
-      // @ts-expect-error - intentionally removing window for SSR guard test
-      delete globalThis.window
+      delete (globalThis as Record<string, unknown>).window
 
       migrateFromPinia()
 

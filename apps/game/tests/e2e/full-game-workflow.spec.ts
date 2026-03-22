@@ -226,7 +226,7 @@ async function finishGameFromModal(page: Page) {
  * Helper: Verify leaderboard shows correct accumulated scores
  * @param expectedScores Array of expected total scores in leaderboard order [1st, 2nd, 3rd]
  */
-async function verifyLeaderboardScores(page: Page, expectedScores: number[]) {
+async function _verifyLeaderboardScores(page: Page, expectedScores: number[]) {
   const leaderboardContainer = page.locator('[data-testid="leaderboard-container"]')
   await expect(leaderboardContainer).toBeVisible({ timeout: 8000 })
 
