@@ -12,6 +12,11 @@ const mockGameSessionState = reactive({
   currentCategory: null as string | null,
   currentLetter: '',
   currentRound: 0,
+  nextRoundNumber: 1,
+  gameMode: 'single' as 'single' | 'multiplayer',
+  flowState: 'setup' as 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed',
+  isCurrentRoundCompleted: false,
+  postRoundDecisionPending: false,
   players: [] as Array<{ name: string; totalScore: number; hasSubmitted: boolean }>,
   currentPlayerTurn: null as { name: string } | null,
   allPlayersSubmitted: false,
@@ -26,6 +31,11 @@ const createGameSessionMock = () => ({
   currentCategory: computed(() => mockGameSessionState.currentCategory),
   currentLetter: computed(() => mockGameSessionState.currentLetter),
   currentRound: computed(() => mockGameSessionState.currentRound),
+  nextRoundNumber: computed(() => mockGameSessionState.nextRoundNumber),
+  gameMode: computed(() => mockGameSessionState.gameMode),
+  flowState: computed(() => mockGameSessionState.flowState),
+  isCurrentRoundCompleted: computed(() => mockGameSessionState.isCurrentRoundCompleted),
+  postRoundDecisionPending: computed(() => mockGameSessionState.postRoundDecisionPending),
   players: computed(() => mockGameSessionState.players),
   currentPlayerTurn: computed(() => mockGameSessionState.currentPlayerTurn),
   allPlayersSubmitted: computed(() => mockGameSessionState.allPlayersSubmitted),
@@ -47,6 +57,11 @@ describe('useGameState', () => {
     mockGameSessionState.currentCategory = null
     mockGameSessionState.currentLetter = ''
     mockGameSessionState.currentRound = 0
+    mockGameSessionState.nextRoundNumber = 1
+    mockGameSessionState.gameMode = 'single'
+    mockGameSessionState.flowState = 'setup'
+    mockGameSessionState.isCurrentRoundCompleted = false
+    mockGameSessionState.postRoundDecisionPending = false
     mockGameSessionState.players = []
     mockGameSessionState.currentPlayerTurn = null
     mockGameSessionState.allPlayersSubmitted = false
@@ -73,6 +88,31 @@ describe('useGameState', () => {
     it('should return 0 for currentRound when no session', () => {
       const state = useGameState()
       expect(state.currentRound.value).toBe(0)
+    })
+
+    it('should return 1 for nextRoundNumber when no session', () => {
+      const state = useGameState()
+      expect(state.nextRoundNumber.value).toBe(1)
+    })
+
+    it('should return single for gameMode by default', () => {
+      const state = useGameState()
+      expect(state.gameMode.value).toBe('single')
+    })
+
+    it('should return setup flowState by default', () => {
+      const state = useGameState()
+      expect(state.flowState.value).toBe('setup')
+    })
+
+    it('should return false for isCurrentRoundCompleted by default', () => {
+      const state = useGameState()
+      expect(state.isCurrentRoundCompleted.value).toBe(false)
+    })
+
+    it('should return false for postRoundDecisionPending by default', () => {
+      const state = useGameState()
+      expect(state.postRoundDecisionPending.value).toBe(false)
     })
 
     it('should return empty array for players when no session', () => {
@@ -133,6 +173,36 @@ describe('useGameState', () => {
       expect(state.currentRound.value).toBe(3)
     })
 
+    it('should reflect nextRoundNumber from store', () => {
+      mockGameSessionState.nextRoundNumber = 4
+      const state = useGameState()
+      expect(state.nextRoundNumber.value).toBe(4)
+    })
+
+    it('should reflect gameMode from store', () => {
+      mockGameSessionState.gameMode = 'multiplayer'
+      const state = useGameState()
+      expect(state.gameMode.value).toBe('multiplayer')
+    })
+
+    it('should reflect flowState from store', () => {
+      mockGameSessionState.flowState = 'decision'
+      const state = useGameState()
+      expect(state.flowState.value).toBe('decision')
+    })
+
+    it('should reflect isCurrentRoundCompleted from store', () => {
+      mockGameSessionState.isCurrentRoundCompleted = true
+      const state = useGameState()
+      expect(state.isCurrentRoundCompleted.value).toBe(true)
+    })
+
+    it('should reflect postRoundDecisionPending from store', () => {
+      mockGameSessionState.postRoundDecisionPending = true
+      const state = useGameState()
+      expect(state.postRoundDecisionPending.value).toBe(true)
+    })
+
     it('should reflect players from store', () => {
       const players = [
         { name: 'Alice', totalScore: 10, hasSubmitted: true },
@@ -189,7 +259,7 @@ describe('useGameState', () => {
   // Return shape
   // ──────────────────────────────────────────
   describe('return value', () => {
-    it('should return all 10 properties (10 computeds)', () => {
+    it('should return all expected computed properties', () => {
       const state = useGameState()
 
       // Computed properties (each is a ComputedRef)
@@ -197,6 +267,11 @@ describe('useGameState', () => {
         'currentCategory',
         'currentLetter',
         'currentRound',
+        'nextRoundNumber',
+        'gameMode',
+        'flowState',
+        'isCurrentRoundCompleted',
+        'postRoundDecisionPending',
         'players',
         'currentPlayerTurn',
         'allPlayersSubmitted',
@@ -216,7 +291,7 @@ describe('useGameState', () => {
     it('should not include extra unexpected properties', () => {
       const state = useGameState()
       const keys = Object.keys(state)
-      expect(keys).toHaveLength(12)
+      expect(keys).toHaveLength(17)
       expect(keys).toEqual(
         expect.arrayContaining([
           'gameStore',
@@ -224,6 +299,11 @@ describe('useGameState', () => {
           'currentCategory',
           'currentLetter',
           'currentRound',
+          'nextRoundNumber',
+          'gameMode',
+          'flowState',
+          'isCurrentRoundCompleted',
+          'postRoundDecisionPending',
           'players',
           'currentPlayerTurn',
           'allPlayersSubmitted',

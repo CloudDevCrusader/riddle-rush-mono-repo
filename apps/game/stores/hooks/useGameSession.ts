@@ -48,6 +48,26 @@ export function useGameSession() {
       void version.value
       return gameStore.getState().currentRound
     }),
+    postRoundDecisionPending: computed(() => {
+      void version.value
+      return gameStore.getState().postRoundDecisionPending
+    }),
+    gameMode: computed(() => {
+      void version.value
+      return gameStore.getState().gameMode()
+    }),
+    isCurrentRoundCompleted: computed(() => {
+      void version.value
+      return gameStore.getState().isCurrentRoundCompleted()
+    }),
+    nextRoundNumber: computed(() => {
+      void version.value
+      return gameStore.getState().nextRoundNumber()
+    }),
+    flowState: computed(() => {
+      void version.value
+      return gameStore.getState().flowState()
+    }),
     currentCategory: computed(() => {
       void version.value
       return gameStore.getState().currentCategory
@@ -85,6 +105,7 @@ export function useGameSession() {
     saveHistoryToDB: gameStore.getState().saveHistoryToDB,
     loadSessionById: gameStore.getState().loadSessionById,
     setupPlayers: gameStore.getState().setupPlayers,
+    advanceToConfiguredRound: gameStore.getState().advanceToConfiguredRound,
     generateLetter: gameStore.getState().generateLetter,
     setOnlineStatus: gameStore.getState().setOnlineStatus,
   }

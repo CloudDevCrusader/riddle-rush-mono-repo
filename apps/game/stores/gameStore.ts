@@ -24,6 +24,12 @@ const randomLetter = () => {
 
 export const gameStore = create<
   GameState & {
+    // Flow types
+    gameMode: () => 'single' | 'multiplayer'
+    isCurrentRoundCompleted: () => boolean
+    nextRoundNumber: () => number
+    flowState: () => 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
+
     // Getters
     hasActiveSession: () => boolean
     canInstall: boolean
@@ -34,6 +40,7 @@ export const gameStore = create<
     categoryEmoji: (name?: string | null) => string
     players: Player[]
     currentRound: number
+    postRoundDecisionPending: boolean
     allPlayersSubmitted: boolean
     currentPlayerTurn: Player | null
     leaderboard: PlayerWithRank[]
@@ -76,6 +83,10 @@ export const gameStore = create<
       category?: Category,
       letter?: string
     ) => Promise<import('@riddle-rush/types/game').GameSession | null>
+    advanceToConfiguredRound: (
+      category: Category,
+      letter: string
+    ) => Promise<import('@riddle-rush/types/game').GameSession | null>
     resetPlayerSubmissions: () => Promise<void>
     getPlayerById: (playerId: string) => Player | null
   }
@@ -92,6 +103,29 @@ export const gameStore = create<
   categoryLoadError: null,
   selectedLetter: null,
   pendingPlayerNames: [],
+  postRoundDecisionPending: false,
+
+  gameMode() {
+    return (get().currentSession?.players.length ?? 0) > 0 ? 'multiplayer' : 'single'
+  },
+  isCurrentRoundCompleted() {
+    const session = get().currentSession
+    if (!session) return false
+    return session.roundHistory.length >= session.currentRound
+  },
+  nextRoundNumber() {
+    const session = get().currentSession
+    if (!session) return 1
+    return get().isCurrentRoundCompleted() ? session.currentRound + 1 : session.currentRound
+  },
+  flowState() {
+    const session = get().currentSession
+    if (!session) return 'setup'
+    if (session.status === 'completed') return 'completed'
+    if (get().postRoundDecisionPending) return 'decision'
+    if (get().isCurrentRoundCompleted()) return 'round-complete'
+    return 'in-round'
+  },
 
   // Getters
   hasActiveSession() {
@@ -192,7 +226,7 @@ export const gameStore = create<
       return nextRound
     } else {
       const session = sessionManager.createSinglePlayerSession(category, letter)
-      set({ currentSession: session })
+      set({ currentSession: session, postRoundDecisionPending: false })
       await get().saveSessionToDB()
       return session
     }
@@ -212,7 +246,7 @@ export const gameStore = create<
     await get().saveHistoryToDB()
     await lifecycle.updateStatisticsForSession(session)
 
-    set({ currentSession: null })
+    set({ currentSession: null, postRoundDecisionPending: false })
   },
   async completeGame() {
     const session = get().currentSession
@@ -231,6 +265,8 @@ export const gameStore = create<
     await get().saveHistoryToDB()
     await lifecycle.updateStatisticsForSession(session)
 
+    set({ postRoundDecisionPending: false })
+
     // Don't clear session - keep it so leaderboard can display winner
     return session
   },
@@ -244,7 +280,7 @@ export const gameStore = create<
     await get().saveSessionToDB()
     await get().saveHistoryToDB()
 
-    set({ currentSession: null })
+    set({ currentSession: null, postRoundDecisionPending: false })
   },
   setOnlineStatus(status: boolean) {
     set({ isOnline: status })
@@ -282,11 +318,11 @@ export const gameStore = create<
   async loadSessionById(sessionId: string) {
     const persistence = usePersistence()
     const session = await persistence.loadSessionById(sessionId)
-    set({ currentSession: session })
+    set({ currentSession: session, postRoundDecisionPending: false })
     return session
   },
   clearSession() {
-    set({ currentSession: null })
+    set({ currentSession: null, postRoundDecisionPending: false })
   },
   async setupPlayers(
     playerNames: string[],
@@ -306,7 +342,7 @@ export const gameStore = create<
     const players = playerManager.createPlayers(playerNames)
     const session = sessionManager.createSession(players, category, letter, gameName)
 
-    set({ currentSession: session })
+    set({ currentSession: session, postRoundDecisionPending: false })
     await get().saveSessionToDB()
     return session
   },
@@ -318,8 +354,13 @@ export const gameStore = create<
     const playerIndex = playerManager.findPlayerIndex(session.players, playerId)
     if (playerIndex === -1) return
 
+    // Only the active player's submission can advance turn progression.
+    if (playerIndex !== session.currentPlayerIndex) return
+
     const player = session.players[playerIndex]
     if (!player) return
+    if (player.hasSubmitted) return
+
     playerManager.submitPlayerAnswer(player, answer)
     session.currentPlayerIndex = playerManager.advancePlayerIndex(
       session.currentPlayerIndex,
@@ -360,11 +401,30 @@ export const gameStore = create<
     const session = get().currentSession
     if (!session) return
 
+    // Prevent incomplete round snapshots in multiplayer mode.
+    if (session.players.length > 0) {
+      const playerManager = usePlayerManager()
+      if (!playerManager.allPlayersSubmitted(session.players)) {
+        return
+      }
+    }
+
+    if (session.players.length === 0 && session.status !== 'active') {
+      return
+    }
+
+    // Idempotency guard: avoid duplicate history entries for the same round.
+    if (get().isCurrentRoundCompleted()) {
+      set({ postRoundDecisionPending: true })
+      return
+    }
+
     const lifecycle = useGameLifecycle()
     const roundResult = lifecycle.buildRoundResult(session)
 
     session.roundHistory.push(roundResult)
     await get().saveSessionToDB()
+    set({ postRoundDecisionPending: true })
   },
   async startNextRound(category?: Category, letter?: string) {
     const session = get().currentSession
@@ -385,6 +445,44 @@ export const gameStore = create<
     session.letter = selectedLetter
 
     await get().saveSessionToDB()
+    set({ postRoundDecisionPending: false })
+    return session
+  },
+  async advanceToConfiguredRound(category: Category, letter: string) {
+    const session = get().currentSession
+    const hasPendingPlayers = get().pendingPlayerNames.length > 0
+
+    if (!session || hasPendingPlayers) {
+      if (!hasPendingPlayers) {
+        return null
+      }
+
+      const createdSession = await get().setupPlayers(
+        get().pendingPlayerNames,
+        undefined,
+        letter,
+        category
+      )
+
+      set({
+        pendingPlayerNames: [],
+        selectedLetter: null,
+        postRoundDecisionPending: false,
+      })
+
+      return createdSession
+    }
+
+    if (get().isCurrentRoundCompleted()) {
+      return get().startNextRound(category, letter)
+    }
+
+    // Refresh within an active round: keep round counter stable, update round context,
+    // and reset submissions for a fair restart.
+    session.category = { ...category, letter }
+    session.letter = letter
+    await get().resetPlayerSubmissions()
+    set({ postRoundDecisionPending: false })
     return session
   },
   async resetPlayerSubmissions() {
@@ -396,6 +494,7 @@ export const gameStore = create<
     session.currentPlayerIndex = 0
 
     await get().saveSessionToDB()
+    set({ postRoundDecisionPending: false })
   },
   getPlayerById(playerId: string): Player | null {
     const session = get().currentSession

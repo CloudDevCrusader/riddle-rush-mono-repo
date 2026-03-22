@@ -74,6 +74,7 @@ describe('Game Store', () => {
     state.isOnline = true
     state.installPromptEvent = null
     state.pendingPlayerNames = []
+    state.postRoundDecisionPending = false
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
     fetchMock.mockClear()
@@ -1141,6 +1142,170 @@ describe('Game Store', () => {
         expect(isCurrentRoundCompleted).toBe(false)
         expect(gameStore.getState().currentSession?.currentRound).toBe(1)
       })
+    })
+  })
+
+  describe('Unified Flow Contract', () => {
+    it('reports setup flow state with no active session', () => {
+      const store = gameStore.getState()
+
+      expect(store.flowState()).toBe('setup')
+      expect(store.gameMode()).toBe('single')
+      expect(store.nextRoundNumber()).toBe(1)
+    })
+
+    it('reports in-round flow for active multiplayer before round completion', async () => {
+      await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+
+      const store = gameStore.getState()
+      expect(store.gameMode()).toBe('multiplayer')
+      expect(store.isCurrentRoundCompleted()).toBe(false)
+      expect(store.flowState()).toBe('in-round')
+      expect(store.nextRoundNumber()).toBe(1)
+    })
+
+    it('reports decision flow after completeRound', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+
+      if (alice && bob) {
+        await gameStore.getState().submitPlayerAnswer(alice.id, 'A')
+        await gameStore.getState().submitPlayerAnswer(bob.id, 'B')
+      }
+
+      await gameStore.getState().completeRound()
+
+      const store = gameStore.getState()
+      expect(store.isCurrentRoundCompleted()).toBe(true)
+      expect(store.postRoundDecisionPending).toBe(true)
+      expect(store.flowState()).toBe('decision')
+      expect(store.nextRoundNumber()).toBe(2)
+    })
+
+    it('resets decision state when starting next round', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+
+      if (alice && bob) {
+        await gameStore.getState().submitPlayerAnswer(alice.id, 'A')
+        await gameStore.getState().submitPlayerAnswer(bob.id, 'B')
+      }
+
+      await gameStore.getState().completeRound()
+      await gameStore.getState().startNextRound()
+
+      const store = gameStore.getState()
+      expect(store.postRoundDecisionPending).toBe(false)
+      expect(store.isCurrentRoundCompleted()).toBe(false)
+      expect(store.flowState()).toBe('in-round')
+    })
+
+    it('advanceToConfiguredRound creates initial session from pending players', async () => {
+      const category = mockCategories[0]
+      if (!category) throw new Error('Missing mock category')
+
+      const state = gameStore.getState()
+      state.pendingPlayerNames = ['Alice', 'Bob']
+
+      const session = await state.advanceToConfiguredRound(category, 'Z')
+
+      expect(session).toBeDefined()
+      expect(session?.players).toHaveLength(2)
+      expect(session?.currentRound).toBe(1)
+      expect(session?.category.id).toBe(category.id)
+      expect(session?.letter).toBe('Z')
+      expect(gameStore.getState().pendingPlayerNames).toEqual([])
+    })
+
+    it('advanceToConfiguredRound starts next round when current one is completed', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+
+      if (alice && bob) {
+        await gameStore.getState().submitPlayerAnswer(alice.id, 'A')
+        await gameStore.getState().submitPlayerAnswer(bob.id, 'B')
+      }
+
+      await gameStore.getState().completeRound()
+
+      const originalRound = gameStore.getState().currentSession?.currentRound ?? 0
+      const category = mockCategories[1]
+      if (!category) throw new Error('Missing mock category')
+
+      await gameStore.getState().advanceToConfiguredRound(category, 'Q')
+
+      const updated = gameStore.getState().currentSession
+      expect(updated?.currentRound).toBe(originalRound + 1)
+      expect(updated?.letter).toBe('Q')
+      expect(updated?.category.id).toBe(category.id)
+    })
+
+    it('advanceToConfiguredRound keeps round number during refresh in active round', async () => {
+      await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+
+      const roundBefore = gameStore.getState().currentSession?.currentRound
+      const category = mockCategories[2]
+      if (!category) throw new Error('Missing mock category')
+
+      await gameStore.getState().advanceToConfiguredRound(category, 'M')
+
+      const updated = gameStore.getState().currentSession
+      expect(updated?.currentRound).toBe(roundBefore)
+      expect(updated?.letter).toBe('M')
+      expect(updated?.category.id).toBe(category.id)
+      expect(updated?.currentPlayerIndex).toBe(0)
+      expect(updated?.players.every((p) => p.hasSubmitted === false)).toBe(true)
+    })
+
+    it('submitPlayerAnswer ignores out-of-turn submissions', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+      if (!alice || !bob) throw new Error('Missing players')
+
+      await gameStore.getState().submitPlayerAnswer(bob.id, 'Out of turn')
+
+      const updated = gameStore.getState().currentSession
+      expect(updated?.players[1]?.hasSubmitted).toBe(false)
+      expect(updated?.currentPlayerIndex).toBe(0)
+    })
+
+    it('submitPlayerAnswer keeps first answer when same player retries out-of-turn', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+      if (!alice || !bob) throw new Error('Missing players')
+
+      await gameStore.getState().submitPlayerAnswer(alice.id, 'First')
+      await gameStore.getState().submitPlayerAnswer(alice.id, 'Second')
+
+      const updatedAlice = gameStore.getState().getPlayerById(alice.id)
+      expect(updatedAlice?.currentRoundAnswer).toBe('First')
+    })
+
+    it('completeRound is idempotent for same round', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+
+      if (alice && bob) {
+        await gameStore.getState().submitPlayerAnswer(alice.id, 'A')
+        await gameStore.getState().submitPlayerAnswer(bob.id, 'B')
+      }
+
+      await gameStore.getState().completeRound()
+      await gameStore.getState().completeRound()
+
+      expect(gameStore.getState().currentSession?.roundHistory).toHaveLength(1)
+    })
+
+    it('completeRound does not record multiplayer rounds before all submissions', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const alice = session.players[0]
+      if (!alice) throw new Error('Missing player')
+
+      await gameStore.getState().submitPlayerAnswer(alice.id, 'Only one answer')
+      await gameStore.getState().completeRound()
+
+      expect(gameStore.getState().currentSession?.roundHistory).toHaveLength(0)
+      expect(gameStore.getState().postRoundDecisionPending).toBe(false)
     })
   })
 

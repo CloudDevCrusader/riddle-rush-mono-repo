@@ -133,6 +133,30 @@ export function useGameActions() {
     }
   }
 
+  /**
+   * Start or resume a configured round context from round-start page selections.
+   * Uses store flow contract to decide whether to bootstrap, advance, or refresh.
+   */
+  const startConfiguredRound = async (
+    category: import('@riddle-rush/types/game').Category,
+    letter: string
+  ) => {
+    try {
+      const session = await gameSession.advanceToConfiguredRound(category, letter)
+      if (!session) {
+        toast.warning(t('players.need_players', 'Add at least one player to start'))
+        return null
+      }
+
+      audio.playNewRound()
+      return session
+    } catch (error) {
+      logger.error('Error starting configured round:', error)
+      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+      return null
+    }
+  }
+
   return {
     startNewGame,
     resumeOrStartGame,
@@ -140,5 +164,6 @@ export function useGameActions() {
     shareScore,
     setupMultiplayerGame,
     startNextRound,
+    startConfiguredRound,
   }
 }
