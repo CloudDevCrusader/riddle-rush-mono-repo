@@ -1,192 +1,17 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
 import { generatePlayerName } from './helpers/faker'
-
-/**
- * Helper: Navigate from menu to game page (2 default players)
- * Menu → Players → Round Start → Game
- */
-async function navigateToGameWithDefaults(page: Page) {
-  await page.goto('/', { timeout: 30000 })
-
-  await hideDevtools(page)
-
-  // Click PLAY to go to players
-  const playBtn = page.locator('[data-testid="menu-start-button"]')
-  await expect(playBtn).toBeVisible({ timeout: 15000 })
-  await playBtn.click()
-  await expect(page).toHaveURL(/\/players/)
-
-  // Start game with default players
-  const startBtn = page.locator('[data-testid="players-start-button"]')
-  await expect(startBtn).toBeVisible({ timeout: 5000 })
-  await startBtn.click()
-
-  // Wait for game to start (goes through /round-start → /game)
-  // The round-start transition may be too fast to catch, so wait for /game directly
-  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
-  await page.waitForTimeout(500)
-}
-
-/**
- * Helper: Set up a multiplayer game with custom player names
- * Goes to players page, adjusts count, fills names, starts game
- */
-async function setupMultiplayerGame(page: Page, playerNames: string[]) {
-  await page.goto('/players', { timeout: 30000 })
-
-  await hideDevtools(page)
-
-  const targetCount = playerNames.length
-  const increaseBtn = page.locator('[data-testid="players-increase-button"]')
-  await expect(increaseBtn).toBeVisible({ timeout: 15000 })
-
-  // Default is 2 players — increase to target count
-  for (let i = 2; i < targetCount; i++) {
-    await increaseBtn.click()
-    await page.waitForTimeout(150)
-  }
-
-  // Fill in custom player names
-  for (let i = 0; i < targetCount; i++) {
-    const nameInput = page.locator(`[data-testid="players-name-input-${i}"]`)
-    await nameInput.fill(playerNames[i]!)
-  }
-
-  // Start game
-  const startBtn = page.locator('[data-testid="players-start-button"]')
-  await startBtn.click()
-
-  // Wait for game to start (goes through /round-start → /game)
-  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
-  await page.waitForTimeout(500)
-}
-
-/**
- * Helper: Submit answers for all players in multiplayer mode
- */
-async function submitAllPlayerAnswers(page: Page, answers: string[]) {
-  const answerInput = page.locator('[data-testid="game-answer-input"]')
-  const submitBtn = page.locator('[data-testid="game-submit-button"]')
-
-  for (const answer of answers) {
-    await expect(answerInput).toBeVisible({ timeout: 5000 })
-    await answerInput.fill(answer)
-    await submitBtn.click()
-    await page.waitForTimeout(500)
-  }
-}
-
-/**
- * Helper: Navigate from game (all submitted) to results page
- */
-async function navigateToResults(page: Page) {
-  const nextBtn = page.locator('[data-testid="next-button"]')
-  await expect(nextBtn).toBeVisible({ timeout: 5000 })
-
-  const gameMatch = page.url().match(/\/game\/([^/?#]+)/)
-  const gameId = gameMatch?.[1] ?? null
-
-  await page.evaluate(() => {
-    const button = document.querySelector('[data-testid="next-button"]')
-    if (button instanceof HTMLButtonElement) {
-      button.click()
-    }
-  })
-
-  await expect(page).toHaveURL(/\/results/, { timeout: 5000 })
-  await page.waitForLoadState('networkidle')
-
-  await page.evaluate(async (id) => {
-    const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-      | { game?: { getState: () => Record<string, unknown> } }
-      | undefined
-    const gameState = zustand?.game?.getState() as
-      | { loadFromDB?: () => Promise<void>; loadSessionById?: (id: string) => Promise<void> }
-      | undefined
-    if (gameState?.loadFromDB) {
-      await gameState.loadFromDB()
-    }
-    if (id && gameState?.loadSessionById) {
-      await gameState.loadSessionById(id)
-    }
-  }, gameId)
-
-  await page.waitForFunction(
-    () => {
-      const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-        | { game?: { getState: () => { currentSession?: { players?: unknown[] } } } }
-        | undefined
-      const gameState = zustand?.game?.getState()
-      return (gameState?.currentSession?.players?.length ?? 0) > 0
-    },
-    null,
-    { timeout: 10000 }
-  )
-
-  const scoresContainer = page.locator('[data-testid="results-scores-container"]')
-  await expect(scoresContainer).toBeVisible({ timeout: 8000 })
-}
-
-/**
- * Helper: Assign scores on results page for each player
- * scores array: number of increment clicks per player
- */
-async function assignScores(page: Page, scores: number[]) {
-  for (let i = 0; i < scores.length; i++) {
-    const playerEntry = page.locator(`[data-testid="results-player-entry-${i}"]`)
-    const incrementBtn = playerEntry.locator('[data-testid="score-increment"]')
-
-    const clickCount = scores[i] ?? 0
-    for (let c = 0; c < clickCount; c++) {
-      await incrementBtn.click()
-      await page.waitForTimeout(80)
-    }
-  }
-}
-
-/**
- * Helper: Confirm scores and handle the leaderboard overlay + decision modal
- * Returns after decision modal is visible
- */
-async function confirmScoresAndWaitForModal(page: Page) {
-  const confirmBtn = page.locator('[data-testid="confirm-scores"]')
-  await expect(confirmBtn).toBeVisible({ timeout: 5000 })
-  await confirmBtn.click()
-
-  // Wait for leaderboard overlay to auto-dismiss (2s) and decision modal to appear
-  // The decision modal contains both "next-round" and "finish-game" buttons
-  // Wait for the modal to be visible by checking for either button
-  const nextRoundBtn = page.locator('[data-testid="next-round"]')
-  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
-
-  // Wait for at least one of the buttons to appear (both may be visible simultaneously)
-  await expect(nextRoundBtn.or(leaderboardBtn).first()).toBeVisible({ timeout: 15000 })
-}
-
-/**
- * Helper: Click "Next Round" in decision modal and wait for game to start
- */
-async function goToNextRound(page: Page) {
-  const nextRoundBtn = page.locator('[data-testid="next-round"]')
-  await expect(nextRoundBtn).toBeVisible({ timeout: 5000 })
-  await nextRoundBtn.click()
-
-  // Goes through round-start → game (round-start may be too fast to catch)
-  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
-  await page.waitForTimeout(500)
-}
-
-/**
- * Helper: Click "Finish Game" in decision modal and wait for leaderboard
- */
-async function finishGame(page: Page) {
-  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
-  await expect(leaderboardBtn).toBeVisible({ timeout: 5000 })
-  await leaderboardBtn.click()
-  await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 })
-  await page.waitForTimeout(500)
-}
+import {
+  assignScores,
+  confirmScoresAndWaitForModal,
+  finishGame,
+  goToNextRound,
+  hideDevtools,
+  navigateToResults,
+  setupMultiplayerGame,
+  startGameWithDefaults,
+  submitPlayerAnswers,
+} from './helpers/game-flow'
 
 /**
  * Helper: Click "New Game" in decision modal and wait for players page
@@ -200,18 +25,11 @@ async function startNewGameFromModal(page: Page) {
   await page.waitForTimeout(300)
 }
 
-async function hideDevtools(page: Page) {
-  await page.addStyleTag({
-    content:
-      '#nuxt-devtools-container, nuxt-devtools-frame { display: none !important; pointer-events: none !important; }',
-  })
-}
-
 test.describe('Complete Game Flow', () => {
   // ===== SINGLE PLAYER TESTS =====
   test.describe('Single Player Flow', () => {
     test('should complete full game flow from menu to game page', async ({ page }) => {
-      await navigateToGameWithDefaults(page)
+      await startGameWithDefaults(page)
 
       // Verify we're on game page with round indicator
       const roundIndicator = page.locator('[data-testid="game-round-indicator"]')
@@ -219,7 +37,7 @@ test.describe('Complete Game Flow', () => {
     })
 
     test('should display game elements correctly', async ({ page }) => {
-      await navigateToGameWithDefaults(page)
+      await startGameWithDefaults(page)
 
       // Category info
       const categoryInfo = page.locator('[data-testid="game-category-info"]')
@@ -237,7 +55,7 @@ test.describe('Complete Game Flow', () => {
     test('should show NEXT button in single player mode (no multiplayer turn flow)', async ({
       page,
     }) => {
-      await navigateToGameWithDefaults(page)
+      await startGameWithDefaults(page)
 
       // In multiplayer with 2 default players, player turn should be visible
       const playerTurn = page.locator('[data-testid="game-player-turn"]')
@@ -248,10 +66,10 @@ test.describe('Complete Game Flow', () => {
   // ===== NAVIGATION TESTS =====
   test.describe('Navigation', () => {
     test('should navigate through full scoring flow to leaderboard', async ({ page }) => {
-      await navigateToGameWithDefaults(page)
+      await startGameWithDefaults(page)
 
       // Submit answers for 2 default players
-      await submitAllPlayerAnswers(page, ['', ''])
+      await submitPlayerAnswers(page, 2)
 
       // Go to results
       await navigateToResults(page)
@@ -270,8 +88,8 @@ test.describe('Complete Game Flow', () => {
     })
 
     test('should return to menu from leaderboard when clicking finish', async ({ page }) => {
-      await navigateToGameWithDefaults(page)
-      await submitAllPlayerAnswers(page, ['', ''])
+      await startGameWithDefaults(page)
+      await submitPlayerAnswers(page, 2)
       await navigateToResults(page)
       await confirmScoresAndWaitForModal(page)
       await finishGame(page)
@@ -290,6 +108,7 @@ test.describe('Complete Game Flow', () => {
     test('should handle browser back button navigation', async ({ page }) => {
       // Build up navigation history: menu → players → game
       await page.goto('/', { timeout: 30000 })
+      await hideDevtools(page)
 
       const playBtn = page.locator('[data-testid="menu-start-button"]')
       await expect(playBtn).toBeVisible({ timeout: 15000 })
@@ -322,7 +141,7 @@ test.describe('Complete Game Flow', () => {
       await expect(turnName).toHaveText(player1)
 
       // Submit answers for all 3 players
-      await submitAllPlayerAnswers(page, ['', '', ''])
+      await submitPlayerAnswers(page, 3)
 
       // Should show "all submitted" message
       const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
@@ -367,7 +186,9 @@ test.describe('Complete Game Flow', () => {
       const nextBtn = page.locator('[data-testid="next-button"]')
 
       // After first player submits — should NOT show NEXT or all-submitted
-      await answerInput.fill('')
+      if (await answerInput.isVisible()) {
+        await answerInput.fill('')
+      }
       await submitBtn.click()
       await page.waitForTimeout(500)
 
@@ -375,7 +196,9 @@ test.describe('Complete Game Flow', () => {
       await expect(nextBtn).not.toBeVisible()
 
       // After second player submits — should show both
-      await answerInput.fill('')
+      if (await answerInput.isVisible()) {
+        await answerInput.fill('')
+      }
       await submitBtn.click()
       await page.waitForTimeout(1000)
 
@@ -391,7 +214,7 @@ test.describe('Complete Game Flow', () => {
       await setupMultiplayerGame(page, [player1, player2, player3])
 
       // Round 1: Submit answers
-      await submitAllPlayerAnswers(page, ['', '', ''])
+      await submitPlayerAnswers(page, 3)
       await navigateToResults(page)
 
       // Assign minimal scores and continue to next round
@@ -407,7 +230,9 @@ test.describe('Complete Game Flow', () => {
       const answerInput = page.locator('[data-testid="game-answer-input"]')
       const submitBtn = page.locator('[data-testid="game-submit-button"]')
 
-      await answerInput.fill('')
+      if (await answerInput.isVisible()) {
+        await answerInput.fill('')
+      }
       await submitBtn.click()
       await page.waitForTimeout(500)
 
@@ -424,7 +249,7 @@ test.describe('Complete Game Flow', () => {
       await setupMultiplayerGame(page, [player1, player2])
 
       // ===== ROUND 1 =====
-      await submitAllPlayerAnswers(page, ['', ''])
+      await submitPlayerAnswers(page, 2)
       await navigateToResults(page)
 
       // Player 1: 3 points, Player 2: 1 point (SCORE_INCREMENT = 1)
@@ -433,7 +258,7 @@ test.describe('Complete Game Flow', () => {
       await goToNextRound(page)
 
       // ===== ROUND 2 =====
-      await submitAllPlayerAnswers(page, ['', ''])
+      await submitPlayerAnswers(page, 2)
       await navigateToResults(page)
 
       // Player 1: 1 point, Player 2: 2 points
@@ -462,7 +287,7 @@ test.describe('Complete Game Flow', () => {
       await setupMultiplayerGame(page, [player1, player2])
 
       // ===== ROUND 1 =====
-      await submitAllPlayerAnswers(page, ['', ''])
+      await submitPlayerAnswers(page, 2)
       await navigateToResults(page)
 
       // Player 1: 5 points, Player 2: 3 points
@@ -471,7 +296,7 @@ test.describe('Complete Game Flow', () => {
       await goToNextRound(page)
 
       // ===== ROUND 2 =====
-      await submitAllPlayerAnswers(page, ['', ''])
+      await submitPlayerAnswers(page, 2)
       await navigateToResults(page)
 
       // Player 1: 2 more, Player 2: 4 more
@@ -494,7 +319,7 @@ test.describe('Complete Game Flow', () => {
 
       await setupMultiplayerGame(page, [player1, player2])
 
-      await submitAllPlayerAnswers(page, ['', ''])
+      await submitPlayerAnswers(page, 2)
       await navigateToResults(page)
 
       await assignScores(page, [1, 1])
