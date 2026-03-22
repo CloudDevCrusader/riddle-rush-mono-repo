@@ -6,18 +6,70 @@ const DEFAULT_IDLE_TIME = 500
 const POLL_INTERVAL = 100
 
 /**
+ * Browser-context window type for accessing Zustand stores exposed by the zustand plugin.
+ * Used inside page.evaluate() callbacks where the browser window has additional properties.
+ */
+interface ZustandWindow {
+  __zustand__?: {
+    game?: {
+      getState: () => {
+        currentSession?: {
+          status?: string
+          currentRound?: number
+          players?: Array<{ hasSubmitted?: boolean }>
+          id?: string
+        }
+        isOnline?: boolean
+        loadFromDB?: () => Promise<void>
+        loadSessionById?: (id: string) => Promise<void>
+      }
+    }
+    settings?: { getState: () => Record<string, unknown> }
+    loading?: { getState: () => Record<string, unknown> }
+  }
+  __vue_app__?: unknown
+  __VUE_APP__?: unknown
+  __NUXT__?: { isHydrating?: boolean; _hydrated?: boolean }
+  $nuxt?: { isHydrating?: boolean; _hydrated?: boolean }
+  __app__?: {
+    config: {
+      globalProperties: {
+        $router?: { currentRoute: { value: { fullPath: string } } }
+      }
+    }
+  }
+  $socket?: {
+    connected?: boolean
+    readyState?: number
+    on?: (event: string, cb: () => void) => void
+  }
+  __socket__?: {
+    connected?: boolean
+    readyState?: number
+    on?: (event: string, cb: () => void) => void
+  }
+  io?: { connected?: boolean }
+  __gameEventReceived__?: Record<string, boolean>
+}
+
+/** Helper to cast window to the extended type inside page.evaluate() */
+function getTypedWindow(): ZustandWindow {
+  return window as unknown as ZustandWindow
+}
+
+/**
  * Debug helper - logs current game state for troubleshooting
  */
 async function logGameDebugInfo(page: Page, context: string): Promise<void> {
   try {
     const debugInfo = await page.evaluate(() => {
-      const zustand = (window as any).__zustand__
+      const w = window as unknown as ZustandWindow
+      const zustand = w.__zustand__
       if (!zustand) {
         return { error: 'Zustand store not found' }
       }
 
-      const gameStore = zustand.game
-      const gameState = gameStore?.getState()
+      const gameState = zustand.game?.getState()
 
       return {
         gameState: gameState?.currentSession?.status || 'unknown',
@@ -47,7 +99,7 @@ function getBackoffDelay(
 }
 
 /**
- * Wait for specific game state in Pinia store
+ * Wait for specific game state in Zustand store
  */
 export async function waitForGameState(
   page: Page,
@@ -61,14 +113,11 @@ export async function waitForGameState(
   try {
     await page.waitForFunction(
       (state: string) => {
-        const zustand = (window as any).__zustand__
-        if (!zustand) return false
-
-        const gameStore = zustand.game
-        const gameState = gameStore?.getState()
-
+        const w = window as unknown as {
+          __zustand__?: { game?: { getState: () => { currentSession?: { status?: string } } } }
+        }
+        const gameState = w.__zustand__?.game?.getState()
         if (!gameState) return false
-
         const currentState = gameState.currentSession?.status || 'unknown'
         return currentState === state
       },
@@ -99,12 +148,10 @@ export async function waitForRoundTransition(
   try {
     // First, capture the current round number
     const initialRound = await page.evaluate(() => {
-      const zustand = (window as any).__zustand__
-      if (!zustand) return 0
-
-      const gameStore = zustand.game
-      const gameState = gameStore?.getState()
-
+      const w = window as unknown as {
+        __zustand__?: { game?: { getState: () => { currentSession?: { currentRound?: number } } } }
+      }
+      const gameState = w.__zustand__?.game?.getState()
       return gameState?.currentSession?.currentRound || 0
     })
 
@@ -113,12 +160,12 @@ export async function waitForRoundTransition(
     // Wait for round number to change
     await page.waitForFunction(
       (prevRound: number) => {
-        const zustand = (window as any).__zustand__
-        if (!zustand) return false
-
-        const gameStore = zustand.game
-        const gameState = gameStore?.getState()
-
+        const w = window as unknown as {
+          __zustand__?: {
+            game?: { getState: () => { currentSession?: { currentRound?: number } } }
+          }
+        }
+        const gameState = w.__zustand__?.game?.getState()
         const currentRound = gameState?.currentSession?.currentRound || 0
         return currentRound > prevRound
       },
@@ -127,9 +174,10 @@ export async function waitForRoundTransition(
     )
 
     const newRound = await page.evaluate(() => {
-      const zustand = (window as any).__zustand__
-      const gameStore = zustand?.game
-      const gameState = gameStore?.getState()
+      const w = window as unknown as {
+        __zustand__?: { game?: { getState: () => { currentSession?: { currentRound?: number } } } }
+      }
+      const gameState = w.__zustand__?.game?.getState()
       return gameState?.currentSession?.currentRound || 0
     })
 
@@ -365,14 +413,22 @@ export async function waitForPageReady(
     // 2. Wait for Vue/Nuxt hydration to complete
     await page.waitForFunction(
       () => {
+        const w = window as unknown as {
+          __vue_app__?: unknown
+          __VUE_APP__?: unknown
+          __NUXT__?: { isHydrating?: boolean; _hydrated?: boolean }
+          $nuxt?: { isHydrating?: boolean; _hydrated?: boolean }
+          __zustand__?: { game?: unknown }
+        }
+
         // Check for Vue hydration
-        const vueApp = (window as any).__vue_app__ || (window as any).__VUE_APP__
+        const vueApp = w.__vue_app__ || w.__VUE_APP__
         if (vueApp) {
           return true
         }
 
         // Check for Nuxt hydration
-        const nuxtApp = (window as any).__NUXT__ || (window as any).$nuxt
+        const nuxtApp = w.__NUXT__ || w.$nuxt
         if (nuxtApp) {
           // Check if Nuxt is fully hydrated
           if (nuxtApp.isHydrating === false || nuxtApp._hydrated === true) {
@@ -381,7 +437,7 @@ export async function waitForPageReady(
         }
 
         // Check for Zustand being ready
-        const zustand = (window as any).__zustand__
+        const zustand = w.__zustand__
         if (zustand && zustand.game) {
           return true
         }
@@ -444,11 +500,14 @@ export async function waitForRoundComplete(
   try {
     await page.waitForFunction(
       () => {
-        const zustand = (window as any).__zustand__
-        if (!zustand) return false
-
-        const gameStore = zustand.game
-        const gameState = gameStore?.getState()
+        const w = window as unknown as {
+          __zustand__?: {
+            game?: {
+              getState: () => { currentSession?: { players?: Array<{ hasSubmitted?: boolean }> } }
+            }
+          }
+        }
+        const gameState = w.__zustand__?.game?.getState()
 
         // Check various round completion indicators
         const session = gameState?.currentSession
@@ -457,7 +516,8 @@ export async function waitForRoundComplete(
         // Check if all players have submitted
         const players = session.players || []
         const allSubmitted =
-          players.length > 0 && players.every((player: any) => player.hasSubmitted)
+          players.length > 0 &&
+          players.every((player: { hasSubmitted?: boolean }) => player.hasSubmitted)
 
         if (allSubmitted) {
           return true
@@ -528,11 +588,12 @@ export async function waitForResultsRendered(
         if (scoreElements.length === 0) return false
 
         // Check Zustand state
-        const zustand = (window as any).__zustand__
-        if (zustand) {
-          const gameStore = zustand.game
-          const gameState = gameStore?.getState()
-          const state = gameState?.currentSession?.status
+        const w = window as unknown as {
+          __zustand__?: { game?: { getState: () => { currentSession?: { status?: string } } } }
+        }
+        const gameState = w.__zustand__?.game?.getState()
+        if (gameState) {
+          const state = gameState.currentSession?.status
           if (state === 'completed' || state === 'finished') {
             return true
           }
@@ -578,15 +639,22 @@ export async function getRoundState(
   page: Page
 ): Promise<{ round: number; state: string; players: number }> {
   const result = await page.evaluate(() => {
-    const zustand = (window as any).__zustand__
+    const w = window as unknown as {
+      __zustand__?: {
+        game?: {
+          getState: () => {
+            currentSession?: { currentRound?: number; status?: string; players?: unknown[] }
+          }
+        }
+      }
+    }
+    const zustand = w.__zustand__
 
     if (!zustand) {
       return { round: 0, state: 'unknown', players: 0, error: 'Zustand not found' }
     }
 
-    const gameStore = zustand.game
-    const gameState = gameStore?.getState()
-
+    const gameState = zustand.game?.getState()
     const session = gameState?.currentSession
     const round = session?.currentRound || 0
     const state = session?.status || 'unknown'
@@ -614,20 +682,21 @@ export async function waitForWebSocketConnection(
   try {
     await page.waitForFunction(
       () => {
-        // Check for common WebSocket state indicators
-        const zustand = (window as any).__zustand__
-        if (zustand) {
-          // Zustand doesn't have a separate socket store, check window socket directly
+        const w = window as unknown as {
+          __zustand__?: unknown
+          $socket?: { connected?: boolean; readyState?: number }
+          __socket__?: { connected?: boolean; readyState?: number }
+          io?: { connected?: boolean }
         }
 
         // Check for global socket instance
-        const socket = (window as any).$socket || (window as any).__socket__
+        const socket = w.$socket || w.__socket__
         if (socket && (socket.connected || socket.readyState === 1)) {
           return true
         }
 
         // Check for socket.io
-        const io = (window as any).io
+        const io = w.io
         if (io && io.connected) {
           return true
         }
@@ -660,14 +729,21 @@ export async function waitForGameEvent(
 
   // Inject event listener
   await page.evaluate((event: string) => {
-    ;(window as any).__gameEventReceived__ = (window as any).__gameEventReceived__ || {}
-    ;(window as any).__gameEventReceived__[event] = false
+    const w = window as unknown as {
+      __gameEventReceived__?: Record<string, boolean>
+      $socket?: { on?: (event: string, cb: () => void) => void }
+      __socket__?: { on?: (event: string, cb: () => void) => void }
+    }
+    w.__gameEventReceived__ = w.__gameEventReceived__ || {}
+    w.__gameEventReceived__[event] = false
 
     // Try to hook into socket events
-    const socket = (window as any).$socket || (window as any).__socket__
+    const socket = w.$socket || w.__socket__
     if (socket && socket.on) {
       socket.on(event, () => {
-        ;(window as any).__gameEventReceived__[event] = true
+        if (w.__gameEventReceived__) {
+          w.__gameEventReceived__[event] = true
+        }
       })
     }
   }, eventName)
@@ -675,7 +751,8 @@ export async function waitForGameEvent(
   try {
     await page.waitForFunction(
       (event: string) => {
-        return (window as any).__gameEventReceived__?.[event] === true
+        const w = window as unknown as { __gameEventReceived__?: Record<string, boolean> }
+        return w.__gameEventReceived__?.[event] === true
       },
       eventName,
       { timeout, polling: POLL_INTERVAL }

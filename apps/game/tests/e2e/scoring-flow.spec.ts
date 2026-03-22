@@ -52,16 +52,24 @@ async function startGameAndGoToResults(page: Page) {
   await expect(page).toHaveURL(/\/results/, { timeout: 5000 })
 
   const resolvedGameId = await page.evaluate(async (id) => {
-    const pinia = (window as any).__pinia__
-    const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
-    if (gameStore?.loadFromDB) {
-      await gameStore.loadFromDB()
+    const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
+      | { game?: { getState: () => Record<string, unknown> } }
+      | undefined
+    const gameState = zustand?.game?.getState() as
+      | {
+          loadFromDB?: () => Promise<void>
+          loadSessionById?: (id: string) => Promise<void>
+          currentSession?: { id?: string }
+        }
+      | undefined
+    if (gameState?.loadFromDB) {
+      await gameState.loadFromDB()
     }
-    if (id && gameStore?.loadSessionById) {
-      await gameStore.loadSessionById(id)
+    if (id && gameState?.loadSessionById) {
+      await gameState.loadSessionById(id)
       return id
     }
-    return gameStore?.currentSession?.id ?? null
+    return gameState?.currentSession?.id ?? null
   }, gameId)
 
   if (resolvedGameId && !page.url().includes(`/results/${resolvedGameId}`)) {

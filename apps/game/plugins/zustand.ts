@@ -19,7 +19,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Expose stores on window in development mode for E2E test access
   if (import.meta.dev && import.meta.client) {
-    ;(window as any).__zustand__ = {
+    ;(window as unknown as Record<string, unknown>).__zustand__ = {
       game: gameStore,
       settings: settingsStore,
       loading: loadingStore,

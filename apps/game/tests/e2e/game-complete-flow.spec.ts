@@ -98,21 +98,27 @@ async function navigateToResults(page: Page) {
   await page.waitForLoadState('networkidle')
 
   await page.evaluate(async (id) => {
-    const pinia = (window as any).__pinia__
-    const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
-    if (gameStore?.loadFromDB) {
-      await gameStore.loadFromDB()
+    const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
+      | { game?: { getState: () => Record<string, unknown> } }
+      | undefined
+    const gameState = zustand?.game?.getState() as
+      | { loadFromDB?: () => Promise<void>; loadSessionById?: (id: string) => Promise<void> }
+      | undefined
+    if (gameState?.loadFromDB) {
+      await gameState.loadFromDB()
     }
-    if (id && gameStore?.loadSessionById) {
-      await gameStore.loadSessionById(id)
+    if (id && gameState?.loadSessionById) {
+      await gameState.loadSessionById(id)
     }
   }, gameId)
 
   await page.waitForFunction(
     () => {
-      const pinia = (window as any).__pinia__
-      const gameStore = pinia?._s?.get('game') || pinia?.state?.value?.game
-      return (gameStore?.currentSession?.players?.length ?? 0) > 0
+      const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
+        | { game?: { getState: () => { currentSession?: { players?: unknown[] } } } }
+        | undefined
+      const gameState = zustand?.game?.getState()
+      return (gameState?.currentSession?.players?.length ?? 0) > 0
     },
     null,
     { timeout: 10000 }
