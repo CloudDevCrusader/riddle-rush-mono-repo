@@ -2,8 +2,6 @@ import { computed, ref, onScopeDispose } from '#imports'
 import { settingsStore } from '../settingsStore'
 import type { GameSettings } from '../settingsStore'
 
-export type { GameSettings }
-
 export function useSettings() {
   const version = ref(0)
   const unsubscribe = settingsStore.subscribe(() => {
