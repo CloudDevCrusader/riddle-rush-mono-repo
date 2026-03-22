@@ -1,6 +1,15 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
 import { generatePlayerNames, setFakerSeed } from './helpers/faker'
+import {
+  assignScores,
+  confirmScoresAndWaitForModal,
+  finishGame,
+  goToNextRound,
+  navigateToResults,
+  setupMultiplayerGame,
+  submitPlayerAnswers,
+} from './helpers/game-flow'
 
 /**
  * Full Multi-Round Game Workflow E2E Test
@@ -21,206 +30,6 @@ import { generatePlayerNames, setFakerSeed } from './helpers/faker'
  * - Tests both scoring paths (continue vs finish)
  * - Validates score accumulation logic
  */
-
-/**
- * Helper: Navigate from menu to players page
- */
-async function navigateToPlayersPage(page: Page) {
-  await page.goto('/', { timeout: 30000 })
-
-  await hideDevtools(page)
-
-  const playBtn = page.locator('[data-testid="menu-start-button"]')
-  await expect(playBtn).toBeVisible({ timeout: 15000 })
-  await playBtn.click()
-
-  await expect(page).toHaveURL(/\/players/, { timeout: 10000 })
-  await page.waitForTimeout(500) // Allow page to stabilize
-}
-
-/**
- * Helper: Set up multiplayer game with 3 custom players
- */
-async function setupThreePlayerGame(page: Page, playerNames: string[]) {
-  if (playerNames.length !== 3) {
-    throw new Error('This helper expects exactly 3 player names')
-  }
-
-  await navigateToPlayersPage(page)
-
-  // Increase from default 2 players to 3
-  const increaseBtn = page.locator('[data-testid="players-increase-button"]')
-  await expect(increaseBtn).toBeVisible({ timeout: 15000 })
-  await increaseBtn.click()
-  await page.waitForTimeout(200) // Allow UI to update
-
-  // Fill in custom player names
-  for (let i = 0; i < 3; i++) {
-    const nameInput = page.locator(`[data-testid="players-name-input-${i}"]`)
-    await expect(nameInput).toBeVisible({ timeout: 5000 })
-    await nameInput.fill(playerNames[i]!)
-    await page.waitForTimeout(100) // Prevent input race conditions
-  }
-
-  // Start the game
-  const startBtn = page.locator('[data-testid="players-start-button"]')
-  await expect(startBtn).toBeVisible({ timeout: 5000 })
-  await startBtn.click()
-
-  // Wait for game to start (goes through /round-start → /game)
-  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
-  await page.waitForTimeout(500) // Allow game to initialize
-}
-
-/**
- * Helper: Submit answers for all 3 players in sequence (empty answers allowed)
- */
-async function submitThreePlayerAnswers(page: Page, answers?: string[]) {
-  if (answers && answers.length !== 3) {
-    throw new Error('This helper expects exactly 3 answers')
-  }
-
-  const answerInput = page.locator('[data-testid="game-answer-input"]')
-  const submitBtn = page.locator('[data-testid="game-submit-button"]')
-
-  for (let i = 0; i < 3; i++) {
-    await expect(answerInput).toBeVisible({ timeout: 5000 })
-    await answerInput.fill(answers?.[i] ?? '')
-
-    await expect(submitBtn).toBeEnabled({ timeout: 5000 })
-    await submitBtn.click()
-
-    // Wait for submission to process and next player turn (except last player)
-    if (i < 2) {
-      await page.waitForTimeout(600)
-    } else {
-      // After last player, wait for "all submitted" state
-      await page.waitForTimeout(800)
-    }
-  }
-
-  // Verify all players have submitted
-  const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
-  await expect(allSubmitted).toBeVisible({ timeout: 5000 })
-}
-
-/**
- * Helper: Navigate from game to results page
- */
-async function navigateToResults(page: Page) {
-  const nextBtn = page.locator('[data-testid="next-button"]')
-  await expect(nextBtn).toBeVisible({ timeout: 8000 })
-
-  const gameMatch = page.url().match(/\/game\/([^/?#]+)/)
-  const gameId = gameMatch?.[1] ?? null
-
-  await page.evaluate(() => {
-    const button = document.querySelector('[data-testid="next-button"]')
-    if (button instanceof HTMLButtonElement) {
-      button.click()
-    }
-  })
-
-  await expect(page).toHaveURL(/\/results/, { timeout: 8000 })
-  await page.waitForLoadState('networkidle')
-
-  await page.evaluate(async (id) => {
-    const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-      | { game?: { getState: () => Record<string, unknown> } }
-      | undefined
-    const gameState = zustand?.game?.getState() as
-      | { loadFromDB?: () => Promise<void>; loadSessionById?: (id: string) => Promise<void> }
-      | undefined
-    if (gameState?.loadFromDB) {
-      await gameState.loadFromDB()
-    }
-    if (id && gameState?.loadSessionById) {
-      await gameState.loadSessionById(id)
-    }
-  }, gameId)
-
-  await page.waitForFunction(
-    () => {
-      const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-        | { game?: { getState: () => { currentSession?: { players?: unknown[] } } } }
-        | undefined
-      const gameState = zustand?.game?.getState()
-      return (gameState?.currentSession?.players?.length ?? 0) > 0
-    },
-    null,
-    { timeout: 10000 }
-  )
-
-  const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
-  await expect(firstEntry).toBeVisible({ timeout: 8000 })
-}
-
-/**
- * Helper: Assign scores to players on results page
- * @param scores Array of score increments for each player [player0, player1, player2]
- */
-async function assignScoresToPlayers(page: Page, scores: number[]) {
-  if (scores.length !== 3) {
-    throw new Error('This helper expects exactly 3 scores')
-  }
-
-  for (let i = 0; i < 3; i++) {
-    const playerEntry = page.locator(`[data-testid="results-player-entry-${i}"]`)
-    await expect(playerEntry).toBeVisible({ timeout: 5000 })
-
-    const incrementBtn = playerEntry.locator('[data-testid="score-increment"]')
-
-    const clickCount = scores[i] ?? 0
-    for (let c = 0; c < clickCount; c++) {
-      await expect(incrementBtn).toBeVisible({ timeout: 3000 })
-      await incrementBtn.click()
-      await page.waitForTimeout(100) // Prevent button spam issues
-    }
-  }
-}
-
-/**
- * Helper: Confirm scores and wait for decision modal
- */
-async function confirmScoresAndWaitForDecision(page: Page) {
-  const confirmBtn = page.locator('[data-testid="confirm-scores"]')
-  await expect(confirmBtn).toBeVisible({ timeout: 5000 })
-  await confirmBtn.click()
-
-  // Wait for leaderboard overlay to show and auto-dismiss, then decision modal
-  await page.waitForTimeout(2500) // Leaderboard overlay duration
-
-  // Verify decision modal is visible with both options
-  const nextRoundBtn = page.locator('[data-testid="next-round"]')
-  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
-
-  await expect(nextRoundBtn.or(leaderboardBtn).first()).toBeVisible({ timeout: 15000 })
-}
-
-/**
- * Helper: Continue to next round from decision modal
- */
-async function continueToNextRound(page: Page) {
-  const nextRoundBtn = page.locator('[data-testid="next-round"]')
-  await expect(nextRoundBtn).toBeVisible({ timeout: 5000 })
-  await nextRoundBtn.click()
-
-  // Goes through round-start → game (round-start may be too fast to observe)
-  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
-  await page.waitForTimeout(700) // Allow new round to initialize
-}
-
-/**
- * Helper: Finish game from decision modal
- */
-async function finishGameFromModal(page: Page) {
-  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
-  await expect(leaderboardBtn).toBeVisible({ timeout: 5000 })
-  await leaderboardBtn.click()
-
-  await expect(page).toHaveURL(/\/leaderboard/, { timeout: 8000 })
-  await page.waitForTimeout(500) // Allow leaderboard to load
-}
 
 /**
  * Helper: Verify leaderboard shows correct accumulated scores
@@ -252,13 +61,6 @@ async function returnToMenuFromLeaderboard(page: Page) {
   await expect(playBtn).toBeVisible({ timeout: 15000 })
 }
 
-async function hideDevtools(page: Page) {
-  await page.addStyleTag({
-    content:
-      '#nuxt-devtools-container, nuxt-devtools-frame { display: none !important; pointer-events: none !important; }',
-  })
-}
-
 /**
  * Complete Round Helper: Play one full round with scores
  * @param roundNumber 1-based round number for logging
@@ -278,18 +80,18 @@ async function playCompleteRound(
   await expect(roundIndicator).toBeVisible({ timeout: 8000 })
 
   // Submit empty answers for each player (skip input)
-  await submitThreePlayerAnswers(page)
+  await submitPlayerAnswers(page, 3)
   await navigateToResults(page)
 
   // Assign scores
   console.log(`Round ${roundNumber} scores:`, scores)
-  await assignScoresToPlayers(page, scores)
-  await confirmScoresAndWaitForDecision(page)
+  await assignScores(page, scores)
+  await confirmScoresAndWaitForModal(page)
 
   if (isLastRound) {
-    await finishGameFromModal(page)
+    await finishGame(page)
   } else {
-    await continueToNextRound(page)
+    await goToNextRound(page)
   }
 }
 
@@ -308,7 +110,7 @@ test.describe('Full Multi-Round Game Workflow @slow', () => {
 
     // Setup: Navigate to game with 3 players
     console.log('⚙️ Setting up 3-player game...')
-    await setupThreePlayerGame(page, playerNames)
+    await setupMultiplayerGame(page, playerNames)
 
     // Track cumulative scores: [player0, player1, player2]
     const cumulativeScores = [0, 0, 0]
@@ -392,7 +194,7 @@ test.describe('Full Multi-Round Game Workflow @slow', () => {
     const playerNames = ['Alice', 'Bob', 'Charlie']
     console.log('Testing name preservation with players:', playerNames)
 
-    await setupThreePlayerGame(page, playerNames)
+    await setupMultiplayerGame(page, playerNames)
 
     // Test name preservation for first 2 rounds
     for (let round = 1; round <= 2; round++) {
@@ -407,31 +209,37 @@ test.describe('Full Multi-Round Game Workflow @slow', () => {
       const submitBtn = page.locator('[data-testid="game-submit-button"]')
 
       // Player 1 (Alice)
-      await answerInput.fill('')
+      if (await answerInput.isVisible()) {
+        await answerInput.fill('')
+      }
       await submitBtn.click()
       await page.waitForTimeout(500)
       await expect(turnName).toHaveText(playerNames[1]!) // Bob
 
       // Player 2 (Bob)
-      await answerInput.fill('')
+      if (await answerInput.isVisible()) {
+        await answerInput.fill('')
+      }
       await submitBtn.click()
       await page.waitForTimeout(500)
       await expect(turnName).toHaveText(playerNames[2]!) // Charlie
 
       // Player 3 (Charlie)
-      await answerInput.fill('')
+      if (await answerInput.isVisible()) {
+        await answerInput.fill('')
+      }
       await submitBtn.click()
       await page.waitForTimeout(800)
 
       // Navigate to results and continue (except last round tested)
       await navigateToResults(page)
-      await assignScoresToPlayers(page, [1, 1, 1]) // Equal scores
-      await confirmScoresAndWaitForDecision(page)
+      await assignScores(page, [1, 1, 1]) // Equal scores
+      await confirmScoresAndWaitForModal(page)
 
       if (round < 2) {
-        await continueToNextRound(page)
+        await goToNextRound(page)
       } else {
-        await finishGameFromModal(page)
+        await finishGame(page)
       }
     }
 
@@ -442,7 +250,7 @@ test.describe('Full Multi-Round Game Workflow @slow', () => {
     setFakerSeed(98765)
 
     const playerNames = generatePlayerNames(3)
-    await setupThreePlayerGame(page, playerNames)
+    await setupMultiplayerGame(page, playerNames)
 
     // Test extreme score variations
     const extremeScores = [
@@ -479,12 +287,12 @@ test.describe('Full Multi-Round Game Workflow @slow', () => {
     setFakerSeed(11111)
 
     const playerNames = generatePlayerNames(3)
-    await setupThreePlayerGame(page, playerNames)
+    await setupMultiplayerGame(page, playerNames)
 
     // Test rapid scoring with no delays between clicks
     console.log('Testing rapid scoring interactions...')
 
-    await submitThreePlayerAnswers(page)
+    await submitPlayerAnswers(page, 3)
     await navigateToResults(page)
 
     // Rapidly assign different scores to each player
@@ -504,8 +312,8 @@ test.describe('Full Multi-Round Game Workflow @slow', () => {
     // Note: Score values are displayed in GameDisplay components without specific testids
     await page.waitForTimeout(500) // Let UI stabilize
 
-    await confirmScoresAndWaitForDecision(page)
-    await finishGameFromModal(page)
+    await confirmScoresAndWaitForModal(page)
+    await finishGame(page)
 
     console.log('✅ Rapid scoring test completed!')
   })

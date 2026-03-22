@@ -1,25 +1,17 @@
 import { test, expect } from '@playwright/test'
 import { generatePlayerName, generateAnswer } from './helpers/faker'
+import {
+  navigateToResults,
+  setupMultiplayerGame,
+  startGameWithDefaults,
+  submitPlayerAnswers,
+} from './helpers/game-flow'
 
 test.describe('Results/Scoring Page', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up game state first by going through players page
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-
-    // Start game with default player to initialize store
-    const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
-
-    // Wait for game to start
-    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
-    await page.waitForTimeout(500)
-
-    // Now navigate to results
-    await page.goto('/results')
-    await page.waitForLoadState('networkidle')
+    await startGameWithDefaults(page)
+    await submitPlayerAnswers(page, 2, [generateAnswer(), generateAnswer()])
+    await navigateToResults(page)
   })
 
   test('should display results page with all elements', async ({ page }) => {
@@ -185,44 +177,10 @@ test.describe('Results/Scoring Page', () => {
 
 test.describe('Results Page - Multi-Player', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up game with multiple players
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-
-    // Add second player
     const player2Name = generatePlayerName()
-    page.once('dialog', async (dialog) => {
-      await dialog.accept(player2Name)
-    })
-    const addBtn = page.locator('.add-btn')
-    await addBtn.click()
-    await page.waitForTimeout(300)
-
-    // Start game
-    const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
-
-    // Wait for game
-    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
-    await page.waitForTimeout(500)
-
-    // Submit answers for both players
-    const answerInput = page.locator('.answer-input')
-    const submitBtn = page.locator('.submit-answer-btn')
-
-    await answerInput.fill(generateAnswer())
-    await submitBtn.click()
-    await page.waitForTimeout(500)
-
-    await answerInput.fill(generateAnswer())
-    await submitBtn.click()
-    await page.waitForTimeout(1000)
-
-    // Navigate to results
-    await page.locator('[data-testid="next-button"]').click()
-    await expect(page).toHaveURL(/\/results/)
+    await setupMultiplayerGame(page, ['Player 1', player2Name])
+    await submitPlayerAnswers(page, 2, [generateAnswer(), generateAnswer()])
+    await navigateToResults(page)
   })
 
   test('should display all players in multi-player game', async ({ page }) => {
