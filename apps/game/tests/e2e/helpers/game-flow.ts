@@ -20,6 +20,10 @@ export async function submitPlayerAnswers(
   count: number,
   answers: string[] = []
 ): Promise<void> {
+  if (count <= 0) {
+    return
+  }
+
   const answerInput = page.locator('[data-testid="game-answer-input"]')
   const submitBtn = page.locator('[data-testid="game-submit-button"]')
   const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
@@ -223,15 +227,19 @@ export async function startGameWithDefaults(page: Page): Promise<void> {
 
 /**
  * Convenience setup: start game, submit player turns, then open results.
+ *
+ * Ensures at least one player turn is processed for edge cases (e.g. count <= 0).
  */
 export async function startGameAndGoToResults(page: Page, playerCount = 2): Promise<void> {
-  if (playerCount === 2) {
+  const normalizedPlayerCount = Math.max(1, Math.floor(playerCount))
+
+  if (normalizedPlayerCount === 2) {
     await startGameWithDefaults(page)
   } else {
-    const players = Array.from({ length: playerCount }, (_, i) => `Player ${i + 1}`)
+    const players = Array.from({ length: normalizedPlayerCount }, (_, i) => `Player ${i + 1}`)
     await setupMultiplayerGame(page, players)
   }
 
-  await submitPlayerAnswers(page, playerCount)
+  await submitPlayerAnswers(page, normalizedPlayerCount)
   await navigateToResults(page)
 }
