@@ -26,17 +26,17 @@
     "@oclif/plugin-help": "^6.2.38"
   },
   "devDependencies": {
-    "@eslint/json": "^1.0.1",
+    "@eslint/json": "^1.2.0",
     "@eslint/markdown": "^7.5.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^25.3.3",
-    "eslint": "^10.0.2",
-    "globals": "^17.3.0",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
+    "globals": "^17.4.0",
     "mocha": "^11.7.5",
     "oclif": "^4.22.79",
     "shx": "^0.4.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.0"
+    "typescript-eslint": "^8.57.1"
   },
   "engines": {
     "node": ">=20.0.0"
