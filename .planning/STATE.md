@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 18-03-PLAN.md
-last_updated: '2026-03-22T22:25:35Z'
+stopped_at: Completed 18-04-PLAN.md
+last_updated: '2026-03-22T22:28:30Z'
 last_activity: 2026-03-22
 progress:
   total_phases: 20
   completed_phases: 17
   total_plans: 56
-  completed_plans: 51
-  percent: 91
+  completed_plans: 52
+  percent: 93
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 18 of 20 (Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring)
-Plan: 3 of 5
+Plan: 4 of 5
 Status: In progress
 Last activity: 2026-03-22
-Last completed: 18-03 — Refactor remaining E2E specs to shared helpers and complete suite audit
+Last completed: 18-04 — Codify explicit feature-flag precedence contract and regression coverage
 
-Progress: [█████████░] 91% (51/56 total plans complete)
+Progress: [█████████░] 93% (52/56 total plans complete)
 
 ## Performance Metrics
 
@@ -93,6 +93,8 @@ Recent decisions affecting current work:
 - **[New]** Round-start contract finalized: fortune wheel is the default user path; immediate random start is fallback-only when the wheel flag resolves disabled (GitLab authoritative when configured, local settings fallback otherwise) (18-02).
 - **[New]** E2E scoring/leaderboard flows now standardize on shared `game-flow` helpers, with feature-flag-aware answer submission via input-visibility checks before fill (18-02).
 - **[New]** All 7 targeted game-flow E2E specs now import `./helpers/game-flow`; duplicate local flow helpers and legacy dialog/CSS game setup selectors are removed suite-wide (18-03).
+- **[New]** Managed feature flags (`fortune-wheel`, `answer-input`, `websocket`) now resolve through one explicit precedence contract path: runtime force-disable (answer-input only) → GitLab → local settings → default (18-04).
+- **[New]** Feature-flag regression suite now locks precedence/default semantics, including default-enabled fortune-wheel fallback when GitLab is unavailable (18-04).
 - **[New]** Removed `apps/game/stores/index.ts` and `apps/game/stores/hooks/index.ts` to eliminate Nuxt auto-import collision warnings from barrel re-exports (18-01).
 - **[New]** Pinia residue audit now validated against source scope (`apps/`, `packages/`, `tools/`) with allowlist-only historical/migration exceptions (18-01).
 - **[New]** Phase warning closure is now tracked in `18-01-warning-inventory.md` with explicit fixed vs intentional-suppression rationale (18-01).
@@ -200,8 +202,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-22T22:25:35Z
-Stopped at: Completed 18-03-PLAN.md
+Last session: 2026-03-22T22:28:30Z
+Stopped at: Completed 18-04-PLAN.md
 Resume file: None
 
 ### Deployment: development
