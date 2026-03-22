@@ -72,6 +72,20 @@ export {
 // Test data generation (existing)
 export { generatePlayerName, generateAnswer } from './faker'
 
+// Game flow helpers (shared across E2E specs)
+export {
+  hideDevtools,
+  submitPlayerAnswers,
+  navigateToResults,
+  assignScores,
+  confirmScoresAndWaitForModal,
+  goToNextRound,
+  finishGame,
+  setupMultiplayerGame,
+  startGameWithDefaults,
+  startGameAndGoToResults,
+} from './game-flow'
+
 // Types
 export type { GameMessage } from './realtime'
 export type { GameStateSnapshot, NetworkEntry, BrowserMetrics } from './diagnostics'
