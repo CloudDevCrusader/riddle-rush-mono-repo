@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs (completed 2026-03-21)
 - [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 - [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
-- [ ] **Phase 18: Enable fortune-wheel as default review/refactor if implementation works and looks good** - Enable fortune wheel by default and validate/refactor implementation quality
+- [ ] **Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring** - Enable fortune wheel default, fix warnings/duplicated imports, rework E2E tests, refactor post-migration changes
 - [x] **Phase 19: Move from Pinia to Zustand** - Complete Pinia-to-Zustand state management migration (completed 2026-03-22)
 
 ## Phase Details
@@ -413,21 +413,21 @@ Plans:
 - **Wave 1 (Parallel):** Plans 01, 02 — File cleanup and Knip setup (independent)
 - **Wave 2 (Sequential):** Plan 03 — Documentation updates (depends on 01, 02 for accurate post-cleanup state)
 
-### Phase 18: Enable fortune-wheel as default review/refactor if implementation works and looks good
+### Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring
 
-**Goal:** Make fortune-wheel the default round-start experience across local fallback and GitLab-flagged environments, then verify behavior/UX quality and document the finalized precedence contract.
-**Depends on:** Phase 17
-**Plans:** 2 plans
+**Goal:** Enable fortune wheel as the default round-start experience, fix build warnings (duplicated imports, unused vars), rework E2E test suite for reliability and Zustand compatibility, and refactor post-migration code quality issues across the codebase.
+**Depends on:** Phase 19
+**Success Criteria** (what must be TRUE):
 
-Plans:
+1. Fortune wheel is the default round-start mode (no feature flag needed to enable it)
+2. Zero duplicated import warnings in TypeScript/ESLint output
+3. All build warnings addressed or intentionally suppressed with explanation
+4. E2E test suite reworked — passes reliably, uses Zustand-compatible helpers
+5. Post-Zustand migration cleanup complete — no leftover Pinia references, clean store patterns
+6. `pnpm run workspace:check` passes with no errors
+7. All existing unit tests pass after refactoring
 
-- [ ] 18-01-PLAN.md — Enable fortune-wheel default at fallback + precedence layer and align unit tests
-- [ ] 18-02-PLAN.md — Harden round-start E2E + docs/state contract and perform human UX verification
-
-**Details:**
-
-- **Wave 1:** Plan 01 — implement default semantics in settings/feature-flag resolution and lock with unit tests
-- **Wave 2:** Plan 02 — validate default behavior end-to-end, update docs/state, and confirm visual quality checkpoint
+**Plans:** Replanning...
 
 ### Phase 19: Move from Pinia to Zustand
 
@@ -453,24 +453,24 @@ Plans:
 **Execution Order:**
 Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18 -> 19
 
-| Phase                                 | Plans Complete | Status   | Completed  |
-| ------------------------------------- | -------------- | -------- | ---------- |
-| 1. Design Tokens                      | 3/3            | Complete | 2026-01-31 |
-| 2. Design Utilities                   | 2/2            | Complete | 2026-01-31 |
-| 3. Core Layout Components             | 2/2            | Complete | 2026-02-01 |
-| 4. Interactive Components             | 2/2            | Complete | 2026-02-01 |
-| 5. Structural Components              | 3/3            | Complete | 2026-02-01 |
-| 6. Splash & Navigation                | 2/2            | Complete | 2026-02-01 |
-| 7. Player Setup                       | 2/2            | Complete | 2026-02-01 |
-| 8. Core Gameplay                      | 2/2            | Complete | 2026-02-01 |
-| 9. Game Results                       | 2/2            | Complete | 2026-02-01 |
-| 10. Settings Pages                    | 2/2            | Complete | 2026-02-01 |
-| 11. Modal Dialogs                     | 3/3            | Complete | 2026-02-16 |
-| 11.1. Scoring & Player Config         | 2/2            | Complete | 2026-02-16 |
-| 12. App Optimization & Refactoring    | 10/10          | Complete | 2026-02-16 |
-| 13. Post-Round Next Step Modal        | 1/1            | Complete | 2026-02-27 |
-| 14. Maintenance & Quality of Life     | 3/3            | Complete | 2026-03-21 |
-| 15. Visual Polish & Bug Fixes         | 0/4            | Planned  | —          |
-| 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
-| 18. Fortune Wheel Default & Review    | 0/2            | Planned  | —          |
-| 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |
+| Phase                                 | Plans Complete | Status     | Completed  |
+| ------------------------------------- | -------------- | ---------- | ---------- |
+| 1. Design Tokens                      | 3/3            | Complete   | 2026-01-31 |
+| 2. Design Utilities                   | 2/2            | Complete   | 2026-01-31 |
+| 3. Core Layout Components             | 2/2            | Complete   | 2026-02-01 |
+| 4. Interactive Components             | 2/2            | Complete   | 2026-02-01 |
+| 5. Structural Components              | 3/3            | Complete   | 2026-02-01 |
+| 6. Splash & Navigation                | 2/2            | Complete   | 2026-02-01 |
+| 7. Player Setup                       | 2/2            | Complete   | 2026-02-01 |
+| 8. Core Gameplay                      | 2/2            | Complete   | 2026-02-01 |
+| 9. Game Results                       | 2/2            | Complete   | 2026-02-01 |
+| 10. Settings Pages                    | 2/2            | Complete   | 2026-02-01 |
+| 11. Modal Dialogs                     | 3/3            | Complete   | 2026-02-16 |
+| 11.1. Scoring & Player Config         | 2/2            | Complete   | 2026-02-16 |
+| 12. App Optimization & Refactoring    | 10/10          | Complete   | 2026-02-16 |
+| 13. Post-Round Next Step Modal        | 1/1            | Complete   | 2026-02-27 |
+| 14. Maintenance & Quality of Life     | 3/3            | Complete   | 2026-03-21 |
+| 15. Visual Polish & Bug Fixes         | 0/4            | Planned    | —          |
+| 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned    | —          |
+| 18. Fortune Wheel + Warnings + E2E    | 0/?            | Replanning | —          |
+| 19. Pinia to Zustand Migration        | 3/3            | Complete   | 2026-03-22 |
