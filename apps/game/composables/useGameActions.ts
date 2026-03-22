@@ -13,6 +13,15 @@ export function useGameActions() {
   const { t } = useI18n()
   const logger = useLogger()
 
+  const getFlowState = () =>
+    (
+      gameSession as {
+        flowState?: {
+          value?: 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
+        }
+      }
+    ).flowState?.value ?? 'setup'
+
   /**
    * Start a new game session
    */
@@ -157,6 +166,13 @@ export function useGameActions() {
     }
   }
 
+  const canConfirmRoundScores = () => getFlowState() === 'in-round'
+
+  const canProceedToResults = () => {
+    const flow = getFlowState()
+    return flow === 'round-complete' || flow === 'decision'
+  }
+
   return {
     startNewGame,
     resumeOrStartGame,
@@ -165,5 +181,7 @@ export function useGameActions() {
     setupMultiplayerGame,
     startNextRound,
     startConfiguredRound,
+    canConfirmRoundScores,
+    canProceedToResults,
   }
 }

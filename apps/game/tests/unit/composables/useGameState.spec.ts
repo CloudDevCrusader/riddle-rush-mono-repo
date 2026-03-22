@@ -270,6 +270,8 @@ describe('useGameState', () => {
         'nextRoundNumber',
         'gameMode',
         'flowState',
+        'canProceedToResults',
+        'canConfirmRoundScores',
         'isCurrentRoundCompleted',
         'postRoundDecisionPending',
         'players',
@@ -291,7 +293,7 @@ describe('useGameState', () => {
     it('should not include extra unexpected properties', () => {
       const state = useGameState()
       const keys = Object.keys(state)
-      expect(keys).toHaveLength(17)
+      expect(keys).toHaveLength(19)
       expect(keys).toEqual(
         expect.arrayContaining([
           'gameStore',
@@ -302,6 +304,8 @@ describe('useGameState', () => {
           'nextRoundNumber',
           'gameMode',
           'flowState',
+          'canProceedToResults',
+          'canConfirmRoundScores',
           'isCurrentRoundCompleted',
           'postRoundDecisionPending',
           'players',
@@ -344,6 +348,32 @@ describe('useGameState', () => {
 
       expect(state.players.value).toHaveLength(1)
       expect(state.players.value[0]!.name).toBe('Charlie')
+    })
+
+    it('should derive proceed and confirm states from flowState', () => {
+      const state = useGameState()
+      mockGameSessionState.players = [{ name: 'Alice', totalScore: 0, hasSubmitted: false }]
+
+      mockGameSessionState.flowState = 'in-round'
+      expect(state.canConfirmRoundScores.value).toBe(true)
+      expect(state.canProceedToResults.value).toBe(false)
+
+      mockGameSessionState.flowState = 'round-complete'
+      expect(state.canConfirmRoundScores.value).toBe(false)
+      expect(state.canProceedToResults.value).toBe(true)
+
+      mockGameSessionState.flowState = 'decision'
+      expect(state.canConfirmRoundScores.value).toBe(false)
+      expect(state.canProceedToResults.value).toBe(true)
+    })
+
+    it('should always allow proceed for single-player sessions', () => {
+      const state = useGameState()
+
+      mockGameSessionState.players = []
+      mockGameSessionState.flowState = 'in-round'
+
+      expect(state.canProceedToResults.value).toBe(true)
     })
   })
 })

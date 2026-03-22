@@ -98,7 +98,12 @@ export function usePlayerManager() {
   }
 
   /**
-   * Reset the hasSubmitted flag for all players.
+   * Reset all submission-related state for all players.
+   *
+   * This helper is used when an in-progress round is restarted/refreshed and
+   * must behave deterministically: no stale answers, no stale round scores,
+   * and no submitted flags from a previous attempt.
+   *
    * Mutates player objects directly (caller owns reactivity).
    *
    * @param players - Array of players to reset
@@ -106,6 +111,8 @@ export function usePlayerManager() {
   function resetPlayerSubmissions(players: Player[]): void {
     players.forEach((player) => {
       player.hasSubmitted = false
+      player.currentRoundAnswer = undefined
+      player.currentRoundScore = 0
     })
   }
 

@@ -839,6 +839,8 @@ describe('Game Store', () => {
 
         for (const player of gameStore.getState().players) {
           expect(player.hasSubmitted).toBe(false)
+          expect(player.currentRoundAnswer).toBeUndefined()
+          expect(player.currentRoundScore).toBe(0)
         }
       })
 
@@ -848,6 +850,16 @@ describe('Game Store', () => {
         await gameStore.getState().resetPlayerSubmissions()
 
         expect(mockSaveGameSession).toHaveBeenCalled()
+      })
+
+      it('resets currentPlayerIndex to first player', async () => {
+        const session = gameStore.getState().currentSession
+        if (!session) throw new Error('Session not found')
+
+        session.currentPlayerIndex = 1
+        await gameStore.getState().resetPlayerSubmissions()
+
+        expect(gameStore.getState().currentSession?.currentPlayerIndex).toBe(0)
       })
     })
 

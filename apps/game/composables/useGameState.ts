@@ -10,6 +10,17 @@ export function useGameState() {
   const playerActions = usePlayerActions()
 
   // Return combined API with all actions for backward compatibility
+  const canProceedToResults = computed(() => {
+    const hasMultiplayerPlayers = gameSession.players.value.length > 0
+    if (!hasMultiplayerPlayers) return true
+
+    return (
+      gameSession.flowState.value === 'round-complete' || gameSession.flowState.value === 'decision'
+    )
+  })
+
+  const canConfirmRoundScores = computed(() => gameSession.flowState.value === 'in-round')
+
   return {
     // Backward compatibility: return hooks as "store" objects
     // gameStore now provides ALL actions from all hooks
@@ -27,6 +38,8 @@ export function useGameState() {
     nextRoundNumber: gameSession.nextRoundNumber,
     gameMode: gameSession.gameMode,
     flowState: gameSession.flowState,
+    canProceedToResults,
+    canConfirmRoundScores,
     isCurrentRoundCompleted: gameSession.isCurrentRoundCompleted,
     postRoundDecisionPending: gameSession.postRoundDecisionPending,
     players: gameSession.players,
