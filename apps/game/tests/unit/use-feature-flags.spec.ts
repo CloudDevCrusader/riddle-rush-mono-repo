@@ -342,9 +342,10 @@ describe('useFeatureFlags (GitLab)', () => {
       mockGitLabClient = null
       mockSettingsStore.websocketEnabled = true
 
-      const { isWebSocketEnabled } = useFeatureFlags()
+      const { isWebSocketEnabled, isEnabled } = useFeatureFlags()
 
       expect(isWebSocketEnabled.value).toBe(true)
+      expect(isEnabled('websocket', false)).toBe(true)
     })
 
     it('should use GitLab value when client exists', () => {
