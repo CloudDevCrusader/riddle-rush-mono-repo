@@ -375,10 +375,10 @@ Plans:
 
 Plans:
 
-- [ ] 15-01-PLAN.md -- CSS deduplication, shared utilities, migrate credits.vue + round-start.vue to design system
-- [ ] 15-02-PLAN.md -- Figma token sync pipeline preparation
-- [ ] 15-03-PLAN.md -- Bug fixes (multiplayer round flow, dead code cleanup, typecheck investigation)
-- [ ] 15-04-PLAN.md -- Mockup CSS gap fixes across all pages + page/component animations
+- [ ] 15-01-PLAN.md -- Remove duplicate scoped @keyframes, migrate round-start.vue to GameBackground
+- [ ] 15-02-PLAN.md -- Figma token sync pipeline: sync script, CSS override layer, nuxt.config.ts wiring
+- [ ] 15-03-PLAN.md -- Bug fixes: multiplayer round flow regression test + fix, remove orphaned PageTransition.vue
+- [ ] 15-04-PLAN.md -- Fortune Wheel redesign (game palette + CSS pointer + 300px fluid), index.vue CSS gaps + page animations
 
 **Details**:
 
