@@ -1,0 +1,496 @@
+{
+  "scripts": [
+    {
+      "name": "android:open",
+      "command": "pnpm android:open",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "android:run",
+      "command": "pnpm android:run",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "android:sync",
+      "command": "pnpm android:sync",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "build",
+      "command": "pnpm build",
+      "mode": "command",
+      "category": "build"
+    },
+    {
+      "name": "build:all",
+      "command": "pnpm build:all",
+      "mode": "command",
+      "category": "build"
+    },
+    {
+      "name": "changeset",
+      "command": "pnpm changeset",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "changeset:publish",
+      "command": "pnpm changeset:publish",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "changeset:version",
+      "command": "pnpm changeset:version",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "clean",
+      "command": "pnpm clean",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "version",
+      "command": "pnpm version",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:aws",
+      "command": "pnpm deploy:aws",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:dev",
+      "command": "pnpm deploy:dev",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:infrastructure",
+      "command": "pnpm deploy:infrastructure",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:prod",
+      "command": "pnpm deploy:prod",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:vercel:dev",
+      "command": "pnpm deploy:vercel:dev",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:vercel:prod",
+      "command": "pnpm deploy:vercel:prod",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:vercel:preview",
+      "command": "pnpm deploy:vercel:preview",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "deploy:preview",
+      "command": "pnpm deploy:preview",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "vercel:env:pull",
+      "command": "pnpm vercel:env:pull",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "vercel:link",
+      "command": "pnpm vercel:link",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "dev",
+      "command": "pnpm dev",
+      "mode": "service",
+      "category": "dev"
+    },
+    {
+      "name": "dev:all",
+      "command": "pnpm dev:all",
+      "mode": "service",
+      "category": "dev"
+    },
+    {
+      "name": "format",
+      "command": "pnpm format",
+      "mode": "command",
+      "category": "format"
+    },
+    {
+      "name": "format:check",
+      "command": "pnpm format:check",
+      "mode": "command",
+      "category": "format"
+    },
+    {
+      "name": "generate",
+      "command": "pnpm generate",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:fmt",
+      "command": "pnpm infra:fmt",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:fmt:check",
+      "command": "pnpm infra:fmt:check",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:validate:dev",
+      "command": "pnpm infra:validate:dev",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:validate:prod",
+      "command": "pnpm infra:validate:prod",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:dev:apply",
+      "command": "pnpm infra:dev:apply",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:dev:init",
+      "command": "pnpm infra:dev:init",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:dev:plan",
+      "command": "pnpm infra:dev:plan",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:prod:apply",
+      "command": "pnpm infra:prod:apply",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:prod:init",
+      "command": "pnpm infra:prod:init",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:prod:plan",
+      "command": "pnpm infra:prod:plan",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:translation:apply",
+      "command": "pnpm infra:translation:apply",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:translation:init",
+      "command": "pnpm infra:translation:init",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:translation:plan",
+      "command": "pnpm infra:translation:plan",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:validate:translation",
+      "command": "pnpm infra:validate:translation",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "infra:setup",
+      "command": "pnpm infra:setup",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "lint",
+      "command": "pnpm lint",
+      "mode": "command",
+      "category": "lint"
+    },
+    {
+      "name": "lint:fix",
+      "command": "pnpm lint:fix",
+      "mode": "command",
+      "category": "lint"
+    },
+    {
+      "name": "playwright:docker",
+      "command": "pnpm playwright:docker",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "prepare",
+      "command": "pnpm prepare",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "syncpack:check",
+      "command": "pnpm syncpack:check",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "syncpack:fix",
+      "command": "pnpm syncpack:fix",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "syncpack:format",
+      "command": "pnpm syncpack:format",
+      "mode": "command",
+      "category": "format"
+    },
+    {
+      "name": "terraform:apply",
+      "command": "pnpm terraform:apply",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "terraform:outputs",
+      "command": "pnpm terraform:outputs",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "terraform:plan",
+      "command": "pnpm terraform:plan",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "terraform:sync",
+      "command": "pnpm terraform:sync",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "test",
+      "command": "pnpm test",
+      "mode": "command",
+      "category": "test"
+    },
+    {
+      "name": "test:e2e",
+      "command": "pnpm test:e2e",
+      "mode": "command",
+      "category": "test"
+    },
+    {
+      "name": "test:e2e:ui",
+      "command": "pnpm test:e2e:ui",
+      "mode": "command",
+      "category": "test"
+    },
+    {
+      "name": "test:e2e:docker",
+      "command": "pnpm test:e2e:docker",
+      "mode": "command",
+      "category": "test"
+    },
+    {
+      "name": "test:unit",
+      "command": "pnpm test:unit",
+      "mode": "command",
+      "category": "test"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm typecheck",
+      "mode": "command",
+      "category": "typecheck"
+    },
+    {
+      "name": "workspace:check",
+      "command": "pnpm workspace:check",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "workspace:fix",
+      "command": "pnpm workspace:fix",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "agent",
+      "command": "pnpm agent",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "agent:help",
+      "command": "pnpm agent:help",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "agent:status",
+      "command": "pnpm agent:status",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "agent:validate",
+      "command": "pnpm agent:validate",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "agent:fix",
+      "command": "pnpm agent:fix",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "agent:check",
+      "command": "pnpm agent:check",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "agent:commit",
+      "command": "pnpm agent:commit",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "maintain",
+      "command": "pnpm maintain",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "validate:locales",
+      "command": "pnpm validate:locales",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "i18n:start",
+      "command": "pnpm i18n:start",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "i18n:stop",
+      "command": "pnpm i18n:stop",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "i18n:push",
+      "command": "pnpm i18n:push",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "i18n:pull",
+      "command": "pnpm i18n:pull",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "python:lint",
+      "command": "pnpm python:lint",
+      "mode": "command",
+      "category": "lint"
+    },
+    {
+      "name": "python:format",
+      "command": "pnpm python:format",
+      "mode": "command",
+      "category": "format"
+    },
+    {
+      "name": "python:check",
+      "command": "pnpm python:check",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "trunk:eslint",
+      "command": "pnpm trunk:eslint",
+      "mode": "command",
+      "category": "lint"
+    },
+    {
+      "name": "trunk:prettier",
+      "command": "pnpm trunk:prettier",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "trunk:check",
+      "command": "pnpm trunk:check",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "trunk:fmt",
+      "command": "pnpm trunk:fmt",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "ai:status",
+      "command": "pnpm ai:status",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "ai:agents",
+      "command": "pnpm ai:agents",
+      "mode": "command",
+      "category": "other"
+    },
+    {
+      "name": "ai:tools",
+      "command": "pnpm ai:tools",
+      "mode": "command",
+      "category": "other"
+    }
+  ]
+}

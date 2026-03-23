@@ -1,9 +1,4 @@
 {
   "mcpServers": {
-    "dev-to": {
-      "source": "npx -y @dev-dot-to/mcp-server",
-      "tools": ["*"],
-      "description": "Dev.to article publishing, content management, and community features"
-    }
   }
 }
