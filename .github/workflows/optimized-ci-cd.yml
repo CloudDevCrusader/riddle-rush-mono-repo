@@ -156,8 +156,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build all packages
-        run: pnpm run build:all
+      - name: Build game app
+        run: pnpm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
