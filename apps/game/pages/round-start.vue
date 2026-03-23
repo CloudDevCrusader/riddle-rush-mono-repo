@@ -303,12 +303,14 @@ onUnmounted(() => {
   if (wheelFallbackTimer) clearTimeout(wheelFallbackTimer)
 })
 
+const pageTitle = computed(() => t('game.round_start_title'))
+
 useHead({
-  title: t('game.round_start_title'),
+  title: pageTitle,
   meta: [
     {
       name: 'description',
-      content: t('game.round_start_description'),
+      content: () => t('game.round_start_description'),
     },
   ],
 })
