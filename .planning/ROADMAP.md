@@ -32,6 +32,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
 - [ ] **Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring** - Enable fortune wheel default, fix warnings/duplicated imports, rework E2E tests, refactor post-migration changes
 - [x] **Phase 19: Move from Pinia to Zustand** - Complete Pinia-to-Zustand state management migration (completed 2026-03-22)
+- [x] **Phase 20: Revert Zustand to Pinia** - Revert Zustand migration back to Pinia while preserving architectural improvements
+- [ ] **Phase 21: Refactor and Fix E2E and Unit Tests** - Complete Phase 12 uncompleted unit tests, refactor remaining E2E specs, fix multi-round scoring workflow, achieve 100% E2E test pass rate
 
 ## Phase Details
 
@@ -465,7 +467,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18 -> 19
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18 -> 19 -> 20 -> 21
 
 | Phase                                 | Plans Complete | Status   | Completed  |
 | ------------------------------------- | -------------- | -------- | ---------- |
@@ -489,6 +491,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 18. Fortune Wheel + Warnings + E2E    | 0/3            | Planned  | —          |
 | 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |
 | 20. Revert Zustand to Pinia           | 0/3            | Planned  | —          |
+| 21. Refactor and Fix E2E & Unit Tests | 0/0            | Planned  | —          |
 
 ### Phase 20: Revert Zustand to Pinia
 
@@ -507,12 +510,115 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 Plans:
 
-- [ ] 20-01-PLAN.md — Convert main game store back to Pinia, preserve unified flow state
-- [ ] 20-02-PLAN.md — Update all Vue components and tests to use Pinia
-- [ ] 20-03-PLAN.md — Run comprehensive E2E tests and verify reactivity issues resolved
+- [x] 20-01-PLAN.md — Convert main game store back to Pinia, preserve unified flow state
+- [x] 20-02-PLAN.md — Update all Vue components and tests to use Pinia
+- [x] 20-03-PLAN.md — Run comprehensive E2E tests and verify reactivity issues resolved
 
 **Details**:
 
 - **Wave 1:** Plan 01 — Convert main store to Pinia with preserved architecture
 - **Wave 2:** Plan 02 — Update all components and tests for Pinia compatibility
 - **Wave 3:** Plan 03 — Verify E2E tests pass and reactivity issues are resolved
+
+### Phase 21: Refactor and Fix E2E and Unit Tests
+
+**Goal**: Complete Phase 12 unimplemented unit test plans, refactor remaining E2E specs to use shared helpers, fix multi-round scoring workflow, and achieve 100% E2E test pass rate. Address all test-related technical debt and ensure comprehensive coverage of critical game flows.
+
+**Depends on**: Phase 20
+**Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05
+**Success Criteria** (what must be TRUE):
+
+1. All Phase 12 unimplemented unit test plans are complete (12-02, 12-03, 12-06, 12-07, 12-08)
+2. Integration tests cover WebSocket and IndexedDB flows
+3. E2E test suite passes with 100% success rate (no intermittent failures)
+4. Multi-round scoring workflow test passes (modal 3 options, predicted rank, answer input feature flag)
+5. Game mode refactored to single source of truth with documented state flow chart
+6. All remaining E2E specs use shared helpers from tests/e2e/helpers/game-flow.ts
+7. Zero CSS class selectors remain in E2E tests (all data-testid based)
+8. All unit tests pass and workspace:check succeeds
+
+**Plans:** TBD (run /gsd:plan-phase 21 to break down)
+
+**Details**:
+
+Collected test-related todos from recent phases:
+
+**From Phase 12 (Unimplemented Plans):**
+
+- Unit tests for composables (12-02, 12-03, 12-06, 12-07, 12-08)
+- Integration tests covering WebSocket and IndexedDB flows
+- E2E test suite with 100% success rate
+
+**From Phase 18 (Incomplete E2E Refactor):**
+
+- Plan 18-03: Refactor remaining E2E specs to use shared helpers
+- Remaining specs still use CSS class selectors instead of data-testid
+
+**From STATE.md Pending Todos:**
+
+- Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag)
+- Refactor game mode to single source of truth with documented state flow chart
+
+**Key Issues to Address:**
+
+1. E2E tests have intermittent failures due to timing/race conditions
+2. Some E2E specs still use fragile CSS class selectors
+3. Unit test coverage gaps for key composables
+4. Multi-round scoring workflow not fully tested end-to-end
+5. Integration tests for WebSocket and IndexedDB missing
+
+### Phase 21: Refactor and Fix E2E and Unit Tests
+
+**Goal**: Complete Phase 12 unimplemented unit test plans, refactor remaining E2E specs to use shared helpers, fix multi-round scoring workflow, and achieve 100% E2E test pass rate. Address all test-related technical debt and ensure comprehensive coverage of critical game flows.
+
+**Depends on**: Phase 20
+**Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05
+
+**Success Criteria** (what must be TRUE):
+
+1. All Phase 12 unimplemented unit test plans are complete (12-02, 12-03, 12-06, 12-07, 12-08)
+2. Integration tests cover WebSocket and IndexedDB flows
+3. E2E test suite passes with 100% success rate (no intermittent failures)
+4. Multi-round scoring workflow test passes (modal 3 options, predicted rank, answer input feature flag)
+5. Game mode refactored to single source of truth with documented state flow chart
+6. All remaining E2E specs use shared helpers from tests/e2e/helpers/game-flow.ts
+7. Zero CSS class selectors remain in E2E tests (all data-testid based)
+8. All unit tests pass and workspace:check succeeds
+
+**Plans:** 5 plans
+
+Plans:
+
+- [ ] 21-01-PLAN.md — Unit tests for composables (CategoryManager, PlayerManager, ScoringEngine, SessionManager, Persistence, GameLifecycle, Analytics)
+- [ ] 21-02-PLAN.md — Refactor E2E specs to data-testid selectors and shared helpers
+- [ ] 21-03-PLAN.md — Add missing data-testid attributes to page components
+- [ ] 21-04-PLAN.md — Mobile E2E tests for critical game flows (Pixel 5, iPad Pro 11)
+- [ ] 21-05-PLAN.md — NativeScript mobile app unit and integration tests
+
+**Details**:
+
+Collected test-related todos from recent phases:
+
+**From Phase 12 (Unimplemented Plans):**
+
+- Unit tests for composables (12-02, 12-03, 12-06, 12-07, 12-08)
+- Integration tests covering WebSocket and IndexedDB flows
+- E2E test suite with 100% success rate
+
+**From Phase 18 (Incomplete E2E Refactor):**
+
+- Plan 18-03: Refactor remaining E2E specs to use shared helpers
+- Remaining specs still use CSS class selectors instead of data-testid
+
+**From STATE.md Pending Todos:**
+
+- Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag)
+- Refactor game mode to single source of truth with documented state flow chart
+
+**Key Issues to Address:**
+
+1. E2E tests have intermittent failures due to timing/race conditions
+2. Some E2E specs still use fragile CSS class selectors
+3. Unit test coverage gaps for key composables
+4. Multi-round scoring workflow not fully tested end-to-end
+5. Integration tests for WebSocket and IndexedDB missing
