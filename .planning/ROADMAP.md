@@ -488,3 +488,31 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
 | 18. Fortune Wheel + Warnings + E2E    | 0/3            | Planned  | —          |
 | 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |
+| 20. Revert Zustand to Pinia           | 0/3            | Planned  | —          |
+
+### Phase 20: Revert Zustand to Pinia
+
+**Goal**: Revert Zustand migration back to Pinia while preserving architectural improvements to eliminate reactivity issues and restore production stability.
+
+**Success Criteria** (what must be TRUE):
+
+1. Application reverts to stable Pinia-based state management
+2. No reactivity issues between store and Vue templates
+3. Unified GameFlowState and transition helpers preserved
+4. Same composable API surface maintained (useGameState, useGameActions, etc.)
+5. All E2E tests pass, especially multi-round scoring workflow
+6. Application is production-ready without fundamental reactivity problems
+
+**Plans:** 3/3 plans complete
+
+Plans:
+
+- [ ] 20-01-PLAN.md — Convert main game store back to Pinia, preserve unified flow state
+- [ ] 20-02-PLAN.md — Update all Vue components and tests to use Pinia
+- [ ] 20-03-PLAN.md — Run comprehensive E2E tests and verify reactivity issues resolved
+
+**Details**:
+
+- **Wave 1:** Plan 01 — Convert main store to Pinia with preserved architecture
+- **Wave 2:** Plan 02 — Update all components and tests for Pinia compatibility
+- **Wave 3:** Plan 03 — Verify E2E tests pass and reactivity issues are resolved
