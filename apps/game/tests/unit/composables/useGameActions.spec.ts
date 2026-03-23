@@ -1,3 +1,4 @@
+import { setActivePinia, createPinia } from 'pinia'
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 
 // Import after mocks are set up
@@ -109,6 +110,7 @@ vi.mock('~/composables/useLogger', () => ({
 
 describe('useGameActions', () => {
   beforeEach(() => {
+    setActivePinia(createPinia())
     vi.clearAllMocks()
     mockHasActiveSession = false
     mockCurrentScore = 42

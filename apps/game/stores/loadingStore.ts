@@ -1,47 +1,34 @@
-import { create } from 'zustand'
+import { defineStore } from 'pinia'
 
-export const loadingStore = create<{
-  isLoading: boolean
-  loadingCount: number
-  progress: number
-  showProgress: boolean
+export const useLoadingStore = defineStore('loading', {
+  state: () => ({
+    isLoading: false,
+    loadingCount: 0,
+    progress: 0,
+    showProgress: false,
+  }),
 
-  showLoading: () => void
-  hideLoading: () => void
-  setProgress: (value: number) => void
-}>()((set) => ({
-  // State
-  isLoading: false,
-  loadingCount: 0,
-  progress: 0,
-  showProgress: false,
+  actions: {
+    showLoading() {
+      this.loadingCount += 1
+      this.isLoading = true
+      this.progress = 0
+      this.showProgress = false
+    },
 
-  // Actions
-  showLoading: () => {
-    set((state) => ({
-      loadingCount: state.loadingCount + 1,
-      isLoading: true,
-      progress: 0,
-      showProgress: false,
-    }))
+    hideLoading() {
+      const newCount = this.loadingCount - 1
+      this.loadingCount = newCount <= 0 ? 0 : newCount
+      this.isLoading = newCount <= 0 ? false : this.isLoading
+      this.progress = newCount <= 0 ? 0 : this.progress
+      this.showProgress = newCount <= 0 ? false : this.showProgress
+    },
+
+    setProgress(value: number) {
+      this.progress = Math.min(100, Math.max(0, value))
+      this.showProgress = true
+    },
   },
+})
 
-  hideLoading: () => {
-    set((state) => {
-      const newCount = state.loadingCount - 1
-      return {
-        loadingCount: newCount <= 0 ? 0 : newCount,
-        isLoading: newCount <= 0 ? false : state.isLoading,
-        progress: newCount <= 0 ? 0 : state.progress,
-        showProgress: newCount <= 0 ? false : state.showProgress,
-      }
-    })
-  },
-
-  setProgress: (value: number) => {
-    set({
-      progress: Math.min(100, Math.max(0, value)),
-      showProgress: true,
-    })
-  },
-}))
+export const loadingStore = useLoadingStore

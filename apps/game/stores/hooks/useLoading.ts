@@ -1,35 +1,23 @@
-import { computed, ref, onScopeDispose } from '#imports'
-import { loadingStore } from '../loadingStore'
-import { gameStore } from '~/stores/gameStore'
+import { computed } from '#imports'
+import { useLoadingStore as loadingStore } from '../loadingStore'
+import { useGameStore } from '~/stores/gameStore'
 
 export function useLoading() {
-  const version = ref(0)
-  const unsubscribe = loadingStore.subscribe(() => {
-    version.value++
-  })
-  onScopeDispose(() => unsubscribe())
+  const store = loadingStore()
+  const game = useGameStore()
 
   return {
     // State
-    isLoading: computed(() => {
-      void version.value
-      return loadingStore.getState().isLoading
-    }),
-    progress: computed(() => {
-      void version.value
-      return loadingStore.getState().progress
-    }),
-    showProgress: computed(() => {
-      void version.value
-      return loadingStore.getState().showProgress
-    }),
+    isLoading: computed(() => store.isLoading),
+    progress: computed(() => store.progress),
+    showProgress: computed(() => store.showProgress),
 
     // Actions
-    showLoading: loadingStore.getState().showLoading,
-    hideLoading: loadingStore.getState().hideLoading,
-    setProgress: loadingStore.getState().setProgress,
+    showLoading: store.showLoading,
+    hideLoading: store.hideLoading,
+    setProgress: store.setProgress,
 
     // Convenience: setOnlineStatus from gameStore
-    setOnlineStatus: gameStore.getState().setOnlineStatus,
+    setOnlineStatus: game.setOnlineStatus,
   }
 }

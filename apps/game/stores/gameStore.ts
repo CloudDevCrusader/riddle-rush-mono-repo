@@ -1,4 +1,4 @@
-import { create, type StoreApi, type UseBoundStore } from 'zustand'
+import { defineStore } from 'pinia'
 import { useCategoryEmoji } from '../composables/useCategoryEmoji'
 import { useCategoryManager } from '../composables/useCategoryManager'
 import { useSessionManager } from '../composables/useSessionManager'
@@ -66,104 +66,8 @@ const loadPendingPlayerNames = (): string[] => {
   }
 }
 
-type GameStoreShape = GameState & {
-  /**
-   * Flow state machine — single source of truth for game mode and round transitions.
-   *
-   * States:
-   *   setup          → No active session yet (players page, initial state)
-   *   in-round       → Active session with an ongoing round (game page)
-   *   round-complete → Current round data recorded in roundHistory (internal, auto-transitions to decision)
-   *   decision       → Post-round modal is active: next round / new game / leaderboard (results page)
-   *   completed      → Session status is 'completed', game is over (leaderboard page)
-   *
-   * Transitions:
-   *   setup          → in-round        via setupPlayers / advanceToConfiguredRound
-   *   in-round       → round-complete   via completeRound (when all players submitted)
-   *   round-complete → decision         via completeRound setting postRoundDecisionPending
-   *   decision       → in-round         via startNextRound (next round chosen)
-   *   decision       → completed        via completeGame (leaderboard or new game chosen)
-   *   completed      → setup            via endGame / clearSession (return to menu)
-   */
-  gameMode: () => 'single' | 'multiplayer'
-  isCurrentRoundCompleted: () => boolean
-  nextRoundNumber: () => number
-  flowState: () => 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
-
-  // Getters
-  hasActiveSession: () => boolean
-  canInstall: boolean
-  currentCategory: Category | null
-  currentLetter: string
-  displayedCategories: Category[]
-  hasMoreCategories: boolean
-  categoryEmoji: (name?: string | null) => string
-  players: Player[]
-  currentRound: number
-  postRoundDecisionPending: boolean
-  allPlayersSubmitted: boolean
-  currentPlayerTurn: Player | null
-  leaderboard: PlayerWithRank[]
-  isGameCompleted: () => boolean
-  gameStatus: () => string
-
-  // Actions
-  fetchCategories: (force?: boolean) => Promise<Category[]>
-  loadMoreCategories: (step?: number) => void
-  resetDisplayedCategories: (count?: number) => void
-  getCategoryById: (categoryId: number) => Category | null
-  getRandomCategory: () => Category | null
-  generateLetter: () => string
-  resumeOrStartNewGame: () => Promise<import('@riddle-rush/types/game').GameSession | null>
-  startNewGame: () => Promise<import('@riddle-rush/types/game').GameSession>
-  endGame: () => Promise<void>
-  completeGame: () => Promise<import('@riddle-rush/types/game').GameSession | undefined>
-  abandonGame: () => Promise<void>
-  setOnlineStatus: (status: boolean) => void
-  setInstallPrompt: (event: BeforeInstallPromptEvent | null) => void
-  setPendingPlayerNames: (playerNames: string[]) => void
-  showInstallPrompt: () => Promise<boolean>
-  loadFromDB: () => Promise<void>
-  saveSessionToDB: () => Promise<void>
-  saveHistoryToDB: () => Promise<void>
-  loadSessionById: (
-    sessionId: string
-  ) => Promise<import('@riddle-rush/types/game').GameSession | null>
-  clearSession: () => void
-  setupPlayers: (
-    playerNames: string[],
-    gameName?: string,
-    customLetter?: string,
-    customCategory?: Category
-  ) => Promise<import('@riddle-rush/types/game').GameSession>
-  submitPlayerAnswer: (playerId: string, answer: string) => Promise<void>
-  assignPlayerScore: (playerId: string, points: number) => Promise<void>
-  updatePlayerAvatar: (playerId: string, avatarUrl: string) => Promise<void>
-  completeRound: () => Promise<void>
-  startNextRound: (
-    category?: Category,
-    letter?: string
-  ) => Promise<import('@riddle-rush/types/game').GameSession | null>
-  advanceToConfiguredRound: (
-    category: Category,
-    letter: string
-  ) => Promise<import('@riddle-rush/types/game').GameSession | null>
-  resetPlayerSubmissions: () => Promise<void>
-  getPlayerById: (playerId: string) => Player | null
-
-  // Flow state transition helpers
-  transitionToSetup: () => void
-  transitionToInRound: () => void
-  transitionToRoundComplete: () => void
-  transitionToDecision: () => void
-  transitionToCompleted: () => void
-}
-
-type GameStoreInstance = UseBoundStore<StoreApi<GameStoreShape>>
-
-const createGameStore = (): GameStoreInstance =>
-  create<GameStoreShape>()((set, get) => ({
-    // State
+export const useGameStore = defineStore('game', {
+  state: (): GameState => ({
     currentSession: null,
     isOnline: true,
     installPromptEvent: null,
@@ -176,152 +80,157 @@ const createGameStore = (): GameStoreInstance =>
     selectedLetter: null,
     pendingPlayerNames: [],
     postRoundDecisionPending: false,
+  }),
 
-    gameMode() {
-      return (get().currentSession?.players.length ?? 0) > 0 ? 'multiplayer' : 'single'
+  getters: {
+    gameMode(state): 'single' | 'multiplayer' {
+      return (state.currentSession?.players.length ?? 0) > 0 ? 'multiplayer' : 'single'
     },
-    isCurrentRoundCompleted() {
-      const session = get().currentSession
+    isCurrentRoundCompleted(state): boolean {
+      const session = state.currentSession
       if (!session) return false
       return session.roundHistory.length >= session.currentRound
     },
-    nextRoundNumber() {
-      const session = get().currentSession
+    nextRoundNumber(state): number {
+      const session = state.currentSession
       if (!session) return 1
-      return get().isCurrentRoundCompleted() ? session.currentRound + 1 : session.currentRound
+      return this.isCurrentRoundCompleted ? session.currentRound + 1 : session.currentRound
     },
-    flowState() {
-      const session = get().currentSession
+    flowState(state): GameFlowState {
+      const session = state.currentSession
       if (!session) return 'setup'
       if (session.status === 'completed') return 'completed'
-      if (get().postRoundDecisionPending) return 'decision'
-      if (get().isCurrentRoundCompleted()) return 'round-complete'
+      if (state.postRoundDecisionPending) return 'decision'
+      if (this.isCurrentRoundCompleted) return 'round-complete'
       return 'in-round'
     },
 
-    // Getters
-    hasActiveSession() {
-      return get().currentSession !== null
+    hasActiveSession(state): boolean {
+      return state.currentSession !== null
     },
-    get canInstall() {
-      return get().installPromptEvent !== null
+    canInstall(state): boolean {
+      return state.installPromptEvent !== null
     },
-    get currentCategory() {
-      return get().currentSession?.category ?? null
+    currentCategory(state): Category | null {
+      return state.currentSession?.category ?? null
     },
-    get currentLetter() {
-      return get().currentSession?.letter ?? ''
+    currentLetter(state): string {
+      return state.currentSession?.letter ?? ''
     },
-    get displayedCategories() {
-      return get().categories.slice(0, get().displayedCategoryCount)
+    displayedCategories(state): Category[] {
+      return state.categories.slice(0, state.displayedCategoryCount)
     },
-    get hasMoreCategories() {
-      return get().displayedCategoryCount < get().categories.length
+    hasMoreCategories(state): boolean {
+      return state.displayedCategoryCount < state.categories.length
     },
-    categoryEmoji(name?: string | null) {
-      const { resolve } = useCategoryEmoji()
-      return resolve(name)
+    categoryEmoji(): (name?: string | null) => string {
+      return (name?: string | null) => {
+        const { resolve } = useCategoryEmoji()
+        return resolve(name)
+      }
     },
-    get players() {
-      return get().currentSession?.players ?? []
+    players(state): Player[] {
+      return state.currentSession?.players ?? []
     },
-    get currentRound() {
-      return get().currentSession?.currentRound ?? 0
+    currentRound(state): number {
+      return state.currentSession?.currentRound ?? 0
     },
-    get allPlayersSubmitted() {
+    allPlayersSubmitted(state): boolean {
       const playerManager = usePlayerManager()
-      return playerManager.allPlayersSubmitted(get().currentSession?.players ?? [])
+      return playerManager.allPlayersSubmitted(state.currentSession?.players ?? [])
     },
-    get currentPlayerTurn() {
+    currentPlayerTurn(state): Player | null {
       const playerManager = usePlayerManager()
       return playerManager.getCurrentPlayerTurn(
-        get().currentSession?.players ?? [],
-        get().currentSession?.currentPlayerIndex ?? 0
+        state.currentSession?.players ?? [],
+        state.currentSession?.currentPlayerIndex ?? 0
       )
     },
-    get leaderboard() {
+    leaderboard(state): PlayerWithRank[] {
       const playerManager = usePlayerManager()
-      const players = get().currentSession?.players ?? []
-      const isGameCompleted = get().currentSession?.status === 'completed'
-      return playerManager.buildLeaderboard(players, isGameCompleted ?? false)
+      const players = state.currentSession?.players ?? []
+      const isCompleted = state.currentSession?.status === 'completed'
+      return playerManager.buildLeaderboard(players, isCompleted ?? false)
     },
-    isGameCompleted() {
-      return get().currentSession?.status === 'completed'
+    isGameCompleted(state): boolean {
+      return state.currentSession?.status === 'completed'
     },
-    gameStatus() {
-      return get().currentSession?.status ?? 'active'
+    gameStatus(state): string {
+      return state.currentSession?.status ?? 'active'
     },
+  },
 
-    // Actions
+  actions: {
     async fetchCategories(force = false) {
       const categoryManager = useCategoryManager()
-      return categoryManager.fetchCategories(get(), force)
+      return categoryManager.fetchCategories(this, force)
     },
     loadMoreCategories(step = 9) {
       const categoryManager = useCategoryManager()
-      categoryManager.loadMoreCategories(get(), step)
+      categoryManager.loadMoreCategories(this, step)
     },
     resetDisplayedCategories(count = 9) {
       const categoryManager = useCategoryManager()
-      categoryManager.resetDisplayedCategories(get(), count)
+      categoryManager.resetDisplayedCategories(this, count)
     },
     getCategoryById(categoryId: number): Category | null {
       const categoryManager = useCategoryManager()
-      return categoryManager.getCategoryById(get().categories, categoryId)
+      return categoryManager.getCategoryById(this.categories, categoryId)
     },
     getRandomCategory(): Category | null {
       const categoryManager = useCategoryManager()
-      return categoryManager.getRandomCategory(get().categories)
+      return categoryManager.getRandomCategory(this.categories)
     },
     generateLetter() {
       return randomLetter()
     },
     async resumeOrStartNewGame() {
-      if (get().currentSession) return get().currentSession
-      return get().startNewGame()
+      if (this.currentSession) return this.currentSession
+      return this.startNewGame()
     },
     async startNewGame() {
       const categoryManager = useCategoryManager()
       const sessionManager = useSessionManager()
 
-      await get().fetchCategories()
-      const category = categoryManager.getRandomCategory(get().categories)
+      await this.fetchCategories()
+      const category = categoryManager.getRandomCategory(this.categories)
       if (!category) throw new Error('Unable to start game without categories')
 
-      const letter = get().generateLetter()
-      const currentPlayers = get().currentSession?.players
+      const letter = this.generateLetter()
+      const currentPlayers = this.currentSession?.players
       const hasPlayers = currentPlayers && currentPlayers.length > 0
 
       if (hasPlayers) {
-        const nextRound = await get().startNextRound()
+        const nextRound = await this.startNextRound()
         if (!nextRound) throw new Error('Failed to start next round')
         return nextRound
       } else {
         const session = sessionManager.createSinglePlayerSession(category, letter)
-        set({ currentSession: session, postRoundDecisionPending: false })
-        await get().saveSessionToDB()
+        this.currentSession = session
+        this.postRoundDecisionPending = false
+        await this.saveSessionToDB()
         return session
       }
     },
     async endGame() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       const sessionManager = useSessionManager()
       const lifecycle = useGameLifecycle()
 
       session.endTime = Date.now()
-      const newHistory = [...get().history, sessionManager.cloneSessionForHistory(session)]
-      set({ history: newHistory })
+      this.history = [...this.history, sessionManager.cloneSessionForHistory(session)]
 
-      await get().saveSessionToDB()
-      await get().saveHistoryToDB()
+      await this.saveSessionToDB()
+      await this.saveHistoryToDB()
       await lifecycle.updateStatisticsForSession(session)
 
-      set({ currentSession: null, postRoundDecisionPending: false })
+      this.currentSession = null
+      this.postRoundDecisionPending = false
     },
     async completeGame() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       const sessionManager = useSessionManager()
@@ -330,72 +239,72 @@ const createGameStore = (): GameStoreInstance =>
       session.status = 'completed'
       session.endTime = Date.now()
 
-      const newHistory = [...get().history, sessionManager.cloneSessionForHistory(session)]
-      set({ history: newHistory })
+      this.history = [...this.history, sessionManager.cloneSessionForHistory(session)]
 
-      await get().saveSessionToDB()
-      await get().saveHistoryToDB()
+      await this.saveSessionToDB()
+      await this.saveHistoryToDB()
       await lifecycle.updateStatisticsForSession(session)
 
       // Explicit flow transition: decision → completed
-      get().transitionToCompleted()
+      this.transitionToCompleted()
 
       // Don't clear session - keep it so leaderboard can display winner
       return session
     },
     async abandonGame() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       session.status = 'abandoned'
       session.endTime = Date.now()
 
-      await get().saveSessionToDB()
-      await get().saveHistoryToDB()
+      await this.saveSessionToDB()
+      await this.saveHistoryToDB()
 
-      set({ currentSession: null, postRoundDecisionPending: false })
+      this.currentSession = null
+      this.postRoundDecisionPending = false
     },
     setOnlineStatus(status: boolean) {
-      set({ isOnline: status })
+      this.isOnline = status
     },
     setInstallPrompt(event: BeforeInstallPromptEvent | null) {
-      set({ installPromptEvent: event })
+      this.installPromptEvent = event
     },
     setPendingPlayerNames(playerNames: string[]) {
       const names = [...playerNames]
-      set({ pendingPlayerNames: names })
+      this.pendingPlayerNames = names
       persistPendingPlayerNames(names)
     },
     async showInstallPrompt() {
-      const promptEvent = get().installPromptEvent
+      const promptEvent = this.installPromptEvent
       if (!promptEvent) return false
       await promptEvent.prompt()
       const { outcome } = await promptEvent.userChoice
-      if (outcome === 'accepted') set({ installPromptEvent: null })
+      if (outcome === 'accepted') this.installPromptEvent = null
       return outcome === 'accepted'
     },
     async loadFromDB() {
       const persistence = usePersistence()
 
       const session = await persistence.loadSessionFromDB()
-      set({ currentSession: session ?? null })
+      this.currentSession = session ?? null
 
       const history = await persistence.loadHistoryFromDB()
-      set({ history: history ?? [] })
+      this.history = history ?? []
     },
     async saveSessionToDB() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
       const persistence = usePersistence()
       await persistence.saveSessionToDB(session)
     },
     async saveHistoryToDB() {
       const persistence = usePersistence()
-      await persistence.saveHistoryToDB(get().history)
+      await persistence.saveHistoryToDB(this.history)
     },
     async loadSessionById(sessionId: string) {
       const persistence = usePersistence()
-      const currentSession = get().currentSession
+      const currentSession = this.currentSession
       let session: import('@riddle-rush/types/game').GameSession | null = null
 
       try {
@@ -406,27 +315,31 @@ const createGameStore = (): GameStoreInstance =>
 
       // Primary lookup: direct ID store hit.
       if (session) {
-        set({ currentSession: session, postRoundDecisionPending: false })
+        this.currentSession = session
+        this.postRoundDecisionPending = false
         return session
       }
 
       // Keep in-memory session when route transitions race DB writes.
       if (currentSession?.id === sessionId) {
-        set({ currentSession, postRoundDecisionPending: false })
+        this.currentSession = currentSession
+        this.postRoundDecisionPending = false
         return currentSession
       }
 
       // Secondary lookup: the current-session slot can exist even when ID index is stale.
       const currentFromDB = await persistence.loadSessionFromDB()
       if (currentFromDB?.id === sessionId) {
-        set({ currentSession: currentFromDB, postRoundDecisionPending: false })
+        this.currentSession = currentFromDB
+        this.postRoundDecisionPending = false
         return currentFromDB
       }
 
       return null
     },
     clearSession() {
-      set({ currentSession: null, postRoundDecisionPending: false })
+      this.currentSession = null
+      this.postRoundDecisionPending = false
     },
     async setupPlayers(
       playerNames: string[],
@@ -438,23 +351,26 @@ const createGameStore = (): GameStoreInstance =>
       const sessionManager = useSessionManager()
       const playerManager = usePlayerManager()
 
-      await get().fetchCategories()
-      const category = customCategory || categoryManager.getRandomCategory(get().categories)
+      await this.fetchCategories()
+      const category = customCategory || categoryManager.getRandomCategory(this.categories)
       if (!category) throw new Error('Unable to start game without categories')
 
-      const letter = customLetter || get().generateLetter()
+      const letter = customLetter || this.generateLetter()
       const players = playerManager.createPlayers(playerNames)
       const session = sessionManager.createSession(players, category, letter, gameName)
 
-      set({ currentSession: session, postRoundDecisionPending: false, pendingPlayerNames: [] })
+      this.currentSession = session
+      this.postRoundDecisionPending = false
+      this.pendingPlayerNames = []
+
       // Explicit flow transition: setup → in-round
-      get().transitionToInRound()
+      this.transitionToInRound()
       persistPendingPlayerNames([])
-      await get().saveSessionToDB()
+      await this.saveSessionToDB()
       return session
     },
     async submitPlayerAnswer(playerId: string, answer: string) {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       const playerManager = usePlayerManager()
@@ -478,33 +394,26 @@ const createGameStore = (): GameStoreInstance =>
         )
       }
 
-      // Trigger reactive updates for Vue subscribers consuming Zustand hooks.
-      set({
-        currentSession: {
-          ...session,
-          players: [...session.players],
-        },
-      })
-
       // Check if all players submitted and transition to round-complete
       if (playerManager.allPlayersSubmitted(session.players)) {
-        get().transitionToRoundComplete()
+        this.transitionToRoundComplete()
       }
 
-      void get().saveSessionToDB()
+      void this.saveSessionToDB()
     },
 
     // Flow state transition helpers for unified state management
     transitionToSetup() {
-      set({ currentSession: null, postRoundDecisionPending: false })
+      this.currentSession = null
+      this.postRoundDecisionPending = false
     },
 
     transitionToInRound() {
-      set({ postRoundDecisionPending: false })
+      this.postRoundDecisionPending = false
     },
 
     transitionToRoundComplete() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (session) {
         // Mark the current round as completed by adding it to roundHistory
         // This ensures flowState returns 'round-complete'
@@ -514,7 +423,7 @@ const createGameStore = (): GameStoreInstance =>
             category: session.category.name,
             letter: session.letter,
             timestamp: Date.now(),
-            playerResults: session.players.map((player) => ({
+            playerResults: session.players.map((player: Player) => ({
               playerId: player.id,
               playerName: player.name,
               answer: player.currentRoundAnswer || '',
@@ -522,27 +431,24 @@ const createGameStore = (): GameStoreInstance =>
             })),
           })
         }
-        set({
-          currentSession: { ...session },
-          postRoundDecisionPending: true,
-        })
+        this.postRoundDecisionPending = true
       }
     },
 
     transitionToDecision() {
-      set({ postRoundDecisionPending: true })
+      this.postRoundDecisionPending = true
     },
 
     transitionToCompleted() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (session) {
         session.status = 'completed'
-        set({ currentSession: { ...session }, postRoundDecisionPending: false })
+        this.postRoundDecisionPending = false
       }
     },
 
     async assignPlayerScore(playerId: string, points: number) {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       const playerManager = usePlayerManager()
@@ -553,18 +459,10 @@ const createGameStore = (): GameStoreInstance =>
       if (!player) return
       playerManager.assignPlayerScore(player, points)
 
-      // Trigger reactive updates for score-dependent UI projections.
-      set({
-        currentSession: {
-          ...session,
-          players: [...session.players],
-        },
-      })
-
-      void get().saveSessionToDB()
+      void this.saveSessionToDB()
     },
     async updatePlayerAvatar(playerId: string, avatarUrl: string) {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       const playerManager = usePlayerManager()
@@ -575,18 +473,10 @@ const createGameStore = (): GameStoreInstance =>
       if (!player) return
       playerManager.updatePlayerAvatar(player, avatarUrl)
 
-      // Trigger reactive updates for avatar-dependent UI.
-      set({
-        currentSession: {
-          ...session,
-          players: [...session.players],
-        },
-      })
-
-      void get().saveSessionToDB()
+      void this.saveSessionToDB()
     },
     async completeRound() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       // Prevent incomplete round snapshots in multiplayer mode.
@@ -602,8 +492,8 @@ const createGameStore = (): GameStoreInstance =>
       }
 
       // Idempotency guard: avoid duplicate history entries for the same round.
-      if (get().isCurrentRoundCompleted()) {
-        set({ postRoundDecisionPending: true })
+      if (this.isCurrentRoundCompleted) {
+        this.postRoundDecisionPending = true
         return
       }
 
@@ -611,21 +501,21 @@ const createGameStore = (): GameStoreInstance =>
       const roundResult = lifecycle.buildRoundResult(session)
 
       session.roundHistory.push(roundResult)
-      await get().saveSessionToDB()
+      await this.saveSessionToDB()
       // Explicit flow transition: round-complete → decision
-      get().transitionToDecision()
+      this.transitionToDecision()
     },
     async startNextRound(category?: Category, letter?: string) {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return null
 
       const categoryManager = useCategoryManager()
       const playerManager = usePlayerManager()
 
-      const selectedCategory = category || categoryManager.getRandomCategory(get().categories)
+      const selectedCategory = category || categoryManager.getRandomCategory(this.categories)
       if (!selectedCategory) throw new Error('Unable to start round without categories')
 
-      const selectedLetter = letter || get().generateLetter()
+      const selectedLetter = letter || this.generateLetter()
       playerManager.resetPlayerRoundState(session.players)
       session.currentPlayerIndex = 0
 
@@ -633,14 +523,14 @@ const createGameStore = (): GameStoreInstance =>
       session.category = { ...selectedCategory, letter: selectedLetter }
       session.letter = selectedLetter
 
-      await get().saveSessionToDB()
+      await this.saveSessionToDB()
       // Explicit flow transition: decision → in-round
-      get().transitionToInRound()
+      this.transitionToInRound()
       return session
     },
     async advanceToConfiguredRound(category: Category, letter: string) {
-      const session = get().currentSession
-      const inMemoryPendingPlayers = get().pendingPlayerNames
+      const session = this.currentSession
+      const inMemoryPendingPlayers = this.pendingPlayerNames
       const restoredPendingPlayers =
         inMemoryPendingPlayers.length > 0 ? inMemoryPendingPlayers : loadPendingPlayerNames()
       const hasPendingPlayers = restoredPendingPlayers.length > 0
@@ -650,18 +540,16 @@ const createGameStore = (): GameStoreInstance =>
           return null
         }
 
-        const createdSession = await get().setupPlayers(
+        const createdSession = await this.setupPlayers(
           restoredPendingPlayers,
           undefined,
           letter,
           category
         )
 
-        set({
-          pendingPlayerNames: [],
-          selectedLetter: null,
-          postRoundDecisionPending: false,
-        })
+        this.pendingPlayerNames = []
+        this.selectedLetter = null
+        this.postRoundDecisionPending = false
 
         return createdSession
       }
@@ -673,43 +561,36 @@ const createGameStore = (): GameStoreInstance =>
         return null
       }
 
-      if (get().isCurrentRoundCompleted()) {
-        return get().startNextRound(category, letter)
+      if (this.isCurrentRoundCompleted) {
+        return this.startNextRound(category, letter)
       }
 
       // Refresh within an active round: keep round counter stable, update round context,
       // and reset submissions for a fair restart.
       session.category = { ...category, letter }
       session.letter = letter
-      await get().resetPlayerSubmissions()
-      set({ postRoundDecisionPending: false })
+      await this.resetPlayerSubmissions()
+      this.postRoundDecisionPending = false
       return session
     },
     async resetPlayerSubmissions() {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return
 
       const playerManager = usePlayerManager()
       playerManager.resetPlayerSubmissions(session.players)
       session.currentPlayerIndex = 0
 
-      await get().saveSessionToDB()
-      set({ postRoundDecisionPending: false })
+      await this.saveSessionToDB()
+      this.postRoundDecisionPending = false
     },
     getPlayerById(playerId: string): Player | null {
-      const session = get().currentSession
+      const session = this.currentSession
       if (!session) return null
       const playerManager = usePlayerManager()
       return playerManager.getPlayerById(session.players, playerId)
     },
-  }))
+  },
+})
 
-const gameStoreGlobal = globalThis as typeof globalThis & {
-  __RR_GAME_STORE__?: GameStoreInstance
-}
-
-export const gameStore = gameStoreGlobal.__RR_GAME_STORE__ ?? createGameStore()
-
-if (!gameStoreGlobal.__RR_GAME_STORE__) {
-  gameStoreGlobal.__RR_GAME_STORE__ = gameStore
-}
+export const gameStore = useGameStore

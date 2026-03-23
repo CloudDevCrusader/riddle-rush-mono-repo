@@ -1,14 +1,16 @@
-import { gameStore } from '~/stores/gameStore'
+import { useGameStore } from '~/stores/gameStore'
 
 export function usePlayerActions() {
+  const store = useGameStore()
+
   return {
     // Actions (all stable references from the store)
-    submitPlayerAnswer: gameStore.getState().submitPlayerAnswer,
-    assignPlayerScore: gameStore.getState().assignPlayerScore,
-    updatePlayerAvatar: gameStore.getState().updatePlayerAvatar,
-    completeRound: gameStore.getState().completeRound,
-    startNextRound: gameStore.getState().startNextRound,
-    resetPlayerSubmissions: gameStore.getState().resetPlayerSubmissions,
-    getPlayerById: gameStore.getState().getPlayerById,
+    submitPlayerAnswer: store.submitPlayerAnswer,
+    assignPlayerScore: store.assignPlayerScore,
+    updatePlayerAvatar: store.updatePlayerAvatar,
+    completeRound: store.completeRound,
+    startNextRound: store.startNextRound,
+    resetPlayerSubmissions: store.resetPlayerSubmissions,
+    getPlayerById: store.getPlayerById,
   }
 }

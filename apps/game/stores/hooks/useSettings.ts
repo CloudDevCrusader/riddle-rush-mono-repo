@@ -1,106 +1,44 @@
-import { computed, ref, onScopeDispose } from '#imports'
-import { settingsStore } from '../settingsStore'
-import type { GameSettings } from '../settingsStore'
+import { computed } from '#imports'
+import { useSettingsStore as settingsStore } from '../settingsStore'
 
 export function useSettings() {
-  const version = ref(0)
-  const unsubscribe = settingsStore.subscribe(() => {
-    version.value++
-  })
-  onScopeDispose(() => unsubscribe())
+  const store = settingsStore()
 
   return {
     // State
-    maxPlayersPerGame: computed(() => {
-      void version.value
-      return settingsStore.getState().maxPlayersPerGame
-    }),
-    showLeaderboardAfterRound: computed(() => {
-      void version.value
-      return settingsStore.getState().showLeaderboardAfterRound
-    }),
-    leaderboardEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().leaderboardEnabled
-    }),
-    debugMode: computed(() => {
-      void version.value
-      return settingsStore.getState().debugMode
-    }),
-    soundEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().soundEnabled
-    }),
-    soundVolume: computed(() => {
-      void version.value
-      return settingsStore.getState().soundVolume
-    }),
-    musicEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().musicEnabled
-    }),
-    musicVolume: computed(() => {
-      void version.value
-      return settingsStore.getState().musicVolume
-    }),
-    offlineMode: computed(() => {
-      void version.value
-      return settingsStore.getState().offlineMode
-    }),
-    language: computed(() => {
-      void version.value
-      return settingsStore.getState().language
-    }),
-    fortuneWheelEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().fortuneWheelEnabled
-    }),
-    websocketEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().websocketEnabled
-    }),
-    answerInputEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().answerInputEnabled
-    }),
+    maxPlayersPerGame: computed(() => store.maxPlayersPerGame),
+    showLeaderboardAfterRound: computed(() => store.showLeaderboardAfterRound),
+    leaderboardEnabled: computed(() => store.leaderboardEnabled),
+    debugMode: computed(() => store.debugMode),
+    soundEnabled: computed(() => store.soundEnabled),
+    soundVolume: computed(() => store.soundVolume),
+    musicEnabled: computed(() => store.musicEnabled),
+    musicVolume: computed(() => store.musicVolume),
+    offlineMode: computed(() => store.offlineMode),
+    language: computed(() => store.language),
+    fortuneWheelEnabled: computed(() => store.fortuneWheelEnabled),
+    websocketEnabled: computed(() => store.websocketEnabled),
+    answerInputEnabled: computed(() => store.answerInputEnabled),
 
     // Getters
-    isDebugMode: computed(() => {
-      void version.value
-      return settingsStore.getState().isDebugMode
-    }),
-    isLeaderboardEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().isLeaderboardEnabled
-    }),
-    shouldShowLeaderboard: computed(() => {
-      void version.value
-      return settingsStore.getState().shouldShowLeaderboard
-    }),
-    isFortuneWheelEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().isFortuneWheelEnabled
-    }),
-    isWebSocketEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().isWebSocketEnabled
-    }),
-    isAnswerInputEnabled: computed(() => {
-      void version.value
-      return settingsStore.getState().isAnswerInputEnabled
-    }),
+    isDebugMode: computed(() => store.isDebugMode),
+    isLeaderboardEnabled: computed(() => store.isLeaderboardEnabled),
+    shouldShowLeaderboard: computed(() => store.shouldShowLeaderboard),
+    isFortuneWheelEnabled: computed(() => store.isFortuneWheelEnabled),
+    isWebSocketEnabled: computed(() => store.isWebSocketEnabled),
+    isAnswerInputEnabled: computed(() => store.isAnswerInputEnabled),
 
     // Actions
-    updateSetting: settingsStore.getState().updateSetting,
-    toggleDebugMode: settingsStore.getState().toggleDebugMode,
-    toggleLeaderboard: settingsStore.getState().toggleLeaderboard,
-    toggleSound: settingsStore.getState().toggleSound,
-    toggleFortuneWheel: settingsStore.getState().toggleFortuneWheel,
-    toggleWebSocket: settingsStore.getState().toggleWebSocket,
-    toggleAnswerInput: settingsStore.getState().toggleAnswerInput,
-    setOfflineMode: settingsStore.getState().setOfflineMode,
-    resetToDefaults: settingsStore.getState().resetToDefaults,
-    setLanguage: settingsStore.getState().setLanguage,
-    getLanguage: settingsStore.getState().getLanguage,
+    updateSetting: store.updateSetting,
+    toggleDebugMode: store.toggleDebugMode,
+    toggleLeaderboard: store.toggleLeaderboard,
+    toggleSound: store.toggleSound,
+    toggleFortuneWheel: store.toggleFortuneWheel,
+    toggleWebSocket: store.toggleWebSocket,
+    toggleAnswerInput: store.toggleAnswerInput,
+    setOfflineMode: store.setOfflineMode,
+    resetToDefaults: store.resetToDefaults,
+    setLanguage: store.setLanguage,
+    getLanguage: store.getLanguage,
   }
 }

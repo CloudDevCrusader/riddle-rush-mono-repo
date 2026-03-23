@@ -1,8 +1,11 @@
+import { setActivePinia, createPinia } from 'pinia'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { gameStore } from '../../stores/gameStore'
+import { useGameStore } from '../../stores/gameStore'
 import { usePlayerManager } from '../../composables/usePlayerManager'
 import { createCategoryList } from '../utils/factories'
 import type { Category, Player } from '@riddle-rush/types/game'
+
+let gameStore: ReturnType<typeof useGameStore>
 
 // Mock setup (same as game-store.spec.ts)
 const mockSaveGameSession = vi.fn().mockResolvedValue(undefined)
@@ -29,7 +32,7 @@ vi.mock('~/composables/useStatistics', () => ({
 const fetchMock = vi.fn()
 vi.stubGlobal('$fetch', fetchMock as unknown as typeof $fetch)
 
-const getSession = () => gameStore.getState().currentSession
+const getSession = () => gameStore?.currentSession
 const getPlayers = () => getSession()?.players ?? []
 const getCurrentPlayerTurn = () => {
   const playerManager = usePlayerManager()
@@ -48,22 +51,11 @@ describe('Reactivity Improvements - Player State Mutations', () => {
   let mockCategories: Category[]
 
   beforeEach(() => {
+    setActivePinia(createPinia())
     vi.clearAllMocks()
     vi.clearAllTimers()
-    // Reset Zustand store data properties for test isolation.
-    // Direct mutation preserves JS getter properties on the store.
-    const state = gameStore.getState()
-    state.currentSession = null
-    state.history = []
-    state.categories = []
-    state.categoriesLoaded = false
-    state.categoriesLoading = false
-    state.displayedCategoryCount = 9
-    state.categoryLoadError = null
-    state.selectedLetter = null
-    state.isOnline = true
-    state.installPromptEvent = null
-    state.pendingPlayerNames = []
+    // Fresh Pinia instance starts with default state - no manual reset needed
+    gameStore = useGameStore()
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
     fetchMock.mockClear()
@@ -79,7 +71,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
   describe('Index-based Player Mutations', () => {
     describe('submitPlayerAnswer - Reactivity via Index', () => {
       it('updates player at correct index when submitting answer', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = session.players[0]!.id
@@ -106,7 +98,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('properly triggers currentPlayerTurn reactive update', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = session.players[0]!.id
@@ -122,7 +114,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('ensures reactivity works with allPlayersSubmitted getter', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = session.players
@@ -142,7 +134,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
     describe('assignPlayerScore - Reactivity via Index', () => {
       it('updates player score at correct index', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = session.players[0]!.id
@@ -162,7 +154,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('accumulates total score correctly with multiple rounds', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob'])
 
         const aliceId = session.players[0]!.id
@@ -184,7 +176,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('maintains leaderboard ranking after score updates', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const alice = session.players[0]!
@@ -206,7 +198,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
     describe('updatePlayerAvatar - Reactivity via Index', () => {
       it('updates avatar at correct player index', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const aliceId = session.players[0]!.id
@@ -227,7 +219,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('persists avatar updates to database', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice'])
 
         const alice = session.players[0]!
@@ -242,7 +234,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
     describe('Complex Multiplayer Workflow', () => {
       it('handles complete round with multiple players correctly', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
         const [alice, bob, charlie] = session.players
@@ -273,7 +265,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
       })
 
       it('supports multiple rounds with proper state reset', async () => {
-        const store = gameStore.getState()
+        const store = gameStore
         const session = await store.setupPlayers(['Alice', 'Bob'])
 
         const [alice, bob] = session.players
@@ -308,7 +300,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
 
   describe('Edge Cases - Reactivity', () => {
     it('handles rapid consecutive updates without race conditions', async () => {
-      const store = gameStore.getState()
+      const store = gameStore
       const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       const [alice, bob, charlie] = session.players
@@ -326,7 +318,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
     })
 
     it('updates leaderboard reactively after score changes', async () => {
-      const store = gameStore.getState()
+      const store = gameStore
       const session = await store.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       const [alice, bob, charlie] = session.players
@@ -354,7 +346,7 @@ describe('Reactivity Improvements - Player State Mutations', () => {
     })
 
     it('handles update of nonexistent player gracefully', async () => {
-      const store = gameStore.getState()
+      const store = gameStore
       const session = await store.setupPlayers(['Alice', 'Bob'])
 
       const initialState = JSON.stringify(session.players)

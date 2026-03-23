@@ -1,8 +1,11 @@
+import { setActivePinia, createPinia } from 'pinia'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { gameStore } from '../../stores/gameStore'
+import { useGameStore } from '../../stores/gameStore'
 import { usePlayerManager } from '../../composables/usePlayerManager'
 import { createCategoryList } from '../utils/factories'
 import type { Category, Player } from '@riddle-rush/types/game'
+
+let gameStore: ReturnType<typeof useGameStore>
 
 // Mock setup
 const mockSaveGameSession = vi.fn().mockResolvedValue(undefined)
@@ -33,22 +36,11 @@ describe('currentPlayerIndex - Index-based Player Turn Tracking', () => {
   let mockCategories: Category[]
 
   beforeEach(() => {
+    setActivePinia(createPinia())
     vi.clearAllMocks()
     vi.clearAllTimers()
-    // Reset Zustand store data properties for test isolation.
-    // Direct mutation preserves JS getter properties on the store.
-    const state = gameStore.getState()
-    state.currentSession = null
-    state.history = []
-    state.categories = []
-    state.categoriesLoaded = false
-    state.categoriesLoading = false
-    state.displayedCategoryCount = 9
-    state.categoryLoadError = null
-    state.selectedLetter = null
-    state.isOnline = true
-    state.installPromptEvent = null
-    state.pendingPlayerNames = []
+    // Fresh Pinia instance starts with default state - no manual reset needed
+    gameStore = useGameStore()
     mockCategories = createCategoryList(10)
     fetchMock.mockResolvedValue(mockCategories)
     fetchMock.mockClear()
@@ -112,78 +104,78 @@ describe('currentPlayerIndex - Index-based Player Turn Tracking', () => {
 
   describe('Store integration - currentPlayerIndex', () => {
     it('new session via setupPlayers has currentPlayerIndex 0', async () => {
-      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob', 'Charlie'])
+      const session = await gameStore.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       expect(session.currentPlayerIndex).toBe(0)
     })
 
     it('submitPlayerAnswer advances currentPlayerIndex by 1', async () => {
-      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob', 'Charlie'])
+      const session = await gameStore.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       const aliceId = session.players[0]!.id
-      await gameStore.getState().submitPlayerAnswer(aliceId, 'Apple')
+      await gameStore.submitPlayerAnswer(aliceId, 'Apple')
 
-      expect(gameStore.getState().currentSession?.currentPlayerIndex).toBe(1)
+      expect(gameStore.currentSession?.currentPlayerIndex).toBe(1)
     })
 
     it('after submitting all players, currentPlayerIndex equals player count', async () => {
-      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob', 'Charlie'])
+      const session = await gameStore.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       for (const player of session.players) {
-        await gameStore.getState().submitPlayerAnswer(player.id, 'Answer')
+        await gameStore.submitPlayerAnswer(player.id, 'Answer')
       }
 
-      expect(gameStore.getState().currentSession?.currentPlayerIndex).toBe(3)
+      expect(gameStore.currentSession?.currentPlayerIndex).toBe(3)
     })
 
     it('startNextRound resets currentPlayerIndex to 0', async () => {
-      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob', 'Charlie'])
+      const session = await gameStore.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       // Submit some answers to advance the index
-      await gameStore.getState().submitPlayerAnswer(session.players[0]!.id, 'A')
-      await gameStore.getState().submitPlayerAnswer(session.players[1]!.id, 'B')
-      expect(gameStore.getState().currentSession?.currentPlayerIndex).toBe(2)
+      await gameStore.submitPlayerAnswer(session.players[0]!.id, 'A')
+      await gameStore.submitPlayerAnswer(session.players[1]!.id, 'B')
+      expect(gameStore.currentSession?.currentPlayerIndex).toBe(2)
 
       // Start next round
-      await gameStore.getState().startNextRound()
+      await gameStore.startNextRound()
 
-      expect(gameStore.getState().currentSession?.currentPlayerIndex).toBe(0)
+      expect(gameStore.currentSession?.currentPlayerIndex).toBe(0)
     })
 
     it('resetPlayerSubmissions resets currentPlayerIndex to 0', async () => {
-      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const session = await gameStore.setupPlayers(['Alice', 'Bob'])
 
-      await gameStore.getState().submitPlayerAnswer(session.players[0]!.id, 'A')
-      expect(gameStore.getState().currentSession?.currentPlayerIndex).toBe(1)
+      await gameStore.submitPlayerAnswer(session.players[0]!.id, 'A')
+      expect(gameStore.currentSession?.currentPlayerIndex).toBe(1)
 
-      await gameStore.getState().resetPlayerSubmissions()
+      await gameStore.resetPlayerSubmissions()
 
-      expect(gameStore.getState().currentSession?.currentPlayerIndex).toBe(0)
+      expect(gameStore.currentSession?.currentPlayerIndex).toBe(0)
     })
 
     it('currentPlayerTurn getter uses currentPlayerIndex', async () => {
-      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob', 'Charlie'])
+      const session = await gameStore.setupPlayers(['Alice', 'Bob', 'Charlie'])
 
       const playerManager = usePlayerManager()
       const getTurn = () =>
         playerManager.getCurrentPlayerTurn(
-          gameStore.getState().currentSession?.players ?? [],
-          gameStore.getState().currentSession?.currentPlayerIndex ?? 0
+          gameStore.currentSession?.players ?? [],
+          gameStore.currentSession?.currentPlayerIndex ?? 0
         )
 
       // Index 0 -> Alice
       expect(getTurn()?.name).toBe('Alice')
 
       // Submit Alice -> index becomes 1 -> Bob
-      await gameStore.getState().submitPlayerAnswer(session.players[0]!.id, 'A')
+      await gameStore.submitPlayerAnswer(session.players[0]!.id, 'A')
       expect(getTurn()?.name).toBe('Bob')
 
       // Submit Bob -> index becomes 2 -> Charlie
-      await gameStore.getState().submitPlayerAnswer(session.players[1]!.id, 'B')
+      await gameStore.submitPlayerAnswer(session.players[1]!.id, 'B')
       expect(getTurn()?.name).toBe('Charlie')
 
       // Submit Charlie -> index becomes 3 -> null (all done)
-      await gameStore.getState().submitPlayerAnswer(session.players[2]!.id, 'C')
+      await gameStore.submitPlayerAnswer(session.players[2]!.id, 'C')
       expect(getTurn()).toBeNull()
     })
   })

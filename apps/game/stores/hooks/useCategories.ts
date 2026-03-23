@@ -1,54 +1,27 @@
-import { computed, ref, onScopeDispose } from '#imports'
-import { gameStore } from '~/stores/gameStore'
+import { computed } from '#imports'
+import { useGameStore } from '~/stores/gameStore'
 
 export function useCategories() {
-  const version = ref(0)
-  const unsubscribe = gameStore.subscribe(() => {
-    version.value++
-  })
-  onScopeDispose(() => unsubscribe())
+  const store = useGameStore()
 
   return {
     // State
-    categories: computed(() => {
-      void version.value
-      return gameStore.getState().categories
-    }),
-    categoriesLoaded: computed(() => {
-      void version.value
-      return gameStore.getState().categoriesLoaded
-    }),
-    categoriesLoading: computed(() => {
-      void version.value
-      return gameStore.getState().categoriesLoading
-    }),
-    displayedCategoryCount: computed(() => {
-      void version.value
-      return gameStore.getState().displayedCategoryCount
-    }),
-    categoryLoadError: computed(() => {
-      void version.value
-      return gameStore.getState().categoryLoadError
-    }),
+    categories: computed(() => store.categories),
+    categoriesLoaded: computed(() => store.categoriesLoaded),
+    categoriesLoading: computed(() => store.categoriesLoading),
+    displayedCategoryCount: computed(() => store.displayedCategoryCount),
+    categoryLoadError: computed(() => store.categoryLoadError),
 
     // Getters
-    displayedCategories: computed(() => {
-      void version.value
-      const state = gameStore.getState()
-      return state.categories.slice(0, state.displayedCategoryCount)
-    }),
-    hasMoreCategories: computed(() => {
-      void version.value
-      const state = gameStore.getState()
-      return state.displayedCategoryCount < state.categories.length
-    }),
+    displayedCategories: computed(() => store.displayedCategories),
+    hasMoreCategories: computed(() => store.hasMoreCategories),
 
     // Actions
-    fetchCategories: gameStore.getState().fetchCategories,
-    loadMoreCategories: gameStore.getState().loadMoreCategories,
-    resetDisplayedCategories: gameStore.getState().resetDisplayedCategories,
-    getCategoryById: gameStore.getState().getCategoryById,
-    getRandomCategory: gameStore.getState().getRandomCategory,
-    categoryEmoji: gameStore.getState().categoryEmoji,
+    fetchCategories: store.fetchCategories,
+    loadMoreCategories: store.loadMoreCategories,
+    resetDisplayedCategories: store.resetDisplayedCategories,
+    getCategoryById: store.getCategoryById,
+    getRandomCategory: store.getRandomCategory,
+    categoryEmoji: store.categoryEmoji,
   }
 }

@@ -50,6 +50,7 @@ vi.stubGlobal('useGameSession', createGameSessionMock)
 vi.stubGlobal('useSettings', () => ({}))
 vi.stubGlobal('useCategories', () => ({}))
 vi.stubGlobal('usePlayerActions', () => ({}))
+vi.stubGlobal('useGameActions', () => ({}))
 
 describe('useGameState', () => {
   beforeEach(() => {
@@ -293,9 +294,10 @@ describe('useGameState', () => {
     it('should not include extra unexpected properties', () => {
       const state = useGameState()
       const keys = Object.keys(state)
-      expect(keys).toHaveLength(19)
+      expect(keys).toHaveLength(20)
       expect(keys).toEqual(
         expect.arrayContaining([
+          'gameState',
           'gameStore',
           'settingsStore',
           'currentCategory',

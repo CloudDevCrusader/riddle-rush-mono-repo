@@ -1,5 +1,4 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { defineStore } from 'pinia'
 
 export interface GameSettings {
   maxPlayersPerGame: number
@@ -33,119 +32,68 @@ const DEFAULT_SETTINGS: GameSettings = {
   answerInputEnabled: false,
 }
 
-const STORAGE_KEY = 'game-settings'
+export const useSettingsStore = defineStore('settings', {
+  state: (): GameSettings => ({
+    ...DEFAULT_SETTINGS,
+  }),
 
-export const settingsStore = create<
-  GameSettings & {
-    // Getters
-    isDebugMode: boolean
-    isLeaderboardEnabled: boolean
-    shouldShowLeaderboard: boolean
-    isFortuneWheelEnabled: boolean
-    isWebSocketEnabled: boolean
-    isAnswerInputEnabled: boolean
+  getters: {
+    isDebugMode(state): boolean {
+      return state.debugMode
+    },
+    isLeaderboardEnabled(state): boolean {
+      return state.leaderboardEnabled
+    },
+    shouldShowLeaderboard(state): boolean {
+      return state.leaderboardEnabled && state.showLeaderboardAfterRound
+    },
+    isFortuneWheelEnabled(state): boolean {
+      return state.fortuneWheelEnabled
+    },
+    isWebSocketEnabled(state): boolean {
+      return state.websocketEnabled
+    },
+    isAnswerInputEnabled(state): boolean {
+      return state.answerInputEnabled
+    },
+  },
 
-    // Actions
-    updateSetting: <K extends keyof GameSettings>(key: K, value: GameSettings[K]) => void
-    toggleDebugMode: () => void
-    toggleLeaderboard: () => void
-    toggleSound: () => void
-    toggleFortuneWheel: () => void
-    toggleWebSocket: () => void
-    toggleAnswerInput: () => void
-    setOfflineMode: (enabled: boolean) => void
-    resetToDefaults: () => void
-    setLanguage: (lang: string) => void
-    getLanguage: () => string
-  }
->()(
-  persist(
-    (set, get) => ({
-      // State
-      ...DEFAULT_SETTINGS,
+  actions: {
+    updateSetting<K extends keyof GameSettings>(key: K, value: GameSettings[K]) {
+      this[key] = value
+    },
+    toggleDebugMode() {
+      this.debugMode = !this.debugMode
+    },
+    toggleLeaderboard() {
+      this.leaderboardEnabled = !this.leaderboardEnabled
+    },
+    toggleSound() {
+      this.soundEnabled = !this.soundEnabled
+    },
+    toggleFortuneWheel() {
+      this.fortuneWheelEnabled = !this.fortuneWheelEnabled
+    },
+    toggleWebSocket() {
+      this.websocketEnabled = !this.websocketEnabled
+    },
+    toggleAnswerInput() {
+      this.answerInputEnabled = !this.answerInputEnabled
+    },
+    setOfflineMode(enabled: boolean) {
+      this.offlineMode = enabled
+    },
+    resetToDefaults() {
+      this.$patch(DEFAULT_SETTINGS)
+    },
+    setLanguage(lang: string) {
+      this.language = lang
+    },
+    getLanguage(): string {
+      return this.language
+    },
+  },
+  persist: true,
+})
 
-      // Getters
-      get isDebugMode() {
-        return get().debugMode
-      },
-      get isLeaderboardEnabled() {
-        return get().leaderboardEnabled
-      },
-      get shouldShowLeaderboard() {
-        return get().leaderboardEnabled && get().showLeaderboardAfterRound
-      },
-      get isFortuneWheelEnabled() {
-        return get().fortuneWheelEnabled
-      },
-      get isWebSocketEnabled() {
-        return get().websocketEnabled
-      },
-      get isAnswerInputEnabled() {
-        return get().answerInputEnabled
-      },
-
-      // Actions
-      updateSetting: <K extends keyof GameSettings>(key: K, value: GameSettings[K]) => {
-        set({ [key]: value } as unknown as Partial<GameSettings>)
-      },
-
-      toggleDebugMode: () => {
-        set({ debugMode: !get().debugMode })
-      },
-
-      toggleLeaderboard: () => {
-        set({ leaderboardEnabled: !get().leaderboardEnabled })
-      },
-
-      toggleSound: () => {
-        set({ soundEnabled: !get().soundEnabled })
-      },
-
-      toggleFortuneWheel: () => {
-        set({ fortuneWheelEnabled: !get().fortuneWheelEnabled })
-      },
-
-      toggleWebSocket: () => {
-        set({ websocketEnabled: !get().websocketEnabled })
-      },
-
-      toggleAnswerInput: () => {
-        set({ answerInputEnabled: !get().answerInputEnabled })
-      },
-
-      setOfflineMode: (enabled: boolean) => {
-        set({ offlineMode: enabled })
-      },
-
-      resetToDefaults: () => {
-        set(DEFAULT_SETTINGS)
-      },
-
-      setLanguage: (lang: string) => {
-        set({ language: lang })
-      },
-
-      getLanguage: () => {
-        return get().language
-      },
-    }),
-    {
-      name: STORAGE_KEY,
-      partialize: (state) => ({
-        maxPlayersPerGame: state.maxPlayersPerGame,
-        showLeaderboardAfterRound: state.showLeaderboardAfterRound,
-        leaderboardEnabled: state.leaderboardEnabled,
-        debugMode: state.debugMode,
-        soundEnabled: state.soundEnabled,
-        soundVolume: state.soundVolume,
-        musicEnabled: state.musicEnabled,
-        musicVolume: state.musicVolume,
-        offlineMode: state.offlineMode,
-        language: state.language,
-        fortuneWheelEnabled: state.fortuneWheelEnabled,
-        websocketEnabled: state.websocketEnabled,
-        answerInputEnabled: state.answerInputEnabled,
-      }),
-    }
-  )
-)
+export const settingsStore = useSettingsStore

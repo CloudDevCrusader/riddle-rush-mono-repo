@@ -3,7 +3,6 @@
  * Provides centralized access to commonly used game store computeds
  * Reduces duplication across pages
  */
-import { gameStore } from '../stores/gameStore'
 
 export function useGameState() {
   const gameSession = useGameSession()

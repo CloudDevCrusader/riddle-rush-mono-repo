@@ -1,28 +1,18 @@
-import { computed, ref, onScopeDispose } from '#imports'
-import { gameStore } from '~/stores/gameStore'
+import { computed } from '#imports'
+import { useGameStore } from '~/stores/gameStore'
 
 export function useInstallPrompt() {
-  const version = ref(0)
-  const unsubscribe = gameStore.subscribe(() => {
-    version.value++
-  })
-  onScopeDispose(() => unsubscribe())
+  const store = useGameStore()
 
   return {
     // State
-    installPromptEvent: computed(() => {
-      void version.value
-      return gameStore.getState().installPromptEvent
-    }),
+    installPromptEvent: computed(() => store.installPromptEvent),
 
     // Getters
-    canInstall: computed(() => {
-      void version.value
-      return gameStore.getState().installPromptEvent !== null
-    }),
+    canInstall: computed(() => store.canInstall),
 
     // Actions
-    setInstallPrompt: gameStore.getState().setInstallPrompt,
-    showInstallPrompt: gameStore.getState().showInstallPrompt,
+    setInstallPrompt: store.setInstallPrompt,
+    showInstallPrompt: store.showInstallPrompt,
   }
 }

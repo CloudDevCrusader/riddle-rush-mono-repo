@@ -1,122 +1,51 @@
-import { computed, ref, onScopeDispose } from '#imports'
-import { gameStore } from '~/stores/gameStore'
+import { computed } from '#imports'
+import { useGameStore } from '~/stores/gameStore'
 import { usePlayerManager } from '~/composables/usePlayerManager'
 
 export function useGameSession() {
   const playerManager = usePlayerManager()
-  const version = ref(0)
-  const unsubscribe = gameStore.subscribe(() => {
-    version.value++
-  })
-  onScopeDispose(() => unsubscribe())
+  const store = useGameStore()
 
   return {
     // State
-    currentSession: computed(() => {
-      void version.value
-      return gameStore.getState().currentSession
-    }),
-    history: computed(() => {
-      void version.value
-      return gameStore.getState().history
-    }),
-    isOnline: computed(() => {
-      void version.value
-      return gameStore.getState().isOnline
-    }),
-    pendingPlayerNames: computed(() => {
-      void version.value
-      return gameStore.getState().pendingPlayerNames
-    }),
-    selectedLetter: computed(() => {
-      void version.value
-      return gameStore.getState().selectedLetter
-    }),
+    currentSession: computed(() => store.currentSession),
+    history: computed(() => store.history),
+    isOnline: computed(() => store.isOnline),
+    pendingPlayerNames: computed(() => store.pendingPlayerNames),
+    selectedLetter: computed(() => store.selectedLetter),
 
     // Getters
-    hasActiveSession: computed(() => {
-      void version.value
-      return gameStore.getState().hasActiveSession()
-    }),
-    isGameCompleted: computed(() => {
-      void version.value
-      return gameStore.getState().isGameCompleted()
-    }),
-    gameStatus: computed(() => {
-      void version.value
-      return gameStore.getState().gameStatus()
-    }),
-    currentRound: computed(() => {
-      void version.value
-      return gameStore.getState().currentSession?.currentRound ?? 0
-    }),
-    postRoundDecisionPending: computed(() => {
-      void version.value
-      return gameStore.getState().postRoundDecisionPending
-    }),
-    gameMode: computed(() => {
-      void version.value
-      return gameStore.getState().gameMode()
-    }),
-    isCurrentRoundCompleted: computed(() => {
-      void version.value
-      return gameStore.getState().isCurrentRoundCompleted()
-    }),
-    nextRoundNumber: computed(() => {
-      void version.value
-      return gameStore.getState().nextRoundNumber()
-    }),
-    flowState: computed(() => {
-      void version.value
-      return gameStore.getState().flowState()
-    }),
-    currentCategory: computed(() => {
-      void version.value
-      return gameStore.getState().currentSession?.category ?? null
-    }),
-    currentLetter: computed(() => {
-      void version.value
-      return gameStore.getState().currentSession?.letter ?? ''
-    }),
-    players: computed(() => {
-      void version.value
-      return gameStore.getState().currentSession?.players ?? []
-    }),
-    currentPlayerTurn: computed(() => {
-      void version.value
-      const session = gameStore.getState().currentSession
-      const players = session?.players ?? []
-      const currentPlayerIndex = session?.currentPlayerIndex ?? 0
-      return playerManager.getCurrentPlayerTurn(players, currentPlayerIndex)
-    }),
-    allPlayersSubmitted: computed(() => {
-      void version.value
-      const players = gameStore.getState().currentSession?.players ?? []
-      return playerManager.allPlayersSubmitted(players)
-    }),
-    leaderboard: computed(() => {
-      void version.value
-      const session = gameStore.getState().currentSession
-      const players = session?.players ?? []
-      const isCompleted = session?.status === 'completed'
-      return playerManager.buildLeaderboard(players, isCompleted)
-    }),
+    hasActiveSession: computed(() => store.hasActiveSession),
+    isGameCompleted: computed(() => store.isGameCompleted),
+    gameStatus: computed(() => store.gameStatus),
+    currentRound: computed(() => store.currentRound),
+    postRoundDecisionPending: computed(() => store.postRoundDecisionPending),
+    gameMode: computed(() => store.gameMode),
+    isCurrentRoundCompleted: computed(() => store.isCurrentRoundCompleted),
+    nextRoundNumber: computed(() => store.nextRoundNumber),
+    flowState: computed(() => store.flowState),
+    currentCategory: computed(() => store.currentCategory),
+    currentLetter: computed(() => store.currentLetter),
+    players: computed(() => store.players),
+    currentPlayerTurn: computed(() => store.currentPlayerTurn),
+    allPlayersSubmitted: computed(() => store.allPlayersSubmitted),
+    leaderboard: computed(() => store.leaderboard),
 
-    // Actions (stable references -- no computed needed)
-    resumeOrStartNewGame: gameStore.getState().resumeOrStartNewGame,
-    startNewGame: gameStore.getState().startNewGame,
-    endGame: gameStore.getState().endGame,
-    completeGame: gameStore.getState().completeGame,
-    abandonGame: gameStore.getState().abandonGame,
-    clearSession: gameStore.getState().clearSession,
-    loadFromDB: gameStore.getState().loadFromDB,
-    saveSessionToDB: gameStore.getState().saveSessionToDB,
-    saveHistoryToDB: gameStore.getState().saveHistoryToDB,
-    loadSessionById: gameStore.getState().loadSessionById,
-    setupPlayers: gameStore.getState().setupPlayers,
-    advanceToConfiguredRound: gameStore.getState().advanceToConfiguredRound,
-    generateLetter: gameStore.getState().generateLetter,
-    setOnlineStatus: gameStore.getState().setOnlineStatus,
-    setPendingPlayerNames: gameStore.getState().setPendingPlayerNames,
+    // Actions
+    resumeOrStartNewGame: store.resumeOrStartNewGame,
+    startNewGame: store.startNewGame,
+    endGame: store.endGame,
+    completeGame: store.completeGame,
+    abandonGame: store.abandonGame,
+    clearSession: store.clearSession,
+    loadFromDB: store.loadFromDB,
+    saveSessionToDB: store.saveSessionToDB,
+    saveHistoryToDB: store.saveHistoryToDB,
+    loadSessionById: store.loadSessionById,
+    setupPlayers: store.setupPlayers,
+    advanceToConfiguredRound: store.advanceToConfiguredRound,
+    generateLetter: store.generateLetter,
+    setOnlineStatus: store.setOnlineStatus,
+    setPendingPlayerNames: store.setPendingPlayerNames,
   }
 }

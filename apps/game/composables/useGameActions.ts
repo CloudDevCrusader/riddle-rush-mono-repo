@@ -1,3 +1,4 @@
+import { useGameStore } from '~/stores/gameStore'
 import { useGameSession } from '../stores/hooks/useGameSession'
 import { useLogger } from './useLogger'
 
@@ -10,6 +11,7 @@ import { useLogger } from './useLogger'
  * this composable for fire-and-forget side-effectful actions.
  */
 export function useGameActions() {
+  const store = useGameStore()
   const gameSession = useGameSession()
   const playerActions = usePlayerActions()
   const router = useRouter()
@@ -170,7 +172,7 @@ export function useGameActions() {
    * Transition to round-complete state (used when all players submit)
    */
   const transitionToRoundComplete = () => {
-    gameStore.getState().transitionToRoundComplete()
+    store.transitionToRoundComplete()
   }
 
   const canConfirmRoundScores = () => getFlowState() === 'in-round'
