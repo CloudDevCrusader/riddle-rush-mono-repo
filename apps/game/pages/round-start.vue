@@ -180,7 +180,8 @@ onMounted(async () => {
   await gameStore.fetchCategories().catch((error) => {
     logger.warn('Falling back to local round-start category due fetch error', error)
   })
-  const allCategories = gameStore.categories.length > 0 ? gameStore.categories : [fallbackCategory]
+  const fetchedCategories = gameStore.categories.value ?? []
+  const allCategories = fetchedCategories.length > 0 ? fetchedCategories : [fallbackCategory]
 
   // Always ensure deterministic fallback values are present
   selectedCategory.value =
@@ -263,8 +264,10 @@ const startGame = async () => {
   }
 
   try {
-    if (!gameStore.currentSession.value && gameStore.pendingPlayerNames.value.length === 0) {
-      // No players configured — redirect to player setup instead of creating a ghost session
+    const currentSession = gameStore.currentSession.value
+    const pendingNames = gameStore.pendingPlayerNames.value
+    if (!currentSession && (!pendingNames || pendingNames.length === 0)) {
+      // No players configured -- redirect to player setup instead of creating a ghost session
       await goToPlayers()
       return
     }

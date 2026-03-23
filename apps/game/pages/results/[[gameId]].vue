@@ -272,7 +272,7 @@ watch(isDecisionFlow, (isDecision: boolean) => {
 
 onMounted(async () => {
   const id = gameId.value
-  if (id && gameStore.currentSession?.value?.id !== id) {
+  if (id && gameStore.currentSession.value?.id !== id) {
     try {
       await gameStore.loadSessionById(id)
     } catch {

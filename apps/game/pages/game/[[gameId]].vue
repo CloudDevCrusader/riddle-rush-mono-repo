@@ -165,6 +165,7 @@ const {
   players,
   currentPlayerTurn,
   allPlayersSubmitted,
+  hasActiveSession,
 } = useGameState()
 const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
@@ -201,7 +202,7 @@ const goHome = () => {
 }
 
 const handleBack = () => {
-  if (gameStore.hasActiveSession()) {
+  if (hasActiveSession.value) {
     showQuitModal.value = true
   } else {
     goHome()
@@ -261,7 +262,7 @@ const handleNext = async () => {
   }
 
   // Navigate to results with game ID
-  const currentGameId = gameStore.currentSession?.id ?? gameId.value
+  const currentGameId = gameStore.currentSession.value?.id ?? gameId.value
   if (currentGameId) {
     goToResults(currentGameId)
   } else {
@@ -318,10 +319,10 @@ onMounted(async () => {
       goToPlayers()
       return
     }
-  } else if (!gameStore.hasActiveSession()) {
+  } else if (!hasActiveSession.value) {
     // Multiplayer flow contract: /game without active session should not create
     // an implicit single-player session. Resume setup flow instead.
-    if (gameStore.pendingPlayerNames.length > 0) {
+    if (gameStore.pendingPlayerNames.value.length > 0) {
       await goToRoundStart()
     } else {
       await goToPlayers()
