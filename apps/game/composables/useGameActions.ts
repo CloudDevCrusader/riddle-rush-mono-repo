@@ -166,6 +166,13 @@ export function useGameActions() {
     }
   }
 
+  /**
+   * Transition to round-complete state (used when all players submit)
+   */
+  const transitionToRoundComplete = () => {
+    gameStore.getState().transitionToRoundComplete()
+  }
+
   const canConfirmRoundScores = () => getFlowState() === 'in-round'
 
   const canProceedToResults = () => {
@@ -181,6 +188,7 @@ export function useGameActions() {
     setupMultiplayerGame,
     startNextRound,
     startConfiguredRound,
+    transitionToRoundComplete,
     canConfirmRoundScores,
     canProceedToResults,
   }

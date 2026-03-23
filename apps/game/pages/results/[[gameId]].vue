@@ -204,7 +204,11 @@ const handleLeaderboardDismiss = () => {
 
 const handleConfirmScores = async () => {
   if (isConfirming.value) return
-  if (!canConfirmRoundScores.value || isDecisionFlow.value || hasConfirmedRound.value) {
+
+  // Use unified flow state for validation
+  const flow = flowState.value
+  if (flow !== 'in-round' || isDecisionFlow.value || hasConfirmedRound.value) {
+    // If not in correct flow state, show decision modal directly
     showDecisionModal.value = true
     return
   }
@@ -216,7 +220,7 @@ const handleConfirmScores = async () => {
       await gameStore.assignPlayerScore(playerId, score)
     }
 
-    // Complete the round (records round history)
+    // Complete the round (records round history and transitions to decision)
     await gameStore.completeRound()
     hasConfirmedRound.value = true
 
@@ -258,8 +262,9 @@ watch(
   { immediate: true }
 )
 
-watch(isDecisionFlow, (isDecision: boolean) => {
-  if (isDecision) {
+watch(flowState, (newFlow: string, oldFlow: string) => {
+  // When flow transitions to decision, ensure modal appears
+  if (newFlow === 'decision' && oldFlow !== 'decision') {
     hasConfirmedRound.value = true
     showDecisionModal.value = true
     if (dismissTimer) {
@@ -280,9 +285,16 @@ onMounted(async () => {
     }
   }
 
+  // Check flow state and initialize accordingly
   if (flowState.value === 'decision') {
     hasConfirmedRound.value = true
     showDecisionModal.value = true
+  } else if (flowState.value === 'round-complete') {
+    // Auto-transition to decision modal for better UX
+    setTimeout(() => {
+      showDecisionModal.value = true
+      hasConfirmedRound.value = true
+    }, 1000)
   }
 })
 

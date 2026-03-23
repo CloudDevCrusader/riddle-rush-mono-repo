@@ -110,7 +110,7 @@
 
       <!-- All Players Submitted Message -->
       <div
-        v-if="allPlayersSubmitted"
+        v-if="flowState === 'round-complete' || flowState === 'decision' || allPlayersSubmitted"
         class="all-submitted-message"
         data-testid="game-all-submitted"
       >
@@ -136,7 +136,7 @@
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
       <button
-        v-if="allPlayersSubmitted || players.length === 0"
+        v-if="flowState === 'round-complete' || flowState === 'decision' || players.length === 0"
         data-testid="next-button"
         class="next-btn btn-primary tap-highlight no-select"
         @click="handleNext"
@@ -162,6 +162,7 @@ const {
   currentLetter,
   currentRound,
   canProceedToResults,
+  flowState,
   players,
   currentPlayerTurn,
   allPlayersSubmitted,
@@ -256,9 +257,24 @@ const submitAnswer = async () => {
 
 const handleNext = async () => {
   // In round-based flow, NEXT goes to results/scoring screen
-  if (!canProceedToResults.value) {
+  // Use unified flow state to determine readiness
+  const flow = flowState.value
+  const hasMultiplayerPlayers = players.value.length > 0
+
+  if (
+    hasMultiplayerPlayers &&
+    !allPlayersSubmitted.value &&
+    flow !== 'round-complete' &&
+    flow !== 'decision'
+  ) {
     toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
     return
+  }
+
+  // Ensure proper flow transition before navigation
+  if (flow === 'in-round' && allPlayersSubmitted.value) {
+    // Transition to round-complete state to trigger results flow
+    gameStore.transitionToRoundComplete()
   }
 
   // Navigate to results with game ID

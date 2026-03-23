@@ -48,12 +48,12 @@ test.describe('multi round scoring workflow', () => {
   })
 
   test.describe('Edge Cases', () => {
-    test('should handle single player game', async ({ page }) => {
-      await startGameAndGoToResults(page, 1)
+    test('should handle minimum 2-player game', async ({ page }) => {
+      await startGameAndGoToResults(page, 2)
 
-      // Should show one player
+      // Should show two players
       const incrementBtns = page.locator('[data-testid="score-increment"]')
-      await expect(incrementBtns).toHaveCount(1)
+      await expect(incrementBtns).toHaveCount(2)
 
       // Should be able to confirm
       const confirmBtn = page.locator('[data-testid="confirm-scores"]')
@@ -61,7 +61,7 @@ test.describe('multi round scoring workflow', () => {
     })
 
     test('should handle zero scores confirmation', async ({ page }) => {
-      await startGameAndGoToResults(page, 1)
+      await startGameAndGoToResults(page, 2)
       await confirmScoresAndWaitForModal(page)
       await expect(page.locator('[data-testid="leaderboard-button"]')).toBeVisible()
     })

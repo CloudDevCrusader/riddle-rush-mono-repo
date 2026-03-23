@@ -3,13 +3,35 @@
  * Provides centralized access to commonly used game store computeds
  * Reduces duplication across pages
  */
+import { gameStore } from '../stores/gameStore'
+
 export function useGameState() {
   const gameSession = useGameSession()
   const settingsHook = useSettings()
   const categories = useCategories()
   const playerActions = usePlayerActions()
+  const gameActions = useGameActions()
 
   // Return combined API with all actions for backward compatibility
+  // gameState now provides ALL actions from all hooks
+  const gameState = {
+    ...gameSession,
+    ...categories,
+    ...playerActions,
+    ...gameActions,
+  }
+
+  // Maintain backward compatibility by also exposing gameStore alias
+  const gameStore = gameState
+  const settingsStore = settingsHook
+
+  // Convenience: destructured common computed refs
+  const currentCategory = gameSession.currentCategory
+  const currentLetter = gameSession.currentLetter
+  const currentRound = gameSession.currentRound
+  const nextRoundNumber = gameSession.nextRoundNumber
+  const gameMode = gameSession.gameMode
+  const flowState = gameSession.flowState
   const canProceedToResults = computed(() => {
     const hasMultiplayerPlayers = gameSession.players.value.length > 0
     if (!hasMultiplayerPlayers) return true
@@ -26,21 +48,18 @@ export function useGameState() {
 
   return {
     // Backward compatibility: return hooks as "store" objects
-    // gameStore now provides ALL actions from all hooks
-    gameStore: {
-      ...gameSession,
-      ...categories,
-      ...playerActions,
-    },
+    // gameState now provides ALL actions from all hooks
+    gameState,
+    gameStore,
     settingsStore: settingsHook,
 
     // Convenience: destructured common computed refs
-    currentCategory: gameSession.currentCategory,
-    currentLetter: gameSession.currentLetter,
-    currentRound: gameSession.currentRound,
-    nextRoundNumber: gameSession.nextRoundNumber,
-    gameMode: gameSession.gameMode,
-    flowState: gameSession.flowState,
+    currentCategory,
+    currentLetter,
+    currentRound,
+    nextRoundNumber,
+    gameMode,
+    flowState,
     canProceedToResults,
     canConfirmRoundScores,
     isCurrentRoundCompleted: gameSession.isCurrentRoundCompleted,

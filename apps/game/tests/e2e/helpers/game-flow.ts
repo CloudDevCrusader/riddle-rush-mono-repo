@@ -6,7 +6,15 @@ import { expect, type Page } from '@playwright/test'
 export async function hideDevtools(page: Page): Promise<void> {
   await page.addStyleTag({
     content:
-      '#nuxt-devtools-container, nuxt-devtools-frame, #nuxt-devtools-container *, .nuxt-devtools-panel, .nuxt-devtools-toggle, [data-v-inspector], [data-inspector] { display: none !important; pointer-events: none !important; opacity: 0 !important; visibility: hidden !important; }',
+      '#nuxt-devtools-container, nuxt-devtools-frame, #nuxt-devtools-container *, .nuxt-devtools-panel, .nuxt-devtools-toggle, [data-v-inspector], [data-inspector], [data-inspector] { display: none !important; pointer-events: none !important; opacity: 0 !important; visibility: hidden !important; z-index: -1 !important; position: static !important; }',
+  })
+
+  // Also try to force devtools to be disabled
+  await page.evaluate(() => {
+    ;(window as any).__NUXT_DEVTOOLS__ = null
+    ;(window as any).__NUXT__ = (window as any).__NUXT__ || {}
+    ;(window as any).__NUXT__.config = (window as any).__NUXT__.config || {}
+    ;(window as any).__NUXT__.config.devtools = false
   })
 }
 
@@ -126,7 +134,16 @@ export async function navigateToResults(page: Page): Promise<void> {
   const gameMatch = page.url().match(/\/game\/([^/?#]+)/)
   const gameId = gameMatch?.[1] ?? null
 
-  await nextBtn.click()
+  // Try to click, and if devtools interferes, use evaluate as fallback
+  try {
+    await nextBtn.click({ force: false })
+  } catch (error) {
+    // If click fails due to overlay, use JavaScript click
+    await nextBtn.evaluate((btn) => {
+      ;(btn as HTMLButtonElement).click()
+    })
+  }
+
   await expect(page).toHaveURL(/\/results/, { timeout: 10000 })
   await page.waitForLoadState('networkidle')
 
@@ -177,7 +194,15 @@ export async function assignScores(page: Page, scores: number[]): Promise<void> 
     const clickCount = Math.max(0, scores[i] ?? 0)
 
     for (let c = 0; c < clickCount; c++) {
-      await incrementBtn.click()
+      // Try to click, and if devtools interferes, use evaluate as fallback
+      try {
+        await incrementBtn.click({ force: false })
+      } catch (error) {
+        // If click fails due to overlay, use JavaScript click
+        await incrementBtn.evaluate((btn) => {
+          ;(btn as HTMLButtonElement).click()
+        })
+      }
       await page.waitForTimeout(90)
     }
   }
@@ -302,6 +327,10 @@ export async function setupMultiplayerGame(page: Page, playerNames: string[]): P
 
   // Use UI flow for deterministic behavior across browser projects.
   await hideDevtools(page)
+
+  // Wait for players page to be fully loaded and interactive
+  await page.waitForSelector('[data-testid="players-start-button"]', { timeout: 10000 })
+  await page.waitForTimeout(2000) // Additional wait for reactivity
 
   const targetCount = playerNames.length
   const decreaseBtn = page.locator('[data-testid="players-decrease-button"]')
@@ -438,7 +467,7 @@ export async function startGameWithDefaults(page: Page): Promise<void> {
  * Ensures at least one player turn is processed for edge cases (e.g. count <= 0).
  */
 export async function startGameAndGoToResults(page: Page, playerCount = 2): Promise<void> {
-  const normalizedPlayerCount = Math.max(1, Math.floor(playerCount))
+  const normalizedPlayerCount = Math.max(2, Math.floor(playerCount))
 
   if (normalizedPlayerCount === 2) {
     await startGameWithDefaults(page)

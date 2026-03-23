@@ -177,7 +177,7 @@ const currentRoundNumber = computed(() => {
 
 onMounted(async () => {
   // Fetch all categories
-  await gameStore.fetchCategories().catch((error) => {
+  await gameStore.fetchCategories().catch((error: unknown) => {
     logger.warn('Falling back to local round-start category due fetch error', error)
   })
   const fetchedCategories = gameStore.categories.value ?? []
@@ -277,6 +277,9 @@ const startGame = async () => {
       startingGame.value = false
       return
     }
+
+    // Ensure proper flow transition after session creation
+    // The store should automatically transition to in-round state
 
     // Navigate to game with game ID
     const gameId = session.id ?? gameStore.currentSession.value?.id

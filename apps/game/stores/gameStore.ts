@@ -14,6 +14,22 @@ import type {
   PlayerWithRank,
 } from '@riddle-rush/types/game'
 
+// Game flow state types for unified state management
+export type GameFlowState = 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
+
+// Round action that may trigger state transitions
+export type RoundAction =
+  | {
+      type: 'setup'
+      payload: { players: string[]; category?: Category; letter?: string; gameName?: string }
+    }
+  | { type: 'submit-answer'; payload: { playerId: string; answer: string } }
+  | { type: 'assign-score'; payload: { playerId: string; points: number } }
+  | { type: 'complete-round' }
+  | { type: 'next-round'; payload: { category?: Category; letter?: string } }
+  | { type: 'complete-game' }
+  | { type: 'reset-submissions' }
+
 const randomLetter = () => {
   if (!ALPHABET || ALPHABET.length === 0) {
     throw new Error('ALPHABET constant is not defined or empty')
@@ -134,6 +150,13 @@ type GameStoreShape = GameState & {
   ) => Promise<import('@riddle-rush/types/game').GameSession | null>
   resetPlayerSubmissions: () => Promise<void>
   getPlayerById: (playerId: string) => Player | null
+
+  // Flow state transition helpers
+  transitionToSetup: () => void
+  transitionToInRound: () => void
+  transitionToRoundComplete: () => void
+  transitionToDecision: () => void
+  transitionToCompleted: () => void
 }
 
 type GameStoreInstance = UseBoundStore<StoreApi<GameStoreShape>>
@@ -314,7 +337,8 @@ const createGameStore = (): GameStoreInstance =>
       await get().saveHistoryToDB()
       await lifecycle.updateStatisticsForSession(session)
 
-      set({ postRoundDecisionPending: false })
+      // Explicit flow transition: decision → completed
+      get().transitionToCompleted()
 
       // Don't clear session - keep it so leaderboard can display winner
       return session
@@ -423,6 +447,8 @@ const createGameStore = (): GameStoreInstance =>
       const session = sessionManager.createSession(players, category, letter, gameName)
 
       set({ currentSession: session, postRoundDecisionPending: false, pendingPlayerNames: [] })
+      // Explicit flow transition: setup → in-round
+      get().transitionToInRound()
       persistPendingPlayerNames([])
       await get().saveSessionToDB()
       return session
@@ -443,10 +469,14 @@ const createGameStore = (): GameStoreInstance =>
       if (player.hasSubmitted) return
 
       playerManager.submitPlayerAnswer(player, answer)
-      session.currentPlayerIndex = playerManager.advancePlayerIndex(
-        session.currentPlayerIndex,
-        session.players.length
-      )
+
+      // For single player games, don't advance index since there's no next player
+      if (session.players.length > 1) {
+        session.currentPlayerIndex = playerManager.advancePlayerIndex(
+          session.currentPlayerIndex,
+          session.players.length
+        )
+      }
 
       // Trigger reactive updates for Vue subscribers consuming Zustand hooks.
       set({
@@ -456,8 +486,61 @@ const createGameStore = (): GameStoreInstance =>
         },
       })
 
+      // Check if all players submitted and transition to round-complete
+      if (playerManager.allPlayersSubmitted(session.players)) {
+        get().transitionToRoundComplete()
+      }
+
       void get().saveSessionToDB()
     },
+
+    // Flow state transition helpers for unified state management
+    transitionToSetup() {
+      set({ currentSession: null, postRoundDecisionPending: false })
+    },
+
+    transitionToInRound() {
+      set({ postRoundDecisionPending: false })
+    },
+
+    transitionToRoundComplete() {
+      const session = get().currentSession
+      if (session) {
+        // Mark the current round as completed by adding it to roundHistory
+        // This ensures flowState returns 'round-complete'
+        if (session.roundHistory.length < session.currentRound) {
+          session.roundHistory.push({
+            roundNumber: session.currentRound,
+            category: session.category.name,
+            letter: session.letter,
+            timestamp: Date.now(),
+            playerResults: session.players.map((player) => ({
+              playerId: player.id,
+              playerName: player.name,
+              answer: player.currentRoundAnswer || '',
+              score: player.currentRoundScore,
+            })),
+          })
+        }
+        set({
+          currentSession: { ...session },
+          postRoundDecisionPending: true,
+        })
+      }
+    },
+
+    transitionToDecision() {
+      set({ postRoundDecisionPending: true })
+    },
+
+    transitionToCompleted() {
+      const session = get().currentSession
+      if (session) {
+        session.status = 'completed'
+        set({ currentSession: { ...session }, postRoundDecisionPending: false })
+      }
+    },
+
     async assignPlayerScore(playerId: string, points: number) {
       const session = get().currentSession
       if (!session) return
@@ -529,7 +612,8 @@ const createGameStore = (): GameStoreInstance =>
 
       session.roundHistory.push(roundResult)
       await get().saveSessionToDB()
-      set({ postRoundDecisionPending: true })
+      // Explicit flow transition: round-complete → decision
+      get().transitionToDecision()
     },
     async startNextRound(category?: Category, letter?: string) {
       const session = get().currentSession
@@ -550,7 +634,8 @@ const createGameStore = (): GameStoreInstance =>
       session.letter = selectedLetter
 
       await get().saveSessionToDB()
-      set({ postRoundDecisionPending: false })
+      // Explicit flow transition: decision → in-round
+      get().transitionToInRound()
       return session
     },
     async advanceToConfiguredRound(category: Category, letter: string) {

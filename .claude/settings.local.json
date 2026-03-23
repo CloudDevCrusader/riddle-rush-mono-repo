@@ -89,7 +89,8 @@
       "Bash(git check-ignore:*)",
       "Bash(pnpm --filter @riddle-rush/game run typecheck:*)",
       "Bash(wc:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Skill(gsd:resume-work)"
     ]
   },
   "enableAllProjectMcpServers": true,
