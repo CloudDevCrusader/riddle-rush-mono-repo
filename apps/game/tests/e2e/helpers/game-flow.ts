@@ -1,5 +1,50 @@
 import { expect, type Page } from '@playwright/test'
 
+// ---------------------------------------------------------------------------
+// Browser-context window type extensions (used inside page.evaluate callbacks)
+// ---------------------------------------------------------------------------
+
+/** Window extended with Nuxt internal properties. */
+interface NuxtWindow extends Window {
+  __NUXT_DEVTOOLS__: unknown
+  __NUXT__?: { config?: { devtools?: boolean } }
+}
+
+/** Player state as seen from the E2E browser context. */
+interface E2EPlayer {
+  id: string
+  hasSubmitted?: boolean
+  name?: string
+}
+
+/** Game session state as seen from the E2E browser context. */
+interface E2EGameSession {
+  id?: string
+  currentPlayerIndex?: number
+  players?: E2EPlayer[]
+  category?: { name?: string; searchWord?: string }
+  letter?: string
+}
+
+/** Pinia game store shape as seen from the E2E browser context. */
+interface E2EPiniaGameStore {
+  currentSession?: E2EGameSession
+  pendingPlayerNames?: string[]
+  currentPlayerTurn?: { name?: string }
+  loadFromDB?: () => Promise<void>
+  loadSessionById?: (sessionId: string) => Promise<void>
+  clearSession?: () => void
+}
+
+/** Window extended with Pinia stores exposed for E2E testing. */
+interface PiniaWindow extends Window {
+  __pinia_stores__?: {
+    game?: E2EPiniaGameStore
+  }
+}
+
+// ---------------------------------------------------------------------------
+
 /**
  * Hide Nuxt devtools overlay so it cannot intercept clicks during E2E.
  */
@@ -11,10 +56,11 @@ export async function hideDevtools(page: Page): Promise<void> {
 
   // Also try to force devtools to be disabled
   await page.evaluate(() => {
-    ;(window as any).__NUXT_DEVTOOLS__ = null
-    ;(window as any).__NUXT__ = (window as any).__NUXT__ || {}
-    ;(window as any).__NUXT__.config = (window as any).__NUXT__.config || {}
-    ;(window as any).__NUXT__.config.devtools = false
+    const win = window as NuxtWindow
+    win.__NUXT_DEVTOOLS__ = null
+    win.__NUXT__ = win.__NUXT__ ?? {}
+    win.__NUXT__.config = win.__NUXT__.config ?? {}
+    win.__NUXT__.config.devtools = false
   })
 }
 
@@ -40,26 +86,11 @@ export async function submitPlayerAnswers(
     await expect(submitBtn).toBeVisible({ timeout: 10000 })
 
     const beforeState = await page.evaluate(() => {
-      const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-        | {
-            game?: {
-              getState: () => Record<string, unknown>
-            }
-          }
-        | undefined
+      const store = (window as PiniaWindow).__pinia_stores__?.game
 
-      const gameState = zustand?.game?.getState() as
-        | {
-            currentSession?: {
-              currentPlayerIndex?: number
-              players?: Array<{ hasSubmitted?: boolean }>
-            }
-          }
-        | undefined
-
-      const players = gameState?.currentSession?.players ?? []
+      const players = store?.currentSession?.players ?? []
       return {
-        currentPlayerIndex: gameState?.currentSession?.currentPlayerIndex ?? 0,
+        currentPlayerIndex: store?.currentSession?.currentPlayerIndex ?? 0,
         submittedCount: players.filter((player) => Boolean(player.hasSubmitted)).length,
       }
     })
@@ -82,26 +113,10 @@ export async function submitPlayerAnswers(
             }
 
             const afterState = await page.evaluate(() => {
-              const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-                | {
-                    game?: {
-                      getState: () => Record<string, unknown>
-                    }
-                  }
-                | undefined
-
-              const gameState = zustand?.game?.getState() as
-                | {
-                    currentSession?: {
-                      currentPlayerIndex?: number
-                      players?: Array<{ hasSubmitted?: boolean }>
-                    }
-                  }
-                | undefined
-
-              const players = gameState?.currentSession?.players ?? []
+              const store = (window as PiniaWindow).__pinia_stores__?.game
+              const players = store?.currentSession?.players ?? []
               return {
-                currentPlayerIndex: gameState?.currentSession?.currentPlayerIndex ?? 0,
+                currentPlayerIndex: store?.currentSession?.currentPlayerIndex ?? 0,
                 submittedCount: players.filter((player) => Boolean(player.hasSubmitted)).length,
               }
             })
@@ -148,27 +163,18 @@ export async function navigateToResults(page: Page): Promise<void> {
   await page.waitForLoadState('networkidle')
 
   const resolvedGameId = await page.evaluate(async (id) => {
-    const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-      | { game?: { getState: () => Record<string, unknown> } }
-      | undefined
-    const gameState = zustand?.game?.getState() as
-      | {
-          loadFromDB?: () => Promise<void>
-          loadSessionById?: (sessionId: string) => Promise<void>
-          currentSession?: { id?: string }
-        }
-      | undefined
+    const store = (window as PiniaWindow).__pinia_stores__?.game
 
-    if (gameState?.loadFromDB) {
-      await gameState.loadFromDB()
+    if (store?.loadFromDB) {
+      await store.loadFromDB()
     }
 
-    if (id && gameState?.loadSessionById) {
-      await gameState.loadSessionById(id)
+    if (id && store?.loadSessionById) {
+      await store.loadSessionById(id)
       return id
     }
 
-    return gameState?.currentSession?.id ?? null
+    return store?.currentSession?.id ?? null
   }, gameId)
 
   if (resolvedGameId && !page.url().includes(`/results/${resolvedGameId}`)) {
@@ -308,16 +314,7 @@ export async function setupMultiplayerGame(page: Page, playerNames: string[]): P
     }
 
     await clearStores()
-
-    const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-      | {
-          game?: {
-            getState: () => Record<string, unknown>
-          }
-        }
-      | undefined
-
-    ;(zustand?.game?.getState() as { clearSession?: () => void } | undefined)?.clearSession?.()
+    ;(window as PiniaWindow).__pinia_stores__?.game?.clearSession?.()
 
     localStorage.clear()
     sessionStorage.clear()
@@ -405,45 +402,22 @@ export async function setupMultiplayerGame(page: Page, playerNames: string[]): P
         }
 
         const snapshot = await page.evaluate(() => {
-          const zustand = (window as unknown as Record<string, unknown>).__zustand__ as
-            | {
-                game?: {
-                  getState: () => Record<string, unknown>
-                }
-              }
-            | undefined
-
-          const gameState = zustand?.game?.getState() as
-            | {
-                currentSession?: {
-                  id?: string
-                  players?: Array<{ id: string }>
-                  category?: { name?: string; searchWord?: string }
-                  letter?: string
-                }
-                pendingPlayerNames?: string[]
-              }
-            | undefined
+          const store = (window as PiniaWindow).__pinia_stores__?.game
+          const session = store?.currentSession
 
           return {
             href: window.location.pathname,
-            sessionId: gameState?.currentSession?.id ?? null,
-            playerCount: gameState?.currentSession?.players?.length ?? 0,
-            currentPlayerIndex:
-              (gameState?.currentSession as { currentPlayerIndex?: number } | undefined)
-                ?.currentPlayerIndex ?? null,
+            sessionId: session?.id ?? null,
+            playerCount: session?.players?.length ?? 0,
+            currentPlayerIndex: session?.currentPlayerIndex ?? null,
             allSubmitted:
-              (gameState?.currentSession?.players?.length ?? 0) > 0
-                ? (gameState?.currentSession?.players?.every((player) =>
-                    Boolean((player as { hasSubmitted?: boolean }).hasSubmitted)
-                  ) ?? false)
+              (session?.players?.length ?? 0) > 0
+                ? (session?.players?.every((player) => Boolean(player.hasSubmitted)) ?? false)
                 : false,
-            currentPlayerTurnName:
-              (gameState as { currentPlayerTurn?: { name?: string } } | undefined)
-                ?.currentPlayerTurn?.name ?? null,
-            pendingCount: gameState?.pendingPlayerNames?.length ?? 0,
-            letter: gameState?.currentSession?.letter ?? null,
-            category: gameState?.currentSession?.category?.searchWord ?? null,
+            currentPlayerTurnName: store?.currentPlayerTurn?.name ?? null,
+            pendingCount: store?.pendingPlayerNames?.length ?? 0,
+            letter: session?.letter ?? null,
+            category: session?.category?.searchWord ?? null,
           }
         })
 
