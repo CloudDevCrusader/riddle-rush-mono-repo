@@ -98,6 +98,7 @@
     "agent:commit": "pnpm run agent:validate && git add . && echo 'Ready to commit! Run: git commit -m \"type: message\"'",
     "maintain": "pnpm update && pnpm run syncpack:fix && pnpm run workspace:check",
     "validate:locales": "node scripts/validate-locales.mjs",
+    "figma:sync-tokens": "node scripts/sync-figma-tokens.mjs",
     "i18n:start": "pnpm --filter @riddle-rush/tolgee start",
     "i18n:stop": "pnpm --filter @riddle-rush/tolgee stop",
     "i18n:push": "pnpm --filter @riddle-rush/tolgee push",

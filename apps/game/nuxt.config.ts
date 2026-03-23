@@ -118,7 +118,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['~/assets/scss/design-system.scss'],
+  css: ['~/assets/scss/design-system.scss', '~/assets/css/figma-tokens.generated.css'],
 
   // Color mode configuration
   colorMode: {
