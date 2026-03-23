@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// gsd-hook-version: 1.28.0
+// gsd-hook-version: 1.27.0
 // Context Monitor - PostToolUse/AfterTool hook (Gemini uses AfterTool)
 // Reads context metrics from the statusline bridge file and injects
 // warnings when context usage is high. This makes the AGENT aware of
@@ -18,9 +18,9 @@
 // Debounce: 5 tool uses between warnings to avoid spam
 // Severity escalation bypasses debounce (WARNING -> CRITICAL fires immediately)
 
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
+const fs = require('node:fs')
+const os = require('node:os')
+const path = require('node:path')
 
 const WARNING_THRESHOLD = 35 // remaining_percentage <= 35%
 const CRITICAL_THRESHOLD = 25 // remaining_percentage <= 25%
@@ -54,7 +54,7 @@ process.stdin.on('end', () => {
         if (config.hooks?.context_warnings === false) {
           process.exit(0)
         }
-      } catch (e) {
+      } catch {
         // Ignore config parse errors
       }
     }
@@ -92,7 +92,7 @@ process.stdin.on('end', () => {
       try {
         warnData = JSON.parse(fs.readFileSync(warnPath, 'utf8'))
         firstWarn = false
-      } catch (e) {
+      } catch {
         // Corrupted file, reset
       }
     }
@@ -149,7 +149,7 @@ process.stdin.on('end', () => {
     }
 
     process.stdout.write(JSON.stringify(output))
-  } catch (e) {
+  } catch {
     // Silent fail -- never block tool execution
     process.exit(0)
   }

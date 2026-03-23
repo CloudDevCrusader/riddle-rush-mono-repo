@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// gsd-hook-version: 1.28.0
+// gsd-hook-version: 1.27.0
 // Claude Code Statusline - GSD Edition
 // Shows: model | current task | directory | context usage
 
-const fs = require('fs')
-const path = require('path')
-const os = require('os')
+const fs = require('node:fs')
+const path = require('node:path')
+const os = require('node:os')
 
 // Read JSON from stdin
 let input = ''
@@ -48,7 +48,7 @@ process.stdin.on('end', () => {
             timestamp: Math.floor(Date.now() / 1000),
           })
           fs.writeFileSync(bridgePath, bridgeData)
-        } catch (e) {
+        } catch {
           // Silent fail -- bridge is best-effort, don't break statusline
         }
       }
@@ -59,13 +59,13 @@ process.stdin.on('end', () => {
 
       // Color based on usable context thresholds
       if (used < 50) {
-        ctx = ` \x1b[32m${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[32m${bar} ${used}%\x1B[0m`
       } else if (used < 65) {
-        ctx = ` \x1b[33m${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[33m${bar} ${used}%\x1B[0m`
       } else if (used < 80) {
-        ctx = ` \x1b[38;5;208m${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[38;5;208m${bar} ${used}%\x1B[0m`
       } else {
-        ctx = ` \x1b[5;31m💀 ${bar} ${used}%\x1b[0m`
+        ctx = ` \x1B[5;31m💀 ${bar} ${used}%\x1B[0m`
       }
     }
 
@@ -88,9 +88,11 @@ process.stdin.on('end', () => {
             const todos = JSON.parse(fs.readFileSync(path.join(todosDir, files[0].name), 'utf8'))
             const inProgress = todos.find((t) => t.status === 'in_progress')
             if (inProgress) task = inProgress.activeForm || ''
-          } catch (e) {}
+          } catch {
+            /* ignore */
+          }
         }
-      } catch (e) {
+      } catch {
         // Silently fail on file system errors - don't break statusline
       }
     }
@@ -102,24 +104,26 @@ process.stdin.on('end', () => {
       try {
         const cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'))
         if (cache.update_available) {
-          gsdUpdate = '\x1b[33m⬆ /gsd:update\x1b[0m │ '
+          gsdUpdate = '\x1B[33m⬆ /gsd:update\x1B[0m │ '
         }
         if (cache.stale_hooks && cache.stale_hooks.length > 0) {
-          gsdUpdate += '\x1b[31m⚠ stale hooks — run /gsd:update\x1b[0m │ '
+          gsdUpdate += '\x1B[31m⚠ stale hooks — run /gsd:update\x1B[0m │ '
         }
-      } catch (e) {}
+      } catch {
+        /* ignore */
+      }
     }
 
     // Output
     const dirname = path.basename(dir)
     if (task) {
       process.stdout.write(
-        `${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`
+        `${gsdUpdate}\x1B[2m${model}\x1B[0m │ \x1B[1m${task}\x1B[0m │ \x1B[2m${dirname}\x1B[0m${ctx}`
       )
     } else {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`)
+      process.stdout.write(`${gsdUpdate}\x1B[2m${model}\x1B[0m │ \x1B[2m${dirname}\x1B[0m${ctx}`)
     }
-  } catch (e) {
+  } catch {
     // Silent fail - don't break statusline on parse errors
   }
 })

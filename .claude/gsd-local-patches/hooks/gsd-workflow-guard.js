@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// gsd-hook-version: 1.28.0
+// gsd-hook-version: 1.27.0
 // GSD Workflow Guard — PreToolUse hook
 // Detects when Claude attempts file edits outside a GSD workflow context
 // (no active /gsd: command or Task subagent) and injects an advisory warning.
@@ -11,8 +11,8 @@
 // Enable via config: hooks.workflow_guard: true (default: false)
 // Only triggers on Write/Edit tool calls to non-.planning/ files.
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 let input = ''
 const stdinTimeout = setTimeout(() => process.exit(0), 3000)
@@ -66,7 +66,7 @@ process.stdin.on('end', () => {
         if (!config.hooks?.workflow_guard) {
           process.exit(0) // Guard disabled (default)
         }
-      } catch (e) {
+      } catch {
         process.exit(0)
       }
     } else {
@@ -88,7 +88,7 @@ process.stdin.on('end', () => {
     }
 
     process.stdout.write(JSON.stringify(output))
-  } catch (e) {
+  } catch {
     // Silent fail — never block tool execution
     process.exit(0)
   }
