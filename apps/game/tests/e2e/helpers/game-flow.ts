@@ -6,7 +6,7 @@ import { expect, type Page } from '@playwright/test'
 
 /** Window extended with Nuxt internal properties. */
 interface NuxtWindow extends Window {
-  __NUXT_DEVTOOLS__: unknown
+  __NUXT_DEVTOOLS__?: unknown
   __NUXT__?: { config?: { devtools?: boolean } }
 }
 
