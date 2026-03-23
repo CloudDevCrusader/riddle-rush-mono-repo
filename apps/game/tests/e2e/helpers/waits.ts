@@ -6,26 +6,26 @@ const DEFAULT_IDLE_TIME = 500
 const POLL_INTERVAL = 100
 
 /**
- * Browser-context window type for accessing Zustand stores exposed by the zustand plugin.
+ * Browser-context window type for accessing Pinia stores exposed by pinia.client.ts.
  * Used inside page.evaluate() callbacks where the browser window has additional properties.
  */
-interface ZustandWindow {
-  __zustand__?: {
+interface PiniaGameSession {
+  status?: string
+  currentRound?: number
+  players?: Array<{ hasSubmitted?: boolean }>
+  id?: string
+}
+
+interface PiniaWindow {
+  __pinia_stores__?: {
     game?: {
-      getState: () => {
-        currentSession?: {
-          status?: string
-          currentRound?: number
-          players?: Array<{ hasSubmitted?: boolean }>
-          id?: string
-        }
-        isOnline?: boolean
-        loadFromDB?: () => Promise<void>
-        loadSessionById?: (id: string) => Promise<void>
-      }
+      currentSession?: PiniaGameSession
+      isOnline?: boolean
+      loadFromDB?: () => Promise<void>
+      loadSessionById?: (id: string) => Promise<void>
     }
-    settings?: { getState: () => Record<string, unknown> }
-    loading?: { getState: () => Record<string, unknown> }
+    settings?: Record<string, unknown>
+    loading?: Record<string, unknown>
   }
   __vue_app__?: unknown
   __VUE_APP__?: unknown
@@ -58,19 +58,17 @@ interface ZustandWindow {
 async function logGameDebugInfo(page: Page, context: string): Promise<void> {
   try {
     const debugInfo = await page.evaluate(() => {
-      const w = window as unknown as ZustandWindow
-      const zustand = w.__zustand__
-      if (!zustand) {
-        return { error: 'Zustand store not found' }
+      const w = window as unknown as PiniaWindow
+      const store = w.__pinia_stores__?.game
+      if (!store) {
+        return { error: 'Pinia store not found' }
       }
 
-      const gameState = zustand.game?.getState()
-
       return {
-        gameState: gameState?.currentSession?.status || 'unknown',
-        currentRound: gameState?.currentSession?.currentRound || 0,
-        players: gameState?.currentSession?.players?.length || 0,
-        isOnline: gameState?.isOnline || false,
+        gameState: store.currentSession?.status ?? 'unknown',
+        currentRound: store.currentSession?.currentRound ?? 0,
+        players: store.currentSession?.players?.length ?? 0,
+        isOnline: store.isOnline ?? false,
         timestamp: Date.now(),
       }
     })
@@ -94,7 +92,7 @@ function getBackoffDelay(
 }
 
 /**
- * Wait for specific game state in Zustand store
+ * Wait for specific game state in Pinia store
  */
 export async function waitForGameState(
   page: Page,
@@ -108,12 +106,10 @@ export async function waitForGameState(
   try {
     await page.waitForFunction(
       (state: string) => {
-        const w = window as unknown as {
-          __zustand__?: { game?: { getState: () => { currentSession?: { status?: string } } } }
-        }
-        const gameState = w.__zustand__?.game?.getState()
-        if (!gameState) return false
-        const currentState = gameState.currentSession?.status || 'unknown'
+        const w = window as unknown as PiniaWindow
+        const session = w.__pinia_stores__?.game?.currentSession
+        if (!session) return false
+        const currentState = session.status ?? 'unknown'
         return currentState === state
       },
       targetState,
@@ -143,11 +139,8 @@ export async function waitForRoundTransition(
   try {
     // First, capture the current round number
     const initialRound = await page.evaluate(() => {
-      const w = window as unknown as {
-        __zustand__?: { game?: { getState: () => { currentSession?: { currentRound?: number } } } }
-      }
-      const gameState = w.__zustand__?.game?.getState()
-      return gameState?.currentSession?.currentRound || 0
+      const w = window as unknown as PiniaWindow
+      return w.__pinia_stores__?.game?.currentSession?.currentRound ?? 0
     })
 
     console.log(`[waitForRoundTransition] Current round: ${initialRound}`)
@@ -155,13 +148,8 @@ export async function waitForRoundTransition(
     // Wait for round number to change
     await page.waitForFunction(
       (prevRound: number) => {
-        const w = window as unknown as {
-          __zustand__?: {
-            game?: { getState: () => { currentSession?: { currentRound?: number } } }
-          }
-        }
-        const gameState = w.__zustand__?.game?.getState()
-        const currentRound = gameState?.currentSession?.currentRound || 0
+        const w = window as unknown as PiniaWindow
+        const currentRound = w.__pinia_stores__?.game?.currentSession?.currentRound ?? 0
         return currentRound > prevRound
       },
       initialRound,
@@ -169,11 +157,8 @@ export async function waitForRoundTransition(
     )
 
     const newRound = await page.evaluate(() => {
-      const w = window as unknown as {
-        __zustand__?: { game?: { getState: () => { currentSession?: { currentRound?: number } } } }
-      }
-      const gameState = w.__zustand__?.game?.getState()
-      return gameState?.currentSession?.currentRound || 0
+      const w = window as unknown as PiniaWindow
+      return w.__pinia_stores__?.game?.currentSession?.currentRound ?? 0
     })
 
     console.log(
@@ -408,13 +393,7 @@ export async function waitForPageReady(
     // 2. Wait for Vue/Nuxt hydration to complete
     await page.waitForFunction(
       () => {
-        const w = window as unknown as {
-          __vue_app__?: unknown
-          __VUE_APP__?: unknown
-          __NUXT__?: { isHydrating?: boolean; _hydrated?: boolean }
-          $nuxt?: { isHydrating?: boolean; _hydrated?: boolean }
-          __zustand__?: { game?: unknown }
-        }
+        const w = window as unknown as PiniaWindow
 
         // Check for Vue hydration
         const vueApp = w.__vue_app__ || w.__VUE_APP__
@@ -425,15 +404,13 @@ export async function waitForPageReady(
         // Check for Nuxt hydration
         const nuxtApp = w.__NUXT__ || w.$nuxt
         if (nuxtApp) {
-          // Check if Nuxt is fully hydrated
           if (nuxtApp.isHydrating === false || nuxtApp._hydrated === true) {
             return true
           }
         }
 
-        // Check for Zustand being ready
-        const zustand = w.__zustand__
-        if (zustand && zustand.game) {
+        // Check for Pinia stores being ready
+        if (w.__pinia_stores__?.game) {
           return true
         }
 
@@ -495,21 +472,14 @@ export async function waitForRoundComplete(
   try {
     await page.waitForFunction(
       () => {
-        const w = window as unknown as {
-          __zustand__?: {
-            game?: {
-              getState: () => { currentSession?: { players?: Array<{ hasSubmitted?: boolean }> } }
-            }
-          }
-        }
-        const gameState = w.__zustand__?.game?.getState()
+        const w = window as unknown as PiniaWindow
+        const session = w.__pinia_stores__?.game?.currentSession
 
         // Check various round completion indicators
-        const session = gameState?.currentSession
         if (!session) return false
 
         // Check if all players have submitted
-        const players = session.players || []
+        const players = session.players ?? []
         const allSubmitted =
           players.length > 0 &&
           players.every((player: { hasSubmitted?: boolean }) => player.hasSubmitted)
@@ -582,16 +552,11 @@ export async function waitForResultsRendered(
         )
         if (scoreElements.length === 0) return false
 
-        // Check Zustand state
-        const w = window as unknown as {
-          __zustand__?: { game?: { getState: () => { currentSession?: { status?: string } } } }
-        }
-        const gameState = w.__zustand__?.game?.getState()
-        if (gameState) {
-          const state = gameState.currentSession?.status
-          if (state === 'completed' || state === 'finished') {
-            return true
-          }
+        // Check Pinia state
+        const w = window as unknown as PiniaWindow
+        const sessionStatus = w.__pinia_stores__?.game?.currentSession?.status
+        if (sessionStatus === 'completed' || sessionStatus === 'finished') {
+          return true
         }
 
         // Fallback: results element visible and has content
@@ -634,26 +599,17 @@ export async function getRoundState(
   page: Page
 ): Promise<{ round: number; state: string; players: number }> {
   const result = await page.evaluate(() => {
-    const w = window as unknown as {
-      __zustand__?: {
-        game?: {
-          getState: () => {
-            currentSession?: { currentRound?: number; status?: string; players?: unknown[] }
-          }
-        }
-      }
-    }
-    const zustand = w.__zustand__
+    const w = window as unknown as PiniaWindow
+    const store = w.__pinia_stores__?.game
 
-    if (!zustand) {
-      return { round: 0, state: 'unknown', players: 0, error: 'Zustand not found' }
+    if (!store) {
+      return { round: 0, state: 'unknown', players: 0, error: 'Pinia store not found' }
     }
 
-    const gameState = zustand.game?.getState()
-    const session = gameState?.currentSession
-    const round = session?.currentRound || 0
-    const state = session?.status || 'unknown'
-    const players = session?.players?.length || 0
+    const session = store.currentSession
+    const round = session?.currentRound ?? 0
+    const state = session?.status ?? 'unknown'
+    const players = session?.players?.length ?? 0
 
     return { round, state, players }
   })
@@ -678,7 +634,6 @@ export async function waitForWebSocketConnection(
     await page.waitForFunction(
       () => {
         const w = window as unknown as {
-          __zustand__?: unknown
           $socket?: { connected?: boolean; readyState?: number }
           __socket__?: { connected?: boolean; readyState?: number }
           io?: { connected?: boolean }
@@ -729,7 +684,7 @@ export async function waitForGameEvent(
       $socket?: { on?: (event: string, cb: () => void) => void }
       __socket__?: { on?: (event: string, cb: () => void) => void }
     }
-    w.__gameEventReceived__ = w.__gameEventReceived__ || {}
+    w.__gameEventReceived__ = w.__gameEventReceived__ ?? {}
     w.__gameEventReceived__[event] = false
 
     // Try to hook into socket events

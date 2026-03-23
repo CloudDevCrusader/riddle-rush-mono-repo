@@ -62,18 +62,18 @@ export async function captureGameState(page: Page): Promise<GameStateSnapshot> {
   const url = page.url()
 
   const stateData = await page.evaluate(() => {
-    // Access Zustand stores from window (assumes stores are exposed for testing)
-    const zustand = (
+    // Access Pinia stores from window (exposed by pinia.client.ts for testing)
+    const piniaStores = (
       window as unknown as {
-        __zustand__?: { game: { getState: () => unknown }; settings: { getState: () => unknown } }
+        __pinia_stores__?: { game?: unknown; settings?: unknown }
       }
-    ).__zustand__
+    ).__pinia_stores__
     let gameStore: unknown = null
     let settingsStore: unknown = null
 
-    if (zustand) {
-      gameStore = zustand.game?.getState() ?? null
-      settingsStore = zustand.settings?.getState() ?? null
+    if (piniaStores) {
+      gameStore = piniaStores.game ?? null
+      settingsStore = piniaStores.settings ?? null
     }
 
     // Get current route from Vue Router if available

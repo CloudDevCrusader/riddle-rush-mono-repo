@@ -24,6 +24,8 @@ interface E2EGameSession {
   players?: E2EPlayer[]
   category?: { name?: string; searchWord?: string }
   letter?: string
+  currentRound?: number
+  status?: string
 }
 
 /** Pinia game store shape as seen from the E2E browser context. */
