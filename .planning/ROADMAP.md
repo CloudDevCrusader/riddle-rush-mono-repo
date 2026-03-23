@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs (completed 2026-03-21)
 - [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
 - [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
-- [ ] **Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring** - Enable fortune wheel default, fix warnings/duplicated imports, rework E2E tests, refactor post-migration changes
+- [x] **Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring** - Enable fortune wheel default, fix warnings/duplicated imports, rework E2E tests, refactor post-migration changes (completed 2026-03-23)
 - [x] **Phase 19: Move from Pinia to Zustand** - Complete Pinia-to-Zustand state management migration (completed 2026-03-22)
 - [x] **Phase 20: Revert Zustand to Pinia** - Revert Zustand migration back to Pinia while preserving architectural improvements
 - [ ] **Phase 21: Refactor and Fix E2E and Unit Tests** - Complete Phase 12 uncompleted unit tests, refactor remaining E2E specs, fix multi-round scoring workflow, achieve 100% E2E test pass rate
@@ -432,11 +432,11 @@ Plans:
 
 Plans:
 
-- [ ] 18-01-PLAN.md — Remove store barrel files (fix 19 duplicated import warnings), verify fortune wheel default
-- [ ] 18-02-PLAN.md — Create shared E2E game-flow helpers, refactor HIGH priority specs
-- [ ] 18-03-PLAN.md — Refactor remaining E2E specs to use shared helpers, final suite audit
-- [ ] 18-04-PLAN.md — Finalize feature-flag contract and precedence tests (GitLab-first, fortune-wheel default fallback)
-- [ ] 18-05-PLAN.md — Single-source game flow refactor, multi-round workflow fixes, and code-review cleanup bundle
+- [x] 18-01-PLAN.md — Remove store barrel files (fix 19 duplicated import warnings), verify fortune wheel default
+- [x] 18-02-PLAN.md — Create shared E2E game-flow helpers, refactor HIGH priority specs
+- [x] 18-03-PLAN.md — Refactor remaining E2E specs to use shared helpers, final suite audit
+- [x] 18-04-PLAN.md — Finalize feature-flag contract and precedence tests (GitLab-first, fortune-wheel default fallback)
+- [x] 18-05-PLAN.md — Single-source game flow refactor, multi-round workflow fixes, and code-review cleanup bundle
 
 **Details**:
 
@@ -487,7 +487,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 14. Maintenance & Quality of Life     | 3/3            | Complete | 2026-03-21 |
 | 15. Visual Polish & Bug Fixes         | 0/4            | Planned  | —          |
 | 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
-| 18. Fortune Wheel + Warnings + E2E    | 0/5            | Planned  | —          |
+| 18. Fortune Wheel + Warnings + E2E    | 5/5            | Complete | 2026-03-23 |
 | 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |
 | 20. Revert Zustand to Pinia           | 3/3            | Complete | 2026-03-23 |
 | 21. Refactor and Fix E2E & Unit Tests | 0/10           | Planned  | —          |
