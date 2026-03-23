@@ -28,8 +28,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 12: App Optimization & Refactoring** - Production readiness, testing, and infrastructure
 - [x] **Phase 13: Post-Round Next Step Modal** - Prompt to play another round or view leaderboard
 - [x] **Phase 14: Maintenance & Quality of Life** - Address pending todos and bugs (completed 2026-03-21)
-- [ ] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes
-- [ ] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities
+- [x] **Phase 15: Visual Polish, Animations & Bug Fixes** - Mockup CSS fidelity, Figma sync prep, smooth animations, code dedup, bug fixes (completed 2026-03-23)
+- [x] **Phase 17: Repo Cleanup, Documentation & Optimization** - Cleanup repo structure, improve documentation, research refactoring & optimization opportunities (completed 2026-03-23)
 - [x] **Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring** - Enable fortune wheel default, fix warnings/duplicated imports, rework E2E tests, refactor post-migration changes (completed 2026-03-23)
 - [x] **Phase 19: Move from Pinia to Zustand** - Complete Pinia-to-Zustand state management migration (completed 2026-03-22)
 - [x] **Phase 20: Revert Zustand to Pinia** - Revert Zustand migration back to Pinia while preserving architectural improvements
@@ -373,14 +373,14 @@ Plans:
 7. Known bugs from STATE.md pending todos are resolved
 8. All unit tests pass, workspace:check passes
 
-**Plans:** 4 plans
+**Plans:** 4/4 plans complete
 
 Plans:
 
-- [ ] 15-01-PLAN.md -- Remove duplicate scoped @keyframes, migrate round-start.vue to GameBackground
-- [ ] 15-02-PLAN.md -- Figma token sync pipeline: sync script, CSS override layer, nuxt.config.ts wiring
-- [ ] 15-03-PLAN.md -- Bug fixes: multiplayer round flow regression test + fix, remove orphaned PageTransition.vue
-- [ ] 15-04-PLAN.md -- Fortune Wheel redesign (game palette + CSS pointer + 300px fluid), index.vue CSS gaps + page animations
+- [x] 15-01-PLAN.md -- Remove duplicate scoped @keyframes, migrate round-start.vue to GameBackground
+- [x] 15-02-PLAN.md -- Figma token sync pipeline: sync script, CSS override layer, nuxt.config.ts wiring
+- [x] 15-03-PLAN.md -- Bug fixes: multiplayer round flow regression test + fix, remove orphaned PageTransition.vue
+- [x] 15-04-PLAN.md -- Fortune Wheel redesign (game palette + CSS pointer + 300px fluid), index.vue CSS gaps + page animations
 
 **Details**:
 
@@ -401,13 +401,13 @@ Plans:
 5. Build and bundle size optimized where quick wins exist
 6. Large refactoring opportunities documented as todos in STATE.md for future work
 
-**Plans:** 5 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 
-- [ ] 17-01-PLAN.md — Remove orphaned root files and AI tool config dirs from git tracking, update .gitignore
-- [ ] 17-02-PLAN.md — Install Knip for dead code detection, remove stale CI configs and orphaned dirs
-- [ ] 17-03-PLAN.md — Update CLAUDE.md and README.md to match current codebase, archive stale docs
+- [x] 17-01-PLAN.md — Remove orphaned root files and AI tool config dirs from git tracking, update .gitignore
+- [x] 17-02-PLAN.md — Install Knip for dead code detection, remove stale CI configs and orphaned dirs
+- [x] 17-03-PLAN.md — Update CLAUDE.md and README.md to match current codebase, archive stale docs
 
 **Details**:
 
@@ -485,12 +485,12 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 12. App Optimization & Refactoring    | 10/10          | Complete | 2026-02-16 |
 | 13. Post-Round Next Step Modal        | 1/1            | Complete | 2026-02-27 |
 | 14. Maintenance & Quality of Life     | 3/3            | Complete | 2026-03-21 |
-| 15. Visual Polish & Bug Fixes         | 0/4            | Planned  | —          |
-| 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
+| 15. Visual Polish & Bug Fixes         | 4/4            | Complete | 2026-03-23 |
+| 17. Repo Cleanup, Docs & Optimization | 3/3            | Complete | 2026-03-23 |
 | 18. Fortune Wheel + Warnings + E2E    | 5/5            | Complete | 2026-03-23 |
 | 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |
 | 20. Revert Zustand to Pinia           | 3/3            | Complete | 2026-03-23 |
-| 21. Refactor and Fix E2E & Unit Tests | 0/10           | Planned  | —          |
+| 21. Refactor and Fix E2E & Unit Tests | 0/11           | Planned  | —          |
 
 ### Phase 20: Revert Zustand to Pinia
 
@@ -537,7 +537,7 @@ Plans:
 7. Zero CSS class selectors remain in E2E tests (all data-testid based)
 8. All unit tests pass and workspace:check succeeds
 
-**Plans:** 10 plans
+**Plans:** 11 plans
 
 Plans:
 
