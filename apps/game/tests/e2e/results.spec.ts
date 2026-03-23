@@ -7,7 +7,7 @@ import {
   submitPlayerAnswers,
 } from './helpers/game-flow'
 
-test.describe('Results/Scoring Page', () => {
+test.describe('results scoring page', () => {
   test.beforeEach(async ({ page }) => {
     await startGameWithDefaults(page)
     await submitPlayerAnswers(page, 2, [generateAnswer(), generateAnswer()])
@@ -126,7 +126,7 @@ test.describe('Results/Scoring Page', () => {
 
     // Decision modal should appear
     const nextRoundBtn = page.locator('[data-testid="next-round"]')
-    const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    const finishGameBtn = page.locator('[data-testid="leaderboard-button"]')
 
     await expect(nextRoundBtn).toBeVisible()
     await expect(finishGameBtn).toBeVisible()
@@ -156,7 +156,7 @@ test.describe('Results/Scoring Page', () => {
     await page.waitForTimeout(2500)
 
     // Click Finish Game
-    const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    const finishGameBtn = page.locator('[data-testid="leaderboard-button"]')
     await finishGameBtn.click()
 
     await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 })
@@ -175,7 +175,7 @@ test.describe('Results/Scoring Page', () => {
   })
 })
 
-test.describe('Results Page - Multi-Player', () => {
+test.describe('results page multi-player', () => {
   test.beforeEach(async ({ page }) => {
     const player2Name = generatePlayerName()
     await setupMultiplayerGame(page, ['Player 1', player2Name])

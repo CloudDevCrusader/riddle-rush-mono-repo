@@ -47,7 +47,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 3. Spacing scale derived from 1080x1920 mockup values accessible throughout app
 4. Typography scales maintain readability at 360px width and 1024px width
 
-**Plans:** 3 plans
+**Plans:** 5 plans
 
 Plans:
 
@@ -400,7 +400,7 @@ Plans:
 5. Build and bundle size optimized where quick wins exist
 6. Large refactoring opportunities documented as todos in STATE.md for future work
 
-**Plans:** 3 plans
+**Plans:** 5 plans
 
 Plans:
 
@@ -427,7 +427,21 @@ Plans:
 6. `pnpm run workspace:check` passes with no errors
 7. All existing unit tests pass after refactoring
 
-**Plans:** Replanning...
+**Plans:** 3 plans
+
+Plans:
+
+- [ ] 18-01-PLAN.md — Remove store barrel files (fix 19 duplicated import warnings), verify fortune wheel default
+- [ ] 18-02-PLAN.md — Create shared E2E game-flow helpers, refactor HIGH priority specs
+- [ ] 18-03-PLAN.md — Refactor remaining E2E specs to use shared helpers, final suite audit
+- [ ] 18-04-PLAN.md — Finalize feature-flag contract and precedence tests (GitLab-first, fortune-wheel default fallback)
+- [ ] 18-05-PLAN.md — Single-source game flow refactor, multi-round workflow fixes, and code-review cleanup bundle
+
+**Details**:
+
+- **Wave 1 (Parallel):** Plans 01, 02 — Barrel cleanup and E2E helper creation (independent)
+- **Wave 2 (Parallel):** Plans 03, 04 — E2E completion + feature-flag contract finalization (03 depends on 02, 04 depends on 01)
+- **Wave 3 (Sequential):** Plan 05 — Unified game-flow + multi-round fixes (depends on 03 and 04)
 
 ### Phase 19: Move from Pinia to Zustand
 
@@ -453,24 +467,24 @@ Plans:
 **Execution Order:**
 Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18 -> 19
 
-| Phase                                 | Plans Complete | Status     | Completed  |
-| ------------------------------------- | -------------- | ---------- | ---------- |
-| 1. Design Tokens                      | 3/3            | Complete   | 2026-01-31 |
-| 2. Design Utilities                   | 2/2            | Complete   | 2026-01-31 |
-| 3. Core Layout Components             | 2/2            | Complete   | 2026-02-01 |
-| 4. Interactive Components             | 2/2            | Complete   | 2026-02-01 |
-| 5. Structural Components              | 3/3            | Complete   | 2026-02-01 |
-| 6. Splash & Navigation                | 2/2            | Complete   | 2026-02-01 |
-| 7. Player Setup                       | 2/2            | Complete   | 2026-02-01 |
-| 8. Core Gameplay                      | 2/2            | Complete   | 2026-02-01 |
-| 9. Game Results                       | 2/2            | Complete   | 2026-02-01 |
-| 10. Settings Pages                    | 2/2            | Complete   | 2026-02-01 |
-| 11. Modal Dialogs                     | 3/3            | Complete   | 2026-02-16 |
-| 11.1. Scoring & Player Config         | 2/2            | Complete   | 2026-02-16 |
-| 12. App Optimization & Refactoring    | 10/10          | Complete   | 2026-02-16 |
-| 13. Post-Round Next Step Modal        | 1/1            | Complete   | 2026-02-27 |
-| 14. Maintenance & Quality of Life     | 3/3            | Complete   | 2026-03-21 |
-| 15. Visual Polish & Bug Fixes         | 0/4            | Planned    | —          |
-| 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned    | —          |
-| 18. Fortune Wheel + Warnings + E2E    | 0/?            | Replanning | —          |
-| 19. Pinia to Zustand Migration        | 3/3            | Complete   | 2026-03-22 |
+| Phase                                 | Plans Complete | Status   | Completed  |
+| ------------------------------------- | -------------- | -------- | ---------- |
+| 1. Design Tokens                      | 3/3            | Complete | 2026-01-31 |
+| 2. Design Utilities                   | 2/2            | Complete | 2026-01-31 |
+| 3. Core Layout Components             | 2/2            | Complete | 2026-02-01 |
+| 4. Interactive Components             | 2/2            | Complete | 2026-02-01 |
+| 5. Structural Components              | 3/3            | Complete | 2026-02-01 |
+| 6. Splash & Navigation                | 2/2            | Complete | 2026-02-01 |
+| 7. Player Setup                       | 2/2            | Complete | 2026-02-01 |
+| 8. Core Gameplay                      | 2/2            | Complete | 2026-02-01 |
+| 9. Game Results                       | 2/2            | Complete | 2026-02-01 |
+| 10. Settings Pages                    | 2/2            | Complete | 2026-02-01 |
+| 11. Modal Dialogs                     | 3/3            | Complete | 2026-02-16 |
+| 11.1. Scoring & Player Config         | 2/2            | Complete | 2026-02-16 |
+| 12. App Optimization & Refactoring    | 10/10          | Complete | 2026-02-16 |
+| 13. Post-Round Next Step Modal        | 1/1            | Complete | 2026-02-27 |
+| 14. Maintenance & Quality of Life     | 3/3            | Complete | 2026-03-21 |
+| 15. Visual Polish & Bug Fixes         | 0/4            | Planned  | —          |
+| 17. Repo Cleanup, Docs & Optimization | 0/3            | Planned  | —          |
+| 18. Fortune Wheel + Warnings + E2E    | 0/3            | Planned  | —          |
+| 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |

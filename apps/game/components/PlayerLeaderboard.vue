@@ -1,10 +1,10 @@
 <template>
   <Transition name="player-leaderboard">
-    <div v-if="visible" class="player-leaderboard-overlay" @click.self="$emit('close')">
+    <div v-if="props.visible" class="player-leaderboard-overlay" @click.self="$emit('close')">
       <div class="player-leaderboard-panel">
         <header class="leaderboard-header">
           <h2>
-            <span v-if="isGameCompleted"
+            <span v-if="props.isGameCompleted"
               >🏆 {{ t('leaderboard.winner_title', 'Final Standings') }}</span
             >
             <span v-else>📊 {{ t('leaderboard.current_standings', 'Current Standings') }}</span>
@@ -13,14 +13,14 @@
         </header>
 
         <div class="leaderboard-content">
-          <div v-if="players.length === 0" class="empty-state">
+          <div v-if="props.players.length === 0" class="empty-state">
             <span class="empty-icon">🎮</span>
             <p>{{ t('leaderboard.no_players', 'No players yet') }}</p>
           </div>
 
           <div v-else class="players-list">
             <div
-              v-for="(player, index) in players"
+              v-for="(player, index) in props.players"
               :key="player.id"
               class="player-row"
               :class="{
@@ -40,26 +40,32 @@
               <div class="player-info">
                 <div class="player-name">
                   {{ player.name }}
-                  <span v-if="player.isWinner" class="winner-badge">Winner!</span>
+                  <span v-if="player.isWinner" class="winner-badge">{{ winnerBadgeLabel }}</span>
                 </div>
                 <div class="player-meta">
-                  Round {{ currentRound }}
-                  <span v-if="player.currentRoundScore > 0">
-                    · +{{ player.currentRoundScore }} pts this round
+                  {{ roundLabel }} {{ props.currentRound }}
+                  <span v-if="player.currentRoundScore !== 0">
+                    ·
+                    {{
+                      player.currentRoundScore > 0
+                        ? `+${player.currentRoundScore}`
+                        : player.currentRoundScore
+                    }}
+                    {{ roundScoreLabel }}
                   </span>
                 </div>
               </div>
 
               <div class="player-score">
                 {{ player.totalScore }}
-                <span class="score-label">pts</span>
+                <span class="score-label">{{ pointsLabel }}</span>
               </div>
             </div>
           </div>
         </div>
 
         <footer class="leaderboard-footer">
-          <button v-if="!isGameCompleted" class="btn btn-primary" @click="$emit('continue')">
+          <button v-if="!props.isGameCompleted" class="btn btn-primary" @click="$emit('continue')">
             {{ t('common.continue', 'Continue') }}
           </button>
           <button v-else class="btn btn-primary" @click="$emit('finish')">
@@ -79,12 +85,17 @@ import type { PlayerWithRank } from '@riddle-rush/types/game'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   visible: boolean
   players: PlayerWithRank[]
   isGameCompleted: boolean
   currentRound: number
 }>()
+
+const winnerBadgeLabel = computed(() => t('leaderboard.winner_badge', 'Winner!'))
+const roundLabel = computed(() => t('game.round', 'Round'))
+const roundScoreLabel = computed(() => t('leaderboard.points_this_round', 'pts this round'))
+const pointsLabel = computed(() => t('scoring.points', 'pts'))
 
 defineEmits<{
   close: []

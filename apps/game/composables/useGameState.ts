@@ -14,6 +14,9 @@ export function useGameState() {
     const hasMultiplayerPlayers = gameSession.players.value.length > 0
     if (!hasMultiplayerPlayers) return true
 
+    // Game -> results transition is allowed once all players submitted answers.
+    if (gameSession.allPlayersSubmitted.value) return true
+
     return (
       gameSession.flowState.value === 'round-complete' || gameSession.flowState.value === 'decision'
     )

@@ -10,8 +10,8 @@ import {
   startGameAndGoToResults,
 } from './helpers/game-flow'
 
-test.describe('Scoring Workflow: Multi-Round and Edges', () => {
-  test.describe('Multi-Round Score Accumulation', () => {
+test.describe('multi round scoring workflow', () => {
+  test.describe('multi round score accumulation', () => {
     test('should accumulate scores across multiple rounds', async ({ page }) => {
       await setupMultiplayerGame(page, ['Player 1', 'Player 2'])
 

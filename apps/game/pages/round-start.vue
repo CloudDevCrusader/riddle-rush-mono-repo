@@ -114,8 +114,10 @@ import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/s
 
 const { baseUrl, toast, t } = usePageSetup()
 const { goToGame, goToPlayers } = useNavigation()
-const { gameStore } = useGameState()
+const { gameStore, nextRoundNumber } = useGameState()
 const { isFortuneWheelEnabled } = useFeatureFlags()
+const logger = useLogger()
+const { startConfiguredRound } = useGameActions()
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const selectedCategory = ref<Category | null>(null)
@@ -128,6 +130,10 @@ const categorySpinComplete = ref(false)
 const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
+let wheelStartTimer: ReturnType<typeof setTimeout> | null = null
+let wheelFadeTimer: ReturnType<typeof setTimeout> | null = null
+let resultStartTimer: ReturnType<typeof setTimeout> | null = null
+let wheelFallbackTimer: ReturnType<typeof setTimeout> | null = null
 
 const categoryIconMap: Record<string, string> = {
   female_name: '👩',
@@ -147,6 +153,14 @@ const categoryIconMap: Record<string, string> = {
   movie: '🎬',
 }
 
+const fallbackCategory: Category = {
+  id: 0,
+  name: 'General',
+  searchWord: 'general',
+  key: 'general',
+  searchProvider: 'offline',
+}
+
 const selectedCategoryIcon = computed(() => {
   if (!selectedCategory.value) return '📦'
   return getCategoryIcon(selectedCategory.value)
@@ -158,32 +172,23 @@ const selectedCategoryName = computed(() => {
 })
 
 const currentRoundNumber = computed(() => {
-  // No session yet = first round setup
-  if (!gameStore.currentSession) return 1
-
-  const session = gameStore.currentSession
-  // Check if current round has been completed (saved to roundHistory)
-  const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
-
-  // If current round is completed, we're about to start the next round
-  // Otherwise, show the current round number (e.g., on refresh)
-  return isCurrentRoundCompleted ? session.currentRound + 1 : session.currentRound
+  return nextRoundNumber.value || 1
 })
 
 onMounted(async () => {
   // Fetch all categories
-  await gameStore.fetchCategories()
-  const allCategories = gameStore.categories
+  await gameStore.fetchCategories().catch((error) => {
+    logger.warn('Falling back to local round-start category due fetch error', error)
+  })
+  const allCategories = gameStore.categories.length > 0 ? gameStore.categories : [fallbackCategory]
+
+  // Always ensure deterministic fallback values are present
+  selectedCategory.value =
+    allCategories[Math.floor(Math.random() * allCategories.length)] ?? fallbackCategory
+  selectedLetter.value = alphabet[Math.floor(Math.random() * alphabet.length)] ?? 'A'
 
   // If fortune wheel is disabled, skip directly to game
   if (!isFortuneWheelEnabled.value) {
-    // Select random category and letter
-    const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
-    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
-
-    selectedCategory.value = randomCategory ?? null
-    selectedLetter.value = randomLetter ?? null
-
     // Start game immediately
     await startGame()
     return
@@ -193,10 +198,28 @@ onMounted(async () => {
   displayCategories.value = allCategories.slice(0, 12)
 
   // Auto-spin both wheels immediately (will complete within 5 seconds)
-  setTimeout(() => {
+  wheelStartTimer = setTimeout(() => {
     categoryWheelRef.value?.spinRandom()
     letterWheelRef.value?.spinRandom()
   }, 100)
+
+  // Fallback: if wheel callbacks fail to fire, continue round start deterministically
+  wheelFallbackTimer = setTimeout(() => {
+    if (startingGame.value || wheelsComplete.value) return
+
+    if (!selectedCategory.value) {
+      selectedCategory.value =
+        allCategories[Math.floor(Math.random() * allCategories.length)] ?? fallbackCategory
+    }
+    if (!selectedLetter.value) {
+      selectedLetter.value = alphabet[Math.floor(Math.random() * alphabet.length)] ?? 'A'
+    }
+
+    if (selectedCategory.value && selectedLetter.value) {
+      wheelsComplete.value = true
+      void startGame()
+    }
+  }, 7000)
 })
 
 const getCategoryIcon = (category: Category): string => {
@@ -219,12 +242,12 @@ const checkBothComplete = () => {
   if (categorySpinComplete.value && letterSpinComplete.value) {
     // Both wheels have completed spinning
     // Wait a moment, then fade out wheels
-    setTimeout(() => {
+    wheelFadeTimer = setTimeout(() => {
       wheelsComplete.value = true
 
       // After showing results, start the game
-      setTimeout(() => {
-        startGame()
+      resultStartTimer = setTimeout(() => {
+        void startGame()
       }, RESULTS_DISPLAY_DURATION_MS)
     }, WHEEL_FADE_DELAY_MS)
   }
@@ -234,56 +257,26 @@ const startGame = async () => {
   if (!selectedCategory.value || !selectedLetter.value) return
 
   startingGame.value = true
+  if (wheelFallbackTimer) {
+    clearTimeout(wheelFallbackTimer)
+    wheelFallbackTimer = null
+  }
 
   try {
-    const hasSession = !!gameStore.currentSession
-    const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
-    let createdSessionId: string | undefined
+    if (!gameStore.currentSession.value && gameStore.pendingPlayerNames.value.length === 0) {
+      // No players configured — redirect to player setup instead of creating a ghost session
+      await goToPlayers()
+      return
+    }
 
-    // Determine if this is initial setup or a new round
-    // Initial setup: no session OR pending players from players page
-    if (!hasSession || hasPendingPlayers) {
-      // This is initial setup - create new session with players
-      if (!hasPendingPlayers) {
-        // No players configured — redirect to player setup instead of creating a ghost session
-        await goToPlayers()
-        return
-      }
-      const playerNames = gameStore.pendingPlayerNames
-
-      const session = await gameStore.setupPlayers(
-        playerNames,
-        undefined,
-        selectedLetter.value,
-        selectedCategory.value
-      )
-      createdSessionId = session.id
-
-      // Clear pending state
-      gameStore.pendingPlayerNames = []
-      gameStore.selectedLetter = null
-    } else {
-      // Session exists - check if current round is completed
-      const session = gameStore.currentSession
-      if (!session) return // Safety check
-
-      const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
-
-      if (isCurrentRoundCompleted) {
-        // Current round completed - start new round (increment counter)
-        await gameStore.startNextRound(selectedCategory.value, selectedLetter.value)
-      } else {
-        // Refresh during same round - update category/letter but don't increment round
-        session.category = { ...selectedCategory.value, letter: selectedLetter.value }
-        session.letter = selectedLetter.value
-        // Reset player submissions for fair restart on refresh
-        await gameStore.resetPlayerSubmissions()
-        await gameStore.saveSessionToDB()
-      }
+    const session = await startConfiguredRound(selectedCategory.value, selectedLetter.value)
+    if (!session) {
+      startingGame.value = false
+      return
     }
 
     // Navigate to game with game ID
-    const gameId = createdSessionId ?? gameStore.currentSession?.id
+    const gameId = session.id ?? gameStore.currentSession.value?.id
     if (gameId) {
       await goToGame(gameId)
     } else {
@@ -293,13 +286,19 @@ const startGame = async () => {
     // CRITICAL: Ensure spinner is turned off on success
     startingGame.value = false
   } catch (error) {
-    const logger = useLogger()
     logger.error('Failed to start game:', error)
     startingGame.value = false
     // Show error to user
     toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
   }
 }
+
+onUnmounted(() => {
+  if (wheelStartTimer) clearTimeout(wheelStartTimer)
+  if (wheelFadeTimer) clearTimeout(wheelFadeTimer)
+  if (resultStartTimer) clearTimeout(resultStartTimer)
+  if (wheelFallbackTimer) clearTimeout(wheelFallbackTimer)
+})
 
 useHead({
   title: t('game.round_start_title'),

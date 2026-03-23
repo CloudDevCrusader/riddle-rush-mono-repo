@@ -95,7 +95,7 @@ async function playCompleteRound(
   }
 }
 
-test.describe('Full Multi-Round Game Workflow @slow', () => {
+test.describe('full game workflow @slow', () => {
   test('complete multi-round multiplayer game with 3 players and score accumulation', async ({
     page,
   }) => {

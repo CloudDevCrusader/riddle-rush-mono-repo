@@ -1,5 +1,5 @@
 import { computed, ref, onScopeDispose } from '#imports'
-import { gameStore } from '../gameStore'
+import { gameStore } from '~/stores/gameStore'
 
 export function useCategories() {
   const version = ref(0)
@@ -34,11 +34,13 @@ export function useCategories() {
     // Getters
     displayedCategories: computed(() => {
       void version.value
-      return gameStore.getState().displayedCategories
+      const state = gameStore.getState()
+      return state.categories.slice(0, state.displayedCategoryCount)
     }),
     hasMoreCategories: computed(() => {
       void version.value
-      return gameStore.getState().hasMoreCategories
+      const state = gameStore.getState()
+      return state.displayedCategoryCount < state.categories.length
     }),
 
     // Actions

@@ -7,7 +7,7 @@ import {
   finishGame,
 } from './helpers/game-flow'
 
-test.describe('Leaderboard Page', () => {
+test.describe('leaderboard page leaderboard', () => {
   test.beforeEach(async ({ page }) => {
     await startGameWithDefaults(page)
     await submitPlayerAnswers(page, 2, ['TestAnswer1', 'TestAnswer2'])

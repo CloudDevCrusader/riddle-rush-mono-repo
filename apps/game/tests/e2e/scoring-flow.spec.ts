@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test'
 import { startGameAndGoToResults } from './helpers/game-flow'
 
-test.describe('Scoring Workflow: Flow', () => {
-  test.describe('Leaderboard Overlay', () => {
+test.describe('scoring results flow', () => {
+  test.describe('leaderboard overlay', () => {
     test('should show leaderboard overlay after confirming scores', async ({ page }) => {
       // Setup game and navigate to results
       await startGameAndGoToResults(page)

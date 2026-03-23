@@ -1,4 +1,4 @@
-import { gameStore } from '../gameStore'
+import { gameStore } from '~/stores/gameStore'
 
 export function usePlayerActions() {
   return {

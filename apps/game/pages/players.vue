@@ -146,9 +146,9 @@ const startGame = () => {
     return
   }
 
-  gameStore.pendingPlayerNames = names
+  gameStore.setPendingPlayerNames(names)
   toast.success(t('players.ready', { 0: names.length }))
-  goToRoundStart()
+  void goToRoundStart()
 }
 
 const { pageElement } = usePageSwipe({

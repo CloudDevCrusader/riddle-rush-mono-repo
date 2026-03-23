@@ -136,11 +136,13 @@ import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/share
 import type { Player } from '@riddle-rush/types/game'
 
 const { t } = usePageSetup()
-const { gameStore, players, leaderboard, currentRound } = useGameState()
+const { gameStore, players, leaderboard, currentRound, flowState, canConfirmRoundScores } =
+  useGameState()
 const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
 const { isAnswerInputEnabled } = useFeatureFlags()
 const route = useRoute()
+const logger = useLogger()
 
 // Pending scores for each player (local state before confirming)
 const pendingScores = reactive(new Map<string, number>())
@@ -160,6 +162,9 @@ const isConfirming = ref(false)
 const showLeaderboard = ref(false)
 const showDecisionModal = ref(false)
 let dismissTimer: ReturnType<typeof setTimeout> | null = null
+const hasConfirmedRound = ref(false)
+
+const isDecisionFlow = computed(() => flowState.value === 'decision')
 
 // Projected ranks based on totalScore + pending scores
 const projectedRanks = computed(() => {
@@ -199,6 +204,10 @@ const handleLeaderboardDismiss = () => {
 
 const handleConfirmScores = async () => {
   if (isConfirming.value) return
+  if (!canConfirmRoundScores.value || isDecisionFlow.value || hasConfirmedRound.value) {
+    showDecisionModal.value = true
+    return
+  }
 
   isConfirming.value = true
   try {
@@ -209,14 +218,16 @@ const handleConfirmScores = async () => {
 
     // Complete the round (records round history)
     await gameStore.completeRound()
+    hasConfirmedRound.value = true
 
     void playScoreIncrease()
 
     // Show leaderboard overlay (auto-dismisses after timeout)
     showLeaderboard.value = true
     dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS)
-  } catch {
+  } catch (error) {
     // Score saving failed — allow the user to retry
+    logger.error('Failed to confirm scores:', error)
   } finally {
     isConfirming.value = false
   }
@@ -247,14 +258,31 @@ watch(
   { immediate: true }
 )
 
+watch(isDecisionFlow, (isDecision: boolean) => {
+  if (isDecision) {
+    hasConfirmedRound.value = true
+    showDecisionModal.value = true
+    if (dismissTimer) {
+      clearTimeout(dismissTimer)
+      dismissTimer = null
+    }
+    showLeaderboard.value = false
+  }
+})
+
 onMounted(async () => {
   const id = gameId.value
-  if (id && gameStore.currentSession?.id !== id) {
+  if (id && gameStore.currentSession?.value?.id !== id) {
     try {
       await gameStore.loadSessionById(id)
     } catch {
       await gameStore.loadFromDB()
     }
+  }
+
+  if (flowState.value === 'decision') {
+    hasConfirmedRound.value = true
+    showDecisionModal.value = true
   }
 })
 
@@ -265,8 +293,12 @@ onUnmounted(() => {
   }
 })
 
+const pageTitle = computed(
+  () => `${t('scoring.title', 'Scoring')} · ${t('game.round')} ${currentRound.value || 1}`
+)
+
 useHead({
-  title: t('scoring.title', 'Scoring'),
+  title: pageTitle,
   meta: [
     {
       name: 'description',

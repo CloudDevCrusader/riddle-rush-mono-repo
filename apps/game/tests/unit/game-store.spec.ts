@@ -1352,24 +1352,22 @@ describe('Game Store', () => {
       expect(gameStore.getState().currentSession).toEqual(mockSession)
     })
 
-    it('should throw error when session not found', async () => {
+    it('should return null when session not found', async () => {
       const gameId = 'non-existent-id'
 
       mockGetGameSessionById.mockResolvedValue(null)
 
-      await expect(gameStore.getState().loadSessionById(gameId)).rejects.toThrow(
-        'Failed to load game session'
-      )
+      const result = await gameStore.getState().loadSessionById(gameId)
+      expect(result).toBeNull()
     })
 
-    it('should handle IndexedDB errors', async () => {
+    it('should return null on IndexedDB errors', async () => {
       const gameId = '123e4567-e89b-12d3-a456-426614174000'
 
       mockGetGameSessionById.mockRejectedValue(new Error('Database error'))
 
-      await expect(gameStore.getState().loadSessionById(gameId)).rejects.toThrow(
-        'Failed to load game session'
-      )
+      const result = await gameStore.getState().loadSessionById(gameId)
+      expect(result).toBeNull()
     })
 
     it('should load session with UUID format', async () => {
@@ -1399,17 +1397,13 @@ describe('Game Store', () => {
       expect(result!.players).toHaveLength(2)
     })
 
-    it('should throw descriptive error with session ID', async () => {
+    it('should return null for missing ID-based session lookup', async () => {
       const gameId = 'test-game-123'
 
       mockGetGameSessionById.mockResolvedValue(null)
 
-      try {
-        await gameStore.getState().loadSessionById(gameId)
-        expect.fail('Should have thrown an error')
-      } catch (error: unknown) {
-        expect((error as Error).message).toContain('Failed to load game session')
-      }
+      const result = await gameStore.getState().loadSessionById(gameId)
+      expect(result).toBeNull()
     })
   })
 

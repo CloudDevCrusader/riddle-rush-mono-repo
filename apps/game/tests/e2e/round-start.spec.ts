@@ -35,7 +35,7 @@ async function startGameFromPlayers(page: Page) {
   await expect(page).toHaveURL(/\/round-start/)
 }
 
-test.describe('Round Start Page', () => {
+test.describe('round-start page round-start', () => {
   test.beforeEach(async ({ page }) => {
     await resetPersistedGameState(page)
     await startGameFromPlayers(page)

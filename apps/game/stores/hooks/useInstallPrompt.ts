@@ -1,5 +1,5 @@
 import { computed, ref, onScopeDispose } from '#imports'
-import { gameStore } from '../gameStore'
+import { gameStore } from '~/stores/gameStore'
 
 export function useInstallPrompt() {
   const version = ref(0)
@@ -18,7 +18,7 @@ export function useInstallPrompt() {
     // Getters
     canInstall: computed(() => {
       void version.value
-      return gameStore.getState().canInstall
+      return gameStore.getState().installPromptEvent !== null
     }),
 
     // Actions

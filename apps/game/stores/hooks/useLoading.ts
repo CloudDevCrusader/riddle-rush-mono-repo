@@ -1,6 +1,6 @@
 import { computed, ref, onScopeDispose } from '#imports'
 import { loadingStore } from '../loadingStore'
-import { gameStore } from '../gameStore'
+import { gameStore } from '~/stores/gameStore'
 
 export function useLoading() {
   const version = ref(0)

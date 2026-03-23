@@ -1,7 +1,9 @@
 import { computed, ref, onScopeDispose } from '#imports'
-import { gameStore } from '../gameStore'
+import { gameStore } from '~/stores/gameStore'
+import { usePlayerManager } from '~/composables/usePlayerManager'
 
 export function useGameSession() {
+  const playerManager = usePlayerManager()
   const version = ref(0)
   const unsubscribe = gameStore.subscribe(() => {
     version.value++
@@ -46,7 +48,7 @@ export function useGameSession() {
     }),
     currentRound: computed(() => {
       void version.value
-      return gameStore.getState().currentRound
+      return gameStore.getState().currentSession?.currentRound ?? 0
     }),
     postRoundDecisionPending: computed(() => {
       void version.value
@@ -70,27 +72,34 @@ export function useGameSession() {
     }),
     currentCategory: computed(() => {
       void version.value
-      return gameStore.getState().currentCategory
+      return gameStore.getState().currentSession?.category ?? null
     }),
     currentLetter: computed(() => {
       void version.value
-      return gameStore.getState().currentLetter
+      return gameStore.getState().currentSession?.letter ?? ''
     }),
     players: computed(() => {
       void version.value
-      return gameStore.getState().players
+      return gameStore.getState().currentSession?.players ?? []
     }),
     currentPlayerTurn: computed(() => {
       void version.value
-      return gameStore.getState().currentPlayerTurn
+      const session = gameStore.getState().currentSession
+      const players = session?.players ?? []
+      const currentPlayerIndex = session?.currentPlayerIndex ?? 0
+      return playerManager.getCurrentPlayerTurn(players, currentPlayerIndex)
     }),
     allPlayersSubmitted: computed(() => {
       void version.value
-      return gameStore.getState().allPlayersSubmitted
+      const players = gameStore.getState().currentSession?.players ?? []
+      return playerManager.allPlayersSubmitted(players)
     }),
     leaderboard: computed(() => {
       void version.value
-      return gameStore.getState().leaderboard
+      const session = gameStore.getState().currentSession
+      const players = session?.players ?? []
+      const isCompleted = session?.status === 'completed'
+      return playerManager.buildLeaderboard(players, isCompleted)
     }),
 
     // Actions (stable references -- no computed needed)
@@ -108,5 +117,6 @@ export function useGameSession() {
     advanceToConfiguredRound: gameStore.getState().advanceToConfiguredRound,
     generateLetter: gameStore.getState().generateLetter,
     setOnlineStatus: gameStore.getState().setOnlineStatus,
+    setPendingPlayerNames: gameStore.getState().setPendingPlayerNames,
   }
 }

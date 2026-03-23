@@ -175,10 +175,12 @@
     "invalid_image": "Bitte wähle eine gültige Bilddatei",
     "next_round": "Nächste Runde spielen",
     "no_players": "Noch keine Spieler",
+    "points_this_round": "Pkt diese Runde",
     "ranking": "Rangliste",
     "score": "Punkte",
     "time": "Zeit",
     "title": "Bestenliste",
+    "winner_badge": "Sieger!",
     "winner_title": "Endstand"
   },
   "menu": {

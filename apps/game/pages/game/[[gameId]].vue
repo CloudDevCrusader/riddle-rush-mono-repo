@@ -53,7 +53,7 @@
       <div class="category-panel" data-testid="game-category-info">
         <img
           :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
-          alt="Category"
+          :alt="t('common.category')"
           class="category-label-image"
           loading="lazy"
         />
@@ -143,7 +143,7 @@
       >
         <img
           :src="`${baseUrl}assets/alphabets/next.png`"
-          alt="Next"
+          :alt="t('common.next')"
           class="next-icon"
           loading="lazy"
         />
@@ -155,12 +155,13 @@
 
 <script setup lang="ts">
 const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
-const { goToResults, goToPlayers } = useNavigation()
+const { goToResults, goToPlayers, goToRoundStart } = useNavigation()
 const {
   gameStore,
   currentCategory,
   currentLetter,
   currentRound,
+  canProceedToResults,
   players,
   currentPlayerTurn,
   allPlayersSubmitted,
@@ -176,6 +177,12 @@ const gameId = computed(() => route.params.gameId as string | undefined)
 const playerAnswer = ref('')
 const showPauseModal = ref(false)
 const showQuitModal = ref(false)
+
+const handleEscapeKey = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && !showPauseModal.value) {
+    showPauseModal.value = true
+  }
+}
 
 // Clear stale input when flag toggles off mid-session
 watch(isAnswerInputEnabled, (enabled: boolean) => {
@@ -241,7 +248,6 @@ const submitAnswer = async () => {
       toast.info(t('game.all_submitted', 'All players have submitted!'))
     }
   } catch (error) {
-    const logger = useLogger()
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))
   }
@@ -249,7 +255,7 @@ const submitAnswer = async () => {
 
 const handleNext = async () => {
   // In round-based flow, NEXT goes to results/scoring screen
-  if (players.value.length > 0 && !allPlayersSubmitted.value) {
+  if (!canProceedToResults.value) {
     toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
     return
   }
@@ -284,34 +290,59 @@ onMounted(async () => {
   // Load game session based on route parameter
   if (gameId.value) {
     try {
-      await gameStore.loadSessionById(gameId.value)
+      let loadedSession = await gameStore.loadSessionById(gameId.value)
+
+      // Route transitions can arrive before storage hydration; retry briefly before failing.
+      if (!loadedSession) {
+        for (let attempt = 0; attempt < 4; attempt++) {
+          await gameStore.loadFromDB()
+          loadedSession = await gameStore.loadSessionById(gameId.value)
+          if (loadedSession) {
+            break
+          }
+          await new Promise((resolve) => setTimeout(resolve, 150))
+        }
+      }
+
+      if (!loadedSession) {
+        logger.warn('No matching session for game route, redirecting to players setup', {
+          gameId: gameId.value,
+        })
+        toast.error(t('game.error_loading', 'Failed to load game session'))
+        goToPlayers()
+        return
+      }
     } catch (error) {
       logger.error('Failed to load game session:', error)
       toast.error(t('game.error_loading', 'Failed to load game session'))
-      // Fallback to starting a new game
-      await gameActions.resumeOrStartGame()
+      goToPlayers()
+      return
     }
   } else if (!gameStore.hasActiveSession()) {
-    // No game ID in route and no active session - start new game
-    await gameActions.resumeOrStartGame()
+    // Multiplayer flow contract: /game without active session should not create
+    // an implicit single-player session. Resume setup flow instead.
+    if (gameStore.pendingPlayerNames.length > 0) {
+      await goToRoundStart()
+    } else {
+      await goToPlayers()
+    }
+    return
   }
 
   // Add ESC key listener for pause
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && !showPauseModal.value) {
-      showPauseModal.value = true
-    }
-  }
-
-  window.addEventListener('keydown', handleKeyDown)
-
-  onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeyDown)
-  })
+  window.addEventListener('keydown', handleEscapeKey)
 })
 
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscapeKey)
+})
+
+const pageTitle = computed(
+  () => `${t('game.page_title')} · ${t('game.round')} ${formattedRound.value}`
+)
+
 useHead({
-  title: t('game.page_title'),
+  title: pageTitle,
   meta: [
     {
       name: 'description',
