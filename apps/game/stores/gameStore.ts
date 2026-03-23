@@ -590,6 +590,9 @@ export const useGameStore = defineStore('game', {
       const playerManager = usePlayerManager()
       return playerManager.getPlayerById(session.players, playerId)
     },
+    getState(): any {
+      return this
+    },
   },
 })
 

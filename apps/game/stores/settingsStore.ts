@@ -92,6 +92,9 @@ export const useSettingsStore = defineStore('settings', {
     getLanguage(): string {
       return this.language
     },
+    getState(): any {
+      return this
+    },
   },
   persist: true,
 })

@@ -1,5 +1,5 @@
 import type { UnleashClient } from 'unleash-proxy-client'
-import { settingsStore } from '~/stores/settingsStore'
+import { useSettingsStore } from '~/stores/settingsStore'
 
 /**
  * Module-level reactive bridge between the Unleash EventEmitter and Vue's
@@ -84,7 +84,7 @@ export function useFeatureFlags() {
         return gitlabClient.isEnabled(flagName)
       }
 
-      const localValue = settingsStore.getState()[settingsKey]
+      const localValue = useSettingsStore()[settingsKey]
       return typeof localValue === 'boolean' ? localValue : defaultValue
     } catch (error) {
       logger.warn(`Failed to resolve feature flag ${flagName}:`, error)

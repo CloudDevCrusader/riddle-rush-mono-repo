@@ -79,6 +79,7 @@ export interface GameState {
   categoryLoadError: string | null
   selectedLetter: string | null
   pendingPlayerNames: string[]
+  postRoundDecisionPending: boolean
 }
 
 // PWA install prompt

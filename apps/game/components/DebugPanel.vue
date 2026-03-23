@@ -109,7 +109,6 @@
 
 <script setup lang="ts">
 import type { GameStatistics } from '@riddle-rush/types/game'
-import { settingsStore } from '~/stores/settingsStore'
 
 const gameSession = useGameSession()
 const categories = useCategories()
@@ -159,7 +158,21 @@ const exportDebugInfo = () => {
       categories: categories.categories.value.length,
       history: gameSession.history.value.length,
     },
-    settings: settingsStore.getState(),
+    settings: {
+      maxPlayersPerGame: settings.maxPlayersPerGame.value,
+      showLeaderboardAfterRound: settings.showLeaderboardAfterRound.value,
+      leaderboardEnabled: settings.leaderboardEnabled.value,
+      debugMode: settings.debugMode.value,
+      soundEnabled: settings.soundEnabled.value,
+      soundVolume: settings.soundVolume.value,
+      musicEnabled: settings.musicEnabled.value,
+      musicVolume: settings.musicVolume.value,
+      offlineMode: settings.offlineMode.value,
+      language: settings.language.value,
+      fortuneWheelEnabled: settings.fortuneWheelEnabled.value,
+      websocketEnabled: settings.websocketEnabled.value,
+      answerInputEnabled: settings.answerInputEnabled.value,
+    },
     stats: stats.value,
     pwa: {
       swRegistered: swRegistered.value,

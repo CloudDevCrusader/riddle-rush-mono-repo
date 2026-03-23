@@ -3,7 +3,7 @@
  * Uses @nuxtjs/i18n's instance for locale persistence and detection.
  */
 
-import { settingsStore } from '~/stores/settingsStore'
+import { useSettingsStore } from '~/stores/settingsStore'
 
 type LocaleCode = 'de' | 'en'
 const supportedLocales = new Set<LocaleCode>(['de', 'en'])
@@ -49,10 +49,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     return null
   }
 
-  // Load settings from Zustand store (plugin context - use getState())
-  const state = settingsStore.getState()
-  const hasStoredSettings = Boolean(state.language)
-  const storedLanguage = state.language
+  // Load settings from Pinia store
+  const settingsStore = useSettingsStore()
+  const hasStoredSettings = Boolean(settingsStore.language)
+  const storedLanguage = settingsStore.language
 
   let skipLocalePersistence = false
 
@@ -90,8 +90,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (!newLocale) return
 
       if (!skipLocalePersistence) {
-        // Use Zustand store action (persist is always on with zustand-persist)
-        settingsStore.getState().setLanguage(newLocale as string)
+        settingsStore.setLanguage(newLocale as string)
       }
       skipLocalePersistence = false
     }

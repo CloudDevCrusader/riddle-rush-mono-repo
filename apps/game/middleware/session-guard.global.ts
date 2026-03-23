@@ -1,4 +1,4 @@
-import { gameStore } from '~/stores/gameStore'
+import { useGameStore } from '~/stores/gameStore'
 
 const getRouteGameId = (to: { params?: Record<string, unknown>; path: string }) => {
   const fromParam = to.params?.gameId
@@ -17,22 +17,22 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return
   }
 
-  const state = gameStore.getState()
+  const store = useGameStore()
   const routeGameId = getRouteGameId(to)
 
   // Always hydrate persisted session first to make route boundary canonical.
-  await state.loadFromDB()
+  await store.loadFromDB()
 
-  let session = gameStore.getState().currentSession
+  let session = store.currentSession
 
   if (routeGameId) {
-    const loaded = await gameStore.getState().loadSessionById(routeGameId)
+    const loaded = await store.loadSessionById(routeGameId)
     // Route id is authoritative on id-based routes.
     // Never keep a stale in-memory session if the requested id cannot be loaded.
     session = loaded ?? null
   }
 
-  const pending = gameStore.getState().pendingPlayerNames
+  const pending = store.pendingPlayerNames
 
   // If players are pending and current session is not a multiplayer round,
   // force canonical bootstrap through round-start.
