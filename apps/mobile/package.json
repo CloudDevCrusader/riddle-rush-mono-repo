@@ -10,10 +10,10 @@
   "devDependencies": {
     "@nativescript/tailwind": "^4.0.7",
     "@nativescript/types": "^9.0.0",
-    "@nativescript/webpack": "^5.0.31",
-    "@types/node": "^25.3.3",
+    "@nativescript/webpack": "^5.0.32",
+    "@types/node": "^25.5.0",
     "nativescript-vue-template-compiler": "^2.9.3",
-    "tailwindcss": "^4.2.0",
+    "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3",
     "vue": "^3.5.30",
     "vue-loader": "^17.4.2",
