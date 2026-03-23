@@ -1319,6 +1319,67 @@ describe('Game Store', () => {
       expect(gameStore.getState().currentSession?.roundHistory).toHaveLength(0)
       expect(gameStore.getState().postRoundDecisionPending).toBe(false)
     })
+
+    it('reports completed flow state after completeGame', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+
+      if (alice && bob) {
+        await gameStore.getState().submitPlayerAnswer(alice.id, 'A')
+        await gameStore.getState().submitPlayerAnswer(bob.id, 'B')
+      }
+
+      await gameStore.getState().completeRound()
+      await gameStore.getState().completeGame()
+
+      const store = gameStore.getState()
+      expect(store.flowState()).toBe('completed')
+      expect(store.isGameCompleted()).toBe(true)
+      expect(store.postRoundDecisionPending).toBe(false)
+    })
+
+    it('multi-round scoring accumulates correctly across 3 rounds', async () => {
+      const session = await gameStore.getState().setupPlayers(['Alice', 'Bob'])
+      const [alice, bob] = session.players
+      if (!alice || !bob) throw new Error('Missing players')
+
+      // Round 1: Alice=10, Bob=5
+      await gameStore.getState().submitPlayerAnswer(alice.id, 'A1')
+      await gameStore.getState().submitPlayerAnswer(bob.id, 'B1')
+      await gameStore.getState().assignPlayerScore(alice.id, 10)
+      await gameStore.getState().assignPlayerScore(bob.id, 5)
+      await gameStore.getState().completeRound()
+
+      expect(gameStore.getState().flowState()).toBe('decision')
+      expect(alice.totalScore).toBe(10)
+      expect(bob.totalScore).toBe(5)
+
+      // Round 2: Alice=3, Bob=8
+      await gameStore.getState().startNextRound()
+      expect(gameStore.getState().flowState()).toBe('in-round')
+
+      await gameStore.getState().submitPlayerAnswer(alice.id, 'A2')
+      await gameStore.getState().submitPlayerAnswer(bob.id, 'B2')
+      await gameStore.getState().assignPlayerScore(alice.id, 3)
+      await gameStore.getState().assignPlayerScore(bob.id, 8)
+      await gameStore.getState().completeRound()
+
+      expect(alice.totalScore).toBe(13)
+      expect(bob.totalScore).toBe(13)
+
+      // Round 3: Alice=7, Bob=2
+      await gameStore.getState().startNextRound()
+      await gameStore.getState().submitPlayerAnswer(alice.id, 'A3')
+      await gameStore.getState().submitPlayerAnswer(bob.id, 'B3')
+      await gameStore.getState().assignPlayerScore(alice.id, 7)
+      await gameStore.getState().assignPlayerScore(bob.id, 2)
+      await gameStore.getState().completeRound()
+
+      expect(alice.totalScore).toBe(20)
+      expect(bob.totalScore).toBe(15)
+      expect(gameStore.getState().currentSession?.roundHistory).toHaveLength(3)
+      expect(gameStore.getState().currentSession?.currentRound).toBe(3)
+    })
   })
 
   describe('Load Session By ID', () => {

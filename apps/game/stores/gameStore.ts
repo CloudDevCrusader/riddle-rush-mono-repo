@@ -51,7 +51,24 @@ const loadPendingPlayerNames = (): string[] => {
 }
 
 type GameStoreShape = GameState & {
-  // Flow types
+  /**
+   * Flow state machine — single source of truth for game mode and round transitions.
+   *
+   * States:
+   *   setup          → No active session yet (players page, initial state)
+   *   in-round       → Active session with an ongoing round (game page)
+   *   round-complete → Current round data recorded in roundHistory (internal, auto-transitions to decision)
+   *   decision       → Post-round modal is active: next round / new game / leaderboard (results page)
+   *   completed      → Session status is 'completed', game is over (leaderboard page)
+   *
+   * Transitions:
+   *   setup          → in-round        via setupPlayers / advanceToConfiguredRound
+   *   in-round       → round-complete   via completeRound (when all players submitted)
+   *   round-complete → decision         via completeRound setting postRoundDecisionPending
+   *   decision       → in-round         via startNextRound (next round chosen)
+   *   decision       → completed        via completeGame (leaderboard or new game chosen)
+   *   completed      → setup            via endGame / clearSession (return to menu)
+   */
   gameMode: () => 'single' | 'multiplayer'
   isCurrentRoundCompleted: () => boolean
   nextRoundNumber: () => number

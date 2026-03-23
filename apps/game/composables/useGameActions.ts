@@ -2,7 +2,12 @@ import { useGameSession } from '../stores/hooks/useGameSession'
 import { useLogger } from './useLogger'
 
 /**
- * Composable for common game actions with error handling and user feedback
+ * Composable for common game actions with error handling and user feedback.
+ *
+ * All flow-sensitive decisions (canConfirmRoundScores, canProceedToResults)
+ * derive from the store's authoritative `flowState()`. Pages should prefer
+ * `useGameState()` for reactive computed versions of these guards and use
+ * this composable for fire-and-forget side-effectful actions.
  */
 export function useGameActions() {
   const gameSession = useGameSession()
@@ -13,14 +18,9 @@ export function useGameActions() {
   const { t } = useI18n()
   const logger = useLogger()
 
-  const getFlowState = () =>
-    (
-      gameSession as {
-        flowState?: {
-          value?: 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
-        }
-      }
-    ).flowState?.value ?? 'setup'
+  /** Read the authoritative flow state from the store's computed hook. */
+  const getFlowState = (): 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed' =>
+    gameSession.flowState.value ?? 'setup'
 
   /**
    * Start a new game session
