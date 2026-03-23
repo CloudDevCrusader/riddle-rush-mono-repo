@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Session resumed — Phase 20 (Revert Zustand to Pinia) in progress with uncommitted changes
+stopped_at: Session resumed — Phase 20 complete, Phase 18-05 is next (single-source game flow refactor)
 last_updated: '2026-03-23T00:00:00Z'
 last_activity: 2026-03-23
 progress:
-  total_phases: 20
-  completed_phases: 17
-  total_plans: 56
-  completed_plans: 52
-  percent: 93
+  total_phases: 21
+  completed_phases: 18
+  total_plans: 61
+  completed_plans: 60
+  percent: 99
 ---
 
 # Project State
@@ -25,11 +25,11 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 
 ## Current Position
 
-Phase: 18 of 20 (Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring)
-Plan: 4 of 5
-Status: In progress
-Last activity: 2026-03-22
-Last completed: 18-04 — Codify explicit feature-flag precedence contract and regression coverage
+Phase: 21 of 21 (Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring)
+Plan: 5 of 5 — PENDING (18-05 is the last remaining plan)
+Status: In progress (1 plan remaining)
+Last activity: 2026-03-23
+Last completed: Phase 21 plans created — 5 plans ready for execution (20-01, 20-02, 20-03 all have SUMMARYs, git clean)
 
 Progress: [█████████░] 93% (52/56 total plans complete)
 
@@ -80,6 +80,7 @@ _Updated after each plan completion_
 
 - Phase 18 added: enable fortune-wheel as default review/refactor if implementation works and looks good
 - Phase 19 added: Move from Pinia to Zustand
+- Phase 21 added: Refactor and fix E2E and unit tests
 
 ### Decisions
 
@@ -203,7 +204,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-23T00:00:00Z
-Stopped at: Session resumed, Phase 20 (Revert Zustand to Pinia) in progress — stores converted (staged), tests/components updated (unstaged), pinia.client.ts untracked
+Stopped at: Session resumed — Phase 20 complete, Phase 18-05 is next (single-source game flow refactor)
 Resume file: None
 
 ### Deployment: development
