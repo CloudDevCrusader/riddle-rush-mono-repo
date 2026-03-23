@@ -5,10 +5,9 @@ import { useLogger } from './useLogger'
 /**
  * Composable for common game actions with error handling and user feedback.
  *
- * All flow-sensitive decisions (canConfirmRoundScores, canProceedToResults)
- * derive from the store's authoritative `flowState()`. Pages should prefer
- * `useGameState()` for reactive computed versions of these guards and use
- * this composable for fire-and-forget side-effectful actions.
+ * Fire-and-forget side-effectful game actions with error handling.
+ * Flow-sensitive guards (canConfirmRoundScores, canProceedToResults) live
+ * in `useGameState()` as reactive computed refs — use those instead.
  */
 export function useGameActions() {
   const store = useGameStore()
@@ -175,13 +174,6 @@ export function useGameActions() {
     store.transitionToRoundComplete()
   }
 
-  const canConfirmRoundScores = () => getFlowState() === 'in-round'
-
-  const canProceedToResults = () => {
-    const flow = getFlowState()
-    return flow === 'round-complete' || flow === 'decision'
-  }
-
   return {
     startNewGame,
     resumeOrStartGame,
@@ -191,7 +183,5 @@ export function useGameActions() {
     startNextRound,
     startConfiguredRound,
     transitionToRoundComplete,
-    canConfirmRoundScores,
-    canProceedToResults,
   }
 }

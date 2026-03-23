@@ -409,41 +409,12 @@ describe('useGameActions', () => {
       expect(actions).toHaveProperty('shareScore')
       expect(actions).toHaveProperty('setupMultiplayerGame')
       expect(actions).toHaveProperty('startNextRound')
-      expect(actions).toHaveProperty('canConfirmRoundScores')
-      expect(actions).toHaveProperty('canProceedToResults')
       expect(typeof actions.startNewGame).toBe('function')
       expect(typeof actions.resumeOrStartGame).toBe('function')
       expect(typeof actions.endGame).toBe('function')
       expect(typeof actions.shareScore).toBe('function')
       expect(typeof actions.setupMultiplayerGame).toBe('function')
       expect(typeof actions.startNextRound).toBe('function')
-      expect(typeof actions.canConfirmRoundScores).toBe('function')
-      expect(typeof actions.canProceedToResults).toBe('function')
-    })
-  })
-
-  describe('flow guard helpers', () => {
-    it('canConfirmRoundScores is true only in in-round state', () => {
-      const actions = useGameActions()
-
-      mockGameSession.flowState.value = 'in-round'
-      expect(actions.canConfirmRoundScores()).toBe(true)
-
-      mockGameSession.flowState.value = 'decision'
-      expect(actions.canConfirmRoundScores()).toBe(false)
-    })
-
-    it('canProceedToResults is true for round-complete and decision states', () => {
-      const actions = useGameActions()
-
-      mockGameSession.flowState.value = 'round-complete'
-      expect(actions.canProceedToResults()).toBe(true)
-
-      mockGameSession.flowState.value = 'decision'
-      expect(actions.canProceedToResults()).toBe(true)
-
-      mockGameSession.flowState.value = 'in-round'
-      expect(actions.canProceedToResults()).toBe(false)
     })
   })
 })

@@ -415,8 +415,7 @@ export const useGameStore = defineStore('game', {
     transitionToRoundComplete() {
       const session = this.currentSession
       if (session) {
-        // Mark the current round as completed by adding it to roundHistory
-        // This ensures flowState returns 'round-complete'
+        // INVARIANT: Do NOT set postRoundDecisionPending here — completeRound() owns that transition.
         if (session.roundHistory.length < session.currentRound) {
           session.roundHistory.push({
             roundNumber: session.currentRound,
@@ -431,7 +430,6 @@ export const useGameStore = defineStore('game', {
             })),
           })
         }
-        this.postRoundDecisionPending = true
       }
     },
 
@@ -493,7 +491,7 @@ export const useGameStore = defineStore('game', {
 
       // Idempotency guard: avoid duplicate history entries for the same round.
       if (this.isCurrentRoundCompleted) {
-        this.postRoundDecisionPending = true
+        this.transitionToDecision()
         return
       }
 
@@ -590,8 +588,8 @@ export const useGameStore = defineStore('game', {
       const playerManager = usePlayerManager()
       return playerManager.getPlayerById(session.players, playerId)
     },
-    getState(): any {
-      return this
+    getState(): ReturnType<typeof useGameStore> {
+      return this as ReturnType<typeof useGameStore>
     },
   },
 })

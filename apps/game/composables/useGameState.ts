@@ -43,7 +43,7 @@ export function useGameState() {
     )
   })
 
-  const canConfirmRoundScores = computed(() => gameSession.flowState.value === 'in-round')
+  const canConfirmRoundScores = computed(() => gameSession.flowState.value === 'round-complete')
 
   return {
     // Backward compatibility: return hooks as "store" objects

@@ -357,11 +357,11 @@ describe('useGameState', () => {
       mockGameSessionState.players = [{ name: 'Alice', totalScore: 0, hasSubmitted: false }]
 
       mockGameSessionState.flowState = 'in-round'
-      expect(state.canConfirmRoundScores.value).toBe(true)
+      expect(state.canConfirmRoundScores.value).toBe(false)
       expect(state.canProceedToResults.value).toBe(false)
 
       mockGameSessionState.flowState = 'round-complete'
-      expect(state.canConfirmRoundScores.value).toBe(false)
+      expect(state.canConfirmRoundScores.value).toBe(true)
       expect(state.canProceedToResults.value).toBe(true)
 
       mockGameSessionState.flowState = 'decision'

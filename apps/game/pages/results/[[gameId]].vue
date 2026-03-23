@@ -207,7 +207,7 @@ const handleConfirmScores = async () => {
 
   // Use unified flow state for validation
   const flow = flowState.value
-  if (flow !== 'in-round' || isDecisionFlow.value || hasConfirmedRound.value) {
+  if (flow !== 'round-complete' || isDecisionFlow.value || hasConfirmedRound.value) {
     // If not in correct flow state, show decision modal directly
     showDecisionModal.value = true
     return
@@ -289,12 +289,6 @@ onMounted(async () => {
   if (flowState.value === 'decision') {
     hasConfirmedRound.value = true
     showDecisionModal.value = true
-  } else if (flowState.value === 'round-complete') {
-    // Auto-transition to decision modal for better UX
-    setTimeout(() => {
-      showDecisionModal.value = true
-      hasConfirmedRound.value = true
-    }, 1000)
   }
 })
 
