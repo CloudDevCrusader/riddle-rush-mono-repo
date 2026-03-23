@@ -72,8 +72,12 @@ This phase aims to:
 2. Create integration tests for WebSocket and IndexedDB flows
 3. Refactor all remaining E2E specs to use shared helpers and data-testid selectors
 4. Fix multi-round scoring workflow E2E test
-5. Achieve 100% E2E test pass rate with no intermittent failures
-6. Document game mode state flow chart as single source of truth
+5. **CRITICAL**: Ensure E2E tests cover the COMPLETE game workflow including:
+   - Playing multiple rounds in a single game session
+   - Creating a NEW game after completing/ending a previous game
+   - Full user journey from menu → players → game (multiple rounds) → results → new game creation
+6. Achieve 100% E2E test pass rate with no intermittent failures
+7. Document game mode state flow chart as single source of truth
 
 ## Mobile Enhancement Goals
 
@@ -93,11 +97,15 @@ After this phase, the following must be TRUE:
 
 1. All Phase 12 unimplemented unit test plans are complete and passing
 2. Integration tests exist for WebSocket and IndexedDB flows
-3. E2E test suite passes with 100% success rate
-4. Multi-round scoring workflow E2E test passes consistently
-5. Game mode state flow chart documented and referenced by tests
-6. Zero CSS class selectors remain in E2E tests (all data-testid based)
-7. All E2E specs use shared helpers from tests/e2e/helpers/game-flow.ts
-8. Unit test coverage >75% for all composables
+3. **CRITICAL**: E2E test suite covers COMPLETE game workflow:
+   - Tests verify playing multiple rounds in a single session
+   - Tests verify creating a NEW game after completing a previous game
+   - Full user journey: menu → players → game (multiple rounds) → results → new game creation
+4. E2E test suite passes with 100% success rate
+5. Multi-round scoring workflow E2E test passes consistently
+6. Game mode state flow chart documented and referenced by tests
+7. Zero CSS class selectors remain in E2E tests (all data-testid based)
+8. All E2E specs use shared helpers from tests/e2e/helpers/game-flow.ts
+9. Unit test coverage >75% for all composables
 
-**Mobile Testing:** 9. Mobile E2E tests cover all critical game flows (menu, players, game, results) 10. Touch interactions tested (swipe gestures, tap, pinch-to-zoom if applicable) 11. Responsive design validated across Pixel 5 (mobile) and iPad Pro 11 (tablet) viewports 12. Native mobile app has unit tests for core components and utilities 13. Native mobile app has integration tests for key workflows 14. PWA install flow tested end-to-end on mobile 15. PWA offline mode verified to work on mobile 16. All mobile responsive design issues identified and fixed
+**Mobile Testing:** 9. Mobile E2E tests cover COMPLETE game workflow on mobile (menu, players, game with multiple rounds, results, new game creation) 10. Touch interactions tested (swipe gestures, tap, pinch-to-zoom if applicable) 11. Responsive design validated across Pixel 5 (mobile) and iPad Pro 11 (tablet) viewports 12. Native mobile app has unit tests for core components and utilities 13. Native mobile app has integration tests for key workflows 14. PWA install flow tested end-to-end on mobile 15. PWA offline mode verified to work on mobile 16. All mobile responsive design issues identified and fixed
