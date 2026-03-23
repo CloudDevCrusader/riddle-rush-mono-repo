@@ -960,6 +960,67 @@ body {
   line-height: 1.2;
 }
 
+// ============================================
+// GAME BACK BUTTON (shared circular back-button)
+// ============================================
+// Use --back-btn-size, --back-btn-bg, --back-btn-border,
+// --back-btn-shadow-color to customise per-page.
+
+.game-back-btn {
+  --back-btn-size: clamp(44px, 10vw, 64px);
+  --back-btn-bg: var(--bg-gradient-btn-orange);
+  --back-btn-border: 3px solid var(--color-border-gold);
+  --back-btn-shadow-color: #{color('btn-orange-shadow')};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--back-btn-size);
+  height: var(--back-btn-size);
+  background: var(--back-btn-bg);
+  border: var(--back-btn-border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow:
+    0 4px 0 var(--back-btn-shadow-color),
+    0 6px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow:
+      0 2px 0 var(--back-btn-shadow-color),
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  // Red variant (used in game page)
+  &--red {
+    --back-btn-bg: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
+    --back-btn-border: 4px solid #ffaa00;
+    --back-btn-shadow-color: rgba(0, 0, 0, 0.2);
+
+    box-shadow:
+      0 8px 0 var(--back-btn-shadow-color),
+      var(--shadow-lg);
+
+    &:active {
+      box-shadow:
+        0 4px 0 var(--back-btn-shadow-color),
+        var(--shadow-md);
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

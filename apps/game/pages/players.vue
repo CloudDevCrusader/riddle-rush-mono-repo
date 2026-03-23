@@ -47,7 +47,18 @@
           </div>
 
           <GameScrollList class="players-list" max-height="420px">
-            <div v-for="(_, index) in playerCount" :key="`player-${index}`" class="player-row">
+            <div
+              v-for="(_, index) in playerCount"
+              :key="`player-${index}`"
+              v-motion
+              :initial="{ opacity: 0, x: -20 }"
+              :enter="{
+                opacity: 1,
+                x: 0,
+                transition: { duration: 300, delay: Number(index) * 80 },
+              }"
+              class="player-row"
+            >
               <label class="player-row__label" :for="`player-${index}`">
                 {{ placeholderForIndex(index) }}
               </label>
@@ -81,6 +92,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
+
 const { t, goBack, toast } = usePageSetup()
 const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()

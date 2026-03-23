@@ -3,14 +3,15 @@
     <GameBackground>
       <!-- Main Container -->
       <div class="container">
-        <!-- Logo -->
-        <div class="logo-container">
-          <img :src="`${baseUrl}assets/main-menu/LOGO.png`" alt="Logo" class="logo-image" />
-        </div>
+        <!-- Title -->
+        <GameHeader color="gold">RIDDLE RUSH</GameHeader>
 
         <!-- Menu Buttons -->
         <div v-show="!showMenu" class="menu-buttons">
           <GameButton
+            v-motion
+            :initial="{ opacity: 0, y: 30 }"
+            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 0 } }"
             variant="primary"
             size="lg"
             full-width
@@ -20,6 +21,9 @@
             {{ t('menu.play', 'PLAY') }}
           </GameButton>
           <GameButton
+            v-motion
+            :initial="{ opacity: 0, y: 30 }"
+            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 80 } }"
             variant="secondary"
             size="lg"
             full-width
@@ -29,6 +33,9 @@
             {{ t('menu.menu', 'MENU') }}
           </GameButton>
           <GameButton
+            v-motion
+            :initial="{ opacity: 0, y: 30 }"
+            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 160 } }"
             variant="warning"
             size="lg"
             full-width
@@ -38,7 +45,10 @@
             {{ t('menu.options', 'OPTIONS') }}
           </GameButton>
           <GameButton
-            variant="secondary"
+            v-motion
+            :initial="{ opacity: 0, y: 30 }"
+            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 240 } }"
+            variant="warning"
             size="lg"
             full-width
             data-testid="menu-credits-button"
@@ -77,7 +87,9 @@
 </template>
 
 <script setup lang="ts">
-const { router, baseUrl, toast, t } = usePageSetup()
+definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } })
+
+const { router, toast, t } = usePageSetup()
 const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
 const route = useRoute()
 
@@ -146,18 +158,6 @@ useHead({
   gap: var(--spacing-3xl);
 }
 
-.logo-container {
-  display: flex;
-  justify-content: center;
-  margin-top: calc(var(--spacing-3xl) * -1);
-}
-
-.logo-image {
-  width: clamp(250px, 40vw, 450px);
-  height: auto;
-  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
-}
-
 .menu-buttons {
   display: flex;
   flex-direction: column;
@@ -199,10 +199,6 @@ useHead({
     gap: var(--spacing-2xl);
   }
 
-  .logo-image {
-    width: clamp(200px, 40vw, 380px);
-  }
-
   .menu-buttons {
     width: calc(100% - 2rem);
     max-width: 400px;
@@ -220,11 +216,6 @@ useHead({
   .container {
     padding: var(--spacing-xl) var(--spacing-lg);
     gap: var(--spacing-xl);
-  }
-
-  .logo-image {
-    width: clamp(150px, 35vw, 250px);
-    margin-top: calc(var(--spacing-xl) * -1);
   }
 
   .menu-buttons {
@@ -252,10 +243,6 @@ useHead({
     width: calc(100% - 3rem);
     max-width: 360px;
     gap: var(--spacing-md);
-  }
-
-  .logo-image {
-    width: clamp(180px, 38vw, 280px);
   }
 }
 </style>

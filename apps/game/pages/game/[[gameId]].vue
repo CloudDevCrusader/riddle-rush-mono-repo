@@ -8,7 +8,7 @@
       <!-- Back Button -->
       <button
         data-testid="back-button"
-        class="back-btn tap-highlight no-select"
+        class="game-back-btn game-back-btn--red tap-highlight no-select"
         @click="handleBack"
       >
         <img
@@ -154,6 +154,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
+
 const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
 const { goToResults, goToPlayers, goToRoundStart } = useNavigation()
 const {
@@ -404,42 +406,6 @@ useHead({
   justify-content: space-between;
   padding: var(--spacing-lg) var(--spacing-md);
   z-index: var(--z-base);
-}
-
-.back-btn {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
-  border: 4px solid #ffaa00;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-lg);
-  position: relative;
-  overflow: hidden;
-}
-
-.back-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.back-btn:active {
-  transform: translateY(2px);
-  box-shadow:
-    0 4px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-md);
 }
 
 .back-icon {
@@ -852,7 +818,7 @@ useHead({
     padding: var(--spacing-md);
   }
 
-  .back-btn,
+  .game-back-btn,
   .pause-btn {
     width: clamp(50px, 12vw, 64px);
     height: clamp(50px, 12vw, 64px);
@@ -919,7 +885,7 @@ useHead({
     padding: var(--spacing-sm);
   }
 
-  .back-btn,
+  .game-back-btn,
   .pause-btn {
     width: clamp(44px, 11vw, 56px);
     height: clamp(44px, 11vw, 56px);

@@ -1,118 +1,110 @@
 <template>
-  <div class="round-start-page">
-    <!-- Background Image -->
-    <NuxtImg
-      :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
-      alt="Background"
-      class="page-bg"
-      format="webp"
-      quality="80"
-      preset="background"
-      loading="eager"
-      preload
-    />
-
-    <!-- Top Bar -->
-    <div class="top-bar">
-      <!-- Round Indicator -->
-      <div class="round-indicator" data-testid="round-indicator">
-        <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
-      </div>
-    </div>
-
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Dual Wheels Phase (only shown if feature is enabled) -->
-      <transition name="wheel-fade">
-        <div
-          v-if="isFortuneWheelEnabled && !wheelsComplete"
-          class="wheels-container"
-          data-testid="round-wheels-container"
-        >
-          <div class="wheel-wrapper">
-            <div class="wheel-label">
-              {{ t('common.category', 'Category') }}
-            </div>
-            <FortuneWheel
-              ref="categoryWheelRef"
-              v-model="selectedCategory"
-              :items="displayCategories"
-              :get-item-key="(cat: any, idx: number) => cat?.searchWord || idx"
-              :get-item-label="(cat: any) => t(`categories.${cat.searchWord}`, cat.name)"
-              :get-item-icon="getCategoryIcon"
-              center-icon="🎯"
-              @spin-complete="onCategoryComplete"
-            />
-          </div>
-
-          <div class="wheel-wrapper">
-            <div class="wheel-label">
-              {{ t('common.letter', 'Letter') }}
-            </div>
-            <FortuneWheel
-              ref="letterWheelRef"
-              v-model="selectedLetter"
-              :items="alphabet"
-              :get-item-key="(letter: string, idx: number) => letter"
-              :get-item-label="(letter: string) => letter"
-              :get-item-icon="() => ''"
-              center-icon="🎯"
-              @spin-complete="onLetterComplete"
-            />
-          </div>
+  <GameBackground>
+    <div class="round-start-page">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <!-- Round Indicator -->
+        <div class="round-indicator" data-testid="round-indicator">
+          <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
         </div>
-      </transition>
+      </div>
 
-      <!-- Selected Values Display Phase (only shown if fortune wheel was used) -->
-      <transition name="results-fade">
-        <div
-          v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
-          class="results-display"
-          data-testid="round-results-display"
-        >
-          <div class="result-item animate-scale-in" data-testid="round-category-display">
-            <div class="result-label">
-              {{ t('common.category', 'Category') }}
-            </div>
-            <div class="result-value">
-              <span class="result-icon">{{ selectedCategoryIcon }}</span>
-              <span class="result-text">{{ selectedCategoryName }}</span>
-            </div>
-          </div>
-
-          <div class="divider">×</div>
-
+      <!-- Main Container -->
+      <div class="container">
+        <!-- Dual Wheels Phase (only shown if feature is enabled) -->
+        <transition name="wheel-fade">
           <div
-            class="result-item animate-scale-in"
-            style="animation-delay: 0.2s"
-            data-testid="round-letter-display"
+            v-if="isFortuneWheelEnabled && !wheelsComplete"
+            class="wheels-container"
+            data-testid="round-wheels-container"
           >
-            <div class="result-label">
-              {{ t('common.letter', 'Letter') }}
+            <div class="wheel-wrapper">
+              <div class="wheel-label">
+                {{ t('common.category', 'Category') }}
+              </div>
+              <FortuneWheel
+                ref="categoryWheelRef"
+                v-model="selectedCategory"
+                :items="displayCategories"
+                :get-item-key="(cat: any, idx: number) => cat?.searchWord || idx"
+                :get-item-label="(cat: any) => t(`categories.${cat.searchWord}`, cat.name)"
+                :get-item-icon="getCategoryIcon"
+                center-icon="🎯"
+                @spin-complete="onCategoryComplete"
+              />
             </div>
-            <div class="result-value">
-              <span class="result-text result-letter">{{ selectedLetter }}</span>
+
+            <div class="wheel-wrapper">
+              <div class="wheel-label">
+                {{ t('common.letter', 'Letter') }}
+              </div>
+              <FortuneWheel
+                ref="letterWheelRef"
+                v-model="selectedLetter"
+                :items="alphabet"
+                :get-item-key="(letter: string, idx: number) => letter"
+                :get-item-label="(letter: string) => letter"
+                :get-item-icon="() => ''"
+                center-icon="🎯"
+                @spin-complete="onLetterComplete"
+              />
             </div>
           </div>
-        </div>
-      </transition>
+        </transition>
 
-      <!-- Loading indicator -->
-      <div v-if="startingGame" class="loading-container" data-testid="round-loading">
-        <Spinner />
-        <p class="loading-text">
-          {{ t('home.starting_game', 'Starting game...') }}
-        </p>
+        <!-- Selected Values Display Phase (only shown if fortune wheel was used) -->
+        <transition name="results-fade">
+          <div
+            v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
+            class="results-display"
+            data-testid="round-results-display"
+          >
+            <div class="result-item animate-scale-in" data-testid="round-category-display">
+              <div class="result-label">
+                {{ t('common.category', 'Category') }}
+              </div>
+              <div class="result-value">
+                <span class="result-icon">{{ selectedCategoryIcon }}</span>
+                <span class="result-text">{{ selectedCategoryName }}</span>
+              </div>
+            </div>
+
+            <div class="divider">×</div>
+
+            <div
+              class="result-item animate-scale-in"
+              style="animation-delay: 0.2s"
+              data-testid="round-letter-display"
+            >
+              <div class="result-label">
+                {{ t('common.letter', 'Letter') }}
+              </div>
+              <div class="result-value">
+                <span class="result-text result-letter">{{ selectedLetter }}</span>
+              </div>
+            </div>
+          </div>
+        </transition>
+
+        <!-- Loading indicator -->
+        <div v-if="startingGame" class="loading-container" data-testid="round-loading">
+          <Spinner />
+          <p class="loading-text">
+            {{ t('home.starting_game', 'Starting game...') }}
+          </p>
+        </div>
       </div>
     </div>
-  </div>
+  </GameBackground>
 </template>
 
 <script setup lang="ts">
 import type { Category } from '@riddle-rush/types/game'
 import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
-const { baseUrl, toast, t } = usePageSetup()
+definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
+
+const { toast, t } = usePageSetup()
 const { goToGame, goToPlayers } = useNavigation()
 const { gameStore, nextRoundNumber } = useGameState()
 const { isFortuneWheelEnabled } = useFeatureFlags()
@@ -325,18 +317,7 @@ useHead({
   min-height: 100dvh;
   position: relative;
   overflow: hidden;
-  background: #1a1a2e;
-}
-
-/* Background Image */
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
 }
 
 /* Top Bar */
@@ -533,17 +514,6 @@ useHead({
 
 .animate-scale-in {
   animation: scaleIn 0.6s ease-out backwards;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* Responsive - Stack wheels vertically on mobile */

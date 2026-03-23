@@ -84,24 +84,14 @@ const isSpinning = ref(false)
 
 const angleStep = computed(() => 360 / props.items.length)
 
-// Default color palette - soft blues matching game aesthetic
+// Default color palette - game design system blues/teals
 const defaultColors = [
-  '#FF6B6B', // Soft red
-  '#4ECDC4', // Teal
-  '#45B7D1', // Sky blue
-  '#96CEB4', // Mint green
-  '#FFEAA7', // Cream
-  '#DDA0DD', // Light purple
-  '#98D8C8', // Sea green
-  '#F7DC6F', // Light yellow
-  '#BB8FCE', // Lavender
-  '#85C1E2', // Light blue
-  '#F8C471', // Peach
-  '#82E0AA', // Light green
-  '#D2B4DE', // Mauve
-  '#85C1E2', // Blue
-  '#F8C471', // Orange
-  '#82E0AA', // Green
+  '#0a4cc7', // dark blue (--color-bg-blue-dark)
+  '#0b7ad6', // mid blue (--color-bg-blue-mid)
+  '#44c8ff', // light blue (--color-btn-blue-light)
+  '#0a7bda', // blue (--color-btn-blue-dark)
+  '#1cc6ff', // bright blue (--color-bg-blue-light)
+  '#0756a0', // deeper blue (btn-blue-shadow)
 ]
 
 const getSegmentStyle = (index: number) => {
@@ -215,44 +205,57 @@ watch(
 </script>
 
 <style scoped>
-/* Wheel Container */
+/* Wheel Container — fluid sizing */
 .wheel-container {
   position: relative;
-  width: min(85vw, 85vh, 420px);
-  height: min(85vw, 85vh, 420px);
+  width: min(90vw, 90dvh, 420px);
+  height: min(90vw, 90dvh, 420px);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
 }
 
+/* Smaller override for very narrow viewports */
+@media (max-width: 400px) {
+  .wheel-container {
+    width: min(88vw, 88dvh, 320px);
+    height: min(88vw, 88dvh, 320px);
+  }
+}
+
 /* Wheel Pointer */
 .wheel-pointer {
   position: absolute;
-  top: -20px;
+  top: calc(-1 * clamp(20px, 5vw, 32px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
 }
 
+/* CSS triangle pointer — overrides emoji character */
 .pointer-arrow {
-  font-size: clamp(40px, 8vw, 60px);
-  color: #ffd700;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
-  animation: pulse 1.5s ease-in-out infinite;
+  font-size: 0;
+  display: block;
+  width: clamp(20px, 5vw, 32px);
+  height: clamp(24px, 6vw, 40px);
+  background: linear-gradient(160deg, #ffd700, #ffa500);
+  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+  animation: pointer-bounce 1.5s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes pointer-bounce {
   0%,
   100% {
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
   50% {
-    transform: scale(1.1) translateY(4px);
+    transform: translateY(4px);
   }
 }
 
-/* Fortune Wheel - Enhanced 3D effect */
+/* Fortune Wheel — gold embossed outer ring */
 .fortune-wheel {
   position: relative;
   width: 100%;
@@ -260,26 +263,15 @@ watch(
   border-radius: 50%;
   transition: transform 1.8s cubic-bezier(0.25, 0.1, 0.25, 1);
   will-change: transform;
-  transform-style: preserve-3d;
-  perspective: 1000px;
+  border: clamp(6px, 2vw, 12px) solid var(--color-border-gold);
   box-shadow:
-    0 0 40px rgba(255, 215, 0, 0.4),
-    0 8px 30px rgba(0, 0, 0, 0.4),
-    inset 0 0 60px rgba(255, 255, 255, 0.1),
-    0 0 0 8px rgba(255, 255, 255, 0.1) inset;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    rgba(255, 255, 255, 0.1) 0deg,
-    rgba(255, 255, 255, 0.3) 360deg
-  );
+    0 0 0 clamp(3px, 1vw, 6px) var(--color-border-gold-dark),
+    0 0 30px rgba(255, 213, 79, 0.5),
+    0 8px 30px rgba(0, 0, 0, 0.5),
+    inset 0 0 20px rgba(255, 255, 255, 0.08);
 }
 
-/* Add 3D effect when spinning */
-.fortune-wheel:active {
-  transform: translateZ(10px);
-}
-
-/* Wheel Segments - Enhanced */
+/* Wheel Segments */
 .wheel-segment {
   position: absolute;
   width: 100%;
@@ -298,13 +290,10 @@ watch(
     50% 0%,
     calc(50% + 50% * sin(var(--angle, 30deg))) calc(50% - 50% * cos(var(--angle, 30deg)))
   );
-  /* Enhanced 3D button effect */
   box-shadow:
     inset 0 2px 6px rgba(255, 255, 255, 0.5),
     inset 0 -2px 6px rgba(0, 0, 0, 0.3),
     0 3px 8px rgba(0, 0, 0, 0.4);
-  /* Add subtle gradient overlay */
-  position: relative;
   overflow: hidden;
 }
 
@@ -351,18 +340,18 @@ watch(
 }
 
 .segment-icon {
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(16px, 5vw, 32px);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .segment-text {
   font-family: var(--font-display);
-  font-size: clamp(10px, 2vw, 14px);
+  font-size: clamp(8px, 2.5vw, 14px);
   font-weight: var(--font-weight-bold);
   color: var(--color-white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
   text-align: center;
-  max-width: 80px;
+  max-width: clamp(40px, 12vw, 80px);
   line-height: 1.2;
 }
 
@@ -402,11 +391,11 @@ watch(
 
 .center-circle {
   position: relative;
-  width: clamp(80px, 18vw, 120px);
-  height: clamp(80px, 18vw, 120px);
+  width: clamp(60px, 18vw, 120px);
+  height: clamp(60px, 18vw, 120px);
   border-radius: 50%;
   background: linear-gradient(135deg, #ffd700, #ffa500);
-  border: 4px solid var(--color-white);
+  border: clamp(3px, 0.8vw, 5px) solid var(--color-white);
   box-shadow:
     0 0 20px rgba(255, 215, 0, 0.8),
     0 4px 15px rgba(0, 0, 0, 0.4),
@@ -418,7 +407,7 @@ watch(
 
 .selected-icon,
 .center-icon {
-  font-size: clamp(32px, 7vw, 48px);
+  font-size: clamp(24px, 6vw, 40px);
   animation: bounce 0.5s ease-out;
 }
 
@@ -431,86 +420,6 @@ watch(
   }
   100% {
     transform: scale(1);
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .wheel-container {
-    width: min(80vw, 80vh, 360px);
-    height: min(80vw, 80vh, 360px);
-  }
-}
-
-@media (max-width: 640px) {
-  .wheel-container {
-    width: min(75vw, 75vh, 320px);
-    height: min(75vw, 75vh, 320px);
-  }
-
-  .segment-icon {
-    font-size: clamp(20px, 5vw, 28px);
-  }
-
-  .segment-text {
-    font-size: clamp(9px, 2.2vw, 12px);
-  }
-
-  .center-circle {
-    width: clamp(70px, 16vw, 100px);
-    height: clamp(70px, 16vw, 100px);
-  }
-
-  .selected-icon,
-  .center-icon {
-    font-size: clamp(28px, 6vw, 40px);
-  }
-}
-
-@media (max-width: 480px) {
-  .wheel-container {
-    width: min(70vw, 70vh, 280px);
-    height: min(70vw, 70vh, 280px);
-  }
-
-  .segment-icon {
-    font-size: clamp(18px, 4.5vw, 24px);
-  }
-
-  .segment-text {
-    font-size: clamp(8px, 2vw, 11px);
-    max-width: 60px;
-  }
-
-  .center-circle {
-    width: clamp(60px, 14vw, 90px);
-    height: clamp(60px, 14vw, 90px);
-  }
-
-  .selected-icon,
-  .center-icon {
-    font-size: clamp(24px, 5vw, 36px);
-  }
-
-  .pointer-arrow {
-    font-size: clamp(32px, 7vw, 48px);
-  }
-}
-
-/* Pixel 7 Pro specific (412px width) */
-@media (min-width: 390px) and (max-width: 480px) {
-  .wheel-container {
-    width: min(72vw, 72vh, 300px);
-    height: min(72vw, 72vh, 300px);
-  }
-
-  .segment-icon {
-    font-size: clamp(20px, 4.8vw, 26px);
-  }
-
-  .segment-text {
-    font-size: clamp(9px, 2.1vw, 12px);
-    max-width: 70px;
   }
 }
 </style>

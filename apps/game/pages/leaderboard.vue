@@ -18,6 +18,9 @@
         <div
           v-for="(entry, index) in leaderboard"
           :key="entry.id"
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 80 } }"
           class="leaderboard-row"
           :data-testid="`leaderboard-entry-${index}`"
         >
@@ -55,6 +58,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
+
 const { t, toast } = usePageSetup()
 const { goHome, goToRoundStart } = useNavigation()
 const { gameStore, leaderboard, isGameCompleted } = useGameState()

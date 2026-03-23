@@ -133,22 +133,48 @@ useHead({
   min-height: 100dvh;
 }
 
-/* Page Transition Animations - Mobile Optimized */
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Forward navigation: slide left */
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 250ms ease;
+}
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
 }
 
-.page-enter-from,
-.page-leave-to {
+/* Back navigation: slide right */
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 250ms ease;
+}
+.slide-right-enter-from {
   opacity: 0;
+  transform: translateX(-30px);
+}
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .page-enter-active,
-  .page-leave-active {
+  .slide-left-enter-active,
+  .slide-left-leave-active,
+  .slide-right-enter-active,
+  .slide-right-leave-active {
     transition: opacity 0.15s ease;
+  }
+
+  .slide-left-enter-from,
+  .slide-left-leave-to,
+  .slide-right-enter-from,
+  .slide-right-leave-to {
+    transform: none;
   }
 }
 </style>

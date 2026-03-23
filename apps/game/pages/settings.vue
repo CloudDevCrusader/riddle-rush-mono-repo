@@ -4,7 +4,7 @@
       <!-- Header -->
       <GameHeader color="gold">
         <template #left>
-          <button class="back-btn tap-highlight no-select" @click="goBack">
+          <button class="game-back-btn tap-highlight no-select" @click="goBack">
             <span class="back-btn__arrow">&#8592;</span>
           </button>
         </template>
@@ -33,6 +33,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } })
+
 const { t, router } = usePageSetup()
 const settings = useSettings()
 
@@ -119,35 +121,12 @@ useHead({
   gap: var(--spacing-lg);
 }
 
-.back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(40px, 8vw, 52px);
-  height: clamp(40px, 8vw, 52px);
-  background: linear-gradient(180deg, #ffb84d 0%, #ff9500 100%);
-  border: 3px solid #ffd54f;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  box-shadow:
-    0 4px 0 #cc7700,
-    0 6px 12px rgba(0, 0, 0, 0.3);
-
-  &:active {
-    transform: translateY(2px);
-    box-shadow:
-      0 2px 0 #cc7700,
-      0 4px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  &__arrow {
-    font-size: clamp(20px, 4vw, 28px);
-    font-weight: var(--font-weight-bold);
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    line-height: 1;
-  }
+.back-btn__arrow {
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  line-height: 1;
 }
 
 .settings-panel {
