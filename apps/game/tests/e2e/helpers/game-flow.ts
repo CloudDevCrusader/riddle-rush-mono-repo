@@ -252,7 +252,7 @@ export async function confirmScoresAndWaitForModal(page: Page): Promise<void> {
     }
   }
 
-  const nextRoundBtn = page.locator('[data-testid="next-round"]')
+  const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
   const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
 
   await expect(nextRoundBtn.or(leaderboardBtn).first()).toBeVisible({ timeout: 15000 })
@@ -262,7 +262,7 @@ export async function confirmScoresAndWaitForModal(page: Page): Promise<void> {
  * Continue to the next round from the post-round decision modal.
  */
 export async function goToNextRound(page: Page): Promise<void> {
-  const nextRoundBtn = page.locator('[data-testid="next-round"]')
+  const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
   await expect(nextRoundBtn).toBeVisible({ timeout: 8000 })
   await nextRoundBtn.click()
   await expect(page).toHaveURL(/\/game/, { timeout: 20000 })

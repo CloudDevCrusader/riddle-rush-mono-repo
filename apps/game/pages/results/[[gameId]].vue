@@ -16,7 +16,7 @@
           :data-testid="`results-player-entry-${index}`"
         >
           <div class="scoring-page__player-header">
-            <span class="scoring-page__rank" data-testid="projected-rank">
+            <span class="scoring-page__rank" :data-testid="`predicted-rank-${index}`">
               #{{ projectedRanks.get(player.id) ?? Number(index) + 1 }}
             </span>
             <GamePlayerCard
@@ -85,6 +85,7 @@
     <!-- Decision modal: next round or finish game -->
     <GameModal
       v-model="showDecisionModal"
+      data-testid="post-round-modal"
       :title="t('scoring.round_complete', 'Round Complete!')"
       :close-on-backdrop="false"
       :close-on-escape="false"
@@ -103,7 +104,7 @@
             variant="primary"
             size="lg"
             full-width
-            data-testid="next-round"
+            data-testid="next-round-button"
             @click="handleNextRound"
           >
             {{ t('scoring.next_round', 'Next Round') }}
