@@ -68,8 +68,8 @@ test.describe('multi round scoring workflow', () => {
 
       // Assign scores: Player 1 = 2, Player 2 = 1
       await assignScores(page, [2, 1])
-      await expect(page.locator('.scoring-page__score-value').nth(0)).toContainText('2')
-      await expect(page.locator('.scoring-page__score-value').nth(1)).toContainText('1')
+      await expect(page.locator('[data-testid^="scoring-page-score-value-"]').nth(0)).toContainText('2')
+      await expect(page.locator('[data-testid^="scoring-page-score-value-"]').nth(1)).toContainText('1')
 
       // Confirm scores
       await confirmScoresAndWaitForModal(page)
@@ -81,8 +81,8 @@ test.describe('multi round scoring workflow', () => {
 
       // Assign scores: Player 1 = 1, Player 2 = 3
       await assignScores(page, [1, 3])
-      await expect(page.locator('.scoring-page__score-value').nth(0)).toContainText('1')
-      await expect(page.locator('.scoring-page__score-value').nth(1)).toContainText('3')
+      await expect(page.locator('[data-testid^="scoring-page-score-value-"]').nth(0)).toContainText('1')
+      await expect(page.locator('[data-testid^="scoring-page-score-value-"]').nth(1)).toContainText('3')
 
       // Confirm scores
       await confirmScoresAndWaitForModal(page)

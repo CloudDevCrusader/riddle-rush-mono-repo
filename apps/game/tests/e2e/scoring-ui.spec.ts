@@ -19,7 +19,7 @@ test.describe('Scoring Workflow: Score Entry UI', () => {
 
     const firstIncrement = incrementBtns.first()
     const firstDecrement = decrementBtns.first()
-    const firstScoreDisplay = page.locator('.scoring-page__score-value').first()
+    const firstScoreDisplay = page.locator('[data-testid^="scoring-page-score-value-"]').first()
 
     // Decrement button should be disabled initially
     await expect(firstDecrement).toBeDisabled()

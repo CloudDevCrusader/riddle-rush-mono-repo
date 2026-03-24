@@ -1,6 +1,6 @@
 <template>
   <Transition name="player-leaderboard">
-    <div v-if="props.visible" class="player-leaderboard-overlay" @click.self="$emit('close')">
+    <div v-if="props.visible" class="player-leaderboard-overlay" data-testid="player-leaderboard-overlay" @click.self="$emit('close')">
       <div class="player-leaderboard-panel">
         <header class="leaderboard-header">
           <h2>

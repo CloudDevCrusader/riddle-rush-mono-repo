@@ -10,14 +10,14 @@ test.describe('scoring results flow', () => {
       // Increment score
       const incrementBtn = page.locator('[data-testid="score-increment"]').first()
       await incrementBtn.click()
-      await expect(page.locator('.scoring-page__score-value').first()).toContainText('1')
+      await expect(page.locator('[data-testid^="scoring-page-score-value-"]').first()).toContainText('1')
 
       // Confirm scores
       const confirmBtn = page.locator('[data-testid="confirm-scores"]')
       await confirmBtn.click()
 
       // Leaderboard overlay should appear
-      const leaderboardOverlay = page.locator('.player-leaderboard-overlay')
+      const leaderboardOverlay = page.locator('[data-testid="player-leaderboard-overlay"]')
       await expect(leaderboardOverlay).toBeVisible({ timeout: 5000 })
     })
 

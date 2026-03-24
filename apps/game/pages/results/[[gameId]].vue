@@ -42,7 +42,7 @@
               −
             </GameButton>
 
-            <GameDisplay size="sm" :glow="false" class="scoring-page__score-value" :data-testid="`results-score-display-${index}`">
+            <GameDisplay size="sm" :glow="false" class="scoring-page__score-value" :data-testid="`scoring-page-score-value-${index}`">
               {{ pendingScores.get(player.id) ?? 0 }}
             </GameDisplay>
 
