@@ -105,7 +105,7 @@ useHead({
   height: 44px;
   padding: 0;
   border-radius: 50%;
-  font-size: 1.4rem;
+  font-size: var(--font-size-xl);
   line-height: 1;
 }
 
@@ -202,8 +202,42 @@ useHead({
     margin: 0 var(--spacing-sm);
   }
 
+  .credit-section {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+
   .ok-btn {
     width: min(220px, 80%);
+  }
+}
+
+@media (max-width: 360px) {
+  .credits-page {
+    padding: var(--spacing-lg) var(--spacing-xs);
+    gap: var(--spacing-md);
+  }
+
+  .credits-panel {
+    padding: var(--spacing-md);
+    max-height: 260px;
+    border-width: 3px;
+    margin: 0;
+  }
+
+  .credit-section {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .credit-box {
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+  }
+
+  .ok-btn {
+    width: min(200px, 85%);
   }
 }
 </style>

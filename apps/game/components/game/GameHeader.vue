@@ -108,4 +108,24 @@ const headerClasses = computed(() => ['game-header', `game-header--${props.color
     @include text-3d-orange;
   }
 }
+
+// Small phone adjustments
+@media (max-width: 480px) {
+  .game-header {
+    padding: var(--spacing-sm) 0;
+    gap: var(--spacing-xs);
+
+    &__title {
+      font-size: var(--font-size-2xl);
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .game-header {
+    &__title {
+      font-size: var(--font-size-xl);
+    }
+  }
+}
 </style>

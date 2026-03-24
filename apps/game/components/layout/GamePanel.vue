@@ -21,4 +21,20 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
 }
+
+// Small phone adjustments
+@include small-mobile {
+  .game-panel {
+    max-width: calc(100% - var(--spacing-sm) * 2);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+  }
+}
+
+@include tiny-mobile {
+  .game-panel {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+  }
+}
 </style>

@@ -27,7 +27,7 @@
             <div class="flag-container" data-testid="language-flag-en">
               <span class="flag-emoji">&#x1F1EC;&#x1F1E7;</span>
             </div>
-            <span class="language-name">ENGLISH</span>
+            <span class="language-name">{{ t('language.english') }}</span>
             <div
               class="checkbox"
               :class="{ checked: selectedLocale === 'en' }"
@@ -49,7 +49,7 @@
             <div class="flag-container" data-testid="language-flag-de">
               <span class="flag-emoji">&#x1F1E9;&#x1F1EA;</span>
             </div>
-            <span class="language-name">DEUTSCH</span>
+            <span class="language-name">{{ t('language.german') }}</span>
             <div
               class="checkbox"
               :class="{ checked: selectedLocale === 'de' }"
@@ -70,7 +70,7 @@
         data-testid="language-ok-button"
         @click="confirmSelection"
       >
-        OK
+        {{ t('common.ok') }}
       </GameButton>
     </div>
   </GameBackground>
@@ -324,7 +324,7 @@ useHead({
 }
 
 /* Responsive */
-@media (width <= 480px) {
+@media (max-width: 480px) {
   .language-page {
     padding: var(--spacing-md);
     padding-top: var(--spacing-2xl);
@@ -368,6 +368,44 @@ useHead({
 
   .checkmark {
     font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .language-page {
+    padding: var(--spacing-sm);
+    padding-top: var(--spacing-xl);
+    gap: var(--spacing-lg);
+  }
+
+  .back-btn {
+    width: 40px;
+    height: 40px;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm);
+  }
+
+  .language-row {
+    min-height: 52px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .flag-container {
+    width: 40px;
+    height: 40px;
+  }
+
+  .flag-emoji {
+    font-size: 1.5rem;
+  }
+
+  .checkbox {
+    width: 28px;
+    height: 28px;
+  }
+
+  .checkmark {
+    font-size: 1rem;
   }
 }
 </style>

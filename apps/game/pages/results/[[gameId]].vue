@@ -410,4 +410,59 @@ useHead({
     gap: var(--spacing-xl);
   }
 }
+
+@include small-mobile {
+  .scoring-page {
+    padding: var(--spacing-lg) var(--spacing-xs);
+    gap: var(--spacing-lg);
+  }
+
+  .scoring-page__list {
+    gap: var(--spacing-md);
+  }
+
+  .scoring-page__player-header {
+    flex-wrap: wrap;
+  }
+
+  .scoring-page__rank {
+    font-size: var(--font-size-base);
+    min-width: 2rem;
+  }
+
+  .scoring-page__base-score {
+    font-size: var(--font-size-xs);
+    width: 100%;
+    text-align: center;
+    margin-top: var(--spacing-xs);
+  }
+
+  .scoring-page__score-controls {
+    gap: var(--spacing-sm);
+  }
+
+  .scoring-page__score-value {
+    min-width: 50px;
+  }
+
+  .decision-content__text {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .decision-content__actions {
+    gap: var(--spacing-sm);
+  }
+}
+
+@include tiny-mobile {
+  .scoring-page {
+    padding: var(--spacing-md) var(--spacing-xs);
+    gap: var(--spacing-md);
+  }
+
+  .scoring-page__score-controls {
+    gap: var(--spacing-xs);
+  }
+}
 </style>

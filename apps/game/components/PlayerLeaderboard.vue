@@ -445,6 +445,73 @@ defineEmits<{
   }
 }
 
+/* Small phones */
+@media (max-width: 480px) {
+  .player-row {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .rank {
+    width: 32px;
+    min-width: 32px;
+    font-size: 18px;
+  }
+
+  .crown {
+    font-size: 26px;
+  }
+
+  .player-name {
+    font-size: var(--font-size-sm);
+  }
+
+  .player-score {
+    font-size: var(--font-size-xl);
+  }
+
+  .score-label {
+    font-size: 0.65rem;
+  }
+
+  .leaderboard-header h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .leaderboard-footer {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .leaderboard-footer .btn {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 360px) {
+  .player-row {
+    padding: var(--spacing-xs);
+  }
+
+  .rank {
+    width: 28px;
+    min-width: 28px;
+    font-size: 16px;
+  }
+
+  .crown {
+    font-size: 22px;
+  }
+
+  .player-score {
+    font-size: var(--font-size-lg);
+  }
+
+  .leaderboard-footer .btn {
+    min-height: 44px;
+  }
+}
+
 /* Pixel 7 Pro specific (412px width, tall screen) */
 @media (max-width: 450px) and (min-height: 800px) {
   .player-leaderboard-panel {

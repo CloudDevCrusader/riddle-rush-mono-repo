@@ -4,7 +4,7 @@
       <!-- Main Container -->
       <div class="container">
         <!-- Title -->
-        <GameHeader color="gold">RIDDLE RUSH</GameHeader>
+        <GameHeader color="gold" class="brand-title">{{ t('app.title') }}</GameHeader>
 
         <!-- Menu Buttons -->
         <div v-show="!showMenu" class="menu-buttons">
@@ -158,6 +158,10 @@ useHead({
   gap: var(--spacing-3xl);
 }
 
+.brand-title :deep(.game-header__title) {
+  text-transform: uppercase;
+}
+
 .menu-buttons {
   display: flex;
   flex-direction: column;
@@ -243,6 +247,26 @@ useHead({
     width: calc(100% - 3rem);
     max-width: 360px;
     gap: var(--spacing-md);
+  }
+}
+
+/* Ultra-small phones (<360px, e.g. iPhone SE 1st gen, Galaxy S3) */
+@media (max-width: 360px) {
+  .container {
+    padding: var(--spacing-lg) var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+
+  .menu-buttons {
+    width: calc(100% - 1rem);
+    max-width: 300px;
+    gap: var(--spacing-xs);
+  }
+
+  .menu-panel {
+    width: calc(100% - var(--spacing-xs) * 2);
+    max-width: 260px;
+    padding: var(--spacing-md);
   }
 }
 </style>

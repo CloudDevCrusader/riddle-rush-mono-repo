@@ -61,7 +61,7 @@ test.describe('Translation Checks', () => {
     let categoryName = ''
     if (isRoundStart) {
       // Wait for wheels to complete and results to show
-      const resultText = page.locator('[data-testid="round-start-result"]').first()
+      const resultText = page.locator('[data-testid="round-category-display"]').first()
       // It might skip directly to game if it navigates fast, so we handle both
       try {
         await expect(resultText).toBeVisible({ timeout: 10000 })
@@ -69,12 +69,12 @@ test.describe('Translation Checks', () => {
       } catch {
         // Maybe already navigated to game
         await page.waitForURL('**/game/**')
-        const gameCatName = page.locator('[data-testid="game-category-name"]')
+        const gameCatName = page.locator('[data-testid="game-category-info"]')
         await expect(gameCatName).toBeVisible()
         categoryName = (await gameCatName.textContent()) ?? ''
       }
     } else {
-      const gameCatName = page.locator('[data-testid="game-category-name"]')
+      const gameCatName = page.locator('[data-testid="game-category-info"]')
       await expect(gameCatName).toBeVisible()
       categoryName = (await gameCatName.textContent()) ?? ''
     }

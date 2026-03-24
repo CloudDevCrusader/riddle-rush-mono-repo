@@ -146,4 +146,37 @@ const formatScore = (score: number): string => {
     border-color: var(--color-btn-red-shadow);
   }
 }
+
+// Small phone adjustments
+@include small-mobile {
+  .game-player-card {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .game-player-card__name {
+    font-size: var(--font-size-base);
+  }
+
+  .game-player-card__answer {
+    font-size: var(--font-size-sm);
+  }
+
+  .game-player-card__indicator {
+    min-width: 60px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+  }
+}
+
+@include tiny-mobile {
+  .game-player-card {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-width: 2px;
+  }
+
+  .game-player-card__indicator {
+    min-width: 52px;
+  }
+}
 </style>

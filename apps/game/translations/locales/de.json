@@ -164,6 +164,8 @@
   },
   "language": {
     "description": "Wählen Sie Ihre bevorzugte Sprache",
+    "english": "ENGLISH",
+    "german": "DEUTSCH",
     "select_prompt": "Sprache auswählen",
     "title": "Sprachauswahl"
   },

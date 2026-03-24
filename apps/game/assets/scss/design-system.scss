@@ -282,6 +282,18 @@ $z-index: (
   }
 }
 
+@mixin small-mobile {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
+@mixin tiny-mobile {
+  @media (max-width: 360px) {
+    @content;
+  }
+}
+
 @mixin dark-mode {
   @media (prefers-color-scheme: dark) {
     @content;

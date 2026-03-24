@@ -193,4 +193,40 @@ const listStyles = computed(() => ({
     min-width: 0; // Allow text truncation
   }
 }
+
+// Small phone adjustments
+@media (max-width: 480px) {
+  .game-scroll-list {
+    &__row {
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+    }
+
+    &__rank {
+      width: 28px;
+      height: 28px;
+    }
+
+    &__crown {
+      width: 24px;
+      height: 24px;
+    }
+
+    &__badge {
+      width: 24px;
+      height: 24px;
+      font-size: var(--font-size-sm);
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .game-scroll-list {
+    &__row {
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs);
+      margin-bottom: var(--spacing-xs);
+    }
+  }
+}
 </style>

@@ -13,9 +13,9 @@ test.describe('Credits Page', () => {
     // Wait for the main container to appear (sign that Vue has mounted)
     await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
 
-    // Check for main title image
-    const titleImage = page.locator('[data-testid="credits-title-image"]')
-    await expect(titleImage).toBeVisible({ timeout: 10000 })
+    // Check for header
+    const header = page.locator('[data-testid="credits-header"]')
+    await expect(header).toBeVisible({ timeout: 10000 })
 
     // Check for credits panel
     const creditsPanel = page.locator('[data-testid="credits-panel"]')
@@ -35,40 +35,36 @@ test.describe('Credits Page', () => {
     const creditsPanel = page.locator('[data-testid="credits-panel"]')
     await expect(creditsPanel).toBeVisible({ timeout: 10000 })
 
-    // Check for all three credit sections
-    const creditSections = page.locator('[data-testid^="credits-section-"]')
+    // Check for all three credit sections (use exact pattern to avoid matching heading elements)
+    const creditSections = page.locator(
+      '[data-testid="credits-section-0"], [data-testid="credits-section-1"], [data-testid="credits-section-2"]'
+    )
     await expect(creditSections).toHaveCount(3)
 
-    // Check for Game Design section heading
-    const gameDesignHeading = page
-      .locator('[data-testid^="credits-section-heading-"]')
-      .filter({ hasText: /Game Design/i })
+    // Check for Game Design section heading (use testid, text may be translated)
+    const gameDesignHeading = page.locator('[data-testid="credits-section-heading-0"]')
     await expect(gameDesignHeading).toBeVisible()
 
     // Check for team members (Tobi and Sophia)
-    const tobi = page.locator('[data-testid^="credits-name-"]').filter({ hasText: /^Tobi$/i })
-    const sophia = page.locator('[data-testid^="credits-name-"]').filter({ hasText: /^Sophia$/i })
+    const tobi = page.locator('[data-testid="credits-name-0"]')
+    const sophia = page.locator('[data-testid="credits-name-1"]')
     await expect(tobi).toBeVisible()
     await expect(sophia).toBeVisible()
 
     // Check for Programming section heading
-    const programmingHeading = page
-      .locator('[data-testid^="credits-section-heading-"]')
-      .filter({ hasText: /Programming/i })
+    const programmingHeading = page.locator('[data-testid="credits-section-heading-1"]')
     await expect(programmingHeading).toBeVisible()
 
     // Check for Markus
-    const markus = page.locator('[data-testid^="credits-name-"]').filter({ hasText: /^Markus$/i })
+    const markus = page.locator('[data-testid="credits-name-2"]')
     await expect(markus).toBeVisible()
 
     // Check for Art section heading
-    const artHeading = page
-      .locator('[data-testid^="credits-section-heading-"]')
-      .filter({ hasText: /Art/i })
+    const artHeading = page.locator('[data-testid="credits-section-heading-2"]')
     await expect(artHeading).toBeVisible()
 
     // Check for Sarmad Ali
-    const sarmad = page.locator('[data-testid^="credits-name-"]').filter({ hasText: /Sarmad Ali/i })
+    const sarmad = page.locator('[data-testid="credits-name-3"]')
     await expect(sarmad).toBeVisible()
   })
 
@@ -140,15 +136,15 @@ test.describe('Credits Page', () => {
     await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
 
     // Check that the page has the main container
-    const container = page.locator('[data-testid="credits-container"]')
+    const container = page.locator('[data-testid="credits-page"]')
     await expect(container).toBeVisible({ timeout: 10000 })
 
     // Check for credits panel with proper styling
     const creditsPanel = page.locator('[data-testid="credits-panel"]')
     await expect(creditsPanel).toBeVisible({ timeout: 10000 })
 
-    // Verify background image is present
-    const backgroundImage = page.locator('[data-testid="page-background"]')
+    // Verify background is present
+    const backgroundImage = page.locator('.game-background')
     await expect(backgroundImage).toBeVisible()
   })
 })

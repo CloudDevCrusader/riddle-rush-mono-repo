@@ -98,7 +98,7 @@ const handleClick = (event: MouseEvent) => {
 .game-button--sm {
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-sm);
-  min-height: 40px;
+  min-height: 44px;
 }
 
 .game-button--md {
@@ -111,6 +111,27 @@ const handleClick = (event: MouseEvent) => {
   padding: var(--spacing-lg) var(--spacing-xl);
   font-size: var(--font-size-lg);
   min-height: 64px;
+}
+
+// Small phone adjustments
+@media (max-width: 480px) {
+  .game-button--md {
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 48px;
+  }
+
+  .game-button--lg {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-md);
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 360px) {
+  .game-button--lg {
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 48px;
+  }
 }
 
 // Color variants using glossy-button mixin

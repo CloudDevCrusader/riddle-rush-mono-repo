@@ -436,6 +436,60 @@ syncPlayerList(playerCount.value)
   }
 }
 
+@media (max-width: 480px) {
+  .stepper__button {
+    width: 48px;
+    height: 48px;
+    font-size: var(--font-size-xl);
+  }
+
+  .stepper__count {
+    font-size: var(--font-size-xl);
+  }
+
+  .stepper__pill {
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+
+  .player-row__label {
+    font-size: var(--font-size-lg);
+  }
+
+  .player-row__input {
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .start-button {
+    font-size: var(--font-size-lg);
+    min-height: mockup-clamp(60px);
+  }
+}
+
+@media (max-width: 360px) {
+  .stepper__button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .stepper__pill {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-width: 3px;
+  }
+
+  .player-row {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .player-row__input {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-width: 2px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .stepper__button,
   .back-button {

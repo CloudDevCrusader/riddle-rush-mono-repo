@@ -65,7 +65,7 @@ useHead({
     <GameBackground />
 
     <div class="splash-container">
-      <GameHeader color="gold" class="splash-title"> RIDDLE RUSH </GameHeader>
+      <GameHeader color="gold" class="splash-title">{{ t('app.title') }}</GameHeader>
 
       <div class="splash-loading">
         <div class="loading-bar">
@@ -104,6 +104,7 @@ useHead({
 .splash-title {
   :deep(.game-header__title) {
     font-size: var(--font-size-display);
+    text-transform: uppercase;
   }
 }
 

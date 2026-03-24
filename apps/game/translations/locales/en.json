@@ -164,6 +164,8 @@
   },
   "language": {
     "description": "Choose your preferred language",
+    "english": "ENGLISH",
+    "german": "DEUTSCH",
     "select_prompt": "Select Language",
     "title": "Language Selection"
   },

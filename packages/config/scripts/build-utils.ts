@@ -1,7 +1,6 @@
 /**
- * Shared build utilities for the monorepo
+ * Shared build utilities for monorepo
  */
-
 import { execSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
