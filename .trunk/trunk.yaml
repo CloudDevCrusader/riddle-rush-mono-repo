@@ -39,6 +39,7 @@ lint:
         - '**/test-results/**'
         # Trunk outputs
         - '**/.trunk/**'
+        - '**/.claude/**'
     - linters: [trufflehog]
       paths:
         - '**/.env*'
@@ -83,7 +84,7 @@ lint:
     - markdownlint@0.48.0
     - oxipng@10.1.0
     - prettier@3.8.1
-    - renovate@43.87.0
+    - renovate@43.87.1
     - shellcheck@0.11.0
     - shfmt@3.6.0
     - stylelint@17.5.0
@@ -154,9 +155,9 @@ tools:
     - uv@0.11.0
     - tsc@6.0.2
     - markdown-link-check@3.14.2
-    - terraform-docs@0.16.0
+    - terraform-docs@0.21.0
     - trunk-toolbox@0.5.4
-    - pnpm@8.6.1
+    - pnpm@10.32.1
     - ts-node@10.9.2
     - terraform@1.1.4
   runtimes:

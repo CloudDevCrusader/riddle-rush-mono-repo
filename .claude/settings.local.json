@@ -97,7 +97,8 @@
   "enabledPlugins": {
     "voltagent-qa-sec@voltagent-subagents": true,
     "playwright-tools@claude-settings": true,
-    "voltagent-lang@voltagent-subagents": true
+    "voltagent-lang@voltagent-subagents": true,
+    "claude-opus-4-5-migration@claude-code-plugins": true
   },
   "outputStyle": "Explanatory",
   "prefersReducedMotion": true
