@@ -23,7 +23,7 @@ export default defineConfig({
     environment: 'happy-dom',
     pool: 'forks', // Use forks to avoid --localstorage-file warning with happy-dom
     setupFiles: ['tests/unit/setup.ts'],
-    include: ['tests/unit/**/*.{test,spec}.ts'],
+    include: ['tests/unit/**/*.{test,spec}.ts', 'tests/integration/**/*.{test,spec}.ts'],
     exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
     coverage: {
       enabled: false, // Disabled due to version conflicts
