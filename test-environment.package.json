@@ -1,0 +1,28 @@
+/* 
+This package.json defines the test environment requirements.
+Since dependencies are missing, this documents what should be installed.
+*/
+{
+  "name": "@riddle-rush/test-environment",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Test environment configuration for Riddle Rush",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:unit": "vitest",
+    "test:unit:ui": "vitest --ui",
+    "install:playwright": "playwright install"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "vitest": "^1.0.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "pinia": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

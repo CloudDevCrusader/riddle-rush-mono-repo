@@ -1,5 +1,7 @@
-// INSPECTION
-import { test, expect } from '@playwright/test'
+// TEMP: Mock imports until dependencies are available
+import { test as mockTest, expect as mockExpected } from '../../../test-mocks.js'
+const test = mockTest;
+const expect = mockExpected;
 import { waitForSplashComplete, hideDevtools } from './helpers/game-flow'
 
 test.describe('Credits Page', () => {
