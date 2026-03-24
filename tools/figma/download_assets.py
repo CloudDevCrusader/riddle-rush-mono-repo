@@ -1,7 +1,7 @@
 import json
 import os
 
-import requests
+import requests  # type: ignore[import-untyped]
 
 FIGMA_TOKEN = os.environ.get("FIGMA_TOKEN", "")
 FILE_KEY = "hINuFPjeXxAZVlbEQghd11"

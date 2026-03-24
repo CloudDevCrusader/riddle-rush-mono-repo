@@ -104,8 +104,13 @@ jobs:
         run: |
           echo "Running quality checks..."
 
+          SYNCPACK_PASSED="false"
+          TYPECHECK_PASSED="false"
+          LINT_PASSED="false"
+
           # Dependency version check
           if pnpm run syncpack:check; then
+            SYNCPACK_PASSED="true"
             echo "syncpack-passed=true" >> $GITHUB_OUTPUT
           else
             echo "syncpack-passed=false" >> $GITHUB_OUTPUT
@@ -113,6 +118,7 @@ jobs:
 
           # TypeScript typecheck
           if pnpm run typecheck; then
+            TYPECHECK_PASSED="true"
             echo "typecheck-passed=true" >> $GITHUB_OUTPUT
           else
             echo "typecheck-passed=false" >> $GITHUB_OUTPUT
@@ -120,6 +126,7 @@ jobs:
 
           # ESLint
           if pnpm run lint; then
+            LINT_PASSED="true"
             echo "lint-passed=true" >> $GITHUB_OUTPUT
           else
             echo "lint-passed=false" >> $GITHUB_OUTPUT
@@ -133,9 +140,9 @@ jobs:
           fi
 
           # Set overall status
-          if [[ "${{ steps.check.outputs.syncpack-passed }}" == "true" && \
-                "${{ steps.check.outputs.typecheck-passed }}" == "true" && \
-                "${{ steps.check.outputs.lint-passed }}" == "true" ]]; then
+          if [[ "$SYNCPACK_PASSED" == "true" && \
+                "$TYPECHECK_PASSED" == "true" && \
+                "$LINT_PASSED" == "true" ]]; then
             echo "tests-passed=true" >> $GITHUB_OUTPUT
           else
             echo "tests-passed=false" >> $GITHUB_OUTPUT
@@ -379,7 +386,7 @@ jobs:
           echo "## 📦 Build Report - ${{ matrix.environment }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Environment:** ${{ matrix.environment }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Node Version:** ${{ env.NODE_VERSION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Build Duration:** ${{ github.run_duration }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
 
   # ====================================
@@ -471,7 +478,7 @@ jobs:
           echo "- **CodeQL Analysis:** ✅ Completed" >> $GITHUB_STEP_SUMMARY
           echo "- **Dependency Check:** ✅ Completed" >> $GITHUB_STEP_SUMMARY
           echo "- **Audit Level:** Moderate" >> $GITHUB_STEP_SUMMARY
-          echo "- **Scan Duration:** ${{ github.run_duration }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
 
   # ====================================
@@ -738,13 +745,14 @@ jobs:
         with:
           script: |
             const title = "❌ **CI/CD Pipeline Failed**";
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const details = [
               `**Repository:** \`${context.repo.repo}\``,
               `**Branch:** \`${context.ref_name}\``,
               `**Commit:** \`${context.sha.substring(0, 7)}\``,
               `**Workflow:** \`${context.workflow}\``,
               `**Run ID:** \`${context.runId}\``,
-              `**Run URL:** [${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              `**Run URL:** [${runUrl}](${runUrl})`,
             ].join('\n');
 
             const issue_body = `${title}\n\n${details}\n\nPlease investigate the failure and take necessary action.`;
@@ -757,8 +765,8 @@ jobs:
               labels: 'ci-failure, automated'
             });
 
-            const existing_issue = issues.data.find(issue => 
-              issue.title.includes('CI/CD Pipeline Failed') && 
+            const existing_issue = issues.data.find(issue =>
+              issue.title.includes('CI/CD Pipeline Failed') &&
               issue.body.includes(context.sha.substring(0, 7))
             );
 
