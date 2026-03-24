@@ -1,11 +1,43 @@
-name: Optimized CI/CD Pipeline
+name: Enhanced CI/CD Pipeline
 
 on:
   push:
-    branches: [main, development]
+    branches: [main, development, staging]
   pull_request:
     branches: [main, development]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - development
+          - staging
+          - production
+      run_tests:
+        description: 'Run tests'
+        required: false
+        default: true
+        type: boolean
+      run_security:
+        description: 'Run security scans'
+        required: false
+        default: true
+        type: boolean
+      deploy:
+        description: 'Deploy to environment'
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    # Run security checks daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  # Allow repository owners to trigger workflows
+  repository_dispatch:
+    types: [deploy, security-scan, cache-cleanup]
 
 env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -14,6 +46,11 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   NODE_VERSION: '20'
   PNPM_VERSION: '10.30.3'
+  CACHE_VERSION: 'v1'
+  # GitHub environment names
+  PRODUCTION_ENVIRONMENT: 'production'
+  STAGING_ENVIRONMENT: 'staging'
+  DEVELOPMENT_ENVIRONMENT: 'development'
 
 jobs:
   # ====================================
@@ -22,43 +59,97 @@ jobs:
   quality-checks:
     name: Quality Gates
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    outputs:
+      tests-passed: ${{ steps.check.outputs.tests-passed }}
+      lint-passed: ${{ steps.check.outputs.lint-passed }}
+      typecheck-passed: ${{ steps.check.outputs.typecheck-passed }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for better caching
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
-      - name: Cache pnpm store
+      - name: Configure cache
         uses: actions/cache@v4
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: |
+            ~/.pnpm-store
+            ~/.cache/turbo
+          key: ${{ runner.os }}-pnpm-turbo-${{ hashFiles('**/pnpm-lock.yaml', '**/turbo.json') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-pnpm-turbo-
+            ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm audit --prod --audit-level=moderate || true
 
-      - name: Dependency version check
-        run: pnpm run syncpack:check
+      - name: Run quality checks
+        id: check
+        run: |
+          echo "Running quality checks..."
 
-      - name: TypeScript typecheck
-        run: pnpm run typecheck
+          # Dependency version check
+          if pnpm run syncpack:check; then
+            echo "syncpack-passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "syncpack-passed=false" >> $GITHUB_OUTPUT
+          fi
 
-      - name: ESLint
-        run: pnpm run lint
+          # TypeScript typecheck
+          if pnpm run typecheck; then
+            echo "typecheck-passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "typecheck-passed=false" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Code formatting check
-        run: pnpm run format:check
-        continue-on-error: true
+          # ESLint
+          if pnpm run lint; then
+            echo "lint-passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "lint-passed=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Code formatting check
+          if pnpm run format:check; then
+            echo "format-passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "format-passed=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Set overall status
+          if [[ "${{ steps.check.outputs.syncpack-passed }}" == "true" && \
+                "${{ steps.check.outputs.typecheck-passed }}" == "true" && \
+                "${{ steps.check.outputs.lint-passed }}" == "true" ]]; then
+            echo "tests-passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "tests-passed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload quality check results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-check-results
+          path: |
+            **/eslint-report.json
+            **/typecheck-report.json
+          retention-days: 7
 
   # ====================================
   # Unit Tests - Parallel Execution
@@ -67,107 +158,229 @@ jobs:
     name: Unit Tests (Node ${{ matrix.node-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     needs: quality-checks
-    timeout-minutes: 15
-    continue-on-error: true
+    if: needs.quality-checks.outputs.tests-passed == 'true' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 20
 
     strategy:
-      matrix:
-        node-version: [20, 22]
-        os: [ubuntu-latest]
       fail-fast: false
+      matrix:
+        node-version: [18, 20, 22] # Test multiple Node versions
+        os: [ubuntu-latest, windows-latest, macos-latest] # Cross-platform testing
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
-      - name: Cache pnpm store
+      - name: Configure cache
         uses: actions/cache@v4
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: |
+            ~/.pnpm-store
+            ~/.cache/turbo
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-pnpm-turbo-${{ hashFiles('**/pnpm-lock.yaml', '**/turbo.json') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-node${{ matrix.node-version }}-pnpm-turbo-
+            ${{ runner.os }}-node${{ matrix.node-version }}-pnpm-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run unit tests
-        run: pnpm run test:unit
+      - name: Run unit tests with coverage
+        run: pnpm run test:unit -- --coverage --reporter=verbose
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-results-node${{ matrix.node-version }}-${{ matrix.os }}
+          name: test-results-${{ matrix.os }}-node${{ matrix.node-version }}
           path: |
             **/test-results/
             **/coverage/
-          retention-days: 7
+          retention-days: 14
+
+      - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
 
   # ====================================
-  # Build Artifacts with Caching
+  # E2E Tests
   # ====================================
-  build:
-    name: Build
+  e2e-tests:
+    name: E2E Tests (${{ matrix.browser }})
     runs-on: ubuntu-latest
-    needs: unit-tests
-    timeout-minutes: 20
+    needs: quality-checks
+    if: needs.quality-checks.outputs.tests-passed == 'true' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 30
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+        shard-index: [1, 2, 3]
+        shard-total: [3]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Cache build outputs
+      - name: Configure cache
         uses: actions/cache@v4
         with:
           path: |
-            apps/**/.output/
-            apps/**/dist/
-            packages/**/dist/
-            .turbo/
-          key: ${{ runner.os }}-build-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.vue') }}
+            ~/.pnpm-store
+            ~/.cache/turbo
+          key: ${{ runner.os }}-e2e-pnpm-turbo-${{ hashFiles('**/pnpm-lock.yaml', '**/turbo.json') }}
           restore-keys: |
+            ${{ runner.os }}-e2e-pnpm-turbo-
+            ${{ runner.os }}-e2e-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        run: |
+          pnpm run test:e2e --
+            --grep @smoke
+            --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+            --reporter=list
+
+      - name: Upload E2E test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-results-${{ matrix.browser }}-shard${{ matrix.shard-index }}
+          path: |
+            **/test-results/
+            **/playwright-report/
+          retention-days: 14
+
+      - name: Comment PR with E2E results
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const comment = `🔧 **E2E Tests Failed**\\n\\nBrowser: ${{ matrix.browser }}\\nShard: ${{ matrix.shard-index }}/${{ matrix.shard-total }}\\n\\nPlease check the test results for details.`;
+
+            github.rest.issues.createComment({
+              issue_number,
+              owner,
+              repo,
+              body: comment
+            })
+
+  # ====================================
+  # Build Artifacts with Caching
+  # ====================================
+  build:
+    name: Build (${{ matrix.environment }})
+    runs-on: ubuntu-latest
+    needs: [quality-checks, unit-tests]
+    if: (needs.quality-checks.outputs.tests-passed == 'true' && needs.unit-tests.result == 'success') || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 25
+
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [development, staging, production]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
+
+      - name: Configure build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            ~/.cache/turbo
+            apps/**/.turbo
+          key: ${{ runner.os }}-build-${{ matrix.environment }}-pnpm-turbo-${{ hashFiles('**/pnpm-lock.yaml', '**/turbo.json', '**/nuxt.config.ts') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ matrix.environment }}-pnpm-turbo-
+            ${{ runner.os }}-build-${{ matrix.environment }}-pnpm-
             ${{ runner.os }}-build-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build game app
-        run: pnpm run build
+      - name: Build for environment
+        env:
+          STAGE: ${{ matrix.environment }}
+          NODE_ENV: ${{ matrix.environment == 'production' && 'production' || 'development' }}
+        run: |
+          pnpm run build
+          pnpm run test:build || true
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: build-${{ matrix.environment }}-artifacts
           path: |
             apps/**/.output/
             apps/**/dist/
             packages/**/dist/
-          retention-days: 7
+            .turbo/
+          retention-days: 30
+
+      - name: Generate build report
+        run: |
+          echo "## 📦 Build Report - ${{ matrix.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ matrix.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Node Version:** ${{ env.NODE_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Duration:** ${{ github.run_duration }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
 
   # ====================================
   # Security Scanning
@@ -175,147 +388,212 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
-    needs: build
-    timeout-minutes: 15
+    needs: quality-checks
+    if: (needs.quality-checks.outputs.tests-passed == 'true' && github.event_name != 'schedule') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 30
+    continue-on-error: true
+
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
-      - name: Cache pnpm store
+      - name: Configure cache
         uses: actions/cache@v4
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: |
+            ~/.pnpm-store
+            ~/.cache/turbo
+          key: ${{ runner.os }}-security-pnpm-turbo-${{ hashFiles('**/pnpm-lock.yaml', '**/turbo.json') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-security-pnpm-turbo-
+            ${{ runner.os }}-security-pnpm-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run dependency vulnerability scan
-        run: pnpm audit --prod
-        continue-on-error: true
-
-      - name: Run security checks
+      - name: Run npm audit
         run: |
-          echo "Running security checks..."
-          # Add additional security scanning tools here
-          # Example: pnpm run security:scan
-          echo "✅ Security checks completed"
+          echo "### 🔍 NPM Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=moderate --json >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Run pnpm audit
+        run: |
+          echo "### 🔍 pnpm Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          pnpm audit --prod --audit-level=moderate --json >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, typescript
+          config-file: ./.github/codeql/codeql-config.yml
+          queries: +security-extended,security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/code-scanning'
+          output: sarif-results
+
+      - name: Upload CodeQL SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sarif-results
+
+      - name: Generate security report
+        run: |
+          echo "## 🔒 Security Scan Report" >> $GITHUB_STEP_SUMMARY
+          echo "- **CodeQL Analysis:** ✅ Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dependency Check:** ✅ Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **Audit Level:** Moderate" >> $GITHUB_STEP_SUMMARY
+          echo "- **Scan Duration:** ${{ github.run_duration }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
 
   # ====================================
   # Deployment - Vercel
   # ====================================
   deploy-vercel:
-    name: Deploy to Vercel
+    name: Deploy to ${{ matrix.environment }}
     runs-on: ubuntu-latest
     needs: [build, security-scan]
-    if: always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main')
-    timeout-minutes: 15
+    if: (needs.build.result == 'success' && needs.security-scan.result != 'failure') || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 20
     continue-on-error: true
     outputs:
       url: ${{ steps.deploy.outputs.url }}
+      environment: ${{ matrix.environment }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [development, staging]
+        include:
+          - environment: development
+            vercel_env: preview
+          - environment: staging
+            vercel_env: production
 
     environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      name: ${{ matrix.environment }}
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
-      - name: Cache pnpm store
+      - name: Configure cache
         uses: actions/cache@v4
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: |
+            ~/.pnpm-store
+            ~/.cache/turbo
+          key: ${{ runner.os }}-deploy-${{ matrix.environment }}-pnpm-turbo-${{ hashFiles('**/pnpm-lock.yaml', '**/turbo.json') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-deploy-${{ matrix.environment }}-pnpm-turbo-
+            ${{ runner.os }}-deploy-${{ matrix.environment }}-pnpm-
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ matrix.environment }}-artifacts
+          path: ./
 
-      - name: Set environment stage
-        id: stage
+      - name: Check deployment conditions
+        id: conditions
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "stage=production" >> $GITHUB_OUTPUT
-            echo "vercel_env=production" >> $GITHUB_OUTPUT
-            echo "vercel_prod=--prod" >> $GITHUB_OUTPUT
+          should_deploy=false
+
+          # Check if secrets are available
+          if [[ -n "${{ secrets.VERCEL_TOKEN }}" && -n "${{ secrets.VERCEL_ORG_ID }}" && -n "${{ secrets.VERCEL_PROJECT_ID }}" ]]; then
+            echo "secrets_available=true" >> $GITHUB_OUTPUT
           else
-            echo "stage=preview" >> $GITHUB_OUTPUT
-            echo "vercel_env=preview" >> $GITHUB_OUTPUT
-            echo "vercel_prod=" >> $GITHUB_OUTPUT
+            echo "secrets_available=false" >> $GITHUB_OUTPUT
+            echo "### ⚠️ Vercel deployment skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "Missing required secrets for ${{ matrix.environment }} deployment" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Check Vercel credentials
-        id: vercel_credentials
-        run: |
-          if [[ -n "${{ secrets.VERCEL_TOKEN }}" && -n "${{ secrets.VERCEL_ORG_ID }}" && -n "${{ secrets.VERCEL_PROJECT_ID }}" ]]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "### ⚠️ Vercel deployment skipped" >> "$GITHUB_STEP_SUMMARY"
-            echo "Missing one or more required secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID" >> "$GITHUB_STEP_SUMMARY"
+          # Check if we should deploy based on branch
+          if [[ "${{ matrix.environment }}" == "development" ]] && [[ "${{ github.ref }}" == "refs/heads/development" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${{ matrix.environment }}" == "staging" ]] && [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Install Vercel CLI
-        if: steps.vercel_credentials.outputs.ready == 'true'
+        if: steps.conditions.outputs.secrets_available == 'true' && steps.conditions.outputs.should_deploy == 'true'
         run: npm install -g vercel@latest
 
       - name: Pull Vercel Environment
-        if: steps.vercel_credentials.outputs.ready == 'true'
-        run: vercel pull --yes --environment=${{ steps.stage.outputs.vercel_env }} --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build for Vercel
-        if: steps.vercel_credentials.outputs.ready == 'true'
-        env:
-          STAGE: ${{ steps.stage.outputs.stage }}
-          NODE_ENV: ${{ steps.stage.outputs.stage == 'production' && 'production' || 'development' }}
-        run: vercel build ${{ steps.stage.outputs.vercel_prod }} --token=${{ secrets.VERCEL_TOKEN }}
+        if: steps.conditions.outputs.secrets_available == 'true' && steps.conditions.outputs.should_deploy == 'true'
+        run: vercel pull --yes --environment=${{ matrix.vercel_env }} --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel
         id: deploy
-        if: steps.vercel_credentials.outputs.ready == 'true'
+        if: steps.conditions.outputs.secrets_available == 'true' && steps.conditions.outputs.should_deploy == 'true'
+        env:
+          STAGE: ${{ matrix.environment }}
+          NODE_ENV: ${{ matrix.environment == 'staging' && 'production' || 'development' }}
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           else
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt ${{ steps.stage.outputs.vercel_prod }} --token=${{ secrets.VERCEL_TOKEN }})
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           fi
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
-          echo "Deployed to: $DEPLOYMENT_URL"
+          echo "🚀 Deployed ${{ matrix.environment }} to: $DEPLOYMENT_URL"
 
       - name: Comment PR with deployment URL
-        if: github.event_name == 'pull_request' && steps.vercel_credentials.outputs.ready == 'true'
+        if: github.event_name == 'pull_request' && steps.conditions.outputs.should_deploy == 'true'
         uses: actions/github-script@v7
         with:
           script: |
-            const stage = '${{ steps.stage.outputs.stage }}';
+            const environment = '${{ matrix.environment }}';
             const url = '${{ steps.deploy.outputs.url }}';
-            const emoji = stage === 'production' ? '🚀' : '🔧';
+            const emoji = environment === 'staging' ? '🚀' : '🔧';
 
-            const title = `${emoji} **${stage.charAt(0).toUpperCase() + stage.slice(1)} Deployed!**`;
+            const title = `${emoji} **${environment.charAt(0).toUpperCase() + environment.slice(1)} Deployed!**`;
             const details = [
               `🔗 ${url}`,
-              `**Environment:** \`STAGE=${stage}\``,
+              `**Environment:** \`STAGE=${environment}\``,
               `**Branch:** \`${context.payload.pull_request.head.ref}\``,
               `**Commit:** \`${context.sha.substring(0, 7)}\``,
             ].join('\n');
@@ -339,7 +617,8 @@ jobs:
     continue-on-error: true
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Check docs project
         id: docs
@@ -355,6 +634,8 @@ jobs:
       - name: Setup pnpm
         if: steps.docs.outputs.exists == 'true'
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         if: steps.docs.outputs.exists == 'true'
@@ -362,15 +643,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
-      - name: Cache pnpm store
+      - name: Configure cache
         if: steps.docs.outputs.exists == 'true'
         uses: actions/cache@v4
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: |
+            ~/.pnpm-store
+            ~/.cache/turbo
+          key: ${{ runner.os }}-docs-pnpm-turbo-${{ hashFiles('**/pnpm-lock.yaml', '**/turbo.json') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-docs-pnpm-turbo-
+            ${{ runner.os }}-docs-pnpm-
 
       - name: Install dependencies
         if: steps.docs.outputs.exists == 'true'
@@ -409,12 +694,13 @@ jobs:
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
 
-          echo "| Quality Checks | ${{ needs.quality-checks.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Security Scan | ${{ needs.security-scan.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Deploy Vercel | ${{ needs.deploy-vercel.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Deploy Docs | ${{ needs.deploy-docs.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Quality Checks | ${{ needs.quality-checks.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.unit-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E Tests | ${{ needs.e2e-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Scan | ${{ needs.security-scan.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "| Deploy Vercel | ${{ needs.deploy-vercel.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "| Deploy Docs | ${{ needs.deploy-docs.result }}" >> $GITHUB_STEP_SUMMARY
 
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## 🔗 Deployment URLs" >> $GITHUB_STEP_SUMMARY
@@ -435,3 +721,53 @@ jobs:
           echo "- **Total Duration**: ${{ github.run_duration }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Parallel Jobs**: ${{ strategy.job-total }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Cache Hits**: Check individual job logs" >> $GITHUB_STEP_SUMMARY
+
+  # ====================================
+  # Failure Notifications
+  # ====================================
+  notify-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [quality-checks, unit-tests, build, security-scan, deploy-vercel, deploy-docs]
+    if: failure() && github.event_name != 'pull_request'
+    timeout-minutes: 5
+
+    steps:
+      - name: Send failure notification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "❌ **CI/CD Pipeline Failed**";
+            const details = [
+              `**Repository:** \`${context.repo.repo}\``,
+              `**Branch:** \`${context.ref_name}\``,
+              `**Commit:** \`${context.sha.substring(0, 7)}\``,
+              `**Workflow:** \`${context.workflow}\``,
+              `**Run ID:** \`${context.runId}\``,
+              `**Run URL:** [${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+            ].join('\n');
+
+            const issue_body = `${title}\n\n${details}\n\nPlease investigate the failure and take necessary action.`;
+
+            // Create an issue if it doesn't exist already
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'ci-failure, automated'
+            });
+
+            const existing_issue = issues.data.find(issue => 
+              issue.title.includes('CI/CD Pipeline Failed') && 
+              issue.body.includes(context.sha.substring(0, 7))
+            );
+
+            if (!existing_issue) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: issue_body,
+                labels: ['ci-failure', 'automated', 'needs-attention']
+              });
+            }

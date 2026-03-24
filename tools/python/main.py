@@ -10,11 +10,12 @@ This FastMCP server provides specialized subagents for:
 - Documentation generation
 """
 
-from fastmcp import FastMCP
-import subprocess
 import json
 import os
+import subprocess
 from pathlib import Path
+
+from fastmcp import FastMCP
 
 # MAIN ENTRY POINT
 # ============================================================================

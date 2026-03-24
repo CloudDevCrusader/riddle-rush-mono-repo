@@ -1,7 +1,9 @@
 # VSCode Configuration Fix for Volar Errors
 
 ## Problem
+
 You're experiencing Volar errors:
+
 ```
 [Error] Request textDocument/documentSymbol failed.
 Message: host.fileExists is not a function
@@ -9,7 +11,9 @@ Code: -32603
 ```
 
 ## Root Cause
+
 You have **TWO Volar extensions** installed:
+
 1. ❌ `johnsoncodehk.volar@0.30.1` (deprecated, causing errors)
 2. ✅ `vue.volar@3.2.1` (current official version)
 
@@ -27,11 +31,13 @@ The old extension conflicts with the new one.
 4. Keep **"Vue - Official" by Vue** (v3.2.1) - this is the correct one
 
 **OR use Command Palette:**
+
 1. Press `Ctrl+Shift+P`
 2. Type: `Extensions: Show Installed Extensions`
 3. Find and uninstall `johnsoncodehk.volar`
 
 **OR use CLI:**
+
 ```bash
 code --uninstall-extension johnsoncodehk.volar
 ```
@@ -39,12 +45,14 @@ code --uninstall-extension johnsoncodehk.volar
 ### 2. Reload VSCode
 
 After uninstalling:
+
 - Press `Ctrl+Shift+P` → "Developer: Reload Window"
 - Or restart VSCode completely
 
 ### 3. Verify
 
 Open any `.vue` file and check:
+
 - ✅ No more "host.fileExists" errors in Output → Volar
 - ✅ IntelliSense works for auto-imports
 - ✅ Go to definition works
@@ -55,6 +63,7 @@ Open any `.vue` file and check:
 The following files have been updated with correct configuration:
 
 ### `.vscode/settings.json`
+
 - ✅ `nuxt.isNuxtApp: true` (was incorrectly false)
 - ✅ `volar.tsconfig` points to Nuxt's generated config
 - ✅ `volar.takeOverMode.enabled: false` (prevents conflicts)
@@ -62,6 +71,7 @@ The following files have been updated with correct configuration:
 - ✅ Auto-fix ESLint on save
 
 ### `.vscode/extensions.json`
+
 - ✅ Recommends `vue.volar` (official extension)
 - ✅ Blocks `octref.vetur` (old Vue 2 extension)
 
@@ -77,11 +87,13 @@ The following files have been updated with correct configuration:
 If errors persist after uninstalling old Volar:
 
 1. **Clear VSCode cache:**
+
    ```bash
    rm -rf ~/.config/Code/User/workspaceStorage/*
    ```
 
 2. **Regenerate Nuxt types:**
+
    ```bash
    rm -rf .nuxt
    pnpm install
@@ -89,6 +101,7 @@ If errors persist after uninstalling old Volar:
    ```
 
 3. **Check TypeScript version:**
+
    ```bash
    pnpm list typescript
    # Should show ~5.9.x

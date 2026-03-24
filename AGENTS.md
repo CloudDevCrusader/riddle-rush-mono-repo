@@ -168,10 +168,19 @@ pnpm run format:check     # Check formatting (Turbo)
 pnpm run syncpack:check   # Check dependency version consistency
 pnpm run syncpack:fix     # Fix version mismatches
 
+# Dead code analysis
+pnpm run knip             # Remove unused code (FastReporter)
+
 # Python checks (if needed)
-pnpm run python:lint
-pnpm run python:format
-pnpm run python:check
+pnpm run python:lint      # Ruff linting
+pnpm run python:format    # Black formatting
+pnpm run python:check     # Python checks
+
+# Trunk CI checks
+pnpm run trunk:check      # Trunk format/style/type checks
+pnpm run trunk:fmt        # Trunk auto-formatting
+pnpm run trunk:eslint     # ESLint via Trunk
+pnpm run trunk:prettier   # Prettier via Trunk
 ```
 
 ### Mobile (Capacitor/Android)
@@ -181,6 +190,33 @@ pnpm run python:check
 pnpm run android:sync     # Build game + sync to Android
 pnpm run android:run      # Run on Android device/emulator
 pnpm run android:open     # Open in Android Studio
+```
+
+### Agent Tools
+
+```bash
+# Run agent CLI
+pnpm run agent              # Start agent CLI
+pnpm run agent:help         # Show command reference
+pnpm run agent:status       # Check agent status
+pnpm run agent:validate     # Validate current changes
+pnpm run agent:fix          # Auto-fix issues
+pnpm run agent:check        # Run workspace checks (alias for workspace:check)
+pnpm run agent:commit       # Validate and stage for commit
+```
+
+### i18n Management (Tolgee)
+
+```bash
+# Start Tolgee
+pnpm run i18n:start         # Start Tolgee UI server
+
+# Stop Tolgee
+pnpm run i18n:stop          # Stop Tolgee server
+
+# Sync translations
+pnpm run i18n:push          # Push translations from Tolgee
+pnpm run i18n:pull          # Pull translations to Tolgee
 ```
 
 ### Deployment
@@ -222,6 +258,23 @@ export AWS_REGION=eu-central-1
 
 # Or with env vars
 VERCEL_TOKEN=xxx VERCEL_ORG_ID=xxx VERCEL_PROJECT_ID=xxx npx vercel --prod
+
+# Deploy to stages
+pnpm run deploy:vercel:dev      # Deploy to development
+pnpm run deploy:vercel:preview  # Deploy to preview
+pnpm run deploy:vercel:prod     # Deploy to production
+```
+
+### Maintenance
+
+```bash
+# Update dependencies and fix version mismatches
+pnpm run maintain
+
+# This runs:
+# - pnpm update (update external dependencies)
+# - pnpm run syncpack:fix (fix workspace package versions)
+# - pnpm run workspace:check (verify everything passes)
 ```
 
 ---

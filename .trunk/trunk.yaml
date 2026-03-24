@@ -31,15 +31,31 @@ lint:
         # Build outputs
         - '**/node_modules/**'
         - '**/.nuxt/**'
+        - '**/.output/**'
         - '**/dist/**'
         - '**/build/**'
+        - '**/.vite/**'
+        # Cache & tooling
+        - '**/.turbo/**'
+        - '**/.vercel/**'
+        - '**/.cache/**'
+        - '**/.trunk/**'
+        - '**/.trunk-cache/**'
+        - '**/.claude/**'
+        - '**/.claude-worktrees/**'
         # Test outputs
         - '**/.playwright-mcp/**'
         - '**/playwright-report/**'
         - '**/test-results/**'
-        # Trunk outputs
-        - '**/.trunk/**'
-        - '**/.claude/**'
+        - '**/coverage/**'
+        # Auto-generated / agent artifacts
+        - '**/.planning/**'
+        - '**/.sisyphus/**'
+        - '**/.opencode/**'
+        - '**/.yoyo/**'
+        # Python bytecode
+        - '**/__pycache__/**'
+        - '**/*.egg-info/**'
     - linters: [trufflehog]
       paths:
         - '**/.env*'

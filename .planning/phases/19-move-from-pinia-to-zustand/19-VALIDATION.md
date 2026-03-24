@@ -15,13 +15,13 @@ created: 2026-03-17
 
 ## Test Infrastructure
 
-| Property | Value |
-|----------|-------|
-| **Framework** | vitest 3.x |
-| **Config file** | apps/game/vitest.config.ts |
-| **Quick run command** | `cd apps/game && pnpm run test:unit` |
+| Property               | Value                                            |
+| ---------------------- | ------------------------------------------------ |
+| **Framework**          | vitest 3.x                                       |
+| **Config file**        | apps/game/vitest.config.ts                       |
+| **Quick run command**  | `cd apps/game && pnpm run test:unit`             |
 | **Full suite command** | `pnpm run test:unit && pnpm run workspace:check` |
-| **Estimated runtime** | ~30 seconds |
+| **Estimated runtime**  | ~30 seconds                                      |
 
 ---
 
@@ -36,14 +36,14 @@ created: 2026-03-17
 
 ## Per-Task Verification Map
 
-| Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
-|---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 19-01-01 | 01 | 1 | N/A | typecheck | `pnpm run typecheck` | N/A | ⬜ pending |
-| 19-01-02 | 01 | 1 | N/A | unit | `cd apps/game && pnpm run test:unit` | ✅ | ⬜ pending |
-| 19-02-01 | 02 | 1 | N/A | unit | `cd apps/game && pnpm run test:unit` | ✅ | ⬜ pending |
-| 19-03-01 | 03 | 2 | N/A | unit + typecheck | `pnpm run workspace:check` | ✅ | ⬜ pending |
+| Task ID  | Plan | Wave | Requirement | Test Type        | Automated Command                    | File Exists | Status     |
+| -------- | ---- | ---- | ----------- | ---------------- | ------------------------------------ | ----------- | ---------- |
+| 19-01-01 | 01   | 1    | N/A         | typecheck        | `pnpm run typecheck`                 | N/A         | ⬜ pending |
+| 19-01-02 | 01   | 1    | N/A         | unit             | `cd apps/game && pnpm run test:unit` | ✅          | ⬜ pending |
+| 19-02-01 | 02   | 1    | N/A         | unit             | `cd apps/game && pnpm run test:unit` | ✅          | ⬜ pending |
+| 19-03-01 | 03   | 2    | N/A         | unit + typecheck | `pnpm run workspace:check`           | ✅          | ⬜ pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+_Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 
 ---
 
@@ -55,11 +55,11 @@ Existing infrastructure covers all phase requirements. Vitest is installed and c
 
 ## Manual-Only Verifications
 
-| Behavior | Requirement | Why Manual | Test Instructions |
-|----------|-------------|------------|-------------------|
-| Vue reactivity works with Zustand stores | N/A | Reactivity bridge needs runtime verification | Start dev server, navigate through game flow, verify UI updates when store state changes |
-| Settings persist across page reload | N/A | IndexedDB + localStorage interaction | Change settings, reload page, verify settings retained |
-| Old Pinia data migrates correctly | N/A | Requires pre-existing localStorage data | Seed old-format localStorage key, reload, verify migration |
+| Behavior                                 | Requirement | Why Manual                                   | Test Instructions                                                                        |
+| ---------------------------------------- | ----------- | -------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Vue reactivity works with Zustand stores | N/A         | Reactivity bridge needs runtime verification | Start dev server, navigate through game flow, verify UI updates when store state changes |
+| Settings persist across page reload      | N/A         | IndexedDB + localStorage interaction         | Change settings, reload page, verify settings retained                                   |
+| Old Pinia data migrates correctly        | N/A         | Requires pre-existing localStorage data      | Seed old-format localStorage key, reload, verify migration                               |
 
 ---
 

@@ -17,7 +17,7 @@
     "@nativescript/tailwind": "^4.0.7",
     "@nativescript/types": "^9.0.0",
     "@nativescript/webpack": "^5.0.31",
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.5.0",
     "nativescript-vue-template-compiler": "^2.9.3",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3",

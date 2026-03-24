@@ -79,14 +79,16 @@ const hello = 'world'
 
 With features:
 
-````md
+`````md
 ````ts {2,3}              // Line highlighting
 ```ts {1|2-3|all}        // Click-based highlighting
 ```ts {monaco}           // Monaco editor
 ```ts {monaco-run}       // Runnable code
 ```ts twoslash           // TypeScript types
 ````
-````
+`````
+
+`````
 
 ## LaTeX Math
 
@@ -109,7 +111,7 @@ Mermaid:
 graph LR
   A --> B --> C
 ```
-````
+`````
 
 PlantUML:
 

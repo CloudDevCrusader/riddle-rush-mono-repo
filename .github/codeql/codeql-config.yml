@@ -1,0 +1,73 @@
+# CodeQL Configuration File
+# This file configures CodeQL security scanning for the repository
+
+# Disable default queries and use only specific ones
+disable-default-queries: true
+
+# Additional security queries beyond the default set
+queries:
+  - name: Security and quality
+    uses: security-extended
+  - name: Security only
+    uses: security-and-quality
+
+# Paths to include in the analysis
+include:
+  - src/
+  - apps/
+  - packages/
+  - tools/
+
+# Paths to exclude from the analysis
+exclude:
+  - node_modules/
+  - .turbo/
+  - .output/
+  - dist/
+  - build/
+  - coverage/
+  - .changeset/
+  - .git/
+  - .claude/
+  - .yoyo/
+
+# Language-specific configuration
+languages:
+  - javascript
+  - typescript
+
+# JavaScript/TypeScript specific configuration
+javascript:
+  # Enable experimental features
+  experimental:
+    - extract-in-comments
+  # Configure data flow analysis
+  data-flow:
+    # Enable more precise data flow analysis
+    mode: 'more-precise'
+  # Configure taint analysis
+  taint:
+    # Enable taint tracking for security analysis
+    mode: 'security'
+
+# Enable automatic dependency analysis
+package-dependencies:
+  # Enable automatic detection of dependencies
+  enabled: true
+  # Configure dependency version analysis
+  version-analysis:
+    # Check for known vulnerable versions
+    check-vulnerabilities: true
+    # Check for outdated versions
+    check-outdated: true
+
+# Performance optimization
+performance:
+  # Enable performance optimizations
+  enabled: true
+  # Configure memory usage
+  memory:
+    # Maximum memory usage in MB
+    max-mb: 4096
+    # Memory usage threshold for warning
+    warning-threshold: 3072

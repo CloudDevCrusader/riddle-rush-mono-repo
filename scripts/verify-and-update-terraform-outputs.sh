@@ -50,7 +50,7 @@ for arg in "$@"; do
 		exit 0
 		;;
 	*)
-		if [[ -z "${ENVIRONMENT}" ]]; then
+		if [[ -z ${ENVIRONMENT} ]]; then
 			ENVIRONMENT="${arg}"
 		fi
 		;;
@@ -65,20 +65,20 @@ PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 get_terraform_output() {
 	local env_dir="$1"
 	local output_name="$2"
-	local fallback1="${3:-}"
-	local fallback2="${4:-}"
+	local fallback1="${3-}"
+	local fallback2="${4-}"
 
 	cd "${env_dir}"
 
 	# Try primary output name
 	local value=$(terraform output -raw "${output_name}" 2>/dev/null || echo "")
-	
+
 	# Try fallbacks if primary is empty
-	if [[ -z "${value}" ]] && [[ -n "${fallback1}" ]]; then
+	if [[ -z ${value} ]] && [[ -n ${fallback1} ]]; then
 		value=$(terraform output -raw "${fallback1}" 2>/dev/null || echo "")
 	fi
-	
-	if [[ -z "${value}" ]] && [[ -n "${fallback2}" ]]; then
+
+	if [[ -z ${value} ]] && [[ -n ${fallback2} ]]; then
 		value=$(terraform output -raw "${fallback2}" 2>/dev/null || echo "")
 	fi
 
@@ -90,30 +90,30 @@ get_terraform_output() {
 get_json_value() {
 	local json_file="$1"
 	local key="$2"
-	local fallback1="${3:-}"
-	local fallback2="${4:-}"
+	local fallback1="${3-}"
+	local fallback2="${4-}"
 
-	if [[ ! -f "${json_file}" ]]; then
+	if [[ ! -f ${json_file} ]]; then
 		echo ""
 		return
 	fi
 
 	if command -v jq &>/dev/null; then
 		local value=$(jq -r ".${key}.value // empty" "${json_file}" 2>/dev/null || echo "")
-		if [[ -z "${value}" ]] && [[ -n "${fallback1}" ]]; then
+		if [[ -z ${value} ]] && [[ -n ${fallback1} ]]; then
 			value=$(jq -r ".${fallback1}.value // empty" "${json_file}" 2>/dev/null || echo "")
 		fi
-		if [[ -z "${value}" ]] && [[ -n "${fallback2}" ]]; then
+		if [[ -z ${value} ]] && [[ -n ${fallback2} ]]; then
 			value=$(jq -r ".${fallback2}.value // empty" "${json_file}" 2>/dev/null || echo "")
 		fi
 		echo "${value}"
 	else
 		# Fallback without jq
 		local value=$(grep -o "\"${key}\"[^}]*\"value\"[^\"]*\"[^\"]*\"" "${json_file}" 2>/dev/null | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1 || echo "")
-		if [[ -z "${value}" ]] && [[ -n "${fallback1}" ]]; then
+		if [[ -z ${value} ]] && [[ -n ${fallback1} ]]; then
 			value=$(grep -o "\"${fallback1}\"[^}]*\"value\"[^\"]*\"[^\"]*\"" "${json_file}" 2>/dev/null | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1 || echo "")
 		fi
-		if [[ -z "${value}" ]] && [[ -n "${fallback2}" ]]; then
+		if [[ -z ${value} ]] && [[ -n ${fallback2} ]]; then
 			value=$(grep -o "\"${fallback2}\"[^}]*\"value\"[^\"]*\"[^\"]*\"" "${json_file}" 2>/dev/null | sed -n 's/.*"value"[^"]*"\([^"]*\)".*/\1/p' | head -1 || echo "")
 		fi
 		echo "${value}"
@@ -126,20 +126,20 @@ update_json_file() {
 	local key="$2"
 	local value="$3"
 
-	if [[ ! -f "${json_file}" ]]; then
+	if [[ ! -f ${json_file} ]]; then
 		echo -e "${YELLOW}  ⚠️  JSON file not found: ${json_file}${NC}"
 		return 1
 	fi
 
 	if command -v jq &>/dev/null; then
-		if [[ "${DRY_RUN}" = true ]]; then
+		if [[ ${DRY_RUN} == true ]]; then
 			echo -e "${CYAN}  [DRY RUN] Would update ${key} in ${json_file}${NC}"
 			return 0
 		fi
-		
+
 		# Update JSON using jq
 		local temp_file=$(mktemp)
-		jq ".${key}.value = \"${value}\"" "${json_file}" > "${temp_file}" && mv "${temp_file}" "${json_file}"
+		jq ".${key}.value = \"${value}\"" "${json_file}" >"${temp_file}" && mv "${temp_file}" "${json_file}"
 		return 0
 	else
 		echo -e "${YELLOW}  ⚠️  jq not available, cannot update JSON file${NC}"
@@ -153,13 +153,13 @@ update_env_file() {
 	local key="$2"
 	local value="$3"
 
-	if [[ "${DRY_RUN}" = true ]]; then
+	if [[ ${DRY_RUN} == true ]]; then
 		echo -e "${CYAN}  [DRY RUN] Would update ${key} in ${env_file}${NC}"
 		return 0
 	fi
 
 	# Create file if it doesn't exist
-	if [[ ! -f "${env_file}" ]]; then
+	if [[ ! -f ${env_file} ]]; then
 		mkdir -p "$(dirname "${env_file}")"
 		touch "${env_file}"
 	fi
@@ -167,14 +167,14 @@ update_env_file() {
 	# Update or add the key
 	if grep -q "^${key}=" "${env_file}" 2>/dev/null; then
 		# Update existing line
-		if [[ "$(uname)" = "Darwin" ]]; then
+		if [[ "$(uname)" == "Darwin" ]]; then
 			sed -i '' "s|^${key}=.*|${key}=${value}|" "${env_file}"
 		else
 			sed -i "s|^${key}=.*|${key}=${value}|" "${env_file}"
 		fi
 	else
 		# Add new line
-		echo "${key}=${value}" >> "${env_file}"
+		echo "${key}=${value}" >>"${env_file}"
 	fi
 }
 
@@ -183,7 +183,7 @@ verify_and_update_environment() {
 	local env="$1"
 	local env_dir="${PROJECT_ROOT}/infrastructure/environments/${env}"
 
-	if [[ ! -d "${env_dir}" ]]; then
+	if [[ ! -d ${env_dir} ]]; then
 		echo -e "${YELLOW}⚠️  Environment directory not found: ${env}${NC}"
 		return 1
 	fi
@@ -200,14 +200,14 @@ verify_and_update_environment() {
 
 	# Get correct values from Terraform
 	echo -e "\n${CYAN}📋 Getting values from Terraform state...${NC}"
-	
+
 	local terraform_bucket=$(get_terraform_output "${env_dir}" "bucket_name" "active_bucket_name" "blue_bucket_name")
 	local terraform_cf_id=$(get_terraform_output "${env_dir}" "cloudfront_distribution_id")
 	local terraform_cf_domain=$(get_terraform_output "${env_dir}" "cloudfront_domain_name")
 	local terraform_region=$(get_terraform_output "${env_dir}" "aws_region")
-	
+
 	# Default region if not found
-	if [[ -z "${terraform_region}" ]]; then
+	if [[ -z ${terraform_region} ]]; then
 		terraform_region="eu-central-1"
 	fi
 
@@ -219,8 +219,8 @@ verify_and_update_environment() {
 	# Check terraform-outputs.json
 	echo -e "\n${CYAN}📄 Checking terraform-outputs.json...${NC}"
 	local json_file="${env_dir}/terraform-outputs.json"
-	
-	if [[ -f "${json_file}" ]]; then
+
+	if [[ -f ${json_file} ]]; then
 		local json_bucket=$(get_json_value "${json_file}" "bucket_name" "active_bucket_name" "blue_bucket_name")
 		local json_cf_id=$(get_json_value "${json_file}" "cloudfront_distribution_id")
 		local json_region=$(get_json_value "${json_file}" "aws_region")
@@ -228,8 +228,8 @@ verify_and_update_environment() {
 		local needs_update=false
 
 		# Check bucket name
-		if [[ "${json_bucket}" != "${terraform_bucket}" ]] || [[ "${FORCE}" = true ]]; then
-			if [[ -n "${terraform_bucket}" ]]; then
+		if [[ ${json_bucket} != "${terraform_bucket}" ]] || [[ ${FORCE} == true ]]; then
+			if [[ -n ${terraform_bucket} ]]; then
 				echo -e "  ${YELLOW}⚠️  Bucket mismatch:${NC}"
 				echo -e "     JSON: ${json_bucket}"
 				echo -e "     Terraform: ${terraform_bucket}"
@@ -245,8 +245,8 @@ verify_and_update_environment() {
 		fi
 
 		# Check CloudFront ID
-		if [[ "${json_cf_id}" != "${terraform_cf_id}" ]] || [[ "${FORCE}" = true ]]; then
-			if [[ -n "${terraform_cf_id}" ]]; then
+		if [[ ${json_cf_id} != "${terraform_cf_id}" ]] || [[ ${FORCE} == true ]]; then
+			if [[ -n ${terraform_cf_id} ]]; then
 				echo -e "  ${YELLOW}⚠️  CloudFront ID mismatch:${NC}"
 				echo -e "     JSON: ${json_cf_id}"
 				echo -e "     Terraform: ${terraform_cf_id}"
@@ -258,8 +258,8 @@ verify_and_update_environment() {
 		fi
 
 		# Check region
-		if [[ "${json_region}" != "${terraform_region}" ]] || [[ "${FORCE}" = true ]]; then
-			if [[ -n "${terraform_region}" ]]; then
+		if [[ ${json_region} != "${terraform_region}" ]] || [[ ${FORCE} == true ]]; then
+			if [[ -n ${terraform_region} ]]; then
 				echo -e "  ${YELLOW}⚠️  Region mismatch:${NC}"
 				echo -e "     JSON: ${json_region}"
 				echo -e "     Terraform: ${terraform_region}"
@@ -270,14 +270,14 @@ verify_and_update_environment() {
 			echo -e "  ${GREEN}✓${NC} Region matches"
 		fi
 
-		if [[ "${needs_update}" = false ]] && [[ "${FORCE}" = false ]]; then
+		if [[ ${needs_update} == false ]] && [[ ${FORCE} == false ]]; then
 			echo -e "  ${GREEN}✓${NC} All values in terraform-outputs.json are up to date"
 		fi
 	else
 		echo -e "  ${YELLOW}⚠️  terraform-outputs.json not found, generating...${NC}"
-		if [[ "${DRY_RUN}" != true ]]; then
+		if [[ ${DRY_RUN} != true ]]; then
 			cd "${env_dir}"
-			terraform output -json | jq '.' > terraform-outputs.json
+			terraform output -json | jq '.' >terraform-outputs.json
 			cd - >/dev/null
 			echo -e "  ${GREEN}✓${NC} Generated terraform-outputs.json"
 		fi
@@ -286,15 +286,15 @@ verify_and_update_environment() {
 	# Check .env.terraform file
 	echo -e "\n${CYAN}📄 Checking .env.terraform...${NC}"
 	local env_file="${env_dir}/.env.terraform"
-	
-	if [[ -f "${env_file}" ]]; then
+
+	if [[ -f ${env_file} ]]; then
 		local env_bucket=$(grep "^AWS_S3_BUCKET=" "${env_file}" 2>/dev/null | cut -d'=' -f2 | tr -d '"' || echo "")
 		local env_cf_id=$(grep "^AWS_CLOUDFRONT_ID=" "${env_file}" 2>/dev/null | cut -d'=' -f2 | tr -d '"' || echo "")
 		local env_region=$(grep "^AWS_REGION=" "${env_file}" 2>/dev/null | cut -d'=' -f2 | tr -d '"' || echo "")
 
 		# Check bucket
-		if [[ "${env_bucket}" != "${terraform_bucket}" ]] || [[ "${FORCE}" = true ]]; then
-			if [[ -n "${terraform_bucket}" ]]; then
+		if [[ ${env_bucket} != "${terraform_bucket}" ]] || [[ ${FORCE} == true ]]; then
+			if [[ -n ${terraform_bucket} ]]; then
 				echo -e "  ${YELLOW}⚠️  Bucket mismatch in .env.terraform${NC}"
 				update_env_file "${env_file}" "AWS_S3_BUCKET" "${terraform_bucket}"
 			fi
@@ -303,8 +303,8 @@ verify_and_update_environment() {
 		fi
 
 		# Check CloudFront ID
-		if [[ "${env_cf_id}" != "${terraform_cf_id}" ]] || [[ "${FORCE}" = true ]]; then
-			if [[ -n "${terraform_cf_id}" ]]; then
+		if [[ ${env_cf_id} != "${terraform_cf_id}" ]] || [[ ${FORCE} == true ]]; then
+			if [[ -n ${terraform_cf_id} ]]; then
 				echo -e "  ${YELLOW}⚠️  CloudFront ID mismatch in .env.terraform${NC}"
 				update_env_file "${env_file}" "AWS_CLOUDFRONT_ID" "${terraform_cf_id}"
 			fi
@@ -313,8 +313,8 @@ verify_and_update_environment() {
 		fi
 
 		# Check region
-		if [[ "${env_region}" != "${terraform_region}" ]] || [[ "${FORCE}" = true ]]; then
-			if [[ -n "${terraform_region}" ]]; then
+		if [[ ${env_region} != "${terraform_region}" ]] || [[ ${FORCE} == true ]]; then
+			if [[ -n ${terraform_region} ]]; then
 				echo -e "  ${YELLOW}⚠️  Region mismatch in .env.terraform${NC}"
 				update_env_file "${env_file}" "AWS_REGION" "${terraform_region}"
 			fi
@@ -323,8 +323,8 @@ verify_and_update_environment() {
 		fi
 	else
 		echo -e "  ${YELLOW}⚠️  .env.terraform not found, creating...${NC}"
-		if [[ "${DRY_RUN}" != true ]]; then
-			cat > "${env_file}" << EOF
+		if [[ ${DRY_RUN} != true ]]; then
+			cat >"${env_file}" <<EOF
 # Terraform outputs for ${env} environment
 # Generated by verify-and-update-terraform-outputs.sh
 # DO NOT EDIT MANUALLY - This file is auto-generated
@@ -342,7 +342,7 @@ EOF
 }
 
 # Main logic
-if [[ -z "${ENVIRONMENT}" ]]; then
+if [[ -z ${ENVIRONMENT} ]]; then
 	echo -e "${RED}❌ Error: Environment not specified${NC}"
 	echo -e "Usage: $0 [options] <environment>"
 	echo -e "       $0 [options] all"
@@ -354,24 +354,24 @@ if [[ -z "${ENVIRONMENT}" ]]; then
 	exit 1
 fi
 
-if [[ "${DRY_RUN}" = true ]]; then
+if [[ ${DRY_RUN} == true ]]; then
 	echo -e "${YELLOW}🔍 DRY RUN MODE: No changes will be made${NC}"
 fi
 
 case "${ENVIRONMENT}" in
-	all)
-		echo -e "${BLUE}🔄 Verifying all environments...${NC}"
-		for env in development staging production; do
-			verify_and_update_environment "${env}" || true
-		done
-		;;
-	*)
-		verify_and_update_environment "${ENVIRONMENT}"
-		;;
+all)
+	echo -e "${BLUE}🔄 Verifying all environments...${NC}"
+	for env in development staging production; do
+		verify_and_update_environment "${env}" || true
+	done
+	;;
+*)
+	verify_and_update_environment "${ENVIRONMENT}"
+	;;
 esac
 
 echo -e "\n${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-if [[ "${DRY_RUN}" = true ]]; then
+if [[ ${DRY_RUN} == true ]]; then
 	echo -e "${GREEN}✅ Verification complete (dry run)${NC}"
 else
 	echo -e "${GREEN}✅ All outputs verified and updated!${NC}"

@@ -12,7 +12,7 @@ sleep 2
 
 # Start the server in the background
 cd "$PWD"
-node .output/server/index.mjs > /tmp/nuxt-server.log 2>&1 &
+node .output/server/index.mjs >/tmp/nuxt-server.log 2>&1 &
 SERVER_PID=$!
 
 echo "⏳ Waiting for server to start..."
@@ -20,9 +20,9 @@ sleep 5
 
 # Check if server is running
 if ! kill -0 $SERVER_PID 2>/dev/null; then
-    echo "❌ Server failed to start"
-    cat /tmp/nuxt-server.log
-    exit 1
+	echo "❌ Server failed to start"
+	cat /tmp/nuxt-server.log
+	exit 1
 fi
 
 echo "✅ Server started (PID: $SERVER_PID)"
@@ -38,9 +38,9 @@ echo "🧹 Cleaning up..."
 pkill -f "node.*3000" 2>/dev/null || true
 
 if [ $TEST_EXIT_CODE -eq 0 ]; then
-    echo "✅ Tests passed!"
+	echo "✅ Tests passed!"
 else
-    echo "❌ Tests failed with exit code $TEST_EXIT_CODE"
+	echo "❌ Tests failed with exit code $TEST_EXIT_CODE"
 fi
 
 exit $TEST_EXIT_CODE

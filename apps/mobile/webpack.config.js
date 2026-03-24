@@ -21,7 +21,7 @@ module.exports = (env) => {
       .rule('vue')
       .use('vue-loader')
       .loader(require.resolve('vue-loader'))
-      .tap(options => ({
+      .tap((options) => ({
         ...options,
         compiler: require('vue-template-compiler'),
       }))

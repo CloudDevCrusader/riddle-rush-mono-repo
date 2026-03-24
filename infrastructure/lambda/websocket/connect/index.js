@@ -25,7 +25,7 @@ exports.handler = async (event) => {
           connectedAt: timestamp,
           ttl: Math.floor(Date.now() / 1000) + 7200, // 2 hours TTL
         },
-      }),
+      })
     )
 
     console.log(`Connection stored: ${connectionId} for user: ${userId}`)
