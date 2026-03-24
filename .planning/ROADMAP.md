@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring** - Enable fortune wheel default, fix warnings/duplicated imports, rework E2E tests, refactor post-migration changes (completed 2026-03-23)
 - [x] **Phase 19: Move from Pinia to Zustand** - Complete Pinia-to-Zustand state management migration (completed 2026-03-22)
 - [x] **Phase 20: Revert Zustand to Pinia** - Revert Zustand migration back to Pinia while preserving architectural improvements
-- [ ] **Phase 21: Refactor and Fix E2E and Unit Tests** - Complete Phase 12 uncompleted unit tests, refactor remaining E2E specs, fix multi-round scoring workflow, achieve 100% E2E test pass rate
+- [x] **Phase 21: Refactor and Fix E2E and Unit Tests** - Complete Phase 12 uncompleted unit tests, refactor remaining E2E specs, fix multi-round scoring workflow, achieve 100% E2E test pass rate (completed 2026-03-24)
 
 ## Phase Details
 
