@@ -14,7 +14,17 @@ import type {
   PlayerWithRank,
 } from '@riddle-rush/types/game'
 
-// Game flow state types for unified state management
+/**
+ * Game flow state — the single source of truth for where the game session is
+ * in its lifecycle. Derived as a computed getter from minimal primitive state:
+ *   - `currentSession === null`        → 'setup'
+ *   - `currentSession.status === 'completed'` → 'completed'
+ *   - `postRoundDecisionPending === true`     → 'decision'
+ *   - `isCurrentRoundCompleted === true`      → 'round-complete'
+ *   - otherwise                               → 'in-round'
+ *
+ * @see .planning/phases/21-refactor-and-fix-e2e-and-unit-tests/21-GAME-MODE-FLOW.md
+ */
 export type GameFlowState = 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
 
 // Round action that may trigger state transitions
@@ -83,6 +93,11 @@ export const useGameStore = defineStore('game', {
   }),
 
   getters: {
+    /**
+     * Whether this is a single-player or multiplayer session.
+     * Derived from `currentSession.players.length > 0`.
+     * This is never explicitly set — it is always computed.
+     */
     gameMode(state): 'single' | 'multiplayer' {
       return (state.currentSession?.players.length ?? 0) > 0 ? 'multiplayer' : 'single'
     },
