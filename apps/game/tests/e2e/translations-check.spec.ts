@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { hideDevtools } from './helpers/game-flow'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -34,13 +35,14 @@ test.describe('Translation Checks', () => {
 
     // 2. Go to Home and Start Game
     await page.goto('/')
+    await hideDevtools(page)
     const playBtn = page.locator('button').filter({ hasText: /Play/i }).first()
     await expect(playBtn).toBeVisible()
     await playBtn.click()
 
     // 3. Check Players Page
     await page.waitForURL('**/players')
-    const startBtn = page.locator('.start-button')
+    const startBtn = page.locator('[data-testid="players-start-button"]')
     await expect(startBtn).toBeVisible()
     // Should NOT show the key
     await expect(startBtn).not.toHaveText('players.start')
@@ -59,7 +61,7 @@ test.describe('Translation Checks', () => {
     let categoryName = ''
     if (isRoundStart) {
       // Wait for wheels to complete and results to show
-      const resultText = page.locator('.result-text').first()
+      const resultText = page.locator('[data-testid="round-start-result"]').first()
       // It might skip directly to game if it navigates fast, so we handle both
       try {
         await expect(resultText).toBeVisible({ timeout: 10000 })
@@ -67,12 +69,12 @@ test.describe('Translation Checks', () => {
       } catch {
         // Maybe already navigated to game
         await page.waitForURL('**/game/**')
-        const gameCatName = page.locator('.category-name')
+        const gameCatName = page.locator('[data-testid="game-category-name"]')
         await expect(gameCatName).toBeVisible()
         categoryName = (await gameCatName.textContent()) ?? ''
       }
     } else {
-      const gameCatName = page.locator('.category-name')
+      const gameCatName = page.locator('[data-testid="game-category-name"]')
       await expect(gameCatName).toBeVisible()
       categoryName = (await gameCatName.textContent()) ?? ''
     }

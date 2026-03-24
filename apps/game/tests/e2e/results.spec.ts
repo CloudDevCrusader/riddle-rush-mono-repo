@@ -5,6 +5,7 @@ import {
   setupMultiplayerGame,
   startGameWithDefaults,
   submitPlayerAnswers,
+  hideDevtools,
 } from './helpers/game-flow'
 
 test.describe('results scoring page', () => {
@@ -16,15 +17,15 @@ test.describe('results scoring page', () => {
 
   test('should display results page with all elements', async ({ page }) => {
     // Check for background (GameBackground)
-    const background = page.locator('.game-background')
+    const background = page.locator('[data-testid="page-background"]')
     await expect(background).toBeVisible()
 
     // Check for title (GameHeader)
-    const header = page.locator('.game-header')
+    const header = page.locator('[data-testid="results-header"]')
     await expect(header).toBeVisible()
 
     // Check for player list
-    const playerList = page.locator('.scoring-page__list')
+    const playerList = page.locator('[data-testid="results-scores-container"]')
     await expect(playerList).toBeVisible()
 
     // Check for confirm button
@@ -36,7 +37,7 @@ test.describe('results scoring page', () => {
     // Wait for page to fully load
     await page.waitForLoadState('networkidle')
 
-    const playerEntries = page.locator('.scoring-page__player-entry')
+    const playerEntries = page.locator('[data-testid^="results-player-entry-"]')
 
     // Wait for at least one entry to appear
     await expect(playerEntries.first()).toBeVisible({ timeout: 5000 })
@@ -45,12 +46,12 @@ test.describe('results scoring page', () => {
     expect(count).toBeGreaterThan(0)
 
     // Each entry should have score controls
-    const scoreControls = page.locator('.scoring-page__score-controls')
+    const scoreControls = page.locator('[data-testid^="results-score-controls-"]')
     expect(await scoreControls.count()).toBe(count)
   })
 
   test('should display increment and decrement buttons for each player', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
 
@@ -59,8 +60,8 @@ test.describe('results scoring page', () => {
   })
 
   test('should increase score when clicking increment button', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
-    const scoreDisplay = firstEntry.locator('.scoring-page__score-value')
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
+    const scoreDisplay = firstEntry.locator('[data-testid^="results-score-display-"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
 
     // Get initial score
@@ -76,8 +77,8 @@ test.describe('results scoring page', () => {
   })
 
   test('should decrease score when clicking decrement button', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
-    const scoreDisplay = firstEntry.locator('.scoring-page__score-value')
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
+    const scoreDisplay = firstEntry.locator('[data-testid^="results-score-display-"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
 
@@ -99,7 +100,7 @@ test.describe('results scoring page', () => {
   })
 
   test('should disable decrement button when score is 0', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
 
     // Should be disabled at start (score = 0)
@@ -112,7 +113,7 @@ test.describe('results scoring page', () => {
     await confirmBtn.click()
 
     // Leaderboard should appear
-    const leaderboardOverlay = page.locator('.player-leaderboard')
+    const leaderboardOverlay = page.locator('[data-testid="player-leaderboard"]')
     await expect(leaderboardOverlay).toBeVisible({ timeout: 5000 })
   })
 
@@ -165,8 +166,8 @@ test.describe('results scoring page', () => {
   test('should be responsive on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 })
 
-    const header = page.locator('.game-header')
-    const playerList = page.locator('.scoring-page__list')
+    const header = page.locator('[data-testid="results-header"]')
+    const playerList = page.locator('[data-testid="results-scores-container"]')
     const confirmBtn = page.locator('[data-testid="confirm-scores"]')
 
     await expect(header).toBeVisible()
@@ -184,7 +185,7 @@ test.describe('results page multi-player', () => {
   })
 
   test('should display all players in multi-player game', async ({ page }) => {
-    const playerEntries = page.locator('.scoring-page__player-entry')
+    const playerEntries = page.locator('[data-testid^="results-player-entry-"]')
 
     // Should have 2 players
     await expect(playerEntries).toHaveCount(2)
@@ -192,7 +193,7 @@ test.describe('results page multi-player', () => {
 
   test('should allow independent score adjustment for each player', async ({ page }) => {
     const incrementBtns = page.locator('[data-testid="score-increment"]')
-    const scoreDisplays = page.locator('.scoring-page__score-value')
+    const scoreDisplays = page.locator('[data-testid^="results-score-display-"]')
 
     // Increment player 1 three times
     await incrementBtns.nth(0).click()

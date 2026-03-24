@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { hideDevtools } from './helpers/game-flow'
 
 test.describe('Offline Functionality', () => {
   test('should work offline after initial load', async ({ page, context }) => {
@@ -26,6 +27,7 @@ test.describe('Offline Functionality', () => {
   test('should show offline indicator when offline', async ({ page, context }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
+    await hideDevtools(page)
 
     // Go offline
     await context.setOffline(true)
@@ -39,7 +41,7 @@ test.describe('Offline Functionality', () => {
 
     // Check for offline indicator (try multiple selectors)
     const offlineIndicatorByTestId = page.locator('[data-testid="offline-indicator"]')
-    const offlineIndicatorByClass = page.locator('.offline')
+    const offlineIndicatorByClass = page.locator('[data-testid="offline-indicator"]')
     const offlineIndicatorByText = page.getByText(/offline/i)
 
     // If any offline indicator exists, check it's visible

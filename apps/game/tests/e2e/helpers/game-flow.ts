@@ -48,6 +48,18 @@ interface PiniaWindow extends Window {
 // ---------------------------------------------------------------------------
 
 /**
+ * Wait for the splash screen to finish animating away.
+ */
+export async function waitForSplashComplete(page: Page): Promise<void> {
+  await page.waitForTimeout(1000)
+  const splashScreen = page.locator('[data-testid="splash-screen"]')
+  await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
+    // Splash might already be gone
+  })
+  await page.waitForTimeout(500) // Extra buffer for transitions
+}
+
+/**
  * Hide Nuxt devtools overlay so it cannot intercept clicks during E2E.
  */
 export async function hideDevtools(page: Page): Promise<void> {
