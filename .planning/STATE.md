@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0.3
 milestone_name: milestone
-status: Executing Phase 21
-stopped_at: Phase 21 executing (plan 1 of 11) — wave 1 kickoff in progress
-last_updated: '2026-03-23T23:54:38.213Z'
+status: Ready to execute
+stopped_at: Completed 21-01B-PLAN.md
+last_updated: "2026-03-24T00:36:35.108Z"
 progress:
   total_phases: 22
   completed_phases: 20
   total_plans: 70
-  completed_plans: 60
+  completed_plans: 61
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 21 (refactor-and-fix-e2e-and-unit-tests) — EXECUTING
-Plan: 1 of 11
+Plan: 2 of 11
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ _Updated after each plan completion_
 | Phase 14-03 P03 | 4min | 2 tasks | 1 files |
 | Phase 14-01 P01 | 5min | 2 tasks | 8 files |
 | Phase 19 P03 | 15min | 3 tasks | 12 files |
+| Phase 21 P01B | 31min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -157,6 +158,8 @@ Recent decisions affecting current work:
 - [Phase 14-01]: Merged duplicate language/credits/settings JSON sections keeping union of keys to prevent silent shadowing
 - [Phase 19]: Use direct state mutation for gameStore test reset (setState breaks JS getter properties)
 - [Phase 19]: Define inline typed window interfaces for page.evaluate() E2E callbacks (browser context isolation)
+- [Phase 21]: Mock useAnalytics with behavioral replica to bypass import.meta.client compile-time constant
+- [Phase 21]: Use typed mock factories with GameSession/Player/Category interfaces instead of any casts
 
 ### Pending Todos
 
@@ -196,8 +199,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-23T23:54:38Z
-Stopped at: Phase 21 executing (plan 1 of 11) — wave 1 kickoff in progress
+Last session: 2026-03-24T00:36:35.106Z
+Stopped at: Completed 21-01B-PLAN.md
 Resume file: None
 
 ### Deployment: development

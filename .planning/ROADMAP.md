@@ -490,7 +490,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 18. Fortune Wheel + Warnings + E2E    | 5/5            | Complete | 2026-03-23 |
 | 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |
 | 20. Revert Zustand to Pinia           | 3/3            | Complete | 2026-03-23 |
-| 21. Refactor and Fix E2E & Unit Tests | 0/11           | Planned  | —          |
+| 21. Refactor and Fix E2E & Unit Tests | 1/11 | In Progress|  |
 
 ### Phase 20: Revert Zustand to Pinia
 
@@ -537,13 +537,13 @@ Plans:
 7. Zero CSS class selectors remain in E2E tests (all data-testid based)
 8. All unit tests pass and workspace:check succeeds
 
-**Plans:** 11 plans
+**Plans:** 1/11 plans executed
 
 Plans:
 
 - [ ] 21-01-PLAN.md — Unit tests for core composables (CategoryManager, PlayerManager, ScoringEngine)
 - [ ] 21-01A-PLAN.md — Unit tests for SessionManager and Persistence
-- [ ] 21-01B-PLAN.md — Unit tests for GameLifecycle and Analytics
+- [x] 21-01B-PLAN.md — Unit tests for GameLifecycle and Analytics
 - [ ] 21-02-PLAN.md — Refactor E2E specs to data-testid selectors and shared helpers
 - [ ] 21-03-PLAN.md — Add missing data-testid attributes to page components
 - [ ] 21-04-PLAN.md — Mobile E2E tests for critical game flows (Pixel 5, iPad Pro 11)
