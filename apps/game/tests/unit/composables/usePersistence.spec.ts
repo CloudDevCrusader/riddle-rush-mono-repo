@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { GameSession } from '@riddle-rush/types/game'
 
+import { usePersistence } from '~/composables/usePersistence'
+
 // Mock useIndexedDB before importing composable
 const mockGetGameSession = vi.fn()
 const mockGetGameHistory = vi.fn()
@@ -30,8 +32,6 @@ vi.mock('~/composables/useLogger', () => ({
     info: vi.fn(),
   })),
 }))
-
-import { usePersistence } from '~/composables/usePersistence'
 
 const mockSession: GameSession = {
   id: 'session-123',

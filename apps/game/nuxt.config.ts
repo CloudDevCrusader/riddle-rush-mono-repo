@@ -78,6 +78,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
+    ...(process.env.VERCEL ? ['@vercel/analytics'] : []),
   ],
   // Client-only SPA (IndexedDB and PWA require client-side rendering)
 
@@ -103,7 +104,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Riddle Rush - Fun Party Game',
+      titleTemplate: '%s - Riddle Rush',
       meta: [
         { charset: 'utf-8' },
         {

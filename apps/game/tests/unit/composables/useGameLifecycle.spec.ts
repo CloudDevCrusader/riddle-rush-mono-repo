@@ -230,7 +230,7 @@ describe('useGameLifecycle', () => {
       })
       const result = buildRoundResult(session)
 
-      expect(result.playerResults[0].answer).toBe('')
+      expect(result.playerResults[0]!.answer).toBe('')
     })
   })
 

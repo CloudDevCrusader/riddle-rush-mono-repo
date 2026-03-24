@@ -48,6 +48,16 @@ onBeforeUnmount(() => {
   if (navTimeout) clearTimeout(navTimeout)
   if (skipTimeout) clearTimeout(skipTimeout)
 })
+
+useHead({
+  title: t('app.title'),
+  meta: [
+    {
+      name: 'description',
+      content: t('app.description'),
+    },
+  ],
+})
 </script>
 
 <template>

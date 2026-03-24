@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Player } from '@riddle-rush/types/game'
 
+import { usePlayerManager } from '../../../composables/usePlayerManager'
+
 // Mock generateUUID to produce predictable IDs
 let uuidCounter = 0
 vi.mock('~/utils/uuid', () => ({
   generateUUID: () => `test-uuid-${++uuidCounter}`,
 }))
-
-import { usePlayerManager } from '../../../composables/usePlayerManager'
 
 // Helper factory
 function createPlayer(overrides: Partial<Player> = {}): Player {

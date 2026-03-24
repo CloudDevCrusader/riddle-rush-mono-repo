@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { GameSession, Category, Player } from '@riddle-rush/types/game'
 
+import { useSessionManager } from '~/composables/useSessionManager'
+import { generateUUID } from '~/utils/uuid'
+
 // Mock generateUUID before importing composable
 vi.mock('~/utils/uuid', () => ({
   generateUUID: vi.fn(() => 'mock-uuid-1234'),
 }))
-
-import { useSessionManager } from '~/composables/useSessionManager'
-import { generateUUID } from '~/utils/uuid'
 
 const mockGenerateUUID = vi.mocked(generateUUID)
 

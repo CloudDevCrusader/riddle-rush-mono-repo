@@ -100,7 +100,7 @@ lint:
     - markdownlint@0.48.0
     - oxipng@10.1.0
     - prettier@3.8.1
-    - renovate@43.87.1
+    - renovate@43.87.1π
     - shellcheck@0.11.0
     - shfmt@3.6.0
     - stylelint@17.5.0

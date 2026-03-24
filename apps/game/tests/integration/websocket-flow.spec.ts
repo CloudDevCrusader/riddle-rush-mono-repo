@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { nextTick } from 'vue'
+import { nextTick } from '@vue/runtime-core'
 
 // ──────────────────────────────────────────────
 // Socket.IO mock
@@ -41,7 +41,7 @@ function createMockSocket(): MockSocket {
     }),
     off: vi.fn((event: string, cb?: SocketEventCallback) => {
       if (!cb) {
-        delete handlers[event]
+        handlers[event] = []
       } else {
         handlers[event] = (handlers[event] ?? []).filter((h) => h !== cb)
       }

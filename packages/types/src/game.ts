@@ -109,10 +109,12 @@ export interface LeaderboardEntry {
   score: number
   category: string
   categoryKey: string
+  playerName: string
   attempts: number
   correctAttempts: number
   timestamp: number
   duration: number
+  letter: string
 }
 
 // Settings
