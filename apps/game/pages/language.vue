@@ -2,7 +2,12 @@
   <GameBackground>
     <div class="language-page" data-testid="language-page">
       <!-- Back button -->
-      <button class="back-btn" :aria-label="t('common.back')" data-testid="language-back-button" @click="goBack">
+      <button
+        class="back-btn"
+        :aria-label="t('common.back')"
+        data-testid="language-back-button"
+        @click="goBack"
+      >
         <span class="back-icon">&#x2190;</span>
       </button>
 
@@ -23,7 +28,11 @@
               <span class="flag-emoji">&#x1F1EC;&#x1F1E7;</span>
             </div>
             <span class="language-name">ENGLISH</span>
-            <div class="checkbox" :class="{ checked: selectedLocale === 'en' }" data-testid="language-checkmark-en">
+            <div
+              class="checkbox"
+              :class="{ checked: selectedLocale === 'en' }"
+              data-testid="language-checkmark-en"
+            >
               <Transition name="checkmark">
                 <span v-if="selectedLocale === 'en'" class="checkmark">&#x2713;</span>
               </Transition>
@@ -41,7 +50,11 @@
               <span class="flag-emoji">&#x1F1E9;&#x1F1EA;</span>
             </div>
             <span class="language-name">DEUTSCH</span>
-            <div class="checkbox" :class="{ checked: selectedLocale === 'de' }" data-testid="language-checkmark-de">
+            <div
+              class="checkbox"
+              :class="{ checked: selectedLocale === 'de' }"
+              data-testid="language-checkmark-de"
+            >
               <Transition name="checkmark">
                 <span v-if="selectedLocale === 'de'" class="checkmark">&#x2713;</span>
               </Transition>
@@ -51,7 +64,14 @@
       </GamePanel>
 
       <!-- OK Button -->
-      <GameButton variant="primary" size="lg" data-testid="language-ok-button" @click="confirmSelection"> OK </GameButton>
+      <GameButton
+        variant="primary"
+        size="lg"
+        data-testid="language-ok-button"
+        @click="confirmSelection"
+      >
+        OK
+      </GameButton>
     </div>
   </GameBackground>
 </template>

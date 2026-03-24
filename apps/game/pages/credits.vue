@@ -20,7 +20,9 @@
       <GamePanel class="credits-panel animate-scale-in" data-testid="credits-panel">
         <!-- Game Design -->
         <div class="credit-section" data-testid="credits-section-0">
-          <h2 class="section-heading" data-testid="credits-section-heading-0">{{ t('credits.game_design') }}</h2>
+          <h2 class="section-heading" data-testid="credits-section-heading-0">
+            {{ t('credits.game_design') }}
+          </h2>
           <div class="credit-box">
             <span class="credit-name" data-testid="credits-name-0">Tobi</span>
             <span class="credit-divider" />
@@ -30,7 +32,9 @@
 
         <!-- Programming -->
         <div class="credit-section" data-testid="credits-section-1">
-          <h2 class="section-heading" data-testid="credits-section-heading-1">{{ t('credits.programming') }}</h2>
+          <h2 class="section-heading" data-testid="credits-section-heading-1">
+            {{ t('credits.programming') }}
+          </h2>
           <div class="credit-box">
             <span class="credit-name" data-testid="credits-name-2">Markus</span>
           </div>
@@ -38,7 +42,9 @@
 
         <!-- Art -->
         <div class="credit-section" data-testid="credits-section-2">
-          <h2 class="section-heading" data-testid="credits-section-heading-2">{{ t('credits.art') }}</h2>
+          <h2 class="section-heading" data-testid="credits-section-heading-2">
+            {{ t('credits.art') }}
+          </h2>
           <div class="credit-box">
             <span class="credit-name" data-testid="credits-name-3">Sarmad Ali</span>
           </div>
@@ -48,7 +54,13 @@
         <div class="version-info">v{{ appVersion }}</div>
       </GamePanel>
 
-      <GameButton class="ok-btn animate-slide-up" variant="primary" size="lg" data-testid="credits-ok-button" @click="goBack">
+      <GameButton
+        class="ok-btn animate-slide-up"
+        variant="primary"
+        size="lg"
+        data-testid="credits-ok-button"
+        @click="goBack"
+      >
         {{ t('common.ok', 'OK') }}
       </GameButton>
     </div>

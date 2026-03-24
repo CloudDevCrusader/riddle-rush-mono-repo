@@ -131,11 +131,10 @@ const spinWheel = (targetRotation: number) => {
 
     // Enhanced ease-out animation with bounce effect
     const easedProgress = 1 - Math.pow(1 - progress, 4)
-    
+
     // Add slight bounce at the end
-    const bounceProgress = progress < 0.9 
-      ? easedProgress
-      : 1 - Math.pow((1 - progress) / 0.1, 2) * 0.1 + easedProgress
+    const bounceProgress =
+      progress < 0.9 ? easedProgress : 1 - Math.pow((1 - progress) / 0.1, 2) * 0.1 + easedProgress
 
     wheelRotation.value = startRotation + rotationDiff * bounceProgress
 
@@ -269,9 +268,7 @@ watch(
   height: 100%;
   background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4, #45b7d1);
   clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
-  filter: 
-    drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6))
-    drop-shadow(0 0 16px rgba(255, 107, 107, 0.8));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 16px rgba(255, 107, 107, 0.8));
   animation: gradient-shift 3s ease-in-out infinite;
 }
 
@@ -301,7 +298,8 @@ watch(
 }
 
 @keyframes gradient-shift {
-  0%, 100% {
+  0%,
+  100% {
     filter: hue-rotate(0deg) brightness(1);
   }
   50% {
@@ -360,7 +358,7 @@ watch(
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     linear-gradient(
       135deg,
       rgba(255, 255, 255, 0.4) 0%,
@@ -392,7 +390,7 @@ watch(
   filter: brightness(1.15) saturate(1.1);
   transform: scale(1.02);
   z-index: 10;
-  box-shadow: 
+  box-shadow:
     inset 0 0 20px rgba(255, 255, 255, 0.3),
     0 0 15px var(--segment-color);
 }
@@ -453,7 +451,7 @@ watch(
   font-size: clamp(10px, 3vw, 16px);
   font-weight: var(--font-weight-bold);
   color: var(--color-white);
-  text-shadow: 
+  text-shadow:
     0 2px 6px rgba(0, 0, 0, 0.7),
     0 0 12px rgba(255, 255, 255, 0.3);
   text-align: center;
@@ -463,7 +461,8 @@ watch(
 }
 
 @keyframes icon-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -509,7 +508,7 @@ watch(
   border-radius: 50%;
   border: clamp(3px, 0.8vw, 5px) solid rgba(255, 255, 255, 0.8);
   background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 182, 71, 0.2));
-  box-shadow: 
+  box-shadow:
     0 0 20px rgba(255, 215, 0, 0.6),
     inset 0 0 15px rgba(255, 255, 255, 0.2);
 }
@@ -519,7 +518,7 @@ watch(
   width: clamp(70px, 20vw, 130px);
   height: clamp(70px, 20vw, 130px);
   border-radius: 50%;
-  background: 
+  background:
     linear-gradient(135deg, #ffd700, #ffb347),
     radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 60%);
   border: clamp(3px, 1vw, 5px) solid var(--color-white);
@@ -539,15 +538,7 @@ watch(
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    #ffd700,
-    #ffb347,
-    #ff6b6b,
-    #4ecdc4,
-    #45b7d1,
-    #ffd700
-  );
+  background: conic-gradient(from 0deg, #ffd700, #ffb347, #ff6b6b, #4ecdc4, #45b7d1, #ffd700);
   opacity: 0.3;
   animation: ornament-rotate 15s linear infinite reverse;
 }
@@ -609,26 +600,26 @@ watch(
     font-size: clamp(9px, 3.5vw, 14px);
     max-width: clamp(40px, 12vw, 70px);
   }
-  
+
   .segment-icon {
     font-size: clamp(16px, 5vw, 28px);
   }
-  
+
   .center-glow {
     width: clamp(100px, 24vw, 140px);
     height: clamp(100px, 24vw, 140px);
   }
-  
+
   .center-ring {
     width: clamp(80px, 20vw, 110px);
     height: clamp(80px, 20vw, 110px);
   }
-  
+
   .center-circle {
     width: clamp(60px, 18vw, 110px);
     height: clamp(60px, 18vw, 110px);
   }
-  
+
   .selected-icon,
   .center-icon {
     font-size: clamp(24px, 6.5vw, 38px);
@@ -640,9 +631,9 @@ watch(
   .wheel-segment {
     border: 1px solid rgba(255, 255, 255, 0.8);
   }
-  
+
   .segment-text {
-    text-shadow: 
+    text-shadow:
       0 2px 4px rgba(0, 0, 0, 0.9),
       0 0 8px rgba(255, 255, 255, 0.5);
   }
@@ -653,7 +644,7 @@ watch(
   .fortune-wheel {
     transition: transform 0.5s ease;
   }
-  
+
   .pointer-arrow,
   .center-glow,
   .center-circle,
@@ -661,7 +652,7 @@ watch(
   .segment-icon {
     animation: none;
   }
-  
+
   .wheel-segment.selected {
     animation: none;
   }

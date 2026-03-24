@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants'
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
@@ -65,7 +66,7 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-unstorage/nuxt',
     '@nuxtjs/i18n', // Load i18n early
     '@unocss/nuxt', // Load UnoCSS after i18n, before PWA
     '@vite-pwa/nuxt',
@@ -76,6 +77,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxt/image',
+    '@nuxt/hints',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
     ...(process.env.VERCEL ? ['@vercel/analytics'] : []),
@@ -96,10 +98,13 @@ export default defineNuxtConfig({
     dirs: ['stores', 'stores/hooks', 'composables'],
   },
   devtools: {
-    enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+    enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     timeline: {
-      enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+      enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     },
+  },
+  hints: {
+    devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
   },
 
   app: {

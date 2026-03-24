@@ -57,7 +57,7 @@ async function returnToMenuFromLeaderboard(page: Page) {
   await expect(page).toHaveURL(/\/$/, { timeout: 8000 })
 
   // Verify menu is fully loaded
-  const playBtn = page.locator('[data-testid="menu-start-button"]')
+  const playBtn = page.locator('[data-testid="main-menu-play"]')
   await expect(playBtn).toBeVisible({ timeout: 15000 })
 }
 

@@ -31,7 +31,10 @@
             </span>
           </div>
 
-          <div class="scoring-page__score-controls" :data-testid="`results-score-controls-${index}`">
+          <div
+            class="scoring-page__score-controls"
+            :data-testid="`results-score-controls-${index}`"
+          >
             <GameButton
               variant="danger"
               size="sm"
@@ -42,7 +45,12 @@
               −
             </GameButton>
 
-            <GameDisplay size="sm" :glow="false" class="scoring-page__score-value" :data-testid="`scoring-page-score-value-${index}`">
+            <GameDisplay
+              size="sm"
+              :glow="false"
+              class="scoring-page__score-value"
+              :data-testid="`scoring-page-score-value-${index}`"
+            >
               {{ pendingScores.get(player.id) ?? 0 }}
             </GameDisplay>
 

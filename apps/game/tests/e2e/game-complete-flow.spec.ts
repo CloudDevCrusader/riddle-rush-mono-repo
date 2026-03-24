@@ -101,7 +101,7 @@ test.describe('Complete Game Flow', () => {
 
       // Should be back at menu
       await expect(page).toHaveURL(/\/$/)
-      const playBtn = page.locator('[data-testid="menu-start-button"]')
+      const playBtn = page.locator('[data-testid="main-menu-play"]')
       await expect(playBtn).toBeVisible()
     })
 
@@ -110,7 +110,7 @@ test.describe('Complete Game Flow', () => {
       await page.goto('/', { timeout: 30000 })
       await hideDevtools(page)
 
-      const playBtn = page.locator('[data-testid="menu-start-button"]')
+      const playBtn = page.locator('[data-testid="main-menu-play"]')
       await expect(playBtn).toBeVisible({ timeout: 15000 })
       await playBtn.click()
       await expect(page).toHaveURL(/\/players/)
