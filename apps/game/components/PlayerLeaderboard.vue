@@ -165,7 +165,12 @@ defineEmits<{
   color: var(--color-white);
   font-size: 24px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .close-btn:active {
@@ -175,7 +180,8 @@ defineEmits<{
 .leaderboard-content {
   flex: 1;
   overflow-y: auto;
-  padding: var(--spacing-lg);
+  overscroll-behavior: contain;
+  padding: var(--spacing-md);
 }
 
 .empty-state {
@@ -204,7 +210,12 @@ defineEmits<{
   background: var(--color-white);
   border-radius: var(--radius-lg);
   border: 2px solid transparent;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -378,7 +389,12 @@ defineEmits<{
 /* Transitions */
 .player-leaderboard-enter-active,
 .player-leaderboard-leave-active {
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .player-leaderboard-enter-from,

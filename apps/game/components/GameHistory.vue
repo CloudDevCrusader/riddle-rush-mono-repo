@@ -1,7 +1,13 @@
 <template>
   <Transition name="game-history">
-    <div v-if="visible" class="game-history-overlay" @click.self="$emit('close')">
-      <div class="game-history-panel">
+    <button
+      v-if="visible"
+      class="game-history-overlay"
+      type="button"
+      aria-label="Close history"
+      @click.self="$emit('close')"
+    >
+      <div class="game-history-panel" @click.stop>
         <header class="history-header">
           <h2>📜 {{ t('history.title', 'Game History') }}</h2>
           <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
@@ -83,7 +89,7 @@
           </button>
         </footer>
       </div>
-    </div>
+    </button>
   </Transition>
 </template>
 
@@ -127,7 +133,11 @@ const formatDate = (timestamp: number) => {
   if (diffHours < 24) return `${diffHours}h ago`
   if (diffDays < 7) return `${diffDays}d ago`
 
-  return date.toLocaleDateString()
+  return new Intl.DateTimeFormat(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(date)
 }
 
 // Memoize sorted players per game to avoid recalculation
@@ -161,6 +171,9 @@ const getSortedPlayers = (game: GameSession): Player[] => {
     max(var(--spacing-md), env(safe-area-inset-right, 0px))
     max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
     max(var(--spacing-md), env(safe-area-inset-left, 0px));
+  border: none;
+  cursor: pointer;
+  width: 100%;
 }
 
 .game-history-panel {
@@ -173,6 +186,7 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   border: 3px solid var(--color-primary);
+  cursor: default;
 }
 
 .history-header {
@@ -203,7 +217,13 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   color: var(--color-white);
   font-size: 24px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  touch-action: manipulation;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .close-btn:active {
@@ -213,6 +233,7 @@ const getSortedPlayers = (game: GameSession): Player[] => {
 .history-content {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--spacing-lg);
 }
 
@@ -240,7 +261,12 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   padding: var(--spacing-lg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid var(--color-light);
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .game-card.completed {
@@ -384,7 +410,12 @@ const getSortedPlayers = (game: GameSession): Player[] => {
 /* Transitions */
 .game-history-enter-active,
 .game-history-leave-active {
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .game-history-enter-from,

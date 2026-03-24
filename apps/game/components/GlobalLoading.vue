@@ -2,22 +2,42 @@
   <transition name="fade-out">
     <div v-if="isLoading" class="global-loading-overlay">
       <!-- Background Image -->
-      <img :src="`${baseUrl}assets/splash/background.png`" alt="Background" class="splash-bg" />
+      <img
+        :src="`${baseUrl}assets/splash/background.png`"
+        alt="Background"
+        class="splash-bg"
+        width="1920"
+        height="1080"
+      />
 
       <div class="loading-container">
         <!-- Logo with Fade In Animation -->
         <div class="logo-container animate-fade-in">
-          <img :src="`${baseUrl}assets/splash/LOGO.png`" alt="Logo" class="logo-image" />
+          <img
+            :src="`${baseUrl}assets/splash/LOGO.png`"
+            alt="Logo"
+            class="logo-image"
+            width="512"
+            height="512"
+          />
         </div>
 
         <!-- Loading Bar Container with Slide Up Animation -->
         <div v-if="showProgress" class="loading-bar-container animate-slide-up">
-          <img :src="`${baseUrl}assets/splash/LOADING_.png`" alt="Loading" class="loading-text" />
+          <img
+            :src="`${baseUrl}assets/splash/LOADING_.png`"
+            alt="Loading"
+            class="loading-text"
+            width="256"
+            height="64"
+          />
           <div class="loading-bar-wrapper">
             <img
               :src="`${baseUrl}assets/splash/loading-down.png`"
               alt="Loading bar background"
               class="loading-bar-bg-img"
+              width="512"
+              height="64"
             />
             <div class="loading-bar-track">
               <img
@@ -25,6 +45,8 @@
                 alt="Loading bar fill"
                 :style="{ clipPath: `inset(0 ${100 - progress}% 0 0)` }"
                 class="loading-bar-fill-img"
+                width="512"
+                height="64"
               />
             </div>
           </div>

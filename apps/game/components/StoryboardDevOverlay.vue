@@ -157,7 +157,12 @@ const formatDuration = (seconds: number): string => {
 // Format timestamp
 const formatTime = (timestamp: number): string => {
   const date = new Date(timestamp)
-  return date.toLocaleTimeString('en-US', { hour12: false })
+  return new Intl.DateTimeFormat(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(date)
 }
 
 // Get state name by ID
@@ -482,7 +487,12 @@ const handleReset = () => {
   border-radius: var(--radius-md);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   font-size: var(--font-size-sm);
 }
 

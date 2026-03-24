@@ -65,7 +65,13 @@ const handleClick = (event: MouseEvent) => {
   border-radius: var(--radius-lg);
   border: 3px solid rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  touch-action: manipulation;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   color: white;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
   -webkit-tap-highlight-color: transparent;

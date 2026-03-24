@@ -16,6 +16,8 @@
           :alt="t('common.back')"
           class="back-icon"
           loading="eager"
+          width="32"
+          height="32"
         />
       </button>
 
@@ -56,6 +58,8 @@
           :alt="t('common.category')"
           class="category-label-image"
           loading="lazy"
+          width="200"
+          height="50"
         />
         <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
         <div class="category-name">
@@ -90,10 +94,12 @@
             type="text"
             class="answer-input"
             data-testid="game-answer-input"
-            :placeholder="t('game.your_answer', 'Your answer...')"
+            :placeholder="t('game.your_answer', 'Your answer…')"
             autocomplete="off"
             autocapitalize="words"
             maxlength="50"
+            inputmode="search"
+            enterkeyhint="done"
             @input="sanitizeInput"
             @keyup.enter="submitAnswer"
           />
@@ -449,7 +455,12 @@ useHead({
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow:
     0 8px 0 rgba(0, 0, 0, 0.2),
     var(--shadow-lg);
@@ -688,7 +699,12 @@ useHead({
   background: var(--color-white);
   color: var(--color-dark);
   text-align: center;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .answer-input:focus {
@@ -707,7 +723,12 @@ useHead({
   font-weight: var(--font-weight-bold);
   color: var(--color-white);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow: 0 6px 0 rgba(58, 140, 20, 0.3);
 }
 
@@ -767,7 +788,12 @@ useHead({
     0 12px 20px rgba(0, 0, 0, 0.25),
     inset 0 2px 4px rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   position: relative;
   overflow: hidden;
 }

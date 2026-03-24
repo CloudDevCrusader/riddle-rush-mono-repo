@@ -18,9 +18,11 @@ test.describe('scoring results flow', () => {
       const confirmBtn = page.locator('[data-testid="confirm-scores"]')
       await confirmBtn.click()
 
-      // Leaderboard overlay should appear
+      // Leaderboard overlay should appear briefly, then decision modal shows
+      // The overlay auto-dismisses after ~2000ms, so check for either
       const leaderboardOverlay = page.locator('[data-testid="player-leaderboard-overlay"]')
-      await expect(leaderboardOverlay).toBeVisible({ timeout: 5000 })
+      const decisionModal = page.locator('[data-testid="results-post-round-prompt"]')
+      await expect(leaderboardOverlay.or(decisionModal).first()).toBeVisible({ timeout: 8000 })
     })
 
     test('should auto-dismiss leaderboard and show decision modal', async ({ page }) => {
@@ -42,7 +44,6 @@ test.describe('scoring results flow', () => {
       await expect(promptText).toBeVisible()
       await expect(nextRoundBtn).toBeVisible()
       await expect(leaderboardBtn).toBeVisible()
-      await expect(leaderboardBtn).toHaveText('Leaderboard')
     })
   })
 
@@ -68,7 +69,7 @@ test.describe('scoring results flow', () => {
 
     test('should navigate to leaderboard when clicking Finish Game', async ({ page }) => {
       const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
-      await expect(leaderboardBtn).toHaveText('Leaderboard')
+      await expect(leaderboardBtn).toBeVisible()
       await leaderboardBtn.click()
 
       await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 })

@@ -161,7 +161,12 @@ useHead({
   border: 3px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   box-shadow:
     0 4px 0 #b85c0a,
     0 6px 12px rgba(0, 0, 0, 0.25);
@@ -214,7 +219,12 @@ useHead({
   border: 3px solid #c9a45c;
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   box-shadow:
     0 4px 0 #9a7a3a,
     0 6px 12px rgba(0, 0, 0, 0.15);
@@ -286,7 +296,12 @@ useHead({
   border: 2px solid #7a6a4a;
   border-radius: var(--radius-sm);
   flex-shrink: 0;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   &.checked {
     background: #4caf50;

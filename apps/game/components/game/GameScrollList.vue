@@ -84,6 +84,7 @@ const listStyles = computed(() => ({
 .game-scroll-list {
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   border-radius: var(--radius-md);
 
   // Custom scrollbar styling (WebKit)

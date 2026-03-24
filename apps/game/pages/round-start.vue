@@ -90,7 +90,7 @@
         <div v-if="startingGame" class="loading-container" data-testid="round-loading">
           <Spinner />
           <p class="loading-text">
-            {{ t('home.starting_game', 'Starting game...') }}
+            {{ t('home.starting_game', 'Starting game…') }}
           </p>
         </div>
       </div>
@@ -524,7 +524,9 @@ useHead({
 /* Transitions */
 .wheel-fade-enter-active,
 .wheel-fade-leave-active {
-  transition: all 0.8s ease-out;
+  transition:
+    transform 0.8s ease-out,
+    opacity 0.8s ease-out;
 }
 
 .wheel-fade-enter-from {
@@ -538,7 +540,9 @@ useHead({
 }
 
 .results-fade-enter-active {
-  transition: all 0.8s ease-out;
+  transition:
+    transform 0.8s ease-out,
+    opacity 0.8s ease-out;
 }
 
 .results-fade-enter-from {

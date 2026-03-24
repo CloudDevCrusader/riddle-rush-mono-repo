@@ -558,7 +558,14 @@ body {
   border: 3px solid rgba(255, 255, 255, 0.35);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--transition-base);
+  touch-action: manipulation;
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    filter var(--transition-base);
   box-shadow:
     0 12px 0 rgba(0, 0, 0, 0.18),
     var(--shadow-lg);
@@ -636,7 +643,13 @@ body {
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
   box-shadow: var(--shadow-lg);
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    filter var(--transition-base);
   color: var(--color-dark);
   border: 3px solid rgba(255, 255, 255, 0.65);
 
@@ -993,7 +1006,14 @@ body {
   border: var(--back-btn-border);
   border-radius: 50%;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  touch-action: manipulation;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    filter var(--transition-fast);
   box-shadow:
     0 4px 0 var(--back-btn-shadow-color),
     0 6px 12px rgba(0, 0, 0, 0.3);

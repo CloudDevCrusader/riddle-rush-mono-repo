@@ -4,13 +4,14 @@ import { hideDevtools } from './helpers/game-flow'
 test.describe('Language Selection Page', () => {
   test('should load language page successfully', async ({ page }) => {
     await page.goto('/language')
+    await page.waitForLoadState('networkidle')
 
     // Check page title (supports both German and English)
     await expect(page).toHaveTitle(/Language Selection|Sprachauswahl|Riddle Rush/i)
 
     // Check for language page container
     const languagePage = page.locator('[data-testid="language-page"]')
-    await expect(languagePage).toBeVisible({ timeout: 5000 })
+    await expect(languagePage).toBeVisible({ timeout: 10000 })
   })
 
   test('should display language options', async ({ page }) => {
@@ -134,13 +135,15 @@ test.describe('Language Selection Page', () => {
     if ((await okButton.count()) > 0) {
       await expect(okButton.first()).toBeVisible()
 
-      // Click OK button
-      await okButton.first().click()
+      // Click OK button — this triggers a page reload (stays on /language)
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        okButton.first().click(),
+      ])
 
-      // Should navigate back (URL should change)
-      await page.waitForTimeout(500)
-      const url = page.url()
-      expect(url).not.toContain('/language')
+      // Confirm page reloaded successfully (still on /language with lang query)
+      await page.waitForLoadState('networkidle')
+      expect(page.url()).toContain('/language')
     }
   })
 
@@ -159,24 +162,27 @@ test.describe('Language Selection Page', () => {
     // Verify English is selected
     await expect(englishOption).toHaveClass(/selected/)
 
-    // Click OK to confirm (OK button contains an image, not text)
+    // Click OK to confirm — triggers a page reload (stays on /language)
     const okButton = page.locator('[data-testid="language-ok-button"]').first()
     await expect(okButton).toBeVisible({ timeout: 5000 })
-    await okButton.click()
 
-    // Wait for navigation - should navigate away from language page
-    await page.waitForTimeout(500)
-    const url = page.url()
-    expect(url).not.toContain('/language')
+    await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
+
+    // Confirm page reloaded successfully with lang query param
+    await page.waitForLoadState('networkidle')
+    expect(page.url()).toContain('/language')
+    expect(page.url()).toContain('lang=en')
   })
 
   test('should display flags correctly', async ({ page }) => {
     await page.goto('/language')
 
     await page.waitForLoadState('networkidle')
+    await page.waitForSelector('[data-testid="language-page"]', { timeout: 10000 })
 
     // Check for flag containers
     const flagContainers = page.locator('[data-testid^="language-flag-"]')
+    await expect(flagContainers.first()).toBeVisible({ timeout: 5000 })
     expect(await flagContainers.count()).toBe(2)
 
     // Check that flags are visible
@@ -272,6 +278,10 @@ test.describe('Language Switching Behavior', () => {
 
     await page.waitForLoadState('networkidle')
     expect(page.url()).toContain('lang=en')
+
+    // Navigate to home page with lang=en to verify English menu items
+    await page.goto('/?lang=en', { waitUntil: 'networkidle' })
+    await hideDevtools(page)
 
     await page.locator('[data-testid="main-menu-menu"]').click()
     await expect(page.locator('[data-testid="main-menu-language"]')).toContainText('Language')

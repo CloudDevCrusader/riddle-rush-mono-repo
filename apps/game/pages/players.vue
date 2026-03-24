@@ -71,6 +71,7 @@
                 :placeholder="placeholderForIndex(index)"
                 maxlength="20"
                 autocomplete="off"
+                inputmode="search"
               />
             </div>
           </GameScrollList>
@@ -239,6 +240,7 @@ syncPlayerList(playerCount.value)
     0 10px 0 #a5261f,
     0 16px 28px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+  touch-action: manipulation;
   transition:
     transform var(--transition-base),
     box-shadow var(--transition-base);
@@ -289,6 +291,7 @@ syncPlayerList(playerCount.value)
   font-size: var(--font-size-2xl);
   color: #fff;
   cursor: pointer;
+  touch-action: manipulation;
   transition:
     transform var(--transition-base),
     box-shadow var(--transition-base),
