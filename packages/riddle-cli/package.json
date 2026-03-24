@@ -22,8 +22,8 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@oclif/core": "^4.9.0",
-    "@oclif/plugin-help": "^6.2.38"
+    "@oclif/core": "^4.10.2",
+    "@oclif/plugin-help": "^6.2.40"
   },
   "devDependencies": {
     "@eslint/json": "^1.0.1",
