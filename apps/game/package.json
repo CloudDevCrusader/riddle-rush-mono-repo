@@ -63,7 +63,7 @@
     "unocss": "^66.6.7",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^31.1.0",
-    "vite-plugin-browserslist-useragent": "^0.6.2",
+    "vite-plugin-browserslist-useragent": "^0.7.0",
     "vite-plugin-checker": "^0.12.0",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-dynamic-prefetch": "^0.1.5",
