@@ -1,13 +1,14 @@
 <template>
   <GameBackground>
-    <div class="credits-page page-shell">
-      <GameHeader color="gold" class="credits-header">
+    <div class="credits-page page-shell" data-testid="credits-page">
+      <GameHeader color="gold" class="credits-header" data-testid="credits-header">
         <template #left>
           <GameButton
             class="back-btn"
             variant="secondary"
             size="sm"
             :aria-label="t('common.back')"
+            data-testid="credits-back-button"
             @click="goBack"
           >
             {{ t('common.back') }}
@@ -16,30 +17,30 @@
         {{ t('credits.title', 'Credits') }}
       </GameHeader>
 
-      <GamePanel class="credits-panel animate-scale-in">
+      <GamePanel class="credits-panel animate-scale-in" data-testid="credits-panel">
         <!-- Game Design -->
-        <div class="credit-section">
-          <h2 class="section-heading">{{ t('credits.game_design') }}</h2>
+        <div class="credit-section" data-testid="credits-section-0">
+          <h2 class="section-heading" data-testid="credits-section-heading-0">{{ t('credits.game_design') }}</h2>
           <div class="credit-box">
-            <span class="credit-name">Tobi</span>
+            <span class="credit-name" data-testid="credits-name-0">Tobi</span>
             <span class="credit-divider" />
-            <span class="credit-name">Sophia</span>
+            <span class="credit-name" data-testid="credits-name-1">Sophia</span>
           </div>
         </div>
 
         <!-- Programming -->
-        <div class="credit-section">
-          <h2 class="section-heading">{{ t('credits.programming') }}</h2>
+        <div class="credit-section" data-testid="credits-section-1">
+          <h2 class="section-heading" data-testid="credits-section-heading-1">{{ t('credits.programming') }}</h2>
           <div class="credit-box">
-            <span class="credit-name">Markus</span>
+            <span class="credit-name" data-testid="credits-name-2">Markus</span>
           </div>
         </div>
 
         <!-- Art -->
-        <div class="credit-section">
-          <h2 class="section-heading">{{ t('credits.art') }}</h2>
+        <div class="credit-section" data-testid="credits-section-2">
+          <h2 class="section-heading" data-testid="credits-section-heading-2">{{ t('credits.art') }}</h2>
           <div class="credit-box">
-            <span class="credit-name">Sarmad Ali</span>
+            <span class="credit-name" data-testid="credits-name-3">Sarmad Ali</span>
           </div>
         </div>
 
@@ -47,7 +48,7 @@
         <div class="version-info">v{{ appVersion }}</div>
       </GamePanel>
 
-      <GameButton class="ok-btn animate-slide-up" variant="primary" size="lg" @click="goBack">
+      <GameButton class="ok-btn animate-slide-up" variant="primary" size="lg" data-testid="credits-ok-button" @click="goBack">
         {{ t('common.ok', 'OK') }}
       </GameButton>
     </div>

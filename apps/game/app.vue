@@ -6,6 +6,7 @@
         <NuxtLayout>
           <NuxtPage :key="routeKey" />
         </NuxtLayout>
+        <ConnectionStatus data-testid="offline-indicator" />
         <Toast />
         <DebugPanel />
         <StoryboardDevOverlay />

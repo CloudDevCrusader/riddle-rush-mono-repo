@@ -1,7 +1,7 @@
 <template>
   <GameBackground>
     <div class="scoring-page">
-      <GameHeader color="gold">
+      <GameHeader color="gold" data-testid="results-header">
         {{ t('scoring.title', 'Scoring') }}
       </GameHeader>
 
@@ -31,7 +31,7 @@
             </span>
           </div>
 
-          <div class="scoring-page__score-controls">
+          <div class="scoring-page__score-controls" :data-testid="`results-score-controls-${index}`">
             <GameButton
               variant="danger"
               size="sm"
@@ -42,7 +42,7 @@
               −
             </GameButton>
 
-            <GameDisplay size="sm" :glow="false" class="scoring-page__score-value">
+            <GameDisplay size="sm" :glow="false" class="scoring-page__score-value" :data-testid="`results-score-display-${index}`">
               {{ pendingScores.get(player.id) ?? 0 }}
             </GameDisplay>
 
@@ -73,6 +73,7 @@
 
     <!-- Leaderboard overlay (shown briefly after confirming scores) -->
     <PlayerLeaderboard
+      data-testid="player-leaderboard"
       :visible="showLeaderboard"
       :players="leaderboard"
       :is-game-completed="false"

@@ -15,7 +15,7 @@
             variant="primary"
             size="lg"
             full-width
-            data-testid="menu-start-button"
+            data-testid="main-menu-play"
             @click="handlePlay"
           >
             {{ t('menu.play', 'PLAY') }}
@@ -27,7 +27,7 @@
             variant="secondary"
             size="lg"
             full-width
-            data-testid="menu-menu-button"
+            data-testid="main-menu-menu"
             @click="toggleMenu"
           >
             {{ t('menu.menu', 'MENU') }}
@@ -39,7 +39,7 @@
             variant="warning"
             size="lg"
             full-width
-            data-testid="menu-settings-button"
+            data-testid="main-menu-options"
             @click="wrappedGoToSettings"
           >
             {{ t('menu.options', 'OPTIONS') }}
@@ -51,7 +51,7 @@
             variant="warning"
             size="lg"
             full-width
-            data-testid="menu-credits-button"
+            data-testid="main-menu-credits"
             @click="wrappedGoToCredits"
           >
             {{ t('menu.credits', 'CREDITS') }}
@@ -65,7 +65,7 @@
               variant="secondary"
               size="md"
               full-width
-              data-testid="menu-language-button"
+              data-testid="main-menu-language"
               @click="wrappedGoToLanguage"
             >
               🌐 {{ t('menu.language', 'Language') }}
@@ -74,7 +74,7 @@
               variant="secondary"
               size="md"
               full-width
-              data-testid="menu-panel-settings-button"
+              data-testid="main-menu-settings"
               @click="wrappedGoToSettings"
             >
               ⚙️ {{ t('menu.settings', 'Settings') }}
