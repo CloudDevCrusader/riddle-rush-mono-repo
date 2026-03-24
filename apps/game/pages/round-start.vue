@@ -376,6 +376,7 @@ useHead({
   justify-content: center;
   width: 100%;
   max-width: 1200px;
+  padding: 0 var(--spacing-md);
 }
 
 .wheel-wrapper {
@@ -383,8 +384,24 @@ useHead({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg);
-  max-width: 420px;
+  gap: clamp(var(--spacing-md), 3vw, var(--spacing-lg));
+  max-width: 440px;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 0 20px rgba(255, 215, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wheel-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 0 25px rgba(255, 215, 0, 0.1);
 }
 
 .wheel-label {
@@ -397,6 +414,21 @@ useHead({
     0 0 20px rgba(255, 215, 0, 0.4);
   text-transform: uppercase;
   letter-spacing: 2px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 182, 71, 0.1));
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  backdrop-filter: blur(3px);
+  animation: label-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes label-glow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
 }
 
 /* Results Display */
@@ -524,33 +556,41 @@ useHead({
 
   .wheels-container {
     flex-direction: column;
-    gap: var(--spacing-2xl);
+    gap: clamp(var(--spacing-xl), 4vw, var(--spacing-2xl));
     width: 100%;
     max-width: 500px;
+    padding: 0 var(--spacing-sm);
   }
 
   .wheel-wrapper {
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
+    padding: var(--spacing-md);
+    min-height: 480px;
+    justify-content: center;
   }
 
   .wheel-label {
     font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
+    padding: var(--spacing-xs) var(--spacing-md);
   }
 
   .results-display {
     flex-direction: column;
-    gap: var(--spacing-xl);
+    gap: clamp(var(--spacing-xl), 4vw, var(--spacing-2xl));
     width: calc(100% - 2rem);
+    padding: 0 var(--spacing-sm);
   }
 
   .result-item {
     width: 100%;
     max-width: 400px;
+    padding: clamp(var(--spacing-lg), 4vw, var(--spacing-xl));
   }
 
   .divider {
     transform: rotate(90deg);
+    margin: var(--spacing-md) 0;
   }
 
   .round-text {
@@ -564,17 +604,27 @@ useHead({
   }
 
   .wheels-container {
-    gap: var(--spacing-xl);
+    gap: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
     max-width: 100%;
+    padding: 0 var(--spacing-xs);
   }
 
   .wheel-wrapper {
     width: 100%;
-    max-width: 320px;
+    max-width: 340px;
+    padding: var(--spacing-sm);
+    min-height: 420px;
+  }
+
+  .wheel-label {
+    font-size: clamp(var(--font-size-md), 4.5vw, var(--font-size-lg));
+    padding: var(--spacing-xs) var(--spacing-sm);
+    letter-spacing: 1px;
   }
 
   .results-display {
-    width: calc(100% - 2rem);
+    width: calc(100% - 1.5rem);
+    gap: clamp(var(--spacing-lg), 4vw, var(--spacing-xl));
   }
 
   .result-text {
@@ -586,6 +636,31 @@ useHead({
   }
 }
 
+/* Extra small mobile devices */
+@media (max-width: 360px) {
+  .wheels-container {
+    gap: var(--spacing-md);
+  }
+
+  .wheel-wrapper {
+    max-width: 300px;
+    min-height: 380px;
+    padding: var(--spacing-xs);
+  }
+
+  .wheel-label {
+    font-size: clamp(var(--font-size-base), 5vw, var(--font-size-md));
+  }
+
+  .results-display {
+    gap: var(--spacing-md);
+  }
+
+  .result-item {
+    padding: var(--spacing-md);
+  }
+}
+
 /* Pixel 7 Pro specific (412px width, tall screen) */
 @media (min-width: 390px) and (max-width: 480px) {
   .container {
@@ -593,13 +668,16 @@ useHead({
   }
 
   .wheels-container {
-    gap: var(--spacing-xl);
+    gap: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
     max-width: 100%;
+    padding: 0 var(--spacing-sm);
   }
 
   .wheel-wrapper {
     width: 100%;
-    max-width: 340px;
+    max-width: 360px;
+    min-height: 440px;
+    padding: var(--spacing-sm);
   }
 
   .results-display {
