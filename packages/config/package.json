@@ -6,7 +6,7 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
-    "@nuxt/eslint-config": "^1.15.1",
+    "@nuxt/eslint-config": "^1.15.2",
     "@types/node": "^25.5.0",
     "eslint": "^10.1.0",
     "prettier": "^3.8.1",
