@@ -95,9 +95,7 @@ function finishGame(state: GameState): GameState {
 }
 
 function awardPoints(state: GameState, playerId: string, points: number): GameState {
-  const players = state.players.map((p) =>
-    p.id === playerId ? addScore(p, points) : p,
-  )
+  const players = state.players.map((p) => (p.id === playerId ? addScore(p, points) : p))
   return { ...state, players }
 }
 

@@ -227,10 +227,7 @@ describe('usePlayerManager', () => {
   // ──────────────────────────────────────────
   describe('resetPlayerSubmissions', () => {
     it('sets hasSubmitted to false for all players', () => {
-      const players = [
-        createPlayer({ hasSubmitted: true }),
-        createPlayer({ hasSubmitted: true }),
-      ]
+      const players = [createPlayer({ hasSubmitted: true }), createPlayer({ hasSubmitted: true })]
 
       manager.resetPlayerSubmissions(players)
 
@@ -414,10 +411,7 @@ describe('usePlayerManager', () => {
   // ──────────────────────────────────────────
   describe('allPlayersSubmitted', () => {
     it('returns true when all players have hasSubmitted: true', () => {
-      const players = [
-        createPlayer({ hasSubmitted: true }),
-        createPlayer({ hasSubmitted: true }),
-      ]
+      const players = [createPlayer({ hasSubmitted: true }), createPlayer({ hasSubmitted: true })]
 
       expect(manager.allPlayersSubmitted(players)).toBe(true)
     })
@@ -427,19 +421,13 @@ describe('usePlayerManager', () => {
     })
 
     it('returns false when any player has hasSubmitted: false', () => {
-      const players = [
-        createPlayer({ hasSubmitted: true }),
-        createPlayer({ hasSubmitted: false }),
-      ]
+      const players = [createPlayer({ hasSubmitted: true }), createPlayer({ hasSubmitted: false })]
 
       expect(manager.allPlayersSubmitted(players)).toBe(false)
     })
 
     it('returns false when no players have submitted', () => {
-      const players = [
-        createPlayer({ hasSubmitted: false }),
-        createPlayer({ hasSubmitted: false }),
-      ]
+      const players = [createPlayer({ hasSubmitted: false }), createPlayer({ hasSubmitted: false })]
 
       expect(manager.allPlayersSubmitted(players)).toBe(false)
     })

@@ -97,10 +97,7 @@ describe('usePersistence', () => {
 
       await loadSessionFromDB()
 
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error loading session from IndexedDB:',
-        dbError
-      )
+      expect(mockLoggerError).toHaveBeenCalledWith('Error loading session from IndexedDB:', dbError)
     })
 
     it('should return null (not throw) when IndexedDB fails', async () => {
@@ -139,10 +136,7 @@ describe('usePersistence', () => {
 
       await loadHistoryFromDB()
 
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error loading history from IndexedDB:',
-        dbError
-      )
+      expect(mockLoggerError).toHaveBeenCalledWith('Error loading history from IndexedDB:', dbError)
     })
 
     it('should return null (not throw) when IndexedDB fails', async () => {
@@ -179,10 +173,7 @@ describe('usePersistence', () => {
 
       await saveSessionToDB(mockSession)
 
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error saving session to IndexedDB:',
-        dbError
-      )
+      expect(mockLoggerError).toHaveBeenCalledWith('Error saving session to IndexedDB:', dbError)
     })
 
     it('should continue execution even on error', async () => {
@@ -222,10 +213,7 @@ describe('usePersistence', () => {
 
       await saveHistoryToDB(mockHistory)
 
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error saving history to IndexedDB:',
-        dbError
-      )
+      expect(mockLoggerError).toHaveBeenCalledWith('Error saving history to IndexedDB:', dbError)
     })
 
     it('should continue execution even on error', async () => {

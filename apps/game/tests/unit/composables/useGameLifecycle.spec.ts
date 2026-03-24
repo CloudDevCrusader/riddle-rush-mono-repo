@@ -256,10 +256,7 @@ describe('useGameLifecycle', () => {
 
       await updateStatisticsForSession(session)
 
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error updating statistics:',
-        testError,
-      )
+      expect(mockLoggerError).toHaveBeenCalledWith('Error updating statistics:', testError)
     })
 
     it('should not throw error when updateStatistics fails', async () => {
@@ -269,9 +266,7 @@ describe('useGameLifecycle', () => {
       const session = createMockSession()
 
       // Should not throw
-      await expect(
-        updateStatisticsForSession(session),
-      ).resolves.toBeUndefined()
+      await expect(updateStatisticsForSession(session)).resolves.toBeUndefined()
     })
 
     it('should resolve without error on success', async () => {
@@ -280,9 +275,7 @@ describe('useGameLifecycle', () => {
       const { updateStatisticsForSession } = useGameLifecycle()
       const session = createMockSession()
 
-      await expect(
-        updateStatisticsForSession(session),
-      ).resolves.toBeUndefined()
+      await expect(updateStatisticsForSession(session)).resolves.toBeUndefined()
     })
   })
 

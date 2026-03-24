@@ -14,13 +14,13 @@ The single source of truth for screen navigation is the **Nuxt Router** via `use
 
 ## Single Source of Truth
 
-| Concern | Owner | Location |
-|---|---|---|
-| Game session data | `useGameStore()` | `apps/game/stores/gameStore.ts` |
-| Flow state (`setup → in-round → …`) | `useGameStore().flowState` getter | `apps/game/stores/gameStore.ts` |
-| Game mode (single / multiplayer) | `useGameStore().gameMode` getter | `apps/game/stores/gameStore.ts` |
-| Route / active screen | Nuxt Router | `apps/game/composables/useNavigation.ts` |
-| Combined reactive access | `useGameState()` | `apps/game/composables/useGameState.ts` |
+| Concern                             | Owner                             | Location                                 |
+| ----------------------------------- | --------------------------------- | ---------------------------------------- |
+| Game session data                   | `useGameStore()`                  | `apps/game/stores/gameStore.ts`          |
+| Flow state (`setup → in-round → …`) | `useGameStore().flowState` getter | `apps/game/stores/gameStore.ts`          |
+| Game mode (single / multiplayer)    | `useGameStore().gameMode` getter  | `apps/game/stores/gameStore.ts`          |
+| Route / active screen               | Nuxt Router                       | `apps/game/composables/useNavigation.ts` |
+| Combined reactive access            | `useGameState()`                  | `apps/game/composables/useGameState.ts`  |
 
 ---
 
@@ -34,13 +34,13 @@ Defined in `apps/game/stores/gameStore.ts`:
 export type GameFlowState = 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
 ```
 
-| Flow State | Description | `currentSession` | `postRoundDecisionPending` | Round history |
-|---|---|---|---|---|
-| `setup` | No active session; players screen or fresh start | `null` | `false` | N/A |
-| `in-round` | Active round; players submitting answers | non-null, `status: active` | `false` | `roundHistory.length < currentRound` |
-| `round-complete` | All players submitted; waiting for score confirmation | non-null, `status: active` | `false` | `roundHistory.length >= currentRound` |
-| `decision` | Scores confirmed; user decides next/finish | non-null, `status: active` | `true` | `roundHistory.length >= currentRound` |
-| `completed` | Game finished; leaderboard visible | non-null, `status: completed` | `false` | all rounds recorded |
+| Flow State       | Description                                           | `currentSession`              | `postRoundDecisionPending` | Round history                         |
+| ---------------- | ----------------------------------------------------- | ----------------------------- | -------------------------- | ------------------------------------- |
+| `setup`          | No active session; players screen or fresh start      | `null`                        | `false`                    | N/A                                   |
+| `in-round`       | Active round; players submitting answers              | non-null, `status: active`    | `false`                    | `roundHistory.length < currentRound`  |
+| `round-complete` | All players submitted; waiting for score confirmation | non-null, `status: active`    | `false`                    | `roundHistory.length >= currentRound` |
+| `decision`       | Scores confirmed; user decides next/finish            | non-null, `status: active`    | `true`                     | `roundHistory.length >= currentRound` |
+| `completed`      | Game finished; leaderboard visible                    | non-null, `status: completed` | `false`                    | all rounds recorded                   |
 
 ### Game Mode States (`gameMode`)
 
@@ -51,18 +51,18 @@ gameMode: 'single' | 'multiplayer'
 
 ### Route / Screen States
 
-| Route | Page | Description |
-|---|---|---|
-| `/` | `pages/index.vue` | Main menu |
-| `/players` | `pages/players.vue` | Player setup |
-| `/round-start` | `pages/round-start.vue` | Fortune wheel / category+letter selection |
-| `/game/[gameId]` | `pages/game/[[gameId]].vue` | Active game round (answer submission) |
-| `/results/[gameId]` | `pages/results/[[gameId]].vue` | Score entry & round decision |
-| `/leaderboard` | `pages/leaderboard.vue` | Final leaderboard |
-| `/settings` | `pages/settings.vue` | Settings |
-| `/language` | `pages/language.vue` | Language selection |
-| `/credits` | `pages/credits.vue` | Credits |
-| `/splash` | `pages/splash.vue` | App loading splash |
+| Route               | Page                           | Description                               |
+| ------------------- | ------------------------------ | ----------------------------------------- |
+| `/`                 | `pages/index.vue`              | Main menu                                 |
+| `/players`          | `pages/players.vue`            | Player setup                              |
+| `/round-start`      | `pages/round-start.vue`        | Fortune wheel / category+letter selection |
+| `/game/[gameId]`    | `pages/game/[[gameId]].vue`    | Active game round (answer submission)     |
+| `/results/[gameId]` | `pages/results/[[gameId]].vue` | Score entry & round decision              |
+| `/leaderboard`      | `pages/leaderboard.vue`        | Final leaderboard                         |
+| `/settings`         | `pages/settings.vue`           | Settings                                  |
+| `/language`         | `pages/language.vue`           | Language selection                        |
+| `/credits`          | `pages/credits.vue`            | Credits                                   |
+| `/splash`           | `pages/splash.vue`             | App loading splash                        |
 
 ---
 
@@ -141,27 +141,27 @@ stateDiagram-v2
 
 These methods on `useGameStore()` enforce the flow invariants:
 
-| Method | From → To | Trigger |
-|---|---|---|
-| `transitionToSetup()` | any → `setup` | `clearSession()`, `abandonGame()` |
-| `transitionToInRound()` | `setup/decision` → `in-round` | `setupPlayers()`, `startNextRound()`, `advanceToConfiguredRound()` |
-| `transitionToRoundComplete()` | `in-round` → `round-complete` | `submitPlayerAnswer()` when all players submitted |
-| `transitionToDecision()` | `round-complete` → `decision` | `completeRound()` after scores persisted |
-| `transitionToCompleted()` | `decision` → `completed` | `completeGame()` |
+| Method                        | From → To                     | Trigger                                                            |
+| ----------------------------- | ----------------------------- | ------------------------------------------------------------------ |
+| `transitionToSetup()`         | any → `setup`                 | `clearSession()`, `abandonGame()`                                  |
+| `transitionToInRound()`       | `setup/decision` → `in-round` | `setupPlayers()`, `startNextRound()`, `advanceToConfiguredRound()` |
+| `transitionToRoundComplete()` | `in-round` → `round-complete` | `submitPlayerAnswer()` when all players submitted                  |
+| `transitionToDecision()`      | `round-complete` → `decision` | `completeRound()` after scores persisted                           |
+| `transitionToCompleted()`     | `decision` → `completed`      | `completeGame()`                                                   |
 
 ### Route Navigation Triggers
 
-| User Action | Navigation | Store Side-Effect |
-|---|---|---|
-| Click "PLAY" on main menu | `/` → `/players` | — |
-| Confirm players on players page | `/players` → `/round-start` | `setupPlayers()` sets session + `transitionToInRound()` |
-| Spin wheels & start round | `/round-start` → `/game/[id]` | `advanceToConfiguredRound()` |
-| All players submit answer | auto: `/game/[id]` → `/results/[id]` | `transitionToRoundComplete()` |
-| Confirm scores | (same page) | `completeRound()` → `transitionToDecision()` |
-| Next Round | `/results` → `/round-start` | `startNextRound()` → `transitionToInRound()` |
-| New Game | `/results` → `/players` | `completeGame()` → `transitionToCompleted()` |
-| Leaderboard / Finish | `/results` → `/leaderboard` | `completeGame()` → `transitionToCompleted()` |
-| Quit from pause overlay | `/game` → `/` | `abandonGame()` → session cleared |
+| User Action                     | Navigation                           | Store Side-Effect                                       |
+| ------------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Click "PLAY" on main menu       | `/` → `/players`                     | —                                                       |
+| Confirm players on players page | `/players` → `/round-start`          | `setupPlayers()` sets session + `transitionToInRound()` |
+| Spin wheels & start round       | `/round-start` → `/game/[id]`        | `advanceToConfiguredRound()`                            |
+| All players submit answer       | auto: `/game/[id]` → `/results/[id]` | `transitionToRoundComplete()`                           |
+| Confirm scores                  | (same page)                          | `completeRound()` → `transitionToDecision()`            |
+| Next Round                      | `/results` → `/round-start`          | `startNextRound()` → `transitionToInRound()`            |
+| New Game                        | `/results` → `/players`              | `completeGame()` → `transitionToCompleted()`            |
+| Leaderboard / Finish            | `/results` → `/leaderboard`          | `completeGame()` → `transitionToCompleted()`            |
+| Quit from pause overlay         | `/game` → `/`                        | `abandonGame()` → session cleared                       |
 
 ### `flowState` Computation Logic
 
@@ -179,6 +179,7 @@ flowState(state): GameFlowState {
 ```
 
 The two underlying state fields that drive it:
+
 - `currentSession` — null check → `'setup'`
 - `currentSession.status` — `'completed'` → `'completed'`
 - `postRoundDecisionPending` — boolean flag → `'decision'`
@@ -197,7 +198,9 @@ import { useGameState } from '~/composables/useGameState'
 const { gameMode, flowState, players, canConfirmRoundScores } = useGameState()
 
 // flowState is a computed ref — use .value in script, or directly in template
-if (flowState.value === 'in-round') { /* ... */ }
+if (flowState.value === 'in-round') {
+  /* ... */
+}
 ```
 
 ### Triggering Transitions
@@ -223,10 +226,10 @@ store.abandonGame()
 // Type-safe navigation via composable:
 const { goToPlayers, goToRoundStart, goToGame, goToResults, goToLeaderboard } = useNavigation()
 
-await goToRoundStart()         // → /round-start
-await goToGame(sessionId)      // → /game/[id]
-await goToResults(sessionId)   // → /results/[id]
-await goToLeaderboard()        // → /leaderboard
+await goToRoundStart() // → /round-start
+await goToGame(sessionId) // → /game/[id]
+await goToResults(sessionId) // → /results/[id]
+await goToLeaderboard() // → /leaderboard
 ```
 
 ---
@@ -303,16 +306,16 @@ describe('Game Flow State', () => {
 
 ## File Index
 
-| File | Role |
-|---|---|
-| `apps/game/stores/gameStore.ts` | **Primary** — `GameFlowState` type, all state, all transitions |
-| `apps/game/stores/hooks/useGameSession.ts` | Exposes store state as `ComputedRef` for composable ergonomics |
-| `apps/game/composables/useGameState.ts` | Aggregates all hooks; component-facing API |
-| `apps/game/composables/useGameActions.ts` | Wraps store actions with toast/audio side-effects |
-| `apps/game/composables/useNavigation.ts` | Route navigation helpers |
-| `apps/game/pages/index.vue` | Main menu — triggers `goToPlayers`, `goToSettings`, etc. |
-| `apps/game/pages/players.vue` | Player setup — calls `setupPlayers()` |
-| `apps/game/pages/round-start.vue` | Fortune wheel — calls `advanceToConfiguredRound()` |
-| `apps/game/pages/game/[[gameId]].vue` | Active round — calls `submitPlayerAnswer()` |
-| `apps/game/pages/results/[[gameId]].vue` | Scoring — calls `assignPlayerScore()`, `completeRound()`, `completeGame()` |
-| `apps/game/pages/leaderboard.vue` | Final leaderboard — read-only |
+| File                                       | Role                                                                       |
+| ------------------------------------------ | -------------------------------------------------------------------------- |
+| `apps/game/stores/gameStore.ts`            | **Primary** — `GameFlowState` type, all state, all transitions             |
+| `apps/game/stores/hooks/useGameSession.ts` | Exposes store state as `ComputedRef` for composable ergonomics             |
+| `apps/game/composables/useGameState.ts`    | Aggregates all hooks; component-facing API                                 |
+| `apps/game/composables/useGameActions.ts`  | Wraps store actions with toast/audio side-effects                          |
+| `apps/game/composables/useNavigation.ts`   | Route navigation helpers                                                   |
+| `apps/game/pages/index.vue`                | Main menu — triggers `goToPlayers`, `goToSettings`, etc.                   |
+| `apps/game/pages/players.vue`              | Player setup — calls `setupPlayers()`                                      |
+| `apps/game/pages/round-start.vue`          | Fortune wheel — calls `advanceToConfiguredRound()`                         |
+| `apps/game/pages/game/[[gameId]].vue`      | Active round — calls `submitPlayerAnswer()`                                |
+| `apps/game/pages/results/[[gameId]].vue`   | Scoring — calls `assignPlayerScore()`, `completeRound()`, `completeGame()` |
+| `apps/game/pages/leaderboard.vue`          | Final leaderboard — read-only                                              |

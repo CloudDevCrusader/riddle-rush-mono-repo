@@ -28,12 +28,12 @@ key-files:
   modified: []
 
 key-decisions:
-  - "Mock useAnalytics with behavioral replica to bypass import.meta.client compile-time constant"
-  - "Use typed mock factories with GameSession/Player/Category interfaces instead of any casts"
+  - 'Mock useAnalytics with behavioral replica to bypass import.meta.client compile-time constant'
+  - 'Use typed mock factories with GameSession/Player/Category interfaces instead of any casts'
 
 patterns-established:
-  - "Behavioral mock pattern: replicate composable logic in vi.mock to bypass untestable compile-time constants (import.meta.client)"
-  - "Typed mock factory pattern: createMockSession/createMockPlayer/createMockCategory with Partial<T> overrides"
+  - 'Behavioral mock pattern: replicate composable logic in vi.mock to bypass untestable compile-time constants (import.meta.client)'
+  - 'Typed mock factory pattern: createMockSession/createMockPlayer/createMockCategory with Partial<T> overrides'
 
 requirements-completed: [TEST-01]
 
@@ -55,6 +55,7 @@ completed: 2026-03-24
 - **Files created:** 2
 
 ## Accomplishments
+
 - Created 19 tests for useGameLifecycle covering createAttempt, buildRoundResult, and updateStatisticsForSession
 - Created 25 tests for useAnalytics covering isEnabled, trackEvent, trackPageView, and all trackGameEvent methods
 - Established behavioral mock pattern for testing composables with import.meta.client guard
@@ -68,10 +69,12 @@ Each task was committed atomically:
 2. **Task 2: Create unit tests for useAnalytics composable** - `143d7710c` (test)
 
 ## Files Created/Modified
+
 - `apps/game/tests/unit/composables/useGameLifecycle.spec.ts` - 19 tests for game lifecycle operations (attempt creation, round result building, statistics update with error handling)
 - `apps/game/tests/unit/composables/useAnalytics.spec.ts` - 25 tests for Google Analytics tracking (isEnabled logic, trackEvent/trackPageView/trackGameEvent with production/SSR guards)
 
 ## Decisions Made
+
 - Used module-level `vi.mock` with behavioral replica for useAnalytics to bypass `import.meta.client` compile-time constant that vitest cannot replace via `define` config
 - Used typed mock factories with `Partial<GameSession>` / `Partial<Player>` / `Partial<Category>` overrides instead of `as any` casts for type safety
 
@@ -80,6 +83,7 @@ Each task was committed atomically:
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Blocking] import.meta.client not available in vitest**
+
 - **Found during:** Task 2 (useAnalytics tests)
 - **Issue:** `import.meta.client` is a Nuxt compile-time constant replaced by Vite, but vitest does not apply `define` replacement for `import.meta.*` properties, causing all tracking tests to fail
 - **Fix:** Used `vi.mock` with a behavioral replica of the composable that replaces `import.meta.client` with a controllable mock variable `mockImportMetaClient`
@@ -93,15 +97,19 @@ Each task was committed atomically:
 **Impact on plan:** Auto-fix necessary to test composable with Nuxt compile-time constant. No scope creep.
 
 ## Issues Encountered
+
 - Attempted vitest `define: { 'import.meta.client': true }` config first, which did not work for `import.meta.*` properties. Resolved by using behavioral mock approach instead.
 
 ## User Setup Required
+
 None - no external service configuration required.
 
 ## Known Stubs
+
 None - all test files are complete with real assertions.
 
 ## Next Phase Readiness
+
 - Composable unit test coverage expanded by 44 tests (19 + 25)
 - All 243 composable tests pass with zero regressions
 - TEST-01 requirement (composable test coverage >75%) progressing via plans 01, 01A, and 01B
@@ -115,5 +123,6 @@ None - all test files are complete with real assertions.
 - FOUND: commit 143d7710c
 
 ---
-*Phase: 21-refactor-and-fix-e2e-and-unit-tests*
-*Completed: 2026-03-24*
+
+_Phase: 21-refactor-and-fix-e2e-and-unit-tests_
+_Completed: 2026-03-24_

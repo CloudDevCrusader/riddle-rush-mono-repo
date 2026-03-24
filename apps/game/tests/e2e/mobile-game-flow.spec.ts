@@ -1,9 +1,5 @@
 import { test, expect } from '@playwright/test'
-import {
-  verifyResponsiveLayout,
-  verifyTouchTargets,
-  simulateTouchGesture,
-} from './helpers/mobile'
+import { verifyResponsiveLayout, verifyTouchTargets, simulateTouchGesture } from './helpers/mobile'
 import {
   startGameWithDefaults,
   submitPlayerAnswers,

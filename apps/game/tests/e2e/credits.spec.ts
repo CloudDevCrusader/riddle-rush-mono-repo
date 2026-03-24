@@ -68,9 +68,7 @@ test.describe('Credits Page', () => {
     await expect(artHeading).toBeVisible()
 
     // Check for Sarmad Ali
-    const sarmad = page
-      .locator('[data-testid^="credits-name-"]')
-      .filter({ hasText: /Sarmad Ali/i })
+    const sarmad = page.locator('[data-testid^="credits-name-"]').filter({ hasText: /Sarmad Ali/i })
     await expect(sarmad).toBeVisible()
   })
 

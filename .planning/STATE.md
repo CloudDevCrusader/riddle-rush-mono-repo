@@ -4,7 +4,7 @@ milestone: v1.0.3
 milestone_name: milestone
 status: Milestone Complete
 stopped_at: Completed 21-09-PLAN.md (all 70 plans done — milestone complete)
-last_updated: "2026-03-24T02:35:00.000Z"
+last_updated: '2026-03-24T02:35:00.000Z'
 progress:
   total_phases: 21
   completed_phases: 21
@@ -165,7 +165,7 @@ Recent decisions affecting current work:
 - [Phase 21]: Use typed mock factories with GameSession/Player/Category interfaces instead of any casts
 - [Phase 21]: NativeScript components require native runtime — used node environment + pure TS logic tests instead of component mounting
 - [Phase 21]: Expose useLogger on globalThis for integration tests instead of vi.mock since useWebSocket uses it as Nuxt auto-import (no explicit import)
-- [Phase 21]: Extend vitest include to tests/integration/**/*.spec.ts in vitest.config.ts rather than a separate config file
+- [Phase 21]: Extend vitest include to tests/integration/\*_/_.spec.ts in vitest.config.ts rather than a separate config file
 - [Phase 21]: GameFlowState in gameStore.ts is already the single source of truth — no new type needed
 
 ### Pending Todos

@@ -1,6 +1,6 @@
 ---
 phase: 21-refactor-and-fix-e2e-and-unit-tests
-plan: "06"
+plan: '06'
 subsystem: testing
 tags: [integration-tests, websocket, indexeddb, socket-io, fake-indexeddb]
 dependency_graph:
@@ -26,12 +26,12 @@ key_files:
   modified:
     - apps/game/vitest.config.ts
 decisions:
-  - "Expose useLogger on globalThis instead of vi.mock() because useWebSocket.ts uses it as a Nuxt auto-import (no explicit import statement)"
-  - "Extend vitest include pattern to tests/integration/**/*.{test,spec}.ts instead of creating a separate config"
-  - "MockSocket._trigger() helper pattern for simulating Socket.IO events without a real server"
+  - 'Expose useLogger on globalThis instead of vi.mock() because useWebSocket.ts uses it as a Nuxt auto-import (no explicit import statement)'
+  - 'Extend vitest include pattern to tests/integration/**/*.{test,spec}.ts instead of creating a separate config'
+  - 'MockSocket._trigger() helper pattern for simulating Socket.IO events without a real server'
 metrics:
-  duration: "~8 min"
-  completed: "2026-03-24"
+  duration: '~8 min'
+  completed: '2026-03-24'
   tasks_completed: 2
   files_changed: 3
 ---
@@ -48,42 +48,45 @@ Socket.IO WebSocket connection lifecycle and IndexedDB persistence integration t
 
 24 tests covering the full `useWebSocket` composable (Socket.IO) lifecycle:
 
-| Test Group | Tests | What's Verified |
-|---|---|---|
-| Initial state | 2 | Offline defaults, gray status color |
-| connect() | 6 | io() called, state transitions, status colors, idempotent |
-| disconnect() | 2 | State reset, underlying socket.disconnect() called |
-| Connection errors | 3 | connect_error sets error + clears isConnecting, reconnect_attempt |
-| Server-side disconnect | 1 | Server-triggered disconnect updates state |
-| logPerformance() | 2 | Emits when connected, no-op when disconnected |
-| updateLeaderboard() | 2 | Emits with correct payload, guarded by connection |
-| getUserStats() | 1 | Emits getUserStats event |
-| ping / pong | 2 | Emits ping, tracks lastPongTime from pong event |
-| Connection monitoring | 2 | Single interval, stops after stopConnectionMonitoring() |
-| userId | 1 | Generates "user-" prefixed random userId |
+| Test Group             | Tests | What's Verified                                                   |
+| ---------------------- | ----- | ----------------------------------------------------------------- |
+| Initial state          | 2     | Offline defaults, gray status color                               |
+| connect()              | 6     | io() called, state transitions, status colors, idempotent         |
+| disconnect()           | 2     | State reset, underlying socket.disconnect() called                |
+| Connection errors      | 3     | connect_error sets error + clears isConnecting, reconnect_attempt |
+| Server-side disconnect | 1     | Server-triggered disconnect updates state                         |
+| logPerformance()       | 2     | Emits when connected, no-op when disconnected                     |
+| updateLeaderboard()    | 2     | Emits with correct payload, guarded by connection                 |
+| getUserStats()         | 1     | Emits getUserStats event                                          |
+| ping / pong            | 2     | Emits ping, tracks lastPongTime from pong event                   |
+| Connection monitoring  | 2     | Single interval, stops after stopConnectionMonitoring()           |
+| userId                 | 1     | Generates "user-" prefixed random userId                          |
 
 ### Task 2: IndexedDB Integration Tests (`indexeddb-flow.spec.ts`)
 
 28 tests covering the full `useIndexedDB` composable:
 
-| Test Group | Tests | What's Verified |
-|---|---|---|
-| Game session persistence | 5 | Save/retrieve, null on empty, all fields, overwrite, clear |
-| getGameSessionById() | 3 | Find by ID, null on miss, multiple sessions |
-| Game history persistence | 5 | Save/retrieve, empty array, limit param, newest-first sort, clear |
-| Statistics persistence | 3 | Save/retrieve, null on empty, initializeStatistics() defaults |
-| Leaderboard persistence | 4 | Save/retrieve, highest-score sort, empty array, limit param |
-| Settings persistence | 3 | Save/retrieve, null on empty, initializeSettings() defaults |
-| Data integrity | 3 | Timestamp preservation, independent stores, clearSession not affecting history |
-| Concurrent writes | 2 | Parallel session saves, parallel history batch saves |
+| Test Group               | Tests | What's Verified                                                                |
+| ------------------------ | ----- | ------------------------------------------------------------------------------ |
+| Game session persistence | 5     | Save/retrieve, null on empty, all fields, overwrite, clear                     |
+| getGameSessionById()     | 3     | Find by ID, null on miss, multiple sessions                                    |
+| Game history persistence | 5     | Save/retrieve, empty array, limit param, newest-first sort, clear              |
+| Statistics persistence   | 3     | Save/retrieve, null on empty, initializeStatistics() defaults                  |
+| Leaderboard persistence  | 4     | Save/retrieve, highest-score sort, empty array, limit param                    |
+| Settings persistence     | 3     | Save/retrieve, null on empty, initializeSettings() defaults                    |
+| Data integrity           | 3     | Timestamp preservation, independent stores, clearSession not affecting history |
+| Concurrent writes        | 2     | Parallel session saves, parallel history batch saves                           |
 
 ### Vitest Config Update
 
 Extended `include` pattern in `apps/game/vitest.config.ts` from:
+
 ```
 tests/unit/**/*.{test,spec}.ts
 ```
+
 to:
+
 ```
 tests/unit/**/*.{test,spec}.ts, tests/integration/**/*.{test,spec}.ts
 ```

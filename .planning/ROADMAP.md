@@ -468,29 +468,29 @@ Plans:
 **Execution Order:**
 Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 11.1 -> 12 -> 13 -> 14 -> 15 -> 17 -> 18 -> 19 -> 20 -> 21
 
-| Phase                                 | Plans Complete | Status   | Completed  |
-| ------------------------------------- | -------------- | -------- | ---------- |
-| 1. Design Tokens                      | 3/3            | Complete | 2026-01-31 |
-| 2. Design Utilities                   | 2/2            | Complete | 2026-01-31 |
-| 3. Core Layout Components             | 2/2            | Complete | 2026-02-01 |
-| 4. Interactive Components             | 2/2            | Complete | 2026-02-01 |
-| 5. Structural Components              | 3/3            | Complete | 2026-02-01 |
-| 6. Splash & Navigation                | 2/2            | Complete | 2026-02-01 |
-| 7. Player Setup                       | 2/2            | Complete | 2026-02-01 |
-| 8. Core Gameplay                      | 2/2            | Complete | 2026-02-01 |
-| 9. Game Results                       | 2/2            | Complete | 2026-02-01 |
-| 10. Settings Pages                    | 2/2            | Complete | 2026-02-01 |
-| 11. Modal Dialogs                     | 3/3            | Complete | 2026-02-16 |
-| 11.1. Scoring & Player Config         | 2/2            | Complete | 2026-02-16 |
-| 12. App Optimization & Refactoring    | 10/10          | Complete | 2026-02-16 |
-| 13. Post-Round Next Step Modal        | 1/1            | Complete | 2026-02-27 |
-| 14. Maintenance & Quality of Life     | 3/3            | Complete | 2026-03-21 |
-| 15. Visual Polish & Bug Fixes         | 4/4            | Complete | 2026-03-23 |
-| 17. Repo Cleanup, Docs & Optimization | 3/3            | Complete | 2026-03-23 |
-| 18. Fortune Wheel + Warnings + E2E    | 5/5            | Complete | 2026-03-23 |
-| 19. Pinia to Zustand Migration        | 3/3            | Complete | 2026-03-22 |
-| 20. Revert Zustand to Pinia           | 3/3            | Complete | 2026-03-23 |
-| 21. Refactor and Fix E2E & Unit Tests | 10/11 | In Progress|  |
+| Phase                                 | Plans Complete | Status      | Completed  |
+| ------------------------------------- | -------------- | ----------- | ---------- |
+| 1. Design Tokens                      | 3/3            | Complete    | 2026-01-31 |
+| 2. Design Utilities                   | 2/2            | Complete    | 2026-01-31 |
+| 3. Core Layout Components             | 2/2            | Complete    | 2026-02-01 |
+| 4. Interactive Components             | 2/2            | Complete    | 2026-02-01 |
+| 5. Structural Components              | 3/3            | Complete    | 2026-02-01 |
+| 6. Splash & Navigation                | 2/2            | Complete    | 2026-02-01 |
+| 7. Player Setup                       | 2/2            | Complete    | 2026-02-01 |
+| 8. Core Gameplay                      | 2/2            | Complete    | 2026-02-01 |
+| 9. Game Results                       | 2/2            | Complete    | 2026-02-01 |
+| 10. Settings Pages                    | 2/2            | Complete    | 2026-02-01 |
+| 11. Modal Dialogs                     | 3/3            | Complete    | 2026-02-16 |
+| 11.1. Scoring & Player Config         | 2/2            | Complete    | 2026-02-16 |
+| 12. App Optimization & Refactoring    | 10/10          | Complete    | 2026-02-16 |
+| 13. Post-Round Next Step Modal        | 1/1            | Complete    | 2026-02-27 |
+| 14. Maintenance & Quality of Life     | 3/3            | Complete    | 2026-03-21 |
+| 15. Visual Polish & Bug Fixes         | 4/4            | Complete    | 2026-03-23 |
+| 17. Repo Cleanup, Docs & Optimization | 3/3            | Complete    | 2026-03-23 |
+| 18. Fortune Wheel + Warnings + E2E    | 5/5            | Complete    | 2026-03-23 |
+| 19. Pinia to Zustand Migration        | 3/3            | Complete    | 2026-03-22 |
+| 20. Revert Zustand to Pinia           | 3/3            | Complete    | 2026-03-23 |
+| 21. Refactor and Fix E2E & Unit Tests | 10/11          | In Progress |            |
 
 ### Phase 20: Revert Zustand to Pinia
 

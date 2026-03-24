@@ -1,6 +1,6 @@
 ---
 phase: 21-refactor-and-fix-e2e-and-unit-tests
-plan: "08"
+plan: '08'
 subsystem: game-state
 tags: [documentation, state-management, game-flow, mermaid]
 dependency_graph:
@@ -27,8 +27,8 @@ decisions:
   - Pause is correctly modeled as local component state (overlay), not a flow state
   - No production code refactoring needed — gameStore.ts already IS the single source of truth
 metrics:
-  duration: "8 minutes"
-  completed: "2026-03-24T01:08:29Z"
+  duration: '8 minutes'
+  completed: '2026-03-24T01:08:29Z'
   tasks_completed: 3
   files_modified: 2
 ---
@@ -63,6 +63,7 @@ Created a comprehensive game mode state flow chart document (`21-GAME-MODE-FLOW.
 ### Two State Dimensions
 
 The "game mode state" encompasses two independent dimensions:
+
 1. **Game Flow State** (`GameFlowState`): `setup → in-round → round-complete → decision → completed`
 2. **Route/Screen State**: `/` → `/players` → `/round-start` → `/game/[id]` → `/results/[id]` → `/leaderboard`
 
@@ -71,6 +72,7 @@ These intentionally decouple — flow state drives data decisions, routing drive
 ### Explicit Transition Helpers
 
 The store provides named transition methods that enforce flow invariants:
+
 - `transitionToSetup()` — clears session
 - `transitionToInRound()` — clears decision pending
 - `transitionToRoundComplete()` — records round history snapshot
@@ -82,6 +84,7 @@ The store provides named transition methods that enforce flow invariants:
 ### `.planning/phases/21-refactor-and-fix-e2e-and-unit-tests/21-GAME-MODE-FLOW.md`
 
 Contains:
+
 - **States table** — 5 `GameFlowState` values with conditions + 9 route/screen states
 - **`## State Flow Chart`** section with full Mermaid `stateDiagram-v2` diagram
 - Explicit transition rules table (store method → from→to→trigger)
@@ -95,6 +98,7 @@ Contains:
 ### `apps/game/stores/gameStore.ts`
 
 Added JSDoc comments to:
+
 - `GameFlowState` type — documenting the derivation logic and linking to flow chart
 - `gameMode` getter — clarifying it is always derived from `players.length`, never explicitly set
 

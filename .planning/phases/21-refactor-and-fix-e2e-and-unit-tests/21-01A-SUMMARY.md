@@ -35,7 +35,9 @@ metrics:
 Added two new unit test files providing comprehensive coverage for the session management and persistence composables:
 
 ### useSessionManager.spec.ts (23 tests)
+
 Tests all 5 pure functions exported from `useSessionManager`:
+
 - **createSession**: 7 tests — structure, unique IDs, players/category/letter inclusion, gameName handling, startTime timestamp
 - **createSinglePlayerSession**: 5 tests — required properties, userId, empty players, currentRound: 0, legacy score/attempts fields
 - **cloneSessionForHistory**: 3 tests — equality check, deep copy isolation (mutation does not affect original), property preservation
@@ -44,7 +46,9 @@ Tests all 5 pure functions exported from `useSessionManager`:
 - **return value**: 1 test — all 5 functions present
 
 ### usePersistence.spec.ts (22 tests)
+
 Tests all 5 async functions exported from `usePersistence` with fully mocked dependencies:
+
 - **loadSessionFromDB**: 4 tests — success path, null on error, error logging, resolves null (doesn't throw)
 - **loadHistoryFromDB**: 4 tests — success path, null on error, error logging, resolves null (doesn't throw)
 - **saveSessionToDB**: 4 tests — calls saveGameSession, doesn't throw, logs error, continues execution
@@ -67,6 +71,7 @@ None — plan executed exactly as written.
 ## Verification
 
 Both test suites run successfully:
+
 ```
 ✓ tests/unit/composables/useSessionManager.spec.ts (23 tests)
 ✓ tests/unit/composables/usePersistence.spec.ts (22 tests)

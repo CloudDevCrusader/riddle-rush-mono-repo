@@ -31,8 +31,14 @@ vi.stubGlobal('useRuntimeConfig', () => ({
 // with our controllable mock variable.
 vi.mock('../../../composables/useAnalytics', () => ({
   useAnalytics: () => {
-    const nuxtApp = (globalThis as Record<string, unknown>).useNuxtApp as () => { $gtag: (...args: unknown[]) => void }
-    const config = ((globalThis as Record<string, unknown>).useRuntimeConfig as () => { public: { environment: string; gtagId: string | undefined } })()
+    const nuxtApp = (globalThis as Record<string, unknown>).useNuxtApp as () => {
+      $gtag: (...args: unknown[]) => void
+    }
+    const config = (
+      (globalThis as Record<string, unknown>).useRuntimeConfig as () => {
+        public: { environment: string; gtagId: string | undefined }
+      }
+    )()
 
     const isEnabled = computed(() => {
       return config.public.environment === 'production' && !!config.public.gtagId

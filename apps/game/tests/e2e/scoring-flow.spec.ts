@@ -10,7 +10,9 @@ test.describe('scoring results flow', () => {
       // Increment score
       const incrementBtn = page.locator('[data-testid="score-increment"]').first()
       await incrementBtn.click()
-      await expect(page.locator('[data-testid^="scoring-page-score-value-"]').first()).toContainText('1')
+      await expect(
+        page.locator('[data-testid^="scoring-page-score-value-"]').first()
+      ).toContainText('1')
 
       // Confirm scores
       const confirmBtn = page.locator('[data-testid="confirm-scores"]')

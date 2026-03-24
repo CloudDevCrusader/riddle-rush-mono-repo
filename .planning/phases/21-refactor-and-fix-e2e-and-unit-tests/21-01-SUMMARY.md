@@ -1,6 +1,6 @@
 ---
 phase: 21-refactor-and-fix-e2e-and-unit-tests
-plan: "01"
+plan: '01'
 subsystem: testing
 tags: [unit-tests, composables, vitest, coverage]
 dependency_graph:
@@ -21,8 +21,8 @@ decisions:
   - Mock `generateUUID` with counter-based IDs to verify uniqueness without crypto dependency
   - Test pure/stateless functions only — skip `fetchCategories` (async, $fetch dependency)
 metrics:
-  duration: "~10 minutes"
-  completed: "2025-01-25"
+  duration: '~10 minutes'
+  completed: '2025-01-25'
   tasks_completed: 3
   tasks_total: 3
   files_created: 3
@@ -37,11 +37,11 @@ metrics:
 
 Three unit test files covering the three stateless composables extracted from the game store in a prior refactor:
 
-| Test File | Tests | Functions Covered |
-|-----------|-------|-------------------|
-| `useCategoryManager.spec.ts` | 19 | `loadMoreCategories`, `resetDisplayedCategories`, `getCategoryById`, `getRandomCategory`, `getCategoryEmoji` |
-| `usePlayerManager.spec.ts` | 40 | `createPlayers`, `findPlayerIndex`, `getPlayerById`, `submitPlayerAnswer`, `assignPlayerScore`, `updatePlayerAvatar`, `resetPlayerSubmissions`, `resetPlayerRoundState`, `buildLeaderboard`, `getCurrentPlayerTurn`, `advancePlayerIndex`, `allPlayersSubmitted` |
-| `useScoringEngine.spec.ts` | 26 | `calculateAttemptScore`, `getRankSuffix`, `getScoreDisplay`, `determineWinners` |
+| Test File                    | Tests | Functions Covered                                                                                                                                                                                                                                                |
+| ---------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useCategoryManager.spec.ts` | 19    | `loadMoreCategories`, `resetDisplayedCategories`, `getCategoryById`, `getRandomCategory`, `getCategoryEmoji`                                                                                                                                                     |
+| `usePlayerManager.spec.ts`   | 40    | `createPlayers`, `findPlayerIndex`, `getPlayerById`, `submitPlayerAnswer`, `assignPlayerScore`, `updatePlayerAvatar`, `resetPlayerSubmissions`, `resetPlayerRoundState`, `buildLeaderboard`, `getCurrentPlayerTurn`, `advancePlayerIndex`, `allPlayersSubmitted` |
+| `useScoringEngine.spec.ts`   | 26    | `calculateAttemptScore`, `getRankSuffix`, `getScoreDisplay`, `determineWinners`                                                                                                                                                                                  |
 
 **Total: 85 new tests — all passing**
 
@@ -58,6 +58,7 @@ Three unit test files covering the three stateless composables extracted from th
 ## Test Coverage Details
 
 ### useCategoryManager (19 tests)
+
 - `loadMoreCategories`: increments by step, caps at array length, no-ops when at cap
 - `resetDisplayedCategories`: resets to count, respects array length ceiling, defaults to 9
 - `getCategoryById`: returns match, returns null for missing/empty
@@ -65,6 +66,7 @@ Three unit test files covering the three stateless composables extracted from th
 - `getCategoryEmoji`: maps known names, returns `🎯` for null/undefined/unknown
 
 ### usePlayerManager (40 tests)
+
 - `createPlayers`: structure, unique IDs, default names, zeroed scores
 - `findPlayerIndex`: correct index, -1 for missing/empty
 - `getPlayerById`: returns match, null for missing/empty
@@ -79,6 +81,7 @@ Three unit test files covering the three stateless composables extracted from th
 - `allPlayersSubmitted`: all true, empty false, any false
 
 ### useScoringEngine (26 tests)
+
 - `calculateAttemptScore`: true → 10, false → 0
 - `getRankSuffix`: 1st/2nd/3rd/4th, 11th/12th/13th special cases, 21st-24th
 - `getScoreDisplay`: +N, -N, 0 formatting
@@ -91,11 +94,13 @@ None — plan executed exactly as written. All tasks completed in sequence as TD
 ## Self-Check
 
 ### Files Exist
+
 - [x] `apps/game/tests/unit/composables/useCategoryManager.spec.ts`
 - [x] `apps/game/tests/unit/composables/usePlayerManager.spec.ts`
 - [x] `apps/game/tests/unit/composables/useScoringEngine.spec.ts`
 
 ### Commits Exist
+
 - [x] `fbe1cf359` — test(21-01): add unit tests for useCategoryManager
 - [x] `860afd5b8` — test(21-01): add unit tests for usePlayerManager
 - [x] `d51379a97` — test(21-01): add unit tests for useScoringEngine
