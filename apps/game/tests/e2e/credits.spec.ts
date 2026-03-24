@@ -1,3 +1,4 @@
+// INSPECTION
 import { test, expect } from '@playwright/test'
 import { waitForSplashComplete, hideDevtools } from './helpers/game-flow'
 
