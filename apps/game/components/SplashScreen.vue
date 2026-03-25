@@ -3,7 +3,7 @@
     <div v-if="visible" class="splash-screen">
       <!-- Background Image -->
       <img
-        :src="`${baseUrl}assets/splash/background.png`"
+        :src="getAssetPath('assets/splash/background.png')"
         alt="Background"
         class="splash-bg"
         width="1920"
@@ -13,7 +13,7 @@
       <!-- Logo -->
       <div class="logo-container animate-fade-in">
         <img
-          :src="`${baseUrl}assets/splash/LOGO.png`"
+          :src="getAssetPath('assets/splash/LOGO.png')"
           alt="Logo"
           class="logo-image"
           width="512"
@@ -24,7 +24,7 @@
       <!-- Loading Bar -->
       <div class="loading-container animate-slide-up">
         <img
-          :src="`${baseUrl}assets/splash/LOADING_.png`"
+          :src="getAssetPath('assets/splash/LOADING_.png')"
           alt="Loading"
           class="loading-text"
           width="256"
@@ -32,7 +32,7 @@
         />
         <div class="loading-bar-wrapper">
           <img
-            :src="`${baseUrl}assets/splash/loading-down.png`"
+            :src="getAssetPath('assets/splash/loading-down.png')"
             alt="Loading bar background"
             class="loading-bar-bg-img"
             width="512"
@@ -40,7 +40,7 @@
           />
           <div class="loading-bar-track">
             <img
-              :src="`${baseUrl}assets/splash/loading-top.png`"
+              :src="getAssetPath('assets/splash/loading-top.png')"
               alt="Loading bar fill"
               class="loading-bar-fill-img"
               width="512"
@@ -56,12 +56,7 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig()
-// Ensure base URL has trailing slash or is empty
-const baseUrl = computed(() => {
-  const url = config.public.baseUrl || ''
-  return url && !url.endsWith('/') ? `${url}/` : url
-})
+const { getAssetPath } = useAssets()
 
 const visible = ref(true)
 const progress = ref(0)

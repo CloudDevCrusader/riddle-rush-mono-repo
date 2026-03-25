@@ -3,7 +3,7 @@
     <div v-if="isLoading" class="global-loading-overlay">
       <!-- Background Image -->
       <img
-        :src="`${baseUrl}assets/splash/background.png`"
+        :src="getAssetPath('assets/splash/background.png')"
         alt="Background"
         class="splash-bg"
         width="1920"
@@ -14,7 +14,7 @@
         <!-- Logo with Fade In Animation -->
         <div class="logo-container animate-fade-in">
           <img
-            :src="`${baseUrl}assets/splash/LOGO.png`"
+            :src="getAssetPath('assets/splash/LOGO.png')"
             alt="Logo"
             class="logo-image"
             width="512"
@@ -25,7 +25,7 @@
         <!-- Loading Bar Container with Slide Up Animation -->
         <div v-if="showProgress" class="loading-bar-container animate-slide-up">
           <img
-            :src="`${baseUrl}assets/splash/LOADING_.png`"
+            :src="getAssetPath('assets/splash/LOADING_.png')"
             alt="Loading"
             class="loading-text"
             width="256"
@@ -33,7 +33,7 @@
           />
           <div class="loading-bar-wrapper">
             <img
-              :src="`${baseUrl}assets/splash/loading-down.png`"
+              :src="getAssetPath('assets/splash/loading-down.png')"
               alt="Loading bar background"
               class="loading-bar-bg-img"
               width="512"
@@ -41,7 +41,7 @@
             />
             <div class="loading-bar-track">
               <img
-                :src="`${baseUrl}assets/splash/loading-top.png`"
+                :src="getAssetPath('assets/splash/loading-top.png')"
                 alt="Loading bar fill"
                 :style="{ clipPath: `inset(0 ${100 - progress}% 0 0)` }"
                 class="loading-bar-fill-img"
@@ -58,12 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-const config = useRuntimeConfig()
-// Ensure base URL has a trailing slash or is empty
-const baseUrl = computed(() => {
-  const url = config.public.baseUrl || ''
-  return url && !url.endsWith('/') ? `${url}/` : url
-})
+const { getAssetPath } = useAssets()
 
 const { isLoading, progress, showProgress } = useLoading()
 </script>

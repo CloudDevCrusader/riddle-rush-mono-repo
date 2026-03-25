@@ -3,8 +3,16 @@
     <GameBackground>
       <!-- Main Container -->
       <div class="container">
-        <!-- Title -->
-        <GameHeader color="gold" class="brand-title">{{ t('app.title') }}</GameHeader>
+        <!-- Logo -->
+        <div class="logo-container">
+          <img
+            :src="getAssetPath('assets/splash/LOGO.png')"
+            :alt="t('app.title')"
+            class="logo-image"
+            width="512"
+            height="512"
+          />
+        </div>
 
         <!-- Menu Buttons -->
         <div v-show="!showMenu" class="menu-buttons">
@@ -91,6 +99,7 @@ definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } })
 
 const { router, toast, t } = usePageSetup()
 const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
+const { getAssetPath } = useAssets()
 const route = useRoute()
 
 const showMenu = ref(false)
@@ -158,8 +167,16 @@ useHead({
   gap: var(--spacing-3xl);
 }
 
-.brand-title :deep(.game-header__title) {
-  text-transform: uppercase;
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-image {
+  width: clamp(200px, 40vw, 400px);
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
 }
 
 .menu-buttons {
@@ -220,6 +237,10 @@ useHead({
   .container {
     padding: var(--spacing-xl) var(--spacing-lg);
     gap: var(--spacing-xl);
+  }
+
+  .logo-image {
+    width: min(250px, 60vw);
   }
 
   .menu-buttons {

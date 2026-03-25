@@ -11,44 +11,55 @@
 
       <!-- Main Container -->
       <div class="container">
-        <!-- Dual Wheels Phase (only shown if feature is enabled) -->
+        <!-- Wheels Phase -->
         <transition name="wheel-fade">
           <div
             v-if="isFortuneWheelEnabled && !wheelsComplete"
-            class="wheels-container"
+            class="wheels-container single-wheel"
             data-testid="round-wheels-container"
+            @click="handleTap"
           >
-            <div class="wheel-wrapper">
-              <div class="wheel-label">
-                {{ t('common.category', 'Category') }}
+            <transition name="wheel-fade" mode="out-in">
+              <!-- Category Wheel -->
+              <div v-if="currentPhase === 'category'" class="wheel-wrapper" key="category">
+                <div class="wheel-label">
+                  {{ t('common.category', 'Category') }}
+                </div>
+                <FortuneWheel
+                  ref="categoryWheelRef"
+                  v-model="selectedCategory"
+                  :items="displayCategories"
+                  :get-item-key="(cat: any, idx: number) => cat?.searchWord || idx"
+                  :get-item-label="(cat: any) => t(`categories.${cat.searchWord}`, cat.name)"
+                  :get-item-icon="getCategoryIcon"
+                  center-icon="🎯"
+                  @spin-complete="onCategoryComplete"
+                />
+                <div v-if="isWaitingForTap" class="tap-hint animate-pulse">
+                  {{ t('game.tap_to_spin', 'Tap to spin') }}
+                </div>
               </div>
-              <FortuneWheel
-                ref="categoryWheelRef"
-                v-model="selectedCategory"
-                :items="displayCategories"
-                :get-item-key="(cat: any, idx: number) => cat?.searchWord || idx"
-                :get-item-label="(cat: any) => t(`categories.${cat.searchWord}`, cat.name)"
-                :get-item-icon="getCategoryIcon"
-                center-icon="🎯"
-                @spin-complete="onCategoryComplete"
-              />
-            </div>
 
-            <div class="wheel-wrapper">
-              <div class="wheel-label">
-                {{ t('common.letter', 'Letter') }}
+              <!-- Letter Wheel -->
+              <div v-else-if="currentPhase === 'letter'" class="wheel-wrapper" key="letter">
+                <div class="wheel-label">
+                  {{ t('common.letter', 'Letter') }}
+                </div>
+                <FortuneWheel
+                  ref="letterWheelRef"
+                  v-model="selectedLetter"
+                  :items="alphabet"
+                  :get-item-key="(letter: string, idx: number) => letter"
+                  :get-item-label="(letter: string) => letter"
+                  :get-item-icon="() => ''"
+                  center-icon="🎯"
+                  @spin-complete="onLetterComplete"
+                />
+                <div v-if="isWaitingForTap" class="tap-hint animate-pulse">
+                  {{ t('game.tap_to_spin', 'Tap to spin') }}
+                </div>
               </div>
-              <FortuneWheel
-                ref="letterWheelRef"
-                v-model="selectedLetter"
-                :items="alphabet"
-                :get-item-key="(letter: string, idx: number) => letter"
-                :get-item-label="(letter: string) => letter"
-                :get-item-icon="() => ''"
-                center-icon="🎯"
-                @spin-complete="onLetterComplete"
-              />
-            </div>
+            </transition>
           </div>
         </transition>
 
@@ -122,8 +133,8 @@ const categorySpinComplete = ref(false)
 const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
-let wheelStartTimer: ReturnType<typeof setTimeout> | null = null
-let wheelFadeTimer: ReturnType<typeof setTimeout> | null = null
+const currentPhase = ref<'category' | 'letter' | 'results'>('category')
+const isWaitingForTap = ref(true)
 let resultStartTimer: ReturnType<typeof setTimeout> | null = null
 let wheelFallbackTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -190,12 +201,6 @@ onMounted(async () => {
   // Select up to 12 categories for the wheel
   displayCategories.value = allCategories.slice(0, 12)
 
-  // Auto-spin both wheels immediately (will complete within 5 seconds)
-  wheelStartTimer = setTimeout(() => {
-    categoryWheelRef.value?.spinRandom()
-    letterWheelRef.value?.spinRandom()
-  }, 100)
-
   // Fallback: if wheel callbacks fail to fire, continue round start deterministically
   wheelFallbackTimer = setTimeout(() => {
     if (startingGame.value || wheelsComplete.value) return
@@ -212,38 +217,50 @@ onMounted(async () => {
       wheelsComplete.value = true
       void startGame()
     }
-  }, 7000)
+  }, 30000) // Much longer fallback since it's interactive now
 })
 
 const getCategoryIcon = (category: Category): string => {
   return categoryIconMap[category.searchWord] || '📦'
 }
 
+const handleTap = () => {
+  if (!isWaitingForTap.value) return
+
+  if (currentPhase.value === 'category' && categoryWheelRef.value) {
+    isWaitingForTap.value = false
+    categoryWheelRef.value.spinRandom()
+  } else if (currentPhase.value === 'letter' && letterWheelRef.value) {
+    isWaitingForTap.value = false
+    letterWheelRef.value.spinRandom()
+  }
+}
+
 const onCategoryComplete = (category: Category) => {
   selectedCategory.value = category
   categorySpinComplete.value = true
-  checkBothComplete()
+
+  // Transition to letter phase after a delay
+  setTimeout(() => {
+    currentPhase.value = 'letter'
+    isWaitingForTap.value = true
+  }, 1500)
 }
 
 const onLetterComplete = (letter: string) => {
   selectedLetter.value = letter
   letterSpinComplete.value = true
-  checkBothComplete()
-}
 
-const checkBothComplete = () => {
-  if (categorySpinComplete.value && letterSpinComplete.value) {
-    // Both wheels have completed spinning
-    // Wait a moment, then fade out wheels
-    wheelFadeTimer = setTimeout(() => {
-      wheelsComplete.value = true
+  // Transition to results display
+  setTimeout(() => {
+    currentPhase.value = 'results'
+    wheelsComplete.value = true
 
-      // After showing results, start the game
-      resultStartTimer = setTimeout(() => {
-        void startGame()
-      }, RESULTS_DISPLAY_DURATION_MS)
-    }, WHEEL_FADE_DELAY_MS)
-  }
+    // Auto-start game after results display
+    resultStartTimer = setTimeout(() => {
+      void startGame()
+    }, RESULTS_DISPLAY_DURATION_MS)
+  }, 1500)
 }
 
 const startGame = async () => {
@@ -292,8 +309,6 @@ const startGame = async () => {
 }
 
 onUnmounted(() => {
-  if (wheelStartTimer) clearTimeout(wheelStartTimer)
-  if (wheelFadeTimer) clearTimeout(wheelFadeTimer)
   if (resultStartTimer) clearTimeout(resultStartTimer)
   if (wheelFallbackTimer) clearTimeout(wheelFallbackTimer)
 })
@@ -379,6 +394,11 @@ useHead({
   padding: 0 var(--spacing-md);
 }
 
+.wheels-container.single-wheel {
+  max-width: 600px;
+  cursor: pointer;
+}
+
 .wheel-wrapper {
   flex: 1;
   display: flex;
@@ -386,6 +406,7 @@ useHead({
   align-items: center;
   gap: clamp(var(--spacing-md), 3vw, var(--spacing-lg));
   max-width: 440px;
+  width: 100%;
   padding: var(--spacing-md);
   border-radius: var(--radius-xl);
   background: rgba(255, 255, 255, 0.05);
@@ -397,6 +418,40 @@ useHead({
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
+}
+
+.tap-hint {
+  margin-top: var(--spacing-md);
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-xl));
+  font-weight: var(--font-weight-black);
+  color: var(--color-white);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.4), rgba(255, 182, 71, 0.3));
+  padding: var(--spacing-xs) var(--spacing-xl);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.animate-pulse {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
 }
 
 .wheel-wrapper:hover {

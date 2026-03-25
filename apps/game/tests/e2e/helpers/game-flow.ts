@@ -211,19 +211,36 @@ export async function assignScores(page: Page, scores: number[]): Promise<void> 
   for (let i = 0; i < scores.length; i++) {
     const playerEntry = page.locator(`[data-testid="results-player-entry-${i}"]`)
     const incrementBtn = playerEntry.locator('[data-testid="score-increment"]')
+    const scoreValue = page.locator(`[data-testid="scoring-page-score-value-${i}"]`)
     const clickCount = Math.max(0, scores[i] ?? 0)
 
+    await expect(playerEntry).toBeVisible({ timeout: 10000 })
+    await expect(incrementBtn).toBeVisible({ timeout: 10000 })
+    await expect(scoreValue).toBeVisible({ timeout: 10000 })
+
+    let currentValue = Number.parseInt((await scoreValue.textContent()) ?? '0', 10)
+    if (Number.isNaN(currentValue)) {
+      currentValue = 0
+    }
+
     for (let c = 0; c < clickCount; c++) {
-      // Try to click, and if devtools interferes, use evaluate as fallback
+      await playerEntry.scrollIntoViewIfNeeded()
+
+      // Use a short click timeout on mobile and fall back to synthetic clicks.
       try {
-        await incrementBtn.click({ force: false })
-      } catch (error) {
-        // If click fails due to overlay, use JavaScript click
-        await incrementBtn.evaluate((btn) => {
-          ;(btn as HTMLButtonElement).click()
-        })
+        await incrementBtn.click({ timeout: 1500 })
+      } catch {
+        await incrementBtn.dispatchEvent('click')
       }
-      await page.waitForTimeout(90)
+
+      const nextValue = currentValue + 1
+      await expect
+        .poll(
+          async () => Number.parseInt((await scoreValue.textContent().catch(() => '0')) ?? '0', 10),
+          { timeout: 3000 }
+        )
+        .toBe(nextValue)
+      currentValue = nextValue
     }
   }
 }
@@ -265,7 +282,15 @@ export async function goToNextRound(page: Page): Promise<void> {
   const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
   await expect(nextRoundBtn).toBeVisible({ timeout: 8000 })
   await nextRoundBtn.click()
-  await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
+
+  // Round start may appear first (fortune wheel path) before game route.
+  await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 45000 }).toBe(true)
+
+  if (page.url().includes('/round-start')) {
+    await completeFortuneWheel(page)
+  }
+
+  await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
 }
 
 /**
@@ -276,6 +301,66 @@ export async function finishGame(page: Page): Promise<void> {
   await expect(leaderboardBtn).toBeVisible({ timeout: 8000 })
   await leaderboardBtn.click()
   await expect(page).toHaveURL(/\/leaderboard/, { timeout: 10000 })
+}
+
+/**
+ * Complete the interactive round-start wheel flow and reach `/game`.
+ *
+ * This helper intentionally does not depend on transient UI hints like
+ * `.tap-hint`, which can disappear during animations or when overlapping
+ * loading overlays are active.  Instead, it uses stable readiness signals:
+ * route state (`/round-start` -> `/game`) and durable test IDs.
+ */
+export async function completeFortuneWheel(page: Page): Promise<void> {
+  if (/\/game/.test(page.url())) {
+    return
+  }
+
+  const wheelsContainer = page.locator('[data-testid="round-wheels-container"]')
+  const resultsDisplay = page.locator('[data-testid="round-results-display"]')
+  const loadingState = page.locator('[data-testid="round-loading"]')
+
+  await expect
+    .poll(
+      async () => {
+        if (/\/game/.test(page.url())) return 'game'
+        if (!/\/round-start/.test(page.url())) return 'other-route'
+
+        if (await loadingState.isVisible().catch(() => false)) return 'loading'
+        if (await resultsDisplay.isVisible().catch(() => false)) return 'results'
+        if (await wheelsContainer.isVisible().catch(() => false)) return 'wheels'
+
+        return 'waiting'
+      },
+      { timeout: 20000 }
+    )
+    .not.toBe('waiting')
+
+  if (/\/game/.test(page.url()) || !/\/round-start/.test(page.url())) {
+    return
+  }
+
+  let tapAttempts = 0
+
+  while (/\/round-start/.test(page.url()) && tapAttempts < 10) {
+    if (await loadingState.isVisible().catch(() => false)) {
+      break
+    }
+
+    if (await resultsDisplay.isVisible().catch(() => false)) {
+      break
+    }
+
+    if (await wheelsContainer.isVisible().catch(() => false)) {
+      await wheelsContainer.click({ force: true })
+      tapAttempts++
+    }
+
+    // Allow spin/phase transitions to settle before deciding next action.
+    await page.waitForTimeout(700)
+  }
+
+  await expect.poll(() => /\/game/.test(page.url()), { timeout: 35000 }).toBe(true)
 }
 
 /**
@@ -389,20 +474,12 @@ export async function setupMultiplayerGame(page: Page, playerNames: string[]): P
   await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 45000 }).toBe(true)
 
   if (page.url().includes('/round-start')) {
-    await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
+    await completeFortuneWheel(page)
   }
 
-  if (!/\/game/.test(page.url())) {
-    await page.goto('/round-start', { timeout: 30000 })
-    await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
-  }
-
-  const gameIdMatch = page.url().match(/\/game\/([^/?#]+)/)
-  const currentGameId = gameIdMatch?.[1] ?? null
-  if (currentGameId) {
-    await page.goto(`/game/${currentGameId}`, { timeout: 30000 })
-    await page.waitForLoadState('networkidle')
-  }
+  // Ensure we've reached /game (covers fortune-wheel, non-fortune-wheel,
+  // and the 30 s fallback timer in round-start.vue).
+  await expect.poll(() => /\/game/.test(page.url()), { timeout: 35000 }).toBe(true)
 
   await expect
     .poll(

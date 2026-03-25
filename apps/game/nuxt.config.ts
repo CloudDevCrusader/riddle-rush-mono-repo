@@ -587,24 +587,28 @@ export default defineNuxtConfig({
     },
   },
 
-  // Security headers
-  security: {
-    nonce: false, // Disable nonces for Playwright compatibility
-    headers: {
-      crossOriginEmbedderPolicy:
-        process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
-      contentSecurityPolicy: {
-        'base-uri': ["'self'"],
-        'font-src': ["'self'", 'https:', 'data:'],
-        'form-action': ["'self'"],
-        'frame-ancestors': ["'self'"],
-        'img-src': ["'self'", 'data:', 'blob:'],
-        'object-src': ["'none'"],
-        'script-src-attr': ["'none'"],
-        'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-        'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
-        'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
-      },
-    },
-  },
+  // Security headers (only when nuxt-security is enabled)
+  ...(process.env.DISABLE_SECURITY !== 'true'
+    ? {
+        security: {
+          nonce: false, // Disable nonces for Playwright compatibility
+          headers: {
+            crossOriginEmbedderPolicy:
+              process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
+            contentSecurityPolicy: {
+              'base-uri': ["'self'"],
+              'font-src': ["'self'", 'https:', 'data:'],
+              'form-action': ["'self'"],
+              'frame-ancestors': ["'self'"],
+              'img-src': ["'self'", 'data:', 'blob:'],
+              'object-src': ["'none'"],
+              'script-src-attr': ["'none'"],
+              'style-src': ["'self'", 'https:', "'unsafe-inline'"],
+              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
+              'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
+            },
+          },
+        },
+      }
+    : {}),
 })
