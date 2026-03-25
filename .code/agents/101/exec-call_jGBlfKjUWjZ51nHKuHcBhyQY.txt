@@ -1,0 +1,794 @@
+[WebServer] npm warn Unknown env config "shamefully-hoist". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+[WebServer] npm warn Unknown env config "npm-globalconfig". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+[WebServer] npm warn Unknown env config "verify-deps-before-run". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+[WebServer] npm warn Unknown env config "_jsr-registry". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+[WebServer] npm warn Unknown env config "overrides". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+[WebServer] 
+[WebServer] [90m[[90m@nuxtjs/fontaine[90m][39m [43m[30m WARN [39m[49m Could not find metrics for font system-ui
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m Development mode: Ensuring proper plugin initialization order
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+
+Running 25 tests using 5 workers
+
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+  ✘   3 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:68:5 › Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard (20.5s)
+  ✘   2 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:55:5 › Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow) (20.5s)
+  ✘   1 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:39:5 › Complete Game Flow › Single Player Flow › should display game elements correctly (20.5s)
+  ✘   5 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:90:5 › Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish (20.6s)
+  ✘   4 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:31:5 › Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page (20.7s)
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+  ✓   8 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:108:5 › Complete Game Flow › Navigation › should handle browser back button navigation (7.7s)
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+  ✘  10 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:245:5 › Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion (17.0s)
+  ✘   9 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:209:5 › Complete Game Flow › Multi-Player Flow › should preserve player names across rounds (17.2s)
+  ✘   7 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:177:5 › Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted (17.2s)
+  ✘   6 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:128:5 › Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round (17.3s)
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+  ✘  11 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:283:5 › Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds (15.4s)
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+  ✘  12 [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:316:5 › Complete Game Flow › Reset Flow › should reset the game when choosing New Game (16.8s)
+  ✘  14 [android-pixel5] › tests/e2e/results.spec.ts:36:3 › results scoring page › should display player entries with score controls (17.0s)
+  ✘  13 [android-pixel5] › tests/e2e/results.spec.ts:18:3 › results scoring page › should display results page with all elements (17.1s)
+  ✘  15 [android-pixel5] › tests/e2e/results.spec.ts:53:3 › results scoring page › should display increment and decrement buttons for each player (16.6s)
+  ✘  16 [android-pixel5] › tests/e2e/results.spec.ts:62:3 › results scoring page › should increase score when clicking increment button (14.8s)
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+  ✘  17 [android-pixel5] › tests/e2e/results.spec.ts:79:3 › results scoring page › should decrease score when clicking decrement button (16.7s)
+  ✘  19 [android-pixel5] › tests/e2e/results.spec.ts:110:3 › results scoring page › should show leaderboard overlay after confirming scores (16.7s)
+  ✘  18 [android-pixel5] › tests/e2e/results.spec.ts:102:3 › results scoring page › should disable decrement button when score is 0 (16.9s)
+  ✘  20 [android-pixel5] › tests/e2e/results.spec.ts:120:3 › results scoring page › should show decision modal after leaderboard auto-dismisses (16.8s)
+  ✘  21 [android-pixel5] › tests/e2e/results.spec.ts:136:3 › results scoring page › should navigate to round-start when clicking Next Round (15.3s)
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/switch-locale-path-ssr.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js
+[WebServer] 
+[WebServer] 
+[WebServer] [43m[30m WARN [39m[49m [nuxt.config] Filtering out problematic plugin: /Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/@nuxtjs+i18n@10.2.4_@vercel+functions@3.3.4_@aws-sdk+credential-provider-web-identity@3_f35fa9a07ab7f5c2fc630c4a3605e563/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js
+[WebServer] 
+  ✘  25 [android-pixel5] › tests/e2e/results.spec.ts:194:3 › results page multi-player › should allow independent score adjustment for each player (17.6s)
+  ✘  22 [android-pixel5] › tests/e2e/results.spec.ts:151:3 › results scoring page › should navigate to leaderboard when clicking Finish Game (17.7s)
+  ✘  23 [android-pixel5] › tests/e2e/results.spec.ts:187:3 › results page multi-player › should display all players in multi-player game (17.9s)
+  ✘  24 [android-pixel5] › tests/e2e/results.spec.ts:166:3 › results scoring page › should be responsive on mobile (18.0s)
+
+
+  1) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:31:5 › Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:32:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-ba455-flow-from-menu-to-game-page-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-ba455-flow-from-menu-to-game-page-android-pixel5/error-context.md
+
+  2) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:39:5 › Complete Game Flow › Single Player Flow › should display game elements correctly 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:40:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-42a60-lay-game-elements-correctly-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-42a60-lay-game-elements-correctly-android-pixel5/error-context.md
+
+  3) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:55:5 › Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow) 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:58:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-cf844-e-no-multiplayer-turn-flow--android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-cf844-e-no-multiplayer-turn-flow--android-pixel5/error-context.md
+
+  4) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:68:5 › Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:69:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-99967-scoring-flow-to-leaderboard-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-99967-scoring-flow-to-leaderboard-android-pixel5/error-context.md
+
+  5) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:90:5 › Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:91:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-b2c35-rboard-when-clicking-finish-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-b2c35-rboard-when-clicking-finish-android-pixel5/error-context.md
+
+  6) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:128:5 › Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:133:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-abeca--players-through-full-round-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-abeca--players-through-full-round-android-pixel5/error-context.md
+
+  7) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:177:5 › Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:181:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-4f477--when-all-players-submitted-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-4f477--when-all-players-submitted-android-pixel5/error-context.md
+
+  8) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:209:5 › Complete Game Flow › Multi-Player Flow › should preserve player names across rounds 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:214:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-9724b--player-names-across-rounds-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-9724b--player-names-across-rounds-android-pixel5/error-context.md
+
+  9) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:245:5 › Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:249:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-97b4d-scores-and-declare-champion-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-97b4d-scores-and-declare-champion-android-pixel5/error-context.md
+
+  10) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:283:5 › Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:287:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-d525d-tive-scores-across-2-rounds-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-d525d-tive-scores-across-2-rounds-android-pixel5/error-context.md
+
+  11) [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:316:5 › Complete Game Flow › Reset Flow › should reset the game when choosing New Game 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/game-complete-flow.spec.ts:320:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-complete-flow-Complet-654f0-game-when-choosing-New-Game-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-complete-flow-Complet-654f0-game-when-choosing-New-Game-android-pixel5/error-context.md
+
+  12) [android-pixel5] › tests/e2e/results.spec.ts:18:3 › results scoring page › should display results page with all elements 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-a3d31-ults-page-with-all-elements-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-a3d31-ults-page-with-all-elements-android-pixel5/error-context.md
+
+  13) [android-pixel5] › tests/e2e/results.spec.ts:36:3 › results scoring page › should display player entries with score controls 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-441d7-entries-with-score-controls-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-441d7-entries-with-score-controls-android-pixel5/error-context.md
+
+  14) [android-pixel5] › tests/e2e/results.spec.ts:53:3 › results scoring page › should display increment and decrement buttons for each player 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-c0abf-ent-buttons-for-each-player-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-c0abf-ent-buttons-for-each-player-android-pixel5/error-context.md
+
+  15) [android-pixel5] › tests/e2e/results.spec.ts:62:3 › results scoring page › should increase score when clicking increment button 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-9fca2-n-clicking-increment-button-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-9fca2-n-clicking-increment-button-android-pixel5/error-context.md
+
+  16) [android-pixel5] › tests/e2e/results.spec.ts:79:3 › results scoring page › should decrease score when clicking decrement button 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-ce358-n-clicking-decrement-button-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-ce358-n-clicking-decrement-button-android-pixel5/error-context.md
+
+  17) [android-pixel5] › tests/e2e/results.spec.ts:102:3 › results scoring page › should disable decrement button when score is 0 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-aa5fe-ment-button-when-score-is-0-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-aa5fe-ment-button-when-score-is-0-android-pixel5/error-context.md
+
+  18) [android-pixel5] › tests/e2e/results.spec.ts:110:3 › results scoring page › should show leaderboard overlay after confirming scores 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-23f30-lay-after-confirming-scores-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-23f30-lay-after-confirming-scores-android-pixel5/error-context.md
+
+  19) [android-pixel5] › tests/e2e/results.spec.ts:120:3 › results scoring page › should show decision modal after leaderboard auto-dismisses 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-fb199--leaderboard-auto-dismisses-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-fb199--leaderboard-auto-dismisses-android-pixel5/error-context.md
+
+  20) [android-pixel5] › tests/e2e/results.spec.ts:136:3 › results scoring page › should navigate to round-start when clicking Next Round 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-c01cb-rt-when-clicking-Next-Round-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-c01cb-rt-when-clicking-Next-Round-android-pixel5/error-context.md
+
+  21) [android-pixel5] › tests/e2e/results.spec.ts:151:3 › results scoring page › should navigate to leaderboard when clicking Finish Game 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-pa-56270-d-when-clicking-Finish-Game-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-pa-56270-d-when-clicking-Finish-Game-android-pixel5/error-context.md
+
+  22) [android-pixel5] › tests/e2e/results.spec.ts:166:3 › results scoring page › should be responsive on mobile 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at startGameWithDefaults (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:647:3)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:13:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-scoring-page-should-be-responsive-on-mobile-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-scoring-page-should-be-responsive-on-mobile-android-pixel5/error-context.md
+
+  23) [android-pixel5] › tests/e2e/results.spec.ts:187:3 › results page multi-player › should display all players in multi-player game 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:182:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-page-multi-d9341-layers-in-multi-player-game-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-page-multi-d9341-layers-in-multi-player-game-android-pixel5/error-context.md
+
+  24) [android-pixel5] › tests/e2e/results.spec.ts:194:3 › results page multi-player › should allow independent score adjustment for each player 
+
+    TimeoutError: locator.dispatchEvent: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="players-start-button"]')[22m
+
+
+       at helpers/game-flow.ts:575
+
+      573 |       await startBtn.click({ timeout: 2000 })
+      574 |     } catch {
+    > 575 |       await startBtn.dispatchEvent('click')
+          |                      ^
+      576 |     }
+      577 |     await page.waitForTimeout(250)
+      578 |   }
+        at setupMultiplayerGame (/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/helpers/game-flow.ts:575:22)
+        at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/game/tests/e2e/results.spec.ts:182:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/results-results-page-multi-6aa1d--adjustment-for-each-player-android-pixel5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/results-results-page-multi-6aa1d--adjustment-for-each-player-android-pixel5/error-context.md
+
+  24 failed
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:31:5 › Complete Game Flow › Single Player Flow › should complete full game flow from menu to game page 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:39:5 › Complete Game Flow › Single Player Flow › should display game elements correctly 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:55:5 › Complete Game Flow › Single Player Flow › should show NEXT button in single player mode (no multiplayer turn flow) 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:68:5 › Complete Game Flow › Navigation › should navigate through full scoring flow to leaderboard 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:90:5 › Complete Game Flow › Navigation › should return to menu from leaderboard when clicking finish 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:128:5 › Complete Game Flow › Multi-Player Flow › complete multi-player game: 3 players through full round 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:177:5 › Complete Game Flow › Multi-Player Flow › should show NEXT button only when all players submitted 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:209:5 › Complete Game Flow › Multi-Player Flow › should preserve player names across rounds 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:245:5 › Complete Game Flow › Multi-Round Games with Champion › should play 2 rounds with accumulating scores and declare champion 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:283:5 › Complete Game Flow › Multi-Round Games with Champion › should correctly calculate cumulative scores across 2 rounds 
+    [android-pixel5] › tests/e2e/game-complete-flow.spec.ts:316:5 › Complete Game Flow › Reset Flow › should reset the game when choosing New Game 
+    [android-pixel5] › tests/e2e/results.spec.ts:18:3 › results scoring page › should display results page with all elements 
+    [android-pixel5] › tests/e2e/results.spec.ts:36:3 › results scoring page › should display player entries with score controls 
+    [android-pixel5] › tests/e2e/results.spec.ts:53:3 › results scoring page › should display increment and decrement buttons for each player 
+    [android-pixel5] › tests/e2e/results.spec.ts:62:3 › results scoring page › should increase score when clicking increment button 
+    [android-pixel5] › tests/e2e/results.spec.ts:79:3 › results scoring page › should decrease score when clicking decrement button 
+    [android-pixel5] › tests/e2e/results.spec.ts:102:3 › results scoring page › should disable decrement button when score is 0 
+    [android-pixel5] › tests/e2e/results.spec.ts:110:3 › results scoring page › should show leaderboard overlay after confirming scores 
+    [android-pixel5] › tests/e2e/results.spec.ts:120:3 › results scoring page › should show decision modal after leaderboard auto-dismisses 
+    [android-pixel5] › tests/e2e/results.spec.ts:136:3 › results scoring page › should navigate to round-start when clicking Next Round 
+    [android-pixel5] › tests/e2e/results.spec.ts:151:3 › results scoring page › should navigate to leaderboard when clicking Finish Game 
+    [android-pixel5] › tests/e2e/results.spec.ts:166:3 › results scoring page › should be responsive on mobile 
+    [android-pixel5] › tests/e2e/results.spec.ts:187:3 › results page multi-player › should display all players in multi-player game 
+    [android-pixel5] › tests/e2e/results.spec.ts:194:3 › results page multi-player › should allow independent score adjustment for each player 
+  1 passed (1.8m)
+undefined
+/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test tests/e2e/game-complete-flow.spec.ts tests/e2e/results.spec.ts --project=android-pixel5

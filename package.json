@@ -1,7 +1,7 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.81",
     "@changesets/cli": "^2.30.0",
@@ -113,7 +113,8 @@
     "ai:status": "python tools/ai-agents/agent-tools.py",
     "ai:agents": "cd tools/python && python main.py",
     "ai:tools": "python tools/ai-agents/agent-tools.py",
-    "ai:zhelper": "npx @z_ai/coding-helper"
+    "ai:zhelper": "npx @z_ai/coding-helper",
+    "ai:just-every": "npx -y @just-every/code"
   },
   "type": "module",
   "bin": {
