@@ -12,14 +12,14 @@ overrides:
   file-type@>=13.0.0 <21.3.1: ^21.3.1
   hono@<4.12.7: ^4.12.7
   yauzl@=3.2.0: ^3.2.1
-  h3@>=2.0.0 <=2.0.1-rc.14: '>=2.0.1-rc.15'
+  h3@>=2.0.0 <=2.0.1-rc.14: ^2.0.1-rc.15
   flatted@<=3.4.1: ^3.4.2
   fast-xml-parser@>=4.0.0-beta.3 <=5.5.6: ^5.5.7
-  h3@>=2.0.0-beta.0 <=2.0.1-rc.16: '>=2.0.1-rc.17'
-  h3@>=2.0.1-alpha.0 <=2.0.1-rc.16: '>=2.0.1-rc.17'
+  h3@>=2.0.0-beta.0 <=2.0.1-rc.16: ^2.0.1-rc.17
+  h3@>=2.0.1-alpha.0 <=2.0.1-rc.16: ^2.0.1-rc.17
   fast-xml-parser@>=4.0.0-beta.3 <=5.5.5: ^5.5.6
-  h3@>=2.0.0-0 <2.0.1-rc.15: '>=2.0.1-rc.15'
-  h3@>=2.0.0-beta.4 <2.0.1-rc.18: '>=2.0.1-rc.18'
+  h3@>=2.0.0-0 <2.0.1-rc.15: ^2.0.1-rc.15
+  h3@>=2.0.0-beta.4 <2.0.1-rc.18: ^2.0.1-rc.18
   got@<11.8.5: ^11.8.5
   semver-regex@<3.1.3: ^3.1.3
   semver-regex@<3.1.4: ^3.1.4
@@ -251,7 +251,7 @@ importers:
         version: 25.5.0
       '@unocss/nuxt':
         specifier: ^66.6.7
-        version: 66.6.7(magicast@0.5.2)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2)
+        version: 66.6.7(magicast@0.5.2)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2(esbuild@0.27.4))
       '@vheemstra/vite-plugin-imagemin':
         specifier: ^2.2.1
         version: 2.2.1(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
@@ -302,7 +302,7 @@ importers:
         version: 5.9.3
       unocss:
         specifier: ^66.6.7
-        version: 66.6.7(@unocss/webpack@66.6.7(webpack@5.105.2))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+        version: 66.6.7(@unocss/webpack@66.6.7(webpack@5.105.2(esbuild@0.27.4)))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       unplugin-auto-import:
         specifier: ^21.0.0
         version: 21.0.0(@nuxt/kit@4.4.2(magicast@0.5.2))(@vueuse/core@14.2.1(vue@3.5.30(typescript@5.9.3)))
@@ -24733,7 +24733,7 @@ snapshots:
       gzip-size: 6.0.0
       sirv: 3.0.2
 
-  '@unocss/nuxt@66.6.7(magicast@0.5.2)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2)':
+  '@unocss/nuxt@66.6.7(magicast@0.5.2)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2(esbuild@0.27.4))':
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@unocss/config': 66.6.7
@@ -24747,8 +24747,8 @@ snapshots:
       '@unocss/preset-wind4': 66.6.7
       '@unocss/reset': 66.6.7
       '@unocss/vite': 66.6.7(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      '@unocss/webpack': 66.6.7(webpack@5.105.2)
-      unocss: 66.6.7(@unocss/webpack@66.6.7(webpack@5.105.2))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      '@unocss/webpack': 66.6.7(webpack@5.105.2(esbuild@0.27.4))
+      unocss: 66.6.7(@unocss/webpack@66.6.7(webpack@5.105.2(esbuild@0.27.4)))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     transitivePeerDependencies:
       - '@unocss/astro'
       - '@unocss/postcss'
@@ -24848,7 +24848,7 @@ snapshots:
       unplugin-utils: 0.3.1
       vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
 
-  '@unocss/webpack@66.6.7(webpack@5.105.2)':
+  '@unocss/webpack@66.6.7(webpack@5.105.2(esbuild@0.27.4))':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.6.7
@@ -24859,7 +24859,7 @@ snapshots:
       tinyglobby: 0.2.15
       unplugin: 2.3.11
       unplugin-utils: 0.3.1
-      webpack: 5.105.2(webpack-cli@6.0.1)
+      webpack: 5.105.2(esbuild@0.27.4)
       webpack-sources: 3.3.4
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
@@ -34792,6 +34792,17 @@ snapshots:
 
   term-size@2.2.1: {}
 
+  terser-webpack-plugin@5.3.16(esbuild@0.27.4)(webpack@5.105.2(esbuild@0.27.4)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.3.3
+      serialize-javascript: 7.0.4
+      terser: 5.46.0
+      webpack: 5.105.2(esbuild@0.27.4)
+    optionalDependencies:
+      esbuild: 0.27.4
+
   terser-webpack-plugin@5.3.16(webpack@5.105.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -35273,7 +35284,7 @@ snapshots:
       tiny-emitter: 2.1.0
       uuid: 9.0.1
 
-  unocss@66.6.7(@unocss/webpack@66.6.7(webpack@5.105.2))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
+  unocss@66.6.7(@unocss/webpack@66.6.7(webpack@5.105.2(esbuild@0.27.4)))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       '@unocss/cli': 66.6.7
       '@unocss/core': 66.6.7
@@ -35293,7 +35304,7 @@ snapshots:
       '@unocss/transformer-variant-group': 66.6.7
       '@unocss/vite': 66.6.7(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
-      '@unocss/webpack': 66.6.7(webpack@5.105.2)
+      '@unocss/webpack': 66.6.7(webpack@5.105.2(esbuild@0.27.4))
     transitivePeerDependencies:
       - vite
 
@@ -35936,6 +35947,38 @@ snapshots:
   webpack-virtual-modules@0.4.6: {}
 
   webpack-virtual-modules@0.6.2: {}
+
+  webpack@5.105.2(esbuild@0.27.4):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.8
+      '@types/json-schema': 7.0.15
+      '@webassemblyjs/ast': 1.14.1
+      '@webassemblyjs/wasm-edit': 1.14.1
+      '@webassemblyjs/wasm-parser': 1.14.1
+      acorn: 8.16.0
+      acorn-import-phases: 1.0.4(acorn@8.16.0)
+      browserslist: 4.28.1
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.19.0
+      es-module-lexer: 2.0.0
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.1
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 4.3.3
+      tapable: 2.3.0
+      terser-webpack-plugin: 5.3.16(esbuild@0.27.4)(webpack@5.105.2(esbuild@0.27.4))
+      watchpack: 2.5.1
+      webpack-sources: 3.3.4
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
 
   webpack@5.105.2(webpack-cli@6.0.1):
     dependencies:
