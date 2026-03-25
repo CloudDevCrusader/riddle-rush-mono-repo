@@ -149,19 +149,19 @@ if [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS-}" ]]; then
 	pnpm install --frozen-lockfile
 
 	echo -e "\n✅ Running linter..."
-	(cd apps/game && pnpm run lint) || {
+	pnpm run lint || {
 		echo -e "${RED}❌ Lint failed${NC}"
 		exit 1
 	}
 
 	echo -e "\n🔷 Running type check..."
-	(cd apps/game && pnpm run typecheck) || {
+	pnpm run typecheck || {
 		echo -e "${RED}❌ Type check failed${NC}"
 		exit 1
 	}
 
 	echo -e "\n🧪 Running unit tests..."
-	(cd apps/game && pnpm run test:unit) || {
+	pnpm run test:unit || {
 		echo -e "${RED}❌ Tests failed${NC}"
 		exit 1
 	}
