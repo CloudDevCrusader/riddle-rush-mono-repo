@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { LatitudeTelemetry } from '@latitude-data/telemetry'
 import * as LangchainCallbacks from '@langchain/core/callbacks/manager'
 import { createAgent } from 'langchain'

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Lambda function for processing error logs and sending to CloudWatch
 const AWS = require('aws-sdk')
 
