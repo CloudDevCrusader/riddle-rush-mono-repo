@@ -29,8 +29,10 @@
   "packageManager": "pnpm@10.33.0",
   "private": true,
   "scripts": {
+    "android:build": "./scripts/android-build.sh",
+    "android:build:release": "./scripts/android-build.sh release",
     "android:open": "cd apps/game && pnpm android:open",
-    "android:run": "cd apps/game && pnpm android:run",
+    "android:run": "./scripts/android-run.sh",
     "android:sync": "cd apps/game && pnpm android:sync",
     "build": "turbo run build --filter=@riddle-rush/game",
     "build:all": "turbo run build",
@@ -184,7 +186,6 @@
       "serialize-javascript@<=7.0.2": "^7.0.3"
     },
     "onlyBuiltDependencies": [
-      "@nativescript/core",
       "better-sqlite3",
       "core-js-pure",
       "electron",
