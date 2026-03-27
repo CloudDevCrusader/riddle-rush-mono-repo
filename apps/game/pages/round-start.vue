@@ -17,7 +17,6 @@
             v-if="isFortuneWheelEnabled && !wheelsComplete"
             class="wheels-container single-wheel"
             data-testid="round-wheels-container"
-            @click="handleTap"
           >
             <transition name="wheel-fade" mode="out-in">
               <!-- Category Wheel -->
@@ -35,9 +34,6 @@
                   center-icon="🎯"
                   @spin-complete="onCategoryComplete"
                 />
-                <div v-if="isWaitingForTap" class="tap-hint animate-pulse">
-                  {{ t('game.tap_to_spin', 'Tap to spin') }}
-                </div>
               </div>
 
               <!-- Letter Wheel -->
@@ -55,9 +51,6 @@
                   center-icon="🎯"
                   @spin-complete="onLetterComplete"
                 />
-                <div v-if="isWaitingForTap" class="tap-hint animate-pulse">
-                  {{ t('game.tap_to_spin', 'Tap to spin') }}
-                </div>
               </div>
             </transition>
           </div>
@@ -134,27 +127,10 @@ const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
 const currentPhase = ref<'category' | 'letter' | 'results'>('category')
-const isWaitingForTap = ref(true)
 let resultStartTimer: ReturnType<typeof setTimeout> | null = null
 let wheelFallbackTimer: ReturnType<typeof setTimeout> | null = null
 
-const categoryIconMap: Record<string, string> = {
-  female_name: '👩',
-  male_name: '👨',
-  water_vehicle: '⛵',
-  flowers: '🌸',
-  plants: '🌿',
-  profession: '👔',
-  insect: '🐛',
-  animal: '🦁',
-  city: '🏙️',
-  country: '🌍',
-  food: '🍕',
-  drink: '🧃',
-  sport: '⚽',
-  music: '🎵',
-  movie: '🎬',
-}
+const { resolve: resolveEmoji } = useCategoryEmoji()
 
 const fallbackCategory: Category = {
   id: 0,
@@ -201,6 +177,13 @@ onMounted(async () => {
   // Select up to 12 categories for the wheel
   displayCategories.value = allCategories.slice(0, 12)
 
+  // Auto-spin category wheel after a short delay for visual effect
+  nextTick(() => {
+    setTimeout(() => {
+      categoryWheelRef.value?.spinRandom()
+    }, 800)
+  })
+
   // Fallback: if wheel callbacks fail to fire, continue round start deterministically
   wheelFallbackTimer = setTimeout(() => {
     if (startingGame.value || wheelsComplete.value) return
@@ -217,33 +200,25 @@ onMounted(async () => {
       wheelsComplete.value = true
       void startGame()
     }
-  }, 30000) // Much longer fallback since it's interactive now
+  }, 15000) // Fallback timeout for auto-spin flow
 })
 
 const getCategoryIcon = (category: Category): string => {
-  return categoryIconMap[category.searchWord] || '📦'
-}
-
-const handleTap = () => {
-  if (!isWaitingForTap.value) return
-
-  if (currentPhase.value === 'category' && categoryWheelRef.value) {
-    isWaitingForTap.value = false
-    categoryWheelRef.value.spinRandom()
-  } else if (currentPhase.value === 'letter' && letterWheelRef.value) {
-    isWaitingForTap.value = false
-    letterWheelRef.value.spinRandom()
-  }
+  return resolveEmoji(category.name)
 }
 
 const onCategoryComplete = (category: Category) => {
   selectedCategory.value = category
   categorySpinComplete.value = true
 
-  // Transition to letter phase after a delay
+  // Transition to letter phase after a delay, then auto-spin
   setTimeout(() => {
     currentPhase.value = 'letter'
-    isWaitingForTap.value = true
+    nextTick(() => {
+      setTimeout(() => {
+        letterWheelRef.value?.spinRandom()
+      }, 500)
+    })
   }, 1500)
 }
 
@@ -396,7 +371,6 @@ useHead({
 
 .wheels-container.single-wheel {
   max-width: 600px;
-  cursor: pointer;
 }
 
 .wheel-wrapper {
@@ -418,40 +392,6 @@ useHead({
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
-}
-
-.tap-hint {
-  margin-top: var(--spacing-md);
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-xl));
-  font-weight: var(--font-weight-black);
-  color: var(--color-white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.4), rgba(255, 182, 71, 0.3));
-  padding: var(--spacing-xs) var(--spacing-xl);
-  border-radius: var(--radius-full);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 215, 0, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.animate-pulse {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-  }
 }
 
 .wheel-wrapper:hover {

@@ -443,32 +443,26 @@ watch(
 .segment-icon {
   font-size: clamp(18px, 5.5vw, 34px);
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
-  animation: icon-float 3s ease-in-out infinite;
 }
 
 .segment-text {
   font-family: var(--font-display);
-  font-size: clamp(10px, 3vw, 16px);
+  font-size: clamp(8px, 2.5vw, 14px);
   font-weight: var(--font-weight-bold);
   color: var(--color-white);
   text-shadow:
     0 2px 6px rgba(0, 0, 0, 0.7),
     0 0 12px rgba(255, 255, 255, 0.3);
   text-align: center;
-  max-width: clamp(45px, 13vw, 85px);
-  line-height: 1.3;
-  letter-spacing: 0.5px;
+  max-width: clamp(55px, 16vw, 100px);
+  line-height: 1.2;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: break-word;
 }
 
-@keyframes icon-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-2px);
-  }
-}
+/* icon-float animation removed — was overriding inline counter-rotation transforms */
 
 /* Enhanced Wheel Center */
 .wheel-center {

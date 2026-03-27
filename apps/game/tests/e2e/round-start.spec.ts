@@ -34,9 +34,7 @@ test.describe('round-start page round-start', () => {
     await startGameFromPlayers(page)
   })
 
-  test('shows wheel-default flow and allows interactive spinning before transitioning to game', async ({
-    page,
-  }) => {
+  test('shows wheel-default flow with auto-spin before transitioning to game', async ({ page }) => {
     const roundIndicator = page.locator('[data-testid="round-indicator"]')
     const wheelsContainer = page.locator('[data-testid="round-wheels-container"]')
 
