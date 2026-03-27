@@ -53,7 +53,7 @@ Before you start using this function, we suggest you read the [Web Worker](https
 
 ## Credit
 
-This function is a Vue port of https://github.com/alewin/useWorker by Alessio Koci, with the help of [@Donskelle](https://github.com/Donskelle) to migration.
+This function is a Vue port of <https://github.com/alewin/useWorker> by Alessio Koci, with the help of [@Donskelle](https://github.com/Donskelle) to migration.
 
 ## Type Declarations
 

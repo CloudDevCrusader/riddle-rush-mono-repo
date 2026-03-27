@@ -173,7 +173,7 @@ export function useEmailInput(initialValue = '') {
 
 ## File Organization
 
-```
+```text
 src/
   composables/        # Stateful reactive logic
     useAuth.js

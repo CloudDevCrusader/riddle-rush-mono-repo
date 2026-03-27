@@ -1,6 +1,17 @@
 # DynamoDB Tables Module
 # Game data tables with PAY_PER_REQUEST billing and point-in-time recovery
 
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # Users table - stores player profiles and game history
 resource "aws_dynamodb_table" "users" {
   name         = "${var.project_name}-${var.environment}-users"

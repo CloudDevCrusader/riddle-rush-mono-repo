@@ -116,7 +116,7 @@ const { user, isLoggedIn, login } = useAuth()
 
 Only top-level files are scanned:
 
-```
+```text
 composables/
 ├── useAuth.ts         → useAuth() ✓
 ├── useCounter.ts      → useCounter() ✓

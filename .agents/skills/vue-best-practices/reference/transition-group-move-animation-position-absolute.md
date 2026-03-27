@@ -95,7 +95,7 @@ With `position: absolute`:
 
 ## Visual Diagram
 
-```
+```text
 Without position: absolute:
 [A] [B] [C] [D]  <- Remove B
 [A]     [C] [D]  <- B fading out, C/D waiting

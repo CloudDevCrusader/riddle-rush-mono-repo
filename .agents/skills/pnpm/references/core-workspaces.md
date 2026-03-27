@@ -182,7 +182,7 @@ pnpm publish -r --no-git-checks
 
 ## Example Project Structure
 
-```
+```text
 my-monorepo/
 ├── pnpm-workspace.yaml
 ├── package.json

@@ -11,7 +11,7 @@ Generate many pages from a single markdown file and dynamic data. Useful for blo
 
 Create a template file with parameter in brackets and a paths loader:
 
-```
+```text
 .
 └─ packages/
    ├─ [pkg].md           # Route template
@@ -37,7 +37,7 @@ Generated pages:
 
 ## Multiple Parameters
 
-```
+```text
 .
 └─ packages/
    ├─ [pkg]-[version].md

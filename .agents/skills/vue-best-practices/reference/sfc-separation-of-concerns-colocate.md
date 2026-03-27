@@ -19,7 +19,7 @@ tags: [vue3, sfc, architecture, separation-of-concerns, maintainability]
 
 **Not Recommended:**
 
-```
+```text
 components/
 ├── UserCard.vue          # Just template
 ├── UserCard.js           # Logic

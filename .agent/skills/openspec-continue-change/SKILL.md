@@ -55,9 +55,11 @@ Continue working on a change by creating the next artifact.
    **If artifacts are ready to create** (status shows artifacts with `status: "ready"`):
    - Pick the FIRST artifact with `status: "ready"` from the status output
    - Get its instructions:
+
      ```bash
      openspec instructions <artifact-id> --change "<name>" --json
      ```
+
    - Parse the JSON. The key fields are:
      - `context`: Project background (constraints for you - do NOT include in output)
      - `rules`: Artifact-specific rules (constraints for you - do NOT include in output)
@@ -80,6 +82,7 @@ Continue working on a change by creating the next artifact.
    - Show status and suggest checking for issues
 
 4. **After creating an artifact, show progress**
+
    ```bash
    openspec status --change "<name>"
    ```

@@ -12,4 +12,5 @@ dependencies = ["openai-agents>=0.8.4"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool]
+[tool.mypy]
+ignore_missing_imports = true

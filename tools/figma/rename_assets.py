@@ -49,7 +49,7 @@ if __name__ == "__main__":
     with open(".planning/figma-design.json", "r") as f:
         figma_data = json.load(f)
 
-    id_to_name_map = {}
+    id_to_name_map: dict[str, str] = {}
     find_node_names(figma_data["document"], id_to_name_map)
 
     rename_assets(id_to_name_map, "apps/game/assets/figma")

@@ -1,6 +1,17 @@
 # Enhanced CloudFront Module
 # Optimized for maximum performance with edge caching
 
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # CloudFront Function for SPA routing (rewrite non-file paths to index.html)
 resource "aws_cloudfront_function" "request_rewrite" {
   count   = var.enable_spa_rewrite_function ? 1 : 0

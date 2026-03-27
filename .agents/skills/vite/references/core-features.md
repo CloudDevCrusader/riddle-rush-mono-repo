@@ -117,7 +117,7 @@ import.meta.env.SSR // true when running in server
 
 Only `VITE_` prefixed vars exposed to client:
 
-```
+```text
 # .env
 VITE_API_URL=https://api.example.com
 DB_PASSWORD=secret  # NOT exposed to client
@@ -130,7 +130,7 @@ console.log(import.meta.env.DB_PASSWORD) // undefined
 
 ### Mode-specific Files
 
-```
+```text
 .env                # always loaded
 .env.local          # always loaded, gitignored
 .env.[mode]         # only in specified mode
