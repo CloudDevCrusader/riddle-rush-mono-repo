@@ -204,14 +204,14 @@ elif [[ $PLATFORM == "ios" ]]; then
 	cd "$PLATFORM_DIR/App"
 
 	if [[ $BUILD_TYPE == "debug" ]]; then
-		xcodebuild -workspace App.xcworkspace \
+		xcodebuild -project App.xcodeproj \
 			-scheme App \
 			-configuration Debug \
 			-destination 'generic/platform=iOS Simulator' \
 			-derivedDataPath build \
 			build
 	else
-		xcodebuild -workspace App.xcworkspace \
+		xcodebuild -project App.xcodeproj \
 			-scheme App \
 			-configuration Release \
 			-destination 'generic/platform=iOS' \
