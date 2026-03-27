@@ -364,12 +364,8 @@ export async function finishGame(page: Page): Promise<void> {
 }
 
 /**
- * Complete the interactive round-start wheel flow and reach `/game`.
- *
- * This helper intentionally does not depend on transient UI hints like
- * `.tap-hint`, which can disappear during animations or when overlapping
- * loading overlays are active.  Instead, it uses stable readiness signals:
- * route state (`/round-start` -> `/game`) and durable test IDs.
+ * Wait for the auto-spinning fortune wheel flow to complete and reach `/game`.
+ * Uses stable route signals and durable test IDs — no user interaction required.
  */
 export async function completeFortuneWheel(page: Page): Promise<void> {
   if (/\/game/.test(page.url())) {
@@ -400,26 +396,9 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
     return
   }
 
-  let tapAttempts = 0
-
-  while (/\/round-start/.test(page.url()) && tapAttempts < 10) {
-    if (await loadingState.isVisible().catch(() => false)) {
-      break
-    }
-
-    if (await resultsDisplay.isVisible().catch(() => false)) {
-      break
-    }
-
-    if (await wheelsContainer.isVisible().catch(() => false)) {
-      await wheelsContainer.click({ force: true })
-      tapAttempts++
-    }
-
-    // Allow spin/phase transitions to settle before deciding next action.
-    await page.waitForTimeout(700)
-  }
-
+  // Wheels auto-spin on mount — wait for the flow to complete and transition to /game.
+  // Auto-spin sequence: category wheel (800ms delay + ~4s spin + 1.5s pause) →
+  // letter wheel (500ms delay + ~4s spin) → navigate to /game (~11s total).
   try {
     await expect.poll(() => /\/game/.test(page.url()), { timeout: 35000 }).toBe(true)
   } catch {
