@@ -104,13 +104,8 @@ jobs:
         run: |
           echo "Running quality checks..."
 
-          SYNCPACK_PASSED="false"
-          TYPECHECK_PASSED="false"
-          LINT_PASSED="false"
-
           # Dependency version check
           if pnpm run syncpack:check; then
-            SYNCPACK_PASSED="true"
             echo "syncpack-passed=true" >> $GITHUB_OUTPUT
           else
             echo "syncpack-passed=false" >> $GITHUB_OUTPUT
@@ -118,18 +113,18 @@ jobs:
 
           # TypeScript typecheck
           if pnpm run typecheck; then
-            TYPECHECK_PASSED="true"
             echo "typecheck-passed=true" >> $GITHUB_OUTPUT
           else
             echo "typecheck-passed=false" >> $GITHUB_OUTPUT
+            echo "::error::TypeScript typecheck failed"
           fi
 
-          # ESLint
+          # ESLint (full project — catches pre-existing issues too)
           if pnpm run lint; then
-            LINT_PASSED="true"
             echo "lint-passed=true" >> $GITHUB_OUTPUT
           else
             echo "lint-passed=false" >> $GITHUB_OUTPUT
+            echo "::error::ESLint check failed"
           fi
 
           # Code formatting check
@@ -137,16 +132,17 @@ jobs:
             echo "format-passed=true" >> $GITHUB_OUTPUT
           else
             echo "format-passed=false" >> $GITHUB_OUTPUT
+            echo "::error::Code formatting check failed"
           fi
 
-          # Set overall status
-          if [[ "$SYNCPACK_PASSED" == "true" && \
-                "$TYPECHECK_PASSED" == "true" && \
-                "$LINT_PASSED" == "true" ]]; then
-            echo "tests-passed=true" >> $GITHUB_OUTPUT
-          else
-            echo "tests-passed=false" >> $GITHUB_OUTPUT
+          # Fail the step if any check failed (blocks downstream jobs)
+          if [[ "${{ steps.check.outputs.typecheck-passed }}" == "false" || \
+                "${{ steps.check.outputs.lint-passed }}" == "false" ]]; then
+            echo "::error::Quality checks failed — blocking pipeline"
+            exit 1
           fi
+
+          echo "tests-passed=true" >> $GITHUB_OUTPUT
 
       - name: Upload quality check results
         if: always()
