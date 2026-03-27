@@ -19,7 +19,7 @@ export default createConfigForNuxt({
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
       'no-var': 'error',
-      'eqeqeq': ['error', 'always', { null: 'ignore' }],
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
       '@stylistic/semi': ['error', 'never'],
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
@@ -45,5 +45,6 @@ export default createConfigForNuxt({
       '*.min.js',
       'scripts/',
       '.claude/',
+      'android/',
     ],
   })

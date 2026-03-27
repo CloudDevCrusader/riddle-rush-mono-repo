@@ -1,7 +1,7 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.5.0",
+  "version": "1.4.1",
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.81",
     "@changesets/cli": "^2.30.0",
@@ -17,6 +17,11 @@
     "knip": "^5.88.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
+    "stylelint": "^17.6.0",
+    "stylelint-config-prettier-scss": "^1.0.0",
+    "stylelint-config-recommended-vue": "^1.6.1",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-config-standard-scss": "^17.0.0",
     "syncpack": "^14.2.1",
     "turbo": "^2.8.20",
     "typescript": "^5.9.3",
@@ -29,9 +34,16 @@
   "packageManager": "pnpm@10.33.0",
   "private": true,
   "scripts": {
-    "android:open": "cd apps/game && pnpm android:open",
-    "android:run": "cd apps/game && pnpm android:run",
-    "android:sync": "cd apps/game && pnpm android:sync",
+    "android:build": "./scripts/mobile-build.sh android",
+    "android:build:release": "./scripts/mobile-build.sh android release",
+    "android:open": "cd apps/mobile && pnpm android:open",
+    "android:run": "./scripts/mobile-run.sh android",
+    "android:sync": "cd apps/game && pnpm generate && cd ../mobile && pnpm android:sync",
+    "ios:build": "./scripts/mobile-build.sh ios",
+    "ios:build:release": "./scripts/mobile-build.sh ios release",
+    "ios:open": "cd apps/mobile && pnpm ios:open",
+    "ios:run": "./scripts/mobile-run.sh ios",
+    "ios:sync": "cd apps/game && pnpm generate && cd ../mobile && pnpm ios:sync",
     "build": "turbo run build --filter=@riddle-rush/game",
     "build:all": "turbo run build",
     "changeset": "changeset",
@@ -108,13 +120,14 @@
     "python:check": "pnpm run python:lint",
     "trunk:eslint": "bash scripts/trunk-eslint.sh",
     "trunk:prettier": "bash scripts/trunk-prettier.sh",
-    "trunk:check": "./.trunk-cache/cli/1.25.0-linux-x86_64/trunk check --all",
-    "trunk:fmt": "./.trunk-cache/cli/1.25.0-linux-x86_64/trunk fmt --all",
+    "trunk:check": "trunk check --all",
+    "trunk:fmt": "trunk fmt --all",
     "ai:status": "python tools/ai-agents/agent-tools.py",
     "ai:agents": "cd tools/python && python main.py",
     "ai:tools": "python tools/ai-agents/agent-tools.py",
     "ai:zhelper": "npx @z_ai/coding-helper",
-    "ai:just-every": "npx -y @just-every/code"
+    "ai:just-every": "npx -y @just-every/code",
+    "ai:update:gsd": "npx get-shit-done-cc@latest"
   },
   "type": "module",
   "bin": {
@@ -184,7 +197,6 @@
       "serialize-javascript@<=7.0.2": "^7.0.3"
     },
     "onlyBuiltDependencies": [
-      "@nativescript/core",
       "better-sqlite3",
       "core-js-pure",
       "electron",

@@ -9,7 +9,7 @@ Nuxt automatically imports Vue components from `app/components/` directory.
 
 ## Basic Auto-imports
 
-```
+```text
 components/
 ├── Button.vue         → <Button />
 ├── Card.vue           → <Card />
@@ -32,7 +32,7 @@ components/
 
 Component names include directory path:
 
-```
+```text
 components/
 ├── base/
 │   └── Button.vue       → <BaseButton />
@@ -60,7 +60,7 @@ export default defineNuxtConfig({
 
 With `pathPrefix: false`:
 
-```
+```text
 components/base/Button.vue → <Button />
 ```
 
@@ -186,7 +186,7 @@ function onChartReady() {
 
 ### Client-only (`.client.vue`)
 
-```
+```text
 components/
 └── BrowserChart.client.vue
 ```
@@ -200,7 +200,7 @@ components/
 
 ### Server-only (`.server.vue`)
 
-```
+```text
 components/
 └── ServerMarkdown.server.vue
 ```
@@ -225,7 +225,7 @@ export default defineNuxtConfig({
 
 ### Paired Components
 
-```
+```text
 components/
 ├── Comments.client.vue  # Browser version
 └── Comments.server.vue  # SSR version
@@ -287,7 +287,7 @@ export default defineNuxtConfig({
 
 Or use `.global.vue` suffix:
 
-```
+```text
 components/
 └── Icon.global.vue  → Available globally
 ```

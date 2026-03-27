@@ -56,7 +56,7 @@ Depending on what the user brings, you might:
 
 **Visualize**
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │     Use ASCII diagrams liberally        │
 ├─────────────────────────────────────────┤

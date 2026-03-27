@@ -178,6 +178,6 @@ Presenter notes go here
 
 ## Resources
 
-- Documentation: https://sli.dev
-- Theme Gallery: https://sli.dev/resources/theme-gallery
-- Showcases: https://sli.dev/resources/showcases
+- Documentation: <https://sli.dev>
+- Theme Gallery: <https://sli.dev/resources/theme-gallery>
+- Showcases: <https://sli.dev/resources/showcases>

@@ -185,7 +185,7 @@ const { user, login, logout } = useAuth()
 
 For larger applications, organize keys by domain:
 
-```
+```text
 src/
 ├── injection-keys/
 │   ├── index.ts        # Re-exports all keys

@@ -1,12 +1,7 @@
 {
   "name": "@riddle-rush/game",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "dependencies": {
-    "@capacitor/app": "^8.0.1",
-    "@capacitor/core": "^8.2.0",
-    "@capacitor/haptics": "^8.0.1",
-    "@capacitor/keyboard": "^8.0.1",
-    "@capacitor/status-bar": "^8.0.1",
     "@intlify/core-base": "^11.3.0",
     "@nuxt/hints": "^1.0.2",
     "@nuxtjs/i18n": "^10.2.4",
@@ -33,7 +28,6 @@
     "vue-router": "^5.0.4"
   },
   "devDependencies": {
-    "@capacitor/android": "^8.2.0",
     "@faker-js/faker": "^10.4.0",
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/image": "^2.0.0",
@@ -80,14 +74,8 @@
   "packageManager": "pnpm@10.30.3",
   "private": true,
   "scripts": {
-    "android:build": "pnpm android:sync && npx cap copy android && npx cap sync android",
-    "android:open": "npx cap open android",
-    "android:run": "npx cap run android",
-    "android:sync": "pnpm build && npx cap sync android",
     "build": "npx nuxt build",
     "build:debug": "npx nuxt build --debug",
-    "capacitor:copy": "npx cap copy",
-    "capacitor:sync": "pnpm build && npx cap sync",
     "clean": "rm -rf .nuxt .output node_modules",
     "dev": "npx nuxt dev",
     "dev:debug": "npx nuxt dev --debug",

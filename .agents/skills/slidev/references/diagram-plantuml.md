@@ -19,7 +19,7 @@ Alice -> Bob : Hello!
 
 ## Server Configuration
 
-Default: Uses https://www.plantuml.com/plantuml
+Default: Uses <https://www.plantuml.com/plantuml>
 
 Custom server in headmatter:
 
@@ -41,5 +41,5 @@ plantUmlServer: https://your-server.com/plantuml
 
 ## Resources
 
-- PlantUML docs: https://plantuml.com/
-- Live editor: https://plantuml.com/plantuml
+- PlantUML docs: <https://plantuml.com/>
+- Live editor: <https://plantuml.com/plantuml>

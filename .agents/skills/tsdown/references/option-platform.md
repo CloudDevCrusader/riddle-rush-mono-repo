@@ -122,7 +122,7 @@ Different platforms check different `package.json` fields:
 
 When using `neutral`, packages without `exports` field may fail to resolve:
 
-```
+```text
 Help: The "main" field here was ignored. Main fields must be configured
 explicitly when using the "neutral" platform.
 ```
@@ -214,7 +214,7 @@ export default defineConfig([
 
 When using Node.js APIs in browser builds:
 
-```
+```text
 Warning: Module "fs" has been externalized for browser compatibility
 ```
 

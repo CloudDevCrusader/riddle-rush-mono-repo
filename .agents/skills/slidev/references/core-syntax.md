@@ -71,11 +71,12 @@ These are presenter notes.
 
 Standard Markdown with Shiki highlighting:
 
-````md
+```````md
 ```ts
 const hello = 'world'
 ```
-````
+
+``````text
 
 With features:
 
@@ -85,10 +86,14 @@ With features:
 ```ts {monaco}           // Monaco editor
 ```ts {monaco-run}       // Runnable code
 ```ts twoslash           // TypeScript types
-````
-`````
+``````
+```````
 
-`````
+```````
+
+```text
+
+```
 
 ## LaTeX Math
 
@@ -106,12 +111,13 @@ $$
 
 Mermaid:
 
-````md
+``````md
 ```mermaid
 graph LR
   A --> B --> C
 ```
-`````
+
+`````text
 
 PlantUML:
 
@@ -121,7 +127,7 @@ PlantUML:
 Alice -> Bob : Hello
 @enduml
 ```
-````
+````text
 
 ## MDC Syntax
 
@@ -160,3 +166,5 @@ Import specific slides:
 src: ./other.md#2,5-7
 ---
 ```
+`````
+```````

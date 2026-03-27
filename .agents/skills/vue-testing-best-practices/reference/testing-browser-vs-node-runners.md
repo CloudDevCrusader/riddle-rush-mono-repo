@@ -199,7 +199,7 @@ export default defineConfig({
 
 ### Directory Structure
 
-```
+```text
 tests/
 ├── unit/              # Fast node-based tests
 │   ├── Button.test.js

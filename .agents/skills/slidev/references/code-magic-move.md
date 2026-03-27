@@ -56,4 +56,4 @@ const add = () => (count += 1)
 
 ## Resources
 
-- Playground: https://shiki-magic-move.netlify.app/
+- Playground: <https://shiki-magic-move.netlify.app/>

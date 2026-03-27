@@ -162,7 +162,7 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
 
 Example 1: Only one implemented
 
-```
+```text
 Conflict: specs/auth/spec.md touched by [add-oauth, add-jwt]
 
 Checking add-oauth:
@@ -178,7 +178,7 @@ Resolution: Only add-oauth is implemented. Will sync add-oauth specs only.
 
 Example 2: Both implemented
 
-```
+```text
 Conflict: specs/api/spec.md touched by [add-rest-api, add-graphql]
 
 Checking add-rest-api (created 2026-01-10):
@@ -195,7 +195,7 @@ then add-graphql specs (chronological order, newer takes precedence).
 
 **Output On Success**
 
-```
+```text
 ## Bulk Archive Complete
 
 Archived N changes:
@@ -209,7 +209,7 @@ Spec sync summary:
 
 **Output On Partial Success**
 
-```
+```text
 ## Bulk Archive Complete (partial)
 
 Archived N changes:
@@ -224,7 +224,7 @@ Failed K changes:
 
 **Output When No Changes**
 
-```
+```text
 ## No Changes to Archive
 
 No active changes found. Use `/opsx:new` to create a new change.

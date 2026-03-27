@@ -98,7 +98,7 @@ const onSuspenseResolve = () => {
 
 ## Event Sequence
 
-```
+```text
 Initial Load:
 1. @pending - Suspense enters pending state
 2. @fallback - Fallback content is displayed (may not fire if resolved quickly)

@@ -1,4 +1,4 @@
-from crewai.tools import BaseTool
+from crewai.tools import BaseTool  # type: ignore
 
 
 class CrewAiTool(BaseTool):

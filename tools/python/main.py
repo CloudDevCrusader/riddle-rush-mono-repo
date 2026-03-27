@@ -13,6 +13,7 @@ This FastMCP server provides specialized subagents for:
 import json
 import subprocess
 from pathlib import Path
+from typing import Any
 
 from fastmcp import FastMCP
 
@@ -324,7 +325,11 @@ def aws_deploy_check(environment: str = "development") -> str:
     """
     try:
         result = subprocess.run(
-            ["bash", "-c", f"cd {PROJECT_ROOT} && ./scripts/terraform-plan.sh {environment}"],
+            [
+                "bash",
+                "-c",
+                f"cd {PROJECT_ROOT} && ./scripts/terraform-plan.sh {environment}",
+            ],
             capture_output=True,
             text=True,
             timeout=60,
@@ -457,7 +462,7 @@ def terraform_status() -> dict:
         Dictionary with status for each environment
     """
     environments = ["development", "staging", "production"]
-    status = {}
+    status: dict[str, Any] = {}
 
     for env in environments:
         try:
@@ -526,7 +531,10 @@ def run_quality_checks(fix: bool = False) -> str:
         cmd = "pnpm run agent:fix" if fix else "pnpm run workspace:check"
 
         result = subprocess.run(
-            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"], capture_output=True, text=True, timeout=180
+            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"],
+            capture_output=True,
+            text=True,
+            timeout=180,
         )
 
         return f"Quality Checks:\n\n{result.stdout}\n\nErrors (if any):\n{result.stderr}"
@@ -562,7 +570,10 @@ def run_tests(test_type: str = "unit", coverage: bool = False) -> str:
         cmd = cmd_map.get(test_type, "pnpm run test:unit")
 
         result = subprocess.run(
-            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"], capture_output=True, text=True, timeout=300
+            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"],
+            capture_output=True,
+            text=True,
+            timeout=300,
         )
 
         return f"Test Results ({test_type}):\n\n{result.stdout}\n\nErrors (if any):\n{result.stderr}"
@@ -587,7 +598,10 @@ def test_deployed_site(environment: str = "production") -> str:
         cmd = f"pnpm run test:e2e:{environment}"
 
         result = subprocess.run(
-            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"], capture_output=True, text=True, timeout=600
+            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"],
+            capture_output=True,
+            text=True,
+            timeout=600,
         )
 
         return f"E2E Tests ({environment}):\n\n{result.stdout}\n\nErrors (if any):\n{result.stderr}"
@@ -601,7 +615,7 @@ def test_deployed_site(environment: str = "production") -> str:
 
 
 @mcp.tool()
-def get_project_status() -> dict:
+def get_project_status() -> dict[str, Any]:
     """
     Get comprehensive project status including git, dependencies, and build state.
 
@@ -609,17 +623,25 @@ def get_project_status() -> dict:
         Dictionary with project status information
     """
     try:
-        status = {}
+        status: dict[str, Any] = {}
 
         # Git status
         git_result = subprocess.run(
-            ["git", "status", "--short"], capture_output=True, text=True, timeout=10, cwd=PROJECT_ROOT
+            ["git", "status", "--short"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=PROJECT_ROOT,
         )
         status["git_status"] = git_result.stdout.strip()
 
         # Current branch
         branch_result = subprocess.run(
-            ["git", "branch", "--show-current"], capture_output=True, text=True, timeout=10, cwd=PROJECT_ROOT
+            ["git", "branch", "--show-current"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=PROJECT_ROOT,
         )
         status["current_branch"] = branch_result.stdout.strip()
 
@@ -652,7 +674,10 @@ def run_build(app: str = "game") -> str:
         cmd = "pnpm run build" if app == "all" else f"pnpm --filter @riddle-rush/{app} run build"
 
         result = subprocess.run(
-            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"], capture_output=True, text=True, timeout=300
+            ["bash", "-c", f"cd {PROJECT_ROOT} && {cmd}"],
+            capture_output=True,
+            text=True,
+            timeout=300,
         )
 
         return f"Build Output ({app}):\n\n{result.stdout}\n\nErrors (if any):\n{result.stderr}"

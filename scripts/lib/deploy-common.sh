@@ -634,4 +634,13 @@ post_deployment() {
 	development) log "SUCCESS" "URL: https://dev.riddlerush.de" ;;
 	staging) log "SUCCESS" "URL: https://staging.riddlerush.de" ;;
 	esac
+
+	# Clean up .output directory to prevent syncpack issues
+	# The build output can contain package.json files that interfere with syncpack checks
+	local output_dir="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}/apps/game/.output"
+	if [[ -d "${output_dir}" ]]; then
+		log "INFO" "Cleaning up build output: apps/game/.output/"
+		rm -rf "${output_dir}"
+		log "SUCCESS" "Build output cleaned up"
+	fi
 }
