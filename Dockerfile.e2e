@@ -17,7 +17,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Build the game
-RUN cd apps/game && pnpm build
+RUN pnpm --filter @riddle-rush/game build
 
 # Set environment
 ENV NODE_ENV=test

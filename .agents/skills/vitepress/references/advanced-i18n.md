@@ -11,7 +11,7 @@ VitePress supports multi-language sites through locale configuration.
 
 Organize content by locale:
 
-```
+```text
 docs/
 ├─ en/
 │  ├─ guide.md
@@ -26,7 +26,7 @@ docs/
 
 Or with root as default language:
 
-```
+```text
 docs/
 ├─ guide.md        # English (root)
 ├─ index.md
@@ -182,7 +182,7 @@ themeConfig: {
 
 For fully separated locales without root fallback:
 
-```
+```text
 docs/
 ├─ en/
 │  └─ index.md
@@ -194,7 +194,7 @@ docs/
 
 Requires server redirect for `/` → `/en/`. Netlify example:
 
-```
+```text
 /* /en/:splat 302 Language=en
 /* /zh/:splat 302 Language=zh
 /* /en/:splat 302
@@ -259,7 +259,7 @@ export default {
 
 Split config into separate files:
 
-```
+```text
 .vitepress/
 ├─ config/
 │  ├─ index.ts      # Main config, merges locales

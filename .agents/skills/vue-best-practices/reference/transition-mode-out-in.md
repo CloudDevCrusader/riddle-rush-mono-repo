@@ -81,7 +81,7 @@ No overlap, no layout issues
 
 ### No Mode (Default)
 
-```
+```text
 Time:     |----- leave animation -----|
           |----- enter animation -----|
 
@@ -90,7 +90,7 @@ Elements are animated simultaneously (parallel)
 
 ### mode="out-in" (Recommended for most cases)
 
-```
+```text
 Time:     |----- leave animation -----|
                                       |----- enter animation -----|
 
@@ -99,7 +99,7 @@ Old element leaves first, then new element enters (sequential)
 
 ### mode="in-out" (Rare use case)
 
-```
+```text
 Time:                                 |----- leave animation -----|
           |----- enter animation -----|
 

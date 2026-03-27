@@ -15,7 +15,7 @@ pnpm uses a content-addressable store to save disk space and speed up installati
 
 ### Storage Layout
 
-```
+```text
 ~/.pnpm-store/              # Global store (default location)
 └── v3/
     └── files/

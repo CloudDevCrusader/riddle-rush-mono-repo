@@ -183,7 +183,7 @@ server {
 
 For hashed assets (immutable):
 
-```
+```text
 Cache-Control: max-age=31536000, immutable
 ```
 
@@ -191,7 +191,7 @@ Cache-Control: max-age=31536000, immutable
 
 Place in `docs/public/_headers`:
 
-```
+```text
 /assets/*
   cache-control: max-age=31536000
   cache-control: immutable

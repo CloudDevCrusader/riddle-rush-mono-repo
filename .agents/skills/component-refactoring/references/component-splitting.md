@@ -336,7 +336,7 @@ const OperationsList = () => {
 
 For components with 2-3 sub-components:
 
-```
+```text
 component-name/
   ├── index.tsx           # Main component
   ├── sub-component-a.tsx
@@ -348,7 +348,7 @@ component-name/
 
 For components with many sub-components:
 
-```
+```text
 component-name/
   ├── index.tsx           # Main orchestration
   ├── types.ts            # Shared types
@@ -370,7 +370,7 @@ component-name/
 
 Following Dify's existing patterns:
 
-```
+```text
 configuration/
   ├── index.tsx           # Main page component
   ├── base/               # Base/shared components

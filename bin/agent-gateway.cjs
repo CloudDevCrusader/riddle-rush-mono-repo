@@ -7,14 +7,17 @@ const os = require('node:os')
 const path = require('node:path')
 const { spawn } = require('node:child_process')
 
-const session = (
-  process.env.OPENCODE_BROWSER_AGENT_SESSION
-  || process.env.AGENT_BROWSER_SESSION
-  || 'default'
-).trim()
-const socketPath
-  = process.env.OPENCODE_BROWSER_AGENT_SOCKET
-    || path.join(os.tmpdir(), `agent-browser-${session}.sock`)
+const session = [
+  process.env.OPENCODE_BROWSER_AGENT_SESSION,
+  process.env.AGENT_BROWSER_SESSION,
+  'default',
+]
+  .find(Boolean)
+  .trim()
+
+const socketPath =
+  process.env.OPENCODE_BROWSER_AGENT_SOCKET ||
+  path.join(os.tmpdir(), `agent-browser-${session}.sock`)
 
 function getPortForSession(name) {
   let hash = 0
@@ -25,14 +28,14 @@ function getPortForSession(name) {
   return 49152 + (Math.abs(hash) % 16383)
 }
 
-const host
-  = process.env.OPENCODE_BROWSER_AGENT_GATEWAY_HOST
-    || process.env.OPENCODE_BROWSER_AGENT_HOST
-    || '0.0.0.0'
-const port
-  = Number(
-    process.env.OPENCODE_BROWSER_AGENT_GATEWAY_PORT || process.env.OPENCODE_BROWSER_AGENT_PORT,
-  ) || getPortForSession(session)
+const host =
+  process.env.OPENCODE_BROWSER_AGENT_GATEWAY_HOST ||
+  process.env.OPENCODE_BROWSER_AGENT_HOST ||
+  '0.0.0.0'
+
+const portEnv =
+  process.env.OPENCODE_BROWSER_AGENT_GATEWAY_PORT || process.env.OPENCODE_BROWSER_AGENT_PORT
+const port = Number(portEnv) || getPortForSession(session)
 
 function resolveDaemonPath() {
   const override = process.env.OPENCODE_BROWSER_AGENT_DAEMON
@@ -73,14 +76,14 @@ function startDaemon() {
 }
 
 async function sleep(ms) {
-  return await new Promise(resolve => setTimeout(resolve, ms))
+  return await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 async function connectAgentSocket() {
   return await new Promise((resolve, reject) => {
     const socket = net.createConnection(socketPath)
     socket.once('connect', () => resolve(socket))
-    socket.once('error', err => reject(err))
+    socket.once('error', (err) => reject(err))
   })
 }
 
@@ -93,7 +96,9 @@ async function createAgentConnection() {
       await sleep(100)
       try {
         return await connectAgentSocket()
-      } catch { /* retry silently */ }
+      } catch {
+        /* retry silently */
+      }
     }
     throw new Error(`Could not connect to agent-browser socket at ${socketPath}`)
   }
@@ -115,10 +120,14 @@ const server = net.createServer(async (client) => {
   const close = () => {
     try {
       client.destroy()
-    } catch { /* socket already destroyed */ }
+    } catch {
+      /* socket already destroyed */
+    }
     try {
       upstream.destroy()
-    } catch { /* socket already destroyed */ }
+    } catch {
+      /* socket already destroyed */
+    }
   }
 
   client.on('error', close)

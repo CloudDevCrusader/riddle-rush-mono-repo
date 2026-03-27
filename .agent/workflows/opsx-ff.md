@@ -44,9 +44,11 @@ Fast-forward through artifact creation - generate everything needed to start imp
 
    a. **For each artifact that is `ready` (dependencies satisfied)**:
    - Get instructions:
+
      ```bash
      openspec instructions <artifact-id> --change "<name>" --json
      ```
+
    - The instructions JSON includes:
      - `context`: Project background (constraints for you - do NOT include in output)
      - `rules`: Artifact-specific rules (constraints for you - do NOT include in output)
@@ -69,6 +71,7 @@ Fast-forward through artifact creation - generate everything needed to start imp
    - Then continue with creation
 
 5. **Show final status**
+
    ```bash
    openspec status --change "<name>"
    ```

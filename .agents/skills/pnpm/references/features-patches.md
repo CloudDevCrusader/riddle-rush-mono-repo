@@ -20,7 +20,7 @@ pnpm patch express@4.18.2
 
 This creates a temporary directory with the package source and outputs the path:
 
-```
+```text
 You can now edit the following folder: /tmp/abc123...
 ```
 
@@ -44,7 +44,7 @@ pnpm patch-commit /tmp/abc123...
 
 This creates a `.patch` file in `patches/` and updates `package.json`:
 
-```
+```text
 patches/
 └── express@4.18.2.patch
 ```
@@ -177,7 +177,7 @@ All workspace packages using `express@4.18.2` will have the patch applied.
 
 ### Patch fails to apply
 
-```
+```text
 ERR_PNPM_PATCH_FAILED  Cannot apply patch
 ```
 

@@ -23,14 +23,14 @@
       0 3px 0 color-mix(in srgb, $base-color 70%, black),
       0 4px 0 color-mix(in srgb, $base-color 50%, black),
       0 5px 0 $shadow-color,
-      0 8px 12px rgba(0, 0, 0, 0.3);
+      0 8px 12px rgb(0 0 0 / 0.3);
   } @else {
     text-shadow:
       0 2px 0 color-mix(in srgb, $base-color 90%, black),
       0 3px 0 color-mix(in srgb, $base-color 70%, black),
       0 4px 0 color-mix(in srgb, $base-color 50%, black),
       0 5px 0 $shadow-color,
-      0 8px 12px rgba(0, 0, 0, 0.3);
+      0 8px 12px rgb(0 0 0 / 0.3);
   }
 }
 

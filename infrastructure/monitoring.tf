@@ -1,4 +1,16 @@
 # CloudWatch Alarms for CloudFront Monitoring
+
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_errors" {
   alarm_name          = "${var.project_name}-cloudfront-5xx-errors"
   comparison_operator = "GreaterThanThreshold"

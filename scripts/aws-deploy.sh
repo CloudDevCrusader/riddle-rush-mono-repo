@@ -411,4 +411,12 @@ cat >deployment-info.json <<EOF
 }
 EOF
 
+# Clean up .output directory to prevent syncpack issues
+# The build output can contain package.json files that interfere with syncpack checks
+if [[ -d "${BUILD_DIR%/public}" ]]; then
+	echo -e "\n${BLUE}🧹 Cleaning up build output: ${BUILD_DIR%/public}${NC}"
+	rm -rf "${BUILD_DIR%/public}"
+	echo -e "${GREEN}✓ Build output cleaned up${NC}"
+fi
+
 echo -e "\n${GREEN}✅ Done!${NC}"

@@ -42,5 +42,5 @@ Style like any HTML element:
 
 ## Browse Icons
 
-- https://icones.js.org/
-- https://icon-sets.iconify.design/
+- <https://icones.js.org/>
+- <https://icon-sets.iconify.design/>

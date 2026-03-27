@@ -40,5 +40,5 @@ C -->|Two| E[Result 2]
 
 ## Resources
 
-- Mermaid docs: https://mermaid.js.org/
-- Live editor: https://mermaid.live/
+- Mermaid docs: <https://mermaid.js.org/>
+- Live editor: <https://mermaid.live/>

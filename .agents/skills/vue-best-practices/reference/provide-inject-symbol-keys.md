@@ -145,7 +145,7 @@ console.log(theme.value.mode) // 'light' | 'dark'
 
 For larger applications, organize keys by feature:
 
-```
+```text
 src/
   injection-keys/
     index.ts          # Re-exports all keys

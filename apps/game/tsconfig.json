@@ -9,7 +9,6 @@
     "node_modules",
     ".output",
     "dist",
-    "capacitor.config.ts",
     "vitest.config.ts",
     ".nuxt/pwa-icons-plugin.ts",
     ".nuxt/**/pwa-icons-plugin.ts"

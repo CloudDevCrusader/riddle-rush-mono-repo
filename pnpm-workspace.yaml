@@ -15,7 +15,6 @@ ignoredBuiltDependencies:
   - unrs-resolver
 
 onlyBuiltDependencies:
-  - '@nativescript/core'
   - better-sqlite3
   - core-js-pure
   - esbuild
