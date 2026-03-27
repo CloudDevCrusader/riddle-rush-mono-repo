@@ -3,9 +3,10 @@ import type { CapacitorConfig } from '@capacitor/cli'
 const config: CapacitorConfig = {
   appId: 'com.riddlerush.game',
   appName: 'Riddle Rush',
-  webDir: '.output/public',
+  webDir: '../game/.output/public',
   server: {
     androidScheme: 'https',
+    iosScheme: 'https',
   },
   android: {
     buildOptions: {
@@ -16,6 +17,12 @@ const config: CapacitorConfig = {
     },
     allowMixedContent: false,
     captureInput: true,
+    webContentsDebuggingEnabled: process.env.NODE_ENV !== 'production',
+  },
+  ios: {
+    contentInset: 'automatic',
+    allowsLinkPreview: false,
+    scrollEnabled: false,
     webContentsDebuggingEnabled: process.env.NODE_ENV !== 'production',
   },
   plugins: {

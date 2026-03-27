@@ -1,0 +1,30 @@
+{
+  "name": "@riddle-rush/mobile",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@capacitor/app": "^8.0.1",
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/haptics": "^8.0.1",
+    "@capacitor/keyboard": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/ios": "^8.2.0"
+  },
+  "scripts": {
+    "android:sync": "npx cap sync android",
+    "android:build": "npx cap copy android",
+    "android:open": "npx cap open android",
+    "android:run": "npx cap run android",
+    "ios:sync": "npx cap sync ios",
+    "ios:build": "npx cap copy ios",
+    "ios:open": "npx cap open ios",
+    "ios:run": "npx cap run ios",
+    "capacitor:sync": "npx cap sync",
+    "capacitor:copy": "npx cap copy"
+  }
+}
