@@ -16,6 +16,7 @@
           selected: selectedItem && getItemKey(selectedItem as T, -1) === getItemKey(item, index),
         }"
         :style="getSegmentStyle(index)"
+        :aria-label="`Select ${getItemLabel(item)}`"
         @click="selectItem(item, index)"
       >
         <div class="segment-content">
@@ -50,6 +51,17 @@
     <!-- Sparkles -->
     <div class="sparkles-container" aria-hidden="true" :class="{ 'is-spinning': isSpinning }">
       <div v-for="i in 12" :key="`sparkle-${i}`" class="sparkle" :style="getSparkleStyle(i)" />
+    </div>
+
+    <!-- Screen Reader Announcement -->
+    <div class="sr-only" aria-live="polite">
+      {{
+        isSpinning
+          ? 'Wheel is spinning...'
+          : selectedItem
+            ? `Selected: ${getItemLabel(selectedItem as T)}`
+            : 'Wheel ready to spin'
+      }}
     </div>
   </div>
 </template>
@@ -251,41 +263,72 @@ watch(
 /* Wheel Container */
 .wheel-container {
   position: relative;
-  width: min(85vw, 85vh, 420px);
-  height: min(85vw, 85vh, 420px);
+  width: clamp(280px, 70vmin, 420px);
+  height: clamp(280px, 70vmin, 420px);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  /* Enhanced with design system utilities for better visual hierarchy */
+  filter: drop-shadow(var(--shadow-lg));
+  transition: filter var(--transition-duration-normal) var(--transition-base);
 }
 
 /* Wheel Pointer */
 .wheel-pointer {
   position: absolute;
-  top: -25px;
+  top: -6vmin;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
 }
 
 .pointer-arrow {
+  font-size: clamp(24px, 6vmin, 48px);
   width: 0;
   height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 35px solid var(--color-border-gold);
+  border-left: 0.6em solid transparent;
+  border-right: 0.6em solid transparent;
+  border-top: 1em solid var(--color-border-gold);
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  filter: drop-shadow(var(--shadow-lg)) drop-shadow(0 0 20px var(--color-border-gold));
-  animation: pulse var(--transition-base) ease-in-out infinite;
+  /* Enhanced with sophisticated lighting effects using design system */
+  filter: drop-shadow(var(--shadow-lg)) drop-shadow(0 0 20px var(--color-border-gold))
+    drop-shadow(0 0 40px rgba(255, 215, 0, 0.4));
+  /* Enhanced animation with design system timing */
+  animation: pointerPulse 2s ease-in-out infinite;
+  /* Add subtle metallic gradient */
+  position: relative;
 }
 
-@keyframes pulse {
+.pointer-arrow::before {
+  content: '';
+  position: absolute;
+  top: -0.05em;
+  left: -0.05em;
+  right: -0.05em;
+  bottom: -0.05em;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.6),
+    var(--color-border-gold),
+    rgba(255, 215, 0, 0.8)
+  );
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+@keyframes pointerPulse {
   0%,
   100% {
     transform: scale(1) translateY(0);
+    filter: drop-shadow(var(--shadow-lg)) drop-shadow(0 0 20px var(--color-border-gold))
+      drop-shadow(0 0 40px rgba(255, 215, 0, 0.4));
   }
   50% {
     transform: scale(1.1) translateY(4px);
+    filter: drop-shadow(var(--shadow-lg)) drop-shadow(0 0 30px var(--color-border-gold))
+      drop-shadow(0 0 60px rgba(255, 215, 0, 0.6));
   }
 }
 
@@ -302,7 +345,7 @@ watch(
   contain: layout paint style;
   backface-visibility: hidden;
   transform: translateZ(0);
-  /* Enhanced game show outer ring with sophisticated lighting effects */
+  /* Enhanced game show outer ring with sophisticated lighting effects using design system */
   box-shadow:
     /* Outer ring - enhanced with multiple lighting layers */
     0 0 0 4px var(--color-border-gold),
@@ -315,22 +358,47 @@ watch(
     /* Inner depth with enhanced lighting */ inset 0 0 80px rgba(255, 255, 255, 0.3),
     inset 0 0 120px rgba(255, 255, 255, 0.15),
     /* Subtle inner rim glow */ inset 0 0 2px rgba(255, 215, 0, 0.8);
-  /* Enhanced background with sophisticated gradient overlay */
+  /* Enhanced background with sophisticated gradient overlay using design system */
   background: 
-    /* Base gradient for depth */
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 60%),
+    /* Base gradient for depth with design system colors */
+    radial-gradient(circle at 30% 30%, var(--color-text-white) 0%, transparent 60%),
     /* Conic gradient for segment separation */
     conic-gradient(
         from 0deg at 50% 50%,
-        rgba(255, 255, 255, 0.2) 0deg,
-        rgba(255, 255, 255, 0.4) 90deg,
-        rgba(255, 255, 255, 0.2) 180deg,
-        rgba(255, 255, 255, 0.4) 270deg,
-        rgba(255, 255, 255, 0.2) 360deg
+        rgba(255, 255, 255, 0.1) 0deg,
+        rgba(255, 255, 255, 0.3) 45deg,
+        transparent 90deg,
+        rgba(255, 255, 255, 0.1) 135deg,
+        rgba(255, 255, 255, 0.3) 180deg,
+        transparent 225deg,
+        rgba(255, 255, 255, 0.1) 270deg,
+        rgba(255, 255, 255, 0.3) 315deg,
+        rgba(255, 255, 255, 0.1) 360deg
       ),
-    /* Base color with subtle pattern */
-    linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent 50%);
-
+    /* Sophisticated base gradient with design system colors */
+    linear-gradient(
+        135deg,
+        var(--color-secondary-light) 0%,
+        transparent 30%,
+        var(--color-primary-dark) 70%,
+        transparent 100%
+      ),
+    /* Subtle texture overlay */
+    linear-gradient(
+        45deg,
+        rgba(255, 215, 0, 0.05) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 215, 0, 0.05) 50%,
+        rgba(255, 215, 0, 0.05) 75%,
+        transparent 75%,
+        transparent
+      );
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    20px 20px;
   /* Add subtle animated texture overlay */
   position: relative;
 }
@@ -346,7 +414,7 @@ watch(
   border: none;
   cursor: pointer;
   transition: var(--transition-base);
-  will-change: transform, filter;
+  will-change: transform;
   backface-visibility: hidden;
   clip-path: polygon(
     50% 50%,
@@ -431,9 +499,6 @@ watch(
   box-shadow:
     inset 0 4px 12px rgba(255, 255, 255, 0.8),
     inset 0 -4px 12px rgba(0, 0, 0, 0.4),
-    0 0 35px var(--segment-color),
-    0 0 60px rgba(255, 255, 255, 0.4),
-    0 0 80px var(--segment-color),
     var(--shadow-lg);
   transform: scale(1.05);
   z-index: 3;
@@ -444,22 +509,12 @@ watch(
 @keyframes selectedPulse {
   0%,
   100% {
-    box-shadow:
-      inset 0 4px 12px rgba(255, 255, 255, 0.8),
-      inset 0 -4px 12px rgba(0, 0, 0, 0.4),
-      0 0 35px var(--segment-color),
-      0 0 60px rgba(255, 255, 255, 0.4),
-      0 0 80px var(--segment-color),
-      var(--shadow-lg);
+    filter: brightness(1.2) saturate(1.3) drop-shadow(0 0 15px var(--segment-color));
+    transform: scale(1.05);
   }
   50% {
-    box-shadow:
-      inset 0 4px 12px rgba(255, 255, 255, 0.8),
-      inset 0 -4px 12px rgba(0, 0, 0, 0.4),
-      0 0 45px var(--segment-color),
-      0 0 80px rgba(255, 255, 255, 0.6),
-      0 0 100px var(--segment-color),
-      var(--shadow-lg);
+    filter: brightness(1.4) saturate(1.5) drop-shadow(0 0 25px var(--segment-color));
+    transform: scale(1.05);
   }
 }
 
@@ -476,13 +531,13 @@ watch(
 }
 
 .segment-icon {
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(24px, 5vmin, 32px);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .segment-text {
   font-family: var(--font-display);
-  font-size: clamp(10px, 2vw, 14px);
+  font-size: clamp(10px, 2.5vmin, 14px);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-white);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -506,8 +561,8 @@ watch(
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(100px, 20vw, 140px);
-  height: clamp(100px, 20vw, 140px);
+  width: clamp(100px, 25vmin, 140px);
+  height: clamp(100px, 25vmin, 140px);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 215, 0, 0.6), transparent 70%);
   animation: glow 2s ease-in-out infinite;
@@ -527,8 +582,8 @@ watch(
 
 .center-circle {
   position: relative;
-  width: clamp(80px, 18vw, 120px);
-  height: clamp(80px, 18vw, 120px);
+  width: clamp(80px, 18vmin, 120px);
+  height: clamp(80px, 18vmin, 120px);
   border-radius: 50%;
   /* Enhanced 3D golden orb with layered radial gradients */
   background:
@@ -562,7 +617,7 @@ watch(
 
 .selected-icon,
 .center-icon {
-  font-size: clamp(32px, 7vw, 48px);
+  font-size: clamp(32px, 7vmin, 48px);
   animation: bounce 0.5s ease-out;
 }
 
@@ -622,34 +677,5 @@ watch(
     opacity: 0.2;
     transform: var(--transform-base) scale(0.8);
   }
-}
-
-/* Responsive - replaced with fluid units */
-.wheel-container {
-  width: clamp(280px, 70vmin, 420px);
-  height: clamp(280px, 70vmin, 420px);
-}
-
-.segment-icon {
-  font-size: clamp(18px, 4.5vw, 32px);
-}
-
-.segment-text {
-  font-size: clamp(8px, 2vw, 14px);
-  max-width: clamp(60px, 15vmin, 80px);
-}
-
-.center-circle {
-  width: clamp(60px, 15vmin, 120px);
-  height: clamp(60px, 15vmin, 120px);
-}
-
-.selected-icon,
-.center-icon {
-  font-size: clamp(24px, 6vw, 48px);
-}
-
-.pointer-arrow {
-  font-size: clamp(32px, 7vw, 60px);
 }
 </style>
