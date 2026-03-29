@@ -21,6 +21,9 @@ export function useFeatureFlags() {
       if (flagName === 'websocket') {
         return settingsStore.websocketEnabled
       }
+      if (flagName === 'input-field') {
+        return settingsStore.inputFieldEnabled
+      }
       return defaultValue
     }
 
@@ -80,10 +83,26 @@ export function useFeatureFlags() {
     return settingsStore.websocketEnabled
   })
 
+  /**
+   * Check if input field feature is enabled
+   * When disabled, players use verbal answers and a "Skip" button instead
+   */
+  const isInputFieldEnabled = computed(() => {
+    // First check GitLab Feature Flags — GitLab can turn OFF the input field
+    if (gitlabClient) {
+      if (!isEnabled('input-field', true)) return false
+    }
+
+    // Fallback to local settings
+    const settingsStore = useSettingsStore()
+    return settingsStore.inputFieldEnabled
+  })
+
   return {
     isEnabled,
     getVariant,
     isFortuneWheelEnabled,
     isWebSocketEnabled,
+    isInputFieldEnabled,
   }
 }

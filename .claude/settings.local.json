@@ -98,11 +98,14 @@
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_wait_for",
       "Bash(git stash:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Skill(gsd:quick)"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["playwright-test"],
+  "enabledMcpjsonServers": [
+    "playwright-test"
+  ],
   "enabledPlugins": {
     "voltagent-qa-sec@voltagent-subagents": true,
     "playwright-tools@claude-settings": true,
