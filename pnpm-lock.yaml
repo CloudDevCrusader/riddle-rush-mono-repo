@@ -420,8 +420,8 @@ importers:
         specifier: ^4.10.3
         version: 4.10.3
       '@oclif/plugin-help':
-        specifier: ^6.2.40
-        version: 6.2.40
+        specifier: ^6.2.41
+        version: 6.2.41
     devDependencies:
       '@eslint/json':
         specifier: ^1.0.1
@@ -823,8 +823,8 @@ packages:
     resolution: {integrity: sha512-x5ZXDcW/N4cxWl93CnbHs/u7qq4793jS2kNPWm+duPrXlrva+ml2ZGT7X9tuOBKzyIHf60zWCdIK7TUgMPAwXA==}
     engines: {node: '>=18.0.0'}
 
-  '@apideck/better-ajv-errors@0.3.6':
-    resolution: {integrity: sha512-P+ZygBLZtkp0qqOAJJVX4oX/sFo5JR3eBWwwuqHHhK0GIgQOKWrAfiAaWX0aArHkRWHMuggFEgAZNxVPwPZYaA==}
+  '@apideck/better-ajv-errors@0.3.7':
+    resolution: {integrity: sha512-TajUJwGWbDwkCx/CZi7tRE8PVB7simCvKJfHUsSdvps+aTM/PDPP4gkLmKnc+x3CE//y9i/nj74GqdL/hwk7Iw==}
     engines: {node: '>=10'}
     peerDependencies:
       ajv: '>=8'
@@ -3539,8 +3539,8 @@ packages:
     resolution: {integrity: sha512-0mD8vcrrX5uRsxzvI8tbWmSVGngvZA/Qo6O0ZGvLPAWEauSf5GFniwgirhY0SkszuHwu0S1J1ivj/jHmqtIDuA==}
     engines: {node: '>=18.0.0'}
 
-  '@oclif/plugin-help@6.2.40':
-    resolution: {integrity: sha512-sU/PMrz1LnnnNk4T3qvZU8dTUiSc0MZaL7woh2wfuNSXbCnxicJzx4kX1sYeY6eF0NmqFiYlpNEQJykBG0g1sA==}
+  '@oclif/plugin-help@6.2.41':
+    resolution: {integrity: sha512-oHqpm9a8NnLY9J5yIA+znchB2QCBqDUu5n7XINdZwfbhO6WOUZ2ANww6QN7crhvAKgpN5HK/ELN8Hy96kgLUuA==}
     engines: {node: '>=18.0.0'}
 
   '@oclif/plugin-not-found@3.2.74':
@@ -7264,6 +7264,7 @@ packages:
   '@xmldom/xmldom@0.8.11':
     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -15953,10 +15954,9 @@ snapshots:
     dependencies:
       nanoevents: 7.0.1
 
-  '@apideck/better-ajv-errors@0.3.6(ajv@8.18.0)':
+  '@apideck/better-ajv-errors@0.3.7(ajv@8.18.0)':
     dependencies:
       ajv: 8.18.0
-      json-schema: 0.4.0
       jsonpointer: 5.0.1
       leven: 3.1.0
 
@@ -19978,7 +19978,7 @@ snapshots:
       wordwrap: 1.0.0
       wrap-ansi: 7.0.0
 
-  '@oclif/plugin-help@6.2.40':
+  '@oclif/plugin-help@6.2.41':
     dependencies:
       '@oclif/core': 4.10.3
 
@@ -30186,7 +30186,7 @@ snapshots:
       '@inquirer/input': 2.3.0
       '@inquirer/select': 2.5.0
       '@oclif/core': 4.10.3
-      '@oclif/plugin-help': 6.2.40
+      '@oclif/plugin-help': 6.2.41
       '@oclif/plugin-not-found': 3.2.74(@types/node@25.5.0)
       '@oclif/plugin-warn-if-update-available': 3.1.55
       ansis: 3.17.0
@@ -34090,7 +34090,7 @@ snapshots:
 
   workbox-build@7.4.0(@types/babel__core@7.20.5):
     dependencies:
-      '@apideck/better-ajv-errors': 0.3.6(ajv@8.18.0)
+      '@apideck/better-ajv-errors': 0.3.7(ajv@8.18.0)
       '@babel/core': 7.29.0
       '@babel/preset-env': 7.29.2(@babel/core@7.29.0)
       '@babel/runtime': 7.29.2
