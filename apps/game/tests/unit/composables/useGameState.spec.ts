@@ -2,12 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 import { useGameState } from '../../../composables/useGameState'
 
-const computed = <T>(getter: () => T) => ({ value: getter() })
-const reactive = <T extends object>(obj: T): T => obj
-
-vi.stubGlobal('computed', computed)
-
-// --- Mock store state (reactive for computed tracking) ---
+// --- Mock store state (Vue reactive for computed tracking) ---
 
 const mockGameStoreState = reactive({
   currentCategory: null as string | null,

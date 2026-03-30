@@ -14,23 +14,38 @@ After a GSD update wipes and reinstalls files, this command merges user's previo
 Check for local patches directory:
 
 ```bash
-# Global install (path templated at install time)
-PATCHES_DIR=./.claude/gsd-local-patches
-# Local install fallback
+# Global install — detect runtime config directory
+if [ -d "$HOME/.config/opencode/gsd-local-patches" ]; then
+  PATCHES_DIR="$HOME/.config/opencode/gsd-local-patches"
+elif [ -d "$HOME/.opencode/gsd-local-patches" ]; then
+  PATCHES_DIR="$HOME/.opencode/gsd-local-patches"
+elif [ -d "$HOME/.gemini/gsd-local-patches" ]; then
+  PATCHES_DIR="$HOME/.gemini/gsd-local-patches"
+else
+  PATCHES_DIR="/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/gsd-local-patches"
+fi
+# Local install fallback — check all runtime directories
 if [ ! -d "$PATCHES_DIR" ]; then
-  PATCHES_DIR=./.claude/gsd-local-patches
+  for dir in .config/opencode .opencode .gemini .claude; do
+    if [ -d "./$dir/gsd-local-patches" ]; then
+      PATCHES_DIR="./$dir/gsd-local-patches"
+      break
+    fi
+  done
 fi
 ```
 
 Read `backup-meta.json` from the patches directory.
 
 **If no patches found:**
+
 ```
 No local patches found. Nothing to reapply.
 
 Local patches are automatically saved when you run /gsd:update
 after modifying any GSD workflow, command, or agent files.
 ```
+
 Exit.
 
 ## Step 2: Show patch summary
@@ -55,7 +70,6 @@ For each file in `backup-meta.json`:
 1. **Read the backed-up version** (user's modified copy from `gsd-local-patches/`)
 2. **Read the newly installed version** (current file after update)
 3. **Compare and merge:**
-
    - If the new file is identical to the backed-up file: skip (modification was incorporated upstream)
    - If the new file differs: identify the user's modifications and apply them to the new version
 
@@ -83,6 +97,7 @@ After reapplying, regenerate the file manifest so future updates correctly detec
 ## Step 5: Cleanup option
 
 Ask user:
+
 - "Keep patch backups for reference?" → preserve `gsd-local-patches/`
 - "Clean up patch backups?" → remove `gsd-local-patches/` directory
 
@@ -103,8 +118,9 @@ Ask user:
 </process>
 
 <success_criteria>
+
 - [ ] All backed-up patches processed
 - [ ] User modifications merged into new version
 - [ ] Conflicts resolved with user input
 - [ ] Status reported for each file
-</success_criteria>
+      </success_criteria>

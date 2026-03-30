@@ -34,6 +34,16 @@
             "command": "claudekit-hooks run file-guard"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/gsd-prompt-guard.js",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -90,6 +100,16 @@
             "command": "claudekit-hooks run check-unused-parameters"
           }
         ]
+      },
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/gsd-context-monitor.js",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "Stop": [
@@ -119,7 +139,6 @@
         ]
       }
     ],
-    "SubagentStop": [],
     "UserPromptSubmit": [
       {
         "matcher": "*",

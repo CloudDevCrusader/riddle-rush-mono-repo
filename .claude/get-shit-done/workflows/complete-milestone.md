@@ -24,6 +24,8 @@ When a milestone completes:
 4. Delete REQUIREMENTS.md (fresh one for next milestone)
 5. Perform full PROJECT.md evolution review
 6. Offer to create next milestone inline
+7. Archive UI artifacts (`*-UI-SPEC.md`, `*-UI-REVIEW.md`) alongside other phase documents
+8. Clean up `.planning/ui-reviews/` screenshot files (binary assets, never archived)
 
 **Context Efficiency:** Archives keep ROADMAP.md constant-size and REQUIREMENTS.md milestone-scoped.
 
@@ -40,10 +42,11 @@ When a milestone completes:
 **Use `roadmap analyze` for comprehensive readiness check:**
 
 ```bash
-ROADMAP=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs roadmap analyze)
+ROADMAP=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap analyze)
 ```
 
 This returns all phases with plan/summary counts and disk status. Use this to verify:
+
 - Which phases belong to this milestone?
 - All phases complete (all plans have summaries)? Check `disk_status === 'complete'` for each.
 - `progress_percent` should be 100%.
@@ -51,6 +54,7 @@ This returns all phases with plan/summary counts and disk status. Use this to ve
 **Requirements completion check (REQUIRED before presenting):**
 
 Parse REQUIREMENTS.md traceability table:
+
 - Count total v1 requirements vs checked-off (`[x]`) requirements
 - Identify any non-Complete rows in the traceability table
 
@@ -79,6 +83,7 @@ Requirements: {N}/{M} v1 requirements checked off
 ```
 
 MUST present 3 options:
+
 1. **Proceed anyway** — mark milestone complete with known gaps
 2. **Run audit first** — `/gsd:audit-milestone` to assess gap severity
 3. **Abort** — return to development
@@ -88,7 +93,7 @@ If user selects "Proceed anyway": note incomplete requirements in MILESTONES.md 
 <config-check>
 
 ```bash
-cat .planning/config.json 2>/dev/null
+cat .planning/config.json 2>/dev/null || true
 ```
 
 </config-check>
@@ -113,6 +118,7 @@ Ready to mark this milestone as shipped?
 ```
 
 Wait for confirmation.
+
 - "adjust scope": Ask which phases to include.
 - "wait": Stop, user returns when ready.
 
@@ -127,7 +133,7 @@ Calculate milestone statistics:
 ```bash
 git log --oneline --grep="feat(" | head -20
 git diff --stat FIRST_COMMIT..LAST_COMMIT | tail -1
-find . -name "*.swift" -o -name "*.ts" -o -name "*.py" | xargs wc -l 2>/dev/null
+find . -name "*.swift" -o -name "*.ts" -o -name "*.py" | xargs wc -l 2>/dev/null || true
 git log --format="%ai" FIRST_COMMIT | tail -1
 git log --format="%ai" LAST_COMMIT | head -1
 ```
@@ -154,7 +160,8 @@ Extract one-liners from SUMMARY.md files using summary-extract:
 ```bash
 # For each phase in milestone, extract one-liner
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
-  node ./.claude/get-shit-done/bin/gsd-tools.cjs summary-extract "$summary" --fields one_liner | jq -r '.one_liner'
+  [ -e "$summary" ] || continue
+  node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" summary-extract "$summary" --fields one_liner --pick one_liner
 done
 ```
 
@@ -232,7 +239,8 @@ Update PROJECT.md inline. Update "Last updated" footer:
 
 ```markdown
 ---
-*Last updated: [date] after v[X.Y] milestone*
+
+_Last updated: [date] after v[X.Y] milestone_
 ```
 
 **Example full evolution (v1.0 → v1.1 prep):**
@@ -367,10 +375,11 @@ Update `.planning/ROADMAP.md` — group completed milestone phases:
 **Delegate archival to gsd-tools:**
 
 ```bash
-ARCHIVE=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs milestone complete "v[X.Y]" --name "[Milestone Name]")
+ARCHIVE=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" milestone complete "v[X.Y]" --name "[Milestone Name]")
 ```
 
 The CLI handles:
+
 - Creating `.planning/milestones/` directory
 - Archiving ROADMAP.md to `milestones/v[X.Y]-ROADMAP.md`
 - Archiving REQUIREMENTS.md to `milestones/v[X.Y]-REQUIREMENTS.md` with archive header
@@ -387,16 +396,19 @@ Verify: `✅ Milestone archived to .planning/milestones/`
 AskUserQuestion(header="Archive Phases", question="Archive phase directories to milestones/?", options: "Yes — move to milestones/v[X.Y]-phases/" | "Skip — keep phases in place")
 
 If "Yes": move phase directories to the milestone archive:
+
 ```bash
 mkdir -p .planning/milestones/v[X.Y]-phases
 # For each phase directory in .planning/phases/:
 mv .planning/phases/{phase-dir} .planning/milestones/v[X.Y]-phases/
 ```
+
 Verify: `✅ Phase directories archived to .planning/milestones/v[X.Y]-phases/`
 
 If "Skip": Phase directories remain in `.planning/phases/` as raw execution history. Use `/gsd:cleanup` later to archive retroactively.
 
 After archival, the AI still handles:
+
 - Reorganizing ROADMAP.md with milestone grouping (requires judgment)
 - Full PROJECT.md evolution review (requires understanding)
 - Deleting original ROADMAP.md and REQUIREMENTS.md
@@ -438,6 +450,75 @@ rm .planning/REQUIREMENTS.md
 
 </step>
 
+<step name="write_retrospective">
+
+**Append to living retrospective:**
+
+Check for existing retrospective:
+
+```bash
+ls .planning/RETROSPECTIVE.md 2>/dev/null || true
+```
+
+**If exists:** Read the file, append new milestone section before the "## Cross-Milestone Trends" section.
+
+**If doesn't exist:** Create from template at `/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/templates/retrospective.md`.
+
+**Gather retrospective data:**
+
+1. From SUMMARY.md files: Extract key deliverables, one-liners, tech decisions
+2. From VERIFICATION.md files: Extract verification scores, gaps found
+3. From UAT.md files: Extract test results, issues found
+4. From git log: Count commits, calculate timeline
+5. From the milestone work: Reflect on what worked and what didn't
+
+**Write the milestone section:**
+
+```markdown
+## Milestone: v{version} — {name}
+
+**Shipped:** {date}
+**Phases:** {phase_count} | **Plans:** {plan_count}
+
+### What Was Built
+
+{Extract from SUMMARY.md one-liners}
+
+### What Worked
+
+{Patterns that led to smooth execution}
+
+### What Was Inefficient
+
+{Missed opportunities, rework, bottlenecks}
+
+### Patterns Established
+
+{New conventions discovered during this milestone}
+
+### Key Lessons
+
+{Specific, actionable takeaways}
+
+### Cost Observations
+
+- Model mix: {X}% opus, {Y}% sonnet, {Z}% haiku
+- Sessions: {count}
+- Notable: {efficiency observation}
+```
+
+**Update cross-milestone trends:**
+
+If the "## Cross-Milestone Trends" section exists, update the tables with new data from this milestone.
+
+**Commit:**
+
+```bash
+node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: update retrospective for v${VERSION}" --files .planning/RETROSPECTIVE.md
+```
+
+</step>
+
 <step name="update_state">
 
 Most STATE.md updates were handled by `milestone complete`, but verify and update remaining fields:
@@ -454,6 +535,7 @@ See: .planning/PROJECT.md (updated [today])
 ```
 
 **Accumulated Context:**
+
 - Clear decisions summary (full log in PROJECT.md)
 - Clear resolved blockers
 - Keep open blockers for next milestone
@@ -467,7 +549,8 @@ Check branching strategy and offer merge options.
 Use `init milestone-op` for context, or load config directly:
 
 ```bash
-INIT=$(node ./.claude/get-shit-done/bin/gsd-tools.cjs init execute-phase "1")
+INIT=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" init execute-phase "1")
+if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
 Extract `branching_strategy`, `phase_branch_template`, `milestone_branch_template`, and `commit_docs` from init JSON.
@@ -604,6 +687,7 @@ Confirm: "Tagged: v[X.Y]"
 Ask: "Push tag to remote? (y/n)"
 
 If yes:
+
 ```bash
 git push origin v[X.Y]
 ```
@@ -615,8 +699,9 @@ git push origin v[X.Y]
 Commit milestone completion.
 
 ```bash
-node ./.claude/get-shit-done/bin/gsd-tools.cjs commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
+node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
 ```
+
 ```
 
 Confirm: "Committed: chore: complete v[X.Y] milestone"
@@ -626,13 +711,16 @@ Confirm: "Committed: chore: complete v[X.Y] milestone"
 <step name="offer_next">
 
 ```
+
 ✅ Milestone v[X.Y] [Name] complete
 
 Shipped:
+
 - [N] phases ([M] plans, [P] tasks)
 - [One sentence of what shipped]
 
 Archived:
+
 - milestones/v[X.Y]-ROADMAP.md
 - milestones/v[X.Y]-REQUIREMENTS.md
 
@@ -650,6 +738,7 @@ Tag: v[X.Y]
 <sub>`/clear` first → fresh context window</sub>
 
 ---
+
 ```
 
 </step>
@@ -695,6 +784,9 @@ Milestone completion is successful when:
 - [ ] Requirements completion checked against REQUIREMENTS.md traceability table
 - [ ] Incomplete requirements surfaced with proceed/audit/abort options
 - [ ] Known gaps recorded in MILESTONES.md if user proceeded with incomplete requirements
+- [ ] RETROSPECTIVE.md updated with milestone section
+- [ ] Cross-milestone trends updated
 - [ ] User knows next step (/gsd:new-milestone)
 
 </success_criteria>
+```

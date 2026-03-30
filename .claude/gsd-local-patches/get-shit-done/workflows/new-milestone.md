@@ -133,7 +133,9 @@ Focus ONLY on what's needed for the NEW features.
 
 <question>{QUESTION}</question>
 
-<project_context>[PROJECT.md summary]</project_context>
+<files_to_read>
+- .planning/PROJECT.md (Project context)
+</files_to_read>
 
 <downstream_consumer>{CONSUMER}</downstream_consumer>
 
@@ -162,7 +164,12 @@ After all 4 complete, spawn synthesizer:
 Task(prompt="
 Synthesize research outputs into SUMMARY.md.
 
-Read: .planning/research/STACK.md, FEATURES.md, ARCHITECTURE.md, PITFALLS.md
+<files_to_read>
+- .planning/research/STACK.md
+- .planning/research/FEATURES.md
+- .planning/research/ARCHITECTURE.md
+- .planning/research/PITFALLS.md
+</files_to_read>
 
 Write to: .planning/research/SUMMARY.md
 Use template: ./.claude/get-shit-done/templates/research-project/SUMMARY.md
@@ -276,11 +283,13 @@ node ./.claude/get-shit-done/bin/gsd-tools.cjs commit "docs: define milestone v[
 ```
 Task(prompt="
 <planning_context>
-@.planning/PROJECT.md
-@.planning/REQUIREMENTS.md
-@.planning/research/SUMMARY.md (if exists)
-@.planning/config.json
-@.planning/MILESTONES.md
+<files_to_read>
+- .planning/PROJECT.md
+- .planning/REQUIREMENTS.md
+- .planning/research/SUMMARY.md (if exists)
+- .planning/config.json
+- .planning/MILESTONES.md
+</files_to_read>
 </planning_context>
 
 <instructions>

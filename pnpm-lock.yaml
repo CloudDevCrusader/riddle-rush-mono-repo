@@ -4,6 +4,8 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+packageExtensionsChecksum: sha256-c0iARqzutYEL24Oh9IpQyA7QK+oD3JM9VfjWwRKP1Og=
+
 importers:
 
   .:
@@ -19374,6 +19376,7 @@ snapshots:
 
   '@nuxt/kit@3.21.1(magicast@0.5.2)':
     dependencies:
+      '@intlify/utils': 0.13.0
       c12: 3.3.3(magicast@0.5.2)
       consola: 3.4.2
       defu: 6.1.4
@@ -19400,6 +19403,7 @@ snapshots:
 
   '@nuxt/kit@4.3.1(magicast@0.5.2)':
     dependencies:
+      '@intlify/utils': 0.13.0
       c12: 3.3.3(magicast@0.5.2)
       consola: 3.4.2
       defu: 6.1.4
