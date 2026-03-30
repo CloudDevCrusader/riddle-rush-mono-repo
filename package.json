@@ -129,6 +129,15 @@
     "ai:just-every": "npx -y @just-every/code",
     "ai:update:gsd": "npx get-shit-done-cc@latest"
   },
+  "pnpm": {
+    "packageExtensions": {
+      "@nuxt/kit": {
+        "dependencies": {
+          "@intlify/utils": "*"
+        }
+      }
+    }
+  },
   "type": "module",
   "bin": {
     "riddlerush": "./bin/run.js"

@@ -1,119 +1,121 @@
 <template>
-  <GameBackground>
-    <div class="round-start-page">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <!-- Round Indicator -->
-        <div class="round-indicator" data-testid="round-indicator">
-          <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
-        </div>
-      </div>
+  <div class="round-start-page">
+    <!-- Background Image -->
+    <NuxtImg
+      :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
+      alt="Background"
+      class="page-bg"
+      format="webp"
+      quality="80"
+      preset="background"
+      loading="eager"
+      preload
+    />
 
-      <!-- Main Container -->
-      <div class="container">
-        <!-- Wheels Phase -->
-        <transition name="wheel-fade">
-          <div
-            v-if="isFortuneWheelEnabled && !wheelsComplete"
-            class="wheels-container single-wheel"
-            data-testid="round-wheels-container"
-          >
-            <transition name="wheel-fade" mode="out-in">
-              <!-- Category Wheel -->
-              <div v-if="currentPhase === 'category'" class="wheel-wrapper" key="category">
-                <div class="wheel-label">
-                  {{ t('common.category', 'Category') }}
-                </div>
-                <FortuneWheel
-                  ref="categoryWheelRef"
-                  v-model="selectedCategory"
-                  :items="displayCategories"
-                  :get-item-key="(cat: any, idx: number) => cat?.searchWord || idx"
-                  :get-item-label="(cat: any) => t(`categories.${cat.searchWord}`, cat.name)"
-                  :get-item-icon="getCategoryIcon"
-                  center-icon="🎯"
-                  @spin-complete="onCategoryComplete"
-                />
-              </div>
-
-              <!-- Letter Wheel -->
-              <div v-else-if="currentPhase === 'letter'" class="wheel-wrapper" key="letter">
-                <div class="wheel-label">
-                  {{ t('common.letter', 'Letter') }}
-                </div>
-                <FortuneWheel
-                  ref="letterWheelRef"
-                  v-model="selectedLetter"
-                  :items="alphabet"
-                  :get-item-key="(letter: string, idx: number) => letter"
-                  :get-item-label="(letter: string) => letter"
-                  :get-item-icon="() => ''"
-                  center-icon="🎯"
-                  @spin-complete="onLetterComplete"
-                />
-              </div>
-            </transition>
-          </div>
-        </transition>
-
-        <!-- Selected Values Display Phase (only shown if fortune wheel was used) -->
-        <transition name="results-fade">
-          <div
-            v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
-            class="results-display"
-            data-testid="round-results-display"
-          >
-            <div class="result-item animate-scale-in" data-testid="round-category-display">
-              <div class="result-label">
-                {{ t('common.category', 'Category') }}
-              </div>
-              <div class="result-value">
-                <span class="result-icon">{{ selectedCategoryIcon }}</span>
-                <span class="result-text">{{ selectedCategoryName }}</span>
-              </div>
-            </div>
-
-            <div class="divider">×</div>
-
-            <div
-              class="result-item animate-scale-in"
-              style="animation-delay: 0.2s"
-              data-testid="round-letter-display"
-            >
-              <div class="result-label">
-                {{ t('common.letter', 'Letter') }}
-              </div>
-              <div class="result-value">
-                <span class="result-text result-letter">{{ selectedLetter }}</span>
-              </div>
-            </div>
-          </div>
-        </transition>
-
-        <!-- Loading indicator -->
-        <div v-if="startingGame" class="loading-container" data-testid="round-loading">
-          <Spinner />
-          <p class="loading-text">
-            {{ t('home.starting_game', 'Starting game…') }}
-          </p>
-        </div>
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <!-- Round Indicator -->
+      <div class="round-indicator" data-testid="round-indicator">
+        <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
       </div>
     </div>
-  </GameBackground>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Dual Wheels Phase (only shown if feature is enabled) -->
+      <transition name="wheel-fade">
+        <div
+          v-if="isFortuneWheelEnabled && !wheelsComplete"
+          class="wheels-container"
+          data-testid="round-wheels-container"
+        >
+          <div class="wheel-wrapper">
+            <div class="wheel-label">
+              {{ t('common.category', 'Category') }}
+            </div>
+            <FortuneWheel
+              ref="categoryWheelRef"
+              v-model="selectedCategory"
+              :items="displayCategories"
+              :get-item-key="getCategoryKey"
+              :get-item-label="getCategoryLabel"
+              :get-item-icon="getCategoryIcon"
+              center-icon="🎯"
+              @spin-complete="onCategoryComplete"
+            />
+          </div>
+
+          <div class="wheel-wrapper">
+            <div class="wheel-label">
+              {{ t('common.letter', 'Letter') }}
+            </div>
+            <FortuneWheel
+              ref="letterWheelRef"
+              v-model="selectedLetter"
+              :items="alphabet"
+              :get-item-key="getLetterKey"
+              :get-item-label="getLetterLabel"
+              :get-item-icon="getNoIcon"
+              center-icon="🎯"
+              @spin-complete="onLetterComplete"
+            />
+          </div>
+        </div>
+      </transition>
+
+      <!-- Selected Values Display Phase (only shown if fortune wheel was used) -->
+      <transition name="results-fade">
+        <div
+          v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
+          class="results-display"
+          data-testid="round-results-display"
+        >
+          <div class="result-item animate-scale-in" data-testid="round-category-display">
+            <div class="result-label">
+              {{ t('common.category', 'Category') }}
+            </div>
+            <div class="result-value">
+              <span class="result-icon">{{ selectedCategoryIcon }}</span>
+              <span class="result-text">{{ selectedCategoryName }}</span>
+            </div>
+          </div>
+
+          <div class="divider">×</div>
+
+          <div
+            class="result-item animate-scale-in"
+            style="animation-delay: 0.2s"
+            data-testid="round-letter-display"
+          >
+            <div class="result-label">
+              {{ t('common.letter', 'Letter') }}
+            </div>
+            <div class="result-value">
+              <span class="result-text result-letter">{{ selectedLetter }}</span>
+            </div>
+          </div>
+        </div>
+      </transition>
+
+      <!-- Loading indicator -->
+      <div v-if="startingGame" class="loading-container" data-testid="round-loading">
+        <Spinner />
+        <p class="loading-text">
+          {{ t('home.starting_game', 'Starting game...') }}
+        </p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { Category } from '@riddle-rush/types/game'
 import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
-definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
-
-const { toast, t } = usePageSetup()
-const { goToGame, goToPlayers } = useNavigation()
-const { gameStore, nextRoundNumber } = useGameState()
+const { baseUrl, toast, t } = usePageSetup()
+const { goToGame } = useNavigation()
+const { gameStore } = useGameState()
 const { isFortuneWheelEnabled } = useFeatureFlags()
-const logger = useLogger()
-const { startConfiguredRound } = useGameActions()
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const selectedCategory = ref<Category | null>(null)
@@ -126,18 +128,23 @@ const categorySpinComplete = ref(false)
 const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
-const currentPhase = ref<'category' | 'letter' | 'results'>('category')
-let resultStartTimer: ReturnType<typeof setTimeout> | null = null
-let wheelFallbackTimer: ReturnType<typeof setTimeout> | null = null
 
-const { resolve: resolveEmoji } = useCategoryEmoji()
-
-const fallbackCategory: Category = {
-  id: 0,
-  name: 'General',
-  searchWord: 'general',
-  key: 'general',
-  searchProvider: 'offline',
+const categoryIconMap: Record<string, string> = {
+  female_name: '👩',
+  male_name: '👨',
+  water_vehicle: '⛵',
+  flowers: '🌸',
+  plants: '🌿',
+  profession: '👔',
+  insect: '🐛',
+  animal: '🦁',
+  city: '🏙️',
+  country: '🌍',
+  food: '🍕',
+  drink: '🧃',
+  sport: '⚽',
+  music: '🎵',
+  movie: '🎬',
 }
 
 const selectedCategoryIcon = computed(() => {
@@ -151,24 +158,32 @@ const selectedCategoryName = computed(() => {
 })
 
 const currentRoundNumber = computed(() => {
-  return nextRoundNumber.value || 1
+  // No session yet = first round setup
+  if (!gameStore.currentSession) return 1
+
+  const session = gameStore.currentSession
+  // Check if current round has been completed (saved to roundHistory)
+  const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+
+  // If current round is completed, we're about to start the next round
+  // Otherwise, show the current round number (e.g., on refresh)
+  return isCurrentRoundCompleted ? session.currentRound + 1 : session.currentRound
 })
 
 onMounted(async () => {
   // Fetch all categories
-  await gameStore.fetchCategories().catch((error: unknown) => {
-    logger.warn('Falling back to local round-start category due fetch error', error)
-  })
-  const fetchedCategories = gameStore.categories.value ?? []
-  const allCategories = fetchedCategories.length > 0 ? fetchedCategories : [fallbackCategory]
-
-  // Always ensure deterministic fallback values are present
-  selectedCategory.value =
-    allCategories[Math.floor(Math.random() * allCategories.length)] ?? fallbackCategory
-  selectedLetter.value = alphabet[Math.floor(Math.random() * alphabet.length)] ?? 'A'
+  await gameStore.fetchCategories()
+  const allCategories = gameStore.categories
 
   // If fortune wheel is disabled, skip directly to game
   if (!isFortuneWheelEnabled.value) {
+    // Select random category and letter
+    const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
+    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
+
+    selectedCategory.value = randomCategory ?? null
+    selectedLetter.value = randomLetter ?? null
+
     // Start game immediately
     await startGame()
     return
@@ -177,96 +192,97 @@ onMounted(async () => {
   // Select up to 12 categories for the wheel
   displayCategories.value = allCategories.slice(0, 12)
 
-  // Auto-spin category wheel after a short delay for visual effect
-  nextTick(() => {
-    setTimeout(() => {
-      categoryWheelRef.value?.spinRandom()
-    }, 800)
-  })
-
-  // Fallback: if wheel callbacks fail to fire, continue round start deterministically
-  wheelFallbackTimer = setTimeout(() => {
-    if (startingGame.value || wheelsComplete.value) return
-
-    if (!selectedCategory.value) {
-      selectedCategory.value =
-        allCategories[Math.floor(Math.random() * allCategories.length)] ?? fallbackCategory
-    }
-    if (!selectedLetter.value) {
-      selectedLetter.value = alphabet[Math.floor(Math.random() * alphabet.length)] ?? 'A'
-    }
-
-    if (selectedCategory.value && selectedLetter.value) {
-      wheelsComplete.value = true
-      void startGame()
-    }
-  }, 15000) // Fallback timeout for auto-spin flow
+  // Auto-spin both wheels immediately (will complete within 5 seconds)
+  setTimeout(() => {
+    categoryWheelRef.value?.spinRandom()
+    letterWheelRef.value?.spinRandom()
+  }, 100)
 })
 
 const getCategoryIcon = (category: Category): string => {
-  return resolveEmoji(category.name)
+  return categoryIconMap[category.searchWord] || '📦'
 }
+
+const getCategoryKey = (cat: Category, idx: number): string | number => cat?.searchWord || idx
+const getCategoryLabel = (cat: Category): string => t(`categories.${cat.searchWord}`, cat.name)
+const getLetterKey = (letter: string, _idx: number): string => letter
+const getLetterLabel = (letter: string): string => letter
+const getNoIcon = (): string => ''
 
 const onCategoryComplete = (category: Category) => {
   selectedCategory.value = category
   categorySpinComplete.value = true
-
-  // Transition to letter phase after a delay, then auto-spin
-  setTimeout(() => {
-    currentPhase.value = 'letter'
-    nextTick(() => {
-      setTimeout(() => {
-        letterWheelRef.value?.spinRandom()
-      }, 500)
-    })
-  }, 1500)
+  checkBothComplete()
 }
 
 const onLetterComplete = (letter: string) => {
   selectedLetter.value = letter
   letterSpinComplete.value = true
+  checkBothComplete()
+}
 
-  // Transition to results display
-  setTimeout(() => {
-    currentPhase.value = 'results'
-    wheelsComplete.value = true
+const checkBothComplete = () => {
+  if (categorySpinComplete.value && letterSpinComplete.value) {
+    // Both wheels have completed spinning
+    // Wait a moment, then fade out wheels
+    setTimeout(() => {
+      wheelsComplete.value = true
 
-    // Auto-start game after results display
-    resultStartTimer = setTimeout(() => {
-      void startGame()
-    }, RESULTS_DISPLAY_DURATION_MS)
-  }, 1500)
+      // After showing results, start the game
+      setTimeout(() => {
+        startGame()
+      }, RESULTS_DISPLAY_DURATION_MS)
+    }, WHEEL_FADE_DELAY_MS)
+  }
 }
 
 const startGame = async () => {
   if (!selectedCategory.value || !selectedLetter.value) return
 
   startingGame.value = true
-  if (wheelFallbackTimer) {
-    clearTimeout(wheelFallbackTimer)
-    wheelFallbackTimer = null
-  }
 
   try {
-    const currentSession = gameStore.currentSession.value
-    const pendingNames = gameStore.pendingPlayerNames.value
-    if (!currentSession && (!pendingNames || pendingNames.length === 0)) {
-      // No players configured -- redirect to player setup instead of creating a ghost session
-      await goToPlayers()
-      return
-    }
+    const hasSession = !!gameStore.currentSession
+    const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
 
-    const session = await startConfiguredRound(selectedCategory.value, selectedLetter.value)
-    if (!session) {
-      startingGame.value = false
-      return
-    }
+    // Determine if this is initial setup or a new round
+    // Initial setup: no session OR pending players from players page
+    if (!hasSession || hasPendingPlayers) {
+      // This is initial setup - create new session with players
+      const playerNames = hasPendingPlayers ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
 
-    // Ensure proper flow transition after session creation
-    // The store should automatically transition to in-round state
+      await gameStore.setupPlayers(
+        playerNames,
+        undefined,
+        selectedLetter.value,
+        selectedCategory.value
+      )
+
+      // Clear pending state
+      gameStore.pendingPlayerNames = []
+      gameStore.selectedLetter = null
+    } else {
+      // Session exists - check if current round is completed
+      const session = gameStore.currentSession
+      if (!session) return // Safety check
+
+      const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+
+      if (isCurrentRoundCompleted) {
+        // Current round completed - start new round (increment counter)
+        await gameStore.startConfiguredRound(selectedCategory.value, selectedLetter.value)
+      } else {
+        // Refresh during same round - update category/letter but don't increment round
+        session.category = { ...selectedCategory.value, letter: selectedLetter.value }
+        session.letter = selectedLetter.value
+        // Reset player submissions for fair restart on refresh
+        await gameStore.resetPlayerSubmissions()
+        await gameStore.saveSessionToDB()
+      }
+    }
 
     // Navigate to game with game ID
-    const gameId = session.id ?? gameStore.currentSession.value?.id
+    const gameId = gameStore.currentSession?.id
     if (gameId) {
       await goToGame(gameId)
     } else {
@@ -276,6 +292,7 @@ const startGame = async () => {
     // CRITICAL: Ensure spinner is turned off on success
     startingGame.value = false
   } catch (error) {
+    const logger = useLogger()
     logger.error('Failed to start game:', error)
     startingGame.value = false
     // Show error to user
@@ -283,19 +300,12 @@ const startGame = async () => {
   }
 }
 
-onUnmounted(() => {
-  if (resultStartTimer) clearTimeout(resultStartTimer)
-  if (wheelFallbackTimer) clearTimeout(wheelFallbackTimer)
-})
-
-const pageTitle = computed(() => t('game.round_start_title'))
-
 useHead({
-  title: pageTitle,
+  title: 'Round Start',
   meta: [
     {
       name: 'description',
-      content: () => t('game.round_start_description'),
+      content: 'Spinning for category and letter',
     },
   ],
 })
@@ -307,7 +317,18 @@ useHead({
   min-height: 100dvh;
   position: relative;
   overflow: hidden;
+  background: #1a1a2e;
+}
+
+/* Background Image */
+.page-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
 }
 
 /* Top Bar */
@@ -366,11 +387,6 @@ useHead({
   justify-content: center;
   width: 100%;
   max-width: 1200px;
-  padding: 0 var(--spacing-md);
-}
-
-.wheels-container.single-wheel {
-  max-width: 600px;
 }
 
 .wheel-wrapper {
@@ -378,27 +394,8 @@ useHead({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(var(--spacing-md), 3vw, var(--spacing-lg));
-  max-width: 440px;
-  width: 100%;
-  padding: var(--spacing-md);
-  border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 0 20px rgba(255, 215, 0, 0.05);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.wheel-wrapper:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 0 25px rgba(255, 215, 0, 0.1);
+  gap: var(--spacing-lg);
+  max-width: 420px;
 }
 
 .wheel-label {
@@ -411,21 +408,6 @@ useHead({
     0 0 20px rgba(255, 215, 0, 0.4);
   text-transform: uppercase;
   letter-spacing: 2px;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 182, 71, 0.1));
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  backdrop-filter: blur(3px);
-  animation: label-glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes label-glow {
-  0% {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-  }
 }
 
 /* Results Display */
@@ -519,9 +501,7 @@ useHead({
 /* Transitions */
 .wheel-fade-enter-active,
 .wheel-fade-leave-active {
-  transition:
-    transform 0.8s ease-out,
-    opacity 0.8s ease-out;
+  transition: all 0.8s ease-out;
 }
 
 .wheel-fade-enter-from {
@@ -535,9 +515,7 @@ useHead({
 }
 
 .results-fade-enter-active {
-  transition:
-    transform 0.8s ease-out,
-    opacity 0.8s ease-out;
+  transition: all 0.8s ease-out;
 }
 
 .results-fade-enter-from {
@@ -549,6 +527,17 @@ useHead({
   animation: scaleIn 0.6s ease-out backwards;
 }
 
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Responsive - Stack wheels vertically on mobile */
 @media (max-width: 768px) {
   .container {
@@ -557,41 +546,33 @@ useHead({
 
   .wheels-container {
     flex-direction: column;
-    gap: clamp(var(--spacing-xl), 4vw, var(--spacing-2xl));
+    gap: var(--spacing-2xl);
     width: 100%;
     max-width: 500px;
-    padding: 0 var(--spacing-sm);
   }
 
   .wheel-wrapper {
     width: 100%;
-    max-width: 400px;
-    padding: var(--spacing-md);
-    min-height: 480px;
-    justify-content: center;
+    max-width: 380px;
   }
 
   .wheel-label {
     font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
-    padding: var(--spacing-xs) var(--spacing-md);
   }
 
   .results-display {
     flex-direction: column;
-    gap: clamp(var(--spacing-xl), 4vw, var(--spacing-2xl));
+    gap: var(--spacing-xl);
     width: calc(100% - 2rem);
-    padding: 0 var(--spacing-sm);
   }
 
   .result-item {
     width: 100%;
     max-width: 400px;
-    padding: clamp(var(--spacing-lg), 4vw, var(--spacing-xl));
   }
 
   .divider {
     transform: rotate(90deg);
-    margin: var(--spacing-md) 0;
   }
 
   .round-text {
@@ -605,27 +586,17 @@ useHead({
   }
 
   .wheels-container {
-    gap: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
+    gap: var(--spacing-xl);
     max-width: 100%;
-    padding: 0 var(--spacing-xs);
   }
 
   .wheel-wrapper {
     width: 100%;
-    max-width: 340px;
-    padding: var(--spacing-sm);
-    min-height: 420px;
-  }
-
-  .wheel-label {
-    font-size: clamp(var(--font-size-md), 4.5vw, var(--font-size-lg));
-    padding: var(--spacing-xs) var(--spacing-sm);
-    letter-spacing: 1px;
+    max-width: 320px;
   }
 
   .results-display {
-    width: calc(100% - 1.5rem);
-    gap: clamp(var(--spacing-lg), 4vw, var(--spacing-xl));
+    width: calc(100% - 2rem);
   }
 
   .result-text {
@@ -637,31 +608,6 @@ useHead({
   }
 }
 
-/* Extra small mobile devices */
-@media (max-width: 360px) {
-  .wheels-container {
-    gap: var(--spacing-md);
-  }
-
-  .wheel-wrapper {
-    max-width: 300px;
-    min-height: 380px;
-    padding: var(--spacing-xs);
-  }
-
-  .wheel-label {
-    font-size: clamp(var(--font-size-base), 5vw, var(--font-size-md));
-  }
-
-  .results-display {
-    gap: var(--spacing-md);
-  }
-
-  .result-item {
-    padding: var(--spacing-md);
-  }
-}
-
 /* Pixel 7 Pro specific (412px width, tall screen) */
 @media (min-width: 390px) and (max-width: 480px) {
   .container {
@@ -669,16 +615,13 @@ useHead({
   }
 
   .wheels-container {
-    gap: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
+    gap: var(--spacing-xl);
     max-width: 100%;
-    padding: 0 var(--spacing-sm);
   }
 
   .wheel-wrapper {
     width: 100%;
-    max-width: 360px;
-    min-height: 440px;
-    padding: var(--spacing-sm);
+    max-width: 340px;
   }
 
   .results-display {
