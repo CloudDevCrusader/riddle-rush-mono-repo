@@ -8,6 +8,11 @@ const mockGameStoreState = reactive({
   currentCategory: null as string | null,
   currentLetter: '',
   currentRound: 0,
+  nextRoundNumber: 1,
+  gameMode: 'multiplayer' as string,
+  flowState: 'setup' as string,
+  isCurrentRoundCompleted: false,
+  postRoundDecisionPending: false,
   players: [] as Array<{ name: string; totalScore: number; hasSubmitted: boolean }>,
   currentPlayerTurn: null as { name: string } | null,
   allPlayersSubmitted: false,
@@ -23,9 +28,30 @@ const mockSettingsStoreState = reactive({
   language: 'de',
 })
 
-// Stub Nuxt auto-imported globals
-vi.stubGlobal('useGameStore', () => mockGameStoreState)
-vi.stubGlobal('useSettingsStore', () => mockSettingsStoreState)
+// Stub Nuxt auto-imported composables used by useGameState
+// useGameSession returns computed refs wrapping the game store
+vi.stubGlobal('useGameSession', () => ({
+  currentCategory: computed(() => mockGameStoreState.currentCategory),
+  currentLetter: computed(() => mockGameStoreState.currentLetter),
+  currentRound: computed(() => mockGameStoreState.currentRound),
+  nextRoundNumber: computed(() => mockGameStoreState.nextRoundNumber),
+  gameMode: computed(() => mockGameStoreState.gameMode),
+  flowState: computed(() => mockGameStoreState.flowState),
+  isCurrentRoundCompleted: computed(() => mockGameStoreState.isCurrentRoundCompleted),
+  postRoundDecisionPending: computed(() => mockGameStoreState.postRoundDecisionPending),
+  players: computed(() => mockGameStoreState.players),
+  currentPlayerTurn: computed(() => mockGameStoreState.currentPlayerTurn),
+  allPlayersSubmitted: computed(() => mockGameStoreState.allPlayersSubmitted),
+  isGameCompleted: computed(() => mockGameStoreState.isGameCompleted),
+  leaderboard: computed(() => mockGameStoreState.leaderboard),
+  hasActiveSession: computed(() => mockGameStoreState.hasActiveSession),
+  gameStatus: computed(() => mockGameStoreState.gameStatus),
+}))
+
+vi.stubGlobal('useSettings', () => mockSettingsStoreState)
+vi.stubGlobal('useCategories', () => ({}))
+vi.stubGlobal('usePlayerActions', () => ({}))
+vi.stubGlobal('useGameActions', () => ({}))
 
 describe('useGameState', () => {
   beforeEach(() => {
@@ -33,6 +59,11 @@ describe('useGameState', () => {
     mockGameStoreState.currentCategory = null
     mockGameStoreState.currentLetter = ''
     mockGameStoreState.currentRound = 0
+    mockGameStoreState.nextRoundNumber = 1
+    mockGameStoreState.gameMode = 'multiplayer'
+    mockGameStoreState.flowState = 'setup'
+    mockGameStoreState.isCurrentRoundCompleted = false
+    mockGameStoreState.postRoundDecisionPending = false
     mockGameStoreState.players = []
     mockGameStoreState.currentPlayerTurn = null
     mockGameStoreState.allPlayersSubmitted = false
@@ -54,7 +85,10 @@ describe('useGameState', () => {
     it('should expose gameStore and settingsStore directly', () => {
       const state = useGameState()
 
-      expect(state.gameStore).toBe(mockGameStoreState)
+      // gameStore is a merged object of all hook returns
+      expect(state.gameStore).toBeDefined()
+      expect(state.gameStore).toBe(state.gameState)
+      // settingsStore is the direct return of useSettings
       expect(state.settingsStore).toBe(mockSettingsStoreState)
     })
   })
@@ -192,18 +226,26 @@ describe('useGameState', () => {
   // Return shape
   // ──────────────────────────────────────────
   describe('return value', () => {
-    it('should return all 12 properties (2 stores + 10 computeds)', () => {
+    it('should return all 20 properties (3 objects + 17 computeds)', () => {
       const state = useGameState()
 
-      // Direct store references
+      // Object references
+      expect(state).toHaveProperty('gameState')
       expect(state).toHaveProperty('gameStore')
       expect(state).toHaveProperty('settingsStore')
 
-      // Computed properties (each is a ComputedRef)
+      // Computed properties (each is a ComputedRef with .value)
       const computedKeys = [
         'currentCategory',
         'currentLetter',
         'currentRound',
+        'nextRoundNumber',
+        'gameMode',
+        'flowState',
+        'canProceedToResults',
+        'canConfirmRoundScores',
+        'isCurrentRoundCompleted',
+        'postRoundDecisionPending',
         'players',
         'currentPlayerTurn',
         'allPlayersSubmitted',
@@ -223,7 +265,7 @@ describe('useGameState', () => {
     it('should not include extra unexpected properties', () => {
       const state = useGameState()
       const keys = Object.keys(state)
-      expect(keys).toHaveLength(12) // 2 stores + 10 computeds
+      expect(keys).toHaveLength(20) // 3 objects + 17 computeds
     })
   })
 
