@@ -99,7 +99,9 @@
       "mcp__playwright__browser_wait_for",
       "Bash(git stash:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Skill(gsd:quick)"
+      "Skill(gsd:quick)",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_evaluate"
     ]
   },
   "enableAllProjectMcpServers": true,

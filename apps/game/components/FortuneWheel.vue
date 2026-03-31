@@ -5,8 +5,8 @@
       class="fortune-wheel"
       :style="{ width: '100%', height: '100%' }"
       :type="'canvas'"
-      :use-weight="false"
-      :disabled="true"
+      :use-weight="true"
+      :disabled="false"
       :verify="false"
       :prize-id="prizeId"
       :prizes="mappedPrizes"
@@ -125,7 +125,7 @@ const mappedPrizes = computed(() => {
       value: props.getItemKey(item, index),
       bgColor: bgColor || '#45ace9', // Fallback color
       color: '#ffffff',
-      probability: 100 / props.items.length,
+      weight: 1, // Equal chance for all items (avoids floating-point sum !== 100)
     }
   })
 })
@@ -271,6 +271,12 @@ watch(
 
   :deep(.fw-wheel) {
     border-radius: 50%;
+  }
+
+  // Block direct clicks on the library's internal button — spins are triggered
+  // programmatically via startRotate(), not by user clicks on the wheel center.
+  :deep(.fw-btn) {
+    pointer-events: none;
   }
 
   @media (max-width: 768px) {
