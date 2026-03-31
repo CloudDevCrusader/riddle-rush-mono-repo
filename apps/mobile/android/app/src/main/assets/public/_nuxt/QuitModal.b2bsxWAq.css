@@ -1,0 +1,30 @@
+.quit-content[data-v-7f6ae97c] {
+  text-align: center;
+}
+.quit-message[data-v-7f6ae97c] {
+  color: var(--color-text-dark);
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  line-height: 1.4;
+  margin: 0 0 var(--spacing-xl);
+}
+.quit-actions[data-v-7f6ae97c] {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+.quit-actions[data-v-7f6ae97c] .game-button {
+  flex: 1;
+  max-width: 140px;
+}
+@media (max-width: 480px) {
+  .quit-message[data-v-7f6ae97c] {
+    font-size: var(--font-size-md);
+  }
+  .quit-actions[data-v-7f6ae97c] {
+    gap: var(--spacing-sm);
+  }
+  .quit-actions[data-v-7f6ae97c] .game-button {
+    max-width: 120px;
+  }
+}

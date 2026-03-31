@@ -87,7 +87,7 @@
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <form class="answer-form" @submit.prevent="submitAnswer">
+        <form v-if="isInputFieldEnabled" class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-if="isAnswerInputEnabled"
             v-model="playerAnswer"
@@ -112,6 +112,16 @@
             {{ isAnswerInputEnabled ? t('game.submit', 'Submit') : t('common.confirm') }}
           </button>
         </form>
+        <div v-else class="skip-actions">
+          <button
+            class="skip-player-btn"
+            data-testid="game-skip-button"
+            :disabled="isSubmitting"
+            @click="submitAnswer"
+          >
+            {{ t('game.skip', 'Skip') }}
+          </button>
+        </div>
       </div>
 
       <!-- All Players Submitted Message -->
@@ -179,6 +189,7 @@ const {
 const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
 const gameActions = useGameActions()
+const { isInputFieldEnabled } = useFeatureFlags()
 const route = useRoute()
 
 // Handle game ID from route parameter
@@ -739,6 +750,32 @@ useHead({
 
 .submit-answer-btn:disabled {
   opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.skip-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.skip-player-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.skip-player-btn:hover {
+  background-color: #f57c00;
+}
+
+.skip-player-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 

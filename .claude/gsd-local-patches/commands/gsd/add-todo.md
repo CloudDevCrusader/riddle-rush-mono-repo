@@ -24,7 +24,7 @@ Routes to the add-todo workflow which handles:
   </objective>
 
 <execution_context>
-@/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/workflows/add-todo.md
+@./.claude/get-shit-done/workflows/add-todo.md
 </execution_context>
 
 <context>
@@ -34,7 +34,7 @@ State is resolved in-workflow via `init todos` and targeted reads.
 </context>
 
 <process>
-**Follow the add-todo workflow** from `@/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/workflows/add-todo.md`.
+**Follow the add-todo workflow** from `@./.claude/get-shit-done/workflows/add-todo.md`.
 
 The workflow handles all logic including:
 

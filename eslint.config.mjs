@@ -45,6 +45,10 @@ export default createConfigForNuxt({
       '*.min.js',
       'scripts/',
       '.claude/',
+      '.opencode/',
+      '.planning/',
+      '.zenflow/',
+      'openspec/',
       'android/',
     ],
   })

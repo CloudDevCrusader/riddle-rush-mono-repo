@@ -1,0 +1,59 @@
+import c from './B8K1kCyT.js'
+import { d as o } from './sEbgN-wo.js'
+import { i as m } from './DKeuBCMA.js'
+function v(n, e, r) {
+  switch (r.length) {
+    case 0:
+      return n.call(e)
+    case 1:
+      return n.call(e, r[0])
+    case 2:
+      return n.call(e, r[0], r[1])
+    case 3:
+      return n.call(e, r[0], r[1], r[2])
+  }
+  return n.apply(e, r)
+}
+var f = Math.max
+function p(n, e, r) {
+  return (
+    (e = f(e === void 0 ? n.length - 1 : e, 0)),
+    function () {
+      for (var a = arguments, t = -1, u = f(a.length - e, 0), l = Array(u); ++t < u; )
+        l[t] = a[e + t]
+      t = -1
+      for (var i = Array(e + 1); ++t < e; ) i[t] = a[t]
+      return ((i[e] = r(l)), v(n, this, i))
+    }
+  )
+}
+function d(n) {
+  return function () {
+    return n
+  }
+}
+var y = o
+    ? function (n, e) {
+        return o(n, 'toString', { configurable: !0, enumerable: !1, value: d(e), writable: !0 })
+      }
+    : m,
+  h = 800,
+  s = 16,
+  w = Date.now
+function S(n) {
+  var e = 0,
+    r = 0
+  return function () {
+    var a = w(),
+      t = s - (a - r)
+    if (((r = a), t > 0)) {
+      if (++e >= h) return arguments[0]
+    } else e = 0
+    return n.apply(void 0, arguments)
+  }
+}
+var T = S(y)
+function g(n) {
+  return T(p(n, void 0, c), n + '')
+}
+export { g as f }
