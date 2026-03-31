@@ -25,7 +25,7 @@
       <!-- Dual Wheels Phase (only shown if feature is enabled) -->
       <transition name="wheel-fade">
         <div
-          v-if="isFortuneWheelEnabled && !wheelsComplete"
+          v-if="isFortuneWheelEnabled && !startingGame"
           class="double-wheel-layout"
           data-testid="round-wheels-container"
         >
@@ -46,6 +46,16 @@
                 @spin-complete="onCategoryComplete"
               />
             </div>
+            <transition name="result-pop">
+              <div
+                v-if="categorySpinComplete"
+                class="inline-result"
+                data-testid="round-category-inline-result"
+              >
+                <span class="inline-result-icon">{{ selectedCategoryIcon }}</span>
+                <span class="inline-result-text">{{ selectedCategoryName }}</span>
+              </div>
+            </transition>
           </div>
 
           <!-- Central Spin Button -->
@@ -78,40 +88,15 @@
                 @spin-complete="onLetterComplete"
               />
             </div>
-          </div>
-        </div>
-      </transition>
-
-      <!-- Selected Values Display Phase (only shown if fortune wheel was used) -->
-      <transition name="results-fade">
-        <div
-          v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
-          class="results-display"
-          data-testid="round-results-display"
-        >
-          <div class="result-item animate-scale-in" data-testid="round-category-display">
-            <div class="result-label">
-              {{ t('common.category', 'Category') }}
-            </div>
-            <div class="result-value">
-              <span class="result-icon">{{ selectedCategoryIcon }}</span>
-              <span class="result-text">{{ selectedCategoryName }}</span>
-            </div>
-          </div>
-
-          <div class="divider">×</div>
-
-          <div
-            class="result-item animate-scale-in"
-            style="animation-delay: 0.2s"
-            data-testid="round-letter-display"
-          >
-            <div class="result-label">
-              {{ t('common.letter', 'Letter') }}
-            </div>
-            <div class="result-value">
-              <span class="result-text result-letter">{{ selectedLetter }}</span>
-            </div>
+            <transition name="result-pop">
+              <div
+                v-if="letterSpinComplete"
+                class="inline-result"
+                data-testid="round-letter-inline-result"
+              >
+                <span class="inline-result-text inline-result-letter">{{ selectedLetter }}</span>
+              </div>
+            </transition>
           </div>
         </div>
       </transition>
@@ -129,7 +114,7 @@
 
 <script setup lang="ts">
 import type { Category } from '@riddle-rush/types/game'
-import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
+import { RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
 const { baseUrl, toast, t } = usePageSetup()
 const { goToGame } = useNavigation()
@@ -252,16 +237,11 @@ const onLetterComplete = (letter: string) => {
 const checkBothComplete = () => {
   if (categorySpinComplete.value && letterSpinComplete.value) {
     isSpinning.value = false
-    // Both wheels have completed spinning
-    // Wait a moment, then fade out wheels
+    wheelsComplete.value = true
+    // Brief pause to let users see both results, then navigate
     setTimeout(() => {
-      wheelsComplete.value = true
-
-      // After showing results, start the game
-      setTimeout(() => {
-        startGame()
-      }, RESULTS_DISPLAY_DURATION_MS)
-    }, WHEEL_FADE_DELAY_MS)
+      startGame()
+    }, RESULTS_DISPLAY_DURATION_MS)
   }
 }
 
@@ -504,74 +484,41 @@ useHead({
   letter-spacing: 2px;
 }
 
-/* Results Display */
-.results-display {
+/* Inline Results (appear under wheel on completion) */
+.inline-result {
   display: flex;
-  flex-direction: column; /* Stack results vertically too for consistency */
-  gap: clamp(var(--spacing-xl), 4vw, var(--spacing-2xl));
   align-items: center;
   justify-content: center;
-  width: 100%;
-  max-width: 500px;
-}
-
-.result-item {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-xl);
-  padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 0 40px rgba(255, 215, 0, 0.1);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-.result-label {
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-base), 2vw, var(--font-size-lg));
-  font-weight: var(--font-weight-semibold);
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.result-value {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(255, 215, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
 }
 
-.result-icon {
-  font-size: clamp(48px, 8vw, 72px);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+.inline-result-icon {
+  font-size: clamp(24px, 4vw, 36px);
 }
 
-.result-text {
+.inline-result-text {
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-3xl));
+  font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-xl));
   font-weight: var(--font-weight-black);
   color: var(--color-white);
   text-shadow:
     0 2px 8px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(255, 215, 0, 0.6);
+    0 0 20px rgba(255, 215, 0, 0.4);
 }
 
-.result-letter {
-  font-size: clamp(64px, 10vw, 96px);
+.inline-result-letter {
+  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-2xl));
   background: linear-gradient(135deg, #ffd700, #ffa500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.divider {
-  display: none; /* Hide divider in vertical layout */
 }
 
 /* Loading */
@@ -606,28 +553,14 @@ useHead({
   transform: scale(0.9);
 }
 
-.results-fade-enter-active {
-  transition: all 0.8s ease-out;
+/* Result pop transition */
+.result-pop-enter-active {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.results-fade-enter-from {
+.result-pop-enter-from {
   opacity: 0;
-  transform: scale(0.8);
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.6s ease-out backwards;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  transform: scale(0.5) translateY(-10px);
 }
 
 /* Responsive */
