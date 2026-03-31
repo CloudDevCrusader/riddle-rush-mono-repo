@@ -193,21 +193,23 @@ Recent decisions affecting current work:
 
 ### Quick Tasks Completed
 
-| #   | Description                                         | Date       | Commit    | Directory                                                                                             |
-| --- | --------------------------------------------------- | ---------- | --------- | ----------------------------------------------------------------------------------------------------- |
-| 001 | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/) |
-| 002 | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)   |
-| 003 | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                     |
-| 004 | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                  |
-| 005 | Fix crypto.randomUUID TypeError on Safari           | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/) |
-| 006 | Hide answer display when feature flag disabled      | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/) |
-| 007 | Fix page reload on game start causing wrong player  | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)     |
-| 008 | Fix i18n and score display bugs                     | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                       |
+| #          | Description                                         | Date       | Commit    | Directory                                                                                                           |
+| ---------- | --------------------------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
+| 001        | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/)               |
+| 002        | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)                 |
+| 003        | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                                   |
+| 004        | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                                |
+| 005        | Fix crypto.randomUUID TypeError on Safari           | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/)               |
+| 006        | Hide answer display when feature flag disabled      | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/)               |
+| 007        | Fix page reload on game start causing wrong player  | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)                   |
+| 008        | Fix i18n and score display bugs                     | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                                     |
+| 260331-vtk | Fix round-start: redirect, spinner, inline results  | 2026-03-31 | 89c4fe323 | [260331-vtk-fix-round-start-redirect-not-working-sec](./quick/260331-vtk-fix-round-start-redirect-not-working-sec/) |
 
 ## Session Continuity
 
-Last session: 2026-03-24T02:20:00.000Z
-Stopped at: Completed 21-09-PLAN.md (Phase 21 COMPLETE)
+Last activity: 2026-03-31 - Completed quick task 260331-vtk: fix round-start redirect, spinner, inline results
+Last session: 2026-03-31T20:54:40.614Z
+Stopped at: Quick task 260331-vtk complete
 Resume file: None
 
 ### Deployment: development
