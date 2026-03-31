@@ -236,6 +236,7 @@ const onLetterComplete = (letter: string) => {
 
 const checkBothComplete = () => {
   if (categorySpinComplete.value && letterSpinComplete.value) {
+    if (wheelsComplete.value) return
     isSpinning.value = false
     wheelsComplete.value = true
     // Brief pause to let users see both results, then navigate
@@ -259,8 +260,7 @@ const startGame = async () => {
     } else {
       await goToGame()
     }
-
-    startingGame.value = false
+    // Do not set startingGame to false on success so the spinner stays visible during navigation
   } catch (error) {
     const logger = useLogger()
     logger.error('Failed to start game:', error)
