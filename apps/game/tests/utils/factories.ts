@@ -174,6 +174,7 @@ export const createGameSession = (overrides: Partial<GameSession> = {}): GameSes
     // New multi-player fields
     players: overrides.players ?? [],
     currentRound: overrides.currentRound ?? 0,
+    currentPlayerIndex: overrides.currentPlayerIndex ?? 0,
     roundHistory: overrides.roundHistory ?? [],
     gameName: overrides.gameName ?? faker.lorem.words(2),
     status: overrides.status ?? 'active',

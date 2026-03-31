@@ -1,15 +1,7 @@
-// Test setup file to ensure Vue reactivity system is properly initialized
-// @ts-expect-error Nuxt overrides vue module but createApp exists at runtime
-import { createApp } from 'vue'
+// Basic test setup for Vue/Nuxt applications
 import { beforeEach, afterEach, vi } from 'vitest'
-import * as VueExports from 'vue'
-import * as VueRouterExports from 'vue-router'
-import * as PiniaExports from 'pinia'
 
-// Make Vue, VueRouter, and Pinia exports globally available
-Object.assign(globalThis, VueExports, VueRouterExports, PiniaExports)
-
-// Mock common Nuxt composables
+// Nuxt composable mocks
 const mockUseRuntimeConfig = vi.fn(() => ({
   public: {
     baseUrl: '/',
@@ -33,27 +25,54 @@ const mockUseRouter = vi.fn(() => ({
 }))
 
 const mockUseNuxtApp = vi.fn(() => ({
-  $i18n: {},
+  $i18n: {
+    t: (key: string) => key,
+  },
 }))
 
-// Make Nuxt composables globally available
+const mockUseI18n = vi.fn(() => ({
+  t: (key: string, fallback?: string | Record<string, unknown>) =>
+    typeof fallback === 'string' ? fallback : key,
+}))
+
+const localStorageMock = (() => {
+  const store = new Map<string, string>()
+  return {
+    getItem: vi.fn((key: string) => (store.has(key) ? store.get(key)! : null)),
+    setItem: vi.fn((key: string, value: string) => {
+      store.set(key, value)
+    }),
+    removeItem: vi.fn((key: string) => {
+      store.delete(key)
+    }),
+    clear: vi.fn(() => {
+      store.clear()
+    }),
+    key: vi.fn((index: number) => Array.from(store.keys())[index] ?? null),
+    get length() {
+      return store.size
+    },
+  }
+})()
+
+// Global mock setup
 Object.assign(globalThis, {
   useRuntimeConfig: mockUseRuntimeConfig,
   useRoute: mockUseRoute,
   useRouter: mockUseRouter,
   useNuxtApp: mockUseNuxtApp,
+  useI18n: mockUseI18n,
+  localStorage: localStorageMock,
 })
 
-// Ensure Vue reactivity system is properly initialized before each test
 beforeEach(() => {
-  // Create a minimal Vue app to ensure proper reactivity context
-  createApp({})
+  vi.clearAllMocks()
+  localStorageMock.clear()
+})
 
-  // Reset mocks
+afterEach(() => {
+  vi.clearAllTimers()
   vi.clearAllMocks()
 })
 
-// Clean up after each test
-afterEach(() => {
-  // Any cleanup can go here
-})
+export default { createTestContext: () => ({}) }

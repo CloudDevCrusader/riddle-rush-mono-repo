@@ -2,6 +2,17 @@
 # Reusable module for creating S3 buckets configured for static website hosting
 # Includes versioning, lifecycle rules, CORS, transfer acceleration, and public access blocking
 
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 locals {
   bucket_name = var.bucket_name != "" ? var.bucket_name : "${var.project_name}-${var.environment}"
 }

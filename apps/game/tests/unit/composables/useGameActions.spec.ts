@@ -1,7 +1,21 @@
+import { setActivePinia, createPinia } from 'pinia'
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 
 // Import after mocks are set up
 import { useGameActions } from '../../../composables/useGameActions'
+
+// Hoist mockRouterPush so it can be referenced inside the vi.mock factory below.
+// vi.mock is hoisted before imports, so variables used in its factory must also
+// be hoisted via vi.hoisted().
+const { mockRouterPush } = vi.hoisted(() => ({ mockRouterPush: vi.fn() }))
+
+// Mock vue-router at module level to intercept the auto-imported useRouter.
+// unplugin-auto-import transforms composables to use direct ES module imports,
+// so vi.stubGlobal alone is not sufficient — the module mock takes precedence.
+vi.mock('vue-router', () => ({
+  useRouter: vi.fn(() => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() })),
+  useRoute: vi.fn(() => ({ path: '/', params: {}, query: {} })),
+}))
 
 // --- Mock dependencies as globals (Nuxt auto-imports) ---
 
@@ -14,45 +28,47 @@ const mockStartNextRound = vi.fn()
 let mockHasActiveSession = false
 let mockCurrentScore = 42
 
-const mockGameStore = {
+const mockGameSession = {
+  // Actions
   startNewGame: mockStartNewGame,
   resumeOrStartNewGame: mockResumeOrStartNewGame,
   endGame: mockEndGame,
   setupPlayers: mockSetupPlayers,
-  startNextRound: mockStartNextRound,
-  get hasActiveSession() {
-    return mockHasActiveSession
+
+  // Computed properties (simplified for testing)
+  currentSession: {
+    score: mockCurrentScore,
+    attempts: [],
+    id: '1',
+    status: 'active',
+    category: null,
+    letter: '',
+    players: [],
+    currentRound: 0,
+    roundHistory: [],
   },
-  get currentSession() {
-    return {
-      score: mockCurrentScore,
-      attempts: [],
-      id: '1',
-      status: 'active',
-      category: null,
-      letter: '',
-      players: [],
-      currentRound: 0,
-      roundHistory: [],
-    }
+  hasActiveSession: {
+    get value() {
+      return mockHasActiveSession
+    },
+  },
+  flowState: {
+    value: 'setup' as 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed',
   },
 }
 
-// Stub Nuxt auto-imported globals
-vi.stubGlobal('useGameStore', () => mockGameStore)
+const mockPlayerActions = {
+  startNextRound: mockStartNextRound,
+}
 
-const mockRouterPush = vi.fn()
-vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
-
-// Mock vue-router explicitly in case it's auto-imported
-vi.mock('vue-router', () => ({
-  useRouter: () => ({
-    push: mockRouterPush,
-    replace: vi.fn(),
-    back: vi.fn(),
-  }),
-  useRoute: vi.fn(),
+// Mock the useGameSession composable
+vi.mock('~/stores/hooks/useGameSession', () => ({
+  useGameSession: vi.fn(() => mockGameSession),
 }))
+
+// Stub Nuxt auto-imported globals (belt-and-suspenders alongside the module mock)
+vi.stubGlobal('usePlayerActions', () => mockPlayerActions)
+vi.stubGlobal('useRouter', () => ({ push: mockRouterPush, replace: vi.fn(), back: vi.fn() }))
 
 const mockToastSuccess = vi.fn()
 const mockToastError = vi.fn()
@@ -94,9 +110,11 @@ vi.mock('~/composables/useLogger', () => ({
 
 describe('useGameActions', () => {
   beforeEach(() => {
+    setActivePinia(createPinia())
     vi.clearAllMocks()
     mockHasActiveSession = false
     mockCurrentScore = 42
+    mockGameSession.flowState.value = 'setup'
   })
 
   // ──────────────────────────────────────────
@@ -382,7 +400,7 @@ describe('useGameActions', () => {
   // Return shape
   // ──────────────────────────────────────────
   describe('return value', () => {
-    it('should return all six action functions', () => {
+    it('should return action and flow guard functions', () => {
       const actions = useGameActions()
 
       expect(actions).toHaveProperty('startNewGame')

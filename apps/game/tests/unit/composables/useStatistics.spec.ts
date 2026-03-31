@@ -22,6 +22,7 @@ function createTestSession(overrides: Partial<GameSession> = {}): GameSession {
     id: `session-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     players: [],
     currentRound: 1,
+    currentPlayerIndex: 0,
     category: {
       id: 1,
       name: 'Animals',

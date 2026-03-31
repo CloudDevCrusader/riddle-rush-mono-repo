@@ -43,7 +43,7 @@ export default defineConfig({
 
 **Output:**
 
-```
+```text
 dist/
 ├── index.mjs
 ├── index.cjs
@@ -69,7 +69,7 @@ export default defineConfig([
 
 **Output:**
 
-```
+```text
 dist/
 ├── esm/
 │   └── index.js
@@ -157,7 +157,7 @@ export default defineConfig({
 
 **Output:**
 
-```
+```text
 dist/
 ├── index.mjs
 └── utils.mjs
@@ -175,7 +175,7 @@ export default defineConfig({
 
 **Output:**
 
-```
+```text
 dist/
 ├── index.mjs
 ├── utils/

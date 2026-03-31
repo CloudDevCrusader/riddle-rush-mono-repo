@@ -6,31 +6,35 @@
       :style="{ backgroundColor: statusColor }"
       :title="statusText"
     >
-      <div v-if="connectionStatus === 'online'" class="pulse" />
+      <div class="pulse" v-if="connectionStatus === 'online'" />
     </div>
-    <span v-if="showText" class="status-text">{{ statusText }}</span>
+    <span class="status-text" v-if="showText">{{ statusText }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
+// @ts-expect-error Nuxt overrides vue module types but computed exists at runtime
+import { computed } from 'vue'
 import { useWebSocket } from '~/composables/useWebSocket'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{
   showText?: boolean
 }>()
 
 const { connectionStatus, statusColor } = useWebSocket()
+const { t } = useI18n()
 
 const statusText = computed(() => {
   switch (connectionStatus.value) {
     case 'online':
-      return 'Online'
+      return t('connection.online')
     case 'connecting':
-      return 'Connecting...'
+      return t('connection.connecting')
     case 'error':
-      return 'Connection Error'
+      return t('connection.error')
     default:
-      return 'Offline'
+      return t('connection.offline')
   }
 })
 </script>
@@ -48,7 +52,10 @@ const statusText = computed(() => {
   height: 12px;
   border-radius: 50%;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .status-indicator.online {

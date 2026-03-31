@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb')
 const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb')
 
@@ -25,7 +26,7 @@ exports.handler = async (event) => {
           connectedAt: timestamp,
           ttl: Math.floor(Date.now() / 1000) + 7200, // 2 hours TTL
         },
-      }),
+      })
     )
 
     console.log(`Connection stored: ${connectionId} for user: ${userId}`)

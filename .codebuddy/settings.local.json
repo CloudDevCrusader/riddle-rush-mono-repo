@@ -1,4 +1,0 @@
-{
-  "enabledMcpjsonServers": ["playwright-test", "one-mcp"],
-  "disabledMcpjsonServers": []
-}

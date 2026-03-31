@@ -4,11 +4,11 @@
       <!-- Header -->
       <GameHeader color="gold">
         <template #left>
-          <button class="back-btn tap-highlight no-select" @click="goBack">
+          <button class="game-back-btn tap-highlight no-select" @click="goBack">
             <span class="back-btn__arrow">&#8592;</span>
           </button>
         </template>
-        OPTIONS
+        {{ t('menu.options') }}
       </GameHeader>
 
       <!-- Settings Panel -->
@@ -16,29 +16,33 @@
         <!-- Sound slider -->
         <div class="slider-row">
           <GameSlider v-model="soundVolume" icon="🔊" muted-icon="🔇" @change="handleSoundChange" />
-          <span class="slider-label">Sound</span>
+          <span class="slider-label">{{ t('settings.sound') }}</span>
         </div>
 
         <!-- Music slider -->
         <div class="slider-row">
           <GameSlider v-model="musicVolume" icon="🎵" muted-icon="🔇" @change="handleMusicChange" />
-          <span class="slider-label">Music</span>
+          <span class="slider-label">{{ t('settings.music') }}</span>
         </div>
       </GamePanel>
 
       <!-- OK Button -->
-      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk"> OK </GameButton>
+      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk">{{
+        t('common.ok')
+      }}</GameButton>
     </div>
   </GameBackground>
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
-const settingsStore = useSettingsStore()
+definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } })
+
+const { t, router } = usePageSetup()
+const settings = useSettings()
 
 // Local refs for slider values
-const soundVolume = ref(settingsStore.soundVolume)
-const musicVolume = ref(settingsStore.musicVolume)
+const soundVolume = ref(settings.soundVolume.value)
+const musicVolume = ref(settings.musicVolume.value)
 
 // Preview sound throttling
 let lastSoundPreviewTime = 0
@@ -46,8 +50,8 @@ const SOUND_PREVIEW_THROTTLE = 500 // ms
 
 // Handle sound volume change
 const handleSoundChange = (value: number) => {
-  settingsStore.updateSetting('soundVolume', value)
-  settingsStore.updateSetting('soundEnabled', value > 0)
+  settings.updateSetting('soundVolume', value)
+  settings.updateSetting('soundEnabled', value > 0)
 
   // Play preview sound (throttled)
   const now = Date.now()
@@ -60,8 +64,8 @@ const handleSoundChange = (value: number) => {
 
 // Handle music volume change
 const handleMusicChange = (value: number) => {
-  settingsStore.updateSetting('musicVolume', value)
-  settingsStore.updateSetting('musicEnabled', value > 0)
+  settings.updateSetting('musicVolume', value)
+  settings.updateSetting('musicEnabled', value > 0)
 }
 
 // Navigate back
@@ -83,9 +87,8 @@ const handleEscape = (event: KeyboardEvent) => {
 
 // Load settings on mount
 onMounted(() => {
-  settingsStore.loadSettings()
-  soundVolume.value = settingsStore.soundVolume
-  musicVolume.value = settingsStore.musicVolume
+  soundVolume.value = settings.soundVolume.value
+  musicVolume.value = settings.musicVolume.value
 
   // Add escape key listener
   window.addEventListener('keydown', handleEscape)
@@ -97,11 +100,11 @@ onUnmounted(() => {
 })
 
 useHead({
-  title: 'Settings',
+  title: t('settings.title'),
   meta: [
     {
       name: 'description',
-      content: 'Game settings',
+      content: t('settings.title'),
     },
   ],
 })
@@ -120,35 +123,12 @@ useHead({
   gap: var(--spacing-lg);
 }
 
-.back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(40px, 8vw, 52px);
-  height: clamp(40px, 8vw, 52px);
-  background: linear-gradient(180deg, #ffb84d 0%, #ff9500 100%);
-  border: 3px solid #ffd54f;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  box-shadow:
-    0 4px 0 #cc7700,
-    0 6px 12px rgba(0, 0, 0, 0.3);
-
-  &:active {
-    transform: translateY(2px);
-    box-shadow:
-      0 2px 0 #cc7700,
-      0 4px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  &__arrow {
-    font-size: clamp(20px, 4vw, 28px);
-    font-weight: var(--font-weight-bold);
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    line-height: 1;
-  }
+.back-btn__arrow {
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  line-height: 1;
 }
 
 .settings-panel {
@@ -178,5 +158,29 @@ useHead({
 .ok-btn {
   min-width: clamp(150px, 30vw, 200px);
   margin-top: var(--spacing-md);
+}
+
+// Small phone adjustments
+@include small-mobile {
+  .settings-page {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-md);
+  }
+
+  .settings-panel {
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md);
+  }
+
+  .slider-label {
+    font-size: var(--font-size-base);
+  }
+}
+
+@include tiny-mobile {
+  .settings-panel {
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+  }
 }
 </style>

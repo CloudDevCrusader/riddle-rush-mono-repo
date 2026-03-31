@@ -4,8 +4,9 @@
       <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
       <div v-else class="main-content">
         <NuxtLayout>
-          <NuxtPage :key="routeKey" />
+          <NuxtPage />
         </NuxtLayout>
+        <ConnectionStatus data-testid="offline-indicator" />
         <Toast />
         <DebugPanel />
         <StoryboardDevOverlay />
@@ -17,16 +18,10 @@
 <script setup lang="ts">
 import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 
-const route = useRoute()
-const gameStore = useGameStore()
-const settingsStore = useSettingsStore()
+const gameSession = useGameSession()
+const installPrompt = useInstallPrompt()
+const settings = useSettings()
 const { setLocale } = useI18n()
-
-// Force route update by using full route path
-const routeKey = computed(() => {
-  // Use full path to ensure component remounts on route changes
-  return route.fullPath
-})
 
 // Disable splash screen in E2E tests
 const isE2E =
@@ -39,40 +34,51 @@ const onSplashComplete = () => {
   showSplash.value = false
 }
 
+// Named handlers for proper cleanup
+const handleOnline = () => gameSession.setOnlineStatus(true)
+const handleOffline = () => gameSession.setOnlineStatus(false)
+const handleInstallPrompt = (e: Event) => {
+  e.preventDefault()
+  installPrompt.setInstallPrompt(e as BeforeInstallPromptEvent)
+}
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+    e.preventDefault()
+    settings.toggleDebugMode()
+  }
+}
+
 onMounted(async () => {
   // Load persisted state
-  await gameStore.loadFromDB()
-  settingsStore.loadSettings()
+  await gameSession.loadFromDB()
 
   // Set the saved language preference
-  if (settingsStore.hasStoredSettings()) {
-    const savedLanguage = settingsStore.getLanguage()
-    if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
-      try {
-        await setLocale(savedLanguage as 'de' | 'en')
-      } catch (error) {
-        console.error('Failed to set saved language:', error)
-      }
+  const savedLanguage = settings.getLanguage()
+  if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
+    try {
+      await setLocale(savedLanguage as 'de' | 'en')
+    } catch (error) {
+      const logger = useLogger()
+      logger.error('Failed to set saved language:', error)
     }
   }
 
   // Monitor online status
-  window.addEventListener('online', () => gameStore.setOnlineStatus(true))
-  window.addEventListener('offline', () => gameStore.setOnlineStatus(false))
+  window.addEventListener('online', handleOnline)
+  window.addEventListener('offline', handleOffline)
 
   // PWA install prompt
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault()
-    gameStore.setInstallPrompt(e as BeforeInstallPromptEvent)
-  })
+  window.addEventListener('beforeinstallprompt', handleInstallPrompt)
 
   // Debug mode shortcut: Ctrl+Shift+D
-  window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-      e.preventDefault()
-      settingsStore.toggleDebugMode()
-    }
-  })
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('online', handleOnline)
+  window.removeEventListener('offline', handleOffline)
+  window.removeEventListener('beforeinstallprompt', handleInstallPrompt)
+  window.removeEventListener('keydown', handleKeydown)
 })
 
 useHead({
@@ -121,22 +127,48 @@ useHead({
   min-height: 100dvh;
 }
 
-/* Page Transition Animations - Mobile Optimized */
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Forward navigation: slide left */
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 250ms ease;
+}
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
 }
 
-.page-enter-from,
-.page-leave-to {
+/* Back navigation: slide right */
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 250ms ease;
+}
+.slide-right-enter-from {
   opacity: 0;
+  transform: translateX(-30px);
+}
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .page-enter-active,
-  .page-leave-active {
+  .slide-left-enter-active,
+  .slide-left-leave-active,
+  .slide-right-enter-active,
+  .slide-right-leave-active {
     transition: opacity 0.15s ease;
+  }
+
+  .slide-left-enter-from,
+  .slide-left-leave-to,
+  .slide-right-enter-from,
+  .slide-right-leave-to {
+    transform: none;
   }
 }
 </style>

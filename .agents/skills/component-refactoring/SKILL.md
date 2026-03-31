@@ -337,7 +337,7 @@ return <ConfigContext.Provider value={value}>...</ConfigContext.Provider>
 - Extract panel UI to separate files
 - Use `_base` components for common patterns
 
-```
+```text
 nodes/<node-type>/
   ├── index.tsx              # Node registration
   ├── node.tsx               # Node visual component
@@ -412,7 +412,7 @@ Create a refactoring plan based on detected features:
 2. **Run lint, type-check, and tests after each extraction**
 3. **Verify functionality before next step**
 
-```
+```text
 For each extraction:
   ┌────────────────────────────────────────┐
   │ 1. Extract code                        │

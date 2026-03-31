@@ -27,7 +27,7 @@ export default defineConfig({
 
 ### Source Structure
 
-```
+```text
 src/
 ├── index.ts
 ├── utils/
@@ -50,7 +50,7 @@ export default defineConfig({
 
 **Output:**
 
-```
+```text
 dist/
 ├── index.mjs
 ├── utils/
@@ -66,7 +66,7 @@ All imported files are output individually, preserving structure.
 
 **Output:**
 
-```
+```text
 dist/
 └── index.mjs  (all code bundled together)
 ```
@@ -204,7 +204,7 @@ export default defineConfig({
 
 **Output:**
 
-```
+```text
 lib/
 ├── index.js
 ├── utils/

@@ -1,22 +1,36 @@
 <template>
   <Transition name="fade">
-    <div v-if="modelValue" class="settings-overlay" @click="handleOverlayClick">
+    <button
+      v-if="modelValue"
+      class="settings-overlay"
+      type="button"
+      aria-label="Close settings"
+      @click="handleOverlayClick"
+    >
       <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
           :src="`${baseUrl}assets/settings/BACKGROUND.png`"
           alt="Background"
           class="settings-bg"
+          width="600"
+          height="800"
         />
 
         <!-- Back Button -->
-        <button class="back-btn tap-highlight no-select" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" />
+        <button class="back-btn tap-highlight no-select" type="button" @click="closeModal">
+          <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" width="60" height="60" />
         </button>
 
         <!-- Title -->
         <div class="title-container">
-          <img :src="`${baseUrl}assets/settings/options.png`" alt="OPTIONS" class="title-image" />
+          <img
+            :src="`${baseUrl}assets/settings/options.png`"
+            alt="OPTIONS"
+            class="title-image"
+            width="300"
+            height="100"
+          />
         </div>
 
         <!-- Settings Panel -->
@@ -24,10 +38,16 @@
           <!-- Sound Control -->
           <div class="control-item">
             <div class="control-icon-wrapper">
-              <img :src="`${baseUrl}assets/settings/Sound.png`" alt="Sound" class="control-icon" />
+              <img
+                :src="`${baseUrl}assets/settings/Sound.png`"
+                alt="Sound"
+                class="control-icon"
+                width="50"
+                height="50"
+              />
             </div>
             <div class="control-content">
-              <div class="control-label">sound</div>
+              <div class="control-label">{{ t('settings.sound') }}</div>
               <div class="slider-container">
                 <input
                   v-model.number="soundVolume"
@@ -35,6 +55,7 @@
                   min="0"
                   max="100"
                   class="volume-slider"
+                  inputmode="numeric"
                   @input="updateSoundVolume"
                 />
                 <div class="slider-track">
@@ -48,10 +69,16 @@
           <!-- Music Control -->
           <div class="control-item">
             <div class="control-icon-wrapper">
-              <img :src="`${baseUrl}assets/settings/Music.png`" alt="Music" class="control-icon" />
+              <img
+                :src="`${baseUrl}assets/settings/Music.png`"
+                alt="Music"
+                class="control-icon"
+                width="50"
+                height="50"
+              />
             </div>
             <div class="control-content">
-              <div class="control-label">Music</div>
+              <div class="control-label">{{ t('settings.music') }}</div>
               <div class="slider-container">
                 <input
                   v-model.number="musicVolume"
@@ -59,6 +86,7 @@
                   min="0"
                   max="100"
                   class="volume-slider"
+                  inputmode="numeric"
                   @input="updateMusicVolume"
                 />
                 <div class="slider-track">
@@ -71,15 +99,17 @@
         </div>
 
         <!-- OK Button -->
-        <button class="ok-btn tap-highlight no-select" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" />
+        <button class="ok-btn tap-highlight no-select" type="button" @click="closeModal">
+          <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" width="200" height="80" />
         </button>
       </div>
-    </div>
+    </button>
   </Transition>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 defineProps<{
   modelValue: boolean
 }>()
@@ -90,11 +120,12 @@ const emit = defineEmits<{
 
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl
-const settingsStore = useSettingsStore()
+const settings = useSettings()
 const router = useRouter()
+const { t } = useI18n()
 
-const soundVolume = ref(settingsStore.soundVolume)
-const musicVolume = ref(settingsStore.musicVolume)
+const soundVolume = ref(settings.soundVolume.value)
+const musicVolume = ref(settings.musicVolume.value)
 
 const handleOverlayClick = (event: MouseEvent) => {
   // Only close if clicking directly on overlay (not on card content)
@@ -115,13 +146,13 @@ const closeModal = () => {
 }
 
 const updateSoundVolume = () => {
-  settingsStore.updateSetting('soundVolume', soundVolume.value)
-  settingsStore.updateSetting('soundEnabled', soundVolume.value > 0)
+  settings.updateSetting('soundVolume', soundVolume.value)
+  settings.updateSetting('soundEnabled', soundVolume.value > 0)
 }
 
 const updateMusicVolume = () => {
-  settingsStore.updateSetting('musicVolume', musicVolume.value)
-  settingsStore.updateSetting('musicEnabled', musicVolume.value > 0)
+  settings.updateSetting('musicVolume', musicVolume.value)
+  settings.updateSetting('musicEnabled', musicVolume.value > 0)
 }
 
 // Handle escape key
@@ -133,9 +164,8 @@ const handleEscape = (event: KeyboardEvent) => {
 
 // Load settings on mount
 onMounted(() => {
-  settingsStore.loadSettings()
-  soundVolume.value = settingsStore.soundVolume
-  musicVolume.value = settingsStore.musicVolume
+  soundVolume.value = settings.soundVolume.value
+  musicVolume.value = settings.musicVolume.value
 
   // Add escape key listener
   window.addEventListener('keydown', handleEscape)
@@ -164,6 +194,9 @@ onUnmounted(() => {
     max(var(--spacing-lg), env(safe-area-inset-right, 0px))
     max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
     max(var(--spacing-lg), env(safe-area-inset-left, 0px));
+  border: none;
+  cursor: pointer;
+  width: 100%;
 }
 
 .settings-card {
@@ -175,17 +208,7 @@ onUnmounted(() => {
   border-radius: var(--radius-xl);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: scaleIn 0.3s ease-out;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  cursor: default;
 }
 
 .settings-bg {

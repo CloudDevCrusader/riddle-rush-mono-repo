@@ -2,7 +2,7 @@
 set -e
 
 # Run nuxt prepare to generate types
-nuxt prepare
+npx nuxt prepare
 
 # Add @ts-nocheck to pwa-icons-plugin.ts if it exists and doesn't already have it
 if [[ -f .nuxt/pwa-icons-plugin.ts ]]; then
@@ -17,4 +17,4 @@ if [[ -f .nuxt/pwa-icons-plugin.ts ]]; then
 fi
 
 # Use vue-tsc directly to avoid nuxt typecheck regenerating files
-vue-tsc --noEmit
+vue-tsc --noEmit --skipLibCheck

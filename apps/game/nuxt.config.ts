@@ -1,10 +1,10 @@
+import { fileURLToPath } from 'node:url'
 import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants'
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 import { filterSsrPlugins } from './utils/filter-ssr-plugins'
 import { withTrailingSlash } from 'ufo'
 import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema'
-import type { Manifest as ViteBundleManifest } from 'vue-bundle-renderer'
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -65,9 +65,10 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
 
 export default defineNuxtConfig({
   modules: [
-    '@pinia/nuxt', // Load Pinia first since stores are used everywhere
-    '@nuxtjs/i18n', // Load i18n early but after Pinia
-    '@unocss/nuxt', // Load UnoCSS after Pinia/i18n, before PWA
+    '@pinia/nuxt',
+    'pinia-plugin-unstorage/nuxt',
+    '@nuxtjs/i18n', // Load i18n early
+    '@unocss/nuxt', // Load UnoCSS after i18n, before PWA
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
@@ -76,8 +77,10 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxt/image',
+    '@nuxt/hints',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
+    ...(process.env.VERCEL ? ['@vercel/analytics'] : []),
   ],
   // Client-only SPA (IndexedDB and PWA require client-side rendering)
 
@@ -92,24 +95,26 @@ export default defineNuxtConfig({
   ],
 
   imports: {
-    dirs: ['stores', 'composables'],
+    dirs: ['stores', 'stores/hooks', 'composables'],
   },
   devtools: {
-    enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+    enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     timeline: {
-      enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+      enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     },
+  },
+  hints: {
+    devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
   },
 
   app: {
     head: {
-      title: 'Riddle Rush - Fun Party Game',
+      titleTemplate: '%s - Riddle Rush',
       meta: [
         { charset: 'utf-8' },
         {
           name: 'viewport',
-          content:
-            'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+          content: 'width=device-width, initial-scale=1, viewport-fit=cover',
         },
         { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -118,7 +123,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['~/assets/scss/design-system.scss'],
+  css: ['~/assets/scss/design-system.scss', '~/assets/css/figma-tokens.generated.css'],
 
   // Color mode configuration
   colorMode: {
@@ -143,6 +148,9 @@ export default defineNuxtConfig({
       gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
       gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
       gtagId: process.env.GTAG_ID || '',
+      // Feature-flag contract: runtime config can only force-disable answer input.
+      // Precedence in useFeatureFlags.ts is: runtime force-disable -> GitLab -> local settings -> default.
+      featureAnswerInput: process.env.NUXT_PUBLIC_FEATURE_ANSWER_INPUT !== 'false',
       // Game configuration - env vars override shared constants
       minPlayers: Number(process.env.NUXT_PUBLIC_MIN_PLAYERS) || MIN_PLAYERS,
       maxPlayers: Number(process.env.NUXT_PUBLIC_MAX_PLAYERS) || MAX_PLAYERS,
@@ -237,11 +245,9 @@ export default defineNuxtConfig({
     },
     plugins: [
       // Filter out SSR plugins at build time (must be first)
-      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
-      // @ts-expect-error Vite plugin types differ across workspace packages due to duplicate rollup resolutions
       ...(process.env.NODE_ENV === 'production'
         ? getBuildPlugins({ isDev: false })
         : getDevPlugins({ isDev: true })),
@@ -314,11 +320,6 @@ export default defineNuxtConfig({
     // Filter out problematic i18n plugins at app resolution stage
     'app:resolve': (app: NuxtAppSchema) => {
       filterProblematicPlugins(app)
-    },
-    // build:manifest receives the Vite/Webpack bundle manifest (asset map), not app plugins —
-    // plugin filtering is handled in app:resolve above. This hook is kept as a no-op placeholder.
-    'build:manifest': (_manifest: ViteBundleManifest) => {
-      // Plugin filtering is handled in app:resolve; bundle manifest has no plugin list.
     },
   },
 
@@ -586,24 +587,28 @@ export default defineNuxtConfig({
     },
   },
 
-  // Security headers
-  security: {
-    nonce: false, // Disable nonces for Playwright compatibility
-    headers: {
-      crossOriginEmbedderPolicy:
-        process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
-      contentSecurityPolicy: {
-        'base-uri': ["'self'"],
-        'font-src': ["'self'", 'https:', 'data:'],
-        'form-action': ["'self'"],
-        'frame-ancestors': ["'self'"],
-        'img-src': ["'self'", 'data:', 'blob:'],
-        'object-src': ["'none'"],
-        'script-src-attr': ["'none'"],
-        'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-        'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
-        'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
-      },
-    },
-  },
+  // Security headers (only when nuxt-security is enabled)
+  ...(process.env.DISABLE_SECURITY !== 'true'
+    ? {
+        security: {
+          nonce: false, // Disable nonces for Playwright compatibility
+          headers: {
+            crossOriginEmbedderPolicy:
+              process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
+            contentSecurityPolicy: {
+              'base-uri': ["'self'"],
+              'font-src': ["'self'", 'https:', 'data:'],
+              'form-action': ["'self'"],
+              'frame-ancestors': ["'self'"],
+              'img-src': ["'self'", 'data:', 'blob:'],
+              'object-src': ["'none'"],
+              'script-src-attr': ["'none'"],
+              'style-src': ["'self'", 'https:', "'unsafe-inline'"],
+              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
+              'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
+            },
+          },
+        },
+      }
+    : {}),
 })

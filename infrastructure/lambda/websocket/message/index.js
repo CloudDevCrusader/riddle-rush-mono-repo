@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb')
 const { DynamoDBDocumentClient, PutCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb')
 const { CloudWatchClient, PutMetricDataCommand } = require('@aws-sdk/client-cloudwatch')
@@ -68,7 +69,7 @@ async function handlePerformanceLog(data, connectionId) {
         metadata,
         ttl: Math.floor(Date.now() / 1000) + 2592000, // 30 days TTL
       },
-    }),
+    })
   )
 
   // Send metric to CloudWatch
@@ -87,7 +88,7 @@ async function handlePerformanceLog(data, connectionId) {
           ],
         },
       ],
-    }),
+    })
   )
 
   console.log(`Performance logged: ${metricName} = ${duration}ms for user ${userId}`)
@@ -123,7 +124,7 @@ async function handleLeaderboardUpdate(data, connectionId) {
         connectionId,
         ttl: Math.floor(Date.now() / 1000) + 7776000, // 90 days TTL
       },
-    }),
+    })
   )
 
   // Send custom metric to CloudWatch
@@ -142,7 +143,7 @@ async function handleLeaderboardUpdate(data, connectionId) {
           ],
         },
       ],
-    }),
+    })
   )
 
   console.log(`Leaderboard updated: ${gameMode} - ${score} points for user ${userId}`)
@@ -176,7 +177,7 @@ async function handleGetUserStats(data) {
         },
         Limit: 100,
         ScanIndexForward: false, // Get latest first
-      }),
+      })
     )
 
     // Get user's leaderboard entries
@@ -190,7 +191,7 @@ async function handleGetUserStats(data) {
         },
         Limit: 50,
         ScanIndexForward: false,
-      }),
+      })
     )
 
     return {

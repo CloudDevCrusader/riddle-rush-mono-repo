@@ -40,6 +40,7 @@
 
 - [ ] **MODAL-01**: Quit Game modal matches `QUIT GAME.png` — red header bar with "QUIT GAME" title, "Are you sure you want to quit game?" text, red NO button, green YES button
 - [ ] **MODAL-02**: Pause modal matches `menu.png` — blue header "Game Paused", resume message, green Resume button, blue Restart button, orange Home button
+- [ ] **MODAL-03**: Post-round prompt modal — after all players score, ask to play another round or go to leaderboard
 
 ### Visual Polish & Refactoring
 
@@ -48,6 +49,16 @@
 - [ ] **POLISH-03**: Add smooth page transition animations — consistent enter/leave transitions, component mount stagger effects, eliminate jarring navigation cuts
 - [ ] **POLISH-04**: Refactor duplicated CSS/code — extract shared patterns into design system mixins or composables, eliminate copy-paste styling across pages
 - [ ] **POLISH-05**: Fix known bugs — multiplayer round flow bug (skipping last player), game store complexity, intermittent nuxi typecheck error, any visual regressions
+
+### State Management Migration (Pinia to Zustand)
+
+- [x] **MIGRATE-01**: Game store state and actions work via Zustand — raw store at stores/gameStore.ts with all getters and actions
+- [x] **MIGRATE-02**: Settings store works via Zustand with persist-only middleware — no manual load/save methods
+- [ ] **MIGRATE-03**: All consumer files (composables, components, plugins, pages) import from focused Zustand hooks
+- [ ] **MIGRATE-04**: Pinia fully removed — no @pinia/nuxt module, no pinia package, no old store files
+- [ ] **MIGRATE-05**: All unit tests rewritten for Zustand — use store.setState() for isolation, no Pinia setup
+- [x] **MIGRATE-06**: localStorage migration from old Pinia format to Zustand persist envelope format
+- [ ] **MIGRATE-07**: Feature flags and E2E test helpers work with Zustand stores
 
 ---
 
@@ -98,7 +109,15 @@
 | PAGE-08     | Phase 10 | Pending  |
 | MODAL-01    | Phase 11 | Pending  |
 | MODAL-02    | Phase 11 | Pending  |
+| MODAL-03    | Phase 13 | Pending  |
+| MIGRATE-01  | Phase 19 | Complete |
+| MIGRATE-02  | Phase 19 | Complete |
+| MIGRATE-03  | Phase 19 | Pending  |
+| MIGRATE-04  | Phase 19 | Pending  |
+| MIGRATE-05  | Phase 19 | Pending  |
+| MIGRATE-06  | Phase 19 | Complete |
+| MIGRATE-07  | Phase 19 | Pending  |
 
 ---
 
-_Last updated: 2026-01-31_
+_Last updated: 2026-03-17_

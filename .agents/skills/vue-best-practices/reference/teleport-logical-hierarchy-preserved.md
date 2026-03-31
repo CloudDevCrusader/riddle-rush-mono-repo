@@ -144,7 +144,7 @@ function handleFormSubmit(data) {
 
 In Vue Devtools, teleported components appear under their logical parent:
 
-```
+```text
 App
 └── ParentPage
     └── ModalForm        <-- Shows here (logical parent)
@@ -153,7 +153,7 @@ App
 
 Not under their DOM location:
 
-```
+```text
 // This is NOT how it appears in Devtools
 body
 └── ModalForm  <-- Does NOT show here

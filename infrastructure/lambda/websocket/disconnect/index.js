@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb')
 const { DynamoDBDocumentClient, DeleteCommand } = require('@aws-sdk/lib-dynamodb')
 
@@ -17,7 +18,7 @@ exports.handler = async (event) => {
         Key: {
           connectionId,
         },
-      }),
+      })
     )
 
     console.log(`Connection removed: ${connectionId}`)

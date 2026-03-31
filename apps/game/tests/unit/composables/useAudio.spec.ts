@@ -57,13 +57,19 @@ let mockAudioContext = createMockAudioContext()
 
 /** Installs the default AudioContext mock on the global scope */
 function installDefaultAudioContextMock() {
-  vi.stubGlobal(
-    'AudioContext',
-    vi.fn(() => {
-      mockAudioContext = createMockAudioContext()
-      return mockAudioContext
-    })
-  )
+  // Create a constructor function that can be called with 'new' and also works as a spy
+  const MockAudioContext = vi.fn(function () {
+    mockAudioContext = createMockAudioContext()
+    return mockAudioContext
+  }) as unknown as typeof AudioContext
+
+  // Mock the constructor directly on globalThis
+  globalThis.AudioContext = MockAudioContext
+
+  // Also set it on window for the composable to find
+  if (typeof window !== 'undefined') {
+    window.AudioContext = MockAudioContext
+  }
 }
 
 /** Installs the useIndexedDB mock on the global scope */
@@ -145,7 +151,9 @@ describe('useAudio', () => {
       // @ts-expect-error - testing fallback
       delete globalThis.AudioContext
 
-      const webkitMock = vi.fn(() => ({ ...mockAudioContext }))
+      const webkitMock = vi.fn(function () {
+        return { ...mockAudioContext }
+      })
       // @ts-expect-error - webkit prefix
       globalThis.webkitAudioContext = webkitMock
 
@@ -201,13 +209,15 @@ describe('useAudio', () => {
 
       vi.stubGlobal(
         'AudioContext',
-        vi.fn(() => ({
-          currentTime: 0,
-          destination: {},
-          createOscillator: vi.fn(() => createdOscillator),
-          createGain: vi.fn(() => createdGain),
-          createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
-        }))
+        vi.fn(function () {
+          return {
+            currentTime: 0,
+            destination: {},
+            createOscillator: vi.fn(() => createdOscillator),
+            createGain: vi.fn(() => createdGain),
+            createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
+          }
+        })
       )
 
       vi.resetModules()
@@ -230,13 +240,15 @@ describe('useAudio', () => {
 
       vi.stubGlobal(
         'AudioContext',
-        vi.fn(() => ({
-          currentTime: 0,
-          destination,
-          createOscillator: vi.fn(() => createdOscillator),
-          createGain: vi.fn(() => createdGain),
-          createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
-        }))
+        vi.fn(function () {
+          return {
+            currentTime: 0,
+            destination,
+            createOscillator: vi.fn(() => createdOscillator),
+            createGain: vi.fn(() => createdGain),
+            createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
+          }
+        })
       )
 
       vi.resetModules()
@@ -256,13 +268,15 @@ describe('useAudio', () => {
 
       vi.stubGlobal(
         'AudioContext',
-        vi.fn(() => ({
-          currentTime: 0,
-          destination: {},
-          createOscillator: vi.fn(() => createMockOscillator()),
-          createGain: vi.fn(() => createdGain),
-          createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
-        }))
+        vi.fn(function () {
+          return {
+            currentTime: 0,
+            destination: {},
+            createOscillator: vi.fn(() => createMockOscillator()),
+            createGain: vi.fn(() => createdGain),
+            createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
+          }
+        })
       )
 
       vi.resetModules()
@@ -287,13 +301,15 @@ describe('useAudio', () => {
 
       vi.stubGlobal(
         'AudioContext',
-        vi.fn(() => ({
-          currentTime: 5,
-          destination: {},
-          createOscillator: vi.fn(() => createdOscillator),
-          createGain: vi.fn(() => createMockGainNode()),
-          createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
-        }))
+        vi.fn(function () {
+          return {
+            currentTime: 5,
+            destination: {},
+            createOscillator: vi.fn(() => createdOscillator),
+            createGain: vi.fn(() => createMockGainNode()),
+            createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
+          }
+        })
       )
 
       vi.resetModules()
@@ -328,13 +344,15 @@ describe('useAudio', () => {
       const createOscSpy = vi.fn(() => createMockOscillator())
       vi.stubGlobal(
         'AudioContext',
-        vi.fn(() => ({
-          currentTime: 0,
-          destination: {},
-          createOscillator: createOscSpy,
-          createGain: vi.fn(() => createMockGainNode()),
-          createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
-        }))
+        vi.fn(function () {
+          return {
+            currentTime: 0,
+            destination: {},
+            createOscillator: createOscSpy,
+            createGain: vi.fn(() => createMockGainNode()),
+            createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
+          }
+        })
       )
 
       await audio.playClick()
@@ -504,13 +522,15 @@ describe('useAudio', () => {
 
       vi.stubGlobal(
         'AudioContext',
-        vi.fn(() => ({
-          currentTime: 0,
-          destination: {},
-          createOscillator: vi.fn(() => createMockOscillator()),
-          createGain: vi.fn(() => createdGain),
-          createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
-        }))
+        vi.fn(function () {
+          return {
+            currentTime: 0,
+            destination: {},
+            createOscillator: vi.fn(() => createMockOscillator()),
+            createGain: vi.fn(() => createdGain),
+            createBiquadFilter: vi.fn(() => createMockBiquadFilter()),
+          }
+        })
       )
 
       vi.resetModules()

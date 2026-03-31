@@ -7,7 +7,7 @@ cli:
 plugins:
   sources:
     - id: trunk
-      ref: v1.7.4
+      ref: v1.7.6
       uri: https://github.com/trunk-io/plugins
 # Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
 runtimes:
@@ -19,6 +19,28 @@ runtimes:
 lint:
   # Ignore patterns
   ignore:
+    - linters: [yamllint]
+      paths:
+        - 'templates/**'
+    - linters: [markdownlint]
+      paths:
+        - '.agent/**'
+        - '.agents/**'
+        - 'docs/**'
+        - '.zenflow/**'
+        - 'templates/**'
+    - linters: [tflint]
+      paths:
+        - 'infrastructure/**'
+        - '**/infrastructure/**'
+    - linters: [mypy]
+      paths:
+        - 'tools/**'
+    - linters: [shellcheck]
+      paths:
+        - '**/*.sh'
+        - '**/*w'
+
     - linters: [ALL]
       paths:
         # Binary assets
@@ -31,14 +53,31 @@ lint:
         # Build outputs
         - '**/node_modules/**'
         - '**/.nuxt/**'
+        - '**/.output/**'
         - '**/dist/**'
         - '**/build/**'
+        - '**/.vite/**'
+        # Cache & tooling
+        - '**/.turbo/**'
+        - '**/.vercel/**'
+        - '**/.cache/**'
+        - '**/.trunk/**'
+        - '**/.trunk-cache/**'
+        - '**/.claude/**'
+        - '**/.claude-worktrees/**'
         # Test outputs
         - '**/.playwright-mcp/**'
         - '**/playwright-report/**'
         - '**/test-results/**'
-        # Trunk outputs
-        - '**/.trunk/**'
+        - '**/coverage/**'
+        # Auto-generated / agent artifacts
+        - '**/.planning/**'
+        - '**/.sisyphus/**'
+        - '**/.opencode/**'
+        - '**/.yoyo/**'
+        # Python bytecode
+        - '**/__pycache__/**'
+        - '**/*.egg-info/**'
     - linters: [trufflehog]
       paths:
         - '**/.env*'
@@ -55,6 +94,7 @@ lint:
     - linters: [eslint]
       paths:
         - '**/scripts/*.js'
+        - 'bin/**'
     - linters: [tflint]
       paths:
         - '**/variables.tf'
@@ -71,72 +111,54 @@ lint:
     - checkov
 
   enabled:
+    - ruff@0.15.8
+    - ruff@0.15.6
     - taplo@0.10.0
-    - ruff@0.14.14
+    - ruff@0.15.6
     - dotenv-linter@4.0.0
-    - actionlint@1.7.10
-    - eslint@9.39.2
+    - actionlint@1.7.11
+    - eslint@10.1.0
     - git-diff-check
     - hadolint@2.14.0
-    - markdownlint@0.47.0
-    - oxipng@10.0.0
+    - markdownlint@0.48.0
+    - oxipng@10.1.0
     - prettier@3.8.1
-    - renovate@43.0.9
+    - renovate@43.95.0
     - shellcheck@0.11.0
-    - shfmt@3.6.0
-    - stylelint@17.1.0
-    - svgo@4.0.0
-    - tflint@0.60.0
+    - stylelint@17.6.0
+    - svgo@4.0.1
+    - tflint@0.61.0
     - yamllint@1.38.0
     # Python linting tools
     - ruff@0.6.4
-    - black@26.1.0
-    - isort@7.0.0
+    - black@26.3.1
+    - isort@8.0.1
     - mypy@1.19.1
-    - bandit@1.9.3
 
   # Configure specific linters
-  definitions:
-    - name: shellcheck
-      commands:
-        - name: lint
-          run: shellcheck --severity=error --exclude=SC2250,SC2248,SC2086 ${target}
-    - name: markdownlint
-      commands:
-        - name: lint
-          run: markdownlint --config .markdownlint.json ${target}
-          success_codes: [0]
-    - name: ruff
-      commands:
-        - name: lint
-          run: ruff check --config=pyproject.toml ${target}
-          success_codes: [0, 1]
-    - name: black
-      commands:
-        - name: lint
-          run: black --check --diff ${target}
-          success_codes: [0, 1]
-          output: diff
-    - name: isort
-      commands:
-        - name: lint
-          run: isort --check-only --diff ${target}
-          success_codes: [0, 1]
-          output: diff
-    - name: mypy
-      commands:
-        - name: lint
-          run: mypy --config-file=pyproject.toml ${target}
-          success_codes: [0, 1]
-    - name: bandit
-      commands:
-        - name: lint
-          run: bandit -c pyproject.toml -r ${target}
-          success_codes: [0, 1]
 actions:
   disabled:
+    - npm-check-pre-push
     - trunk-announce
-    - trunk-check-pre-push
-    - trunk-fmt-pre-commit
   enabled:
+    - git-lfs
+    - trunk-fmt-pre-commit
+    - trunk-check-pre-push
+    - trunk-check-pre-commit
+    - terraform-docs
+    - npm-check
     - trunk-upgrade-available
+tools:
+  enabled:
+    - awscli@1.44.67
+    - gh@2.27.0
+    - uv@0.11.2
+    - tsc@6.0.2
+    - markdown-link-check@3.14.2
+    - terraform-docs@0.21.0
+    - trunk-toolbox@0.5.4
+    - pnpm@10.32.1
+    - ts-node@10.9.2
+    - terraform@1.1.4
+  runtimes:
+    - python

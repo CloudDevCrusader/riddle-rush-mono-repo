@@ -4,16 +4,12 @@ version = "0.1.0"
 description = "Power up your crews with crew_ai_tool"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
-dependencies = [
-    "crewai[tools]>=0.203.1",
-]
+dependencies = ["crewai[tools]>=0.203.1"]
 
 [project.scripts]
 
 [build-system]
-requires = [
-    "hatchling",
-]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.crewai]

@@ -148,20 +148,6 @@ import_resource "aws_wafv2_web_acl_logging_configuration.cloudfront" \
 	"arn:aws:wafv2:us-east-1:${ACCOUNT_ID}:global/webacl/riddle-rush-pwa-production-waf/ed9c2ad5-72bc-491e-8d9b-72b8cab30e40" \
 	"WAF logging configuration"
 
-# --- Cognito ---
-echo -e "\n${BLUE}--- Cognito ---${NC}"
-import_resource "aws_cognito_user_pool.main" \
-	"eu-central-1_9DkqHYOyu" \
-	"Cognito User Pool"
-
-import_resource "aws_cognito_user_pool_client.main" \
-	"eu-central-1_9DkqHYOyu/6hhaeg59b7486flhabqg4m7ba0" \
-	"Cognito User Pool Client"
-
-import_resource "aws_cloudwatch_log_group.cognito" \
-	"/aws/cognito/riddle-rush-pwa-production" \
-	"Cognito CloudWatch log group"
-
 # --- API Gateway ---
 echo -e "\n${BLUE}--- API Gateway ---${NC}"
 import_resource "aws_apigatewayv2_api.main" \

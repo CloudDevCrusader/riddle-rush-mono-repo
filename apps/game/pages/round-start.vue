@@ -26,39 +26,58 @@
       <transition name="wheel-fade">
         <div
           v-if="isFortuneWheelEnabled && !wheelsComplete"
-          class="wheels-container"
+          class="double-wheel-layout"
           data-testid="round-wheels-container"
         >
-          <div class="wheel-wrapper">
+          <!-- Top Wheel (Category) -->
+          <div class="wheel-wrapper top-wheel">
             <div class="wheel-label">
               {{ t('common.category', 'Category') }}
             </div>
-            <FortuneWheel
-              ref="categoryWheelRef"
-              v-model="selectedCategory"
-              :items="displayCategories"
-              :get-item-key="getCategoryKey"
-              :get-item-label="getCategoryLabel"
-              :get-item-icon="getCategoryIcon"
-              center-icon="🎯"
-              @spin-complete="onCategoryComplete"
-            />
+            <div class="wheel-container flipped">
+              <FortuneWheel
+                ref="categoryWheelRef"
+                v-model="selectedCategory"
+                :items="displayCategories"
+                :get-item-key="getCategoryKey"
+                :get-item-label="getCategoryLabel"
+                :get-item-icon="getCategoryIcon"
+                center-icon="🎯"
+                @spin-complete="onCategoryComplete"
+              />
+            </div>
           </div>
 
-          <div class="wheel-wrapper">
+          <!-- Central Spin Button -->
+          <div class="spin-button-zone">
+            <button
+              @click="spinBothWheels"
+              class="spin-button tap-highlight"
+              :disabled="categorySpinComplete || letterSpinComplete || isSpinning"
+            >
+              <div class="spin-button-inner">
+                <span class="spin-text">SPIN</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- Bottom Wheel (Letter) -->
+          <div class="wheel-wrapper bottom-wheel">
             <div class="wheel-label">
               {{ t('common.letter', 'Letter') }}
             </div>
-            <FortuneWheel
-              ref="letterWheelRef"
-              v-model="selectedLetter"
-              :items="alphabet"
-              :get-item-key="getLetterKey"
-              :get-item-label="getLetterLabel"
-              :get-item-icon="getNoIcon"
-              center-icon="🎯"
-              @spin-complete="onLetterComplete"
-            />
+            <div class="wheel-container">
+              <FortuneWheel
+                ref="letterWheelRef"
+                v-model="selectedLetter"
+                :items="alphabet"
+                :get-item-key="getLetterKey"
+                :get-item-label="getLetterLabel"
+                :get-item-icon="getNoIcon"
+                center-icon="🎯"
+                @spin-complete="onLetterComplete"
+              />
+            </div>
           </div>
         </div>
       </transition>
@@ -128,6 +147,7 @@ const categorySpinComplete = ref(false)
 const letterSpinComplete = ref(false)
 const wheelsComplete = ref(false)
 const startingGame = ref(false)
+const isSpinning = ref(false)
 
 const categoryIconMap: Record<string, string> = {
   female_name: '👩',
@@ -191,13 +211,21 @@ onMounted(async () => {
 
   // Select up to 12 categories for the wheel
   displayCategories.value = allCategories.slice(0, 12)
-
-  // Auto-spin both wheels immediately (will complete within 5 seconds)
-  setTimeout(() => {
-    categoryWheelRef.value?.spinRandom()
-    letterWheelRef.value?.spinRandom()
-  }, 100)
 })
+
+const spinBothWheels = () => {
+  if (isSpinning.value) return
+  isSpinning.value = true
+  categorySpinComplete.value = false
+  letterSpinComplete.value = false
+
+  categoryWheelRef.value?.spinRandom()
+
+  // Stagger the spins slightly for better visual effect
+  setTimeout(() => {
+    letterWheelRef.value?.spinRandom()
+  }, 150)
+}
 
 const getCategoryIcon = (category: Category): string => {
   return categoryIconMap[category.searchWord] || '📦'
@@ -223,6 +251,7 @@ const onLetterComplete = (letter: string) => {
 
 const checkBothComplete = () => {
   if (categorySpinComplete.value && letterSpinComplete.value) {
+    isSpinning.value = false
     // Both wheels have completed spinning
     // Wait a moment, then fade out wheels
     setTimeout(() => {
@@ -270,7 +299,7 @@ const startGame = async () => {
 
       if (isCurrentRoundCompleted) {
         // Current round completed - start new round (increment counter)
-        await gameStore.startNextRound(selectedCategory.value, selectedLetter.value)
+        await gameStore.startConfiguredRound(selectedCategory.value, selectedLetter.value)
       } else {
         // Refresh during same round - update category/letter but don't increment round
         session.category = { ...selectedCategory.value, letter: selectedLetter.value }
@@ -379,28 +408,133 @@ useHead({
   padding: clamp(var(--spacing-xl), 8vh, var(--spacing-3xl)) var(--spacing-xl);
 }
 
-/* Dual Wheels Container */
-.wheels-container {
-  display: flex;
-  gap: clamp(var(--spacing-xl), 5vw, var(--spacing-3xl));
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.wheel-wrapper {
-  flex: 1;
+/* Vertical Double Wheel Layout */
+.double-wheel-layout {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg);
-  max-width: 420px;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  gap: 0; /* Remove gap so we can control overlap */
+}
+
+.wheel-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.wheel-container {
+  width: 100%;
+  max-width: 380px;
+  position: relative;
+}
+
+.wheel-container.flipped {
+  /* Rotate top wheel so pointer is pointing down towards center button */
+  transform: rotate(180deg);
+}
+
+/* Fix text rotation in flipped wheel label */
+.wheel-wrapper.top-wheel .wheel-label {
+  margin-bottom: var(--spacing-md);
+}
+
+.wheel-wrapper.bottom-wheel .wheel-label {
+  margin-top: var(--spacing-md);
+  order: 2; /* Put label below wheel */
+}
+
+/* Make wheels overlap slightly with the central button */
+.top-wheel {
+  margin-bottom: -30px;
+}
+
+.bottom-wheel {
+  margin-top: -30px;
+}
+
+/* Central Spin Button */
+.spin-button-zone {
+  z-index: 10;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spin-button {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--color-border-gold);
+  border: 4px solid var(--color-white);
+  padding: 6px;
+  cursor: pointer;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 215, 0, 0.4),
+    inset 0 4px 10px rgba(255, 255, 255, 0.6),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.spin-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(255, 215, 0, 0.6),
+    inset 0 4px 10px rgba(255, 255, 255, 0.7);
+}
+
+.spin-button:active:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(255, 215, 0, 0.3),
+    inset 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.spin-button:disabled {
+  filter: grayscale(0.5) brightness(0.8);
+  cursor: not-allowed;
+  transform: scale(0.95);
+}
+
+.spin-button-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ff5252 0%, #d32f2f 70%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow:
+    inset 0 -4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 4px 8px rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.spin-text {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  letter-spacing: 2px;
 }
 
 .wheel-label {
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-2xl));
+  font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
   font-weight: var(--font-weight-black);
   color: var(--color-white);
   text-shadow:
@@ -413,15 +547,16 @@ useHead({
 /* Results Display */
 .results-display {
   display: flex;
-  gap: clamp(var(--spacing-2xl), 6vw, var(--spacing-3xl));
+  flex-direction: column; /* Stack results vertically too for consistency */
+  gap: clamp(var(--spacing-xl), 4vw, var(--spacing-2xl));
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 900px;
+  max-width: 500px;
 }
 
 .result-item {
-  flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -429,7 +564,7 @@ useHead({
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: var(--radius-xl);
-  padding: clamp(var(--spacing-xl), 4vw, var(--spacing-3xl));
+  padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 0 40px rgba(255, 215, 0, 0.1);
@@ -476,10 +611,7 @@ useHead({
 }
 
 .divider {
-  font-size: clamp(var(--font-size-3xl), 6vw, var(--font-size-4xl));
-  font-weight: var(--font-weight-black);
-  color: rgba(255, 215, 0, 0.5);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: none; /* Hide divider in vertical layout */
 }
 
 /* Loading */
@@ -538,105 +670,48 @@ useHead({
   }
 }
 
-/* Responsive - Stack wheels vertically on mobile */
-@media (max-width: 768px) {
-  .container {
-    padding: clamp(var(--spacing-xl), 6vh, var(--spacing-2xl)) var(--spacing-lg);
-  }
-
-  .wheels-container {
-    flex-direction: column;
-    gap: var(--spacing-2xl);
-    width: 100%;
-    max-width: 500px;
-  }
-
-  .wheel-wrapper {
-    width: 100%;
-    max-width: 380px;
-  }
-
-  .wheel-label {
-    font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
-  }
-
-  .results-display {
-    flex-direction: column;
-    gap: var(--spacing-xl);
-    width: calc(100% - 2rem);
-  }
-
-  .result-item {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .divider {
-    transform: rotate(90deg);
-  }
-
-  .round-text {
-    font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
-  }
-}
-
+/* Responsive */
 @media (max-width: 480px) {
-  .container {
-    padding: clamp(var(--spacing-lg), 5vh, var(--spacing-xl)) var(--spacing-lg);
+  .spin-button {
+    width: 100px;
+    height: 100px;
   }
 
-  .wheels-container {
-    gap: var(--spacing-xl);
-    max-width: 100%;
+  .spin-text {
+    font-size: 22px;
   }
 
-  .wheel-wrapper {
-    width: 100%;
-    max-width: 320px;
+  .top-wheel {
+    margin-bottom: -20px;
   }
 
-  .results-display {
-    width: calc(100% - 2rem);
-  }
-
-  .result-text {
-    font-size: clamp(var(--font-size-xl), 5vw, var(--font-size-2xl));
-  }
-
-  .result-letter {
-    font-size: clamp(48px, 12vw, 72px);
+  .bottom-wheel {
+    margin-top: -20px;
   }
 }
 
-/* Pixel 7 Pro specific (412px width, tall screen) */
-@media (min-width: 390px) and (max-width: 480px) {
-  .container {
-    padding: clamp(var(--spacing-xl), 6vh, var(--spacing-2xl)) var(--spacing-lg);
+/* Extremely tall/narrow screens might need adjustment to fit both wheels */
+@media (max-height: 800px) {
+  .wheel-container {
+    max-width: 300px; /* Make wheels slightly smaller to fit vertically */
   }
 
-  .wheels-container {
-    gap: var(--spacing-xl);
-    max-width: 100%;
+  .spin-button {
+    width: 90px;
+    height: 90px;
+    border-width: 3px;
   }
 
-  .wheel-wrapper {
-    width: 100%;
-    max-width: 340px;
+  .spin-text {
+    font-size: 20px;
   }
 
-  .results-display {
-    width: calc(100% - 2rem);
-  }
-}
-
-@media (min-width: 769px) and (max-height: 700px) {
-  /* Landscape mode on tablets/small screens */
-  .wheels-container {
-    gap: var(--spacing-lg);
+  .top-wheel {
+    margin-bottom: -15px;
   }
 
-  .wheel-wrapper {
-    max-width: 320px;
+  .bottom-wheel {
+    margin-top: -15px;
   }
 }
 </style>

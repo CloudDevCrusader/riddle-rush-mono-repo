@@ -1,6 +1,17 @@
 # CloudFront Module
 # Reusable module for creating CloudFront distributions
 
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 variable "bucket_regional_domain_name" {
   description = "Regional domain name of the S3 bucket"
   type        = string

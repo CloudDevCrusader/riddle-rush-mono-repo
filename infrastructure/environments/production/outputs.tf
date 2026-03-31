@@ -35,17 +35,6 @@ output "waf_web_acl_arn" {
   value       = aws_wafv2_web_acl.cloudfront.arn
 }
 
-# Cognito
-output "cognito_user_pool_id" {
-  description = "Cognito User Pool ID"
-  value       = aws_cognito_user_pool.main.id
-}
-
-output "cognito_user_pool_client_id" {
-  description = "Cognito User Pool Client ID"
-  value       = aws_cognito_user_pool_client.main.id
-}
-
 # API Gateway
 output "api_gateway_id" {
   description = "API Gateway ID"

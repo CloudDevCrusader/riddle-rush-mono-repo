@@ -1,15 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { LatitudeTelemetry } from '@latitude-data/telemetry'
 import * as LangchainCallbacks from '@langchain/core/callbacks/manager'
 import { createAgent } from 'langchain'
 
-const telemetry = new LatitudeTelemetry(
-  process.env.LATITUDE_API_KEY,
-  {
-    instrumentations: {
-      langchain: { callbackManagerModule: LangchainCallbacks }, // This enables automatic tracing for the LangChain SDK
-    },
+const telemetry = new LatitudeTelemetry(process.env.LATITUDE_API_KEY, {
+  instrumentations: {
+    langchain: { callbackManagerModule: LangchainCallbacks }, // This enables automatic tracing for the LangChain SDK
   },
-)
+})
 
 async function generateSupportReply(input: string) {
   return telemetry.capture(
@@ -21,6 +19,6 @@ async function generateSupportReply(input: string) {
       const agent = createAgent({ model: 'claude-sonnet-4-5' })
       const result = await agent.invoke({})
       return result
-    },
+    }
   )
 }

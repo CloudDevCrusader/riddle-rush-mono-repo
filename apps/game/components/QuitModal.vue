@@ -1,20 +1,28 @@
 <template>
-  <div v-if="isVisible" class="quit-modal-overlay">
-    <div class="quit-modal">
-      <img src="~/assets/figma/back-4.png" class="quit-modal-bg" alt="Quit modal background" />
-      <div class="quit-content">
-        <img src="~/assets/figma/quit-game-1.png" class="quit-title" alt="Quit Game?" />
-        <p class="quit-message">Are you sure you want to quit game?</p>
-        <div class="quit-actions">
-          <img src="~/assets/figma/no-1.png" class="quit-btn" alt="No" @click="handleNo" />
-          <img src="~/assets/figma/yes-1.png" class="quit-btn" alt="Yes" @click="handleYes" />
-        </div>
+  <GameModal
+    v-model="isVisible"
+    variant="danger"
+    :title="t('game.quitGame')"
+    :close-on-backdrop="false"
+    :close-on-escape="false"
+  >
+    <div class="quit-content">
+      <p class="quit-message">{{ t('game.quitConfirmation') }}</p>
+
+      <div class="quit-actions">
+        <GameButton variant="danger" @click="handleNo">
+          {{ t('common.no') }}
+        </GameButton>
+        <GameButton variant="primary" @click="handleYes">
+          {{ t('common.yes') }}
+        </GameButton>
       </div>
     </div>
-  </div>
+  </GameModal>
 </template>
 
 <script setup lang="ts">
+const { t } = usePageSetup()
 const { gameStore } = useGameState()
 const audio = useAudio()
 
@@ -43,7 +51,7 @@ const handleNo = () => {
 
 const handleYes = async () => {
   audio.playClick()
-  if (gameStore.hasActiveSession) {
+  if (gameStore.hasActiveSession()) {
     await gameStore.abandonGame()
   }
   emit('confirm')
@@ -51,61 +59,42 @@ const handleYes = async () => {
 }
 </script>
 
-<style scoped>
-.quit-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-.quit-modal {
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-}
-
-.quit-modal-bg {
-  width: 100%;
-}
-
+<style scoped lang="scss">
 .quit-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  width: 80%;
   text-align: center;
 }
 
-.quit-title {
-  width: 100%;
-  max-width: 200px;
-}
-
 .quit-message {
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-dark);
+  margin: 0 0 var(--spacing-xl);
+  line-height: 1.4;
 }
 
 .quit-actions {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-md);
+  justify-content: center;
 }
 
-.quit-btn {
-  width: 100px;
-  cursor: pointer;
+// Ensure buttons have equal width
+.quit-actions :deep(.game-button) {
+  flex: 1;
+  max-width: 140px;
+}
+
+@media (max-width: 480px) {
+  .quit-message {
+    font-size: var(--font-size-md);
+  }
+
+  .quit-actions {
+    gap: var(--spacing-sm);
+  }
+
+  .quit-actions :deep(.game-button) {
+    max-width: 120px;
+  }
 }
 </style>

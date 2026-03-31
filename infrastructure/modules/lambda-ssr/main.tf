@@ -2,6 +2,17 @@
 # Deploys a Node.js Lambda function with IAM role, Function URL, API Gateway HTTP API,
 # CloudWatch logging, and optional custom domain support.
 
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # IAM Role for Lambda function
 resource "aws_iam_role" "lambda_exec" {
   name = "${var.project_name}-${var.environment}-ssr-lambda"

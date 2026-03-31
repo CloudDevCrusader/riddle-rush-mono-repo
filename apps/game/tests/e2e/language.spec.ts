@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test'
+import { hideDevtools } from './helpers/game-flow'
 
 test.describe('Language Selection Page', () => {
   test('should load language page successfully', async ({ page }) => {
     await page.goto('/language')
+    await page.waitForLoadState('networkidle')
 
     // Check page title (supports both German and English)
     await expect(page).toHaveTitle(/Language Selection|Sprachauswahl|Riddle Rush/i)
 
-    // Check for main title image (title is an image, not text)
-    const titleImage = page
-      .locator('.title-image, img[alt*="Language" i], img[alt*="Sprache" i]')
-      .first()
-    await expect(titleImage).toBeVisible({ timeout: 5000 })
+    // Check for language page container
+    const languagePage = page.locator('[data-testid="language-page"]')
+    await expect(languagePage).toBeVisible({ timeout: 10000 })
   })
 
   test('should display language options', async ({ page }) => {
@@ -21,15 +21,19 @@ test.describe('Language Selection Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Check for English option
-    const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    const englishOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /ENGLISH/i })
     await expect(englishOption).toBeVisible()
 
     // Check for German option
-    const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
+    const germanOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /DEUTSCH/i })
     await expect(germanOption).toBeVisible()
 
-    // Check for flag containers (not .flag class, but .flag-container or .flag-image)
-    const flags = page.locator('.flag-container, .flag-image')
+    // Check for flag containers
+    const flags = page.locator('[data-testid^="language-flag-"]')
     expect(await flags.count()).toBeGreaterThanOrEqual(2)
   })
 
@@ -42,7 +46,7 @@ test.describe('Language Selection Page', () => {
     await page.waitForTimeout(500)
 
     // One language should be selected (have checkmark)
-    const checkmarks = page.locator('.checkmark')
+    const checkmarks = page.locator('[data-testid^="language-checkmark-"]')
     const checkmarkCount = await checkmarks.count()
 
     // At least one checkmark should be visible initially
@@ -57,7 +61,9 @@ test.describe('Language Selection Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Click on English option
-    const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    const englishOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /ENGLISH/i })
     await englishOption.click()
 
     // Wait for state update
@@ -73,7 +79,9 @@ test.describe('Language Selection Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Click on German option
-    const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
+    const germanOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /DEUTSCH/i })
     await germanOption.click()
 
     // Wait for state update
@@ -89,7 +97,9 @@ test.describe('Language Selection Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Click English
-    const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    const englishOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /ENGLISH/i })
     await englishOption.click()
     await page.waitForTimeout(200)
 
@@ -97,7 +107,9 @@ test.describe('Language Selection Page', () => {
     await expect(englishOption).toHaveClass(/selected/)
 
     // Click German
-    const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
+    const germanOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /DEUTSCH/i })
     await germanOption.click()
     await page.waitForTimeout(200)
 
@@ -111,23 +123,27 @@ test.describe('Language Selection Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Select a language first
-    const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    const englishOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /ENGLISH/i })
     await englishOption.click()
     await page.waitForTimeout(200)
 
     // Look for OK button (OK button contains an image, not text)
-    const okButton = page.locator('.ok-btn, button.ok-btn')
+    const okButton = page.locator('[data-testid="language-ok-button"]')
 
     if ((await okButton.count()) > 0) {
       await expect(okButton.first()).toBeVisible()
 
-      // Click OK button
-      await okButton.first().click()
+      // Click OK button — this triggers a page reload (stays on /language)
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        okButton.first().click(),
+      ])
 
-      // Should navigate back (URL should change)
-      await page.waitForTimeout(500)
-      const url = page.url()
-      expect(url).not.toContain('/language')
+      // Confirm page reloaded successfully (still on /language with lang query)
+      await page.waitForLoadState('networkidle')
+      expect(page.url()).toContain('/language')
     }
   })
 
@@ -137,31 +153,36 @@ test.describe('Language Selection Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Select English
-    const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    const englishOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /ENGLISH/i })
     await englishOption.click()
     await page.waitForTimeout(200)
 
     // Verify English is selected
     await expect(englishOption).toHaveClass(/selected/)
 
-    // Click OK to confirm (OK button contains an image, not text)
-    const okButton = page.locator('.ok-btn, button.ok-btn').first()
+    // Click OK to confirm — triggers a page reload (stays on /language)
+    const okButton = page.locator('[data-testid="language-ok-button"]').first()
     await expect(okButton).toBeVisible({ timeout: 5000 })
-    await okButton.click()
 
-    // Wait for navigation - should navigate away from language page
-    await page.waitForTimeout(500)
-    const url = page.url()
-    expect(url).not.toContain('/language')
+    await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
+
+    // Confirm page reloaded successfully with lang query param
+    await page.waitForLoadState('networkidle')
+    expect(page.url()).toContain('/language')
+    expect(page.url()).toContain('lang=en')
   })
 
   test('should display flags correctly', async ({ page }) => {
     await page.goto('/language')
 
     await page.waitForLoadState('networkidle')
+    await page.waitForSelector('[data-testid="language-page"]', { timeout: 10000 })
 
     // Check for flag containers
-    const flagContainers = page.locator('.flag-container')
+    const flagContainers = page.locator('[data-testid^="language-flag-"]')
+    await expect(flagContainers.first()).toBeVisible({ timeout: 5000 })
     expect(await flagContainers.count()).toBe(2)
 
     // Check that flags are visible
@@ -181,13 +202,13 @@ test.describe('Language Selection Page', () => {
     await expect(body).toBeVisible()
 
     // Check for language card
-    const languageCard = page.locator('.language-card')
+    const languageCard = page.locator('[data-testid="language-card"]')
     if ((await languageCard.count()) > 0) {
       await expect(languageCard).toBeVisible()
     }
 
     // Check for background pattern
-    const bgPattern = page.locator('.bg-pattern')
+    const bgPattern = page.locator('[data-testid="page-background-pattern"]')
     if ((await bgPattern.count()) > 0) {
       // Background pattern exists
       expect(await bgPattern.count()).toBeGreaterThan(0)
@@ -201,30 +222,34 @@ test.describe('Language Switching Behavior', () => {
   test('uses browser language by default and persists selection', async ({ page }) => {
     await page.addInitScript(() => localStorage.removeItem('game-settings'))
     await page.goto('/', { waitUntil: 'networkidle' })
+    await hideDevtools(page)
 
-    await page.locator('.options-btn').click()
+    await page.locator('[data-testid="main-menu-menu"]').click()
 
-    const languageItem = page.locator('.menu-item').filter({ hasText: 'Language' })
-    const settingsItem = page.locator('.menu-item').filter({ hasText: 'Settings' })
+    const languageItem = page.locator('[data-testid="main-menu-language"]')
+    const settingsItem = page.locator('[data-testid="main-menu-settings"]')
     await expect(languageItem).toBeVisible()
     await expect(settingsItem).toBeVisible()
 
     await languageItem.click()
     await page.waitForLoadState('networkidle')
 
-    const germanOption = page.locator('.language-option').filter({ hasText: /GERMAN/i })
+    const germanOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /DEUTSCH/i })
     await germanOption.click()
 
-    const okButton = page.locator('.ok-btn, button.ok-btn').first()
+    const okButton = page.locator('[data-testid="language-ok-button"]').first()
     await expect(okButton).toBeVisible({ timeout: 5000 })
 
     await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
 
     await page.goto('/', { waitUntil: 'networkidle' })
+    await hideDevtools(page)
 
-    await page.locator('.options-btn').click()
-    await expect(page.locator('.menu-item').filter({ hasText: 'Sprache' })).toBeVisible()
-    await expect(page.locator('.menu-item').filter({ hasText: 'Einstellungen' })).toBeVisible()
+    await page.locator('[data-testid="main-menu-menu"]').click()
+    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText('Sprache')
+    await expect(page.locator('[data-testid="main-menu-settings"]')).toContainText('Einstellungen')
   })
 
   test('respects ?lang query and preserves it when selecting a different locale', async ({
@@ -232,18 +257,21 @@ test.describe('Language Switching Behavior', () => {
   }) => {
     await page.addInitScript(() => localStorage.removeItem('game-settings'))
     await page.goto('/?lang=de', { waitUntil: 'networkidle' })
+    await hideDevtools(page)
 
-    await page.locator('.options-btn').click()
-    const germanMenuItem = page.locator('.menu-item').filter({ hasText: 'Sprache' })
-    await expect(germanMenuItem).toBeVisible()
+    await page.locator('[data-testid="main-menu-menu"]').click()
+    const germanMenuItem = page.locator('[data-testid="main-menu-language"]')
+    await expect(germanMenuItem).toContainText('Sprache')
 
     await germanMenuItem.click()
     await page.waitForLoadState('networkidle')
 
-    const englishOption = page.locator('.language-option').filter({ hasText: /ENGLISH/i })
+    const englishOption = page
+      .locator('[data-testid^="language-option-"]')
+      .filter({ hasText: /ENGLISH/i })
     await englishOption.click()
 
-    const okButton = page.locator('.ok-btn, button.ok-btn').first()
+    const okButton = page.locator('[data-testid="language-ok-button"]').first()
     await expect(okButton).toBeVisible({ timeout: 5000 })
 
     await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
@@ -251,7 +279,11 @@ test.describe('Language Switching Behavior', () => {
     await page.waitForLoadState('networkidle')
     expect(page.url()).toContain('lang=en')
 
-    await page.locator('.options-btn').click()
-    await expect(page.locator('.menu-item').filter({ hasText: 'Language' })).toBeVisible()
+    // Navigate to home page with lang=en to verify English menu items
+    await page.goto('/?lang=en', { waitUntil: 'networkidle' })
+    await hideDevtools(page)
+
+    await page.locator('[data-testid="main-menu-menu"]').click()
+    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText('Language')
   })
 })

@@ -5,7 +5,33 @@
 
 import { io, type Socket } from 'socket.io-client'
 
+interface WebSocketConnectionData {
+  userId: string
+  socketId: string
+}
+
+interface WebSocketPerformanceData {
+  metricName: string
+  duration: number
+  timestamp: number
+}
+
+interface WebSocketLeaderboardData {
+  userId: string
+  gameMode: string
+  score: number
+  playerName: string
+  timestamp: number
+}
+
+interface WebSocketUserStatsData {
+  userId: string
+  gamesPlayed: number
+  totalScore: number
+}
+
 export const useWebSocket = () => {
+  const logger = useLogger()
   const socket = ref<Socket | null>(null)
   const isConnected = ref(false)
   const isConnecting = ref(false)
@@ -39,7 +65,7 @@ export const useWebSocket = () => {
   // Connect to WebSocket server
   const connect = () => {
     if (socket.value?.connected) {
-      console.log('Already connected')
+      logger.log('Already connected')
       return
     }
 
@@ -60,44 +86,44 @@ export const useWebSocket = () => {
 
       // Connection events
       socket.value.on('connect', () => {
-        console.log('✅ WebSocket connected:', socket.value?.id)
+        logger.log('WebSocket connected:', socket.value?.id)
         isConnected.value = true
         isConnecting.value = false
         connectionError.value = null
       })
 
-      socket.value.on('connected', (data: any) => {
-        console.log('📡 Connection confirmed:', data)
+      socket.value.on('connected', (data: WebSocketConnectionData) => {
+        logger.log('Connection confirmed:', data)
       })
 
       socket.value.on('disconnect', (reason: string) => {
-        console.log('❌ WebSocket disconnected:', reason)
+        logger.log('WebSocket disconnected:', reason)
         isConnected.value = false
         isConnecting.value = false
       })
 
       socket.value.on('connect_error', (error: Error) => {
-        console.error('🔴 Connection error:', error)
+        logger.error('Connection error:', error)
         isConnecting.value = false
         connectionError.value = error.message
       })
 
       socket.value.on('reconnect', (attemptNumber: number) => {
-        console.log(`🔄 Reconnected after ${attemptNumber} attempts`)
+        logger.log(`Reconnected after ${attemptNumber} attempts`)
       })
 
       socket.value.on('reconnect_attempt', (attemptNumber: number) => {
-        console.log(`🔄 Reconnecting... (attempt ${attemptNumber})`)
+        logger.log(`Reconnecting… (attempt ${attemptNumber})`)
         isConnecting.value = true
       })
 
       socket.value.on('reconnect_error', (error: Error) => {
-        console.error('🔴 Reconnection error:', error)
+        logger.error('Reconnection error:', error)
       })
 
       socket.value.on('reconnect_failed', () => {
-        console.error('🔴 Reconnection failed')
-        connectionError.value = 'Failed to reconnect'
+        logger.error('Reconnection failed')
+        connectionError.value = useNuxtApp().$i18n.t('websocket.reconnect_failed')
         isConnecting.value = false
       })
 
@@ -107,28 +133,29 @@ export const useWebSocket = () => {
       })
 
       // Performance logged confirmation
-      socket.value.on('performanceLogged', (data: any) => {
-        console.log('📊 Performance logged:', data)
+      socket.value.on('performanceLogged', (data: WebSocketPerformanceData) => {
+        logger.log('Performance logged:', data)
       })
 
       // Leaderboard update confirmation
-      socket.value.on('leaderboardUpdateConfirm', (data: any) => {
-        console.log('🏆 Leaderboard updated:', data)
+      socket.value.on('leaderboardUpdateConfirm', (data: WebSocketLeaderboardData) => {
+        logger.log('Leaderboard updated:', data)
       })
 
       // Leaderboard updates from other users
-      socket.value.on('leaderboardUpdated', (data: any) => {
-        console.log('🏆 Leaderboard change:', data)
+      socket.value.on('leaderboardUpdated', (data: WebSocketLeaderboardData) => {
+        logger.log('Leaderboard change:', data)
       })
 
       // User stats response
-      socket.value.on('userStats', (data: any) => {
-        console.log('📈 User stats:', data)
+      socket.value.on('userStats', (data: WebSocketUserStatsData) => {
+        logger.log('User stats:', data)
       })
     } catch (error) {
-      console.error('Failed to initialize socket:', error)
+      logger.error('Failed to initialize socket:', error)
       isConnecting.value = false
-      connectionError.value = error instanceof Error ? error.message : 'Connection failed'
+      connectionError.value =
+        error instanceof Error ? error.message : useNuxtApp().$i18n.t('websocket.connection_failed')
     }
   }
 
@@ -149,7 +176,7 @@ export const useWebSocket = () => {
     metadata: Record<string, unknown> = {}
   ) => {
     if (!socket.value?.connected) {
-      console.warn('Cannot log performance: not connected')
+      logger.warn('Cannot log performance: not connected')
       return
     }
 
@@ -165,7 +192,7 @@ export const useWebSocket = () => {
   // Update leaderboard
   const updateLeaderboard = (gameMode: string, score: number, playerName: string) => {
     if (!socket.value?.connected) {
-      console.warn('Cannot update leaderboard: not connected')
+      logger.warn('Cannot update leaderboard: not connected')
       return
     }
 
@@ -181,7 +208,7 @@ export const useWebSocket = () => {
   // Get user stats
   const getUserStats = (targetUserId?: string) => {
     if (!socket.value?.connected) {
-      console.warn('Cannot get user stats: not connected')
+      logger.warn('Cannot get user stats: not connected')
       return
     }
 

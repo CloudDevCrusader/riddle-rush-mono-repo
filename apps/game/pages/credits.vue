@@ -1,71 +1,84 @@
 <template>
-  <div class="credits-page">
-    <!-- Background Image -->
-    <img :src="`${baseUrl}assets/main-menu/BACKGROUND.png`" alt="Background" class="page-bg" />
+  <GameBackground>
+    <div class="credits-page page-shell" data-testid="credits-page">
+      <GameHeader color="gold" class="credits-header" data-testid="credits-header">
+        <template #left>
+          <GameButton
+            class="back-btn"
+            variant="secondary"
+            size="sm"
+            :aria-label="t('common.back')"
+            data-testid="credits-back-button"
+            @click="goBack"
+          >
+            {{ t('common.back') }}
+          </GameButton>
+        </template>
+        {{ t('credits.title', 'Credits') }}
+      </GameHeader>
 
-    <!-- Back Button -->
-    <button class="back-btn tap-highlight no-select" @click="goBack">
-      <img :src="`${baseUrl}assets/language/back.png`" alt="Back" />
-    </button>
-
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Title -->
-      <div class="title-container animate-fade-in">
-        <img :src="`${baseUrl}assets/main-menu/CREDITS.png`" alt="CREDITS" class="title-image" />
-      </div>
-
-      <!-- Credits Panel -->
-      <div class="credits-panel animate-scale-in">
+      <GamePanel class="credits-panel animate-scale-in" data-testid="credits-panel">
         <!-- Game Design -->
-        <div class="credit-section">
-          <h2 class="section-heading">Game Design</h2>
+        <div class="credit-section" data-testid="credits-section-0">
+          <h2 class="section-heading" data-testid="credits-section-heading-0">
+            {{ t('credits.game_design') }}
+          </h2>
           <div class="credit-box">
-            <span class="credit-name">Tobi</span>
+            <span class="credit-name" data-testid="credits-name-0">Tobi</span>
             <span class="credit-divider" />
-            <span class="credit-name">Sophia</span>
+            <span class="credit-name" data-testid="credits-name-1">Sophia</span>
           </div>
         </div>
 
         <!-- Programming -->
-        <div class="credit-section">
-          <h2 class="section-heading">Programming</h2>
+        <div class="credit-section" data-testid="credits-section-1">
+          <h2 class="section-heading" data-testid="credits-section-heading-1">
+            {{ t('credits.programming') }}
+          </h2>
           <div class="credit-box">
-            <span class="credit-name">Markus</span>
+            <span class="credit-name" data-testid="credits-name-2">Markus</span>
           </div>
         </div>
 
         <!-- Art -->
-        <div class="credit-section">
-          <h2 class="section-heading">Art</h2>
+        <div class="credit-section" data-testid="credits-section-2">
+          <h2 class="section-heading" data-testid="credits-section-heading-2">
+            {{ t('credits.art') }}
+          </h2>
           <div class="credit-box">
-            <span class="credit-name">Sarmad Ali</span>
+            <span class="credit-name" data-testid="credits-name-3">Sarmad Ali</span>
           </div>
         </div>
 
         <!-- Version -->
         <div class="version-info">v{{ appVersion }}</div>
-      </div>
+      </GamePanel>
 
-      <!-- OK Button -->
-      <button class="ok-btn tap-highlight no-select animate-slide-up" @click="goBack">
-        <img :src="`${baseUrl}assets/leaderboard/ok.png`" alt="OK" />
-      </button>
+      <GameButton
+        class="ok-btn animate-slide-up"
+        variant="primary"
+        size="lg"
+        data-testid="credits-ok-button"
+        @click="goBack"
+      >
+        {{ t('common.ok', 'OK') }}
+      </GameButton>
     </div>
-  </div>
+  </GameBackground>
 </template>
 
 <script setup lang="ts">
-const { baseUrl, goBack } = usePageSetup()
+const { goBack } = usePageSetup()
 const runtimeConfig = useRuntimeConfig()
 const appVersion = runtimeConfig.public.appVersion
+const { t } = useI18n()
 
 useHead({
-  title: 'Riddle Rush - Credits',
+  title: t('credits.title'),
   meta: [
     {
       name: 'description',
-      content: 'Meet the team behind Riddle Rush',
+      content: t('credits.description'),
     },
   ],
 })
@@ -73,81 +86,34 @@ useHead({
 
 <style scoped>
 .credits-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  position: relative;
-  overflow-x: hidden;
-  background: #1a1a2e;
-}
-
-/* Background Image */
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-}
-
-/* Back Button */
-.back-btn {
-  position: absolute;
-  top: var(--spacing-xl);
-  left: var(--spacing-xl);
-  z-index: 3;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.back-btn img {
-  width: clamp(40px, 5vw, 60px);
-  height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-.back-btn:active {
-  transform: scale(0.95);
-}
-
-/* Container */
-.container {
-  position: relative;
-  z-index: 2;
-  max-width: 700px;
-  width: 100%;
-  margin: 0 auto;
-  padding: var(--spacing-3xl) var(--spacing-md);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-3xl);
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl) var(--spacing-md);
 }
 
-/* Title */
-.title-container {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--spacing-2xl);
+.credits-header {
+  width: 100%;
+  max-width: 700px;
 }
 
-.title-image {
-  width: clamp(250px, 35vw, 400px);
-  height: auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+.back-btn {
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: var(--font-size-xl);
+  line-height: 1;
 }
 
-/* Credits Panel */
 .credits-panel {
   width: 100%;
+  max-width: 700px;
   background: linear-gradient(180deg, rgba(68, 200, 255, 0.95) 0%, rgba(10, 107, 194, 0.95) 100%);
-  border: 6px solid #ff8800;
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
+  border: 4px solid #ff8800;
   box-shadow:
     0 12px 0 rgba(0, 0, 0, 0.2),
     inset 0 2px 10px rgba(255, 255, 255, 0.3),
@@ -212,115 +178,22 @@ useHead({
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* OK Button */
 .ok-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.ok-btn img {
-  width: clamp(150px, 25vw, 200px);
-  height: auto;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
-}
-
-.ok-btn:active {
-  transform: scale(0.95);
-}
-
-/* Animations */
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.6s ease-out 0.2s backwards;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.6s ease-out 0.4s backwards;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  width: min(260px, 70%);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .container {
-    padding: var(--spacing-2xl) var(--spacing-md);
-  }
-
-  .back-btn img {
-    width: clamp(40px, 5vw, 50px);
-  }
-
-  .title-image {
-    width: clamp(180px, 40vw, 300px);
-  }
-
-  .credits-container {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
   .credits-panel {
     padding: var(--spacing-xl);
     max-height: 400px;
   }
-
-  .ok-btn img {
-    width: clamp(120px, 30vw, 200px);
-  }
 }
 
 @media (max-width: 480px) {
-  .container {
+  .credits-page {
     padding: var(--spacing-xl) var(--spacing-sm);
     gap: var(--spacing-lg);
-  }
-
-  .back-btn img {
-    width: clamp(36px, 4vw, 45px);
-  }
-
-  .title-image {
-    width: clamp(140px, 35vw, 200px);
-  }
-
-  .credits-container {
-    max-width: calc(100% - var(--spacing-sm) * 2);
   }
 
   .credits-panel {
@@ -329,21 +202,42 @@ useHead({
     margin: 0 var(--spacing-sm);
   }
 
-  .credit-item {
+  .credit-section {
     padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .ok-btn {
+    width: min(220px, 80%);
+  }
+}
+
+@media (max-width: 360px) {
+  .credits-page {
+    padding: var(--spacing-lg) var(--spacing-xs);
+    gap: var(--spacing-md);
+  }
+
+  .credits-panel {
+    padding: var(--spacing-md);
+    max-height: 260px;
+    border-width: 3px;
+    margin: 0;
+  }
+
+  .credit-section {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
     gap: var(--spacing-sm);
   }
 
-  .credit-label {
-    font-size: clamp(var(--font-size-xs), 1.8vw, var(--font-size-sm));
+  .credit-box {
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
 
-  .credit-value {
-    font-size: clamp(var(--font-size-sm), 2vw, var(--font-size-base));
-  }
-
-  .ok-btn img {
-    width: clamp(100px, 25vw, 140px);
+  .ok-btn {
+    width: min(200px, 85%);
   }
 }
 </style>

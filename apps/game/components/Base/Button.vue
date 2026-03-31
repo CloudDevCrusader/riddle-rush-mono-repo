@@ -56,7 +56,14 @@ const handleClick = (event: MouseEvent) => {
   font-weight: var(--font-weight-bold);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-base);
+  touch-action: manipulation;
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    filter var(--transition-base);
   border: none;
   outline: none;
   position: relative;

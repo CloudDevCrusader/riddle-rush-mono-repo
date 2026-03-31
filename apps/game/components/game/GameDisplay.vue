@@ -71,4 +71,21 @@ const displayClasses = computed(() => [
     @include text-glow(); // Uses default params: yellow text, gold glow
   }
 }
+
+// Small phone adjustments
+@media (max-width: 480px) {
+  .game-display {
+    &--md {
+      font-size: var(--font-size-xl);
+    }
+
+    &--lg {
+      font-size: var(--font-size-2xl);
+    }
+
+    &--xl {
+      font-size: var(--font-size-3xl);
+    }
+  }
+}
 </style>

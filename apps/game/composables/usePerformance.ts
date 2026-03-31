@@ -194,31 +194,24 @@ export const usePerformance = () => {
    * Log performance report to console
    */
   const logReport = () => {
+    if (process.env.NODE_ENV !== 'development') return
+
     const allMetrics = getAllMetrics()
 
-    console.group('📊 Performance Report')
+    console.group('Performance Report')
     ;(Object.entries(allMetrics) as [string, PerformanceMetrics[string]][]).forEach(
       ([name, metric]) => {
-        console.log(`\n${name}:`)
-        console.log(`  Count: ${metric.count}`)
-        console.log(`  Average: ${metric.average.toFixed(2)}ms`)
-        console.log(`  Min: ${metric.min.toFixed(2)}ms`)
-        console.log(`  Max: ${metric.max.toFixed(2)}ms`)
-        console.log(`  Last: ${metric.last.toFixed(2)}ms`)
-        console.log(`  Total: ${metric.total.toFixed(2)}ms`)
+        console.log(
+          `${name}: count=${metric.count}, avg=${metric.average.toFixed(2)}ms, min=${metric.min.toFixed(2)}ms, max=${metric.max.toFixed(2)}ms, last=${metric.last.toFixed(2)}ms, total=${metric.total.toFixed(2)}ms`
+        )
       }
     )
 
     const navTiming = getNavigationTiming()
     if (navTiming) {
-      console.log('\n🚀 Navigation Timing:')
-      console.log(`  DNS: ${navTiming.dns.toFixed(2)}ms`)
-      console.log(`  TCP: ${navTiming.tcp.toFixed(2)}ms`)
-      console.log(`  Request: ${navTiming.request.toFixed(2)}ms`)
-      console.log(`  Response: ${navTiming.response.toFixed(2)}ms`)
-      console.log(`  DOM Processing: ${navTiming.domProcessing.toFixed(2)}ms`)
-      console.log(`  DOM Content Loaded: ${navTiming.domContentLoaded.toFixed(2)}ms`)
-      console.log(`  Total Time: ${navTiming.totalTime.toFixed(2)}ms`)
+      console.log(
+        `Navigation Timing: DNS=${navTiming.dns.toFixed(2)}ms, TCP=${navTiming.tcp.toFixed(2)}ms, Request=${navTiming.request.toFixed(2)}ms, Response=${navTiming.response.toFixed(2)}ms, DOM=${navTiming.domProcessing.toFixed(2)}ms, DCL=${navTiming.domContentLoaded.toFixed(2)}ms, Total=${navTiming.totalTime.toFixed(2)}ms`
+      )
     }
 
     console.groupEnd()
@@ -230,7 +223,11 @@ export const usePerformance = () => {
   const getMemoryUsage = () => {
     if (typeof window === 'undefined') return null
 
-    const memory = (performance as any).memory
+    const memory = (
+      performance as unknown as {
+        memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number }
+      }
+    ).memory
     if (!memory) return null
 
     return {

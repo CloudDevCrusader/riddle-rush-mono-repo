@@ -1,4 +1,5 @@
 import { UnleashClient } from 'unleash-proxy-client'
+import { attachUnleashListener } from '~/composables/useFeatureFlags'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
@@ -16,11 +17,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Only initialize if both URL and token are configured
   if (!gitlabConfig.url || !gitlabConfig.clientKey) {
-    if (import.meta.dev) {
-      logger.warn(
-        '[Feature Flags] GitLab Feature Flags not configured. Using fallback to local settings.'
-      )
-    }
+    logger.info(
+      '[Feature Flags] GitLab Feature Flags not configured — falling back to runtimeConfig/local settings only.'
+    )
     nuxtApp.provide('featureFlags', null)
     return
   }
@@ -39,6 +38,9 @@ export default defineNuxtPlugin((nuxtApp) => {
         logger.info('[Feature Flags] GitLab client ready')
       })
     }
+
+    // Wire up Vue reactivity bridge before start() so 'ready' is never missed
+    attachUnleashListener(unleashClient)
 
     // Start the client
     unleashClient.start()

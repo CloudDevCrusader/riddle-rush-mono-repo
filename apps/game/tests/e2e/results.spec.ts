@@ -1,25 +1,18 @@
 import { test, expect } from '@playwright/test'
 import { generatePlayerName, generateAnswer } from './helpers/faker'
+import {
+  navigateToResults,
+  setupMultiplayerGame,
+  startGameWithDefaults,
+  submitPlayerAnswers,
+  hideDevtools,
+} from './helpers/game-flow'
 
-test.describe('Results/Scoring Page', () => {
+test.describe('results scoring page', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up game state first by going through players page
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-
-    // Start game with default player to initialize store
-    const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
-
-    // Wait for game to start
-    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
-    await page.waitForTimeout(500)
-
-    // Now navigate to results
-    await page.goto('/results')
-    await page.waitForLoadState('networkidle')
+    await startGameWithDefaults(page)
+    await submitPlayerAnswers(page, 2, [generateAnswer(), generateAnswer()])
+    await navigateToResults(page)
   })
 
   test('should display results page with all elements', async ({ page }) => {
@@ -28,11 +21,11 @@ test.describe('Results/Scoring Page', () => {
     await expect(background).toBeVisible()
 
     // Check for title (GameHeader)
-    const header = page.locator('.game-header')
+    const header = page.locator('[data-testid="results-header"]')
     await expect(header).toBeVisible()
 
     // Check for player list
-    const playerList = page.locator('.scoring-page__list')
+    const playerList = page.locator('[data-testid="results-scores-container"]')
     await expect(playerList).toBeVisible()
 
     // Check for confirm button
@@ -44,7 +37,7 @@ test.describe('Results/Scoring Page', () => {
     // Wait for page to fully load
     await page.waitForLoadState('networkidle')
 
-    const playerEntries = page.locator('.scoring-page__player-entry')
+    const playerEntries = page.locator('[data-testid^="results-player-entry-"]')
 
     // Wait for at least one entry to appear
     await expect(playerEntries.first()).toBeVisible({ timeout: 5000 })
@@ -53,12 +46,12 @@ test.describe('Results/Scoring Page', () => {
     expect(count).toBeGreaterThan(0)
 
     // Each entry should have score controls
-    const scoreControls = page.locator('.scoring-page__score-controls')
+    const scoreControls = page.locator('[data-testid^="results-score-controls-"]')
     expect(await scoreControls.count()).toBe(count)
   })
 
   test('should display increment and decrement buttons for each player', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
 
@@ -67,8 +60,8 @@ test.describe('Results/Scoring Page', () => {
   })
 
   test('should increase score when clicking increment button', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
-    const scoreDisplay = firstEntry.locator('.scoring-page__score-value')
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
+    const scoreDisplay = firstEntry.locator('[data-testid^="scoring-page-score-value-"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
 
     // Get initial score
@@ -84,8 +77,8 @@ test.describe('Results/Scoring Page', () => {
   })
 
   test('should decrease score when clicking decrement button', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
-    const scoreDisplay = firstEntry.locator('.scoring-page__score-value')
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
+    const scoreDisplay = firstEntry.locator('[data-testid^="scoring-page-score-value-"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
 
@@ -107,7 +100,7 @@ test.describe('Results/Scoring Page', () => {
   })
 
   test('should disable decrement button when score is 0', async ({ page }) => {
-    const firstEntry = page.locator('.scoring-page__player-entry').first()
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
 
     // Should be disabled at start (score = 0)
@@ -120,7 +113,7 @@ test.describe('Results/Scoring Page', () => {
     await confirmBtn.click()
 
     // Leaderboard should appear
-    const leaderboardOverlay = page.locator('.player-leaderboard')
+    const leaderboardOverlay = page.locator('[data-testid="player-leaderboard"]')
     await expect(leaderboardOverlay).toBeVisible({ timeout: 5000 })
   })
 
@@ -133,8 +126,8 @@ test.describe('Results/Scoring Page', () => {
     await page.waitForTimeout(2500)
 
     // Decision modal should appear
-    const nextRoundBtn = page.locator('[data-testid="next-round"]')
-    const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
+    const finishGameBtn = page.locator('[data-testid="leaderboard-button"]')
 
     await expect(nextRoundBtn).toBeVisible()
     await expect(finishGameBtn).toBeVisible()
@@ -149,7 +142,7 @@ test.describe('Results/Scoring Page', () => {
     await page.waitForTimeout(2500)
 
     // Click Next Round
-    const nextRoundBtn = page.locator('[data-testid="next-round"]')
+    const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
     await nextRoundBtn.click()
 
     await expect(page).toHaveURL(/\/round-start/, { timeout: 5000 })
@@ -164,7 +157,7 @@ test.describe('Results/Scoring Page', () => {
     await page.waitForTimeout(2500)
 
     // Click Finish Game
-    const finishGameBtn = page.locator('[data-testid="finish-game"]')
+    const finishGameBtn = page.locator('[data-testid="leaderboard-button"]')
     await finishGameBtn.click()
 
     await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 })
@@ -173,8 +166,8 @@ test.describe('Results/Scoring Page', () => {
   test('should be responsive on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 })
 
-    const header = page.locator('.game-header')
-    const playerList = page.locator('.scoring-page__list')
+    const header = page.locator('[data-testid="results-header"]')
+    const playerList = page.locator('[data-testid="results-scores-container"]')
     const confirmBtn = page.locator('[data-testid="confirm-scores"]')
 
     await expect(header).toBeVisible()
@@ -183,50 +176,16 @@ test.describe('Results/Scoring Page', () => {
   })
 })
 
-test.describe('Results Page - Multi-Player', () => {
+test.describe('results page multi-player', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up game with multiple players
-    await page.goto('/players')
-    await page.waitForLoadState('networkidle')
-
-    // Add second player
     const player2Name = generatePlayerName()
-    page.once('dialog', async (dialog) => {
-      await dialog.accept(player2Name)
-    })
-    const addBtn = page.locator('.add-btn')
-    await addBtn.click()
-    await page.waitForTimeout(300)
-
-    // Start game
-    const startBtn = page.locator('.start-btn')
-    await startBtn.click()
-    await expect(page).toHaveURL(/\/round-start/)
-    await page.waitForTimeout(2000)
-
-    // Wait for game
-    await expect(page).toHaveURL(/\/game/, { timeout: 10000 })
-    await page.waitForTimeout(500)
-
-    // Submit answers for both players
-    const answerInput = page.locator('.answer-input')
-    const submitBtn = page.locator('.submit-answer-btn')
-
-    await answerInput.fill(generateAnswer())
-    await submitBtn.click()
-    await page.waitForTimeout(500)
-
-    await answerInput.fill(generateAnswer())
-    await submitBtn.click()
-    await page.waitForTimeout(1000)
-
-    // Navigate to results
-    await page.locator('[data-testid="next-button"]').click()
-    await expect(page).toHaveURL(/\/results/)
+    await setupMultiplayerGame(page, ['Player 1', player2Name])
+    await submitPlayerAnswers(page, 2, [generateAnswer(), generateAnswer()])
+    await navigateToResults(page)
   })
 
   test('should display all players in multi-player game', async ({ page }) => {
-    const playerEntries = page.locator('.scoring-page__player-entry')
+    const playerEntries = page.locator('[data-testid^="results-player-entry-"]')
 
     // Should have 2 players
     await expect(playerEntries).toHaveCount(2)
@@ -234,7 +193,7 @@ test.describe('Results Page - Multi-Player', () => {
 
   test('should allow independent score adjustment for each player', async ({ page }) => {
     const incrementBtns = page.locator('[data-testid="score-increment"]')
-    const scoreDisplays = page.locator('.scoring-page__score-value')
+    const scoreDisplays = page.locator('[data-testid^="scoring-page-score-value-"]')
 
     // Increment player 1 three times
     await incrementBtns.nth(0).click()

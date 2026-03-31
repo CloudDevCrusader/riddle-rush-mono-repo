@@ -1,1 +1,19 @@
-import{b as o}from"./DBIYhhxi.js";import{i as t}from"./nLWjQ9zq.js";var n="[object Arguments]";function e(r){return t(r)&&o(r)==n}var a=Object.prototype,s=a.hasOwnProperty,c=a.propertyIsEnumerable,m=e((function(){return arguments})())?e:function(r){return t(r)&&s.call(r,"callee")&&!c.call(r,"callee")};export{m as i};
+import { b as o } from './DBIYhhxi.js'
+import { i as t } from './nLWjQ9zq.js'
+var n = '[object Arguments]'
+function e(r) {
+  return t(r) && o(r) == n
+}
+var a = Object.prototype,
+  s = a.hasOwnProperty,
+  c = a.propertyIsEnumerable,
+  m = e(
+    (function () {
+      return arguments
+    })()
+  )
+    ? e
+    : function (r) {
+        return t(r) && s.call(r, 'callee') && !c.call(r, 'callee')
+      }
+export { m as i }

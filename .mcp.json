@@ -1,14 +1,8 @@
 {
   "mcpServers": {
-    "playwright-test": {
-      "command": "npx",
-      "args": ["playwright", "run-test-mcp-server"]
-    },
-    "one-mcp": {
-      "type": "stdio",
-      "disabled": false,
-      "command": "npx",
-      "args": ["-y", "@agiflowai/one-mcp", "mcp-serve"]
+    "Tabby MCP": {
+      "type": "streamable_http",
+      "url": "http://localhost:3001/mcp"
     }
   }
 }

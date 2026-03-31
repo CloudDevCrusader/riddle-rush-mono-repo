@@ -1,173 +1,161 @@
-import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useLoading, useLoadingStore } from '../../composables/useLoading'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { useLoadingStore } from '../../stores/loadingStore'
+import { useLoading } from '../../stores/hooks/useLoading'
 
-describe('useLoadingStore', () => {
+let loadingStore: ReturnType<typeof useLoadingStore>
+
+describe('loadingStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    // Fresh Pinia instance starts with default state - no manual reset needed
+    loadingStore = useLoadingStore()
   })
 
   describe('initial state', () => {
     it('should start with loading disabled', () => {
-      const store = useLoadingStore()
+      const store = loadingStore
       expect(store.isLoading).toBe(false)
     })
 
     it('should start with zero loading count', () => {
-      const store = useLoadingStore()
+      const store = loadingStore
       expect(store.loadingCount).toBe(0)
     })
 
     it('should start with zero progress', () => {
-      const store = useLoadingStore()
+      const store = loadingStore
       expect(store.progress).toBe(0)
     })
 
     it('should start with progress hidden', () => {
-      const store = useLoadingStore()
+      const store = loadingStore
       expect(store.showProgress).toBe(false)
     })
   })
 
   describe('showLoading', () => {
     it('should enable loading', () => {
-      const store = useLoadingStore()
-      store.showLoading()
-      expect(store.isLoading).toBe(true)
+      loadingStore.showLoading()
+      expect(loadingStore.isLoading).toBe(true)
     })
 
     it('should increment loading count', () => {
-      const store = useLoadingStore()
-      store.showLoading()
-      expect(store.loadingCount).toBe(1)
-      store.showLoading()
-      expect(store.loadingCount).toBe(2)
+      loadingStore.showLoading()
+      expect(loadingStore.loadingCount).toBe(1)
+      loadingStore.showLoading()
+      expect(loadingStore.loadingCount).toBe(2)
     })
 
     it('should reset progress', () => {
-      const store = useLoadingStore()
-      store.setProgress(50)
-      store.showLoading()
-      expect(store.progress).toBe(0)
+      loadingStore.setProgress(50)
+      loadingStore.showLoading()
+      expect(loadingStore.progress).toBe(0)
     })
 
     it('should hide progress indicator', () => {
-      const store = useLoadingStore()
-      store.setProgress(50)
-      store.showLoading()
-      expect(store.showProgress).toBe(false)
+      loadingStore.setProgress(50)
+      loadingStore.showLoading()
+      expect(loadingStore.showProgress).toBe(false)
     })
   })
 
   describe('hideLoading', () => {
     it('should decrement loading count', () => {
-      const store = useLoadingStore()
-      store.showLoading()
-      store.showLoading()
-      expect(store.loadingCount).toBe(2)
+      loadingStore.showLoading()
+      loadingStore.showLoading()
+      expect(loadingStore.loadingCount).toBe(2)
 
-      store.hideLoading()
-      expect(store.loadingCount).toBe(1)
+      loadingStore.hideLoading()
+      expect(loadingStore.loadingCount).toBe(1)
     })
 
     it('should disable loading when count reaches zero', () => {
-      const store = useLoadingStore()
-      store.showLoading()
-      store.hideLoading()
-      expect(store.isLoading).toBe(false)
+      loadingStore.showLoading()
+      loadingStore.hideLoading()
+      expect(loadingStore.isLoading).toBe(false)
     })
 
     it('should not go below zero', () => {
-      const store = useLoadingStore()
-      store.hideLoading()
-      expect(store.loadingCount).toBe(0)
+      loadingStore.hideLoading()
+      expect(loadingStore.loadingCount).toBe(0)
     })
 
     it('should keep loading enabled for nested calls', () => {
-      const store = useLoadingStore()
-      store.showLoading()
-      store.showLoading()
-      store.hideLoading()
-      expect(store.isLoading).toBe(true)
-      expect(store.loadingCount).toBe(1)
+      loadingStore.showLoading()
+      loadingStore.showLoading()
+      loadingStore.hideLoading()
+      expect(loadingStore.isLoading).toBe(true)
+      expect(loadingStore.loadingCount).toBe(1)
     })
 
     it('should reset progress when fully hidden', () => {
-      const store = useLoadingStore()
-      store.showLoading()
-      store.setProgress(75)
-      store.hideLoading()
-      expect(store.progress).toBe(0)
+      loadingStore.showLoading()
+      loadingStore.setProgress(75)
+      loadingStore.hideLoading()
+      expect(loadingStore.progress).toBe(0)
     })
 
     it('should hide progress indicator when fully hidden', () => {
-      const store = useLoadingStore()
-      store.showLoading()
-      store.setProgress(75)
-      store.hideLoading()
-      expect(store.showProgress).toBe(false)
+      loadingStore.showLoading()
+      loadingStore.setProgress(75)
+      loadingStore.hideLoading()
+      expect(loadingStore.showProgress).toBe(false)
     })
   })
 
   describe('setProgress', () => {
     it('should set progress value', () => {
-      const store = useLoadingStore()
-      store.setProgress(50)
-      expect(store.progress).toBe(50)
+      loadingStore.setProgress(50)
+      expect(loadingStore.progress).toBe(50)
     })
 
     it('should show progress indicator', () => {
-      const store = useLoadingStore()
-      store.setProgress(50)
-      expect(store.showProgress).toBe(true)
+      loadingStore.setProgress(50)
+      expect(loadingStore.showProgress).toBe(true)
     })
 
     it('should clamp progress to 0-100 range', () => {
-      const store = useLoadingStore()
-      store.setProgress(-10)
-      expect(store.progress).toBe(0)
+      loadingStore.setProgress(-10)
+      expect(loadingStore.progress).toBe(0)
 
-      store.setProgress(150)
-      expect(store.progress).toBe(100)
+      loadingStore.setProgress(150)
+      expect(loadingStore.progress).toBe(100)
     })
 
     it('should accept boundary values', () => {
-      const store = useLoadingStore()
-      store.setProgress(0)
-      expect(store.progress).toBe(0)
+      loadingStore.setProgress(0)
+      expect(loadingStore.progress).toBe(0)
 
-      store.setProgress(100)
-      expect(store.progress).toBe(100)
+      loadingStore.setProgress(100)
+      expect(loadingStore.progress).toBe(100)
     })
 
     it('should accept fractional values', () => {
-      const store = useLoadingStore()
-      store.setProgress(33.33)
-      expect(store.progress).toBe(33.33)
+      loadingStore.setProgress(33.33)
+      expect(loadingStore.progress).toBe(33.33)
     })
   })
 
   describe('nested loading calls', () => {
     it('should handle multiple show/hide correctly', () => {
-      const store = useLoadingStore()
+      loadingStore.showLoading() // count: 1
+      expect(loadingStore.isLoading).toBe(true)
 
-      store.showLoading() // count: 1
-      expect(store.isLoading).toBe(true)
+      loadingStore.showLoading() // count: 2
+      expect(loadingStore.isLoading).toBe(true)
 
-      store.showLoading() // count: 2
-      expect(store.isLoading).toBe(true)
+      loadingStore.showLoading() // count: 3
+      expect(loadingStore.isLoading).toBe(true)
 
-      store.showLoading() // count: 3
-      expect(store.isLoading).toBe(true)
+      loadingStore.hideLoading() // count: 2
+      expect(loadingStore.isLoading).toBe(true)
 
-      store.hideLoading() // count: 2
-      expect(store.isLoading).toBe(true)
+      loadingStore.hideLoading() // count: 1
+      expect(loadingStore.isLoading).toBe(true)
 
-      store.hideLoading() // count: 1
-      expect(store.isLoading).toBe(true)
-
-      store.hideLoading() // count: 0
-      expect(store.isLoading).toBe(false)
+      loadingStore.hideLoading() // count: 0
+      expect(loadingStore.isLoading).toBe(false)
     })
   })
 })
@@ -175,6 +163,8 @@ describe('useLoadingStore', () => {
 describe('useLoading', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    // useLoading() internally calls useLoadingStore() and useGameStore() - both need active Pinia
+    loadingStore = useLoadingStore()
   })
 
   describe('composable wrapper', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import 'dotenv/config'
 import { Stagehand } from '@browserbasehq/stagehand'
 
@@ -18,14 +19,14 @@ async function main() {
   const extractResult = await stagehand.extract('Extract the value proposition from the page.')
   console.log('Extract result:\n', extractResult)
 
-  const actResult = await stagehand.act('Click the \'Evals\' button.')
+  const actResult = await stagehand.act('Click the Evals button.')
   console.log('Act result:\n', actResult)
 
   const observeResult = await stagehand.observe('What can I click on this page?')
   console.log('Observe result:\n', observeResult)
 
   const agent = stagehand.agent({
-    systemPrompt: 'You\'re a helpful assistant that can control a web browser.',
+    systemPrompt: 'You are a helpful assistant that can control a web browser.',
   })
 
   const agentResult = await agent.execute('What is the most accurate model to use in Stagehand?')

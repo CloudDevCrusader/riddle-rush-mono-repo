@@ -35,5 +35,34 @@
     "path-intellisense.extensionOnImport": true,
     "circleci.persistedProjectSelection": ["circleci/NqFyu74yrheUgS5wD3ERxe/fhprrcv6zHAooUq6UK155"],
     "circleci.filters.branchFilter": "allBranches",
+    "nuxt.isNuxtApp": false,
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/.trunk/*actions/": true,
+      "**/.trunk/*logs/": true,
+      "**/.trunk/*notifications/": true,
+      "**/.trunk/*out/": true,
+      "**/.trunk/*plugins/": true,
+      ".yoyo": true,
+    },
+    "turbo-ai-rules.sources": [
+      {
+        "id": "ai-rules",
+        "name": "ygqygq2's AI Rules",
+        "gitUrl": "https://github.com/ygqygq2/ai-rules.git",
+        "branch": "main",
+        "enabled": true,
+        "authentication": {
+          "type": "none",
+        },
+      },
+    ],
+  },
+  "extensions": {
+    "recommendations": ["nuxtr.nuxt-vscode-extentions"],
   },
 }

@@ -20,26 +20,22 @@ export default defineNuxtPlugin({
     }
 
     // Load GA4 script
-    useHead({
-      script: [
-        {
-          src: `https://www.googletagmanager.com/gtag/js?id=${gtagId}`,
-          async: true,
-        },
-        {
-          innerHTML: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${gtagId}', {
-            anonymize_ip: true,
-            cookie_flags: 'SameSite=None;Secure',
-          });
-        `,
-          type: 'text/javascript',
-        },
-      ],
-    })
+    const script = document.createElement('script')
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${gtagId}`
+    script.async = true
+    document.head.appendChild(script)
+
+    const inlineScript = document.createElement('script')
+    inlineScript.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${gtagId}', {
+        anonymize_ip: true,
+        cookie_flags: 'SameSite=None;Secure',
+      });
+    `
+    document.head.appendChild(inlineScript)
 
     // Track page views on route change
     router.afterEach((to) => {

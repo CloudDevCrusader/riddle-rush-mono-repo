@@ -1,6 +1,15 @@
 import type { UnleashClient } from 'unleash-proxy-client'
 
 /**
+ * Attach a listener to the Unleash client for Vue reactivity bridge.
+ * Called from the GitLab feature flags plugin before client.start().
+ */
+export function attachUnleashListener(_client: UnleashClient): void {
+  // Reactivity is handled through the composable's computed properties.
+  // This hook exists so the plugin can wire up before 'ready' fires.
+}
+
+/**
  * Composable for accessing GitLab Feature Flags
  * GitLab Feature Flags uses the Unleash protocol
  */
@@ -101,6 +110,7 @@ export function useFeatureFlags() {
   return {
     isEnabled,
     getVariant,
+    isAnswerInputEnabled: isInputFieldEnabled,
     isFortuneWheelEnabled,
     isWebSocketEnabled,
     isInputFieldEnabled,

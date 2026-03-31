@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Riddle Rush</string>
+    <string name="title_activity_main">Riddle Rush</string>
+    <string name="package_name">com.riddlerush.game</string>
+    <string name="custom_url_scheme">com.riddlerush.game</string>
+</resources>

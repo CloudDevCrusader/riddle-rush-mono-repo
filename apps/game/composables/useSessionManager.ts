@@ -7,6 +7,7 @@
  */
 
 import type { GameSession, Category, Player } from '@riddle-rush/types/game'
+import { generateUUID } from '~/utils/uuid'
 
 /**
  * Composable providing game session lifecycle utilities.
@@ -36,10 +37,11 @@ export function useSessionManager() {
     gameName?: string
   ): GameSession {
     return {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       gameName,
       players,
       currentRound: 1,
+      currentPlayerIndex: 0,
       category: { ...category, letter },
       letter,
       startTime: Date.now(),
@@ -57,7 +59,7 @@ export function useSessionManager() {
    */
   function createSinglePlayerSession(category: Category, letter: string): GameSession {
     return {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       userId: 'default-user',
       category: { ...category, letter },
       letter,
@@ -66,6 +68,7 @@ export function useSessionManager() {
       attempts: [],
       players: [],
       currentRound: 0,
+      currentPlayerIndex: 0,
       roundHistory: [],
       status: 'active',
     }

@@ -1,46 +1,87 @@
 <template>
-  <div class="scoring-page">
-    <img src="~/assets/figma/background-1-8.png" class="scoring-bg" alt="background" />
-    <header class="scoring-header">
-      <img src="~/assets/figma/back-1.png" class="back-btn" alt="Back" @click="handleBack" />
-      <div class="coin-bar">
-        <img src="~/assets/figma/coin-bar-1.png" alt="Coin bar" />
-        <span class="coin-bar-text">100</span>
-      </div>
-    </header>
-    <div class="scoring-container">
-      <img src="~/assets/figma/scoring-1.png" class="scoring-title" alt="Scoring" />
-      <div class="player-list">
-        <div v-for="player in players" :key="player.id" class="player-item">
-          <img src="~/assets/figma/back-1-3.png" class="player-bg" alt="Player background" />
-          <div class="player-info">
-            <span class="player-name">{{ player.name }}</span>
-            <div class="score-controls">
-              <img
-                src="~/assets/figma/add-back-16.png"
-                class="score-btn"
-                alt="Decrement"
-                @click="decrementScore(player.id)"
-              />
-              <span class="score-value">{{ pendingScores.get(player.id) ?? 0 }}</span>
-              <img
-                src="~/assets/figma/add-2.png"
-                class="score-btn"
-                alt="Increment"
-                @click="incrementScore(player.id)"
-              />
-            </div>
+  <GameBackground>
+    <div class="scoring-page">
+      <GameHeader color="gold" data-testid="results-header">
+        {{ t('scoring.title', 'Scoring') }}
+      </GameHeader>
+
+      <div class="scoring-page__list" data-testid="results-scores-container">
+        <div
+          v-for="(player, index) in players"
+          :key="player.id"
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 50 } }"
+          class="scoring-page__player-entry"
+          :data-testid="`results-player-entry-${index}`"
+        >
+          <div class="scoring-page__player-header">
+            <span class="scoring-page__rank" :data-testid="`predicted-rank-${index}`">
+              #{{ projectedRanks.get(player.id) ?? Number(index) + 1 }}
+            </span>
+            <GamePlayerCard
+              :player="player"
+              :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
+              :show-indicator="false"
+              :show-answer="isAnswerInputEnabled"
+            />
+            <span class="scoring-page__base-score" data-testid="base-score">
+              {{ t('scoring.base_score', 'Score') }}: {{ player.totalScore }}
+              {{ t('scoring.points', 'pts') }}
+            </span>
+          </div>
+
+          <div
+            class="scoring-page__score-controls"
+            :data-testid="`results-score-controls-${index}`"
+          >
+            <GameButton
+              variant="danger"
+              size="sm"
+              :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
+              data-testid="score-decrement"
+              @click="decrementScore(player.id)"
+            >
+              −
+            </GameButton>
+
+            <GameDisplay
+              size="sm"
+              :glow="false"
+              class="scoring-page__score-value"
+              :data-testid="`scoring-page-score-value-${index}`"
+            >
+              {{ pendingScores.get(player.id) ?? 0 }}
+            </GameDisplay>
+
+            <GameButton
+              variant="primary"
+              size="sm"
+              data-testid="score-increment"
+              @click="incrementScore(player.id)"
+            >
+              +
+            </GameButton>
           </div>
         </div>
       </div>
-      <img
-        src="~/assets/figma/next-2.png"
-        class="next-btn"
-        alt="Next"
+
+      <GameButton
+        variant="primary"
+        size="lg"
+        full-width
+        :loading="isConfirming"
+        class="scoring-page__button"
+        data-testid="confirm-scores"
         @click="handleConfirmScores"
-      />
+      >
+        {{ t('scoring.confirm_scores', 'Confirm Scores') }}
+      </GameButton>
     </div>
+
+    <!-- Leaderboard overlay (shown briefly after confirming scores) -->
     <PlayerLeaderboard
+      data-testid="player-leaderboard"
       :visible="showLeaderboard"
       :players="leaderboard"
       :is-game-completed="false"
@@ -48,22 +89,30 @@
       @close="handleLeaderboardDismiss"
       @continue="handleLeaderboardDismiss"
     />
+
+    <!-- Decision modal: next round or finish game -->
     <GameModal
       v-model="showDecisionModal"
+      data-testid="post-round-modal"
       :title="t('scoring.round_complete', 'Round Complete!')"
       :close-on-backdrop="false"
       :close-on-escape="false"
     >
       <div class="decision-content">
-        <p class="decision-content__text">
-          {{ t('scoring.play_another_round', 'Would you like to play another round?') }}
+        <p class="decision-content__text" data-testid="results-post-round-prompt">
+          {{
+            t(
+              'scoring.post_round_prompt',
+              'Do you want to play another round, or go to the leaderboard?'
+            )
+          }}
         </p>
         <div class="decision-content__actions">
           <GameButton
             variant="primary"
             size="lg"
             full-width
-            data-testid="next-round"
+            data-testid="next-round-button"
             @click="handleNextRound"
           >
             {{ t('scoring.next_round', 'Next Round') }}
@@ -72,35 +121,50 @@
             variant="secondary"
             size="lg"
             full-width
-            data-testid="finish-game"
+            data-testid="new-game-button"
+            @click="handleNewGame"
+          >
+            {{ t('scoring.new_game', 'New Game') }}
+          </GameButton>
+          <GameButton
+            variant="secondary"
+            size="lg"
+            full-width
+            data-testid="leaderboard-button"
             @click="handleFinishGame"
           >
-            {{ t('scoring.finish_game', 'Finish Game') }}
+            {{ t('scoring.leaderboard', 'Leaderboard') }}
           </GameButton>
         </div>
       </div>
     </GameModal>
-  </div>
+  </GameBackground>
 </template>
 
 <script setup lang="ts">
 import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
+import type { Player } from '@riddle-rush/types/game'
 
 const { t } = usePageSetup()
-const { goHome } = useNavigation()
-const { gameStore, players, leaderboard, currentRound } = useGameState()
-const { goToRoundStart, goToLeaderboard } = useNavigation()
+const { gameStore, players, leaderboard, currentRound, flowState, canConfirmRoundScores } =
+  useGameState()
+const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation()
 const { playClick, playScoreIncrease } = useAudio()
+const { isAnswerInputEnabled } = useFeatureFlags()
+const route = useRoute()
+const logger = useLogger()
 
 // Pending scores for each player (local state before confirming)
 const pendingScores = reactive(new Map<string, number>())
 
-// Initialize all player scores to 0 on mount
-onMounted(() => {
-  for (const player of players.value) {
-    pendingScores.set(player.id, 0)
+const syncPendingScores = (nextPlayers: Player[]) => {
+  pendingScores.clear()
+  for (const player of nextPlayers) {
+    pendingScores.set(player.id, player.currentRoundScore ?? 0)
   }
-})
+}
+
+const gameId = computed(() => route.params.gameId as string | undefined)
 
 const isConfirming = ref(false)
 
@@ -108,6 +172,23 @@ const isConfirming = ref(false)
 const showLeaderboard = ref(false)
 const showDecisionModal = ref(false)
 let dismissTimer: ReturnType<typeof setTimeout> | null = null
+const hasConfirmedRound = ref(false)
+
+const isDecisionFlow = computed(() => flowState.value === 'decision')
+
+// Projected ranks based on totalScore + pending scores
+const projectedRanks = computed(() => {
+  const ranked = [...players.value]
+    .map((p) => ({
+      id: p.id,
+      projected: p.totalScore + (pendingScores.get(p.id) ?? 0),
+    }))
+    .sort((a, b) => b.projected - a.projected)
+
+  const ranks = new Map<string, number>()
+  ranked.forEach((p, i) => ranks.set(p.id, i + 1))
+  return ranks
+})
 
 const incrementScore = (playerId: string) => {
   const current = pendingScores.get(playerId) ?? 0
@@ -117,10 +198,9 @@ const incrementScore = (playerId: string) => {
 
 const decrementScore = (playerId: string) => {
   const current = pendingScores.get(playerId) ?? 0
-  if (current > 0) {
-    pendingScores.set(playerId, current - SCORE_INCREMENT)
-    void playClick()
-  }
+  // Allow negative adjustments to reflect point deductions
+  pendingScores.set(playerId, current - SCORE_INCREMENT)
+  void playClick()
 }
 
 const handleLeaderboardDismiss = () => {
@@ -135,6 +215,14 @@ const handleLeaderboardDismiss = () => {
 const handleConfirmScores = async () => {
   if (isConfirming.value) return
 
+  // Use unified flow state for validation
+  const flow = flowState.value
+  if (flow !== 'round-complete' || isDecisionFlow.value || hasConfirmedRound.value) {
+    // If not in correct flow state, show decision modal directly
+    showDecisionModal.value = true
+    return
+  }
+
   isConfirming.value = true
   try {
     // Assign scores for all players
@@ -142,16 +230,19 @@ const handleConfirmScores = async () => {
       await gameStore.assignPlayerScore(playerId, score)
     }
 
-    // Complete the round (records round history)
+    // Complete the round (records round history and transitions to decision)
     await gameStore.completeRound()
+    hasConfirmedRound.value = true
 
     void playScoreIncrease()
 
     // Show leaderboard overlay (auto-dismisses after timeout)
     showLeaderboard.value = true
     dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS)
-  } catch {
+  } catch (error) {
     // Score saving failed — allow the user to retry
+    logger.error('Failed to confirm scores:', error)
+  } finally {
     isConfirming.value = false
   }
 }
@@ -161,15 +252,55 @@ const handleNextRound = async () => {
   await goToRoundStart()
 }
 
+const handleNewGame = async () => {
+  showDecisionModal.value = false
+  await gameStore.completeGame()
+  await goToPlayers()
+}
+
 const handleFinishGame = async () => {
   showDecisionModal.value = false
   await gameStore.completeGame()
   await goToLeaderboard()
 }
 
-const handleBack = () => {
-  goHome()
-}
+watch(
+  players,
+  (nextPlayers: Player[]) => {
+    syncPendingScores(nextPlayers)
+  },
+  { immediate: true }
+)
+
+watch(flowState, (newFlow: string, oldFlow: string) => {
+  // When flow transitions to decision, ensure modal appears
+  if (newFlow === 'decision' && oldFlow !== 'decision') {
+    hasConfirmedRound.value = true
+    showDecisionModal.value = true
+    if (dismissTimer) {
+      clearTimeout(dismissTimer)
+      dismissTimer = null
+    }
+    showLeaderboard.value = false
+  }
+})
+
+onMounted(async () => {
+  const id = gameId.value
+  if (id && gameStore.currentSession.value?.id !== id) {
+    try {
+      await gameStore.loadSessionById(id)
+    } catch {
+      await gameStore.loadFromDB()
+    }
+  }
+
+  // Check flow state and initialize accordingly
+  if (flowState.value === 'decision') {
+    hasConfirmedRound.value = true
+    showDecisionModal.value = true
+  }
+})
 
 onUnmounted(() => {
   if (dismissTimer) {
@@ -178,8 +309,12 @@ onUnmounted(() => {
   }
 })
 
+const pageTitle = computed(
+  () => `${t('scoring.title', 'Scoring')} · ${t('game.round')} ${currentRound.value || 1}`
+)
+
 useHead({
-  title: t('scoring.title', 'Scoring'),
+  title: pageTitle,
   meta: [
     {
       name: 'description',
@@ -189,122 +324,145 @@ useHead({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'assets/scss/design-system' as *;
+
 .scoring-page {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-.scoring-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.scoring-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-}
-
-.back-btn {
-  width: 64px;
-  cursor: pointer;
-}
-
-.coin-bar {
-  position: relative;
-  width: 120px;
-}
-
-.coin-bar img {
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl) var(--spacing-md);
   width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
-.coin-bar-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 1.2rem;
+.scoring-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  max-width: 600px;
+}
+
+.scoring-page__player-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.scoring-page__player-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.scoring-page__rank {
+  font-size: var(--font-size-lg);
   font-weight: bold;
+  color: var(--color-gold, #ffd700);
+  min-width: 2.5rem;
+  text-align: center;
 }
 
-.scoring-container {
-  flex-grow: 1;
+.scoring-page__base-score {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted, #aaa);
+  white-space: nowrap;
+}
+
+.scoring-page__score-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.scoring-page__score-value {
+  min-width: 60px;
+  text-align: center;
+}
+
+.scoring-page__button {
+  max-width: 600px;
+}
+
+.decision-content {
+  text-align: center;
+}
+
+.decision-content__text {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.decision-content__actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  gap: 1rem;
+  gap: var(--spacing-md);
 }
 
-.scoring-title {
-  width: 100%;
-  max-width: 300px;
+@media (max-width: 640px) {
+  .scoring-page {
+    padding: var(--spacing-xl) var(--spacing-sm);
+    gap: var(--spacing-xl);
+  }
 }
 
-.player-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  max-width: 400px;
-  overflow-y: auto;
-  padding: 1rem;
+@include small-mobile {
+  .scoring-page {
+    padding: var(--spacing-lg) var(--spacing-xs);
+    gap: var(--spacing-lg);
+  }
+
+  .scoring-page__list {
+    gap: var(--spacing-md);
+  }
+
+  .scoring-page__player-header {
+    flex-wrap: wrap;
+  }
+
+  .scoring-page__rank {
+    font-size: var(--font-size-base);
+    min-width: 2rem;
+  }
+
+  .scoring-page__base-score {
+    font-size: var(--font-size-xs);
+    width: 100%;
+    text-align: center;
+    margin-top: var(--spacing-xs);
+  }
+
+  .scoring-page__score-controls {
+    gap: var(--spacing-sm);
+  }
+
+  .scoring-page__score-value {
+    min-width: 50px;
+  }
+
+  .decision-content__text {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .decision-content__actions {
+    gap: var(--spacing-sm);
+  }
 }
 
-.player-item {
-  position: relative;
-  width: 100%;
-}
+@include tiny-mobile {
+  .scoring-page {
+    padding: var(--spacing-md) var(--spacing-xs);
+    gap: var(--spacing-md);
+  }
 
-.player-bg {
-  width: 100%;
-}
-
-.player-info {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 80%;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.score-controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.score-btn {
-  width: 80px;
-  cursor: pointer;
-}
-
-.score-value {
-  font-size: 1.5rem;
-}
-
-.next-btn {
-  width: 100%;
-  max-width: 300px;
-  cursor: pointer;
-  margin-top: auto;
+  .scoring-page__score-controls {
+    gap: var(--spacing-xs);
+  }
 }
 </style>

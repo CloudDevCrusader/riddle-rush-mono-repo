@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      imports: ['vue', 'vue-router', 'pinia'],
+      imports: ['vue', 'vue-router'],
       dts: false,
     }),
   ],
@@ -15,6 +15,7 @@ export default defineConfig({
     alias: {
       '~': fileURLToPath(new URL('./', import.meta.url)),
       '@': fileURLToPath(new URL('./', import.meta.url)),
+      '#imports': fileURLToPath(new URL('./tests/unit/nuxt-imports.ts', import.meta.url)),
     },
   },
   test: {
@@ -22,7 +23,7 @@ export default defineConfig({
     environment: 'happy-dom',
     pool: 'forks', // Use forks to avoid --localstorage-file warning with happy-dom
     setupFiles: ['tests/unit/setup.ts'],
-    include: ['tests/unit/**/*.{test,spec}.ts'],
+    include: ['tests/unit/**/*.{test,spec}.ts', 'tests/integration/**/*.{test,spec}.ts'],
     exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
     coverage: {
       enabled: false, // Disabled due to version conflicts

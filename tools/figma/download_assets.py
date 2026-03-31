@@ -1,6 +1,6 @@
-import requests
-import json
 import os
+
+import requests  # type: ignore[import-untyped]
 
 FIGMA_TOKEN = os.environ.get("FIGMA_TOKEN", "")
 FILE_KEY = "hINuFPjeXxAZVlbEQghd11"
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     figma_data = get_figma_file(FILE_KEY)
 
     print("Finding image references...")
-    image_refs = set()
+    image_refs: set[str] = set()
     find_image_refs(figma_data["document"], image_refs)
 
     if not image_refs:

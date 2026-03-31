@@ -8,7 +8,7 @@ const mockUseRuntimeConfig = vi.fn(() => ({
 }))
 
 // Make useRuntimeConfig globally available for auto-import in the composable
-;(globalThis as any).useRuntimeConfig = mockUseRuntimeConfig
+vi.stubGlobal('useRuntimeConfig', mockUseRuntimeConfig)
 
 // Mock useRuntimeConfig from #app
 vi.mock('#app', () => ({
@@ -16,6 +16,26 @@ vi.mock('#app', () => ({
 }))
 
 const { useAssets } = await import('../../composables/useAssets')
+
+/** Shape of the Image mock instances used in preload tests. */
+interface MockImageElement {
+  src: string
+  onload: (() => void) | null
+  onerror: ((error: Error) => void) | null
+}
+
+/** Returns a class-based Image stub that appends each instance to `instances`. */
+function makeImageStub(instances: MockImageElement[]) {
+  return class implements MockImageElement {
+    src = ''
+    onload: (() => void) | null = null
+    onerror: ((error: Error) => void) | null = null
+    constructor() {
+      // push(this) passes `this` as an argument — no local alias, no lint error
+      instances.push(this)
+    }
+  }
+}
 
 describe('useAssets', () => {
   beforeEach(() => {
@@ -143,41 +163,25 @@ describe('useAssets', () => {
   describe('preloadImage', () => {
     it('should resolve when image loads successfully', async () => {
       const assets = useAssets()
-
-      // Mock Image constructor
-      const mockImage = {
-        src: '',
-        onload: null as (() => void) | null,
-        onerror: null as ((error: Error) => void) | null,
-      }
-
-      global.Image = vi.fn(() => mockImage) as any
+      const instances: MockImageElement[] = []
+      vi.stubGlobal('Image', makeImageStub(instances))
 
       const promise = assets.preloadImage('/test/image.png')
-
-      // Simulate successful load
-      mockImage.onload?.()
+      // The composable creates the Image instance synchronously; access via array
+      instances[0]!.onload?.()
 
       await expect(promise).resolves.toBeUndefined()
-      expect(mockImage.src).toBe('/test/image.png')
+      expect(instances[0]!.src).toBe('/test/image.png')
     })
 
     it('should reject when image fails to load', async () => {
       const assets = useAssets()
-
-      const mockImage = {
-        src: '',
-        onload: null as (() => void) | null,
-        onerror: null as ((error: Error) => void) | null,
-      }
-
-      global.Image = vi.fn(() => mockImage) as any
+      const instances: MockImageElement[] = []
+      vi.stubGlobal('Image', makeImageStub(instances))
 
       const promise = assets.preloadImage('/test/broken.png')
-
-      // Simulate load error
       const error = new Error('Load failed')
-      mockImage.onerror?.(error)
+      instances[0]!.onerror?.(error)
 
       await expect(promise).rejects.toThrow('Load failed')
     })
@@ -186,21 +190,8 @@ describe('useAssets', () => {
   describe('preloadImages', () => {
     it('should preload multiple images successfully', async () => {
       const assets = useAssets()
-
-      const mockImages: Array<{
-        src: string
-        onload: (() => void) | null
-        onerror: ((error: Error) => void) | null
-      }> = []
-      global.Image = vi.fn(() => {
-        const img = {
-          src: '',
-          onload: null as (() => void) | null,
-          onerror: null as ((error: Error) => void) | null,
-        }
-        mockImages.push(img)
-        return img
-      }) as any
+      const mockImages: MockImageElement[] = []
+      vi.stubGlobal('Image', makeImageStub(mockImages))
 
       const paths = ['/image1.png', '/image2.png', '/image3.png']
       const promise = assets.preloadImages(paths)
@@ -217,21 +208,8 @@ describe('useAssets', () => {
 
     it('should reject if any image fails to load', async () => {
       const assets = useAssets()
-
-      const mockImages: Array<{
-        src: string
-        onload: (() => void) | null
-        onerror: ((error: Error) => void) | null
-      }> = []
-      global.Image = vi.fn(() => {
-        const img = {
-          src: '',
-          onload: null as (() => void) | null,
-          onerror: null as ((error: Error) => void) | null,
-        }
-        mockImages.push(img)
-        return img
-      }) as any
+      const mockImages: MockImageElement[] = []
+      vi.stubGlobal('Image', makeImageStub(mockImages))
 
       const paths = ['/image1.png', '/image2.png', '/image3.png']
       const promise = assets.preloadImages(paths)

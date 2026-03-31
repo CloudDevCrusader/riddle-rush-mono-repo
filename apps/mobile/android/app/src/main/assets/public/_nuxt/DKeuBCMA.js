@@ -1,1 +1,4 @@
-function i(t){return t}export{i};
+function i(t) {
+  return t
+}
+export { i }

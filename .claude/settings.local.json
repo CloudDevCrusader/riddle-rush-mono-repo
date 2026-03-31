@@ -103,9 +103,7 @@
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "playwright-test"
-  ],
+  "enabledMcpjsonServers": ["playwright-test"],
   "enabledPlugins": {
     "voltagent-qa-sec@voltagent-subagents": true,
     "playwright-tools@claude-settings": true,

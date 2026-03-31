@@ -6,7 +6,14 @@
     </div>
 
     <!-- Background Image (if provided by page) -->
-    <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
+    <img
+      v-if="backgroundImage"
+      :src="backgroundImage"
+      alt="Background"
+      class="page-bg"
+      width="1920"
+      height="1080"
+    />
 
     <!-- Main Content -->
     <div class="page-content">

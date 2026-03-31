@@ -81,7 +81,7 @@ When using index as key:
 
 Without keys, you'll see warnings like:
 
-```
+```text
 [Vue warn]: <TransitionGroup> children must be keyed.
 ```
 

@@ -1,13 +1,20 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click.self="handleOverlayClick">
+      <button
+        v-if="modelValue"
+        class="modal-overlay"
+        type="button"
+        aria-label="Close modal"
+        @click.self="handleOverlayClick"
+      >
         <div
           class="modal-container"
           :class="modalClasses"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="title ? 'modal-title' : undefined"
+          @click.stop
         >
           <!-- Close Button -->
           <button
@@ -39,7 +46,7 @@
             <slot name="footer" />
           </div>
         </div>
-      </div>
+      </button>
     </Transition>
   </Teleport>
 </template>
@@ -124,6 +131,9 @@ watch(
   justify-content: center;
   z-index: 1000;
   padding: var(--spacing-md);
+  border: none;
+  cursor: pointer;
+  width: 100%;
 }
 
 .modal-container {
@@ -134,7 +144,9 @@ watch(
   position: relative;
   max-height: 90vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   width: 100%;
+  cursor: default;
 }
 
 /* Sizes */
@@ -169,7 +181,12 @@ watch(
   cursor: pointer;
   font-size: 18px;
   color: var(--color-dark);
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   z-index: 1;
 }
 

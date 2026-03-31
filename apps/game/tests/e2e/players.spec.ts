@@ -90,12 +90,12 @@ test.describe('Players Management Page', () => {
   test('should navigate back when clicking back button', async ({ page }) => {
     // Navigate from menu to players first, so there's a history entry
     await page.goto('/', { timeout: 30000 })
-    await page.waitForSelector('[data-testid="menu-start-button"]', {
+    await page.waitForSelector('[data-testid="main-menu-play"]', {
       state: 'visible',
       timeout: 10000,
     })
 
-    const playBtn = page.locator('[data-testid="menu-start-button"]')
+    const playBtn = page.locator('[data-testid="main-menu-play"]')
     await playBtn.click()
     await expect(page).toHaveURL(/\/players/)
 

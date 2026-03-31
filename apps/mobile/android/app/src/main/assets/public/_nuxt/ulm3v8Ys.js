@@ -1,1 +1,0 @@
-import{d as a,A as o,B as n,a4 as s,_ as t}from"./BRqkcXJS.js";const _={class:"game-background"},c=a({__name:"GameBackground",setup(r){return(e,d)=>(o(),n("div",_,[s(e.$slots,"default",{},void 0,!0)]))}}),p=Object.assign(t(c,[["__scopeId","data-v-8e88f4ca"]]),{__name:"GameBackground"});export{p as _};

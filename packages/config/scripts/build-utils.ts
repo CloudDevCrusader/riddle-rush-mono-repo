@@ -1,7 +1,6 @@
 /**
- * Shared build utilities for the monorepo
+ * Shared build utilities for monorepo
  */
-
 import { execSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -98,10 +97,10 @@ export function getWorkspacePackages(workspaceRoot?: string): string[] {
  */
 export function isCI(): boolean {
   return !!(
-    process.env.CI
-    || process.env.GITLAB_CI
-    || process.env.GITHUB_ACTIONS
-    || process.env.CIRCLECI
+    process.env.CI ||
+    process.env.GITLAB_CI ||
+    process.env.GITHUB_ACTIONS ||
+    process.env.CIRCLECI
   )
 }
 

@@ -149,19 +149,19 @@ if [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS-}" ]]; then
 	pnpm install --frozen-lockfile
 
 	echo -e "\n✅ Running linter..."
-	(cd apps/game && pnpm run lint) || {
+	pnpm run lint || {
 		echo -e "${RED}❌ Lint failed${NC}"
 		exit 1
 	}
 
 	echo -e "\n🔷 Running type check..."
-	(cd apps/game && pnpm run typecheck) || {
+	pnpm run typecheck || {
 		echo -e "${RED}❌ Type check failed${NC}"
 		exit 1
 	}
 
 	echo -e "\n🧪 Running unit tests..."
-	(cd apps/game && pnpm run test:unit) || {
+	pnpm run test:unit || {
 		echo -e "${RED}❌ Tests failed${NC}"
 		exit 1
 	}
@@ -419,5 +419,13 @@ cat >deployment-info.json <<EOF
   "fileCount": ${FILE_COUNT}
 }
 EOF
+
+# Clean up .output directory to prevent syncpack issues
+# The build output can contain package.json files that interfere with syncpack checks
+if [[ -d "${BUILD_DIR%/public}" ]]; then
+	echo -e "\n${BLUE}🧹 Cleaning up build output: ${BUILD_DIR%/public}${NC}"
+	rm -rf "${BUILD_DIR%/public}"
+	echo -e "${GREEN}✓ Build output cleaned up${NC}"
+fi
 
 echo -e "\n${GREEN}✅ Done!${NC}"

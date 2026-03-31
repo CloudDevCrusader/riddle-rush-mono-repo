@@ -7,7 +7,7 @@
       <div class="game-player-card__name">
         {{ player.name }}
       </div>
-      <div v-if="player.currentRoundAnswer" class="game-player-card__answer">
+      <div v-if="showAnswer && player.currentRoundAnswer" class="game-player-card__answer">
         {{ player.currentRoundAnswer }}
       </div>
     </div>
@@ -35,11 +35,14 @@ interface Props {
   label?: string
   /** Whether to show score indicator */
   showIndicator?: boolean
+  /** Whether to show the player's answer */
+  showAnswer?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   label: undefined,
   showIndicator: true,
+  showAnswer: true,
 })
 
 const indicatorVariant = computed(() => {
@@ -141,6 +144,39 @@ const formatScore = (score: number): string => {
     background: linear-gradient(180deg, var(--color-btn-red-light), var(--color-btn-red-dark));
     color: white;
     border-color: var(--color-btn-red-shadow);
+  }
+}
+
+// Small phone adjustments
+@include small-mobile {
+  .game-player-card {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .game-player-card__name {
+    font-size: var(--font-size-base);
+  }
+
+  .game-player-card__answer {
+    font-size: var(--font-size-sm);
+  }
+
+  .game-player-card__indicator {
+    min-width: 60px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+  }
+}
+
+@include tiny-mobile {
+  .game-player-card {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-width: 2px;
+  }
+
+  .game-player-card__indicator {
+    min-width: 52px;
   }
 }
 </style>

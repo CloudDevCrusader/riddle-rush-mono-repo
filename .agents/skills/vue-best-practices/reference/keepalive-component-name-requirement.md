@@ -87,7 +87,7 @@ const count = ref(0)
 
 Since Vue 3.2.34, SFCs using `<script setup>` automatically infer their name from the filename:
 
-```
+```text
 TabA.vue  -> name is "TabA"
 UserProfile.vue -> name is "UserProfile"
 my-component.vue -> name is "my-component" (kebab-case preserved)

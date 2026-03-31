@@ -171,7 +171,7 @@ app.mount('#app')
 
 For projects with many directives, create a dedicated types file:
 
-```
+```text
 src/
 ├── directives/
 │   ├── index.ts           # Re-exports all directives

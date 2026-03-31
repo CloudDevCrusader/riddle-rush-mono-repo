@@ -64,6 +64,7 @@
   },
   "credits": {
     "art": "Art",
+    "description": "Meet the team behind Riddle Rush",
     "game_design": "Game Design",
     "programming": "Programming",
     "title": "CREDITS"
@@ -113,6 +114,7 @@
     "incorrect": "Wrong answer",
     "incorrect_answer": "Wrong answer",
     "loading": "Loading...",
+    "meta_description": "An exciting word guessing game for friends and family. Play offline, perfect for game nights!",
     "multiplayer_setup": "Game started with {0} players!",
     "new_round": "New Round",
     "new_round_started": "New round started!",
@@ -120,17 +122,20 @@
     "no_active_session": "Please start a game first",
     "no_player": "No active player found",
     "other_answers": "Other solutions:",
+    "page_title": "Riddle Rush - Game",
+    "pause": "Pause game",
     "players": "Players",
     "quitConfirmation": "Are you sure you want to quit game?",
     "quitGame": "QUIT GAME",
     "resumed": "Game resumed!",
     "round": "Round",
+    "round_start_description": "Spinning for category and letter",
+    "round_start_title": "Round Start",
     "score": "Score",
-    "meta_description": "An exciting word guessing game for friends and family. Play offline, perfect for game nights!",
-    "page_title": "Riddle Rush - Game",
     "skip": "Skip",
     "starts_with": "Starts with",
     "submit": "Submit",
+    "tap_to_spin": "Tap to spin",
     "title": "Play",
     "wait_for_players": "Please wait for all players to submit",
     "welcome": "Welcome! Guess a word from the category.",
@@ -151,14 +156,19 @@
     "about_link": "About the Game",
     "category_description": "Categories are chosen randomly each round",
     "category_title": "Available Categories",
-    "loading_categories": "Loading categories...",
     "load_more": "Load More Categories",
+    "loading_categories": "Loading categories...",
     "offline_badge": "Play Offline",
+    "page_title": "Main Menu",
     "quick_start": "Quick Start",
     "starting_game": "Starting game..."
   },
   "language": {
-    "title": "LANGUAGE"
+    "description": "Choose your preferred language",
+    "english": "ENGLISH",
+    "german": "DEUTSCH",
+    "select_prompt": "Select Language",
+    "title": "Language Selection"
   },
   "leaderboard": {
     "avatar_error": "Failed to update avatar. Please try again.",
@@ -166,6 +176,7 @@
     "category": "Category",
     "clear": "Clear",
     "current_standings": "Current Standings",
+    "description": "Game leaderboard",
     "empty": "No entries yet. Play some rounds!",
     "finish": "Finish",
     "finish_error": "Error finishing game",
@@ -175,10 +186,12 @@
     "invalid_image": "Please select a valid image file",
     "next_round": "Play Next Round",
     "no_players": "No players yet",
+    "points_this_round": "pts this round",
     "ranking": "Ranking",
     "score": "Score",
     "time": "Time",
     "title": "Leaderboard",
+    "winner_badge": "Winner!",
     "winner_title": "Final Standings"
   },
   "menu": {
@@ -196,6 +209,37 @@
   },
   "offline": {
     "warning": "You are offline. Some features may not work."
+  },
+  "connection": {
+    "online": "Online",
+    "connecting": "Connecting...",
+    "error": "Connection Error",
+    "offline": "Offline"
+  },
+  "websocket": {
+    "reconnect_failed": "Failed to reconnect",
+    "connection_failed": "Connection failed",
+    "not_connected": "Not connected"
+  },
+  "settings": {
+    "dark_mode": "Dark Mode",
+    "debug": "Debug Mode",
+    "language": "Language",
+    "language_changed": "Language changed",
+    "leaderboard": "Show Leaderboard",
+    "leaderboard_disabled": "Leaderboard disabled",
+    "leaderboard_enabled": "Leaderboard enabled",
+    "light_mode": "Light Mode",
+    "maxPlayers": "Max Players",
+    "music": "Music",
+    "reset": "Reset",
+    "reset_success": "Settings reset to defaults",
+    "sound": "Sound",
+    "sound_disabled": "Sound disabled",
+    "sound_enabled": "Sound enabled",
+    "system_default": "System Default",
+    "theme": "Theme",
+    "title": "Settings"
   },
   "pause": {
     "home": "Home",
@@ -228,7 +272,7 @@
     "ready": "{0} players ready!",
     "ready_set_go": "Ready, set, go! \uD83D\uDE80",
     "removed": "{0} removed",
-    "showtime": "Showtime! ⭐",
+    "showtime": "Showtime! \u2B50",
     "start": "Start Game",
     "title": "Players"
   },
@@ -241,29 +285,20 @@
     "your_score": "Your Score"
   },
   "scoring": {
+    "base_score": "Score",
     "confirm_scores": "Confirm Scores",
     "description": "View round scoring results",
     "error_saving": "Failed to save scores. Please try again.",
     "finish_game": "Finish Game",
+    "leaderboard": "Leaderboard",
+    "new_game": "New Game",
     "next_round": "Next Round",
     "play_another_round": "Would you like to play another round?",
     "player": "Player",
+    "points": "pts",
+    "post_round_prompt": "What would you like to do next?",
     "round_complete": "Round Complete!",
     "title": "Scoring"
-  },
-  "settings": {
-    "debug": "Debug Mode",
-    "language_changed": "Language changed",
-    "leaderboard": "Show Leaderboard",
-    "leaderboard_disabled": "Leaderboard disabled",
-    "leaderboard_enabled": "Leaderboard enabled",
-    "maxPlayers": "Max Players",
-    "reset": "Reset",
-    "reset_success": "Settings reset to defaults",
-    "sound": "Sound",
-    "sound_disabled": "Sound disabled",
-    "sound_enabled": "Sound enabled",
-    "title": "Settings"
   },
   "share": {
     "error": "Failed to share score",

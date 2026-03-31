@@ -1,22 +1,34 @@
+import { useGameStore } from '~/stores/gameStore'
+import { useGameSession } from '../stores/hooks/useGameSession'
 import { useLogger } from './useLogger'
 
 /**
- * Composable for common game actions with error handling and user feedback
+ * Composable for common game actions with error handling and user feedback.
+ *
+ * Fire-and-forget side-effectful game actions with error handling.
+ * Flow-sensitive guards (canConfirmRoundScores, canProceedToResults) live
+ * in `useGameState()` as reactive computed refs — use those instead.
  */
 export function useGameActions() {
-  const gameStore = useGameStore()
+  const store = useGameStore()
+  const gameSession = useGameSession()
+  const playerActions = usePlayerActions()
   const router = useRouter()
   const toast = useToast()
   const audio = useAudio()
   const { t } = useI18n()
   const logger = useLogger()
 
+  /** Read the authoritative flow state from the store's computed hook. */
+  const getFlowState = (): 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed' =>
+    gameSession.flowState.value ?? 'setup'
+
   /**
    * Start a new game session
    */
   const startNewGame = async () => {
     try {
-      await gameStore.startNewGame()
+      await gameSession.startNewGame()
       audio.playNewRound()
       toast.success(t('game.new_round_started', 'New round started!'))
       return true
@@ -31,10 +43,10 @@ export function useGameActions() {
    * Resume existing game or start new one
    */
   const resumeOrStartGame = async () => {
-    const hadSession = gameStore.hasActiveSession
+    const hadSession = gameSession.hasActiveSession.value
 
     try {
-      await gameStore.resumeOrStartNewGame()
+      await gameSession.resumeOrStartNewGame()
 
       if (!hadSession) {
         audio.playNewRound()
@@ -56,7 +68,7 @@ export function useGameActions() {
    */
   const endGame = async () => {
     try {
-      await gameStore.endGame()
+      await gameSession.endGame()
       toast.success(t('game.game_ended', 'Game ended! Check your statistics.'))
       await router.push('/')
       return true
@@ -71,7 +83,7 @@ export function useGameActions() {
    * Share game score using Web Share API
    */
   const shareScore = async (score?: number) => {
-    const finalScore = score ?? gameStore.currentSession?.score ?? 0
+    const finalScore = score ?? gameSession.currentSession.value?.score ?? 0
 
     if (!navigator.share) {
       toast.info(t('share.not_supported', 'Sharing is not supported on this device'))
@@ -105,8 +117,8 @@ export function useGameActions() {
     customLetter?: string
   ) => {
     try {
-      await gameStore.setupPlayers(playerNames, gameName, customLetter)
-      toast.success(t('game.multiplayer_setup', `Game started with ${playerNames.length} players!`))
+      await gameSession.setupPlayers(playerNames, gameName, customLetter)
+      toast.success(t('game.multiplayer_setup', [playerNames.length]))
       return true
     } catch (error) {
       logger.error('Error setting up multiplayer game:', error)
@@ -120,7 +132,7 @@ export function useGameActions() {
    */
   const startNextRound = async () => {
     try {
-      await gameStore.startNextRound()
+      await playerActions.startNextRound()
       audio.playNewRound()
       toast.success(t('game.next_round', 'Next round started!'))
       return true
@@ -131,6 +143,37 @@ export function useGameActions() {
     }
   }
 
+  /**
+   * Start or resume a configured round context from round-start page selections.
+   * Uses store flow contract to decide whether to bootstrap, advance, or refresh.
+   */
+  const startConfiguredRound = async (
+    category: import('@riddle-rush/types/game').Category,
+    letter: string
+  ) => {
+    try {
+      const session = await gameSession.advanceToConfiguredRound(category, letter)
+      if (!session) {
+        toast.warning(t('players.need_players', 'Add at least one player to start'))
+        return null
+      }
+
+      audio.playNewRound()
+      return session
+    } catch (error) {
+      logger.error('Error starting configured round:', error)
+      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+      return null
+    }
+  }
+
+  /**
+   * Transition to round-complete state (used when all players submit)
+   */
+  const transitionToRoundComplete = () => {
+    store.transitionToRoundComplete()
+  }
+
   return {
     startNewGame,
     resumeOrStartGame,
@@ -138,5 +181,7 @@ export function useGameActions() {
     shareScore,
     setupMultiplayerGame,
     startNextRound,
+    startConfiguredRound,
+    transitionToRoundComplete,
   }
 }

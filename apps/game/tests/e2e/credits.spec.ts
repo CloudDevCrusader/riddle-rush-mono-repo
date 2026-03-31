@@ -1,17 +1,5 @@
-import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
-
-/**
- * Helper to wait for splash screen to complete
- */
-async function waitForSplashComplete(page: Page) {
-  await page.waitForTimeout(1000)
-  const splashScreen = page.locator('.splash-screen')
-  await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
-    // Splash might already be gone
-  })
-  await page.waitForTimeout(500) // Extra buffer for transitions
-}
+import { waitForSplashComplete, hideDevtools } from './helpers/game-flow'
 
 test.describe('Credits Page', () => {
   test('should load credits page successfully', async ({ page }) => {
@@ -19,17 +7,18 @@ test.describe('Credits Page', () => {
 
     // Wait for page to load and Vue to hydrate
     await page.waitForLoadState('networkidle')
+    await hideDevtools(page)
     await waitForSplashComplete(page)
 
     // Wait for the main container to appear (sign that Vue has mounted)
-    await page.waitForSelector('.credits-page', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
 
-    // Check for main title image
-    const titleImage = page.locator('.title-image')
-    await expect(titleImage).toBeVisible({ timeout: 10000 })
+    // Check for header
+    const header = page.locator('[data-testid="credits-header"]')
+    await expect(header).toBeVisible({ timeout: 10000 })
 
     // Check for credits panel
-    const creditsPanel = page.locator('.credits-panel')
+    const creditsPanel = page.locator('[data-testid="credits-panel"]')
     await expect(creditsPanel).toBeVisible({ timeout: 10000 })
   })
 
@@ -38,41 +27,44 @@ test.describe('Credits Page', () => {
 
     // Wait for page to load and Vue to hydrate
     await page.waitForLoadState('networkidle')
+    await hideDevtools(page)
     await waitForSplashComplete(page)
-    await page.waitForSelector('.credits-page', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
 
     // Check for credits panel
-    const creditsPanel = page.locator('.credits-panel')
+    const creditsPanel = page.locator('[data-testid="credits-panel"]')
     await expect(creditsPanel).toBeVisible({ timeout: 10000 })
 
-    // Check for all three credit sections
-    const creditSections = page.locator('.credit-section')
+    // Check for all three credit sections (use exact pattern to avoid matching heading elements)
+    const creditSections = page.locator(
+      '[data-testid="credits-section-0"], [data-testid="credits-section-1"], [data-testid="credits-section-2"]'
+    )
     await expect(creditSections).toHaveCount(3)
 
-    // Check for Game Design section heading
-    const gameDesignHeading = page.locator('.section-heading').filter({ hasText: /Game Design/i })
+    // Check for Game Design section heading (use testid, text may be translated)
+    const gameDesignHeading = page.locator('[data-testid="credits-section-heading-0"]')
     await expect(gameDesignHeading).toBeVisible()
 
     // Check for team members (Tobi and Sophia)
-    const tobi = page.locator('.credit-name').filter({ hasText: /^Tobi$/i })
-    const sophia = page.locator('.credit-name').filter({ hasText: /^Sophia$/i })
+    const tobi = page.locator('[data-testid="credits-name-0"]')
+    const sophia = page.locator('[data-testid="credits-name-1"]')
     await expect(tobi).toBeVisible()
     await expect(sophia).toBeVisible()
 
     // Check for Programming section heading
-    const programmingHeading = page.locator('.section-heading').filter({ hasText: /Programming/i })
+    const programmingHeading = page.locator('[data-testid="credits-section-heading-1"]')
     await expect(programmingHeading).toBeVisible()
 
     // Check for Markus
-    const markus = page.locator('.credit-name').filter({ hasText: /^Markus$/i })
+    const markus = page.locator('[data-testid="credits-name-2"]')
     await expect(markus).toBeVisible()
 
     // Check for Art section heading
-    const artHeading = page.locator('.section-heading').filter({ hasText: /Art/i })
+    const artHeading = page.locator('[data-testid="credits-section-heading-2"]')
     await expect(artHeading).toBeVisible()
 
     // Check for Sarmad Ali
-    const sarmad = page.locator('.credit-name').filter({ hasText: /Sarmad Ali/i })
+    const sarmad = page.locator('[data-testid="credits-name-3"]')
     await expect(sarmad).toBeVisible()
   })
 
@@ -80,11 +72,12 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await hideDevtools(page)
     await waitForSplashComplete(page)
-    await page.waitForSelector('.credits-page', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
 
     // Look for back button
-    const backButton = page.locator('.back-btn, button:has-text("←")')
+    const backButton = page.locator('[data-testid="credits-back-button"], button:has-text("←")')
 
     if ((await backButton.count()) > 0) {
       await expect(backButton.first()).toBeVisible({ timeout: 10000 })
@@ -103,11 +96,12 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await hideDevtools(page)
     await waitForSplashComplete(page)
-    await page.waitForSelector('.credits-page', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
 
     // Look for OK button
-    const okButton = page.locator('button:has-text("OK"), .btn-ok')
+    const okButton = page.locator('[data-testid="credits-ok-button"]')
 
     if ((await okButton.count()) > 0) {
       await expect(okButton.first()).toBeVisible({ timeout: 10000 })
@@ -129,7 +123,7 @@ test.describe('Credits Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Check for coins display (should not exist)
-    const coinsDisplay = page.locator('.coins-display')
+    const coinsDisplay = page.locator('[data-testid="credits-coins-display"]')
     await expect(coinsDisplay).toHaveCount(0)
   })
 
@@ -137,19 +131,20 @@ test.describe('Credits Page', () => {
     await page.goto('/credits')
 
     await page.waitForLoadState('networkidle')
+    await hideDevtools(page)
     await waitForSplashComplete(page)
-    await page.waitForSelector('.credits-page', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
 
     // Check that the page has the main container
-    const container = page.locator('.container')
+    const container = page.locator('[data-testid="credits-page"]')
     await expect(container).toBeVisible({ timeout: 10000 })
 
     // Check for credits panel with proper styling
-    const creditsPanel = page.locator('.credits-panel')
+    const creditsPanel = page.locator('[data-testid="credits-panel"]')
     await expect(creditsPanel).toBeVisible({ timeout: 10000 })
 
-    // Verify background image is present
-    const backgroundImage = page.locator('.page-bg')
+    // Verify background is present
+    const backgroundImage = page.locator('.game-background')
     await expect(backgroundImage).toBeVisible()
   })
 })

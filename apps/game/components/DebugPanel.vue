@@ -1,6 +1,6 @@
 <template>
   <Transition name="debug">
-    <div v-if="settingsStore.isDebugMode" class="debug-panel">
+    <div v-if="settings.isDebugMode.value" class="debug-panel">
       <header class="debug-header">
         <span>🔧 Debug Mode</span>
         <button class="minimize-btn" @click="minimized = !minimized">
@@ -13,21 +13,23 @@
           <h4>Game State</h4>
           <div class="stat-row">
             <span>Session Active:</span>
-            <span :class="gameStore.hasActiveSession ? 'status-ok' : 'status-off'">
-              {{ gameStore.hasActiveSession ? 'Yes' : 'No' }}
+            <span :class="gameSession.hasActiveSession.value ? 'status-ok' : 'status-off'">
+              {{ gameSession.hasActiveSession.value ? 'Yes' : 'No' }}
             </span>
           </div>
           <div class="stat-row">
             <span>Current Score:</span>
-            <span>{{ gameStore.currentSession?.score ?? 0 }}</span>
+            <span>{{ gameSession.currentSession.value?.score ?? 0 }}</span>
           </div>
           <div class="stat-row">
             <span>Attempts:</span>
-            <span>{{ gameStore.currentSession?.attempts?.length ?? 0 }}</span>
+            <span>{{ gameSession.currentSession.value?.attempts?.length ?? 0 }}</span>
           </div>
           <div class="stat-row">
             <span>Categories Loaded:</span>
-            <span>{{ gameStore.categoriesLoaded ? gameStore.categories.length : 0 }}</span>
+            <span>{{
+              categories.categoriesLoaded.value ? categories.categories.value.length : 0
+            }}</span>
           </div>
         </section>
 
@@ -35,13 +37,13 @@
           <h4>Network</h4>
           <div class="stat-row">
             <span>Online:</span>
-            <span :class="gameStore.isOnline ? 'status-ok' : 'status-error'">
-              {{ gameStore.isOnline ? 'Yes' : 'No' }}
+            <span :class="gameSession.isOnline.value ? 'status-ok' : 'status-error'">
+              {{ gameSession.isOnline.value ? 'Yes' : 'No' }}
             </span>
           </div>
           <div class="stat-row">
             <span>Offline Mode:</span>
-            <span>{{ settingsStore.offlineMode ? 'Forced' : 'Auto' }}</span>
+            <span>{{ settings.offlineMode.value ? 'Forced' : 'Auto' }}</span>
           </div>
         </section>
 
@@ -49,15 +51,15 @@
           <h4>Settings</h4>
           <div class="stat-row">
             <span>Leaderboard:</span>
-            <span>{{ settingsStore.leaderboardEnabled ? 'On' : 'Off' }}</span>
+            <span>{{ settings.leaderboardEnabled.value ? 'On' : 'Off' }}</span>
           </div>
           <div class="stat-row">
             <span>Sound:</span>
-            <span>{{ settingsStore.soundEnabled ? 'On' : 'Off' }}</span>
+            <span>{{ settings.soundEnabled.value ? 'On' : 'Off' }}</span>
           </div>
           <div class="stat-row">
             <span>Max Players:</span>
-            <span>{{ settingsStore.maxPlayersPerGame }}</span>
+            <span>{{ settings.maxPlayersPerGame.value }}</span>
           </div>
         </section>
 
@@ -65,7 +67,7 @@
           <h4>Statistics</h4>
           <div class="stat-row">
             <span>History Games:</span>
-            <span>{{ gameStore.history.length }}</span>
+            <span>{{ gameSession.history.value.length }}</span>
           </div>
           <div v-if="stats" class="stat-row">
             <span>Total Score:</span>
@@ -91,7 +93,7 @@
           </div>
           <div class="stat-row">
             <span>Installable:</span>
-            <span>{{ gameStore.canInstall ? 'Yes' : 'No' }}</span>
+            <span>{{ installPrompt.canInstall.value ? 'Yes' : 'No' }}</span>
           </div>
         </section>
 
@@ -108,8 +110,10 @@
 <script setup lang="ts">
 import type { GameStatistics } from '@riddle-rush/types/game'
 
-const gameStore = useGameStore()
-const settingsStore = useSettingsStore()
+const gameSession = useGameSession()
+const categories = useCategories()
+const settings = useSettings()
+const installPrompt = useInstallPrompt()
 
 const minimized = ref(false)
 const stats = ref<GameStatistics | null>(null)
@@ -148,18 +152,32 @@ const exportDebugInfo = () => {
   const info = {
     timestamp: new Date().toISOString(),
     gameState: {
-      hasSession: gameStore.hasActiveSession,
-      score: gameStore.currentSession?.score ?? 0,
-      attempts: gameStore.currentSession?.attempts?.length ?? 0,
-      categories: gameStore.categories.length,
-      history: gameStore.history.length,
+      hasSession: gameSession.hasActiveSession.value,
+      score: gameSession.currentSession.value?.score ?? 0,
+      attempts: gameSession.currentSession.value?.attempts?.length ?? 0,
+      categories: categories.categories.value.length,
+      history: gameSession.history.value.length,
     },
-    settings: settingsStore.$state,
+    settings: {
+      maxPlayersPerGame: settings.maxPlayersPerGame.value,
+      showLeaderboardAfterRound: settings.showLeaderboardAfterRound.value,
+      leaderboardEnabled: settings.leaderboardEnabled.value,
+      debugMode: settings.debugMode.value,
+      soundEnabled: settings.soundEnabled.value,
+      soundVolume: settings.soundVolume.value,
+      musicEnabled: settings.musicEnabled.value,
+      musicVolume: settings.musicVolume.value,
+      offlineMode: settings.offlineMode.value,
+      language: settings.language.value,
+      fortuneWheelEnabled: settings.fortuneWheelEnabled.value,
+      websocketEnabled: settings.websocketEnabled.value,
+      answerInputEnabled: settings.answerInputEnabled.value,
+    },
     stats: stats.value,
     pwa: {
       swRegistered: swRegistered.value,
-      installable: gameStore.canInstall,
-      online: gameStore.isOnline,
+      installable: installPrompt.canInstall.value,
+      online: gameSession.isOnline.value,
     },
     userAgent: navigator.userAgent,
   }
@@ -274,7 +292,12 @@ onMounted(() => {
 
 .debug-enter-active,
 .debug-leave-active {
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .debug-enter-from,

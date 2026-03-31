@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0.3
+milestone_name: milestone
+status: Milestone Complete
+stopped_at: Completed 21-09-PLAN.md (all 70 plans done — milestone complete)
+last_updated: '2026-03-24T02:35:00.000Z'
+progress:
+  total_phases: 21
+  completed_phases: 21
+  total_plans: 70
+  completed_plans: 70
+---
+
 # Project State
 
 ## Project Reference
@@ -5,59 +19,89 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Infrastructure and tooling enhancements.
+**Current focus:** Phase 21 — refactor-and-fix-e2e-and-unit-tests
 
 ## Current Position
 
-Phase: 12 of 12 (App Optimization & Refactoring)
-Plan: 10 of 10 — Complete
-Status: MILESTONE COMPLETE - Executing ad-hoc tasks.
-Last activity: 2026-02-20 - Completed quick task 004: Update all dependencies
-
-Progress: [█████████████████████████████████] 100% (38/38 total plans complete)
+Phase: 21 (refactor-and-fix-e2e-and-unit-tests) — COMPLETE
+Plan: 9 of 9 (all plans done)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 38
-- Average duration: 3.3 min
-- Total execution time: ~1.9 hours
+- Total plans completed: 41
+- Average duration: 3.4 min
+- Total execution time: ~2h 11min
 
 **By Phase:**
 
-| Phase                      | Plans | Total | Avg/Plan |
-| -------------------------- | ----- | ----- | -------- |
-| 01-design-tokens           | 3/3   | 20min | 7min     |
-| 02-design-utilities        | 2/2   | 5min  | 2.5min   |
-| 03-core-layout-components  | 2/2   | 10min | 5min     |
-| 04-interactive-components  | 2/2   | 5min  | 2.5min   |
-| 05-structural-components   | 3/3   | 20min | 7min     |
-| 06-splash-navigation       | 2/2   | 6min  | 3min     |
-| 07-player-setup            | 2/2   | 6min  | 3min     |
-| 08-core-gameplay           | 2/2   | 5min  | 2.5min   |
-| 09-game-results            | 2/2   | 7min  | 3.5min   |
-| 10-settings-pages          | 2/2   | 7min  | 3.5min   |
-| 11-modal-dialogs           | 3/3   | 9min  | 3min     |
-| 11.1-scoring-player-config | 2/2   | 14min | 7min     |
-| 12-app-optimization        | 10/10 | 44min | 4.4min   |
+| Phase                         | Plans | Total | Avg/Plan |
+| ----------------------------- | ----- | ----- | -------- |
+| 01-design-tokens              | 3/3   | 20min | 7min     |
+| 02-design-utilities           | 2/2   | 5min  | 2.5min   |
+| 03-core-layout-components     | 2/2   | 10min | 5min     |
+| 04-interactive-components     | 2/2   | 5min  | 2.5min   |
+| 05-structural-components      | 3/3   | 20min | 7min     |
+| 06-splash-navigation          | 2/2   | 6min  | 3min     |
+| 07-player-setup               | 2/2   | 6min  | 3min     |
+| 08-core-gameplay              | 2/2   | 5min  | 2.5min   |
+| 09-game-results               | 2/2   | 7min  | 3.5min   |
+| 10-settings-pages             | 2/2   | 7min  | 3.5min   |
+| 11-modal-dialogs              | 3/3   | 9min  | 3min     |
+| 11.1-scoring-player-config    | 2/2   | 14min | 7min     |
+| 12-app-optimization           | 10/10 | 44min | 4.4min   |
+| 13-post-round-flow            | 1/1   | 4min  | 4min     |
+| 19-move-from-pinia-to-zustand | 2/3   | 24min | 12min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 6min, 4min, 4min, 4min, 3min
-- Trend: Consistent ~3-8 min per plan
+- Last 5 plans: 15min, 9min, 4min, 4min, 4min
+- Trend: Consistent ~3-15 min per plan
 
 _Updated after each plan completion_
+| Phase 19 P02 | 15min | 2 tasks | 21 files |
+| Phase 19 P01 | 9min | 2 tasks | 15 files |
+| Phase 14-02 P02 | 3min | 2 tasks | 3 files |
+| Phase 14-03 P03 | 4min | 2 tasks | 1 files |
+| Phase 14-01 P01 | 5min | 2 tasks | 8 files |
+| Phase 19 P03 | 15min | 3 tasks | 12 files |
+| Phase 21 P01B | 31min | 2 tasks | 2 files |
+| Phase 21 P05 | 8 | 4 tasks | 8 files |
+| Phase 21 P06 | 8 | 2 tasks | 3 files |
+| Phase 21 P08 | 8 | 3 tasks | 2 files |
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 18 added: enable fortune-wheel as default review/refactor if implementation works and looks good
+- Phase 19 added: Move from Pinia to Zustand
+- Phase 21 added: Refactor and fix E2E and unit tests
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- **[New]** Syncpack v14 migration: use `lint`/`fix` commands, remove deprecated config properties.
-- **[New]** Use `@ts-expect-error` for cross-package vite/rollup Plugin type conflicts in monorepo.
+- **[New]** Repo cleanup commands for stale/orphaned files must use guarded `git rm --cached`/`git mv` checks so previously-untracked targets do not fail execution (17-01).
+- **[New]** `.gitignore` AI config section now explicitly preserves `.agent/` and `.agents/` with negated rules while ignoring non-essential AI tool directories (17-01).
+- **[New]** Fortune wheel local fallback default is now enabled (`settings.fortuneWheelEnabled = true`) when no GitLab client is configured (18-01).
+- **[New]** Feature-flag precedence remains GitLab-first, with explicit fortune-wheel fallback default (`isEnabled('fortune-wheel', true)`) to document intended behavior (18-01).
+- **[New]** Round-start contract finalized: fortune wheel is the default user path; immediate random start is fallback-only when the wheel flag resolves disabled (GitLab authoritative when configured, local settings fallback otherwise) (18-02).
+- **[New]** E2E scoring/leaderboard flows now standardize on shared `game-flow` helpers, with feature-flag-aware answer submission via input-visibility checks before fill (18-02).
+- **[New]** All 7 targeted game-flow E2E specs now import `./helpers/game-flow`; duplicate local flow helpers and legacy dialog/CSS game setup selectors are removed suite-wide (18-03).
+- **[New]** Managed feature flags (`fortune-wheel`, `answer-input`, `websocket`) now resolve through one explicit precedence contract path: runtime force-disable (answer-input only) → GitLab → local settings → default (18-04).
+- **[New]** Feature-flag regression suite now locks precedence/default semantics, including default-enabled fortune-wheel fallback when GitLab is unavailable (18-04).
+- **[New]** Removed `apps/game/stores/index.ts` and `apps/game/stores/hooks/index.ts` to eliminate Nuxt auto-import collision warnings from barrel re-exports (18-01).
+- **[New]** Pinia residue audit now validated against source scope (`apps/`, `packages/`, `tools/`) with allowlist-only historical/migration exceptions (18-01).
+- **[New]** Phase warning closure is now tracked in `18-01-warning-inventory.md` with explicit fixed vs intentional-suppression rationale (18-01).
+- **[New]** The post-round modal will have three choices: "Play Again", "New Game", and "View Leaderboard".
+- **[New]** Documentation canonicalized to current repo state: CLAUDE.md + README.md now mirror real scripts, structure, and CI setup (17-03).
+- **[New]** Root `docs/nuxt.config.ts` and `docs/pages/[...slug].vue` removed as stale docs app remnants after repo cleanup (17-03).
+- **[New]** pnpm reference standardized to `pnpm@10.30.3` in project guidance docs to match `packageManager` (17-03).
+- Syncpack v14 migration: use `lint`/`fix` commands, remove deprecated config properties.
+- Use `@ts-expect-error` for cross-package vite/rollup Plugin type conflicts in monorepo.
 - EC2 is more cost-effective than ECS Fargate for Tolgee hosting due to 24/7 uptime and persistent storage needs (avoids costly EFS/NAT Gateway).
 - Tolgee admin password and SSH keys will be managed via a local, gitignored `terraform.tfvars` file for security.
 - Terraform state for the `translation` environment will use the existing dev S3 bucket but a separate key path for isolation.
@@ -104,6 +148,25 @@ Recent decisions affecting current work:
 - Dynamic data-testid via template literals for indexed elements (12-01)
 - Reusable E2E test helper functions for multi-step game flows (12-01)
 - Stateless composable extraction pattern: pass mutable state, composable returns pure functions (12-06)
+- [Phase 19-01]: Use #imports instead of 'vue' for Vue reactivity in Nuxt auto-import context
+- [Phase 19-01]: Settings store persist-only: removed manual loadSettings/saveSettings, persist middleware handles all
+- [Phase 19-01]: subscribe+version pattern for Zustand-Vue reactivity bridge (ref counter + computed getState)
+- [Phase 19-02]: Combined all Zustand hooks through useGameState composable for backward compatibility
+- [Phase 19-02]: Plugins use settingsStore.getState() directly since they run outside Vue component scope
+- [Phase 19-02]: Test pattern: gameStore.setState() for setup, gameStore.getState() for assertions (replaced Pinia patterns)
+- [Phase 14-02]: Added .github/workflows/\* to secret scanner ignore paths to prevent false positives on GitHub Actions template refs
+- [Phase 14-03]: Removed unused ViteBundleManifest import and no-op build:manifest hook from nuxt.config.ts to eliminate dead code and potential type conflict source
+- [Phase 14-03]: Multiplayer round-skip bug confirmed fixed by quick task #007 (index-based currentPlayerIndex); no additional code changes needed
+- [Phase 14-03]: Game store (406 lines, 5 composable delegates) assessed as well-structured; defer deep refactor to Phase 19 Zustand migration
+- [Phase 14-01]: Merged duplicate language/credits/settings JSON sections keeping union of keys to prevent silent shadowing
+- [Phase 19]: Use direct state mutation for gameStore test reset (setState breaks JS getter properties)
+- [Phase 19]: Define inline typed window interfaces for page.evaluate() E2E callbacks (browser context isolation)
+- [Phase 21]: Mock useAnalytics with behavioral replica to bypass import.meta.client compile-time constant
+- [Phase 21]: Use typed mock factories with GameSession/Player/Category interfaces instead of any casts
+- [Phase 21]: NativeScript components require native runtime — used node environment + pure TS logic tests instead of component mounting
+- [Phase 21]: Expose useLogger on globalThis for integration tests instead of vi.mock since useWebSocket uses it as Nuxt auto-import (no explicit import)
+- [Phase 21]: Extend vitest include to tests/integration/\*_/_.spec.ts in vitest.config.ts rather than a separate config file
+- [Phase 21]: GameFlowState in gameStore.ts is already the single source of truth — no new type needed
 
 ### Pending Todos
 
@@ -111,6 +174,8 @@ Recent decisions affecting current work:
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~352 lines) for further simplification and bug risk.
 - **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
+- **[New]** Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag).
+- ~~Refactor game mode to single source of truth with documented state flow chart.~~ Done (18-05) — flow state bug fixed, duplicate guards removed, state-flow doc created.
 
 ### Completed Todos (2026-02-14)
 
@@ -134,24 +199,48 @@ Recent decisions affecting current work:
 | 002 | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)   |
 | 003 | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                     |
 | 004 | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                  |
+| 005 | Fix crypto.randomUUID TypeError on Safari           | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/) |
+| 006 | Hide answer display when feature flag disabled      | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/) |
+| 007 | Fix page reload on game start causing wrong player  | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)     |
+| 008 | Fix i18n and score display bugs                     | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                       |
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Completed Quick Task 4 (Update all dependencies)
+Last session: 2026-03-24T02:20:00.000Z
+Stopped at: Completed 21-09-PLAN.md (Phase 21 COMPLETE)
 Resume file: None
 
-### Phase 12 Plans Status
+### Deployment: development
 
-- **12-01**: Complete - E2E test resilience with data-testid selectors
-- **12-02**: Complete - Composable unit tests
-- **12-03**: Complete - Terraform project structure
-- **12-04**: Complete - Terraform modules (S3, CloudFront, DynamoDB)
-- **12-05**: Complete - Terraform modules (Lambda, API Gateway, WebSocket, CloudWatch)
-- **12-06**: Complete - Extract useCategoryManager and useSessionManager from game store
-- **12-07**: Complete - Extract usePlayerManager and useScoringEngine from game store
-- **12-08**: Complete - Extract usePersistence and useGameLifecycle from game store
-- **12-09**: (skipped or combined)
-- **12-10**: Complete - Deployment script enhancements (logging, backup, verify, rollback, post-deploy)
+- **Version:** 1.1.0
+- **Timestamp:** 20260305-013917
+- **Branch:** development
+- **Commit:** 58cc13669
 
-**Phase 12 (App Optimization & Refactoring): COMPLETE** (10/10 plans complete)
+### Deployment: development
+
+- **Version:** 1.2.0
+- **Timestamp:** 20260309-204433
+- **Branch:** development
+- **Commit:** d78a5cac9
+
+### Deployment: development
+
+- **Version:** 1.3.0
+- **Timestamp:** 20260314-215422
+- **Branch:** main
+- **Commit:** 9942c7cb5
+
+### Deployment: development
+
+- **Version:** 1.5.0
+- **Timestamp:** 20260325-023642
+- **Branch:** main
+- **Commit:** e5ddd0e9c
+
+### Deployment: development
+
+- **Version:** 1.5.0
+- **Timestamp:** 20260327-202550
+- **Branch:** development
+- **Commit:** 9fd946e55

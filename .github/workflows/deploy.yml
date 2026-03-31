@@ -4,15 +4,16 @@ on:
   push:
     branches:
       - main # Production deployments
-      - development # Development deployments
   pull_request:
     branches:
       - main
       - development
 
 env:
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TOKEN: '${{ secrets.TURBO_TOKEN }}'
+  TURBO_TEAM: '${{ vars.TURBO_TEAM }}'
+  VERCEL_ORG_ID: '${{ secrets.VERCEL_ORG_ID }}'
+  VERCEL_PROJECT_ID: '${{ secrets.VERCEL_PROJECT_ID }}'
 
 jobs:
   # Quality checks run on all branches
@@ -40,20 +41,21 @@ jobs:
         run: pnpm run test:unit
         continue-on-error: true # Don't block deployment on test failures for now
 
-  # Deploy to Vercel
+  # Deploy to Vercel (Preview + Production)
   deploy:
     runs-on: ubuntu-latest
     needs: quality-checks
-    name: Deploy to ${{ github.ref == 'refs/heads/main' && 'Production' || github.ref == 'refs/heads/development' && 'Development' || 'Preview' }}
+    name: Deploy to ${{ github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
 
-    # Only deploy on push to main/development or PRs
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    # Only deploy on push to main or PRs; run even if checks fail
+    if: always() && (github.event_name == 'push' || github.event_name == 'pull_request')
 
+    continue-on-error: true
     outputs:
       url: ${{ steps.deploy.outputs.url }}
 
     environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || 'preview' }}
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
@@ -66,9 +68,6 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-
       - name: Set environment stage
         id: stage
         run: |
@@ -76,21 +75,34 @@ jobs:
             echo "stage=production" >> $GITHUB_OUTPUT
             echo "vercel_env=production" >> $GITHUB_OUTPUT
             echo "vercel_prod=--prod" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/development" ]]; then
-            echo "stage=development" >> $GITHUB_OUTPUT
-            echo "vercel_env=preview" >> $GITHUB_OUTPUT
-            echo "vercel_prod=" >> $GITHUB_OUTPUT
           else
             echo "stage=preview" >> $GITHUB_OUTPUT
             echo "vercel_env=preview" >> $GITHUB_OUTPUT
             echo "vercel_prod=" >> $GITHUB_OUTPUT
           fi
 
+      - name: Check Vercel credentials
+        id: vercel_credentials
+        run: |
+          if [[ -n "${{ secrets.VERCEL_TOKEN }}" && -n "${{ secrets.VERCEL_ORG_ID }}" && -n "${{ secrets.VERCEL_PROJECT_ID }}" ]]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "### ⚠️ Vercel deployment skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "Missing one or more required secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Install Vercel CLI
+        if: steps.vercel_credentials.outputs.ready == 'true'
+        run: npm install -g vercel@latest
+
       - name: Pull Vercel Environment Information
+        if: steps.vercel_credentials.outputs.ready == 'true'
         run: |
           vercel pull --yes --environment=${{ steps.stage.outputs.vercel_env }} --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
+        if: steps.vercel_credentials.outputs.ready == 'true'
         env:
           STAGE: ${{ steps.stage.outputs.stage }}
           NODE_ENV: ${{ steps.stage.outputs.stage == 'production' && 'production' || 'development' }}
@@ -100,19 +112,20 @@ jobs:
 
       - name: Deploy to Vercel
         id: deploy
+        if: steps.vercel_credentials.outputs.ready == 'true'
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             # Preview deployment for PRs
             DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           else
-            # Production or development deployment
+            # Production deployment
             DEPLOYMENT_URL=$(vercel deploy --prebuilt ${{ steps.stage.outputs.vercel_prod }} --token=${{ secrets.VERCEL_TOKEN }})
           fi
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOYMENT_URL"
 
       - name: Comment PR with deployment URL
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.vercel_credentials.outputs.ready == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -124,15 +137,15 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `${emoji} **${stage.charAt(0).toUpperCase() + stage.slice(1)} Preview Deployed!**\n\n🔗 ${url}\n\n**Environment:** \`STAGE=${stage}\`\n**Branch:** \`${context.payload.pull_request.head.ref}\`\n**Commit:** \`${context.sha.substring(0, 7)}\``
+              body: `🚀 **Preview Deployed!**\n\n🔗 ${url}\n\n`
             })
 
-  # Optional: Run E2E tests against deployed environment
+  # Optional: Run E2E tests against production deployment
   e2e-tests:
     runs-on: ubuntu-latest
     needs: deploy
     name: E2E Tests
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development'
+    if: github.ref == 'refs/heads/main' && needs.deploy.outputs.url != ''
     continue-on-error: true # Don't fail the workflow if E2E tests fail
 
     steps:
@@ -154,13 +167,13 @@ jobs:
       - name: Run E2E tests
         env:
           BASE_URL: ${{ needs.deploy.outputs.url }}
-          STAGE: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+          STAGE: production
         run: |
           pnpm run test:e2e
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report-${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+          name: playwright-report-production
           path: apps/game/playwright-report/
           retention-days: 7

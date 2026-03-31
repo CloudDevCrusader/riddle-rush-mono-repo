@@ -44,6 +44,7 @@ export interface GameSession {
   gameName?: string
   players: Player[]
   currentRound: number
+  currentPlayerIndex: number
   category: Category
   letter: string
   startTime: number
@@ -78,6 +79,7 @@ export interface GameState {
   categoryLoadError: string | null
   selectedLetter: string | null
   pendingPlayerNames: string[]
+  postRoundDecisionPending: boolean
 }
 
 // PWA install prompt
@@ -107,10 +109,12 @@ export interface LeaderboardEntry {
   score: number
   category: string
   categoryKey: string
+  playerName: string
   attempts: number
   correctAttempts: number
   timestamp: number
   duration: number
+  letter: string
 }
 
 // Settings

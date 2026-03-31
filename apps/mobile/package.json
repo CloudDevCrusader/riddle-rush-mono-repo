@@ -1,22 +1,30 @@
 {
-  "name": "mobile",
-  "main": "app/app.ts",
+  "name": "@riddle-rush/mobile",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "dependencies": {
-    "@nativescript/core": "^9.0.15",
-    "nativescript-vue": "^3.0.2"
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/keyboard": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.2"
   },
   "devDependencies": {
-    "@nativescript/tailwind": "^4.0.7",
-    "@nativescript/types": "^9.0.0",
-    "@nativescript/webpack": "^5.0.31",
-    "@types/node": "^25.3.0",
-    "nativescript-vue-template-compiler": "^2.9.3",
-    "tailwindcss": "^4.2.0",
-    "typescript": "^5.9.3",
-    "vue": "^3.5.28",
-    "vue-loader": "^17.4.2",
-    "vue-template-compiler": "^2.7.16"
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/ios": "^8.2.0"
+  },
+  "scripts": {
+    "android:sync": "npx cap sync android",
+    "android:build": "npx cap copy android",
+    "android:open": "npx cap open android",
+    "android:run": "npx cap run android",
+    "ios:sync": "npx cap sync ios",
+    "ios:build": "npx cap copy ios",
+    "ios:open": "npx cap open ios",
+    "ios:run": "npx cap run ios",
+    "capacitor:sync": "npx cap sync",
+    "capacitor:copy": "npx cap copy"
   }
 }
