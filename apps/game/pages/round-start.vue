@@ -271,46 +271,8 @@ const startGame = async () => {
   startingGame.value = true
 
   try {
-    const hasSession = !!gameStore.currentSession
-    const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
+    await gameStore.advanceToConfiguredRound(selectedCategory.value, selectedLetter.value)
 
-    // Determine if this is initial setup or a new round
-    // Initial setup: no session OR pending players from players page
-    if (!hasSession || hasPendingPlayers) {
-      // This is initial setup - create new session with players
-      const playerNames = hasPendingPlayers ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
-
-      await gameStore.setupPlayers(
-        playerNames,
-        undefined,
-        selectedLetter.value,
-        selectedCategory.value
-      )
-
-      // Clear pending state
-      gameStore.pendingPlayerNames = []
-      gameStore.selectedLetter = null
-    } else {
-      // Session exists - check if current round is completed
-      const session = gameStore.currentSession
-      if (!session) return // Safety check
-
-      const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
-
-      if (isCurrentRoundCompleted) {
-        // Current round completed - start new round (increment counter)
-        await gameStore.startConfiguredRound(selectedCategory.value, selectedLetter.value)
-      } else {
-        // Refresh during same round - update category/letter but don't increment round
-        session.category = { ...selectedCategory.value, letter: selectedLetter.value }
-        session.letter = selectedLetter.value
-        // Reset player submissions for fair restart on refresh
-        await gameStore.resetPlayerSubmissions()
-        await gameStore.saveSessionToDB()
-      }
-    }
-
-    // Navigate to game with game ID
     const gameId = gameStore.currentSession?.id
     if (gameId) {
       await goToGame(gameId)
@@ -318,13 +280,11 @@ const startGame = async () => {
       await goToGame()
     }
 
-    // CRITICAL: Ensure spinner is turned off on success
     startingGame.value = false
   } catch (error) {
     const logger = useLogger()
     logger.error('Failed to start game:', error)
     startingGame.value = false
-    // Show error to user
     toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
   }
 }
