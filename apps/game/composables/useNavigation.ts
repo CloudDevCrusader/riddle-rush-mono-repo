@@ -24,9 +24,14 @@ export function useNavigation() {
         await new Promise((resolve) => setTimeout(resolve, 300))
         setProgress(70)
         await new Promise((resolve) => setTimeout(resolve, 200))
-      }
 
-      await router.push(route)
+        await router.push(route)
+
+        setProgress(100)
+        await new Promise((resolve) => setTimeout(resolve, 250))
+      } else {
+        await router.push(route)
+      }
     } finally {
       hideLoading()
     }
