@@ -285,13 +285,7 @@ export async function assignScores(page: Page, scores: number[]): Promise<void> 
 
     for (let c = 0; c < clickCount; c++) {
       await playerEntry.scrollIntoViewIfNeeded()
-
-      // Use a short click timeout on mobile and fall back to synthetic clicks.
-      try {
-        await incrementBtn.click({ timeout: 1500 })
-      } catch {
-        await incrementBtn.dispatchEvent('click')
-      }
+      await incrementBtn.click({ timeout: 5000 })
 
       const nextValue = currentValue + 1
       await expect
@@ -396,51 +390,20 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
     return
   }
 
-  // Wheels auto-spin on mount — wait for the flow to complete and transition to /game.
-  // Auto-spin sequence: category wheel (800ms delay + ~4s spin + 1.5s pause) →
-  // letter wheel (500ms delay + ~4s spin) → navigate to /game (~11s total).
+  const spinButton = page.locator('[data-testid="spin-button"]')
+  const spinButtonFallback = page.locator('.spin-button')
+  const spinTarget = spinButton.or(spinButtonFallback).first()
+
   try {
-    await expect.poll(() => /\/game/.test(page.url()), { timeout: 35000 }).toBe(true)
+    await expect(spinTarget).toBeVisible({ timeout: 10000 })
+    await expect(spinTarget).toBeEnabled({ timeout: 5000 })
+    await spinTarget.click({ timeout: 5000 })
   } catch {
-    // Recovery: bootstrap/load a session and navigate directly.
-    const fallbackGameId = await page.evaluate(async () => {
-      const store = (window as PiniaWindow).__pinia_stores__?.game
-      if (!store) return null
-
-      if (
-        !store.currentSession &&
-        (store.pendingPlayerNames?.length ?? 0) > 0 &&
-        typeof store.setupPlayers === 'function'
-      ) {
-        try {
-          const pendingNames = [...(store.pendingPlayerNames ?? [])]
-          const createdSession = await (
-            store.setupPlayers as (...args: unknown[]) => Promise<unknown>
-          )(pendingNames)
-          const createdSessionId =
-            createdSession && typeof createdSession === 'object' && 'id' in createdSession
-              ? ((createdSession as { id?: string }).id ?? null)
-              : null
-          return createdSessionId
-        } catch {
-          // Continue with DB fallback.
-        }
-      }
-
-      if (store.loadFromDB) {
-        await store.loadFromDB()
-      }
-
-      return store.currentSession?.id ?? null
-    })
-
-    if (fallbackGameId) {
-      await page.goto(`/game/${fallbackGameId}`, { timeout: 30000 })
-      await page.waitForLoadState('networkidle')
-    }
-
-    await expect.poll(() => /\/game/.test(page.url()), { timeout: 15000 }).toBe(true)
+    const textButton = page.getByRole('button', { name: 'SPIN' })
+    await textButton.click({ timeout: 5000 }).catch(() => {})
   }
+
+  await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
 }
 
 /**

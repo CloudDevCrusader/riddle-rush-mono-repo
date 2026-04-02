@@ -253,7 +253,7 @@ export default defineNuxtConfig({
         : getDevPlugins({ isDev: true })),
     ],
     optimizeDeps: {
-      include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
+      include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es', 'vue-fortune-wheel'],
       exclude: ['vue-demi'],
       esbuildOptions: {
         // Ensure lodash-es is tree-shaken properly

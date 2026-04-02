@@ -6,7 +6,7 @@
       :style="{ width: '100%', height: '100%' }"
       :type="'canvas'"
       :use-weight="true"
-      :disabled="false"
+      :disabled="disabled"
       :verify="false"
       :prize-id="prizeId"
       :prizes="mappedPrizes"
@@ -47,6 +47,7 @@ interface Props {
   getItemColor?: (item: T, index: number) => string
   centerIcon?: string
   modelValue?: T | null
+  disabled?: boolean
 }
 
 interface Emits {
@@ -59,6 +60,7 @@ const props = withDefaults(defineProps<Props>(), {
   getItemColor: undefined,
   centerIcon: '🎯',
   modelValue: null,
+  disabled: false,
 })
 
 const emit = defineEmits<Emits>()
@@ -271,12 +273,6 @@ watch(
 
   :deep(.fw-wheel) {
     border-radius: 50%;
-  }
-
-  // Block direct clicks on the library's internal button — spins are triggered
-  // programmatically via startRotate(), not by user clicks on the wheel center.
-  :deep(.fw-btn) {
-    pointer-events: none;
   }
 
   @media (max-width: 768px) {

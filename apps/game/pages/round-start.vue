@@ -61,6 +61,7 @@
           <!-- Central Spin Button -->
           <div class="spin-button-zone">
             <button
+              data-testid="spin-button"
               @click="spinBothWheels"
               class="spin-button tap-highlight"
               :disabled="categorySpinComplete || letterSpinComplete || isSpinning"
@@ -164,9 +165,9 @@ const selectedCategoryName = computed(() => {
 
 const currentRoundNumber = computed(() => {
   // No session yet = first round setup
-  if (!gameStore.currentSession) return 1
+  const session = gameStore.currentSession.value
+  if (!session) return 1
 
-  const session = gameStore.currentSession
   // Check if current round has been completed (saved to roundHistory)
   const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
 
@@ -178,7 +179,7 @@ const currentRoundNumber = computed(() => {
 onMounted(async () => {
   // Fetch all categories
   await gameStore.fetchCategories()
-  const allCategories = gameStore.categories
+  const allCategories = gameStore.categories.value
 
   // If fortune wheel is disabled, skip directly to game
   if (!isFortuneWheelEnabled.value) {
@@ -223,12 +224,14 @@ const getLetterLabel = (letter: string): string => letter
 const getNoIcon = (): string => ''
 
 const onCategoryComplete = (category: Category) => {
+  if (!isSpinning.value) return
   selectedCategory.value = category
   categorySpinComplete.value = true
   checkBothComplete()
 }
 
 const onLetterComplete = (letter: string) => {
+  if (!isSpinning.value) return
   selectedLetter.value = letter
   letterSpinComplete.value = true
   checkBothComplete()
@@ -254,7 +257,7 @@ const startGame = async () => {
   try {
     await gameStore.advanceToConfiguredRound(selectedCategory.value, selectedLetter.value)
 
-    const gameId = gameStore.currentSession?.id
+    const gameId = gameStore.currentSession.value?.id
     if (gameId) {
       await goToGame(gameId)
     } else {
