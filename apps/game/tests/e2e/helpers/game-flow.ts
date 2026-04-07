@@ -358,18 +358,18 @@ export async function finishGame(page: Page): Promise<void> {
 }
 
 /**
- * Wait for the auto-spinning fortune wheel flow to complete and reach `/game`.
- * Uses stable route signals and durable test IDs — no user interaction required.
+ * Wait for the auto-playing flip-through animation to complete and reach `/game`.
+ * The animation auto-plays on mount — no user interaction required.
  */
 export async function completeFortuneWheel(page: Page): Promise<void> {
   if (/\/game/.test(page.url())) {
     return
   }
 
-  const wheelsContainer = page.locator('[data-testid="round-wheels-container"]')
-  const resultsDisplay = page.locator('[data-testid="round-results-display"]')
+  const flipContainer = page.locator('[data-testid="flip-container"]')
   const loadingState = page.locator('[data-testid="round-loading"]')
 
+  // Wait for either the flip animation container, loading state, or game route
   await expect
     .poll(
       async () => {
@@ -377,32 +377,16 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
         if (!/\/round-start/.test(page.url())) return 'other-route'
 
         if (await loadingState.isVisible().catch(() => false)) return 'loading'
-        if (await resultsDisplay.isVisible().catch(() => false)) return 'results'
-        if (await wheelsContainer.isVisible().catch(() => false)) return 'wheels'
+        if (await flipContainer.isVisible().catch(() => false)) return 'animating'
 
         return 'waiting'
       },
-      { timeout: 20000 }
+      { timeout: 20000 },
     )
     .not.toBe('waiting')
 
-  if (/\/game/.test(page.url()) || !/\/round-start/.test(page.url())) {
-    return
-  }
-
-  const spinButton = page.locator('[data-testid="spin-button"]')
-  const spinButtonFallback = page.locator('.spin-button')
-  const spinTarget = spinButton.or(spinButtonFallback).first()
-
-  try {
-    await expect(spinTarget).toBeVisible({ timeout: 10000 })
-    await expect(spinTarget).toBeEnabled({ timeout: 5000 })
-    await spinTarget.click({ timeout: 5000 })
-  } catch {
-    const textButton = page.getByRole('button', { name: 'SPIN' })
-    await textButton.click({ timeout: 5000 }).catch(() => {})
-  }
-
+  // No button to click — animation auto-plays and auto-navigates.
+  // Just wait for the /game route.
   await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
 }
 
