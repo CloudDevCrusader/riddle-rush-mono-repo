@@ -195,22 +195,23 @@ Recent decisions affecting current work:
 
 ### Quick Tasks Completed
 
-| #          | Description                                            | Date       | Commit    | Directory                                                                                                           |
-| ---------- | ------------------------------------------------------ | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
-| 001        | Fix Docker image and push working version to GitHub    | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/)               |
-| 002        | Fix missing i18n keys and i18n lazy-load race          | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)                 |
-| 003        | Host Tolgee on AWS EC2                                 | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                                   |
-| 004        | Update all dependencies to latest versions             | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                                |
-| 005        | Fix crypto.randomUUID TypeError on Safari              | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/)               |
-| 006        | Hide answer display when feature flag disabled         | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/)               |
-| 007        | Fix page reload on game start causing wrong player     | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)                   |
-| 008        | Fix i18n and score display bugs                        | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                                     |
-| 260331-vtk | Fix round-start: redirect, spinner, inline results     | 2026-03-31 | 89c4fe323 | [260331-vtk-fix-round-start-redirect-not-working-sec](./quick/260331-vtk-fix-round-start-redirect-not-working-sec/) |
-| 260407-tn6 | Replace fortune wheel with flip-through text animation | 2026-04-07 | 18d142546 | [260407-tn6-replace-fortune-wheel-with-random-catego](./quick/260407-tn6-replace-fortune-wheel-with-random-catego/) |
+| #          | Description                                                            | Date       | Commit    | Directory                                                                                                           |
+| ---------- | ---------------------------------------------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
+| 001        | Fix Docker image and push working version to GitHub                    | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/)               |
+| 002        | Fix missing i18n keys and i18n lazy-load race                          | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)                 |
+| 003        | Host Tolgee on AWS EC2                                                 | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                                   |
+| 004        | Update all dependencies to latest versions                             | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                                |
+| 005        | Fix crypto.randomUUID TypeError on Safari                              | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/)               |
+| 006        | Hide answer display when feature flag disabled                         | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/)               |
+| 007        | Fix page reload on game start causing wrong player                     | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)                   |
+| 008        | Fix i18n and score display bugs                                        | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                                     |
+| 260331-vtk | Fix round-start: redirect, spinner, inline results                     | 2026-03-31 | 89c4fe323 | [260331-vtk-fix-round-start-redirect-not-working-sec](./quick/260331-vtk-fix-round-start-redirect-not-working-sec/) |
+| 260407-tn6 | Replace fortune wheel with flip-through text animation                 | 2026-04-07 | 18d142546 | [260407-tn6-replace-fortune-wheel-with-random-catego](./quick/260407-tn6-replace-fortune-wheel-with-random-catego/) |
+| 260407-u1s | Fix PauseModal/QuitModal buttons (hasActiveSession called as function) | 2026-04-07 | bf1f05f6b | [260407-u1s-fix-pausemodal-and-quitmodal-back-button](./quick/260407-u1s-fix-pausemodal-and-quitmodal-back-button/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-07 - Completed quick task 260407-tn6: replace fortune wheel with flip-through text animation
+Last activity: 2026-04-07 - Completed quick task 260407-u1s: fix PauseModal and QuitModal back buttons
 Last session: 2026-04-07T19:32:14.329Z
 Stopped at: Completed quick task 260407-tn6: replace fortune wheel with flip-through animation
 Resume file: None
