@@ -34,17 +34,17 @@ test.describe('round-start page round-start', () => {
     await startGameFromPlayers(page)
   })
 
-  test('shows wheel-default flow with auto-spin before transitioning to game', async ({ page }) => {
+  test('shows flip-through animation before transitioning to game', async ({ page }) => {
     const roundIndicator = page.locator('[data-testid="round-indicator"]')
-    const wheelsContainer = page.locator('[data-testid="round-wheels-container"]')
+    const flipContainer = page.locator('[data-testid="flip-container"]')
 
     await expect(roundIndicator).toBeVisible()
     await expect(roundIndicator).toContainText('1')
 
-    // Contract: default path shows wheel UI first on /round-start
-    await expect(wheelsContainer).toBeVisible({ timeout: 8000 })
+    // Contract: default path shows flip-through animation on /round-start
+    await expect(flipContainer).toBeVisible({ timeout: 8000 })
 
-    // Drive the interactive flow to /game using stable route/test-id signals.
+    // Animation auto-plays and transitions to /game — no interaction needed
     await completeFortuneWheel(page)
     await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
   })
