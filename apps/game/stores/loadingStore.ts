@@ -28,8 +28,8 @@ export const useLoadingStore = defineStore('loading', {
       this.progress = Math.min(100, Math.max(0, value))
       this.showProgress = true
     },
-    getState(): any {
-      return this
+    getState() {
+      return this.$state
     },
   },
 })

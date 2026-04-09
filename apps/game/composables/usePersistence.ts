@@ -96,20 +96,19 @@ export function usePersistence() {
    * @throws Error if session not found or database error occurs
    */
   async function loadSessionById(sessionId: string): Promise<GameSession> {
+    let session: GameSession | null
     try {
       const { getGameSessionById } = useIndexedDB()
-      const session = await getGameSessionById(sessionId)
-
-      if (!session) {
-        throw new Error(`Game session with ID ${sessionId} not found`)
-      }
-
-      return session
+      session = await getGameSessionById(sessionId)
     } catch (error) {
       const logger = useLogger()
       logger.error('Error loading game session by ID:', error)
-      throw new Error('Failed to load game session')
+      throw new Error(`Database error loading session ${sessionId}`)
     }
+    if (!session) {
+      throw new Error(`Game session with ID ${sessionId} not found`)
+    }
+    return session
   }
 
   return {

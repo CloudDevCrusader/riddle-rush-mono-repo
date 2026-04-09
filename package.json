@@ -1,7 +1,7 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.3.0",
+  "version": "1.4.3",
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.81",
     "@changesets/cli": "^2.30.0",

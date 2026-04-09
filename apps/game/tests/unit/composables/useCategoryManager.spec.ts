@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Category } from '@riddle-rush/types/game'
 
+import { useCategoryManager } from '../../../composables/useCategoryManager'
+
 // Mock useCategoryEmoji before importing the composable
 vi.mock('~/composables/useCategoryEmoji', () => ({
   useCategoryEmoji: () => ({
@@ -30,8 +32,6 @@ vi.mock('~/composables/useLogger', () => ({
     info: vi.fn(),
   }),
 }))
-
-import { useCategoryManager } from '../../../composables/useCategoryManager'
 
 // Helper factory
 function createCategory(overrides: Partial<Category> = {}): Category {

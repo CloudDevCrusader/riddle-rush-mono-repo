@@ -270,8 +270,12 @@ export const useGameStore = defineStore('game', {
       const session = this.currentSession
       if (!session) return
 
+      const sessionManager = useSessionManager()
+
       session.status = 'abandoned'
       session.endTime = Date.now()
+
+      this.history = [...this.history, sessionManager.cloneSessionForHistory(session)]
 
       await this.saveSessionToDB()
       await this.saveHistoryToDB()

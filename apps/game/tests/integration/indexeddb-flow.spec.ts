@@ -96,10 +96,10 @@ function createTestLeaderboardEntry(overrides: Partial<LeaderboardEntry> = {}): 
     score: overrides.score ?? 50,
     category: overrides.category ?? 'Animals',
     categoryKey: overrides.categoryKey ?? 'animals',
-    playerName: overrides.playerName ?? 'Alice',
+    attempts: overrides.attempts ?? 10,
+    correctAttempts: overrides.correctAttempts ?? 5,
     timestamp: overrides.timestamp ?? Date.now(),
     duration: overrides.duration ?? 120,
-    letter: overrides.letter ?? 'A',
     ...overrides,
   }
 }
@@ -279,8 +279,8 @@ describe('IndexedDB', () => {
       const retrieved = await db.getGameHistory()
 
       // Newest first
-      expect(retrieved[0].startTime).toBeGreaterThanOrEqual(retrieved[1].startTime)
-      expect(retrieved[1].startTime).toBeGreaterThanOrEqual(retrieved[2].startTime)
+      expect(retrieved[0]!.startTime).toBeGreaterThanOrEqual(retrieved[1]!.startTime)
+      expect(retrieved[1]!.startTime).toBeGreaterThanOrEqual(retrieved[2]!.startTime)
     })
 
     it('clears all history with clearGameHistory()', async () => {
@@ -338,14 +338,14 @@ describe('IndexedDB', () => {
   describe('leaderboard persistence', () => {
     it('saves and retrieves a leaderboard entry', async () => {
       const db = useIndexedDB()
-      const entry = createTestLeaderboardEntry({ score: 75, playerName: 'Bob' })
+      const entry = createTestLeaderboardEntry({ score: 75, attempts: 8 })
 
       await db.saveLeaderboardEntry(entry)
       const leaderboard = await db.getLeaderboard()
 
       expect(leaderboard).toHaveLength(1)
-      expect(leaderboard[0].score).toBe(75)
-      expect(leaderboard[0].playerName).toBe('Bob')
+      expect(leaderboard[0]!.score).toBe(75)
+      expect(leaderboard[0]!.attempts).toBe(8)
     })
 
     it('returns entries sorted highest-score-first', async () => {
@@ -369,8 +369,8 @@ describe('IndexedDB', () => {
       )
 
       const leaderboard = await db.getLeaderboard()
-      expect(leaderboard[0].score).toBeGreaterThanOrEqual(leaderboard[1].score)
-      expect(leaderboard[1].score).toBeGreaterThanOrEqual(leaderboard[2].score)
+      expect(leaderboard[0]!.score).toBeGreaterThanOrEqual(leaderboard[1]!.score)
+      expect(leaderboard[1]!.score).toBeGreaterThanOrEqual(leaderboard[2]!.score)
     })
 
     it('returns empty array when no entries exist', async () => {
@@ -476,7 +476,7 @@ describe('IndexedDB', () => {
 
       const retrievedHistory = await db.getGameHistory()
       expect(retrievedHistory).toHaveLength(1)
-      expect(retrievedHistory[0].id).toBe('safe-hist')
+      expect(retrievedHistory[0]!.id).toBe('safe-hist')
     })
   })
 
