@@ -1,7 +1,7 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.87",
     "@changesets/cli": "^2.30.0",
@@ -130,34 +130,6 @@
     "ai:update:gsd": "npx get-shit-done-cc@latest"
   },
   "pnpm": {
-    "packageExtensions": {
-      "@nuxt/kit": {
-        "dependencies": {
-          "@intlify/utils": "*"
-        }
-      }
-    }
-  },
-  "type": "module",
-  "bin": {
-    "riddlerush": "./bin/run.js"
-  },
-  "oclif": {
-    "bin": "riddlerush",
-    "commands": "./dist/commands",
-    "dirname": "riddlerush",
-    "topicSeparator": " "
-  },
-  "dependencies": {
-    "@e2b/code-interpreter": "^2.4.0",
-    "@langchain/openai": "^1.3.1",
-    "@voltagent/core": "^2.6.13",
-    "@voltagent/mcp-server": "^2.0.2",
-    "ai": "^6.0.141",
-    "langchain": "^1.2.36",
-    "zod": "^4.3.6"
-  },
-  "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
         "eslint": "10",
@@ -213,5 +185,24 @@
       "protobufjs",
       "yarn"
     ]
+  },
+  "type": "module",
+  "bin": {
+    "riddlerush": "./bin/run.js"
+  },
+  "oclif": {
+    "bin": "riddlerush",
+    "commands": "./dist/commands",
+    "dirname": "riddlerush",
+    "topicSeparator": " "
+  },
+  "dependencies": {
+    "@e2b/code-interpreter": "^2.4.0",
+    "@langchain/openai": "^1.3.1",
+    "@voltagent/core": "^2.6.13",
+    "@voltagent/mcp-server": "^2.0.2",
+    "ai": "^6.0.141",
+    "langchain": "^1.2.36",
+    "zod": "^4.3.6"
   }
 }
