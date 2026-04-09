@@ -173,7 +173,7 @@ export function useFeatureFlags() {
    */
   const isAnswerInputEnabled = computed(() => {
     void flagVersion.value // reactive dependency: re-run when flags update
-    return isEnabled('answer-input', true)
+    return isEnabled('answer-input', false)
   })
 
   /**
