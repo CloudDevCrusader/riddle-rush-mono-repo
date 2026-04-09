@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
-    "@types/node": "^25.5.0",
-    "@vue/compiler-sfc": "^3.5.31",
-    "eslint": "^10.1.0",
+    "@types/node": "^25.5.2",
+    "@vue/compiler-sfc": "^3.5.32",
+    "eslint": "^10.2.0",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3"
   },
