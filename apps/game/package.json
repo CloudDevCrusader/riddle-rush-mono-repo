@@ -2,8 +2,8 @@
   "name": "@riddle-rush/game",
   "version": "1.4.1",
   "dependencies": {
-    "@intlify/core-base": "^11.3.0",
-    "@nuxt/hints": "^1.0.2",
+    "@intlify/core-base": "^11.3.2",
+    "@nuxt/hints": "^1.0.3",
     "@nuxtjs/i18n": "^10.2.4",
     "@pinia/nuxt": "^0.11.3",
     "@riddle-rush/config": "workspace:*",
@@ -14,7 +14,7 @@
     "@vueuse/nuxt": "^14.2.1",
     "focus-trap": "^8.0.1",
     "idb": "^8.0.3",
-    "lodash-es": "^4.17.23",
+    "lodash-es": "^4.18.1",
     "nuxt": "^4.4.2",
     "nuxt-feature-flags-module": "^2025.9.1",
     "pinia": "^3.0.4",
@@ -23,8 +23,8 @@
     "socket.io-client": "^4.8.3",
     "unleash-proxy-client": "^3.7.8",
     "unstorage": "^1.17.5",
-    "vue": "^3.5.31",
-    "vue-i18n": "^11.3.0",
+    "vue": "^3.5.32",
+    "vue-i18n": "^11.3.2",
     "vue-router": "^5.0.4"
   },
   "devDependencies": {
