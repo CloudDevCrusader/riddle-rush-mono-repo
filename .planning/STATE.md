@@ -78,6 +78,7 @@ _Updated after each plan completion_
 - Phase 18 added: enable fortune-wheel as default review/refactor if implementation works and looks good
 - Phase 19 added: Move from Pinia to Zustand
 - Phase 21 added: Refactor and fix E2E and unit tests
+- Phase 22 added: Add fortune wheel for alphabet selection using vue-fortunewheel
 
 ### Decisions
 
