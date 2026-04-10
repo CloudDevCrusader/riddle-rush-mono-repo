@@ -66,7 +66,7 @@ const handleResume = () => {
 }
 
 const handleRestart = async () => {
-  if (gameStore.hasActiveSession.value) {
+  if (gameStore.hasActiveSession) {
     await gameStore.abandonGame()
   }
   emit('restart')
@@ -74,7 +74,7 @@ const handleRestart = async () => {
 }
 
 const handleHome = async () => {
-  if (gameStore.hasActiveSession.value) {
+  if (gameStore.hasActiveSession) {
     await gameStore.abandonGame()
   }
   emit('home')

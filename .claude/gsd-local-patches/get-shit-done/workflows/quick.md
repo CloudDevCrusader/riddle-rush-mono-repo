@@ -273,6 +273,7 @@ Execute quick task ${next_num}.
 ",
   subagent_type="gsd-executor",
   model="{executor_model}",
+  isolation="worktree",
   description="Execute: ${DESCRIPTION}"
 )
 ```
@@ -436,7 +437,7 @@ Commit: ${commit_hash}
 
 ---
 
-Ready for next task: /gsd:quick
+Ready for next task: /gsd:quick ${GSD_WS}
 ```
 
 **If NOT `$FULL_MODE`:**
@@ -453,7 +454,7 @@ Commit: ${commit_hash}
 
 ---
 
-Ready for next task: /gsd:quick
+Ready for next task: /gsd:quick ${GSD_WS}
 ```
 
 </process>

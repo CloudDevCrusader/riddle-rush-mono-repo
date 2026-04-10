@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-// @ts-expect-error Nuxt overrides vue module types but computed exists at runtime
 import { computed } from 'vue'
 
 // --- Mock gtag function ---

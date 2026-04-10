@@ -10,6 +10,7 @@ allowed-tools:
   - Glob
   - Grep
   - Task
+  - AskUserQuestion
   - WebFetch
   - mcp__context7__*
 ---
@@ -27,6 +28,10 @@ Create executable phase prompts (PLAN.md files) for a roadmap phase with integra
 @/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/references/ui-brand.md
 </execution_context>
 
+<runtime_note>
+**Copilot (VS Code):** Use `vscode_askquestions` wherever this workflow calls `AskUserQuestion`. They are equivalent — `vscode_askquestions` is the VS Code Copilot implementation of the same interactive question API. Do not skip questioning steps because `AskUserQuestion` appears unavailable; use `vscode_askquestions` instead.
+</runtime_note>
+
 <context>
 Phase number: $ARGUMENTS (optional — auto-detects next unplanned phase if omitted)
 
@@ -37,7 +42,7 @@ Phase number: $ARGUMENTS (optional — auto-detects next unplanned phase if omit
 - `--gaps` — Gap closure mode (reads VERIFICATION.md, skips research)
 - `--skip-verify` — Skip verification loop
 - `--prd <file>` — Use a PRD/acceptance criteria file instead of discuss-phase. Parses requirements into CONTEXT.md automatically. Skips discuss-phase entirely.
-- `--reviews` — Replan incorporating cross-AI review feedback from REVIEWS.md (produced by `/gsd:review`)
+- `--reviews` — Replan incorporating cross-AI review feedback from REVIEWS.md (produced by `/gsd-review`)
 - `--text` — Use plain-text numbered lists instead of TUI menus (required for `/rc` remote sessions)
 
 Normalize phase input in step 2 before any directory lookups.

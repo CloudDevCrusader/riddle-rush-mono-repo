@@ -65,7 +65,9 @@ export const useSettingsStore = defineStore('settings', {
 
   actions: {
     updateSetting<K extends keyof GameSettings>(key: K, value: GameSettings[K]) {
-      this[key] = value
+      this.$patch((state) => {
+        state[key] = value
+      })
     },
     toggleDebugMode() {
       this.debugMode = !this.debugMode

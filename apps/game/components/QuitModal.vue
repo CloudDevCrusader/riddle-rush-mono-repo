@@ -51,7 +51,7 @@ const handleNo = () => {
 
 const handleYes = async () => {
   audio.playClick()
-  if (gameStore.hasActiveSession.value) {
+  if (gameStore.hasActiveSession) {
     await gameStore.abandonGame()
   }
   emit('confirm')
