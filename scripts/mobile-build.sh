@@ -158,7 +158,12 @@ if [[ $PLATFORM == "android" ]]; then
 		GRADLE_TASK="assembleRelease"
 	fi
 
-	./gradlew "$GRADLE_TASK" --no-daemon
+	GRADLE_ARGS=(--no-daemon)
+	if [[ -n ${CI-} ]]; then
+		GRADLE_ARGS+=(--stacktrace --warning-mode all)
+	fi
+
+	./gradlew "$GRADLE_TASK" "${GRADLE_ARGS[@]}"
 
 	# --- Locate output ---
 	echo ""
