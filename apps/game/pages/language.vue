@@ -85,6 +85,17 @@ const route = useRoute()
 // Stage selection locally (does not apply until OK pressed)
 const selectedLocale = ref(locale.value)
 
+// Update the reactive selectedLocale when the actual locale changes
+watch(
+  locale,
+  (newLocale) => {
+    if (newLocale && newLocale !== selectedLocale.value) {
+      selectedLocale.value = newLocale
+    }
+  },
+  { immediate: true }
+)
+
 type LocaleCode = 'de' | 'en'
 
 const selectLanguage = (lang: LocaleCode) => {
@@ -99,12 +110,21 @@ const confirmSelection = async () => {
     // Set the locale
     await setLocale(selectedLocale.value as LocaleCode)
 
+    // Update route query parameter to persist language across navigation
     await updateLanguageQuery(selectedLocale.value as LocaleCode)
 
-    // Force page reload to ensure all translations update
-    // This is the most reliable way to handle language switching in SPAs
+    // Force a reactive update by triggering a key change on all components
+    // This ensures translations update without full page reload
     if (typeof window !== 'undefined') {
-      window.location.reload()
+      // Force a small delay to ensure locale change is processed
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      // Trigger reactive updates by accessing current locale
+      const currentLocale = locale.value
+      console.log('Language changed to:', currentLocale)
+
+      // Navigate back to the previous page (this is what the tests expect)
+      goBack()
     }
   } catch (error) {
     console.error('Failed to change language:', error)

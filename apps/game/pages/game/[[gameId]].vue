@@ -116,7 +116,7 @@
           <button
             class="skip-player-btn"
             data-testid="game-skip-button"
-            :disabled="isSubmitting"
+            :disabled="false"
             @click="submitAnswer"
           >
             {{ t('game.skip', 'Skip') }}

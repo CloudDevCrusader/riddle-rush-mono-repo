@@ -585,3 +585,14 @@ Collected test-related todos from recent phases:
 3. Unit test coverage gaps for key composables
 4. Multi-round scoring workflow not fully tested end-to-end
 5. Integration tests for WebSocket and IndexedDB missing
+
+### Phase 22: Add fortune wheel for alphabet selection using vue-fortunewheel
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 21
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 22 to break down)
