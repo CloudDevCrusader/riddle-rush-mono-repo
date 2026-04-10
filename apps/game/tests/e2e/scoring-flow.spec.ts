@@ -18,8 +18,8 @@ test.describe('scoring results flow', () => {
       const confirmBtn = page.locator('[data-testid="confirm-scores"]')
       await confirmBtn.click()
 
-      // Leaderboard overlay should appear
-      const leaderboardOverlay = page.locator('[data-testid="player-leaderboard-overlay"]')
+      // Leaderboard overlay should appear (same testid as results page; parent attr merges here)
+      const leaderboardOverlay = page.locator('[data-testid="player-leaderboard"]')
       await expect(leaderboardOverlay).toBeVisible({ timeout: 5000 })
     })
 
@@ -36,7 +36,7 @@ test.describe('scoring results flow', () => {
 
       // Decision modal should appear
       const promptText = page.locator('[data-testid="results-post-round-prompt"]')
-      const nextRoundBtn = page.locator('[data-testid="next-round"]')
+      const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
       const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
 
       await expect(promptText).toBeVisible()
@@ -60,7 +60,7 @@ test.describe('scoring results flow', () => {
     })
 
     test('should navigate to round-start when clicking Next Round', async ({ page }) => {
-      const nextRoundBtn = page.locator('[data-testid="next-round"]')
+      const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
       await nextRoundBtn.click()
 
       await expect(page).toHaveURL(/\/round-start/, { timeout: 5000 })

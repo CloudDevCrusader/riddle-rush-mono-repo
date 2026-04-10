@@ -3,7 +3,7 @@
     <div
       v-if="props.visible"
       class="player-leaderboard-overlay"
-      data-testid="player-leaderboard-overlay"
+      data-testid="player-leaderboard"
       @click.self="$emit('close')"
     >
       <div class="player-leaderboard-panel">
