@@ -32,6 +32,7 @@ interface WebSocketUserStatsData {
 
 export const useWebSocket = () => {
   const logger = useLogger()
+  const { t } = useI18n()
   const socket = ref<Socket | null>(null)
   const isConnected = ref(false)
   const isConnecting = ref(false)
@@ -123,7 +124,7 @@ export const useWebSocket = () => {
 
       socket.value.on('reconnect_failed', () => {
         logger.error('Reconnection failed')
-        connectionError.value = useNuxtApp().$i18n.t('websocket.reconnect_failed')
+        connectionError.value = t('websocket.reconnect_failed')
         isConnecting.value = false
       })
 
@@ -155,7 +156,7 @@ export const useWebSocket = () => {
       logger.error('Failed to initialize socket:', error)
       isConnecting.value = false
       connectionError.value =
-        error instanceof Error ? error.message : useNuxtApp().$i18n.t('websocket.connection_failed')
+        error instanceof Error ? error.message : t('websocket.connection_failed')
     }
   }
 

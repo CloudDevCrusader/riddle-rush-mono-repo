@@ -103,42 +103,21 @@ const selectLanguage = (lang: LocaleCode) => {
 }
 
 const confirmSelection = async () => {
+  const lang = selectedLocale.value as LocaleCode
   try {
-    // Save language preference first
-    settingsStore.setLanguage(selectedLocale.value as LocaleCode)
+    settingsStore.setLanguage(lang)
+    await setLocale(lang)
 
-    // Set the locale
-    await setLocale(selectedLocale.value as LocaleCode)
-
-    // Update route query parameter to persist language across navigation
-    await updateLanguageQuery(selectedLocale.value as LocaleCode)
-
-    // Force a reactive update by triggering a key change on all components
-    // This ensures translations update without full page reload
-    if (typeof window !== 'undefined') {
-      // Force a small delay to ensure locale change is processed
-      await new Promise((resolve) => setTimeout(resolve, 100))
-
-      // Trigger reactive updates by accessing current locale
-      const currentLocale = locale.value
-      console.log('Language changed to:', currentLocale)
-
-      // Navigate back to the previous page (this is what the tests expect)
-      goBack()
+    if (typeof window === 'undefined') {
+      return
     }
+
+    const query = { ...route.query, lang } as Record<string, string | string[] | undefined>
+    await router.push({ path: '/', query })
   } catch (error) {
     console.error('Failed to change language:', error)
-    // Fallback: navigate back without reload
-    goBack()
+    await router.push({ path: '/', query: { lang } })
   }
-}
-
-const updateLanguageQuery = async (lang: LocaleCode) => {
-  if (typeof window === 'undefined') return
-
-  const query = { ...route.query } as Record<string, string | string[] | undefined>
-  query.lang = lang
-  await router.replace({ query })
 }
 
 useHead({

@@ -30,7 +30,7 @@
 - [ ] **PAGE-01**: Splash screen matches `Splash screen.png` — "RIDDLE RUSH" title with 3D text effect, animated loading bar at bottom
 - [ ] **PAGE-02**: Main menu (`index.vue`) matches `start.png` — PLAY/MENU/OPTIONS/CREDITS buttons stacked vertically, no coins, no profile avatar
 - [ ] **PAGE-03**: Players page (`players.vue`) matches `players.png` — +/- stepper for player count (1-6), styled name inputs with placeholder text, START GAME button
-- [ ] **PAGE-04**: Game page (`game/[[gameId]].vue`) matches `alphabet.png` — round indicator top center, category in orange panel, large letter display, text input field between letter and NEXT button, back button top-left, nothing top-right
+- [x] **PAGE-04**: Game page (`game/[[gameId]].vue`) matches `alphabet.png` — round indicator top center, category in orange panel, large letter display, text input field between letter and NEXT button, back button top-left, nothing top-right
 - [ ] **PAGE-05**: Scoring page (`results/[[gameId]].vue`) matches `scoring.png` — player cards with name and score, green +pts / red -pts indicators, NEXT ROUND button
 - [ ] **PAGE-06**: Leaderboard page (`leaderboard.vue`) matches `leaderboard.png` — "Ranking" header, crown icons for top 3, numbered badges for 4-6, player names and scores
 - [ ] **PAGE-07**: Settings page (`settings.vue`) matches `settings.png` — "OPTIONS" title, Sound/Music sliders with custom styled track and thumb, OK button
@@ -102,7 +102,7 @@
 | PAGE-01     | Phase 6  | Pending  |
 | PAGE-02     | Phase 6  | Pending  |
 | PAGE-03     | Phase 7  | Pending  |
-| PAGE-04     | Phase 8  | Pending  |
+| PAGE-04     | Phase 8  | Complete |
 | PAGE-05     | Phase 9  | Pending  |
 | PAGE-06     | Phase 9  | Pending  |
 | PAGE-07     | Phase 10 | Pending  |

@@ -11,6 +11,9 @@ const supportedLocales = new Set<LocaleCode>(['de', 'en'])
 export default defineNuxtPlugin((nuxtApp) => {
   const i18n = (nuxtApp as { $i18n?: any }).$i18n
   const i18nGlobal = i18n?.global ?? i18n
+  const router = nuxtApp.$router as
+    | { currentRoute?: { value?: { query?: Record<string, unknown> } } }
+    | undefined
 
   if (!i18nGlobal?.locale?.value) return
 
@@ -93,6 +96,22 @@ export default defineNuxtPlugin((nuxtApp) => {
         settingsStore.setLanguage(newLocale as string)
       }
       skipLocalePersistence = false
+    }
+  )
+
+  // Keep locale in sync when query lang changes after app boot.
+  watch(
+    () => router?.currentRoute?.value?.query?.lang,
+    (rawLang) => {
+      const langCandidate = Array.isArray(rawLang) ? rawLang[0] : rawLang
+      if (!langCandidate) return
+
+      const normalized = langCandidate.toString().toLowerCase().split('-')[0] as LocaleCode
+      if (!normalized || !supportedLocales.has(normalized)) return
+      if (normalized === i18nGlobal.locale.value) return
+
+      skipLocalePersistence = true
+      i18nGlobal.locale.value = normalized
     }
   )
 

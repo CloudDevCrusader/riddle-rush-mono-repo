@@ -81,7 +81,9 @@ const { mapCategoriesToSegments, validateSelection } = useFortuneWheelSelection(
 const wheelRef = ref<WheelRef | null>(null)
 const isSpinning = ref(false)
 const targetPrizeId = ref(0)
+const pendingSegment = ref<FortuneWheelSegment | null>(null)
 const pendingSelection = ref<FortuneWheelSelection | null>(null)
+const fallbackTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
 const segments = computed(() => mapCategoriesToSegments(props.categories, props.letters))
 const hasSegments = computed(() => segments.value.length > 0)
@@ -114,8 +116,23 @@ function startSpin() {
   const nextSegment = chooseRandomSegment()
   if (!nextSegment) return
 
+  isSpinning.value = true
   pendingSelection.value = null
+  pendingSegment.value = nextSegment
   targetPrizeId.value = nextSegment.id
+
+  if (fallbackTimer.value) {
+    clearTimeout(fallbackTimer.value)
+  }
+
+  fallbackTimer.value = setTimeout(() => {
+    if (!pendingSelection.value && pendingSegment.value) {
+      pendingSelection.value = validateSelection(pendingSegment.value, props.categories)
+    }
+    pendingSegment.value = null
+    isSpinning.value = false
+  }, 4500)
+
   const startRotate = wheelRef.value?.startRotate
   if (typeof startRotate === 'function') {
     startRotate()
@@ -130,16 +147,33 @@ function onRotateStart(rotate?: RotateStartCallback) {
 }
 
 function onRotateEnd(prize: { id?: number }) {
+  if (fallbackTimer.value) {
+    clearTimeout(fallbackTimer.value)
+    fallbackTimer.value = null
+  }
+
   isSpinning.value = false
 
-  const selectedSegment = segments.value.find((segment) => segment.id === prize.id)
+  const resolvedPrizeId =
+    typeof prize.id === 'number' ? prize.id : typeof prize.id === 'string' ? Number(prize.id) : NaN
+
+  const selectedSegment =
+    segments.value.find((segment) => segment.id === resolvedPrizeId) ?? pendingSegment.value
+
   pendingSelection.value = validateSelection(selectedSegment, props.categories)
+  pendingSegment.value = null
 }
 
 function confirmSelection() {
   if (!pendingSelection.value || isSpinning.value) return
   emit('selection-ready', pendingSelection.value)
 }
+
+onBeforeUnmount(() => {
+  if (fallbackTimer.value) {
+    clearTimeout(fallbackTimer.value)
+  }
+})
 </script>
 
 <style scoped>

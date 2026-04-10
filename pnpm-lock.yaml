@@ -206,6 +206,9 @@ importers:
       vue:
         specifier: ^3.5.31
         version: 3.5.32(typescript@5.9.3)
+      vue-fortune-wheel:
+        specifier: ^2.1.0
+        version: 2.1.0(vue@3.5.32(typescript@5.9.3))
       vue-i18n:
         specifier: ^11.3.2
         version: 11.3.2(vue@3.5.32(typescript@5.9.3))
@@ -261,6 +264,9 @@ importers:
       '@vitest/ui':
         specifier: ^4.1.2
         version: 4.1.4(vitest@4.1.4)
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.6
       '@vueuse/motion':
         specifier: ^3.0.3
         version: 3.0.3(magicast@0.5.2)(vue@3.5.32(typescript@5.9.3))
@@ -14978,6 +14984,11 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
 
+  vue-fortune-wheel@2.1.0:
+    resolution: {integrity: sha512-W7Z+C9EpDHiPC8f+AXD9ithQN6hQs0rudw47HSSKIFahGArV4zb6nY90DwBYciyWLc/xTmA7+67n/0zBNwr+Vg==}
+    peerDependencies:
+      vue: ^3.2.0
+
   vue-i18n@11.3.2:
     resolution: {integrity: sha512-gmFrvM+iuf2AH4ygligw/pC7PRJ63AdRNE68E0GPlQ83Mzfyck6g6cRQC3KzkYXr+ZidR91wq+5YBmAMpkgE1A==}
     engines: {node: '>= 16'}
@@ -19786,13 +19797,12 @@ snapshots:
       ansis: 3.17.0
       debug: 4.4.3(supports-color@8.1.1)
       http-call: 5.3.0
-      lodash: 4.17.23
+      lodash: 4.18.1
       registry-auth-token: 5.1.1
     transitivePeerDependencies:
       - supports-color
 
-  '@one-ini/wasm@0.1.1':
-    optional: true
+  '@one-ini/wasm@0.1.1': {}
 
   '@openai/codex@0.118.0':
     optionalDependencies:
@@ -23722,7 +23732,6 @@ snapshots:
     dependencies:
       js-beautify: 1.15.4
       vue-component-type-helpers: 2.2.12
-    optional: true
 
   '@vueuse/core@13.9.0(vue@3.5.32(typescript@5.9.3))':
     dependencies:
@@ -23915,8 +23924,7 @@ snapshots:
 
   abbrev@1.1.1: {}
 
-  abbrev@2.0.0:
-    optional: true
+  abbrev@2.0.0: {}
 
   abbrev@3.0.1: {}
 
@@ -24083,7 +24091,7 @@ snapshots:
       graceful-fs: 4.2.11
       is-stream: 2.0.1
       lazystream: 1.0.1
-      lodash: 4.17.23
+      lodash: 4.18.1
       normalize-path: 3.0.0
       readable-stream: 4.7.0
 
@@ -24940,8 +24948,7 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
-  commander@10.0.1:
-    optional: true
+  commander@10.0.1: {}
 
   commander@11.1.0: {}
 
@@ -25555,7 +25562,6 @@ snapshots:
       commander: 10.0.1
       minimatch: 9.0.9
       semver: 7.7.4
-    optional: true
 
   ee-first@1.1.1: {}
 
@@ -28118,10 +28124,8 @@ snapshots:
       glob: 10.5.0
       js-cookie: 3.0.5
       nopt: 7.2.1
-    optional: true
 
-  js-cookie@3.0.5:
-    optional: true
+  js-cookie@3.0.5: {}
 
   js-tiktoken@1.0.21:
     dependencies:
@@ -29497,7 +29501,6 @@ snapshots:
   nopt@7.2.1:
     dependencies:
       abbrev: 2.0.0
-    optional: true
 
   nopt@8.1.0:
     dependencies:
@@ -33373,8 +33376,7 @@ snapshots:
     dependencies:
       ufo: 1.6.3
 
-  vue-component-type-helpers@2.2.12:
-    optional: true
+  vue-component-type-helpers@2.2.12: {}
 
   vue-devtools-stub@0.1.0: {}
 
@@ -33389,6 +33391,11 @@ snapshots:
       semver: 7.7.4
     transitivePeerDependencies:
       - supports-color
+
+  vue-fortune-wheel@2.1.0(vue@3.5.32(typescript@5.9.3)):
+    dependencies:
+      lodash: 4.18.1
+      vue: 3.5.32(typescript@5.9.3)
 
   vue-i18n@11.3.2(vue@3.5.32(typescript@5.9.3)):
     dependencies:
