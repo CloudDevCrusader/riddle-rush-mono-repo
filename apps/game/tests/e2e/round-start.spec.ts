@@ -33,11 +33,13 @@ test.describe('round-start page round-start', () => {
   test('shows wheel interaction before transitioning to game', async ({ page }) => {
     const roundIndicator = page.locator('[data-testid="round-indicator"]')
     const wheelContainer = page.locator('[data-testid="fortune-wheel-container"]')
+    const legacyFlipContainer = page.locator('[data-testid="flip-container"]')
 
     await expect(roundIndicator).toBeVisible()
     await expect(roundIndicator).toContainText('1')
 
     await expect(wheelContainer).toBeVisible({ timeout: 8000 })
+    await expect(legacyFlipContainer).toHaveCount(0)
     await expect(page.locator('[data-testid="fortune-wheel-spin-button"]')).toBeVisible()
     await expect(page.locator('[data-testid="fortune-wheel-confirm-button"]')).toBeVisible()
 
