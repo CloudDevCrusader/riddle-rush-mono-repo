@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-// @ts-expect-error Nuxt overrides vue module types but computed/reactive exist at runtime
 import { computed, reactive } from 'vue'
 
 import { useGameState } from '../../../composables/useGameState'

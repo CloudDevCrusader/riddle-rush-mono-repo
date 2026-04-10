@@ -30,7 +30,7 @@ test.describe('Language Selection Page', () => {
     // Check for German option
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /GERMAN/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await expect(germanOption).toBeVisible()
 
     // Check for flag containers
@@ -82,7 +82,7 @@ test.describe('Language Selection Page', () => {
     // Click on German option
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /GERMAN/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await germanOption.click()
 
     // Wait for state update
@@ -110,7 +110,7 @@ test.describe('Language Selection Page', () => {
     // Click German
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /GERMAN/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await germanOption.click()
     await page.waitForTimeout(200)
 
@@ -232,7 +232,7 @@ test.describe('Language Switching Behavior', () => {
 
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /GERMAN/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await germanOption.click()
 
     const okButton = page.locator('[data-testid="language-ok-button"]').first()

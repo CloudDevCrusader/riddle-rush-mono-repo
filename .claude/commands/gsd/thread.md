@@ -42,7 +42,7 @@ For each thread, read the first few lines to show title and status:
 If no threads exist, show:
 
 ```
-No threads found. Create one with: /gsd:thread <description>
+No threads found. Create one with: /gsd-thread <description>
 ```
 
 </mode_list>
@@ -68,7 +68,7 @@ Create a new thread:
 1. Generate slug from description:
 
    ```bash
-   SLUG=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" generate-slug "$ARGUMENTS")
+   SLUG=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" generate-slug "$ARGUMENTS" --raw)
    ```
 
 2. Create the threads directory if needed:
@@ -121,7 +121,7 @@ Create a new thread:
    Thread: {slug}
    File: .planning/threads/{slug}.md
 
-   Resume anytime with: /gsd:thread {slug}
+   Resume anytime with: /gsd-thread {slug}
    ```
 
    </mode_create>
@@ -130,9 +130,9 @@ Create a new thread:
 
 <notes>
 - Threads are NOT phase-scoped — they exist independently of the roadmap
-- Lighter weight than /gsd:pause-work — no phase state, no plan context
+- Lighter weight than /gsd-pause-work — no phase state, no plan context
 - The value is in Context and Next Steps — a cold-start session can pick up immediately
 - Threads can be promoted to phases or backlog items when they mature:
-  /gsd:add-phase or /gsd:add-backlog with context from the thread
+  /gsd-add-phase or /gsd-add-backlog with context from the thread
 - Thread files live in .planning/threads/ — no collision with phases or other GSD structures
 </notes>

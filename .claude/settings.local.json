@@ -90,7 +90,11 @@
       "Bash(pnpm --filter @riddle-rush/game run typecheck:*)",
       "Bash(wc:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Skill(gsd:resume-work)"
+      "Skill(gsd:resume-work)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot"
     ]
   },
   "enableAllProjectMcpServers": true,

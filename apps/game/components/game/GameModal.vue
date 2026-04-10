@@ -84,12 +84,12 @@ const handleEscape = (event: KeyboardEvent) => {
 // Focus trap activation
 const activateFocusTrap = () => {
   if (modalRef.value) {
-    focusTrap = createFocusTrap(modalRef.value, {
+    focusTrap = createFocusTrap(modalRef.value as HTMLElement, {
       escapeDeactivates: false, // We handle Escape manually
       clickOutsideDeactivates: false, // We handle backdrop clicks manually
       allowOutsideClick: true,
       initialFocus: false, // Let content determine initial focus
-      fallbackFocus: modalRef.value,
+      fallbackFocus: modalRef.value as HTMLElement,
     })
     focusTrap.activate()
   }

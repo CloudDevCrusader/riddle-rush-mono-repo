@@ -1,0 +1,294 @@
+import { _ as z } from './B-USiBHN.js'
+import {
+  d as D,
+  M,
+  A as E,
+  B as $,
+  D as p,
+  l as c,
+  S as B,
+  C as s,
+  a7 as I,
+  W as P,
+  i as x,
+  m as w,
+  _ as N,
+  al as T,
+  o as U,
+  z as F,
+  Y as H,
+  F as h,
+  E as f,
+  G,
+  R as X,
+} from './BI8BVXPj.js'
+import { _ as O } from './n5CIrt1D.js'
+import { _ as j } from './D9TZGafa.js'
+import { _ as A } from './BwE9VIQt.js'
+import { u as W } from './CbjeSZOE.js'
+const Y = { class: 'game-slider' },
+  q = { key: 0, class: 'game-slider__icon' },
+  J = { class: 'game-slider__track' },
+  K = ['value', 'min', 'max', 'aria-label'],
+  Q = { key: 1, class: 'game-slider__label' },
+  Z = D({
+    __name: 'GameSlider',
+    props: {
+      modelValue: {},
+      min: { default: 0 },
+      max: { default: 100 },
+      icon: { default: '' },
+      mutedIcon: { default: '' },
+      label: { default: '' },
+    },
+    emits: ['update:modelValue', 'change'],
+    setup(i, { emit: r }) {
+      const n = i,
+        o = r,
+        _ = x(null),
+        l = x(!1),
+        C = w(() => (n.modelValue === 0 && n.mutedIcon ? n.mutedIcon : n.icon)),
+        V = w(() => {
+          const e = n.max - n.min
+          return e === 0 ? 0 : ((n.modelValue - n.min) / e) * 100
+        }),
+        k = w(() => ({ width: `${V.value}%` })),
+        y = w(() => ({ left: `${V.value}%` })),
+        v = (e) => {
+          if (!_.value) return n.modelValue
+          const t = _.value.getBoundingClientRect(),
+            d = e - t.left,
+            g = Math.max(0, Math.min(1, d / t.width)),
+            R = n.max - n.min
+          return Math.round(n.min + g * R)
+        },
+        u = (e) => {
+          const t = v(e.clientX)
+          ;(o('update:modelValue', t), o('change', t))
+        },
+        a = (e) => {
+          if (!l.value) return
+          let t
+          if ('touches' in e) {
+            const g = e.touches[0]
+            if (!g) return
+            t = g.clientX
+          } else t = e.clientX
+          const d = v(t)
+          o('update:modelValue', d)
+        },
+        b = (e) => {
+          ;(e.preventDefault(), (l.value = !0))
+          let t
+          if ('touches' in e) {
+            const g = e.touches[0]
+            if (!g) return
+            t = g.clientX
+          } else t = e.clientX
+          const d = v(t)
+          ;(o('update:modelValue', d),
+            document.addEventListener('mousemove', a),
+            document.addEventListener('mouseup', m),
+            document.addEventListener('touchmove', a),
+            document.addEventListener('touchend', m))
+        },
+        m = () => {
+          ;(l.value && ((l.value = !1), o('change', n.modelValue)),
+            document.removeEventListener('mousemove', a),
+            document.removeEventListener('mouseup', m),
+            document.removeEventListener('touchmove', a),
+            document.removeEventListener('touchend', m))
+        },
+        S = (e) => {
+          const t = e.target,
+            d = Number(t.value)
+          o('update:modelValue', d)
+        },
+        L = (e) => {
+          const t = e.target,
+            d = Number(t.value)
+          o('change', d)
+        }
+      return (
+        M(() => {
+          ;(document.removeEventListener('mousemove', a),
+            document.removeEventListener('mouseup', m),
+            document.removeEventListener('touchmove', a),
+            document.removeEventListener('touchend', m))
+        }),
+        (e, t) => (
+          E(),
+          $('div', Y, [
+            i.icon ? (E(), $('div', q, p(c(C)), 1)) : B('', !0),
+            s(
+              'div',
+              {
+                ref_key: 'trackRef',
+                ref: _,
+                class: 'game-slider__track-container',
+                onClick: u,
+                onMousedown: b,
+                onTouchstart: b,
+              },
+              [
+                s('div', J, [s('div', { class: 'game-slider__fill', style: I(c(k)) }, null, 4)]),
+                s(
+                  'div',
+                  {
+                    class: P(['game-slider__thumb', { 'game-slider__thumb--dragging': c(l) }]),
+                    style: I(c(y)),
+                  },
+                  null,
+                  6
+                ),
+                s(
+                  'input',
+                  {
+                    type: 'range',
+                    class: 'game-slider__input',
+                    value: i.modelValue,
+                    min: i.min,
+                    max: i.max,
+                    'aria-label': i.label || 'Volume slider',
+                    onInput: S,
+                    onChange: L,
+                  },
+                  null,
+                  40,
+                  K
+                ),
+              ],
+              544
+            ),
+            i.label ? (E(), $('span', Q, p(i.label), 1)) : B('', !0),
+          ])
+        )
+      )
+    },
+  }),
+  ee = Object.assign(N(Z, [['__scopeId', 'data-v-4f003a42']]), { __name: 'GameSlider' }),
+  te = { class: 'settings-page' },
+  ne = { class: 'slider-row' },
+  oe = { class: 'slider-label' },
+  ae = { class: 'slider-row' },
+  se = { class: 'slider-label' },
+  le = D({
+    __name: 'settings',
+    setup(i) {
+      const { t: r, router: n } = W(),
+        o = T(),
+        _ = x(o.soundVolume.value),
+        l = x(o.musicVolume.value),
+        C = (u) => {
+          ;(o.updateSetting('soundVolume', u), o.updateSetting('soundEnabled', u > 0))
+        },
+        V = (u) => {
+          ;(o.updateSetting('musicVolume', u), o.updateSetting('musicEnabled', u > 0))
+        },
+        k = () => {
+          n.back()
+        },
+        y = () => {
+          n.back()
+        },
+        v = (u) => {
+          u.key === 'Escape' && k()
+        }
+      return (
+        U(() => {
+          ;((_.value = o.soundVolume.value),
+            (l.value = o.musicVolume.value),
+            window.addEventListener('keydown', v))
+        }),
+        M(() => {
+          window.removeEventListener('keydown', v)
+        }),
+        F({
+          title: r('settings.title'),
+          meta: [{ name: 'description', content: r('settings.title') }],
+        }),
+        (u, a) => {
+          const b = z,
+            m = ee,
+            S = O,
+            L = j,
+            e = A
+          return (
+            E(),
+            H(e, null, {
+              default: h(() => [
+                s('div', te, [
+                  f(
+                    b,
+                    { color: 'gold' },
+                    {
+                      left: h(() => [
+                        s(
+                          'button',
+                          { class: 'game-back-btn tap-highlight no-select', onClick: k },
+                          [...(a[2] || (a[2] = [s('span', { class: 'back-btn__arrow' }, '←', -1)]))]
+                        ),
+                      ]),
+                      default: h(() => [G(' ' + p(c(r)('menu.options')), 1)]),
+                      _: 1,
+                    }
+                  ),
+                  f(
+                    S,
+                    { class: 'settings-panel' },
+                    {
+                      default: h(() => [
+                        s('div', ne, [
+                          f(
+                            m,
+                            {
+                              modelValue: c(_),
+                              'onUpdate:modelValue':
+                                a[0] || (a[0] = (t) => (X(_) ? (_.value = t) : null)),
+                              icon: '🔊',
+                              'muted-icon': '🔇',
+                              onChange: C,
+                            },
+                            null,
+                            8,
+                            ['modelValue']
+                          ),
+                          s('span', oe, p(c(r)('settings.sound')), 1),
+                        ]),
+                        s('div', ae, [
+                          f(
+                            m,
+                            {
+                              modelValue: c(l),
+                              'onUpdate:modelValue':
+                                a[1] || (a[1] = (t) => (X(l) ? (l.value = t) : null)),
+                              icon: '🎵',
+                              'muted-icon': '🔇',
+                              onChange: V,
+                            },
+                            null,
+                            8,
+                            ['modelValue']
+                          ),
+                          s('span', se, p(c(r)('settings.music')), 1),
+                        ]),
+                      ]),
+                      _: 1,
+                    }
+                  ),
+                  f(
+                    L,
+                    { variant: 'primary', size: 'lg', class: 'ok-btn', onClick: y },
+                    { default: h(() => [G(p(c(r)('common.ok')), 1)]), _: 1 }
+                  ),
+                ]),
+              ]),
+              _: 1,
+            })
+          )
+        }
+      )
+    },
+  }),
+  ge = N(le, [['__scopeId', 'data-v-1867509c']])
+export { ge as default }

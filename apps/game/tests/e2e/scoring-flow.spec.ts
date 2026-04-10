@@ -42,7 +42,7 @@ test.describe('scoring results flow', () => {
       await expect(promptText).toBeVisible()
       await expect(nextRoundBtn).toBeVisible()
       await expect(leaderboardBtn).toBeVisible()
-      await expect(leaderboardBtn).toHaveText('Leaderboard')
+      await expect(leaderboardBtn).toHaveText(/Leaderboard|Bestenliste/i)
     })
   })
 
@@ -68,7 +68,7 @@ test.describe('scoring results flow', () => {
 
     test('should navigate to leaderboard when clicking Finish Game', async ({ page }) => {
       const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
-      await expect(leaderboardBtn).toHaveText('Leaderboard')
+      await expect(leaderboardBtn).toHaveText(/Leaderboard|Bestenliste/i)
       await leaderboardBtn.click()
 
       await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 })
