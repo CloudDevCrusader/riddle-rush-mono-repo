@@ -46,12 +46,12 @@ UI_ENABLED=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/ge
 **If `UI_ENABLED` is `false`:**
 
 ```
-UI phase is disabled in config. Enable via /gsd:settings.
+UI phase is disabled in config. Enable via /gsd-settings.
 ```
 
 Exit workflow.
 
-**If `planning_exists` is false:** Error — run `/gsd:new-project` first.
+**If `planning_exists` is false:** Error — run `/gsd-new-project` first.
 
 ## 2. Parse and Validate Phase
 
@@ -69,7 +69,7 @@ PHASE_INFO=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/ge
 
 ```
 No CONTEXT.md found for Phase {N}.
-Recommended: run /gsd:discuss-phase {N} first to capture design preferences.
+Recommended: run /gsd-discuss-phase {N} first to capture design preferences.
 Continuing without user decisions — UI researcher will ask all questions.
 ```
 
@@ -130,7 +130,7 @@ Answer: "What visual and interaction contracts does this phase need?"
 - {state_path} (Project State)
 - {roadmap_path} (Roadmap)
 - {requirements_path} (Requirements)
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
+- {context_path} (USER DECISIONS from /gsd-discuss-phase)
 - {research_path} (Technical Research — stack decisions)
   </files_to_read>
 
@@ -253,7 +253,7 @@ Max revision iterations reached. Remaining issues:
 
 Options:
 1. Force approve — proceed with current UI-SPEC (FLAGs become accepted)
-2. Edit manually — open UI-SPEC.md in editor, re-run /gsd:ui-phase
+2. Edit manually — open UI-SPEC.md in editor, re-run /gsd-ui-phase
 3. Abandon — exit without approving
 ```
 
@@ -279,9 +279,9 @@ Dimensions: 6/6 passed
 
 **Plan Phase {N}** — planner will use UI-SPEC.md as design context
 
-`/gsd:plan-phase {N}`
+`/clear` then:
 
-<sub>/clear first → fresh context window</sub>
+`/gsd-plan-phase {N}`
 
 ───────────────────────────────────────────────────────────────
 ```
