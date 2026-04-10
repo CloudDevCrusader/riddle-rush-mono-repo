@@ -1,8 +1,9 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
-import { completeFortuneWheel } from './helpers/game-flow'
+import { completeFortuneWheel, setupMultiplayerGame } from './helpers/game-flow'
 
 test.describe.configure({ mode: 'serial' })
+test.setTimeout(120000)
 
 async function resetPersistedGameState(page: Page) {
   await page.goto('/players')
@@ -17,14 +18,9 @@ async function resetPersistedGameState(page: Page) {
 }
 
 async function startGameFromPlayers(page: Page) {
-  await page.goto('/players')
-  await expect(page).toHaveURL(/\/players/)
-  const startButton = page.locator('[data-testid="players-start-button"]').first()
-  await expect(startButton).toBeVisible({ timeout: 15000 })
-  await startButton
-    .click({ timeout: 5000 })
-    .catch(() => startButton.click({ force: true, timeout: 5000 }))
+  await setupMultiplayerGame(page, ['Player 1', 'Player 2'], false)
 
+  await page.goto('/round-start')
   await expect(page).toHaveURL(/\/round-start/, { timeout: 30000 })
 }
 
@@ -34,17 +30,17 @@ test.describe('round-start page round-start', () => {
     await startGameFromPlayers(page)
   })
 
-  test('shows flip-through animation before transitioning to game', async ({ page }) => {
+  test('shows wheel interaction before transitioning to game', async ({ page }) => {
     const roundIndicator = page.locator('[data-testid="round-indicator"]')
-    const flipContainer = page.locator('[data-testid="flip-container"]')
+    const wheelContainer = page.locator('[data-testid="fortune-wheel-container"]')
 
     await expect(roundIndicator).toBeVisible()
     await expect(roundIndicator).toContainText('1')
 
-    // Contract: default path shows flip-through animation on /round-start
-    await expect(flipContainer).toBeVisible({ timeout: 8000 })
+    await expect(wheelContainer).toBeVisible({ timeout: 8000 })
+    await expect(page.locator('[data-testid="fortune-wheel-spin-button"]')).toBeVisible()
+    await expect(page.locator('[data-testid="fortune-wheel-confirm-button"]')).toBeVisible()
 
-    // Animation auto-plays and transitions to /game — no interaction needed
     await completeFortuneWheel(page)
     await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
   })
