@@ -3,8 +3,16 @@
     <GameBackground>
       <!-- Main Container -->
       <div class="container">
-        <!-- Title -->
-        <GameHeader color="gold">RIDDLE RUSH</GameHeader>
+        <!-- Logo -->
+        <div class="logo-container">
+          <img
+            :src="getAssetPath('assets/splash/LOGO.png')"
+            :alt="t('app.title')"
+            class="logo-image"
+            width="512"
+            height="512"
+          />
+        </div>
 
         <!-- Menu Buttons -->
         <div v-show="!showMenu" class="menu-buttons">
@@ -91,6 +99,7 @@ definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } })
 
 const { router, toast, t } = usePageSetup()
 const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
+const { getAssetPath } = useAssets()
 const route = useRoute()
 
 const showMenu = ref(false)
@@ -158,6 +167,18 @@ useHead({
   gap: var(--spacing-3xl);
 }
 
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-image {
+  width: clamp(200px, 40vw, 400px);
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
 .menu-buttons {
   display: flex;
   flex-direction: column;
@@ -218,6 +239,10 @@ useHead({
     gap: var(--spacing-xl);
   }
 
+  .logo-image {
+    width: min(250px, 60vw);
+  }
+
   .menu-buttons {
     width: calc(100% - 2rem);
     max-width: 350px;
@@ -243,6 +268,26 @@ useHead({
     width: calc(100% - 3rem);
     max-width: 360px;
     gap: var(--spacing-md);
+  }
+}
+
+/* Ultra-small phones (<360px, e.g. iPhone SE 1st gen, Galaxy S3) */
+@media (max-width: 360px) {
+  .container {
+    padding: var(--spacing-lg) var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+
+  .menu-buttons {
+    width: calc(100% - 1rem);
+    max-width: 300px;
+    gap: var(--spacing-xs);
+  }
+
+  .menu-panel {
+    width: calc(100% - var(--spacing-xs) * 2);
+    max-width: 260px;
+    padding: var(--spacing-md);
   }
 }
 </style>

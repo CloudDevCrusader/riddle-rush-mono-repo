@@ -137,7 +137,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `${emoji} **${stage.charAt(0).toUpperCase() + stage.slice(1)} Preview Deployed!**\n\n🔗 ${url}\n\n**Environment:** \`STAGE=${stage}\`\n**Branch:** \`${context.payload.pull_request.head.ref}\`\n**Commit:** \`${context.sha.substring(0, 7)}\``
+              body: `🚀 **Preview Deployed!**\n\n🔗 ${url}\n\n`
             })
 
   # Optional: Run E2E tests against production deployment

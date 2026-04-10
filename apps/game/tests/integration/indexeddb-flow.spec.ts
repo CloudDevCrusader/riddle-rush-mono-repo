@@ -96,8 +96,10 @@ function createTestLeaderboardEntry(overrides: Partial<LeaderboardEntry> = {}): 
     score: overrides.score ?? 50,
     category: overrides.category ?? 'Animals',
     categoryKey: overrides.categoryKey ?? 'animals',
+    playerName: overrides.playerName ?? 'Alice',
     attempts: overrides.attempts ?? 10,
     correctAttempts: overrides.correctAttempts ?? 5,
+    letter: overrides.letter ?? 'A',
     timestamp: overrides.timestamp ?? Date.now(),
     duration: overrides.duration ?? 120,
     ...overrides,
@@ -345,6 +347,7 @@ describe('IndexedDB', () => {
 
       expect(leaderboard).toHaveLength(1)
       expect(leaderboard[0]!.score).toBe(75)
+      expect(leaderboard[0]!.playerName).toBe('Alice')
       expect(leaderboard[0]!.attempts).toBe(8)
     })
 

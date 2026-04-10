@@ -113,7 +113,7 @@ export const useWebSocket = () => {
       })
 
       socket.value.on('reconnect_attempt', (attemptNumber: number) => {
-        logger.log(`Reconnecting... (attempt ${attemptNumber})`)
+        logger.log(`Reconnecting… (attempt ${attemptNumber})`)
         isConnecting.value = true
       })
 

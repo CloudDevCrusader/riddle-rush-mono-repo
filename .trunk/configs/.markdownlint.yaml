@@ -2,4 +2,3 @@
 extends: markdownlint/style/prettier
 with:
   files: .
-  

@@ -553,16 +553,11 @@ export const useGameStore = defineStore('game', {
       const hasPendingPlayers = restoredPendingPlayers.length > 0
 
       if (!session || hasPendingPlayers) {
-        if (!hasPendingPlayers) {
-          return null
-        }
+        // If no session and no pending players, fallback to a single player game
+        // so direct navigation to /round-start works as it did previously.
+        const playerNames = hasPendingPlayers ? restoredPendingPlayers : ['Player 1']
 
-        const createdSession = await this.setupPlayers(
-          restoredPendingPlayers,
-          undefined,
-          letter,
-          category
-        )
+        const createdSession = await this.setupPlayers(playerNames, undefined, letter, category)
 
         this.pendingPlayerNames = []
         this.selectedLetter = null
@@ -587,6 +582,7 @@ export const useGameStore = defineStore('game', {
       session.category = { ...category, letter }
       session.letter = letter
       await this.resetPlayerSubmissions()
+      await this.saveSessionToDB()
       this.postRoundDecisionPending = false
       return session
     },

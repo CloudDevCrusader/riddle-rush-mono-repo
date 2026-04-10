@@ -20,7 +20,9 @@
       <GamePanel class="credits-panel animate-scale-in" data-testid="credits-panel">
         <!-- Game Design -->
         <div class="credit-section" data-testid="credits-section-0">
-          <h2 class="section-heading" data-testid="credits-section-heading-0">{{ t('credits.game_design') }}</h2>
+          <h2 class="section-heading" data-testid="credits-section-heading-0">
+            {{ t('credits.game_design') }}
+          </h2>
           <div class="credit-box">
             <span class="credit-name" data-testid="credits-name-0">Tobi</span>
             <span class="credit-divider" />
@@ -30,7 +32,9 @@
 
         <!-- Programming -->
         <div class="credit-section" data-testid="credits-section-1">
-          <h2 class="section-heading" data-testid="credits-section-heading-1">{{ t('credits.programming') }}</h2>
+          <h2 class="section-heading" data-testid="credits-section-heading-1">
+            {{ t('credits.programming') }}
+          </h2>
           <div class="credit-box">
             <span class="credit-name" data-testid="credits-name-2">Markus</span>
           </div>
@@ -38,7 +42,9 @@
 
         <!-- Art -->
         <div class="credit-section" data-testid="credits-section-2">
-          <h2 class="section-heading" data-testid="credits-section-heading-2">{{ t('credits.art') }}</h2>
+          <h2 class="section-heading" data-testid="credits-section-heading-2">
+            {{ t('credits.art') }}
+          </h2>
           <div class="credit-box">
             <span class="credit-name" data-testid="credits-name-3">Sarmad Ali</span>
           </div>
@@ -48,7 +54,13 @@
         <div class="version-info">v{{ appVersion }}</div>
       </GamePanel>
 
-      <GameButton class="ok-btn animate-slide-up" variant="primary" size="lg" data-testid="credits-ok-button" @click="goBack">
+      <GameButton
+        class="ok-btn animate-slide-up"
+        variant="primary"
+        size="lg"
+        data-testid="credits-ok-button"
+        @click="goBack"
+      >
         {{ t('common.ok', 'OK') }}
       </GameButton>
     </div>
@@ -93,7 +105,7 @@ useHead({
   height: 44px;
   padding: 0;
   border-radius: 50%;
-  font-size: 1.4rem;
+  font-size: var(--font-size-xl);
   line-height: 1;
 }
 
@@ -190,8 +202,42 @@ useHead({
     margin: 0 var(--spacing-sm);
   }
 
+  .credit-section {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+
   .ok-btn {
     width: min(220px, 80%);
+  }
+}
+
+@media (max-width: 360px) {
+  .credits-page {
+    padding: var(--spacing-lg) var(--spacing-xs);
+    gap: var(--spacing-md);
+  }
+
+  .credits-panel {
+    padding: var(--spacing-md);
+    max-height: 260px;
+    border-width: 3px;
+    margin: 0;
+  }
+
+  .credit-section {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .credit-box {
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+  }
+
+  .ok-btn {
+    width: min(200px, 85%);
   }
 }
 </style>

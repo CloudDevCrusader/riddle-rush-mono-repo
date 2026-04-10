@@ -51,7 +51,10 @@ const statusText = computed(() => {
   height: 12px;
   border-radius: 50%;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .status-indicator.online {

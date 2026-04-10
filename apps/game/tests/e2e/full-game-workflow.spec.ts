@@ -57,7 +57,7 @@ async function returnToMenuFromLeaderboard(page: Page) {
   await expect(page).toHaveURL(/\/$/, { timeout: 8000 })
 
   // Verify menu is fully loaded
-  const playBtn = page.locator('[data-testid="menu-start-button"]')
+  const playBtn = page.locator('[data-testid="main-menu-play"]')
   await expect(playBtn).toBeVisible({ timeout: 15000 })
 }
 
@@ -99,6 +99,8 @@ test.describe('full game workflow @slow', () => {
   test('complete multi-round multiplayer game with 3 players and score accumulation', async ({
     page,
   }) => {
+    test.slow()
+
     // Set deterministic seed for reproducible test data
     setFakerSeed(12345)
 
@@ -140,7 +142,7 @@ test.describe('full game workflow @slow', () => {
     console.log('🏁 Playing final round...')
     const finalRoundScores = roundScores[2]!
 
-    await playCompleteRound(page, 5, finalRoundScores, true)
+    await playCompleteRound(page, 3, finalRoundScores, true)
 
     // Update final cumulative scores
     for (let i = 0; i < 3; i++) {

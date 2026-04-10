@@ -5,10 +5,10 @@
   "format": "JSON_TOLGEE",
   "patterns": ["./apps/game/**/*.ts|vue?(x)"],
   "push": {
-    "filesTemplate": "./apps/game/i18n/locales/{languageTag}.json",
+    "filesTemplate": "./apps/game/translations/locales/{languageTag}.json",
     "language": ["de", "en"]
   },
   "pull": {
-    "path": "./apps/game/i18n/locales"
+    "path": "./apps/game/translations/locales/"
   }
 }

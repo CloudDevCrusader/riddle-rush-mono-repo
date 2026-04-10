@@ -135,6 +135,7 @@
     "skip": "Skip",
     "starts_with": "Starts with",
     "submit": "Submit",
+    "tap_to_spin": "Tap to spin",
     "title": "Play",
     "wait_for_players": "Please wait for all players to submit",
     "welcome": "Welcome! Guess a word from the category.",
@@ -164,6 +165,8 @@
   },
   "language": {
     "description": "Choose your preferred language",
+    "english": "ENGLISH",
+    "german": "DEUTSCH",
     "select_prompt": "Select Language",
     "title": "Language Selection"
   },

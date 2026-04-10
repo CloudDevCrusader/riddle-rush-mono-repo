@@ -292,7 +292,12 @@ onMounted(() => {
 
 .debug-enter-active,
 .debug-leave-active {
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .debug-enter-from,

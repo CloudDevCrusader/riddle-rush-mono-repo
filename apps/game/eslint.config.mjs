@@ -8,6 +8,7 @@ export default withNuxt([
       'playwright-report-simple/**',
       'test-results/**',
       '.features-gen/**',
+      'android/**',
     ],
   },
   {

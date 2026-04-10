@@ -12,7 +12,9 @@ const repoRoot = resolve(__dirname, '../..')
 const COMMANDS = {
   'git:status': { command: 'git', args: ['status', '-sb'] },
   'workspace:check': { command: 'pnpm', args: ['run', 'workspace:check'] },
+  // eslint-disable-next-line @stylistic/quote-props
   typecheck: { command: 'pnpm', args: ['run', 'typecheck'] },
+  // eslint-disable-next-line @stylistic/quote-props
   lint: { command: 'pnpm', args: ['run', 'lint'] },
   'test:unit': { command: 'pnpm', args: ['run', 'test:unit'] },
 }

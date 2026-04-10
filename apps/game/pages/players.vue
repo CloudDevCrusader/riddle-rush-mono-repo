@@ -31,7 +31,11 @@
                 –
               </button>
               <div class="stepper__count" aria-live="polite">
-                {{ t('players.count_label') }}: {{ playerCount }} / {{ maxPlayers }}
+                <span class="stepper__label">{{ t('players.count_label') }}:</span>
+                <Transition name="count-pop" mode="out-in">
+                  <span :key="playerCount" class="stepper__number">{{ playerCount }}</span>
+                </Transition>
+                <span class="stepper__separator">/ {{ maxPlayers }}</span>
               </div>
               <button
                 class="stepper__button stepper__button--plus"
@@ -71,6 +75,7 @@
                 :placeholder="placeholderForIndex(index)"
                 maxlength="20"
                 autocomplete="off"
+                inputmode="search"
               />
             </div>
           </GameScrollList>
@@ -239,6 +244,7 @@ syncPlayerList(playerCount.value)
     0 10px 0 #a5261f,
     0 16px 28px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+  touch-action: manipulation;
   transition:
     transform var(--transition-base),
     box-shadow var(--transition-base);
@@ -265,12 +271,12 @@ syncPlayerList(playerCount.value)
 }
 
 .stepper__pill {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-lg);
   padding: var(--spacing-md) var(--spacing-xl);
-  min-width: min(100%, 640px);
+  width: min(100%, 640px);
   border-radius: mockup-clamp(26px);
   border: 4px solid var(--color-border-orange);
   background: linear-gradient(180deg, #3c98e2 0%, #0a7bda 100%);
@@ -281,6 +287,7 @@ syncPlayerList(playerCount.value)
 }
 
 .stepper__button {
+  flex-shrink: 0;
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -289,6 +296,7 @@ syncPlayerList(playerCount.value)
   font-size: var(--font-size-2xl);
   color: #fff;
   cursor: pointer;
+  touch-action: manipulation;
   transition:
     transform var(--transition-base),
     box-shadow var(--transition-base),
@@ -315,18 +323,63 @@ syncPlayerList(playerCount.value)
     cursor: not-allowed;
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(2px);
   }
 }
 
 .stepper__count {
-  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
   font-family: var(--font-display);
   font-size: var(--font-size-2xl);
   color: #e7f4ff;
   text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
   letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.stepper__number {
+  display: inline-block;
+  min-width: 1.2em;
+  text-align: center;
+}
+
+.stepper__separator {
+  opacity: 0.7;
+}
+
+/* Count change animation */
+.count-pop-enter-active {
+  animation: countIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.count-pop-leave-active {
+  animation: countOut 0.15s ease-in;
+}
+
+@keyframes countIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes countOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5) translateY(-8px);
+  }
 }
 
 .players-list {
@@ -429,10 +482,63 @@ syncPlayerList(playerCount.value)
   .players-panel {
     padding: var(--spacing-lg);
   }
+}
+
+@media (max-width: 480px) {
+  .stepper__button {
+    width: 48px;
+    height: 48px;
+    font-size: var(--font-size-xl);
+  }
+
+  .stepper__count {
+    font-size: var(--font-size-lg);
+  }
+
+  .stepper__label {
+    display: none;
+  }
 
   .stepper__pill {
-    grid-template-columns: 1fr;
-    text-align: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+
+  .player-row__label {
+    font-size: var(--font-size-lg);
+  }
+
+  .player-row__input {
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .start-button {
+    font-size: var(--font-size-lg);
+    min-height: mockup-clamp(60px);
+  }
+}
+
+@media (max-width: 360px) {
+  .stepper__button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .stepper__pill {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-width: 3px;
+  }
+
+  .player-row {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .player-row__input {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-width: 2px;
   }
 }
 
@@ -443,6 +549,11 @@ syncPlayerList(playerCount.value)
   }
 
   .players-panel {
+    animation: none;
+  }
+
+  .count-pop-enter-active,
+  .count-pop-leave-active {
     animation: none;
   }
 }

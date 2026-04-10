@@ -8,6 +8,13 @@
       "range": ""
     },
     {
+      "label": "Allow any range for pnpm overrides (security patches)",
+      "packages": ["**"],
+      "dependencies": ["**"],
+      "dependencyTypes": ["pnpmOverrides"],
+      "isIgnored": true
+    },
+    {
       "label": "Use caret for other dependencies",
       "packages": ["**"],
       "dependencies": ["**"],

@@ -27,7 +27,9 @@
       </GamePanel>
 
       <!-- OK Button -->
-      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk"> OK </GameButton>
+      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk">{{
+        t('common.ok')
+      }}</GameButton>
     </div>
   </GameBackground>
 </template>
@@ -156,5 +158,29 @@ useHead({
 .ok-btn {
   min-width: clamp(150px, 30vw, 200px);
   margin-top: var(--spacing-md);
+}
+
+// Small phone adjustments
+@include small-mobile {
+  .settings-page {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-md);
+  }
+
+  .settings-panel {
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md);
+  }
+
+  .slider-label {
+    font-size: var(--font-size-base);
+  }
+}
+
+@include tiny-mobile {
+  .settings-panel {
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+  }
 }
 </style>

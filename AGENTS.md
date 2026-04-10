@@ -71,7 +71,6 @@ riddle-rush-mono-repo/
 ├── apps/
 │   ├── game/           # Nuxt 4 PWA (main game)
 │   ├── mobile/         # NativeScript Vue app
-│   ├── docs/           # Documentation (Nuxt Content)
 │   └── tolgee/         # Translation management
 ├── packages/
 │   ├── config/         # Shared Vite/build configs
@@ -79,6 +78,7 @@ riddle-rush-mono-repo/
 │   ├── types/          # Shared TypeScript types
 │   └── riddle-cli/     # oclif-based CLI tool
 ├── tools/              # AI agents, Python tools, integrations
+├── docs/               # Documentation and guides
 ├── infrastructure/     # Terraform (AWS S3 + CloudFront)
 └── scripts/            # CI/CD, deployment, agent scripts
 ```
@@ -86,7 +86,7 @@ riddle-rush-mono-repo/
 ### Technology Stack
 
 - **Framework**: Nuxt 4 (client-side SPA with `ssr: false`)
-- **Package Manager**: pnpm 10.28.1 (enforced)
+- **Package Manager**: pnpm 10.x (root `packageManager`: `pnpm@10.32.1`)
 - **Task Runner**: Turborepo
 - **Language**: TypeScript (strict mode)
 - **Styling**: UnoCSS, Flowbite, Tailwind CSS
@@ -116,13 +116,14 @@ pnpm run dev:debug        # Debug mode
 
 ```bash
 # Root commands (via Turbo)
-pnpm run build            # Build all projects
+pnpm run build            # Build game app (Turbo filter: @riddle-rush/game)
+pnpm run build:all        # Build all workspace projects
 pnpm run generate         # Generate static site for game
-pnpm run generate:debug   # Generate with debug mode
 
 # Game app specific
 pnpm run build            # Build game app
 pnpm run build:debug      # Build with debug mode
+pnpm run generate:debug   # Generate with debug mode
 pnpm run preview          # Preview production build
 ```
 
@@ -130,10 +131,8 @@ pnpm run preview          # Preview production build
 
 ```bash
 # Unit tests (Vitest) - via Turbo
-pnpm run test             # Run all tests
+pnpm run test             # Run game tests (Turbo filter: @riddle-rush/game)
 pnpm run test:unit        # Run all unit tests
-pnpm run test:watch       # Watch mode
-pnpm run test:unit:coverage # With coverage report
 
 # From apps/game/
 pnpm run test:unit              # Run once
@@ -142,8 +141,12 @@ pnpm run test:watch             # Watch mode
 
 # E2E tests (Playwright) - via Turbo
 pnpm run test:e2e               # Headless
-pnpm run test:e2e:headed        # Show browser
 pnpm run test:e2e:ui            # Interactive UI
+pnpm run test:e2e:docker        # Run E2E tests in Docker
+
+# From apps/game/
+pnpm run test:e2e               # Headless
+pnpm run test:e2e:headed        # Show browser
 pnpm run test:e2e:simple        # Simplified config
 pnpm run test:bdd               # BDD tests (generate + run)
 pnpm run test:bdd:headed        # BDD with visible browser
@@ -366,7 +369,6 @@ git commit -m "chore: update dependencies"
 apps/           # Application code
   game/         # Nuxt 4 PWA game
   mobile/       # NativeScript Vue mobile
-  docs/         # Nuxt Content documentation
   tolgee/       # Translation management
 
 packages/       # Shared packages
@@ -376,6 +378,7 @@ packages/       # Shared packages
   riddle-cli/   # oclif CLI tool
 
 tools/          # AI agents, Python tools, integrations
+docs/           # Documentation and guides
 infrastructure/ # Terraform configs (AWS)
 scripts/        # Deployment and utility scripts
 ```
@@ -648,11 +651,12 @@ pnpm run test:unit        # Unit tests pass (if relevant)
 
 ### Pre-Commit Hooks (Husky)
 
-Already configured in `.husky/pre-commit`:
+Husky is available via the root `prepare` script (`"prepare": "husky"` in `package.json`).
 
-- Runs lint-staged on modified files
-- Validates commit message format
-- Prevents committing with errors
+In Zenflow/worktree setups, tracked hook files may be missing. If `.husky/` is not present, run checks manually before commit:
+
+- `pnpm run workspace:check`
+- `pnpm run test:unit` (when relevant)
 
 ### Lint-Staged Configuration
 
@@ -660,8 +664,11 @@ See `.lintstagedrc.json`:
 
 ```json
 {
-  "*.{js,ts,vue}": ["eslint --fix", "prettier --write"],
-  "*.{json,md,yml}": ["prettier --write"]
+  "*.{ts,tsx,vue}": ["eslint --fix", "prettier --write"],
+  "*.{js,jsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,md,yml,yaml}": ["prettier --write"],
+  "*.{css,scss}": ["prettier --write"],
+  "*.tf": ["terraform fmt"]
 }
 ```
 
@@ -673,7 +680,7 @@ See `.syncpackrc.json`:
 - Caret ranges (`^`) for external dependencies
 - Enforces consistent versions across all workspace `package.json` files
 
-### ESLint 9 (Flat Config)
+### ESLint 10 (Flat Config)
 
 Root `eslint.config.mjs` using `@nuxt/eslint-config/flat`:
 
@@ -783,20 +790,18 @@ changes
 
 ## Deployment
 
-### GitLab CI/CD Pipeline
+### GitHub Actions CI/CD Workflows
 
 **Stages**: test → quality → build → deploy → verify
 
-- Custom Docker image (`ci-build`) for faster builds (~40-50% speed improvement)
-- **Monorepo change detection** — only runs jobs for affected apps/packages
-- Pipeline runs on merge requests, manual triggers, version tags, and main/staging/development branches
+- Workflows are defined in `.github/workflows/` (for example `optimized-ci-cd.yml`, `deploy.yml`, `deploy-dev.yml`)
+- Triggers include push, pull request, and manual `workflow_dispatch` (depending on workflow)
 
 **Branch Strategy:**
 
 - `main` → production (`https://riddlerush.de`)
-- `staging` → staging environment
-- `development` → dev environment
-- `tags` → AWS deployment (S3 + CloudFront)
+- `development` → dev environment (`https://dev.riddlerush.de`)
+- `staging` → quality checks / staging workflows
 
 ### Deployment Workflow
 
@@ -846,7 +851,7 @@ After deployment, verify:
 1. ✅ Tests pass on deployed site (use `BASE_URL` env var)
 2. ✅ Lighthouse scores are good
 3. ✅ Performance metrics are acceptable
-4. ✅ Check deployment logs in GitLab CI/CD
+4. ✅ Check deployment logs in GitHub Actions
 
 ---
 
@@ -944,7 +949,7 @@ This project uses **Zenflow** for task orchestration. Each task runs in an isola
 - Default locale: `de` (German), available: `de`, `en`
 - Strategy: `no_prefix` (no locale in URL path)
 - `detectBrowserLanguage: false` — explicit selection only
-- Translation files: `locales/de.json`, `locales/en.json`
+- Translation files: `translations/locales/de.json`, `translations/locales/en.json`
 - Use `useI18n().t()` for translations
 
 ### Node Version
@@ -953,7 +958,7 @@ Minimum Node version: **20**
 
 ### Package Manager
 
-Must use **pnpm 10.28.1** (enforced via `packageManager` field in package.json). Use `pnpm` (not `npm` or `yarn`).
+Use `pnpm` (not `npm` or `yarn`). Root `packageManager` is currently `pnpm@10.32.1`.
 
 ---
 
@@ -971,9 +976,15 @@ Located in `packages/config/vite.config.ts`:
 
 ### MCP Servers
 
-Available servers (configured in `.mcp.json`):
+MCP configuration is split by client profile:
+
+- `.mcp.json`: generic MCP clients (currently `Tabby MCP`)
+- `fastmcp.json`: Claude/Desktop profile with the full server set
+
+Available servers in `fastmcp.json` include:
 
 - `docker` (Docker Hub search + container management)
+- `riddle-rush-subagents` (VoltAgent repo tools)
 - `nuxt-ui`, `nuxt` (Nuxt tooling)
 - `playwright` (Playwright automation)
 - `aws-docs` (AWS documentation)
@@ -1170,7 +1181,8 @@ Large task:   5-10 commits
 
 # 🚀 Dev Commands
 pnpm run dev              # Start game
-pnpm run build            # Build all
+pnpm run build            # Build game app
+pnpm run build:all        # Build all workspace projects
 pnpm run test             # Run tests
 pnpm run workspace:check  # Full validation
 
@@ -1210,4 +1222,4 @@ Before claiming a task is complete:
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026

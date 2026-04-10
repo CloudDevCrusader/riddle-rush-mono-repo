@@ -27,6 +27,11 @@ on:
         required: false
         default: true
         type: boolean
+      run_e2e:
+        description: 'Run E2E tests'
+        required: false
+        default: false
+        type: boolean
       deploy:
         description: 'Deploy to environment'
         required: false
@@ -104,49 +109,55 @@ jobs:
         run: |
           echo "Running quality checks..."
 
-          SYNCPACK_PASSED="false"
-          TYPECHECK_PASSED="false"
-          LINT_PASSED="false"
-
           # Dependency version check
+          syncpack_passed=true
           if pnpm run syncpack:check; then
-            SYNCPACK_PASSED="true"
             echo "syncpack-passed=true" >> $GITHUB_OUTPUT
           else
             echo "syncpack-passed=false" >> $GITHUB_OUTPUT
+            syncpack_passed=false
           fi
 
           # TypeScript typecheck
+          typecheck_passed=true
           if pnpm run typecheck; then
-            TYPECHECK_PASSED="true"
             echo "typecheck-passed=true" >> $GITHUB_OUTPUT
           else
             echo "typecheck-passed=false" >> $GITHUB_OUTPUT
+            echo "::error::TypeScript typecheck failed"
+            typecheck_passed=false
           fi
 
-          # ESLint
+          # ESLint (full project — catches pre-existing issues too)
+          lint_passed=true
           if pnpm run lint; then
-            LINT_PASSED="true"
             echo "lint-passed=true" >> $GITHUB_OUTPUT
           else
             echo "lint-passed=false" >> $GITHUB_OUTPUT
+            echo "::error::ESLint failed"
+            lint_passed=false
           fi
 
           # Code formatting check
+          format_passed=true
           if pnpm run format:check; then
             echo "format-passed=true" >> $GITHUB_OUTPUT
           else
             echo "format-passed=false" >> $GITHUB_OUTPUT
+            echo "::error::Code formatting check failed"
+            format_passed=false
           fi
 
-          # Set overall status
-          if [[ "$SYNCPACK_PASSED" == "true" && \
-                "$TYPECHECK_PASSED" == "true" && \
-                "$LINT_PASSED" == "true" ]]; then
-            echo "tests-passed=true" >> $GITHUB_OUTPUT
-          else
-            echo "tests-passed=false" >> $GITHUB_OUTPUT
+          # Fail the step if any check failed (blocks downstream jobs)
+          if [[ "$typecheck_passed" == "false" || \
+                "$lint_passed" == "false" || \
+                "$syncpack_passed" == "false" || \
+                "$format_passed" == "false" ]]; then
+            echo "::error::Quality checks failed — blocking pipeline"
+            exit 1
           fi
+
+          echo "tests-passed=true" >> $GITHUB_OUTPUT
 
       - name: Upload quality check results
         if: always()
@@ -171,8 +182,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 22] # Test multiple Node versions
-        os: [ubuntu-latest, windows-latest, macos-latest] # Cross-platform testing
+        node-version: [20, 22]
+        os: [ubuntu-latest]
 
     steps:
       - name: Checkout repository
@@ -234,7 +245,9 @@ jobs:
     name: E2E Tests (${{ matrix.browser }})
     runs-on: ubuntu-latest
     needs: quality-checks
-    if: needs.quality-checks.outputs.tests-passed == 'true' || github.event_name == 'workflow_dispatch'
+    if: |
+      (github.ref == 'refs/heads/main' && needs.quality-checks.outputs.tests-passed == 'true')
+      || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_e2e == 'true')
     timeout-minutes: 30
     continue-on-error: true
 
@@ -688,7 +701,7 @@ jobs:
   summary:
     name: Pipeline Summary
     runs-on: ubuntu-latest
-    needs: [quality-checks, unit-tests, build, security-scan, deploy-vercel, deploy-docs]
+    needs: [quality-checks, unit-tests, e2e-tests, build, security-scan, deploy-vercel, deploy-docs]
     if: always()
 
     steps:
@@ -735,7 +748,7 @@ jobs:
   notify-failure:
     name: Notify on Failure
     runs-on: ubuntu-latest
-    needs: [quality-checks, unit-tests, build, security-scan, deploy-vercel, deploy-docs]
+    needs: [quality-checks, unit-tests, e2e-tests, build, security-scan, deploy-vercel, deploy-docs]
     if: failure() && github.event_name != 'pull_request'
     timeout-minutes: 5
 

@@ -90,15 +90,18 @@ test.describe('@mobile Mobile Game Flow', () => {
   test('touch targets meet minimum 44x44px requirement on players page', async ({ page }) => {
     await page.goto('/players')
     await page.waitForLoadState('networkidle')
+    // Wait for splash screen to finish and actual page content to render
+    await expect(page.locator('[data-testid="players-start-button"]')).toBeVisible({
+      timeout: 15000,
+    })
 
     const result = await verifyTouchTargets(page, 44)
 
-    // Most interactive elements should be large enough (allow a small tolerance for edge cases)
     expect(result.valid).toBeGreaterThan(0)
-    // Report any failures but don't hard-fail – some inputs may be smaller by design
-    if (result.tooSmall.length > 0) {
-      console.warn('[Mobile] Touch targets below 44px:', result.tooSmall)
-    }
+    expect(
+      result.tooSmall,
+      `Interactive controls below 44x44px: ${JSON.stringify(result.tooSmall)}`
+    ).toHaveLength(0)
   })
 
   test('tap interaction navigates from main menu to players page', async ({ page }) => {
@@ -118,13 +121,16 @@ test.describe('@mobile Mobile Game Flow', () => {
   test('touch targets meet minimum 44x44px on main menu', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
+    // Wait for splash screen to finish and actual page content to render
+    await expect(page.locator('[data-testid="main-menu-play"]')).toBeVisible({ timeout: 15000 })
 
     const result = await verifyTouchTargets(page, 44)
 
     expect(result.valid).toBeGreaterThan(0)
-    if (result.tooSmall.length > 0) {
-      console.warn('[Mobile] Touch targets below 44px on main menu:', result.tooSmall)
-    }
+    expect(
+      result.tooSmall,
+      `Interactive controls below 44x44px on main menu: ${JSON.stringify(result.tooSmall)}`
+    ).toHaveLength(0)
   })
 
   // ── Complete game flows ──────────────────────────────────────────────────
@@ -247,12 +253,17 @@ test.describe('@tablet Tablet Game Flow', () => {
   test('touch targets work correctly on tablet (players page)', async ({ page }) => {
     await page.goto('/players')
     await page.waitForLoadState('networkidle')
+    // Wait for splash screen to finish and actual page content to render
+    await expect(page.locator('[data-testid="players-start-button"]')).toBeVisible({
+      timeout: 15000,
+    })
 
     const result = await verifyTouchTargets(page, 44)
     expect(result.valid).toBeGreaterThan(0)
-    if (result.tooSmall.length > 0) {
-      console.warn('[Tablet] Touch targets below 44px:', result.tooSmall)
-    }
+    expect(
+      result.tooSmall,
+      `Interactive controls below 44x44px on tablet: ${JSON.stringify(result.tooSmall)}`
+    ).toHaveLength(0)
   })
 
   test('complete game flow works on tablet viewport', async ({ page }) => {

@@ -7,7 +7,7 @@ description: Deploying Nuxt applications to various hosting platforms
 
 Nuxt is platform-agnostic thanks to [Nitro](https://nitro.build), its server engine. You can deploy to almost any platform with minimal configuration—Node.js servers, static hosting, serverless functions, or edge networks.
 
-> **Full list of supported platforms:** https://nitro.build/deploy
+> **Full list of supported platforms:** <https://nitro.build/deploy>
 
 ## Deployment Modes
 

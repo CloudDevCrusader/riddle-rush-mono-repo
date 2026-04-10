@@ -9,7 +9,7 @@ description: Project setup files including .gitignore, GitHub Actions workflows,
 
 Create when `.gitignore` is not present:
 
-```
+```text
 *.log
 *.tgz
 .cache

@@ -1,6 +1,6 @@
 # turbo run Flags Reference
 
-Full docs: https://turborepo.dev/docs/reference/run
+Full docs: <https://turborepo.dev/docs/reference/run>
 
 ## Package Selection
 
@@ -190,7 +190,7 @@ turbo build --ui=stream  # streaming logs (default in CI)
 
 # turbo-ignore
 
-Full docs: https://turborepo.dev/docs/reference/turbo-ignore
+Full docs: <https://turborepo.dev/docs/reference/turbo-ignore>
 
 Skip CI work when nothing relevant changed. Useful for skipping container setup.
 

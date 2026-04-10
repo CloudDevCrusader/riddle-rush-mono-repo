@@ -1,6 +1,6 @@
 from typing import Type
 
-from crewai.tools import BaseTool  # type: ignore[import-not-found]
+from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
 

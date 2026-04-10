@@ -281,84 +281,142 @@ export async function verifyResponsiveLayout(
  */
 export async function verifyTouchTargets(
   page: Page,
-  minSize: number = DEFAULT_MIN_TOUCH_SIZE
+  minSize: number = DEFAULT_MIN_TOUCH_SIZE,
+  options: {
+    includeTextInputs?: boolean
+  } = {}
 ): Promise<{
   valid: number
   tooSmall: { selector: string; width: number; height: number }[]
+  ignored: { selector: string; width: number; height: number; reason: string }[]
 }> {
-  const result = await page.evaluate((minTouchSize) => {
-    // Selectors for interactive elements
-    const interactiveSelectors = [
-      'a[href]',
-      'button',
-      'input',
-      'select',
-      'textarea',
-      '[role="button"]',
-      '[role="link"]',
-      '[role="menuitem"]',
-      '[role="tab"]',
-      '[role="checkbox"]',
-      '[role="radio"]',
-      '[tabindex]:not([tabindex="-1"])',
-      '[onclick]',
-      '[data-clickable]',
-    ].join(', ')
+  const { includeTextInputs = false } = options
 
-    const elements = document.querySelectorAll(interactiveSelectors)
-    let validCount = 0
-    const tooSmall: { selector: string; width: number; height: number }[] = []
+  const result = await page.evaluate(
+    ({ minTouchSize, includeSmallTextInputs }) => {
+      const interactiveSelectors = [
+        'a[href]',
+        'button',
+        'input[type="button"]',
+        'input[type="submit"]',
+        'input[type="reset"]',
+        'input[type="checkbox"]',
+        'input[type="radio"]',
+        'input[type="range"]',
+        'select',
+        'textarea',
+        '[role="button"]',
+        '[role="link"]',
+        '[role="menuitem"]',
+        '[role="tab"]',
+        '[role="checkbox"]',
+        '[role="radio"]',
+        '[tabindex]:not([tabindex="-1"])',
+        '[onclick]',
+        '[data-clickable]',
+      ]
 
-    elements.forEach((el) => {
-      const rect = el.getBoundingClientRect()
-
-      // Skip hidden elements
-      if (rect.width === 0 || rect.height === 0) return
-
-      // Skip elements not in viewport
-      if (
-        rect.bottom < 0 ||
-        rect.top > window.innerHeight ||
-        rect.right < 0 ||
-        rect.left > window.innerWidth
-      ) {
-        return
+      if (includeSmallTextInputs) {
+        interactiveSelectors.push(
+          'input:not([type])',
+          'input[type="text"]',
+          'input[type="search"]',
+          'input[type="email"]',
+          'input[type="password"]',
+          'input[type="number"]',
+          'input[type="tel"]',
+          'input[type="url"]'
+        )
       }
 
-      const width = Math.round(rect.width)
-      const height = Math.round(rect.height)
+      const textInputSelector =
+        'input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="tel"], input[type="url"]'
 
-      if (width >= minTouchSize && height >= minTouchSize) {
-        validCount++
-      } else {
-        // Build a useful selector for the element
-        let selector = el.tagName.toLowerCase()
-        if (el.id) {
-          selector = `#${el.id}`
-        } else if (el.className && typeof el.className === 'string') {
-          const firstClass = el.className.trim().split(' ')[0]
-          if (firstClass) {
-            selector = `${selector}.${firstClass}`
+      // Selectors for interactive elements
+      const selectorText = interactiveSelectors.join(', ')
+
+      const elements = document.querySelectorAll(selectorText)
+      let validCount = 0
+      const tooSmall: { selector: string; width: number; height: number }[] = []
+      const ignored: { selector: string; width: number; height: number; reason: string }[] = []
+
+      elements.forEach((el) => {
+        const rect = el.getBoundingClientRect()
+
+        // Skip hidden elements
+        if (rect.width === 0 || rect.height === 0) return
+
+        // Skip elements not in viewport
+        if (
+          rect.bottom < 0 ||
+          rect.top > window.innerHeight ||
+          rect.right < 0 ||
+          rect.left > window.innerWidth
+        ) {
+          return
+        }
+
+        const width = Math.round(rect.width)
+        const height = Math.round(rect.height)
+
+        const isTextInput =
+          !includeSmallTextInputs &&
+          el instanceof HTMLInputElement &&
+          el.matches(textInputSelector) &&
+          !(el.type === 'button' || el.type === 'submit' || el.type === 'reset')
+
+        if (width >= minTouchSize && height >= minTouchSize) {
+          validCount++
+        } else if (isTextInput) {
+          let selector = el.tagName.toLowerCase()
+          if (el.id) {
+            selector = `#${el.id}`
+          } else if (el.className && typeof el.className === 'string') {
+            const firstClass = el.className.trim().split(' ')[0]
+            if (firstClass) {
+              selector = `${selector}.${firstClass}`
+            }
           }
+
+          ignored.push({
+            selector,
+            width,
+            height,
+            reason: 'text-input-excluded-by-contract',
+          })
+        } else {
+          // Build a useful selector for the element
+          let selector = el.tagName.toLowerCase()
+          if (el.id) {
+            selector = `#${el.id}`
+          } else if (el.className && typeof el.className === 'string') {
+            const firstClass = el.className.trim().split(' ')[0]
+            if (firstClass) {
+              selector = `${selector}.${firstClass}`
+            }
+          }
+
+          // Add text content hint for buttons/links
+          const text = el.textContent?.trim().slice(0, 20)
+          if (text) {
+            selector += `[text="${text}${text.length >= 20 ? '...' : ''}"]`
+          }
+
+          tooSmall.push({ selector, width, height })
         }
+      })
 
-        // Add text content hint for buttons/links
-        const text = el.textContent?.trim().slice(0, 20)
-        if (text) {
-          selector += `[text="${text}${text.length >= 20 ? '...' : ''}"]`
-        }
-
-        tooSmall.push({ selector, width, height })
-      }
-    })
-
-    return { valid: validCount, tooSmall }
-  }, minSize)
+      return { valid: validCount, tooSmall, ignored }
+    },
+    { minTouchSize: minSize, includeSmallTextInputs: includeTextInputs }
+  )
 
   console.log('[Mobile] Touch target verification:', {
     valid: result.valid,
     tooSmall: result.tooSmall.length,
+    ignored: result.ignored.length,
     minSize: `${minSize}x${minSize}px`,
+    includeTextInputs,
   })
 
   return result

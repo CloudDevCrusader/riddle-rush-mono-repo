@@ -96,7 +96,7 @@ fi
 S3_BUCKET="${AWS_S3_BUCKET:-riddle-rush-pwa}"
 CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID-}"
 AWS_REGION="${AWS_REGION:-eu-central-1}"
-BUILD_DIR="apps/game/.output/public"
+BUILD_DIR="${PROJECT_ROOT}/apps/game/.output/public"
 DRY_RUN="${DRY_RUN:-false}"
 DELETE_OLD_ASSETS="${DELETE_OLD_ASSETS:-false}"
 
@@ -149,19 +149,19 @@ if [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS-}" ]]; then
 	pnpm install --frozen-lockfile
 
 	echo -e "\n✅ Running linter..."
-	(cd apps/game && pnpm run lint) || {
+	pnpm run lint || {
 		echo -e "${RED}❌ Lint failed${NC}"
 		exit 1
 	}
 
 	echo -e "\n🔷 Running type check..."
-	(cd apps/game && pnpm run typecheck) || {
+	pnpm run typecheck || {
 		echo -e "${RED}❌ Type check failed${NC}"
 		exit 1
 	}
 
 	echo -e "\n🧪 Running unit tests..."
-	(cd apps/game && pnpm run test:unit) || {
+	pnpm run test:unit || {
 		echo -e "${RED}❌ Tests failed${NC}"
 		exit 1
 	}
@@ -173,7 +173,7 @@ fi
 # Always build before deployment to ensure fresh build
 echo -e "\n🏗️  Building application..."
 # Use NODE_ENV if set, otherwise default to production
-if [[ -z "${NODE_ENV}" ]]; then
+if [[ -z "${NODE_ENV-}" ]]; then
 	export NODE_ENV=production
 fi
 
@@ -184,6 +184,13 @@ if [[ "${ENVIRONMENT}" == "development" ]]; then
 fi
 
 echo -e "  ${BLUE}Building with NODE_ENV=${NODE_ENV}${NC}"
+
+# Force non-Vercel preset for AWS deployments
+# When VERCEL env var is set (e.g. from 'vercel link'), Nuxt uses 'vercel-static' preset
+# which outputs to .vercel/output/static/ instead of .output/public/
+unset VERCEL
+export NITRO_PRESET=static
+
 (cd apps/game && BASE_URL=/ pnpm run generate)
 
 if [[ -z "${CI-}" ]]; then
@@ -277,6 +284,7 @@ else
 		--exclude "sw.js" \
 		--exclude "workbox-*.js" \
 		--exclude "manifest.json" \
+		--exclude "manifest.webmanifest" \
 		--exclude "*.xml" \
 		--exclude "*.txt"
 
@@ -301,6 +309,7 @@ else
 		--cache-control "public, max-age=86400" \
 		--exclude "*" \
 		--include "manifest.json" \
+		--include "manifest.webmanifest" \
 		--include "*.xml" \
 		--include "robots.txt"
 
@@ -410,5 +419,13 @@ cat >deployment-info.json <<EOF
   "fileCount": ${FILE_COUNT}
 }
 EOF
+
+# Clean up .output directory to prevent syncpack issues
+# The build output can contain package.json files that interfere with syncpack checks
+if [[ -d "${BUILD_DIR%/public}" ]]; then
+	echo -e "\n${BLUE}🧹 Cleaning up build output: ${BUILD_DIR%/public}${NC}"
+	rm -rf "${BUILD_DIR%/public}"
+	echo -e "${GREEN}✓ Build output cleaned up${NC}"
+fi
 
 echo -e "\n${GREEN}✅ Done!${NC}"

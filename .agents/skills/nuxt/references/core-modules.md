@@ -242,7 +242,7 @@ export default defineNuxtConfig({
 
 Place in `modules/` directory:
 
-```
+```text
 modules/
 ├── my-module/
 │   ├── index.ts

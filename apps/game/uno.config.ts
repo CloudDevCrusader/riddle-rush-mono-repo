@@ -1,8 +1,8 @@
-import { defineConfig, presetWind, transformerDirectives, transformerVariantGroup } from 'unocss'
+import { defineConfig, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss'
 
 export default defineConfig({
   // Tailwind-compatible utilities
-  presets: [presetWind()],
+  presets: [presetUno()],
 
   // Enable @apply and variant groups in Vue SFC styles
   transformers: [transformerDirectives(), transformerVariantGroup()],

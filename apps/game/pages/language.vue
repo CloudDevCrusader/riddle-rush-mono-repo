@@ -2,7 +2,12 @@
   <GameBackground>
     <div class="language-page" data-testid="language-page">
       <!-- Back button -->
-      <button class="back-btn" :aria-label="t('common.back')" data-testid="language-back-button" @click="goBack">
+      <button
+        class="back-btn"
+        :aria-label="t('common.back')"
+        data-testid="language-back-button"
+        @click="goBack"
+      >
         <span class="back-icon">&#x2190;</span>
       </button>
 
@@ -22,8 +27,12 @@
             <div class="flag-container" data-testid="language-flag-en">
               <span class="flag-emoji">&#x1F1EC;&#x1F1E7;</span>
             </div>
-            <span class="language-name">ENGLISH</span>
-            <div class="checkbox" :class="{ checked: selectedLocale === 'en' }" data-testid="language-checkmark-en">
+            <span class="language-name">{{ t('language.english') }}</span>
+            <div
+              class="checkbox"
+              :class="{ checked: selectedLocale === 'en' }"
+              data-testid="language-checkmark-en"
+            >
               <Transition name="checkmark">
                 <span v-if="selectedLocale === 'en'" class="checkmark">&#x2713;</span>
               </Transition>
@@ -40,8 +49,12 @@
             <div class="flag-container" data-testid="language-flag-de">
               <span class="flag-emoji">&#x1F1E9;&#x1F1EA;</span>
             </div>
-            <span class="language-name">DEUTSCH</span>
-            <div class="checkbox" :class="{ checked: selectedLocale === 'de' }" data-testid="language-checkmark-de">
+            <span class="language-name">{{ t('language.german') }}</span>
+            <div
+              class="checkbox"
+              :class="{ checked: selectedLocale === 'de' }"
+              data-testid="language-checkmark-de"
+            >
               <Transition name="checkmark">
                 <span v-if="selectedLocale === 'de'" class="checkmark">&#x2713;</span>
               </Transition>
@@ -51,7 +64,14 @@
       </GamePanel>
 
       <!-- OK Button -->
-      <GameButton variant="primary" size="lg" data-testid="language-ok-button" @click="confirmSelection"> OK </GameButton>
+      <GameButton
+        variant="primary"
+        size="lg"
+        data-testid="language-ok-button"
+        @click="confirmSelection"
+      >
+        {{ t('common.ok') }}
+      </GameButton>
     </div>
   </GameBackground>
 </template>
@@ -141,7 +161,12 @@ useHead({
   border: 3px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   box-shadow:
     0 4px 0 #b85c0a,
     0 6px 12px rgba(0, 0, 0, 0.25);
@@ -194,7 +219,12 @@ useHead({
   border: 3px solid #c9a45c;
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   box-shadow:
     0 4px 0 #9a7a3a,
     0 6px 12px rgba(0, 0, 0, 0.15);
@@ -266,7 +296,12 @@ useHead({
   border: 2px solid #7a6a4a;
   border-radius: var(--radius-sm);
   flex-shrink: 0;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   &.checked {
     background: #4caf50;
@@ -304,7 +339,7 @@ useHead({
 }
 
 /* Responsive */
-@media (width <= 480px) {
+@media (max-width: 480px) {
   .language-page {
     padding: var(--spacing-md);
     padding-top: var(--spacing-2xl);
@@ -348,6 +383,44 @@ useHead({
 
   .checkmark {
     font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .language-page {
+    padding: var(--spacing-sm);
+    padding-top: var(--spacing-xl);
+    gap: var(--spacing-lg);
+  }
+
+  .back-btn {
+    width: 40px;
+    height: 40px;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm);
+  }
+
+  .language-row {
+    min-height: 52px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .flag-container {
+    width: 40px;
+    height: 40px;
+  }
+
+  .flag-emoji {
+    font-size: 1.5rem;
+  }
+
+  .checkbox {
+    width: 28px;
+    height: 28px;
+  }
+
+  .checkmark {
+    font-size: 1rem;
   }
 }
 </style>

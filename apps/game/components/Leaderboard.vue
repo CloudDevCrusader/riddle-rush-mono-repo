@@ -1,7 +1,13 @@
 <template>
   <Transition name="leaderboard">
-    <div v-if="visible" class="leaderboard-overlay" @click.self="$emit('close')">
-      <div class="leaderboard-panel">
+    <button
+      v-if="visible"
+      class="leaderboard-overlay"
+      type="button"
+      aria-label="Close leaderboard"
+      @click.self="$emit('close')"
+    >
+      <div class="leaderboard-panel" @click.stop>
         <header class="leaderboard-header">
           <h2>{{ t('leaderboard.title') }}</h2>
           <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
@@ -55,7 +61,7 @@
           </button>
         </footer>
       </div>
-    </div>
+    </button>
   </Transition>
 </template>
 
@@ -100,6 +106,9 @@ const clearLeaderboard = () => {
     max(var(--spacing-md), env(safe-area-inset-right, 0px))
     max(var(--spacing-md), env(safe-area-inset-bottom, 0px))
     max(var(--spacing-md), env(safe-area-inset-left, 0px));
+  border: none;
+  cursor: pointer;
+  width: 100%;
 }
 
 .leaderboard-panel {
@@ -111,6 +120,7 @@ const clearLeaderboard = () => {
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-xl);
+  cursor: default;
 }
 
 .leaderboard-header {
@@ -137,12 +147,19 @@ const clearLeaderboard = () => {
   background: var(--color-light);
   font-size: 18px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  touch-action: manipulation;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .leaderboard-content {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--spacing-md);
 }
 
@@ -171,7 +188,12 @@ const clearLeaderboard = () => {
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-light);
   border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .entry-row.top-three {
@@ -240,7 +262,12 @@ const clearLeaderboard = () => {
 
 .leaderboard-enter-active,
 .leaderboard-leave-active {
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .leaderboard-enter-from,

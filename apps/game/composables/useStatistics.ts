@@ -67,10 +67,12 @@ export function useStatistics() {
         score: session.score,
         category: session.category.name,
         categoryKey: session.category.key,
+        playerName: session.players[0]?.name ?? 'Player',
         attempts: totalAttempts,
         correctAttempts,
         timestamp: session.endTime,
         duration,
+        letter: session.letter,
       }
       await saveLeaderboardEntry(leaderboardEntry)
     }

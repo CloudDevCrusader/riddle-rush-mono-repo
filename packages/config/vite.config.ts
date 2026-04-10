@@ -71,7 +71,7 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
           open: false,
           gzipSize: true,
           brotliSize: true,
-        }) as Plugin
+        })
       )
     } catch {
       // Plugin not installed, skip
@@ -97,7 +97,7 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         gzipSize: true,
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
-      }) as Plugin
+      })
     )
   } catch {
     // Plugin not installed, skip

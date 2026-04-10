@@ -1,4 +1,5 @@
 import { useGameStore } from '~/stores/gameStore'
+import { useLoadingStore } from '~/stores/loadingStore'
 
 const getRouteGameId = (to: { params?: Record<string, unknown>; path: string }) => {
   const fromParam = to.params?.gameId
@@ -12,6 +13,17 @@ const getRouteGameId = (to: { params?: Record<string, unknown>; path: string }) 
 
 const isGuardedRoute = (path: string) => path.startsWith('/game') || path.startsWith('/results')
 
+/**
+ * Force-hide loading before redirecting away from the guarded route.
+ * Middleware redirects bypass useNavigation's hideLoading, leaving the
+ * reference count unbalanced.  Calling forceHide() here resets it.
+ */
+const redirectSafe = (path: string) => {
+  const loading = useLoadingStore()
+  loading.forceHide()
+  return navigateTo(path)
+}
+
 export default defineNuxtRouteMiddleware(async (to) => {
   if (!import.meta.client || !isGuardedRoute(to.path)) {
     return
@@ -20,28 +32,26 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const store = useGameStore()
   const routeGameId = getRouteGameId(to)
 
-  // Always hydrate persisted session first to make route boundary canonical.
-  await store.loadFromDB()
-
   let session = store.currentSession
 
-  if (routeGameId) {
+  if (!session || (routeGameId && session.id !== routeGameId)) {
+    await store.loadFromDB()
+    session = store.currentSession
+  }
+
+  if (routeGameId && (!session || session.id !== routeGameId)) {
     const loaded = await store.loadSessionById(routeGameId)
-    // Route id is authoritative on id-based routes.
-    // Never keep a stale in-memory session if the requested id cannot be loaded.
     session = loaded ?? null
   }
 
   const pending = store.pendingPlayerNames
 
-  // If players are pending and current session is not a multiplayer round,
-  // force canonical bootstrap through round-start.
   if (pending.length > 0 && (!session || (session.players?.length ?? 0) === 0)) {
-    return navigateTo('/round-start')
+    return redirectSafe('/round-start')
   }
 
   if (!session) {
-    return navigateTo('/players')
+    return redirectSafe('/players')
   }
 
   const canonicalGamePath = `/game/${session.id}`

@@ -48,14 +48,24 @@ onBeforeUnmount(() => {
   if (navTimeout) clearTimeout(navTimeout)
   if (skipTimeout) clearTimeout(skipTimeout)
 })
+
+useHead({
+  title: t('app.title'),
+  meta: [
+    {
+      name: 'description',
+      content: t('app.description'),
+    },
+  ],
+})
 </script>
 
 <template>
-  <div class="splash-page" @click="handleSkip">
+  <button class="splash-page" type="button" aria-label="Skip splash screen" @click="handleSkip">
     <GameBackground />
 
     <div class="splash-container">
-      <GameHeader color="gold" class="splash-title"> RIDDLE RUSH </GameHeader>
+      <GameHeader color="gold" class="splash-title">{{ t('app.title') }}</GameHeader>
 
       <div class="splash-loading">
         <div class="loading-bar">
@@ -66,7 +76,7 @@ onBeforeUnmount(() => {
         <p class="loading-text">{{ t('common.loading') }}</p>
       </div>
     </div>
-  </div>
+  </button>
 </template>
 
 <style scoped lang="scss">
@@ -78,6 +88,11 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 0;
 }
 
 .splash-container {
@@ -89,11 +104,13 @@ onBeforeUnmount(() => {
   gap: var(--spacing-3xl);
   width: 100%;
   padding: var(--spacing-2xl);
+  cursor: default;
 }
 
 .splash-title {
   :deep(.game-header__title) {
     font-size: var(--font-size-display);
+    text-transform: uppercase;
   }
 }
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 'use strict'
 
 const net = require('node:net')
@@ -6,11 +7,14 @@ const os = require('node:os')
 const path = require('node:path')
 const { spawn } = require('node:child_process')
 
-const session = (
-  process.env.OPENCODE_BROWSER_AGENT_SESSION ||
-  process.env.AGENT_BROWSER_SESSION ||
-  'default'
-).trim()
+const session = [
+  process.env.OPENCODE_BROWSER_AGENT_SESSION,
+  process.env.AGENT_BROWSER_SESSION,
+  'default',
+]
+  .find(Boolean)
+  .trim()
+
 const socketPath =
   process.env.OPENCODE_BROWSER_AGENT_SOCKET ||
   path.join(os.tmpdir(), `agent-browser-${session}.sock`)
@@ -28,10 +32,10 @@ const host =
   process.env.OPENCODE_BROWSER_AGENT_GATEWAY_HOST ||
   process.env.OPENCODE_BROWSER_AGENT_HOST ||
   '0.0.0.0'
-const port =
-  Number(
-    process.env.OPENCODE_BROWSER_AGENT_GATEWAY_PORT || process.env.OPENCODE_BROWSER_AGENT_PORT
-  ) || getPortForSession(session)
+
+const portEnv =
+  process.env.OPENCODE_BROWSER_AGENT_GATEWAY_PORT || process.env.OPENCODE_BROWSER_AGENT_PORT
+const port = Number(portEnv) || getPortForSession(session)
 
 function resolveDaemonPath() {
   const override = process.env.OPENCODE_BROWSER_AGENT_DAEMON
@@ -92,7 +96,9 @@ async function createAgentConnection() {
       await sleep(100)
       try {
         return await connectAgentSocket()
-      } catch {}
+      } catch {
+        /* retry silently */
+      }
     }
     throw new Error(`Could not connect to agent-browser socket at ${socketPath}`)
   }
@@ -114,10 +120,14 @@ const server = net.createServer(async (client) => {
   const close = () => {
     try {
       client.destroy()
-    } catch {}
+    } catch {
+      /* socket already destroyed */
+    }
     try {
       upstream.destroy()
-    } catch {}
+    } catch {
+      /* socket already destroyed */
+    }
   }
 
   client.on('error', close)

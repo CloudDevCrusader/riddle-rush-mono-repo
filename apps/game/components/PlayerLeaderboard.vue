@@ -1,6 +1,11 @@
 <template>
   <Transition name="player-leaderboard">
-    <div v-if="props.visible" class="player-leaderboard-overlay" data-testid="player-leaderboard-overlay" @click.self="$emit('close')">
+    <div
+      v-if="props.visible"
+      class="player-leaderboard-overlay"
+      data-testid="player-leaderboard-overlay"
+      @click.self="$emit('close')"
+    >
       <div class="player-leaderboard-panel">
         <header class="leaderboard-header">
           <h2>
@@ -160,7 +165,12 @@ defineEmits<{
   color: var(--color-white);
   font-size: 24px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .close-btn:active {
@@ -170,7 +180,8 @@ defineEmits<{
 .leaderboard-content {
   flex: 1;
   overflow-y: auto;
-  padding: var(--spacing-lg);
+  overscroll-behavior: contain;
+  padding: var(--spacing-md);
 }
 
 .empty-state {
@@ -199,7 +210,12 @@ defineEmits<{
   background: var(--color-white);
   border-radius: var(--radius-lg);
   border: 2px solid transparent;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -373,7 +389,12 @@ defineEmits<{
 /* Transitions */
 .player-leaderboard-enter-active,
 .player-leaderboard-leave-active {
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .player-leaderboard-enter-from,
@@ -437,6 +458,73 @@ defineEmits<{
     height: clamp(40px, 9vw, 48px);
     min-width: 40px;
     min-height: 40px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .player-row {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .rank {
+    width: 32px;
+    min-width: 32px;
+    font-size: 18px;
+  }
+
+  .crown {
+    font-size: 26px;
+  }
+
+  .player-name {
+    font-size: var(--font-size-sm);
+  }
+
+  .player-score {
+    font-size: var(--font-size-xl);
+  }
+
+  .score-label {
+    font-size: 0.65rem;
+  }
+
+  .leaderboard-header h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .leaderboard-footer {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .leaderboard-footer .btn {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 360px) {
+  .player-row {
+    padding: var(--spacing-xs);
+  }
+
+  .rank {
+    width: 28px;
+    min-width: 28px;
+    font-size: 16px;
+  }
+
+  .crown {
+    font-size: 22px;
+  }
+
+  .player-score {
+    font-size: var(--font-size-lg);
+  }
+
+  .leaderboard-footer .btn {
+    min-height: 44px;
   }
 }
 

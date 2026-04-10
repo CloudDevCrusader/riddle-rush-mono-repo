@@ -78,10 +78,12 @@ function createTestLeaderboardEntry(overrides: Partial<LeaderboardEntry> = {}): 
     score: overrides.score ?? 50,
     category: overrides.category ?? 'Animals',
     categoryKey: overrides.categoryKey ?? 'animals',
+    playerName: overrides.playerName ?? 'TestPlayer',
     attempts: overrides.attempts ?? 5,
     correctAttempts: overrides.correctAttempts ?? 3,
     timestamp: overrides.timestamp ?? Date.now(),
     duration: overrides.duration ?? 60000,
+    letter: overrides.letter ?? 'A',
   }
 }
 

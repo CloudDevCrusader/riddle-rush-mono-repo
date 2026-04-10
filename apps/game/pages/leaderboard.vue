@@ -146,4 +146,39 @@ useHead({
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+// Small phone adjustments
+@media (max-width: 480px) {
+  .leaderboard-page {
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-sm);
+  }
+
+  .leaderboard-page__subtitle {
+    font-size: var(--font-size-lg);
+    letter-spacing: 0.5px;
+  }
+
+  .leaderboard-page__actions {
+    gap: var(--spacing-md);
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .leaderboard-row__name {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 360px) {
+  .leaderboard-page {
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-xs);
+  }
+
+  .leaderboard-page__actions {
+    gap: var(--spacing-sm);
+  }
+}
 </style>

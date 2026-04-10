@@ -16,6 +16,11 @@ export default createConfigForNuxt({
 })
   .append({
     rules: {
+      // Disable stylistic rules that conflict with Prettier
+      '@stylistic/brace-style': 'off',
+      '@stylistic/comma-dangle': 'off',
+      '@stylistic/operator-linebreak': 'off',
+
       // TypeScript specific rules
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',

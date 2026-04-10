@@ -273,6 +273,7 @@ watch(
 
   .game-modal {
     border-radius: var(--radius-xl);
+    border-width: 3px;
   }
 
   .game-modal-header {
@@ -286,6 +287,31 @@ watch(
 
   .game-modal-title {
     font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
+  }
+}
+
+@media (max-width: 360px) {
+  .game-modal-overlay {
+    padding: var(--spacing-xs);
+  }
+
+  .game-modal {
+    border-radius: var(--radius-lg);
+    border-width: 2px;
+    max-height: 92vh;
+  }
+
+  .game-modal-header {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .game-modal-body {
+    padding: var(--spacing-sm);
+  }
+
+  .game-modal-title {
+    font-size: var(--font-size-lg);
   }
 }
 </style>

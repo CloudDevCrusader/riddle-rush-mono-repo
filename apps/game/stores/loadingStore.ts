@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia'
 
+const LOADING_SAFETY_TIMEOUT_MS = 10_000
+
+let _safetyTimer: ReturnType<typeof setTimeout> | null = null
+
 export const useLoadingStore = defineStore('loading', {
   state: () => ({
     isLoading: false,
@@ -14,6 +18,7 @@ export const useLoadingStore = defineStore('loading', {
       this.isLoading = true
       this.progress = 0
       this.showProgress = false
+      this._startSafetyTimer()
     },
 
     hideLoading() {
@@ -22,14 +27,53 @@ export const useLoadingStore = defineStore('loading', {
       this.isLoading = newCount <= 0 ? false : this.isLoading
       this.progress = newCount <= 0 ? 0 : this.progress
       this.showProgress = newCount <= 0 ? false : this.showProgress
+
+      if (!this.isLoading) {
+        this._clearSafetyTimer()
+      }
+    },
+
+    forceHide() {
+      this._clearSafetyTimer()
+      this.loadingCount = 0
+      this.isLoading = false
+      this.progress = 0
+      this.showProgress = false
     },
 
     setProgress(value: number) {
       this.progress = Math.min(100, Math.max(0, value))
       this.showProgress = true
     },
-    getState() {
+
+    getState(): {
+      isLoading: boolean
+      loadingCount: number
+      progress: number
+      showProgress: boolean
+    } {
       return this.$state
+    },
+
+    _startSafetyTimer() {
+      this._clearSafetyTimer()
+      _safetyTimer = setTimeout(() => {
+        if (this.isLoading) {
+          if (import.meta.dev) {
+            console.warn(
+              `[loadingStore] Safety timeout: loading stuck for ${LOADING_SAFETY_TIMEOUT_MS}ms, force-hiding (count was ${this.loadingCount})`
+            )
+          }
+          this.forceHide()
+        }
+      }, LOADING_SAFETY_TIMEOUT_MS)
+    },
+
+    _clearSafetyTimer() {
+      if (_safetyTimer) {
+        clearTimeout(_safetyTimer)
+        _safetyTimer = null
+      }
     },
   },
 })

@@ -65,7 +65,13 @@ const handleClick = (event: MouseEvent) => {
   border-radius: var(--radius-lg);
   border: 3px solid rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  touch-action: manipulation;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   color: white;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
   -webkit-tap-highlight-color: transparent;
@@ -98,7 +104,7 @@ const handleClick = (event: MouseEvent) => {
 .game-button--sm {
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-sm);
-  min-height: 40px;
+  min-height: 44px;
 }
 
 .game-button--md {
@@ -111,6 +117,27 @@ const handleClick = (event: MouseEvent) => {
   padding: var(--spacing-lg) var(--spacing-xl);
   font-size: var(--font-size-lg);
   min-height: 64px;
+}
+
+// Small phone adjustments
+@media (max-width: 480px) {
+  .game-button--md {
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 48px;
+  }
+
+  .game-button--lg {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-md);
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 360px) {
+  .game-button--lg {
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 48px;
+  }
 }
 
 // Color variants using glossy-button mixin

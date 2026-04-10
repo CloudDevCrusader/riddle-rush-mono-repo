@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { LatitudeTelemetry } from '@latitude-data/telemetry'
 import * as Anthropic from '@anthropic-ai/sdk'
 import Anthropic from '@anthropic-ai/sdk'

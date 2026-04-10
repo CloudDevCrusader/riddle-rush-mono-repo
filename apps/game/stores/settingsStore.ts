@@ -14,6 +14,7 @@ export interface GameSettings {
   fortuneWheelEnabled: boolean
   websocketEnabled: boolean
   answerInputEnabled: boolean
+  inputFieldEnabled: boolean
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -30,6 +31,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   fortuneWheelEnabled: true,
   websocketEnabled: false,
   answerInputEnabled: false,
+  inputFieldEnabled: true,
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -56,6 +58,9 @@ export const useSettingsStore = defineStore('settings', {
     isAnswerInputEnabled(state): boolean {
       return state.answerInputEnabled
     },
+    isInputFieldEnabled(state): boolean {
+      return state.inputFieldEnabled
+    },
   },
 
   actions: {
@@ -81,6 +86,9 @@ export const useSettingsStore = defineStore('settings', {
     },
     toggleAnswerInput() {
       this.answerInputEnabled = !this.answerInputEnabled
+    },
+    toggleInputField() {
+      this.inputFieldEnabled = !this.inputFieldEnabled
     },
     setOfflineMode(enabled: boolean) {
       this.offlineMode = enabled

@@ -39,4 +39,4 @@ Perfect for TypeScript/JavaScript teaching materials where showing types helps u
 
 ## Resources
 
-- TwoSlash docs: https://twoslash.netlify.app/
+- TwoSlash docs: <https://twoslash.netlify.app/>

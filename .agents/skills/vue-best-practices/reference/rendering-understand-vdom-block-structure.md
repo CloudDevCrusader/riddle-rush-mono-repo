@@ -63,7 +63,7 @@ New blocks are created at:
 
 Without blocks (pure runtime diffing):
 
-```
+```text
 Re-render walks ENTIRE tree:
 div
   header (check)
@@ -81,7 +81,7 @@ div
 
 With blocks (Vue's approach):
 
-```
+```text
 Re-render only walks dynamic nodes:
 Root block:
   - p with {{ message }}

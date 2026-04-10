@@ -14,8 +14,11 @@ test.describe('Translation Checks', () => {
   test('should not show raw translation keys on home page', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
+    // Wait for splash screen to finish and actual page content to render
+    await expect(page.locator('[data-testid="main-menu-play"]')).toBeVisible({ timeout: 15000 })
 
-    const bodyText = (await page.locator('body').textContent()) ?? ''
+    // Use innerText to get only visible text (excludes <script>/<style> content)
+    const bodyText = await page.locator('body').innerText()
     // Pattern for keys like "menu.play"
     const keyPattern = /\b[a-z]+\.[a-z_]+\b/g
     const matches = bodyText.match(keyPattern)
@@ -29,15 +32,23 @@ test.describe('Translation Checks', () => {
   test('should show category in English and not as a key', async ({ page }) => {
     // 1. Switch to English via language page
     await page.goto('/language')
-    await page.getByText('ENGLISH').click()
-    await page.getByRole('button', { name: 'OK' }).click()
+    await page.waitForLoadState('networkidle')
+    // Wait for splash screen to finish and language page to render
+    await expect(page.locator('[data-testid="language-ok-button"]')).toBeVisible({ timeout: 15000 })
+
+    await page.locator('[data-testid="language-option-english"]').click()
+    // Clicking OK triggers window.location.reload() — use proven waitForNavigation pattern
+    const okButton = page.locator('[data-testid="language-ok-button"]')
+    await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
     await page.waitForLoadState('networkidle')
 
-    // 2. Go to Home and Start Game
-    await page.goto('/')
+    // 2. Go to Home with ?lang=en to reliably activate English locale
+    //    (route query has highest priority in i18n.client.ts locale resolution)
+    await page.goto('/?lang=en')
+    await page.waitForLoadState('networkidle')
     await hideDevtools(page)
-    const playBtn = page.locator('button').filter({ hasText: /Play/i }).first()
-    await expect(playBtn).toBeVisible()
+    const playBtn = page.locator('[data-testid="main-menu-play"]')
+    await expect(playBtn).toBeVisible({ timeout: 15000 })
     await playBtn.click()
 
     // 3. Check Players Page
@@ -61,7 +72,7 @@ test.describe('Translation Checks', () => {
     let categoryName = ''
     if (isRoundStart) {
       // Wait for wheels to complete and results to show
-      const resultText = page.locator('[data-testid="round-start-result"]').first()
+      const resultText = page.locator('[data-testid="round-category-display"]').first()
       // It might skip directly to game if it navigates fast, so we handle both
       try {
         await expect(resultText).toBeVisible({ timeout: 10000 })
@@ -69,12 +80,12 @@ test.describe('Translation Checks', () => {
       } catch {
         // Maybe already navigated to game
         await page.waitForURL('**/game/**')
-        const gameCatName = page.locator('[data-testid="game-category-name"]')
+        const gameCatName = page.locator('[data-testid="game-category-info"]')
         await expect(gameCatName).toBeVisible()
         categoryName = (await gameCatName.textContent()) ?? ''
       }
     } else {
-      const gameCatName = page.locator('[data-testid="game-category-name"]')
+      const gameCatName = page.locator('[data-testid="game-category-info"]')
       await expect(gameCatName).toBeVisible()
       categoryName = (await gameCatName.textContent()) ?? ''
     }

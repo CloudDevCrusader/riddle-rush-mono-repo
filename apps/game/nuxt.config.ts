@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants'
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
 import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
@@ -65,7 +66,7 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-unstorage/nuxt',
     '@nuxtjs/i18n', // Load i18n early
     '@unocss/nuxt', // Load UnoCSS after i18n, before PWA
     '@vite-pwa/nuxt',
@@ -76,8 +77,10 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxt/image',
+    '@nuxt/hints',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
+    ...(process.env.VERCEL ? ['@vercel/analytics'] : []),
   ],
   // Client-only SPA (IndexedDB and PWA require client-side rendering)
 
@@ -95,21 +98,23 @@ export default defineNuxtConfig({
     dirs: ['stores', 'stores/hooks', 'composables'],
   },
   devtools: {
-    enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+    enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     timeline: {
-      enabled: process.env.NODE_ENV === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+      enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     },
+  },
+  hints: {
+    devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
   },
 
   app: {
     head: {
-      title: 'Riddle Rush - Fun Party Game',
+      titleTemplate: '%s - Riddle Rush',
       meta: [
         { charset: 'utf-8' },
         {
           name: 'viewport',
-          content:
-            'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+          content: 'width=device-width, initial-scale=1, viewport-fit=cover',
         },
         { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -248,7 +253,7 @@ export default defineNuxtConfig({
         : getDevPlugins({ isDev: true })),
     ],
     optimizeDeps: {
-      include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es'],
+      include: ['pinia', '@vueuse/core', '@vueuse/motion', 'lodash-es', 'vue-fortune-wheel'],
       exclude: ['vue-demi'],
       esbuildOptions: {
         // Ensure lodash-es is tree-shaken properly
@@ -582,24 +587,28 @@ export default defineNuxtConfig({
     },
   },
 
-  // Security headers
-  security: {
-    nonce: false, // Disable nonces for Playwright compatibility
-    headers: {
-      crossOriginEmbedderPolicy:
-        process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
-      contentSecurityPolicy: {
-        'base-uri': ["'self'"],
-        'font-src': ["'self'", 'https:', 'data:'],
-        'form-action': ["'self'"],
-        'frame-ancestors': ["'self'"],
-        'img-src': ["'self'", 'data:', 'blob:'],
-        'object-src': ["'none'"],
-        'script-src-attr': ["'none'"],
-        'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-        'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
-        'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
-      },
-    },
-  },
+  // Security headers (only when nuxt-security is enabled)
+  ...(process.env.DISABLE_SECURITY !== 'true'
+    ? {
+        security: {
+          nonce: false, // Disable nonces for Playwright compatibility
+          headers: {
+            crossOriginEmbedderPolicy:
+              process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
+            contentSecurityPolicy: {
+              'base-uri': ["'self'"],
+              'font-src': ["'self'", 'https:', 'data:'],
+              'form-action': ["'self'"],
+              'frame-ancestors': ["'self'"],
+              'img-src': ["'self'", 'data:', 'blob:'],
+              'object-src': ["'none'"],
+              'script-src-attr': ["'none'"],
+              'style-src': ["'self'", 'https:', "'unsafe-inline'"],
+              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
+              'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
+            },
+          },
+        },
+      }
+    : {}),
 })

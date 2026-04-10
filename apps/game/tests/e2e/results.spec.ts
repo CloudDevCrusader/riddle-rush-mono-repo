@@ -17,7 +17,7 @@ test.describe('results scoring page', () => {
 
   test('should display results page with all elements', async ({ page }) => {
     // Check for background (GameBackground)
-    const background = page.locator('[data-testid="page-background"]')
+    const background = page.locator('.game-background')
     await expect(background).toBeVisible()
 
     // Check for title (GameHeader)
@@ -61,7 +61,7 @@ test.describe('results scoring page', () => {
 
   test('should increase score when clicking increment button', async ({ page }) => {
     const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
-    const scoreDisplay = firstEntry.locator('[data-testid^="results-score-display-"]')
+    const scoreDisplay = firstEntry.locator('[data-testid^="scoring-page-score-value-"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
 
     // Get initial score
@@ -78,7 +78,7 @@ test.describe('results scoring page', () => {
 
   test('should decrease score when clicking decrement button', async ({ page }) => {
     const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
-    const scoreDisplay = firstEntry.locator('[data-testid^="results-score-display-"]')
+    const scoreDisplay = firstEntry.locator('[data-testid^="scoring-page-score-value-"]')
     const incrementBtn = firstEntry.locator('[data-testid="score-increment"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
 
@@ -126,7 +126,7 @@ test.describe('results scoring page', () => {
     await page.waitForTimeout(2500)
 
     // Decision modal should appear
-    const nextRoundBtn = page.locator('[data-testid="next-round"]')
+    const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
     const finishGameBtn = page.locator('[data-testid="leaderboard-button"]')
 
     await expect(nextRoundBtn).toBeVisible()
@@ -142,7 +142,7 @@ test.describe('results scoring page', () => {
     await page.waitForTimeout(2500)
 
     // Click Next Round
-    const nextRoundBtn = page.locator('[data-testid="next-round"]')
+    const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
     await nextRoundBtn.click()
 
     await expect(page).toHaveURL(/\/round-start/, { timeout: 5000 })
@@ -193,7 +193,7 @@ test.describe('results page multi-player', () => {
 
   test('should allow independent score adjustment for each player', async ({ page }) => {
     const incrementBtns = page.locator('[data-testid="score-increment"]')
-    const scoreDisplays = page.locator('[data-testid^="results-score-display-"]')
+    const scoreDisplays = page.locator('[data-testid^="scoring-page-score-value-"]')
 
     // Increment player 1 three times
     await incrementBtns.nth(0).click()

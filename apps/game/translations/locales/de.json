@@ -135,6 +135,7 @@
     "skip": "Überspringen",
     "starts_with": "Beginnt mit",
     "submit": "Senden",
+    "tap_to_spin": "Tippen zum Drehen",
     "title": "Spielen",
     "wait_for_players": "Bitte warte, bis alle Spieler geantwortet haben",
     "welcome": "Willkommen! Rate ein Wort aus der Kategorie.",
@@ -164,6 +165,8 @@
   },
   "language": {
     "description": "Wählen Sie Ihre bevorzugte Sprache",
+    "english": "ENGLISH",
+    "german": "DEUTSCH",
     "select_prompt": "Sprache auswählen",
     "title": "Sprachauswahl"
   },

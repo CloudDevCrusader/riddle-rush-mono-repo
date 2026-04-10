@@ -4,7 +4,7 @@
       <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
       <div v-else class="main-content">
         <NuxtLayout>
-          <NuxtPage :key="routeKey" />
+          <NuxtPage />
         </NuxtLayout>
         <ConnectionStatus data-testid="offline-indicator" />
         <Toast />
@@ -18,17 +18,10 @@
 <script setup lang="ts">
 import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 
-const route = useRoute()
 const gameSession = useGameSession()
 const installPrompt = useInstallPrompt()
 const settings = useSettings()
 const { setLocale } = useI18n()
-
-// Force route update by using full route path
-const routeKey = computed(() => {
-  // Use full path to ensure component remounts on route changes
-  return route.fullPath
-})
 
 // Disable splash screen in E2E tests
 const isE2E =

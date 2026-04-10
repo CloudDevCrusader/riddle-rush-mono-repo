@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from '@playwright/test'
+import { completeFortuneWheel } from './helpers/game-flow'
 
 test.describe.configure({ mode: 'serial' })
 
@@ -18,21 +19,13 @@ async function resetPersistedGameState(page: Page) {
 async function startGameFromPlayers(page: Page) {
   await page.goto('/players')
   await expect(page).toHaveURL(/\/players/)
-  await page.waitForSelector('button', { timeout: 10000 })
+  const startButton = page.locator('[data-testid="players-start-button"]').first()
+  await expect(startButton).toBeVisible({ timeout: 15000 })
+  await startButton
+    .click({ timeout: 5000 })
+    .catch(() => startButton.click({ force: true, timeout: 5000 }))
 
-  const preferredButton = page.locator('[data-testid="players-start-button"]').first()
-  if ((await preferredButton.count()) > 0) {
-    await preferredButton
-      .click({ timeout: 5000 })
-      .catch(() => preferredButton.click({ force: true, timeout: 5000 }))
-  } else {
-    const fallbackButton = page.locator('button').last()
-    await fallbackButton
-      .click({ timeout: 5000 })
-      .catch(() => fallbackButton.click({ force: true, timeout: 5000 }))
-  }
-
-  await expect(page).toHaveURL(/\/round-start/)
+  await expect(page).toHaveURL(/\/round-start/, { timeout: 30000 })
 }
 
 test.describe('round-start page round-start', () => {
@@ -41,21 +34,19 @@ test.describe('round-start page round-start', () => {
     await startGameFromPlayers(page)
   })
 
-  test('shows wheel-default flow before transitioning to game', async ({ page }) => {
+  test('shows flip-through animation before transitioning to game', async ({ page }) => {
     const roundIndicator = page.locator('[data-testid="round-indicator"]')
-    const wheelsContainer = page.locator('[data-testid="round-wheels-container"]')
-    const resultsDisplay = page.locator('[data-testid="round-results-display"]')
-    const loadingState = page.locator('[data-testid="round-loading"]')
+    const flipContainer = page.locator('[data-testid="flip-container"]')
 
     await expect(roundIndicator).toBeVisible()
     await expect(roundIndicator).toContainText('1')
 
-    // Contract: default path shows wheel UI first on /round-start
-    await expect(wheelsContainer).toBeVisible({ timeout: 8000 })
+    // Contract: default path shows flip-through animation on /round-start
+    await expect(flipContainer).toBeVisible({ timeout: 8000 })
 
-    // Then proceed through results/loading and finally into /game
-    await expect(resultsDisplay.or(loadingState)).toBeVisible({ timeout: 15000 })
-    await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
+    // Animation auto-plays and transitions to /game — no interaction needed
+    await completeFortuneWheel(page)
+    await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
   })
 })
 
@@ -94,8 +85,8 @@ test.describe('Round Counter Logic', () => {
   }) => {
     await startGameFromPlayers(page)
 
-    // Wait for automatic navigation to game page
-    await expect(page).toHaveURL(/\/game/, { timeout: 20000 })
+    await completeFortuneWheel(page)
+    await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
 
     // Manually navigate back to round-start (simulating a refresh/back)
     await page.goto('/round-start')

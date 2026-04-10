@@ -1,22 +1,36 @@
 <template>
   <Transition name="fade">
-    <div v-if="modelValue" class="settings-overlay" @click="handleOverlayClick">
+    <button
+      v-if="modelValue"
+      class="settings-overlay"
+      type="button"
+      aria-label="Close settings"
+      @click="handleOverlayClick"
+    >
       <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
           :src="`${baseUrl}assets/settings/BACKGROUND.png`"
           alt="Background"
           class="settings-bg"
+          width="600"
+          height="800"
         />
 
         <!-- Back Button -->
-        <button class="back-btn tap-highlight no-select" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" />
+        <button class="back-btn tap-highlight no-select" type="button" @click="closeModal">
+          <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" width="60" height="60" />
         </button>
 
         <!-- Title -->
         <div class="title-container">
-          <img :src="`${baseUrl}assets/settings/options.png`" alt="OPTIONS" class="title-image" />
+          <img
+            :src="`${baseUrl}assets/settings/options.png`"
+            alt="OPTIONS"
+            class="title-image"
+            width="300"
+            height="100"
+          />
         </div>
 
         <!-- Settings Panel -->
@@ -24,7 +38,13 @@
           <!-- Sound Control -->
           <div class="control-item">
             <div class="control-icon-wrapper">
-              <img :src="`${baseUrl}assets/settings/Sound.png`" alt="Sound" class="control-icon" />
+              <img
+                :src="`${baseUrl}assets/settings/Sound.png`"
+                alt="Sound"
+                class="control-icon"
+                width="50"
+                height="50"
+              />
             </div>
             <div class="control-content">
               <div class="control-label">{{ t('settings.sound') }}</div>
@@ -35,6 +55,7 @@
                   min="0"
                   max="100"
                   class="volume-slider"
+                  inputmode="numeric"
                   @input="updateSoundVolume"
                 />
                 <div class="slider-track">
@@ -48,7 +69,13 @@
           <!-- Music Control -->
           <div class="control-item">
             <div class="control-icon-wrapper">
-              <img :src="`${baseUrl}assets/settings/Music.png`" alt="Music" class="control-icon" />
+              <img
+                :src="`${baseUrl}assets/settings/Music.png`"
+                alt="Music"
+                class="control-icon"
+                width="50"
+                height="50"
+              />
             </div>
             <div class="control-content">
               <div class="control-label">{{ t('settings.music') }}</div>
@@ -59,6 +86,7 @@
                   min="0"
                   max="100"
                   class="volume-slider"
+                  inputmode="numeric"
                   @input="updateMusicVolume"
                 />
                 <div class="slider-track">
@@ -71,11 +99,11 @@
         </div>
 
         <!-- OK Button -->
-        <button class="ok-btn tap-highlight no-select" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" />
+        <button class="ok-btn tap-highlight no-select" type="button" @click="closeModal">
+          <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" width="200" height="80" />
         </button>
       </div>
-    </div>
+    </button>
   </Transition>
 </template>
 
@@ -166,6 +194,9 @@ onUnmounted(() => {
     max(var(--spacing-lg), env(safe-area-inset-right, 0px))
     max(var(--spacing-lg), env(safe-area-inset-bottom, 0px))
     max(var(--spacing-lg), env(safe-area-inset-left, 0px));
+  border: none;
+  cursor: pointer;
+  width: 100%;
 }
 
 .settings-card {
@@ -177,6 +208,7 @@ onUnmounted(() => {
   border-radius: var(--radius-xl);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: scaleIn 0.3s ease-out;
+  cursor: default;
 }
 
 .settings-bg {

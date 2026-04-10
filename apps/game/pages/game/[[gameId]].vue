@@ -16,6 +16,8 @@
           :alt="t('common.back')"
           class="back-icon"
           loading="eager"
+          width="32"
+          height="32"
         />
       </button>
 
@@ -56,6 +58,8 @@
           :alt="t('common.category')"
           class="category-label-image"
           loading="lazy"
+          width="200"
+          height="50"
         />
         <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
         <div class="category-name">
@@ -83,17 +87,19 @@
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <form class="answer-form" @submit.prevent="submitAnswer">
+        <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-if="isAnswerInputEnabled"
             v-model="playerAnswer"
             type="text"
             class="answer-input"
             data-testid="game-answer-input"
-            :placeholder="t('game.your_answer', 'Your answer...')"
+            :placeholder="t('game.your_answer', 'Your answer…')"
             autocomplete="off"
             autocapitalize="words"
             maxlength="50"
+            inputmode="search"
+            enterkeyhint="done"
             @input="sanitizeInput"
             @keyup.enter="submitAnswer"
           />
@@ -106,6 +112,16 @@
             {{ isAnswerInputEnabled ? t('game.submit', 'Submit') : t('common.confirm') }}
           </button>
         </form>
+        <div v-else class="skip-actions">
+          <button
+            class="skip-player-btn"
+            data-testid="game-skip-button"
+            :disabled="isSubmitting"
+            @click="submitAnswer"
+          >
+            {{ t('game.skip', 'Skip') }}
+          </button>
+        </div>
       </div>
 
       <!-- All Players Submitted Message -->
@@ -328,18 +344,21 @@ onMounted(async () => {
           gameId: gameId.value,
         })
         toast.error(t('game.error_loading', 'Failed to load game session'))
+        useLoadingStore().forceHide()
         goToPlayers()
         return
       }
     } catch (error) {
       logger.error('Failed to load game session:', error)
       toast.error(t('game.error_loading', 'Failed to load game session'))
+      useLoadingStore().forceHide()
       goToPlayers()
       return
     }
   } else if (!hasActiveSession.value) {
     // Multiplayer flow contract: /game without active session should not create
     // an implicit single-player session. Resume setup flow instead.
+    useLoadingStore().forceHide()
     if (gameStore.pendingPlayerNames.value.length > 0) {
       await goToRoundStart()
     } else {
@@ -449,7 +468,12 @@ useHead({
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow:
     0 8px 0 rgba(0, 0, 0, 0.2),
     var(--shadow-lg);
@@ -688,7 +712,12 @@ useHead({
   background: var(--color-white);
   color: var(--color-dark);
   text-align: center;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .answer-input:focus {
@@ -707,7 +736,12 @@ useHead({
   font-weight: var(--font-weight-bold);
   color: var(--color-white);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow: 0 6px 0 rgba(58, 140, 20, 0.3);
 }
 
@@ -718,6 +752,32 @@ useHead({
 
 .submit-answer-btn:disabled {
   opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.skip-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.skip-player-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.skip-player-btn:hover {
+  background-color: #f57c00;
+}
+
+.skip-player-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -767,7 +827,12 @@ useHead({
     0 12px 20px rgba(0, 0, 0, 0.25),
     inset 0 2px 4px rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   position: relative;
   overflow: hidden;
 }

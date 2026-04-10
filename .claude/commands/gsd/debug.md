@@ -27,6 +27,12 @@ Valid GSD subagent types (use exact names — do not fall back to 'general-purpo
 - gsd-debugger — Diagnoses and fixes issues
   </available_agent_types>
 
+<available_agent_types>
+Valid GSD subagent types (use exact names — do not fall back to 'general-purpose'):
+
+- gsd-debugger — Diagnoses and fixes issues
+  </available_agent_types>
+
 <context>
 User's issue: $ARGUMENTS
 

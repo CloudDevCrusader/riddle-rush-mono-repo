@@ -19,6 +19,28 @@ runtimes:
 lint:
   # Ignore patterns
   ignore:
+    - linters: [yamllint]
+      paths:
+        - 'templates/**'
+    - linters: [markdownlint]
+      paths:
+        - '.agent/**'
+        - '.agents/**'
+        - 'docs/**'
+        - '.zenflow/**'
+        - 'templates/**'
+    - linters: [tflint]
+      paths:
+        - 'infrastructure/**'
+        - '**/infrastructure/**'
+    - linters: [mypy]
+      paths:
+        - 'tools/**'
+    - linters: [shellcheck]
+      paths:
+        - '**/*.sh'
+        - '**/*w'
+
     - linters: [ALL]
       paths:
         # Binary assets
@@ -72,6 +94,7 @@ lint:
     - linters: [eslint]
       paths:
         - '**/scripts/*.js'
+        - 'bin/**'
     - linters: [tflint]
       paths:
         - '**/variables.tf'
@@ -88,7 +111,7 @@ lint:
     - checkov
 
   enabled:
-    - ruff@0.15.7
+    - ruff@0.15.8
     - ruff@0.15.6
     - taplo@0.10.0
     - ruff@0.15.6
@@ -100,10 +123,9 @@ lint:
     - markdownlint@0.48.0
     - oxipng@10.1.0
     - prettier@3.8.1
-    - renovate@43.87.1
+    - renovate@43.95.0
     - shellcheck@0.11.0
-    - shfmt@3.6.0
-    - stylelint@17.5.0
+    - stylelint@17.6.0
     - svgo@4.0.1
     - tflint@0.61.0
     - yamllint@1.38.0
@@ -112,46 +134,8 @@ lint:
     - black@26.3.1
     - isort@8.0.1
     - mypy@1.19.1
-    - bandit@1.9.4
 
   # Configure specific linters
-  definitions:
-    - name: shellcheck
-      commands:
-        - name: lint
-          run: shellcheck --severity=error --exclude=SC2250,SC2248,SC2086 ${target}
-    - name: markdownlint
-      commands:
-        - name: lint
-          run: markdownlint --config .markdownlint.json ${target}
-          success_codes: [0]
-    - name: ruff
-      commands:
-        - name: lint
-          run: ruff check --config=pyproject.toml ${target}
-          success_codes: [0, 1]
-    - name: black
-      commands:
-        - name: lint
-          run: black --check --diff ${target}
-          success_codes: [0, 1]
-          output: diff
-    - name: isort
-      commands:
-        - name: lint
-          run: isort --check-only --diff ${target}
-          success_codes: [0, 1]
-          output: diff
-    - name: mypy
-      commands:
-        - name: lint
-          run: mypy --config-file=pyproject.toml ${target}
-          success_codes: [0, 1]
-    - name: bandit
-      commands:
-        - name: lint
-          run: bandit -c pyproject.toml -r ${target}
-          success_codes: [0, 1]
 actions:
   disabled:
     - npm-check-pre-push
@@ -166,9 +150,9 @@ actions:
     - trunk-upgrade-available
 tools:
   enabled:
-    - awscli@1.44.64
+    - awscli@1.44.67
     - gh@2.27.0
-    - uv@0.11.0
+    - uv@0.11.2
     - tsc@6.0.2
     - markdown-link-check@3.14.2
     - terraform-docs@0.21.0

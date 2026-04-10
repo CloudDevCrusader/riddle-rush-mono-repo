@@ -354,13 +354,14 @@ tsdown --clean                 # Clean output directory
    ```
 
 9. **Validate packages** in CI before publishing:
+
    ```ts
    { publint: 'ci-only', attw: 'ci-only' }
    ```
 
 ## Resources
 
-- Documentation: https://tsdown.dev
-- GitHub: https://github.com/rolldown/tsdown
-- Rolldown: https://rolldown.rs
-- Migration Guide: https://tsdown.dev/guide/migrate-from-tsup
+- Documentation: <https://tsdown.dev>
+- GitHub: <https://github.com/rolldown/tsdown>
+- Rolldown: <https://rolldown.rs>
+- Migration Guide: <https://tsdown.dev/guide/migrate-from-tsup>

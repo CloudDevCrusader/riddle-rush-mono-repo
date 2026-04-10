@@ -99,6 +99,11 @@ export default defineConfig({
       name: 'ios-ipad-pro',
       use: {
         ...devices['iPad Pro 11'],
+        // Keep iPad viewport/UA emulation but run on Chromium for local/dev
+        // stability. WebKit can upgrade localhost assets to HTTPS while the
+        // local Nuxt dev server is HTTP, causing blank pages and false E2E
+        // failures unrelated to app behavior.
+        browserName: 'chromium',
         // Tablets may need extra time for rendering larger viewports
         actionTimeout: isDeployedTest ? 20000 : 10000,
       },

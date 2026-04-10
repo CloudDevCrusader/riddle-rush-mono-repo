@@ -75,7 +75,12 @@ const removeToast = (id: string) => {
   cursor: pointer;
   pointer-events: auto;
   min-height: 60px;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   border-left: 4px solid transparent;
 }
 
@@ -113,7 +118,12 @@ const removeToast = (id: string) => {
   justify-content: center;
   border-radius: var(--radius-sm);
   flex-shrink: 0;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 /* Success Toast */
