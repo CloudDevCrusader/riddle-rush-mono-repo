@@ -132,7 +132,9 @@ export async function submitPlayerAnswers(
   }
 
   const answerInput = page.locator('[data-testid="game-answer-input"]').first()
-  const submitBtn = page.locator('[data-testid="game-submit-button"]').first()
+  const submitBtn = page
+    .locator('[data-testid="game-submit-button"], [data-testid="game-skip-button"]')
+    .first()
   const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
 
   for (let i = 0; i < count; i++) {

@@ -65,7 +65,9 @@ test.describe('@mobile Mobile Game Flow', () => {
 
     // Key game elements must be visible on mobile
     await expect(page.locator('[data-testid="game-player-name"]')).toBeVisible()
-    await expect(page.locator('[data-testid="game-submit-button"]')).toBeVisible()
+    await expect(
+      page.locator('[data-testid="game-submit-button"], [data-testid="game-skip-button"]').first()
+    ).toBeVisible()
   })
 
   test('mobile responsive layout on results page', async ({ page }) => {

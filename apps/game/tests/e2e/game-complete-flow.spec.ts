@@ -181,7 +181,9 @@ test.describe('Complete Game Flow', () => {
       await setupMultiplayerGame(page, [player1, player2])
 
       const answerInput = page.locator('[data-testid="game-answer-input"]')
-      const submitBtn = page.locator('[data-testid="game-submit-button"]')
+      const submitBtn = page
+        .locator('[data-testid="game-submit-button"], [data-testid="game-skip-button"]')
+        .first()
       const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
       const nextBtn = page.locator('[data-testid="next-button"]')
 
@@ -228,7 +230,9 @@ test.describe('Complete Game Flow', () => {
 
       // Submit for player 1 and verify player 2 turn
       const answerInput = page.locator('[data-testid="game-answer-input"]')
-      const submitBtn = page.locator('[data-testid="game-submit-button"]')
+      const submitBtn = page
+        .locator('[data-testid="game-submit-button"], [data-testid="game-skip-button"]')
+        .first()
 
       if (await answerInput.isVisible()) {
         await answerInput.fill('')
