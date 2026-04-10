@@ -145,6 +145,9 @@ gha-creds-*.json
 claude/agents/
 .claude/agents/
 
+# Claude Code worktrees (isolation mode creates gitlinks that look like submodules)
+.claude/worktrees/
+
 # GitHub Actions runner (local runner installation - credentials & binaries)
 tools/github/actions-runner/
 
