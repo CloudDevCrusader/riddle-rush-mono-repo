@@ -197,6 +197,7 @@ const gameId = computed(() => route.params.gameId as string | undefined)
 const playerAnswer = ref('')
 const showPauseModal = ref(false)
 const showQuitModal = ref(false)
+const isSubmitting = ref(false)
 
 const handleEscapeKey = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && !showPauseModal.value) {
@@ -250,6 +251,7 @@ const submitAnswer = async () => {
     return
   }
 
+  isSubmitting.value = true
   try {
     // Allow empty answers (player can skip their turn)
     const answer = playerAnswer.value.trim() || ''
@@ -270,6 +272,8 @@ const submitAnswer = async () => {
   } catch (error) {
     logger.error('Error submitting answer:', error)
     toast.error(t('game.error_submitting', 'Failed to submit answer'))
+  } finally {
+    isSubmitting.value = false
   }
 }
 
