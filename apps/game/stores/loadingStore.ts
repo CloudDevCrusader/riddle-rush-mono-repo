@@ -52,7 +52,7 @@ export const useLoadingStore = defineStore('loading', {
       progress: number
       showProgress: boolean
     } {
-      return this
+      return this.$state
     },
 
     _startSafetyTimer() {

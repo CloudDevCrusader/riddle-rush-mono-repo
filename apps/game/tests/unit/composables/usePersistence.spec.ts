@@ -243,14 +243,18 @@ describe('usePersistence', () => {
       mockGetGameSessionById.mockResolvedValueOnce(null)
       const { loadSessionById } = usePersistence()
 
-      await expect(loadSessionById('missing-id')).rejects.toThrow('Failed to load game session')
+      await expect(loadSessionById('missing-id')).rejects.toThrow(
+        'Game session with ID missing-id not found'
+      )
     })
 
     it('should throw error when IndexedDB lookup fails', async () => {
       mockGetGameSessionById.mockRejectedValueOnce(new Error('DB error'))
       const { loadSessionById } = usePersistence()
 
-      await expect(loadSessionById('session-123')).rejects.toThrow('Failed to load game session')
+      await expect(loadSessionById('session-123')).rejects.toThrow(
+        'Database error loading session session-123'
+      )
     })
 
     it('should log error when load by ID fails', async () => {
@@ -269,7 +273,7 @@ describe('usePersistence', () => {
       )
     })
 
-    it('should log error when session not found (null result)', async () => {
+    it('should not log error when session not found (only logs on DB errors)', async () => {
       mockGetGameSessionById.mockResolvedValueOnce(null)
       const { loadSessionById } = usePersistence()
 
@@ -279,10 +283,7 @@ describe('usePersistence', () => {
         // expected to throw
       }
 
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error loading game session by ID:',
-        expect.any(Error)
-      )
+      expect(mockLoggerError).not.toHaveBeenCalled()
     })
   })
 

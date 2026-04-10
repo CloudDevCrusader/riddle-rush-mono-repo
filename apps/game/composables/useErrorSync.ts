@@ -164,7 +164,10 @@ export const useErrorSync = () => {
         // Fallback to localStorage
         const storedErrors = localStorage.getItem('errorLogsQueue')
         if (storedErrors) {
-          errorsToSync = JSON.parse(storedErrors)
+          const parsed = JSON.parse(storedErrors)
+          if (Array.isArray(parsed)) {
+            errorsToSync = parsed
+          }
           localStorage.removeItem('errorLogsQueue')
         }
       }
@@ -174,9 +177,10 @@ export const useErrorSync = () => {
       }
 
       // Send to CloudWatch via API Gateway
-      const cloudWatchEndpoint =
-        runtimeConfig.public.cloudWatchEndpoint ||
-        'https://your-api-gateway.execute-api.region.amazonaws.com/prod/logs'
+      const cloudWatchEndpoint = runtimeConfig.public.cloudWatchEndpoint
+      if (!cloudWatchEndpoint) {
+        return
+      }
 
       const response = await fetch(cloudWatchEndpoint, {
         method: 'POST',

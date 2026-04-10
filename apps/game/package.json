@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/game",
-  "version": "1.4.1",
+  "version": "1.4.3",
   "dependencies": {
     "@intlify/core-base": "^11.3.0",
     "@nuxt/hints": "^1.0.2",
