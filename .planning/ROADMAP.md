@@ -588,11 +588,13 @@ Collected test-related todos from recent phases:
 
 ### Phase 22: Add fortune wheel for alphabet selection using vue-fortunewheel
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Replace the round-start flip-through with an interactive fortune wheel (vue-fortune-wheel) to select category and letter before entering gameplay, while preserving fallback and existing game-flow contracts.
+**Requirements**: PAGE-04
 **Depends on:** Phase 21
-**Plans:** 0 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 22 to break down)
+- [x] 22-01-PLAN.md — Add wheel dependency, typed selection adapter, reusable FortuneAlphabetWheel component, and unit tests
+- [x] 22-02-PLAN.md — Integrate FortuneAlphabetWheel into /round-start and align game-flow helper orchestration
+- [x] 22-03-PLAN.md — Harden E2E coverage for wheel flow and produce phase verification report
