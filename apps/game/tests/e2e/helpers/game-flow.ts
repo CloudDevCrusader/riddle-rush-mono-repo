@@ -131,8 +131,8 @@ export async function submitPlayerAnswers(
     return
   }
 
-  const answerInput = page.locator('[data-testid="game-answer-input"]')
-  const submitBtn = page.locator('[data-testid="game-submit-button"]')
+  const answerInput = page.locator('[data-testid="game-answer-input"]').first()
+  const submitBtn = page.locator('[data-testid="game-submit-button"]').first()
   const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
 
   for (let i = 0; i < count; i++) {
@@ -285,13 +285,7 @@ export async function assignScores(page: Page, scores: number[]): Promise<void> 
 
     for (let c = 0; c < clickCount; c++) {
       await playerEntry.scrollIntoViewIfNeeded()
-
-      // Use a short click timeout on mobile and fall back to synthetic clicks.
-      try {
-        await incrementBtn.click({ timeout: 1500 })
-      } catch {
-        await incrementBtn.dispatchEvent('click')
-      }
+      await incrementBtn.click({ timeout: 5000 })
 
       const nextValue = currentValue + 1
       await expect
@@ -364,18 +358,18 @@ export async function finishGame(page: Page): Promise<void> {
 }
 
 /**
- * Wait for the auto-spinning fortune wheel flow to complete and reach `/game`.
- * Uses stable route signals and durable test IDs — no user interaction required.
+ * Wait for the auto-playing flip-through animation to complete and reach `/game`.
+ * The animation auto-plays on mount — no user interaction required.
  */
 export async function completeFortuneWheel(page: Page): Promise<void> {
   if (/\/game/.test(page.url())) {
     return
   }
 
-  const wheelsContainer = page.locator('[data-testid="round-wheels-container"]')
-  const resultsDisplay = page.locator('[data-testid="round-results-display"]')
+  const flipContainer = page.locator('[data-testid="flip-container"]')
   const loadingState = page.locator('[data-testid="round-loading"]')
 
+  // Wait for either the flip animation container, loading state, or game route
   await expect
     .poll(
       async () => {
@@ -383,8 +377,7 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
         if (!/\/round-start/.test(page.url())) return 'other-route'
 
         if (await loadingState.isVisible().catch(() => false)) return 'loading'
-        if (await resultsDisplay.isVisible().catch(() => false)) return 'results'
-        if (await wheelsContainer.isVisible().catch(() => false)) return 'wheels'
+        if (await flipContainer.isVisible().catch(() => false)) return 'animating'
 
         return 'waiting'
       },
@@ -392,55 +385,9 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
     )
     .not.toBe('waiting')
 
-  if (/\/game/.test(page.url()) || !/\/round-start/.test(page.url())) {
-    return
-  }
-
-  // Wheels auto-spin on mount — wait for the flow to complete and transition to /game.
-  // Auto-spin sequence: category wheel (800ms delay + ~4s spin + 1.5s pause) →
-  // letter wheel (500ms delay + ~4s spin) → navigate to /game (~11s total).
-  try {
-    await expect.poll(() => /\/game/.test(page.url()), { timeout: 35000 }).toBe(true)
-  } catch {
-    // Recovery: bootstrap/load a session and navigate directly.
-    const fallbackGameId = await page.evaluate(async () => {
-      const store = (window as PiniaWindow).__pinia_stores__?.game
-      if (!store) return null
-
-      if (
-        !store.currentSession &&
-        (store.pendingPlayerNames?.length ?? 0) > 0 &&
-        typeof store.setupPlayers === 'function'
-      ) {
-        try {
-          const pendingNames = [...(store.pendingPlayerNames ?? [])]
-          const createdSession = await (
-            store.setupPlayers as (...args: unknown[]) => Promise<unknown>
-          )(pendingNames)
-          const createdSessionId =
-            createdSession && typeof createdSession === 'object' && 'id' in createdSession
-              ? ((createdSession as { id?: string }).id ?? null)
-              : null
-          return createdSessionId
-        } catch {
-          // Continue with DB fallback.
-        }
-      }
-
-      if (store.loadFromDB) {
-        await store.loadFromDB()
-      }
-
-      return store.currentSession?.id ?? null
-    })
-
-    if (fallbackGameId) {
-      await page.goto(`/game/${fallbackGameId}`, { timeout: 30000 })
-      await page.waitForLoadState('networkidle')
-    }
-
-    await expect.poll(() => /\/game/.test(page.url()), { timeout: 15000 }).toBe(true)
-  }
+  // No button to click — animation auto-plays and auto-navigates.
+  // Just wait for the /game route.
+  await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
 }
 
 /**

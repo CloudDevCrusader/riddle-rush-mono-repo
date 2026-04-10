@@ -59,6 +59,12 @@ gaps = [
 </step>
 
 <step name="report_plan">
+**Read worktree config:**
+
+```bash
+USE_WORKTREES=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow.use_worktrees 2>/dev/null || echo "true")
+```
+
 **Report diagnosis plan to user:**
 
 ```
@@ -87,6 +93,7 @@ This runs in parallel - all gaps investigated simultaneously.
 
 ```bash
 AGENT_SKILLS_DEBUGGER=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" agent-skills gsd-debugger 2>/dev/null)
+EXPECTED_BASE=$(git rev-parse HEAD)
 ```
 
 **Spawn debug agents in parallel:**
@@ -95,9 +102,9 @@ For each gap, fill the debug-subagent-prompt template and spawn:
 
 ```
 Task(
-  prompt=filled_debug_subagent_prompt + "\n\n<files_to_read>\n- {phase_dir}/{phase_num}-UAT.md\n- .planning/STATE.md\n</files_to_read>\n${AGENT_SKILLS_DEBUGGER}",
+  prompt=filled_debug_subagent_prompt + "\n\n<worktree_branch_check>\nFIRST ACTION: run git merge-base HEAD {EXPECTED_BASE} — if result differs from {EXPECTED_BASE}, run git reset --soft {EXPECTED_BASE} to correct the branch base (fixes Windows EnterWorktree creating branches from main).\n</worktree_branch_check>\n\n<files_to_read>\n- {phase_dir}/{phase_num}-UAT.md\n- .planning/STATE.md\n</files_to_read>\n${AGENT_SKILLS_DEBUGGER}",
   subagent_type="gsd-debugger",
-  isolation="worktree",
+  ${USE_WORKTREES !== "false" ? 'isolation="worktree",' : ''}
   description="Debug: {truth_short}"
 )
 ```
@@ -227,7 +234,7 @@ Agents only diagnose—plan-phase --gaps handles fixes (no fix application).
 **Agent times out:**
 
 - Check DEBUG-{slug}.md for partial progress
-- Can resume with /gsd:debug
+- Can resume with /gsd-debug
 
 **All agents fail:**
 

@@ -233,14 +233,14 @@ Resume file: None
 
 ### Deployment: development
 
-- **Version:** 1.5.0
-- **Timestamp:** 20260325-023642
-- **Branch:** main
-- **Commit:** e5ddd0e9c
+- **Version:** 1.4.3
+- **Timestamp:** 20260409-235815
+- **Branch:** release/v1.4.3
+- **Commit:** 2cea4935f
 
 ### Deployment: development
 
-- **Version:** 1.5.0
-- **Timestamp:** 20260327-202550
-- **Branch:** development
-- **Commit:** 9fd946e55
+- **Version:** 1.4.3
+- **Timestamp:** 20260410-001240
+- **Branch:** release/v1.4.3
+- **Commit:** 97c5d80d7

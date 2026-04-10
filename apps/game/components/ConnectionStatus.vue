@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-expect-error Nuxt overrides vue module types but computed exists at runtime
 import { computed } from 'vue'
 import { useWebSocket } from '~/composables/useWebSocket'
 import { useI18n } from 'vue-i18n'

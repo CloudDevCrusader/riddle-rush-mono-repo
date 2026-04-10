@@ -1,5 +1,5 @@
 {
-  "source": ["package.json", "apps/*/package.json", "packages/*/package.json"],
+  "source": ["package.json", "apps/*/package.json", "packages/*/package.json", "!**/.output/**"],
   "semverGroups": [
     {
       "label": "Use exact versions for workspace packages",

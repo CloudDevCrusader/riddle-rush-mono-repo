@@ -87,7 +87,7 @@
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <form v-if="isInputFieldEnabled" class="answer-form" @submit.prevent="submitAnswer">
+        <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-if="isAnswerInputEnabled"
             v-model="playerAnswer"
@@ -189,7 +189,6 @@ const {
 const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
 const gameActions = useGameActions()
-const { isInputFieldEnabled } = useFeatureFlags()
 const route = useRoute()
 
 // Handle game ID from route parameter
@@ -345,18 +344,21 @@ onMounted(async () => {
           gameId: gameId.value,
         })
         toast.error(t('game.error_loading', 'Failed to load game session'))
+        useLoadingStore().forceHide()
         goToPlayers()
         return
       }
     } catch (error) {
       logger.error('Failed to load game session:', error)
       toast.error(t('game.error_loading', 'Failed to load game session'))
+      useLoadingStore().forceHide()
       goToPlayers()
       return
     }
   } else if (!hasActiveSession.value) {
     // Multiplayer flow contract: /game without active session should not create
     // an implicit single-player session. Resume setup flow instead.
+    useLoadingStore().forceHide()
     if (gameStore.pendingPlayerNames.value.length > 0) {
       await goToRoundStart()
     } else {

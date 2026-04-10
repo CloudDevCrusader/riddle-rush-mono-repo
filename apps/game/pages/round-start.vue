@@ -22,95 +22,35 @@
 
     <!-- Main Container -->
     <div class="container">
-      <!-- Dual Wheels Phase (only shown if feature is enabled) -->
-      <transition name="wheel-fade">
+      <!-- Flip-through animation (only shown if feature is enabled) -->
+      <transition name="flip-fade">
         <div
-          v-if="isFortuneWheelEnabled && !wheelsComplete"
-          class="double-wheel-layout"
-          data-testid="round-wheels-container"
+          v-if="isFortuneWheelEnabled && !startingGame"
+          class="flip-through-layout"
+          data-testid="flip-container"
         >
-          <!-- Top Wheel (Category) -->
-          <div class="wheel-wrapper top-wheel">
-            <div class="wheel-label">
-              {{ t('common.category', 'Category') }}
-            </div>
-            <div class="wheel-container flipped">
-              <FortuneWheel
-                ref="categoryWheelRef"
-                v-model="selectedCategory"
-                :items="displayCategories"
-                :get-item-key="getCategoryKey"
-                :get-item-label="getCategoryLabel"
-                :get-item-icon="getCategoryIcon"
-                center-icon="🎯"
-                @spin-complete="onCategoryComplete"
-              />
-            </div>
-          </div>
-
-          <!-- Central Spin Button -->
-          <div class="spin-button-zone">
-            <button
-              @click="spinBothWheels"
-              class="spin-button tap-highlight"
-              :disabled="categorySpinComplete || letterSpinComplete || isSpinning"
-            >
-              <div class="spin-button-inner">
-                <span class="spin-text">SPIN</span>
+          <!-- Category flip -->
+          <div class="flip-section">
+            <div class="flip-label">{{ t('common.category', 'Category') }}</div>
+            <div class="flip-window" data-testid="flip-category">
+              <div class="flip-track" :class="{ settled: categorySettled }">
+                <div class="flip-item" :class="{ active: categorySettled }">
+                  <span class="flip-icon">{{ currentCategoryIcon }}</span>
+                  <span class="flip-text">{{ currentCategoryName }}</span>
+                </div>
               </div>
-            </button>
-          </div>
-
-          <!-- Bottom Wheel (Letter) -->
-          <div class="wheel-wrapper bottom-wheel">
-            <div class="wheel-label">
-              {{ t('common.letter', 'Letter') }}
-            </div>
-            <div class="wheel-container">
-              <FortuneWheel
-                ref="letterWheelRef"
-                v-model="selectedLetter"
-                :items="alphabet"
-                :get-item-key="getLetterKey"
-                :get-item-label="getLetterLabel"
-                :get-item-icon="getNoIcon"
-                center-icon="🎯"
-                @spin-complete="onLetterComplete"
-              />
-            </div>
-          </div>
-        </div>
-      </transition>
-
-      <!-- Selected Values Display Phase (only shown if fortune wheel was used) -->
-      <transition name="results-fade">
-        <div
-          v-if="isFortuneWheelEnabled && wheelsComplete && !startingGame"
-          class="results-display"
-          data-testid="round-results-display"
-        >
-          <div class="result-item animate-scale-in" data-testid="round-category-display">
-            <div class="result-label">
-              {{ t('common.category', 'Category') }}
-            </div>
-            <div class="result-value">
-              <span class="result-icon">{{ selectedCategoryIcon }}</span>
-              <span class="result-text">{{ selectedCategoryName }}</span>
             </div>
           </div>
 
-          <div class="divider">×</div>
-
-          <div
-            class="result-item animate-scale-in"
-            style="animation-delay: 0.2s"
-            data-testid="round-letter-display"
-          >
-            <div class="result-label">
-              {{ t('common.letter', 'Letter') }}
-            </div>
-            <div class="result-value">
-              <span class="result-text result-letter">{{ selectedLetter }}</span>
+          <!-- Letter flip -->
+          <div class="flip-section">
+            <div class="flip-label">{{ t('common.letter', 'Letter') }}</div>
+            <div class="flip-window" data-testid="flip-letter">
+              <div class="flip-track" :class="{ settled: letterSettled }">
+                <div class="flip-item" :class="{ active: letterSettled }">
+                  <span class="flip-text flip-letter-text">{{ currentLetter }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -129,7 +69,7 @@
 
 <script setup lang="ts">
 import type { Category } from '@riddle-rush/types/game'
-import { WHEEL_FADE_DELAY_MS, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
+import { RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 
 const { baseUrl, toast, t } = usePageSetup()
 const { goToGame } = useNavigation()
@@ -139,15 +79,7 @@ const { isFortuneWheelEnabled } = useFeatureFlags()
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const selectedCategory = ref<Category | null>(null)
 const selectedLetter = ref<string | null>(null)
-const displayCategories = ref<Category[]>([])
-const categoryWheelRef = ref()
-const letterWheelRef = ref()
-
-const categorySpinComplete = ref(false)
-const letterSpinComplete = ref(false)
-const wheelsComplete = ref(false)
 const startingGame = ref(false)
-const isSpinning = ref(false)
 
 const categoryIconMap: Record<string, string> = {
   female_name: '👩',
@@ -167,21 +99,32 @@ const categoryIconMap: Record<string, string> = {
   movie: '🎬',
 }
 
-const selectedCategoryIcon = computed(() => {
-  if (!selectedCategory.value) return '📦'
-  return getCategoryIcon(selectedCategory.value)
+const allCategories = ref<Category[]>([])
+const categorySettled = ref(false)
+const letterSettled = ref(false)
+const currentDisplayCategory = ref<Category | null>(null)
+const currentDisplayLetter = ref<string>('A')
+
+const currentCategoryIcon = computed(() => {
+  if (!currentDisplayCategory.value) return '📦'
+  return categoryIconMap[currentDisplayCategory.value.searchWord] || '📦'
 })
 
-const selectedCategoryName = computed(() => {
-  if (!selectedCategory.value) return ''
-  return t(`categories.${selectedCategory.value.searchWord}`, selectedCategory.value.name)
+const currentCategoryName = computed(() => {
+  if (!currentDisplayCategory.value) return ''
+  return t(
+    `categories.${currentDisplayCategory.value.searchWord}`,
+    currentDisplayCategory.value.name
+  )
 })
+
+const currentLetter = computed(() => currentDisplayLetter.value)
 
 const currentRoundNumber = computed(() => {
   // No session yet = first round setup
-  if (!gameStore.currentSession) return 1
+  const session = gameStore.currentSession.value
+  if (!session) return 1
 
-  const session = gameStore.currentSession
   // Check if current round has been completed (saved to roundHistory)
   const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
 
@@ -190,15 +133,60 @@ const currentRoundNumber = computed(() => {
   return isCurrentRoundCompleted ? session.currentRound + 1 : session.currentRound
 })
 
+function runFlipAnimation<T>(
+  items: T[],
+  totalDuration: number,
+  onTick: (item: T) => void
+): Promise<T> {
+  return new Promise((resolve) => {
+    const finalIndex = Math.floor(Math.random() * items.length)
+    const finalItem = items[finalIndex]!
+    const startTime = Date.now()
+    const minInterval = 50 // fastest flip speed (ms)
+    const maxInterval = 400 // slowest before settling (ms)
+    let lastTick = 0
+
+    function tick() {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / totalDuration, 1)
+
+      // Quadratic ease-out: starts fast, slows down
+      const eased = progress * progress
+      const currentInterval = minInterval + (maxInterval - minInterval) * eased
+
+      if (elapsed - lastTick >= currentInterval) {
+        lastTick = elapsed
+        if (progress < 0.85) {
+          // Random item during animation
+          const randomIdx = Math.floor(Math.random() * items.length)
+          onTick(items[randomIdx]!)
+        } else {
+          // In the final stretch, show the target
+          onTick(finalItem)
+        }
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(tick)
+      } else {
+        onTick(finalItem)
+        resolve(finalItem)
+      }
+    }
+
+    requestAnimationFrame(tick)
+  })
+}
+
 onMounted(async () => {
   // Fetch all categories
   await gameStore.fetchCategories()
-  const allCategories = gameStore.categories
+  const cats = gameStore.categories.value
 
   // If fortune wheel is disabled, skip directly to game
   if (!isFortuneWheelEnabled.value) {
     // Select random category and letter
-    const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
+    const randomCategory = cats[Math.floor(Math.random() * cats.length)]
     const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
 
     selectedCategory.value = randomCategory ?? null
@@ -209,61 +197,29 @@ onMounted(async () => {
     return
   }
 
-  // Select up to 12 categories for the wheel
-  displayCategories.value = allCategories.slice(0, 12)
-})
+  allCategories.value = cats
 
-const spinBothWheels = () => {
-  if (isSpinning.value) return
-  isSpinning.value = true
-  categorySpinComplete.value = false
-  letterSpinComplete.value = false
+  // Start category flip
+  const chosenCategory = await runFlipAnimation(cats, 2500, (cat) => {
+    currentDisplayCategory.value = cat
+  })
+  categorySettled.value = true
+  selectedCategory.value = chosenCategory
 
-  categoryWheelRef.value?.spinRandom()
+  // Brief pause then letter flip
+  await new Promise((r) => setTimeout(r, 300))
 
-  // Stagger the spins slightly for better visual effect
+  const chosenLetter = await runFlipAnimation(alphabet, 2000, (letter) => {
+    currentDisplayLetter.value = letter
+  })
+  letterSettled.value = true
+  selectedLetter.value = chosenLetter
+
+  // Show results briefly then start game
   setTimeout(() => {
-    letterWheelRef.value?.spinRandom()
-  }, 150)
-}
-
-const getCategoryIcon = (category: Category): string => {
-  return categoryIconMap[category.searchWord] || '📦'
-}
-
-const getCategoryKey = (cat: Category, idx: number): string | number => cat?.searchWord || idx
-const getCategoryLabel = (cat: Category): string => t(`categories.${cat.searchWord}`, cat.name)
-const getLetterKey = (letter: string, _idx: number): string => letter
-const getLetterLabel = (letter: string): string => letter
-const getNoIcon = (): string => ''
-
-const onCategoryComplete = (category: Category) => {
-  selectedCategory.value = category
-  categorySpinComplete.value = true
-  checkBothComplete()
-}
-
-const onLetterComplete = (letter: string) => {
-  selectedLetter.value = letter
-  letterSpinComplete.value = true
-  checkBothComplete()
-}
-
-const checkBothComplete = () => {
-  if (categorySpinComplete.value && letterSpinComplete.value) {
-    isSpinning.value = false
-    // Both wheels have completed spinning
-    // Wait a moment, then fade out wheels
-    setTimeout(() => {
-      wheelsComplete.value = true
-
-      // After showing results, start the game
-      setTimeout(() => {
-        startGame()
-      }, RESULTS_DISPLAY_DURATION_MS)
-    }, WHEEL_FADE_DELAY_MS)
-  }
-}
+    startGame()
+  }, RESULTS_DISPLAY_DURATION_MS)
+})
 
 const startGame = async () => {
   if (!selectedCategory.value || !selectedLetter.value) return
@@ -271,60 +227,19 @@ const startGame = async () => {
   startingGame.value = true
 
   try {
-    const hasSession = !!gameStore.currentSession
-    const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
+    await gameStore.advanceToConfiguredRound(selectedCategory.value, selectedLetter.value)
 
-    // Determine if this is initial setup or a new round
-    // Initial setup: no session OR pending players from players page
-    if (!hasSession || hasPendingPlayers) {
-      // This is initial setup - create new session with players
-      const playerNames = hasPendingPlayers ? gameStore.pendingPlayerNames : ['Player 1'] // Fallback
-
-      await gameStore.setupPlayers(
-        playerNames,
-        undefined,
-        selectedLetter.value,
-        selectedCategory.value
-      )
-
-      // Clear pending state
-      gameStore.pendingPlayerNames = []
-      gameStore.selectedLetter = null
-    } else {
-      // Session exists - check if current round is completed
-      const session = gameStore.currentSession
-      if (!session) return // Safety check
-
-      const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
-
-      if (isCurrentRoundCompleted) {
-        // Current round completed - start new round (increment counter)
-        await gameStore.startConfiguredRound(selectedCategory.value, selectedLetter.value)
-      } else {
-        // Refresh during same round - update category/letter but don't increment round
-        session.category = { ...selectedCategory.value, letter: selectedLetter.value }
-        session.letter = selectedLetter.value
-        // Reset player submissions for fair restart on refresh
-        await gameStore.resetPlayerSubmissions()
-        await gameStore.saveSessionToDB()
-      }
-    }
-
-    // Navigate to game with game ID
-    const gameId = gameStore.currentSession?.id
+    const gameId = gameStore.currentSession.value?.id
     if (gameId) {
       await goToGame(gameId)
     } else {
       await goToGame()
     }
-
-    // CRITICAL: Ensure spinner is turned off on success
-    startingGame.value = false
+    // Do not set startingGame to false on success so the spinner stays visible during navigation
   } catch (error) {
     const logger = useLogger()
     logger.error('Failed to start game:', error)
     startingGame.value = false
-    // Show error to user
     toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
   }
 }
@@ -408,131 +323,26 @@ useHead({
   padding: clamp(var(--spacing-xl), 8vh, var(--spacing-3xl)) var(--spacing-xl);
 }
 
-/* Vertical Double Wheel Layout */
-.double-wheel-layout {
+/* Flip Through Layout */
+.flip-through-layout {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   max-width: 500px;
-  position: relative;
-  gap: 0; /* Remove gap so we can control overlap */
+  gap: clamp(var(--spacing-xl), 5vh, var(--spacing-3xl));
 }
 
-.wheel-wrapper {
+.flip-section {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1;
+  gap: var(--spacing-md);
 }
 
-.wheel-container {
-  width: 100%;
-  max-width: 380px;
-  position: relative;
-}
-
-.wheel-container.flipped {
-  /* Rotate top wheel so pointer is pointing down towards center button */
-  transform: rotate(180deg);
-}
-
-/* Fix text rotation in flipped wheel label */
-.wheel-wrapper.top-wheel .wheel-label {
-  margin-bottom: var(--spacing-md);
-}
-
-.wheel-wrapper.bottom-wheel .wheel-label {
-  margin-top: var(--spacing-md);
-  order: 2; /* Put label below wheel */
-}
-
-/* Make wheels overlap slightly with the central button */
-.top-wheel {
-  margin-bottom: -30px;
-}
-
-.bottom-wheel {
-  margin-top: -30px;
-}
-
-/* Central Spin Button */
-.spin-button-zone {
-  z-index: 10;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.spin-button {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: var(--color-border-gold);
-  border: 4px solid var(--color-white);
-  padding: 6px;
-  cursor: pointer;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(255, 215, 0, 0.4),
-    inset 0 4px 10px rgba(255, 255, 255, 0.6),
-    inset 0 -4px 10px rgba(0, 0, 0, 0.2);
-  transition:
-    transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    box-shadow 0.2s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.spin-button:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(255, 215, 0, 0.6),
-    inset 0 4px 10px rgba(255, 255, 255, 0.7);
-}
-
-.spin-button:active:not(:disabled) {
-  transform: scale(0.95);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(255, 215, 0, 0.3),
-    inset 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.spin-button:disabled {
-  filter: grayscale(0.5) brightness(0.8);
-  cursor: not-allowed;
-  transform: scale(0.95);
-}
-
-.spin-button-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ff5252 0%, #d32f2f 70%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow:
-    inset 0 -4px 8px rgba(0, 0, 0, 0.4),
-    inset 0 4px 8px rgba(255, 255, 255, 0.4);
-  border: 2px solid rgba(0, 0, 0, 0.1);
-}
-
-.spin-text {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 900;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  letter-spacing: 2px;
-}
-
-.wheel-label {
+.flip-label {
   font-family: var(--font-display);
   font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
   font-weight: var(--font-weight-black);
@@ -544,74 +354,102 @@ useHead({
   letter-spacing: 2px;
 }
 
-/* Results Display */
-.results-display {
-  display: flex;
-  flex-direction: column; /* Stack results vertically too for consistency */
-  gap: clamp(var(--spacing-xl), 4vw, var(--spacing-2xl));
-  align-items: center;
-  justify-content: center;
+.flip-window {
   width: 100%;
-  max-width: 500px;
-}
-
-.result-item {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.1);
+  max-width: 400px;
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   border-radius: var(--radius-xl);
-  padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 0 40px rgba(255, 215, 0, 0.1);
   border: 2px solid rgba(255, 215, 0, 0.3);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 215, 0, 0.1);
 }
 
-.result-label {
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-base), 2vw, var(--font-size-lg));
-  font-weight: var(--font-weight-semibold);
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.result-value {
+.flip-track {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  height: 100%;
+  transition: none;
+}
+
+.flip-track:not(.settled) .flip-item {
+  animation: flipPulse 0.08s ease-in-out;
+}
+
+.flip-track.settled .flip-item {
+  animation: flipSettle 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.flip-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
 }
 
-.result-icon {
-  font-size: clamp(48px, 8vw, 72px);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+.flip-track.settled .flip-item.active {
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
 }
 
-.result-text {
+.flip-icon {
+  font-size: clamp(28px, 5vw, 40px);
+}
+
+.flip-text {
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-3xl));
+  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-2xl));
   font-weight: var(--font-weight-black);
   color: var(--color-white);
   text-shadow:
     0 2px 8px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(255, 215, 0, 0.6);
+    0 0 20px rgba(255, 215, 0, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
 }
 
-.result-letter {
-  font-size: clamp(64px, 10vw, 96px);
+.flip-letter-text {
+  font-size: clamp(var(--font-size-2xl), 6vw, 48px);
   background: linear-gradient(135deg, #ffd700, #ffa500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.divider {
-  display: none; /* Hide divider in vertical layout */
+@keyframes flipPulse {
+  0% {
+    opacity: 0.3;
+    transform: translateY(-8px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0.3;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes flipSettle {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Loading */
@@ -630,88 +468,36 @@ useHead({
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-/* Transitions */
-.wheel-fade-enter-active,
-.wheel-fade-leave-active {
+/* Transition for the flip layout */
+.flip-fade-enter-active,
+.flip-fade-leave-active {
   transition: all 0.8s ease-out;
 }
 
-.wheel-fade-enter-from {
+.flip-fade-enter-from {
   opacity: 0;
   transform: scale(0.9);
 }
 
-.wheel-fade-leave-to {
+.flip-fade-leave-to {
   opacity: 0;
   transform: scale(0.9);
-}
-
-.results-fade-enter-active {
-  transition: all 0.8s ease-out;
-}
-
-.results-fade-enter-from {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.6s ease-out backwards;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* Responsive */
 @media (max-width: 480px) {
-  .spin-button {
-    width: 100px;
-    height: 100px;
-  }
-
-  .spin-text {
-    font-size: 22px;
-  }
-
-  .top-wheel {
-    margin-bottom: -20px;
-  }
-
-  .bottom-wheel {
-    margin-top: -20px;
+  .flip-window {
+    height: 70px;
+    max-width: 320px;
   }
 }
 
-/* Extremely tall/narrow screens might need adjustment to fit both wheels */
-@media (max-height: 800px) {
-  .wheel-container {
-    max-width: 300px; /* Make wheels slightly smaller to fit vertically */
+@media (max-height: 600px) {
+  .flip-through-layout {
+    gap: var(--spacing-lg);
   }
-
-  .spin-button {
-    width: 90px;
-    height: 90px;
-    border-width: 3px;
-  }
-
-  .spin-text {
-    font-size: 20px;
-  }
-
-  .top-wheel {
-    margin-bottom: -15px;
-  }
-
-  .bottom-wheel {
-    margin-top: -15px;
+  .flip-window {
+    height: 60px;
   }
 }
 </style>

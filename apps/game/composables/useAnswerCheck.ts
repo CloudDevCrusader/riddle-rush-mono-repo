@@ -104,8 +104,11 @@ export function useAnswerCheck() {
 
     const results = items.filter((e) => e.toUpperCase().startsWith(letter.toUpperCase()))
 
-    const found = results.includes(term)
-    const other = results.filter((res) => res !== term).slice(0, MAX_SUGGESTIONS)
+    const normalizedTerm = term.trim().toLowerCase()
+    const found = results.some((res) => res.toLowerCase() === normalizedTerm)
+    const other = results
+      .filter((res) => res.toLowerCase() !== normalizedTerm)
+      .slice(0, MAX_SUGGESTIONS)
 
     return { found, other }
   }

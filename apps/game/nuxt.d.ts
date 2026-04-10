@@ -1,3 +1,14 @@
+// Augment NuxtConfig so that the `security` key from nuxt-security is accepted
+// by defineNuxtConfig(). The module only augments NuxtOptions (resolved config),
+// not NuxtConfig (input config), so TypeScript rejects the property otherwise.
+import type { ModuleOptions as NuxtSecurityModuleOptions } from 'nuxt-security'
+
+declare module 'nuxt/schema' {
+  interface NuxtConfig {
+    security?: Partial<NuxtSecurityModuleOptions>
+  }
+}
+
 // Type declarations for Nuxt internal modules used by generated files
 declare module '#build/pwa-icons/pwa-icons' {
   export interface PWAIcons {

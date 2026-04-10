@@ -41,7 +41,7 @@ function createMockSocket(): MockSocket {
     }),
     off: vi.fn((event: string, cb?: SocketEventCallback) => {
       if (!cb) {
-        handlers[event] = []
+        Reflect.deleteProperty(handlers, event)
       } else {
         handlers[event] = (handlers[event] ?? []).filter((h) => h !== cb)
       }
