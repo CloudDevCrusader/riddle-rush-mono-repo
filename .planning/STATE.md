@@ -176,6 +176,11 @@ Recent decisions affecting current work:
 - **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
 - **[New]** Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag).
 - ~~Refactor game mode to single source of truth with documented state flow chart.~~ Done (18-05) — flow state bug fixed, duplicate guards removed, state-flow doc created.
+- **[New]** Verify category selection in fortune wheel flip-through animation (fortune wheel replaced by flip-through in round-start.vue).
+- **[New]** Verify Android build is universal (fails at some customers).
+- **[New]** Fix mobile website not being full page (2/3 of screen is gray).
+- **[New]** Fix remaining E2E failures in language.spec.ts (~12 tests) — UI/testid mismatches (missing credits-title-image, language-flag-_, menu-item-_ elements).
+- **[New]** Fix remaining E2E failures in scoring-flow.spec.ts (~4 tests) — wrong testid names (player-leaderboard-overlay, next-round don't exist in app).
 
 ### Completed Todos (2026-02-14)
 
