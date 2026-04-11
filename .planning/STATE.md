@@ -198,6 +198,7 @@ Recent decisions affecting current work:
 - **[New]** Fix mobile website not being full page (2/3 of screen is gray).
 - **[New]** Fix remaining E2E failures in language.spec.ts (~12 tests) — UI/testid mismatches (missing credits-title-image, language-flag-_, menu-item-_ elements).
 - **[New]** Fix remaining E2E failures in scoring-flow.spec.ts (~4 tests) — wrong testid names (player-leaderboard-overlay, next-round don't exist in app).
+- **[New]** Add polished animations throughout the app (page transitions, micro-interactions, component mounts, game flow moments).
 
 ### Completed Todos (2026-02-14)
 
