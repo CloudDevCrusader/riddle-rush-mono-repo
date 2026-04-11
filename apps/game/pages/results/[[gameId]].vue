@@ -1,9 +1,7 @@
 <template>
   <GameBackground>
-    <div class="scoring-page">
-      <GameHeader color="gold" data-testid="results-header">
-        {{ t('scoring.title', 'Scoring') }}
-      </GameHeader>
+    <div class="scoring-page" data-testid="results-header">
+      <h1 class="scoring-page__sr-only">{{ t('scoring.title', 'Scoring') }}</h1>
 
       <p
         v-if="!isAnswerInputEnabled"
@@ -63,10 +61,11 @@
                 −
               </GameButton>
 
-              <div class="scoring-page__round-score" aria-live="polite">
-                <span class="scoring-page__round-score-label">{{
-                  t('scoring.round_points', 'Round')
-                }}</span>
+              <div
+                class="scoring-page__round-score"
+                aria-live="polite"
+                :aria-label="t('scoring.round_points', 'This round')"
+              >
                 <span class="scoring-page__round-score-value">
                   <span
                     class="scoring-page__round-score-num"
@@ -354,6 +353,7 @@ useLocalizedPageSeo({
 @use 'assets/scss/design-system' as *;
 
 .scoring-page {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -364,9 +364,21 @@ useLocalizedPageSeo({
   min-height: 100dvh;
 }
 
+.scoring-page__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .scoring-page__verbal-hint {
   max-width: 36rem;
-  margin: calc(var(--spacing-xl) * -1) 0 0;
+  margin: 0;
   padding: mockup-clamp(12px) mockup-clamp(20px);
   font-family: var(--font-display);
   font-size: mockup-clamp(15px);
@@ -530,12 +542,12 @@ useLocalizedPageSeo({
 .scoring-page__round-score {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: mockup-clamp(4px);
   min-width: 0;
-  padding: mockup-clamp(10px) var(--spacing-sm);
+  padding: mockup-clamp(12px) var(--spacing-md);
   border-radius: var(--radius-full);
   background: linear-gradient(180deg, rgba(12, 48, 102, 0.92) 0%, rgba(5, 28, 72, 0.96) 100%);
   border: mockup-clamp(3px) solid rgba(255, 213, 79, 0.65);
@@ -543,18 +555,6 @@ useLocalizedPageSeo({
     inset 0 2px 8px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.scoring-page__round-score-label {
-  font-family: var(--font-display);
-  font-size: mockup-clamp(11px);
-  font-weight: var(--font-weight-bold);
-  color: #eaf3ff;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.55),
-    0 0 10px rgba(180, 220, 255, 0.35);
 }
 
 .scoring-page__round-score-value {
