@@ -99,14 +99,9 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleEscape)
 })
 
-useHead({
-  title: t('settings.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('settings.title'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('settings.title'),
+  description: () => t('settings.meta_description'),
 })
 </script>
 

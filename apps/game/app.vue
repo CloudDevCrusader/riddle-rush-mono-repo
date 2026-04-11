@@ -21,7 +21,33 @@ import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 const gameSession = useGameSession()
 const installPrompt = useInstallPrompt()
 const settings = useSettings()
-const { setLocale } = useI18n()
+const { setLocale, t } = useI18n()
+
+useDocumentLang()
+
+const jsonLdPayload = computed(() =>
+  JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: t('seo.site_name'),
+    description: t('seo.json_ld_description'),
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Web',
+    browserRequirements: 'Requires JavaScript. Progressive Web App.',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    inLanguage: ['de-DE', 'en-US'],
+  })
+)
+
+useHead(() => ({
+  script: [
+    {
+      key: 'jsonld-webapp',
+      type: 'application/ld+json',
+      innerHTML: jsonLdPayload.value,
+    },
+  ],
+}))
 
 // Disable splash screen in E2E tests
 const isE2E =

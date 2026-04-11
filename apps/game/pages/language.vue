@@ -120,14 +120,9 @@ const confirmSelection = async () => {
   }
 }
 
-useHead({
-  title: t('language.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('language.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('language.title'),
+  description: () => t('language.description'),
 })
 </script>
 

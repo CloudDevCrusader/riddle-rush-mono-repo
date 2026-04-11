@@ -73,14 +73,9 @@ const runtimeConfig = useRuntimeConfig()
 const appVersion = runtimeConfig.public.appVersion
 const { t } = useI18n()
 
-useHead({
-  title: t('credits.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('credits.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('credits.title'),
+  description: () => t('credits.description'),
 })
 </script>
 

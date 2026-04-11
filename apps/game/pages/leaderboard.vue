@@ -86,14 +86,9 @@ const handleNextRound = async () => {
   await goToRoundStart()
 }
 
-useHead({
-  title: t('leaderboard.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('leaderboard.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('leaderboard.title'),
+  description: () => t('leaderboard.description'),
 })
 </script>
 

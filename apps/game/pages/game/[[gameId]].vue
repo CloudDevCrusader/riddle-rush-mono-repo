@@ -383,14 +383,9 @@ const pageTitle = computed(
   () => `${t('game.page_title')} · ${t('game.round')} ${formattedRound.value}`
 )
 
-useHead({
-  title: pageTitle,
-  meta: [
-    {
-      name: 'description',
-      content: t('game.meta_description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => pageTitle.value,
+  description: () => t('game.meta_description'),
 })
 </script>
 

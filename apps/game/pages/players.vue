@@ -174,14 +174,9 @@ const { pageElement } = usePageSwipe({
   threshold: 80,
 })
 
-useHead({
-  title: t('players.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('players.description', 'Select players for the game'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('players.title'),
+  description: () => t('players.description'),
 })
 
 syncPlayerList(playerCount.value)

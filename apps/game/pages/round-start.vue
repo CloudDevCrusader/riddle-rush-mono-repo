@@ -2,7 +2,7 @@
   <div class="round-start-page">
     <NuxtImg
       :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
-      alt="Background"
+      alt=""
       class="page-bg"
       format="webp"
       quality="80"
@@ -123,14 +123,9 @@ onMounted(async () => {
   }
 })
 
-useHead({
-  title: 'Round Start',
-  meta: [
-    {
-      name: 'description',
-      content: 'Spinning for category and letter',
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('game.round_start_title'),
+  description: () => t('game.round_start_description'),
 })
 </script>
 

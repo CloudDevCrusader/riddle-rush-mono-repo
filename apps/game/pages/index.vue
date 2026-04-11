@@ -11,6 +11,8 @@
             class="logo-image"
             width="512"
             height="512"
+            decoding="async"
+            fetchpriority="high"
           />
         </div>
 
@@ -135,14 +137,9 @@ const wrappedGoToLanguage = () => {
   goToLanguage()
 }
 
-useHead({
-  title: t('home.page_title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('app.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('home.page_title'),
+  description: () => t('app.description'),
 })
 </script>
 
