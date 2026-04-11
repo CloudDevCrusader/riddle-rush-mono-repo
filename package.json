@@ -96,6 +96,8 @@
     "test:e2e": "turbo run test:e2e --filter=@riddle-rush/game",
     "test:e2e:ui": "turbo run test:e2e --filter=@riddle-rush/game --ui web",
     "test:e2e:docker": "./scripts/e2e-docker.sh",
+    "test:e2e:appium:android": "pnpm --filter @riddle-rush/mobile test:e2e:appium:android",
+    "test:e2e:appium:ios": "pnpm --filter @riddle-rush/mobile test:e2e:appium:ios",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
     "knip": "knip --reporter compact",

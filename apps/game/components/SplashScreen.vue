@@ -1,6 +1,6 @@
 <template>
   <transition name="fade-out">
-    <div v-if="visible" class="splash-screen">
+    <div v-if="visible" class="splash-screen" data-testid="splash-screen">
       <!-- Background Image -->
       <img
         :src="getAssetPath('assets/splash/background.png')"
