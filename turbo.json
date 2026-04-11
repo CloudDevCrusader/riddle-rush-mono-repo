@@ -72,6 +72,10 @@
       "inputs": ["src/**", "public/**", "locales/**", "nuxt.config.ts"],
       "outputs": [".output/**", "dist/**"]
     },
+    "lighthouse": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
     "lint": {
       "inputs": ["src/**", "**/*.ts", "**/*.vue", "**/*.js", ".eslintrc.json", "eslint.config.mjs"],
       "outputs": [],

@@ -252,6 +252,7 @@ export default defineNuxtConfig({
       filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
+      // @ts-expect-error Cross-package Vite plugin type mismatch (lightningcss patch-level divergence)
       ...(process.env.NODE_ENV === 'production'
         ? getBuildPlugins({ isDev: false })
         : getDevPlugins({ isDev: true })),
