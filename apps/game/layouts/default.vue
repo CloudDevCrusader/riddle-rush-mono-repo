@@ -1,17 +1,19 @@
 <template>
-  <div class="layout-container">
+  <div
+    class="layout-viewport pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]"
+  >
     <!-- Background Image (if provided by page) -->
     <img
       v-if="backgroundImage"
       :src="backgroundImage"
       alt="Background"
-      class="page-bg"
+      class="page-bg-cover"
       width="1920"
       height="1080"
     />
 
     <!-- Main Content -->
-    <div class="page-content">
+    <div class="layout-main-col">
       <slot />
     </div>
 
@@ -34,25 +36,3 @@ provide('setBackground', (src: string) => {
   backgroundImage.value = src
 })
 </script>
-
-<style scoped lang="scss">
-/* Full-bleed layout: avoids gray bands when a child only fills partial viewport on mobile */
-.layout-container {
-  min-height: 100vh;
-  min-height: 100dvh;
-  width: 100%;
-  max-width: 100vw;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.page-content {
-  flex: 1 0 auto;
-  min-height: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-</style>

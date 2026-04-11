@@ -1,15 +1,28 @@
 <template>
-  <div class="game-layout">
+  <div
+    class="relative min-h-dvh min-h-screen overflow-hidden bg-[#1a1a2e] pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]"
+  >
     <!-- Background Image -->
-    <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
+    <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg-cover" />
 
     <!-- Back Button -->
-    <button v-if="showBackButton" class="back-btn tap-highlight no-select" @click="handleBack">
-      <img :src="backButtonImage" alt="Back" />
+    <button
+      v-if="showBackButton"
+      class="tap-highlight no-select absolute left-md top-lg z-10 cursor-pointer border-none bg-transparent p-0 transition-transform active:scale-95 active:opacity-70 sm:left-xl sm:top-xl"
+      type="button"
+      @click="handleBack"
+    >
+      <img
+        :src="backButtonImage"
+        alt="Back"
+        class="h-auto w-[clamp(2.5rem,5vw,3.75rem)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] max-sm:w-10"
+      />
     </button>
 
     <!-- Main Content Container -->
-    <div class="container">
+    <div
+      class="relative z-20 box-border flex min-h-dvh min-h-screen w-full max-w-full flex-col items-center justify-center gap-2xl px-sm py-2xl sm:px-md sm:py-3xl"
+    >
       <slot />
     </div>
   </div>
@@ -49,69 +62,3 @@ const handleBack = () => {
   }
 }
 </script>
-
-<style scoped>
-.game-layout {
-  min-height: 100vh;
-  min-height: 100dvh;
-  position: relative;
-  overflow: hidden;
-  background: #1a1a2e;
-}
-
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-}
-
-.back-btn {
-  position: absolute;
-  top: var(--spacing-xl);
-  left: var(--spacing-xl);
-  z-index: 3;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform var(--transition-base);
-}
-
-.back-btn img {
-  width: clamp(40px, 5vw, 60px);
-  height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-.back-btn:active {
-  transform: scale(0.95);
-  opacity: 0.7;
-}
-
-.container {
-  position: relative;
-  z-index: 2;
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-md);
-  gap: var(--spacing-2xl);
-}
-
-@media (max-width: 640px) {
-  .back-btn img {
-    width: 40px;
-  }
-
-  .container {
-    padding: var(--spacing-2xl) var(--spacing-sm);
-  }
-}
-</style>

@@ -3,7 +3,7 @@
     <img
       :src="getAssetPath('assets/alphabets/background.png')"
       alt=""
-      class="page-bg"
+      class="page-bg-cover"
       loading="eager"
       fetchpriority="high"
       width="1920"
@@ -285,16 +285,6 @@ useLocalizedPageSeo({
   width: 32px;
   height: 32px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.page-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
 }
 
 .container {
