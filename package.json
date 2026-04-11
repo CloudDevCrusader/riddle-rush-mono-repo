@@ -182,10 +182,22 @@
     "onlyBuiltDependencies": [
       "better-sqlite3",
       "core-js-pure",
-      "electron",
       "esbuild",
       "protobufjs",
+      "puppeteer",
       "yarn"
+    ],
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher",
+      "cwebp-bin",
+      "gifsicle",
+      "jpegtran-bin",
+      "mozjpeg",
+      "optipng-bin",
+      "pngquant-bin",
+      "sharp",
+      "unrs-resolver",
+      "vue-demi"
     ]
   },
   "type": "module",
