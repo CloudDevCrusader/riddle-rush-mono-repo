@@ -9,6 +9,7 @@
         v-if="modelValue"
         ref="overlayRef"
         class="game-modal-overlay"
+        v-bind="$attrs"
         @click.self="handleBackdropClick"
       >
         <div
@@ -38,6 +39,8 @@
 
 <script setup lang="ts">
 import { createFocusTrap, type FocusTrap } from 'focus-trap'
+
+defineOptions({ inheritAttrs: false })
 
 interface Props {
   modelValue: boolean

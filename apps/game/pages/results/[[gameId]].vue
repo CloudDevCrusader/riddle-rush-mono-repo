@@ -20,9 +20,21 @@
         {{ t('scoring.verbal_hint') }}
       </p>
 
-      <div v-if="players.length === 0" class="scoring-page__column" data-testid="results-empty-state">
-        <p class="scoring-page__empty-text">{{ t('game.no_active_session', 'No active game session.') }}</p>
-        <GameButton variant="primary" size="lg" full-width data-testid="results-go-players" @click="goToPlayers">
+      <div
+        v-if="players.length === 0"
+        class="scoring-page__column"
+        data-testid="results-empty-state"
+      >
+        <p class="scoring-page__empty-text">
+          {{ t('game.no_active_session', 'No active game session.') }}
+        </p>
+        <GameButton
+          variant="primary"
+          size="lg"
+          full-width
+          data-testid="results-go-players"
+          @click="goToPlayers"
+        >
           {{ t('players.title', 'Players') }}
         </GameButton>
       </div>
@@ -32,10 +44,8 @@
           <div
             v-for="(player, index) in players"
             :key="player.id"
-            v-motion
-            :initial="{ opacity: 0, y: 20 }"
-            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 50 } }"
-            class="scoring-page__player-card"
+            class="scoring-page__player-card scoring-page__player-card--enter"
+            :style="{ '--scoring-card-enter-delay': `${index * 50}ms` }"
             :data-testid="`results-player-entry-${index}`"
           >
             <div class="scoring-page__player-header">
@@ -460,6 +470,29 @@ useLocalizedPageSeo({
   flex-direction: column;
   gap: var(--spacing-xl);
   width: 100%;
+}
+
+.scoring-page__player-card--enter {
+  animation: scoring-page-card-enter 0.3s ease both;
+  animation-delay: var(--scoring-card-enter-delay, 0ms);
+}
+
+@keyframes scoring-page-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scoring-page__player-card--enter {
+    animation: none;
+  }
 }
 
 .scoring-page__player-card {
