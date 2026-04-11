@@ -10,9 +10,10 @@
       <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
-          :src="getAssetPath('assets/settings/BACKGROUND.png')"
+          :src="getAssetPath('assets/settings/background.png')"
           alt="Background"
           class="settings-bg"
+          loading="lazy"
           width="600"
           height="800"
         />
@@ -28,6 +29,7 @@
             :src="getAssetPath('assets/settings/options.png')"
             alt="OPTIONS"
             class="title-image"
+            loading="lazy"
             width="300"
             height="100"
           />
@@ -39,9 +41,10 @@
           <div class="control-item">
             <div class="control-icon-wrapper">
               <img
-                :src="getAssetPath('assets/settings/Sound.png')"
+                :src="getAssetPath('assets/settings/sound.png')"
                 alt="Sound"
                 class="control-icon"
+                loading="lazy"
                 width="50"
                 height="50"
               />
@@ -70,9 +73,10 @@
           <div class="control-item">
             <div class="control-icon-wrapper">
               <img
-                :src="getAssetPath('assets/settings/Music.png')"
+                :src="getAssetPath('assets/settings/music.png')"
                 alt="Music"
                 class="control-icon"
+                loading="lazy"
                 width="50"
                 height="50"
               />
@@ -100,7 +104,13 @@
 
         <!-- OK Button -->
         <button class="ok-btn tap-highlight no-select" type="button" @click="closeModal">
-          <img :src="getAssetPath('assets/settings/OK.png')" alt="OK" width="200" height="80" />
+          <img
+            :src="getAssetPath('assets/settings/ok.png')"
+            alt="OK"
+            loading="lazy"
+            width="200"
+            height="80"
+          />
         </button>
       </div>
     </button>

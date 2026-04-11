@@ -54,7 +54,7 @@
       <!-- Category Panel -->
       <div class="category-panel" data-testid="game-category-info">
         <img
-          :src="getAssetPath('assets/alphabets/CATEGORY.png')"
+          :src="getAssetPath('assets/alphabets/category.png')"
           :alt="t('common.category')"
           class="category-label-image"
           loading="lazy"
@@ -414,7 +414,7 @@ useLocalizedPageSeo({
   right: 0;
   bottom: 0;
   /* Background image optimized via Nuxt Image in template */
-  /* background-image: url('/assets/alphabets/BACKGROUND.png'); */
+  /* background-image: url('/assets/alphabets/background.png'); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -29,7 +29,7 @@ const { getAssetPath } = useAssets()
 
 // Layout state
 const backgroundImage = ref<string | null>(null)
-const menuButtonImage = ref<string>(getAssetPath('assets/main-menu/MENU.png'))
+const menuButtonImage = ref<string>(getAssetPath('assets/main-menu/menu.png'))
 const showMenuButton = ref(true)
 const isMenuOpen = ref(false)
 

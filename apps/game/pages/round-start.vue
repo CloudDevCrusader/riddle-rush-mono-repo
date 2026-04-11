@@ -1,7 +1,7 @@
 <template>
   <div class="round-start-page">
     <img
-      :src="getAssetPath('assets/alphabets/BACKGROUND.png')"
+      :src="getAssetPath('assets/alphabets/background.png')"
       alt=""
       class="page-bg"
       loading="eager"

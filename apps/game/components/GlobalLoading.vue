@@ -14,9 +14,11 @@
         <!-- Logo with Fade In Animation -->
         <div class="logo-container animate-fade-in">
           <img
-            :src="getAssetPath('assets/splash/LOGO.png')"
+            :src="getAssetPath('assets/splash/logo.png')"
             alt="Logo"
             class="logo-image"
+            loading="eager"
+            fetchpriority="high"
             width="512"
             height="512"
           />
@@ -25,9 +27,10 @@
         <!-- Loading Bar Container with Slide Up Animation -->
         <div v-if="showProgress" class="loading-bar-container animate-slide-up">
           <img
-            :src="getAssetPath('assets/splash/LOADING_.png')"
+            :src="getAssetPath('assets/splash/loading.png')"
             alt="Loading"
             class="loading-text"
+            loading="eager"
             width="256"
             height="64"
           />
@@ -36,6 +39,7 @@
               :src="getAssetPath('assets/splash/loading-down.png')"
               alt="Loading bar background"
               class="loading-bar-bg-img"
+              loading="eager"
               width="512"
               height="64"
             />
@@ -45,6 +49,7 @@
                 alt="Loading bar fill"
                 :style="{ clipPath: `inset(0 ${100 - progress}% 0 0)` }"
                 class="loading-bar-fill-img"
+                loading="eager"
                 width="512"
                 height="64"
               />
