@@ -604,7 +604,7 @@ Plans:
 **Goal:** Improve runtime performance and production asset reliability by removing dead image payload, fixing static image delivery paths, self-hosting fonts, and enforcing measurable Lighthouse benchmarking.
 **Requirements**: PERF-01, PERF-02, PERF-03, PERF-04
 **Depends on:** Phase 22
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 **Success Criteria** (what must be TRUE):
 
@@ -616,7 +616,7 @@ Plans:
 
 Plans:
 
-- [ ] 23-01-PLAN.md — Add Lighthouse tooling and capture baseline metrics before optimization
+- [x] 23-01-PLAN.md — Add Lighthouse tooling and capture baseline metrics before optimization
 - [ ] 23-02-PLAN.md — Consolidate asset path handling and fix static image rendering contracts
 - [ ] 23-03-PLAN.md — Remove dead assets, normalize filenames, and run WebP optimization pipeline
 - [ ] 23-04-PLAN.md — Self-host fonts, lazy-load non-critical overlays, and capture final performance results
