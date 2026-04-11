@@ -209,7 +209,7 @@ test.describe('full game workflow @slow', () => {
       // Submit answers and check turn progression
       const answerInput = page.locator('[data-testid="game-answer-input"]')
       const submitBtn = page
-        .locator('[data-testid="game-submit-button"], [data-testid="game-skip-button"]')
+        .locator('[data-testid="game-submit-button"], [data-testid="game-verbal-turn-done"]')
         .first()
 
       // Player 1 (Alice)

@@ -92,6 +92,7 @@
   },
   "game": {
     "all_submitted": "All players have submitted!",
+    "all_submitted_verbal": "Everyone has had their turn. Tap Next, then award points on the scoring screen.",
     "answer_skipped": "{0} skipped their turn",
     "answer_submitted": "Answer submitted for {0}",
     "attempts": "Attempts",
@@ -132,8 +133,11 @@
     "round_start_description": "Spinning for category and letter",
     "round_start_title": "Round Start",
     "score": "Score",
-    "skip": "Skip",
+    "skip": "Next",
     "starts_with": "Starts with",
+    "verbal_mode_hint": "Say your answer out loud — nothing is typed here. On the scoring screen, use + and − so points show who was right or wrong.",
+    "verbal_turn_done": "Done — next player",
+    "verbal_turn_recorded": "{0} is done. Correct or wrong gets decided when you score this round.",
     "submit": "Submit",
     "tap_to_spin": "Tap to spin",
     "title": "Play",
@@ -291,6 +295,7 @@
   "scoring": {
     "base_score": "Score",
     "confirm_scores": "Confirm Scores",
+    "verbal_hint": "Answers were spoken during the round — use + for a correct answer and − if it was wrong. The round points here are what counts.",
     "description": "View round scoring results",
     "error_saving": "Failed to save scores. Please try again.",
     "finish_game": "Finish Game",

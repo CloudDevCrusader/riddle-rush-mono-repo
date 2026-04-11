@@ -87,6 +87,13 @@
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
         </div>
+        <p
+          v-if="!isAnswerInputEnabled"
+          class="verbal-mode-hint"
+          data-testid="game-verbal-mode-hint"
+        >
+          {{ t('game.verbal_mode_hint') }}
+        </p>
         <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-if="isAnswerInputEnabled"
@@ -107,19 +114,20 @@
             type="submit"
             class="submit-answer-btn"
             data-testid="game-submit-button"
-            :disabled="false"
+            :disabled="isSubmitting"
           >
             {{ isAnswerInputEnabled ? t('game.submit', 'Submit') : t('common.confirm') }}
           </button>
         </form>
-        <div v-else class="skip-actions">
+        <div v-else class="verbal-turn-actions">
           <button
-            class="skip-player-btn"
-            data-testid="game-skip-button"
-            :disabled="false"
+            type="button"
+            class="verbal-turn-done-btn"
+            data-testid="game-verbal-turn-done"
+            :disabled="isSubmitting"
             @click="submitAnswer"
           >
-            {{ t('game.skip', 'Skip') }}
+            {{ t('game.verbal_turn_done') }}
           </button>
         </div>
       </div>
@@ -130,7 +138,9 @@
         class="all-submitted-message"
         data-testid="game-all-submitted"
       >
-        <p>{{ t('game.all_submitted', 'All players have submitted!') }}</p>
+        <p>
+          {{ isAnswerInputEnabled ? t('game.all_submitted') : t('game.all_submitted_verbal') }}
+        </p>
       </div>
     </div>
 
@@ -255,23 +265,27 @@ const submitAnswer = async () => {
 
   isSubmitting.value = true
   try {
-    // Allow empty answers (player can skip their turn)
+    // Typed mode: empty = skipped turn. Verbal mode: answer is always spoken — nothing is typed.
     const answer = playerAnswer.value.trim() || ''
     await gameStore.submitPlayerAnswer(player.id, answer)
 
     if (answer) {
       void audio.playTada()
       toast.success(t('game.answer_submitted', [player.name]))
-    } else {
+    } else if (isAnswerInputEnabled.value) {
       void audio.playClick()
       toast.info(t('game.answer_skipped', [player.name]))
+    } else {
+      void audio.playClick()
+      toast.success(t('game.verbal_turn_recorded', [player.name]))
     }
 
     playerAnswer.value = ''
 
-    // If all players submitted, show message
     if (allPlayersSubmitted.value) {
-      toast.info(t('game.all_submitted', 'All players have submitted!'))
+      toast.info(
+        isAnswerInputEnabled.value ? t('game.all_submitted') : t('game.all_submitted_verbal')
+      )
     }
   } catch (error) {
     logger.error('Error submitting answer:', error)
@@ -761,12 +775,24 @@ useLocalizedPageSeo({
   cursor: not-allowed;
 }
 
-.skip-actions {
+.verbal-mode-hint {
+  margin: 0 0 var(--spacing-md);
+  padding: 0 var(--spacing-sm);
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  text-align: center;
+  line-height: 1.35;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.verbal-turn-actions {
   display: flex;
   justify-content: center;
 }
 
-.skip-player-btn {
+.verbal-turn-done-btn {
   padding: 0.75rem 2rem;
   border-radius: 8px;
   background-color: #ff9800;
@@ -778,11 +804,11 @@ useLocalizedPageSeo({
   transition: background-color 0.2s;
 }
 
-.skip-player-btn:hover {
+.verbal-turn-done-btn:hover {
   background-color: #f57c00;
 }
 
-.skip-player-btn:disabled {
+.verbal-turn-done-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

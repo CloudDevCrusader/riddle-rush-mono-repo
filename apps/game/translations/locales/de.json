@@ -92,6 +92,7 @@
   },
   "game": {
     "all_submitted": "Alle Spieler haben geantwortet!",
+    "all_submitted_verbal": "Alle waren dran. Tippe auf Weiter und vergib die Punkte auf der Auswertungsseite.",
     "answer_skipped": "{0} hat seinen Zug übersprungen",
     "answer_submitted": "Antwort eingereicht für {0}",
     "attempts": "Versuche",
@@ -132,8 +133,11 @@
     "round_start_description": "Dreht für Kategorie und Buchstabe",
     "round_start_title": "Rundenstart",
     "score": "Punkte",
-    "skip": "Überspringen",
+    "skip": "Nächster",
     "starts_with": "Beginnt mit",
+    "verbal_mode_hint": "Sag deine Antwort laut — hier wird nichts eingegeben. Auf der Auswertungsseite vergibt ihr mit + und − die Punkte für richtig oder falsch.",
+    "verbal_turn_done": "Fertig — nächster Spieler",
+    "verbal_turn_recorded": "{0} ist fertig. Richtig oder falsch entscheidet ihr bei der Punktevergabe.",
     "submit": "Senden",
     "tap_to_spin": "Tippen zum Drehen",
     "title": "Spielen",
@@ -291,6 +295,7 @@
   "scoring": {
     "base_score": "Punktestand",
     "confirm_scores": "Punkte bestätigen",
+    "verbal_hint": "Die Antworten wurden in der Runde gesagt — + für richtig, − für falsch. Diese Rundpunkte zählen.",
     "description": "Rundenergebnisse ansehen",
     "error_saving": "Fehler beim Speichern der Punkte. Bitte erneut versuchen.",
     "finish_game": "Spiel beenden",

@@ -5,6 +5,14 @@
         {{ t('scoring.title', 'Scoring') }}
       </GameHeader>
 
+      <p
+        v-if="!isAnswerInputEnabled"
+        class="scoring-page__verbal-hint"
+        data-testid="scoring-verbal-hint"
+      >
+        {{ t('scoring.verbal_hint') }}
+      </p>
+
       <div class="scoring-page__column">
         <div class="scoring-page__list" data-testid="results-scores-container">
           <div
@@ -338,6 +346,18 @@ useLocalizedPageSeo({
   width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+.scoring-page__verbal-hint {
+  max-width: 36rem;
+  margin: calc(var(--spacing-xl) * -1) 0 0;
+  padding: 0 var(--spacing-md);
+  font-family: var(--font-display);
+  font-size: mockup-clamp(15px);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-dark);
+  text-align: center;
+  line-height: 1.4;
 }
 
 .scoring-page__column {
