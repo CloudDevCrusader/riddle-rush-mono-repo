@@ -35,12 +35,12 @@
       "https": true
     },
     "build:debug": {
-      "description": "Build with debug information",
-      "command": "pnpm build --debug"
+      "description": "Production build with DEBUG_BUILD (unminified, sourcemaps)",
+      "command": "pnpm build:debug"
     },
     "generate:debug": {
-      "description": "Generate static site with debug information",
-      "command": "pnpm generate --debug"
+      "description": "Static generate with DEBUG_BUILD (unminified, sourcemaps)",
+      "command": "pnpm generate:debug"
     },
     "preview:https": {
       "description": "Preview build with HTTPS",

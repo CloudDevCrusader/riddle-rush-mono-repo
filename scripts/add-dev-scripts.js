@@ -23,8 +23,8 @@ try {
     'dev:mobile': 'nuxt dev --host 0.0.0.0',
     'dev:https': 'nuxt dev --https',
     'dev:mobile-https': 'nuxt dev --https --host 0.0.0.0',
-    'build:debug': 'nuxt build --debug',
-    'generate:debug': 'nuxt generate --debug',
+    'build:debug': 'DEBUG_BUILD=true nuxt build',
+    'generate:debug': 'DEBUG_BUILD=true nuxt generate',
     'preview:https': 'nuxt preview --https',
   }
 

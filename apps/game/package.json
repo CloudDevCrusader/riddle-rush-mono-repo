@@ -77,7 +77,7 @@
   "private": true,
   "scripts": {
     "build": "npx nuxt build",
-    "build:debug": "npx nuxt build --debug",
+    "build:debug": "DEBUG_BUILD=true npx nuxt build",
     "clean": "rm -rf .nuxt .output node_modules",
     "dev": "npx nuxt dev",
     "dev:debug": "npx nuxt dev --debug",
@@ -87,7 +87,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate": "npx nuxt generate",
-    "generate:debug": "npx nuxt generate --debug",
+    "generate:debug": "DEBUG_BUILD=true npx nuxt generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "nuxt:ui": "npx nuxt ui",
