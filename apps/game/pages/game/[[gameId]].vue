@@ -702,7 +702,8 @@ useLocalizedPageSeo({
   font-family: var(--font-display);
   font-size: clamp(0.9rem, 2vw, 1.2rem);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-dark);
+  /* Light panel: use text token that is not inverted by dark-mode :root overrides */
+  color: var(--color-text-dark);
   display: block;
   margin-bottom: var(--spacing-sm);
 }
@@ -730,7 +731,7 @@ useLocalizedPageSeo({
   border: 3px solid var(--color-primary);
   border-radius: var(--radius-md);
   background: var(--color-white);
-  color: var(--color-dark);
+  color: var(--color-text-dark);
   text-align: center;
   transition:
     transform var(--transition-base),
@@ -781,10 +782,9 @@ useLocalizedPageSeo({
   font-family: var(--font-display);
   font-size: clamp(0.9rem, 2.4vw, 1.05rem);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-white);
+  color: var(--color-text-dark);
   text-align: center;
   line-height: 1.35;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 .verbal-turn-actions {
