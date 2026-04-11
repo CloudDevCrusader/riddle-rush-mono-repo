@@ -181,7 +181,6 @@ useLocalizedPageSeo({
 @media (max-width: 768px) {
   .credits-panel {
     padding: var(--spacing-xl);
-    max-height: 400px;
   }
 }
 
@@ -193,7 +192,6 @@ useLocalizedPageSeo({
 
   .credits-panel {
     padding: var(--spacing-lg);
-    max-height: 300px;
     margin: 0 var(--spacing-sm);
   }
 
@@ -215,7 +213,6 @@ useLocalizedPageSeo({
 
   .credits-panel {
     padding: var(--spacing-md);
-    max-height: 260px;
     border-width: 3px;
     margin: 0;
   }

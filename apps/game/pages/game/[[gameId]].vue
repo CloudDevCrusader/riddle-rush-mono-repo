@@ -95,13 +95,7 @@
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
         </div>
-        <p
-          v-if="!isAnswerInputEnabled"
-          class="verbal-mode-hint"
-          data-testid="game-verbal-mode-hint"
-        >
-          {{ t('game.verbal_mode_hint') }}
-        </p>
+        <!-- verbal-mode-hint removed — instructions now live on the results page -->
         <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-if="isAnswerInputEnabled"
@@ -561,7 +555,9 @@ useLocalizedPageSeo({
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: var(--spacing-3xl);
+  flex: 1;
+  min-height: 0;
+  gap: var(--spacing-xl);
 }
 
 .round-reveal-enter-active {
@@ -590,6 +586,7 @@ useLocalizedPageSeo({
 .category-panel {
   width: 100%;
   max-width: 600px;
+  padding: var(--spacing-md) var(--spacing-lg);
   border: 5px solid #e89520;
   border-radius: var(--radius-xl);
   box-shadow:
@@ -690,6 +687,7 @@ useLocalizedPageSeo({
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
   width: 100%;
   max-width: 500px;
   position: relative;
