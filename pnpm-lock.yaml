@@ -251,7 +251,7 @@ importers:
         version: 25.6.0
       '@unocss/nuxt':
         specifier: ^66.6.8
-        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2(esbuild@0.27.7))
+        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2)
       '@vheemstra/vite-plugin-imagemin':
         specifier: ^2.2.1
         version: 2.2.1(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
@@ -305,7 +305,7 @@ importers:
         version: 5.9.3
       unocss:
         specifier: ^66.6.8
-        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7)))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       unplugin-auto-import:
         specifier: ^21.0.0
         version: 21.0.0(@nuxt/kit@4.4.2(magicast@0.5.2))(@vueuse/core@14.2.1(vue@3.5.32(typescript@5.9.3)))
@@ -485,6 +485,10 @@ importers:
         version: 5.9.3
 
   packages/types:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@nuxt/eslint':
         specifier: ^1.15.2
@@ -23101,7 +23105,7 @@ snapshots:
       gzip-size: 6.0.0
       sirv: 3.0.2
 
-  '@unocss/nuxt@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2(esbuild@0.27.7))':
+  '@unocss/nuxt@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2)':
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@unocss/config': 66.6.8
@@ -23115,8 +23119,8 @@ snapshots:
       '@unocss/preset-wind4': 66.6.8
       '@unocss/reset': 66.6.8
       '@unocss/vite': 66.6.8(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      '@unocss/webpack': 66.6.8(webpack@5.105.2(esbuild@0.27.7))
-      unocss: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7)))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      '@unocss/webpack': 66.6.8(webpack@5.105.2)
+      unocss: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -23221,7 +23225,7 @@ snapshots:
       unplugin-utils: 0.3.1
       vite: 7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
 
-  '@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7))':
+  '@unocss/webpack@66.6.8(webpack@5.105.2)':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.6.8
@@ -23232,7 +23236,7 @@ snapshots:
       tinyglobby: 0.2.16
       unplugin: 3.0.0
       unplugin-utils: 0.3.1
-      webpack: 5.105.2(esbuild@0.27.7)
+      webpack: 5.105.2
       webpack-sources: 3.3.4
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
@@ -32400,15 +32404,13 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terser-webpack-plugin@5.4.0(esbuild@0.27.7)(webpack@5.105.2(esbuild@0.27.7)):
+  terser-webpack-plugin@5.4.0(webpack@5.105.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.3
       terser: 5.46.1
-      webpack: 5.105.2(esbuild@0.27.7)
-    optionalDependencies:
-      esbuild: 0.27.7
+      webpack: 5.105.2
 
   terser@5.46.1:
     dependencies:
@@ -32869,7 +32871,7 @@ snapshots:
       tiny-emitter: 2.1.0
       uuid: 9.0.1
 
-  unocss@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7)))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
+  unocss@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       '@unocss/cli': 66.6.8
       '@unocss/core': 66.6.8
@@ -32889,7 +32891,7 @@ snapshots:
       '@unocss/transformer-variant-group': 66.6.8
       '@unocss/vite': 66.6.8(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
-      '@unocss/webpack': 66.6.8(webpack@5.105.2(esbuild@0.27.7))
+      '@unocss/webpack': 66.6.8(webpack@5.105.2)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -33476,7 +33478,7 @@ snapshots:
 
   webpack-virtual-modules@0.6.2: {}
 
-  webpack@5.105.2(esbuild@0.27.7):
+  webpack@5.105.2:
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.8
@@ -33500,7 +33502,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 4.3.3
       tapable: 2.3.2
-      terser-webpack-plugin: 5.4.0(esbuild@0.27.7)(webpack@5.105.2(esbuild@0.27.7))
+      terser-webpack-plugin: 5.4.0(webpack@5.105.2)
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     transitivePeerDependencies:
