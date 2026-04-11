@@ -1,5 +1,7 @@
 import type { CategorySettings } from '@riddle-rush/types/game'
 
+import { fireNativeClickHaptic } from '~/utils/nativeHaptics'
+
 let audioContext: AudioContext | null = null
 const masterVolume = ref(1.0)
 const isMuted = ref(false)
@@ -66,7 +68,7 @@ export function useAudio() {
 
   const playSuccess = () => {
     const ctx = initAudioContext()
-    if (!ctx) throw new TypeError('AudioContext unavailable')
+    if (!ctx) return
 
     // Play a triumphant major chord with harmonics for a richer sound
     const frequencies = [
@@ -133,7 +135,7 @@ export function useAudio() {
     osc2.stop(now + 0.25)
   }
 
-  const playClick = () => {
+  const playClickTone = () => {
     const ctx = initAudioContext()
     if (!ctx) throw new TypeError('AudioContext unavailable')
 
@@ -155,6 +157,15 @@ export function useAudio() {
 
     oscillator.start(now)
     oscillator.stop(now + 0.03)
+  }
+
+  /** Haptic + optional click tone in one turn (Capacitor: haptic matches sound onset). */
+  const playClick = async () => {
+    const settings = await getSettings()
+    fireNativeClickHaptic()
+    if (settings.soundEnabled) {
+      playClickTone()
+    }
   }
 
   const playNewRound = () => {
@@ -272,7 +283,7 @@ export function useAudio() {
   return {
     playSuccess: () => playSoundIfEnabled(playSuccess),
     playError: () => playSoundIfEnabled(playError),
-    playClick: () => playSoundIfEnabled(playClick),
+    playClick,
     playNewRound: () => playSoundIfEnabled(playNewRound),
     playRoundComplete: () => playSoundIfEnabled(playRoundComplete),
     playButtonHover: () => playSoundIfEnabled(playButtonHover),
