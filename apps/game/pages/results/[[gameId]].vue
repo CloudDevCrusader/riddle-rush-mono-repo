@@ -5,80 +5,82 @@
         {{ t('scoring.title', 'Scoring') }}
       </GameHeader>
 
-      <div class="scoring-page__list" data-testid="results-scores-container">
-        <div
-          v-for="(player, index) in players"
-          :key="player.id"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 50 } }"
-          class="scoring-page__player-entry"
-          :data-testid="`results-player-entry-${index}`"
-        >
-          <div class="scoring-page__player-header">
-            <span class="scoring-page__rank" :data-testid="`predicted-rank-${index}`">
-              #{{ projectedRanks.get(player.id) ?? Number(index) + 1 }}
-            </span>
-            <GamePlayerCard
-              :player="player"
-              :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
-              :show-indicator="false"
-              :show-answer="isAnswerInputEnabled"
-            />
-            <span class="scoring-page__base-score" data-testid="base-score">
-              {{ t('scoring.base_score', 'Score') }}: {{ player.totalScore }}
-              {{ t('scoring.points', 'pts') }}
-            </span>
-          </div>
-
+      <div class="scoring-page__column">
+        <div class="scoring-page__list" data-testid="results-scores-container">
           <div
-            class="scoring-page__score-controls"
-            :data-testid="`results-score-controls-${index}`"
+            v-for="(player, index) in players"
+            :key="player.id"
+            v-motion
+            :initial="{ opacity: 0, y: 20 }"
+            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 50 } }"
+            class="scoring-page__player-entry"
+            :data-testid="`results-player-entry-${index}`"
           >
-            <GameButton
-              variant="danger"
-              size="sm"
-              :sound-on-click="false"
-              :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
-              data-testid="score-decrement"
-              @click="decrementScore(player.id)"
-            >
-              −
-            </GameButton>
+            <div class="scoring-page__player-header">
+              <span class="scoring-page__rank" :data-testid="`predicted-rank-${index}`">
+                #{{ projectedRanks.get(player.id) ?? Number(index) + 1 }}
+              </span>
+              <GamePlayerCard
+                :player="player"
+                :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
+                :show-indicator="false"
+                :show-answer="isAnswerInputEnabled"
+              />
+              <span class="scoring-page__base-score" data-testid="base-score">
+                {{ t('scoring.base_score', 'Score') }}: {{ player.totalScore }}
+                {{ t('scoring.points', 'pts') }}
+              </span>
+            </div>
 
-            <GameDisplay
-              size="sm"
-              :glow="false"
-              class="scoring-page__score-value"
-              :data-testid="`scoring-page-score-value-${index}`"
+            <div
+              class="scoring-page__score-controls"
+              :data-testid="`results-score-controls-${index}`"
             >
-              {{ pendingScores.get(player.id) ?? 0 }}
-            </GameDisplay>
+              <GameButton
+                variant="danger"
+                size="sm"
+                :sound-on-click="false"
+                :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
+                data-testid="score-decrement"
+                @click="decrementScore(player.id)"
+              >
+                −
+              </GameButton>
 
-            <GameButton
-              variant="primary"
-              size="sm"
-              :sound-on-click="false"
-              data-testid="score-increment"
-              @click="incrementScore(player.id)"
-            >
-              +
-            </GameButton>
+              <GameDisplay
+                size="sm"
+                :glow="false"
+                class="scoring-page__score-value"
+                :data-testid="`scoring-page-score-value-${index}`"
+              >
+                {{ pendingScores.get(player.id) ?? 0 }}
+              </GameDisplay>
+
+              <GameButton
+                variant="primary"
+                size="sm"
+                :sound-on-click="false"
+                data-testid="score-increment"
+                @click="incrementScore(player.id)"
+              >
+                +
+              </GameButton>
+            </div>
           </div>
         </div>
-      </div>
 
-      <GameButton
-        variant="primary"
-        size="lg"
-        full-width
-        :loading="isConfirming"
-        class="scoring-page__button"
-        data-testid="confirm-scores"
-        @click="handleConfirmScores"
-      >
-        {{ t('scoring.confirm_scores', 'Confirm Scores') }}
-      </GameButton>
+        <GameButton
+          variant="primary"
+          size="lg"
+          full-width
+          :loading="isConfirming"
+          class="scoring-page__button"
+          data-testid="confirm-scores"
+          @click="handleConfirmScores"
+        >
+          {{ t('scoring.confirm_scores', 'Confirm Scores') }}
+        </GameButton>
+      </div>
     </div>
 
     <!-- Leaderboard overlay (shown briefly after confirming scores) -->
@@ -146,6 +148,7 @@
 <script setup lang="ts">
 import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 import type { Player } from '@riddle-rush/types/game'
+import orderBy from 'lodash-es/orderBy'
 
 const { t } = usePageSetup()
 const { gameStore, players, leaderboard, currentRound, flowState, canConfirmRoundScores } =
@@ -180,12 +183,14 @@ const isDecisionFlow = computed(() => flowState.value === 'decision')
 
 // Projected ranks based on totalScore + pending scores
 const projectedRanks = computed(() => {
-  const ranked = [...players.value]
-    .map((p) => ({
+  const ranked = orderBy(
+    players.value.map((p) => ({
       id: p.id,
       projected: p.totalScore + (pendingScores.get(p.id) ?? 0),
-    }))
-    .sort((a, b) => b.projected - a.projected)
+    })),
+    ['projected'],
+    ['desc']
+  )
 
   const ranks = new Map<string, number>()
   ranked.forEach((p, i) => ranks.set(p.id, i + 1))
@@ -335,12 +340,21 @@ useLocalizedPageSeo({
   min-height: 100dvh;
 }
 
+.scoring-page__column {
+  width: min(100%, 600px);
+  margin-inline: auto;
+  box-sizing: border-box;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
 .scoring-page__list {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
   width: 100%;
-  max-width: 600px;
 }
 
 .scoring-page__player-entry {
@@ -383,7 +397,7 @@ useLocalizedPageSeo({
 }
 
 .scoring-page__button {
-  max-width: 600px;
+  width: 100%;
 }
 
 .decision-content {
@@ -458,8 +472,22 @@ useLocalizedPageSeo({
     gap: var(--spacing-md);
   }
 
+  .scoring-page__column {
+    gap: var(--spacing-lg);
+  }
+
   .scoring-page__score-controls {
     gap: var(--spacing-xs);
+  }
+}
+
+@media (max-width: 320px) {
+  .scoring-page {
+    padding: var(--spacing-sm) var(--spacing-xs);
+  }
+
+  .scoring-page__column {
+    gap: var(--spacing-md);
   }
 }
 </style>

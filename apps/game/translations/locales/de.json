@@ -216,11 +216,6 @@
     "error": "Verbindungsfehler",
     "offline": "Offline"
   },
-  "websocket": {
-    "reconnect_failed": "Verbindung konnte nicht wiederhergestellt werden",
-    "connection_failed": "Verbindung fehlgeschlagen",
-    "not_connected": "Nicht verbunden"
-  },
   "seo": {
     "json_ld_description": "Mehrspieler-Wortratespiel mit Wikipedia-Kategorien. Im Browser spielen oder als PWA installieren, online oder offline.",
     "keywords": "Wortspiel, Partyspiel, Ratespiel, Mehrspieler, Offline-Spiel, PWA, Familienspiel, Riddle Rush, Wikipedia-Kategorien",

@@ -1,41 +1,49 @@
 <template>
-  <div class="connection-status">
+  <div class="connection-status" data-testid="offline-indicator">
     <div
       class="status-indicator"
       :class="connectionStatus"
       :style="{ backgroundColor: statusColor }"
       :title="statusText"
     >
-      <div class="pulse" v-if="connectionStatus === 'online'" />
+      <div v-if="connectionStatus === 'online'" class="pulse" />
     </div>
-    <span class="status-text" v-if="showText">{{ statusText }}</span>
+    <span v-if="showText" class="status-text">{{ statusText }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useWebSocket } from '~/composables/useWebSocket'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 defineProps<{
   showText?: boolean
 }>()
 
-const { connectionStatus, statusColor } = useWebSocket()
 const { t } = useI18n()
 
-const statusText = computed(() => {
-  switch (connectionStatus.value) {
-    case 'online':
-      return t('connection.online')
-    case 'connecting':
-      return t('connection.connecting')
-    case 'error':
-      return t('connection.error')
-    default:
-      return t('connection.offline')
-  }
+const online = ref(true)
+
+const syncOnline = () => {
+  online.value = typeof navigator !== 'undefined' && navigator.onLine
+}
+
+onMounted(() => {
+  syncOnline()
+  window.addEventListener('online', syncOnline)
+  window.addEventListener('offline', syncOnline)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('online', syncOnline)
+  window.removeEventListener('offline', syncOnline)
+})
+
+const connectionStatus = computed(() => (online.value ? 'online' : 'offline'))
+
+const statusColor = computed(() => (online.value ? '#10b981' : '#6b7280'))
+
+const statusText = computed(() => (online.value ? t('connection.online') : t('connection.offline')))
 </script>
 
 <style scoped>
@@ -59,15 +67,6 @@ const statusText = computed(() => {
 
 .status-indicator.online {
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
-}
-
-.status-indicator.connecting {
-  animation: pulse-amber 1.5s ease-in-out infinite;
-}
-
-.status-indicator.error {
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
-  animation: pulse-red 1s ease-in-out infinite;
 }
 
 .pulse {
@@ -98,29 +97,6 @@ const statusText = computed(() => {
   }
 }
 
-@keyframes pulse-amber {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes pulse-red {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .status-text {
     color: #d1d5db;

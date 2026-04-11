@@ -95,6 +95,7 @@
 
 <script setup lang="ts">
 import type { GameSession, Player } from '@riddle-rush/types/game'
+import orderBy from 'lodash-es/orderBy'
 
 const { t } = useI18n()
 
@@ -112,12 +113,7 @@ const sortedGames = computed(() => {
   const games = props.games || []
   if (games.length === 0) return []
 
-  // Use stable sort for better performance
-  return [...games].sort((a, b) => {
-    const timeA = a.endTime || a.startTime
-    const timeB = b.endTime || b.startTime
-    return timeB - timeA // Most recent first
-  })
+  return orderBy(games, [(g) => g.endTime || g.startTime], ['desc'])
 })
 
 const formatDate = (timestamp: number) => {
@@ -150,8 +146,7 @@ const getSortedPlayers = (game: GameSession): Player[] => {
   const cached = playerSortCache.get(game)
   if (cached) return cached
 
-  // Sort and cache
-  const sorted = [...game.players].sort((a, b) => b.totalScore - a.totalScore)
+  const sorted = orderBy(game.players, ['totalScore'], ['desc'])
   playerSortCache.set(game, sorted)
   return sorted
 }

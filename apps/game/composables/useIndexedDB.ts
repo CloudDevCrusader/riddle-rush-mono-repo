@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash-es/cloneDeep'
 import { openDB, type IDBPDatabase } from 'idb'
 import { useLogger } from './useLogger'
 import type {
@@ -81,9 +82,8 @@ export function useIndexedDB() {
     try {
       const db = await getDB()
 
-      // Only serialize if the session is not already a plain object
-      const serialized =
-        session && typeof session === 'object' ? JSON.parse(JSON.stringify(session)) : session
+      // Deep clone plain objects so IndexedDB gets a serializable snapshot
+      const serialized = session && typeof session === 'object' ? cloneDeep(session) : session
 
       // Use transaction for atomic operations
       const tx = db.transaction([GAME_SESSION_STORE, GAME_SESSIONS_BY_ID_STORE], 'readwrite')

@@ -34,7 +34,7 @@
       </GameScrollList>
 
       <!-- Navigation buttons -->
-      <div class="leaderboard-page__actions">
+      <div class="leaderboard-page__actions leaderboard-action-shelf">
         <GameButton
           v-if="!isGameCompleted"
           variant="primary"
@@ -82,7 +82,6 @@ const handleFinish = async () => {
 }
 
 const handleNextRound = async () => {
-  // Continue to next round
   await goToRoundStart()
 }
 
@@ -113,12 +112,31 @@ useLocalizedPageSeo({
   letter-spacing: 1px;
 }
 
+.leaderboard-action-shelf {
+  width: min(100%, 640px);
+  margin-inline: auto;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
 .leaderboard-page__actions {
   display: flex;
   gap: var(--spacing-lg);
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   flex-wrap: wrap;
+  width: 100%;
+}
+
+@media (min-width: 481px) {
+  .leaderboard-page__actions {
+    flex-wrap: nowrap;
+  }
+
+  .leaderboard-page__actions :deep(.game-button) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
 }
 
 // Leaderboard row styling (slot content for GameScrollList)
@@ -156,9 +174,7 @@ useLocalizedPageSeo({
 
   .leaderboard-page__actions {
     gap: var(--spacing-md);
-    width: 100%;
     flex-direction: column;
-    align-items: stretch;
   }
 
   .leaderboard-row__name {
@@ -174,6 +190,13 @@ useLocalizedPageSeo({
 
   .leaderboard-page__actions {
     gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 320px) {
+  .leaderboard-page {
+    padding: var(--spacing-md) var(--spacing-xs);
+    gap: var(--spacing-md);
   }
 }
 </style>

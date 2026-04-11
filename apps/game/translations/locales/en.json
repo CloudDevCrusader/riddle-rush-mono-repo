@@ -216,11 +216,6 @@
     "error": "Connection Error",
     "offline": "Offline"
   },
-  "websocket": {
-    "reconnect_failed": "Failed to reconnect",
-    "connection_failed": "Connection failed",
-    "not_connected": "Not connected"
-  },
   "seo": {
     "json_ld_description": "Multiplayer word guessing party game with Wikipedia categories. Play in the browser or install as a PWA, online or offline.",
     "keywords": "word game, party game, guessing game, multiplayer, offline game, PWA, family game, Riddle Rush, Wikipedia categories",

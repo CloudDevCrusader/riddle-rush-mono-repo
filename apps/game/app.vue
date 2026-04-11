@@ -6,10 +6,9 @@
         <NuxtLayout>
           <NuxtPage />
         </NuxtLayout>
-        <ConnectionStatus data-testid="offline-indicator" />
         <Toast />
-        <DebugPanel />
-        <StoryboardDevOverlay />
+        <LazyDebugPanel />
+        <LazyStoryboardDevOverlay />
       </div>
     </Transition>
   </div>
@@ -109,12 +108,6 @@ onUnmounted(() => {
 
 useHead({
   link: [
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap',
-    },
     { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
     { rel: 'apple-touch-startup-image', href: '/pwa-512x512.png' },
   ],

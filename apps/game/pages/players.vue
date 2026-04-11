@@ -80,16 +80,18 @@
             </div>
           </GameScrollList>
 
-          <GameButton
-            class="start-button"
-            variant="primary"
-            size="lg"
-            full-width
-            data-testid="players-start-button"
-            @click="startGame"
-          >
-            {{ t('players.start') }}
-          </GameButton>
+          <div class="players-action-shelf">
+            <GameButton
+              class="start-button"
+              variant="primary"
+              size="lg"
+              full-width
+              data-testid="players-start-button"
+              @click="startGame"
+            >
+              {{ t('players.start') }}
+            </GameButton>
+          </div>
         </div>
       </GamePanel>
     </div>
@@ -97,6 +99,8 @@
 </template>
 
 <script setup lang="ts">
+import uniq from 'lodash-es/uniq'
+
 definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
 
 const { t, goBack, toast } = usePageSetup()
@@ -157,7 +161,7 @@ const startGame = () => {
   }
 
   const lowerCaseNames = names.map((name: string) => name.toLowerCase())
-  const hasDuplicateNames = new Set(lowerCaseNames).size !== lowerCaseNames.length
+  const hasDuplicateNames = uniq(lowerCaseNames).length !== lowerCaseNames.length
 
   if (hasDuplicateNames) {
     toast.warning(t('players.duplicate_name'))
@@ -260,9 +264,20 @@ syncPlayerList(playerCount.value)
   }
 }
 
+.players-body > .stepper,
+.players-action-shelf {
+  width: min(100%, 640px);
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
 .stepper {
   display: flex;
   justify-content: center;
+}
+
+.stepper__label {
+  font-family: var(--font-display);
 }
 
 .stepper__pill {
@@ -271,7 +286,8 @@ syncPlayerList(playerCount.value)
   justify-content: center;
   gap: var(--spacing-lg);
   padding: var(--spacing-md) var(--spacing-xl);
-  width: min(100%, 640px);
+  width: 100%;
+  min-width: 0;
   border-radius: mockup-clamp(26px);
   border: 4px solid var(--color-border-orange);
   background: linear-gradient(180deg, #3c98e2 0%, #0a7bda 100%);
@@ -534,6 +550,16 @@ syncPlayerList(playerCount.value)
   .player-row__input {
     padding: var(--spacing-xs) var(--spacing-sm);
     border-width: 2px;
+  }
+}
+
+@media (max-width: 320px) {
+  .players-page {
+    padding: mockup-clamp(24px) var(--spacing-sm);
+  }
+
+  .players-panel {
+    padding: var(--spacing-md);
   }
 }
 

@@ -127,7 +127,12 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['~/assets/scss/design-system.scss', '~/assets/css/figma-tokens.generated.css'],
+  css: [
+    '@fontsource-variable/baloo-2',
+    '@fontsource-variable/nunito',
+    '~/assets/scss/design-system.scss',
+    '~/assets/css/figma-tokens.generated.css',
+  ],
 
   // Color mode configuration
   colorMode: {
@@ -252,7 +257,6 @@ export default defineNuxtConfig({
       filterSsrPlugins(),
       // Inspector already enabled via devtools
       // Note: Build plugins are conditionally loaded in shared config
-      // @ts-expect-error Cross-package Vite plugin type mismatch (lightningcss patch-level divergence)
       ...(process.env.NODE_ENV === 'production'
         ? getBuildPlugins({ isDev: false })
         : getDevPlugins({ isDev: true })),
@@ -336,7 +340,7 @@ export default defineNuxtConfig({
 
   // Font optimization
   fontMetrics: {
-    fonts: ['Inter', 'system-ui'],
+    fonts: ['Baloo 2 Variable', 'Nunito Variable', 'Inter', 'system-ui'],
   },
 
   i18n: {
@@ -567,24 +571,6 @@ export default defineNuxtConfig({
             expiration: {
               maxEntries: 10,
               maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-            },
-          },
-        },
-        {
-          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'google-fonts-stylesheets',
-          },
-        },
-        {
-          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'google-fonts-webfonts',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 365 * 24 * 60 * 60,
             },
           },
         },

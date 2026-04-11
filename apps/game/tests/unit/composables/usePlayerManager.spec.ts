@@ -139,29 +139,14 @@ describe('usePlayerManager', () => {
   // submitPlayerAnswer
   // ──────────────────────────────────────────
   describe('submitPlayerAnswer', () => {
-    it('sets currentRoundAnswer to provided answer', () => {
-      const player = createPlayer()
-
-      manager.submitPlayerAnswer(player, 'Tiger')
-
-      expect(player.currentRoundAnswer).toBe('Tiger')
-    })
-
-    it('sets hasSubmitted to true', () => {
+    it('sets answer, marks submitted, mutates same reference', () => {
       const player = createPlayer({ hasSubmitted: false })
-
-      manager.submitPlayerAnswer(player, 'Tiger')
-
-      expect(player.hasSubmitted).toBe(true)
-    })
-
-    it('mutates player object in place', () => {
-      const player = createPlayer()
       const originalRef = player
 
-      manager.submitPlayerAnswer(player, 'answer')
+      manager.submitPlayerAnswer(player, 'Tiger')
 
       expect(player).toBe(originalRef)
+      expect(player.currentRoundAnswer).toBe('Tiger')
       expect(player.hasSubmitted).toBe(true)
     })
   })
@@ -226,34 +211,27 @@ describe('usePlayerManager', () => {
   // resetPlayerSubmissions
   // ──────────────────────────────────────────
   describe('resetPlayerSubmissions', () => {
-    it('sets hasSubmitted to false for all players', () => {
-      const players = [createPlayer({ hasSubmitted: true }), createPlayer({ hasSubmitted: true })]
-
-      manager.resetPlayerSubmissions(players)
-
-      players.forEach((p) => expect(p.hasSubmitted).toBe(false))
-    })
-
-    it('sets currentRoundAnswer to undefined for all players', () => {
+    it('clears submission flags, answers, and round scores', () => {
       const players = [
-        createPlayer({ currentRoundAnswer: 'Tiger' }),
-        createPlayer({ currentRoundAnswer: 'Lion' }),
+        createPlayer({
+          hasSubmitted: true,
+          currentRoundAnswer: 'Tiger',
+          currentRoundScore: 10,
+        }),
+        createPlayer({
+          hasSubmitted: true,
+          currentRoundAnswer: 'Lion',
+          currentRoundScore: 5,
+        }),
       ]
 
       manager.resetPlayerSubmissions(players)
 
-      players.forEach((p) => expect(p.currentRoundAnswer).toBeUndefined())
-    })
-
-    it('sets currentRoundScore to 0 for all players', () => {
-      const players = [
-        createPlayer({ currentRoundScore: 10 }),
-        createPlayer({ currentRoundScore: 5 }),
-      ]
-
-      manager.resetPlayerSubmissions(players)
-
-      players.forEach((p) => expect(p.currentRoundScore).toBe(0))
+      players.forEach((p) => {
+        expect(p.hasSubmitted).toBe(false)
+        expect(p.currentRoundAnswer).toBeUndefined()
+        expect(p.currentRoundScore).toBe(0)
+      })
     })
 
     it('handles empty players array without error', () => {

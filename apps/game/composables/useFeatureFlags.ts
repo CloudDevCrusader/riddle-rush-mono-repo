@@ -50,8 +50,8 @@ export function useFeatureFlags() {
 
   const logger = useLogger()
 
-  type ManagedFlag = 'fortune-wheel' | 'answer-input' | 'websocket'
-  type SettingsFlagKey = 'fortuneWheelEnabled' | 'answerInputEnabled' | 'websocketEnabled'
+  type ManagedFlag = 'fortune-wheel' | 'answer-input'
+  type SettingsFlagKey = 'fortuneWheelEnabled' | 'answerInputEnabled'
 
   interface ResolveManagedFlagOptions {
     flagName: ManagedFlag
@@ -103,7 +103,7 @@ export function useFeatureFlags() {
    * NOTE: This is a plain function, not a reactive computed. Calling it
    * inside a Vue `computed()` will NOT automatically re-evaluate when
    * Unleash updates. For reactive flag values, use the named computeds
-   * (isFortuneWheelEnabled, isAnswerInputEnabled, isWebSocketEnabled).
+   * (isFortuneWheelEnabled, isAnswerInputEnabled).
    */
   const isEnabled = (flagName: string, defaultValue = false): boolean => {
     if (flagName === 'fortune-wheel') {
@@ -122,14 +122,6 @@ export function useFeatureFlags() {
         // Runtime config override is intentionally supported only for answer input,
         // so E2E/dev can hard-disable this UI path regardless of remote/local flags.
         runtimeForceDisabled: config.public.featureAnswerInput === false,
-      })
-    }
-
-    if (flagName === 'websocket') {
-      return resolveManagedFlag({
-        flagName,
-        settingsKey: 'websocketEnabled',
-        defaultValue,
       })
     }
 
@@ -176,19 +168,10 @@ export function useFeatureFlags() {
     return isEnabled('answer-input', false)
   })
 
-  /**
-   * Check if WebSocket feature is enabled
-   */
-  const isWebSocketEnabled = computed(() => {
-    void flagVersion.value // reactive dependency: re-run when flags update
-    return isEnabled('websocket', false)
-  })
-
   return {
     isEnabled,
     getVariant,
     isAnswerInputEnabled,
     isFortuneWheelEnabled,
-    isWebSocketEnabled,
   }
 }

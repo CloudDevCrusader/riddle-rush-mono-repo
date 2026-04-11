@@ -7,6 +7,7 @@
  */
 
 import type { Player, PlayerWithRank } from '@riddle-rush/types/game'
+import orderBy from 'lodash-es/orderBy'
 import { generateUUID } from '~/utils/uuid'
 
 /**
@@ -142,7 +143,7 @@ export function usePlayerManager() {
   function buildLeaderboard(players: Player[], isGameCompleted: boolean): PlayerWithRank[] {
     if (players.length === 0) return []
 
-    const sorted = [...players].sort((a, b) => b.totalScore - a.totalScore)
+    const sorted = orderBy(players, ['totalScore'], ['desc'])
     const topScore = sorted[0]?.totalScore ?? 0
 
     return sorted.map((player, index) => ({
