@@ -35,7 +35,9 @@
   "private": true,
   "scripts": {
     "android:build": "./scripts/mobile-build.sh android",
+    "android:build:universal": "./scripts/mobile-build.sh android debug --universal",
     "android:build:release": "./scripts/mobile-build.sh android release",
+    "android:build:release:universal": "./scripts/mobile-build.sh android release --aab --universal",
     "android:open": "cd apps/mobile && pnpm android:open",
     "android:run": "./scripts/mobile-run.sh android",
     "android:sync": "cd apps/game && pnpm generate && cd ../mobile && pnpm android:sync",

@@ -15,6 +15,8 @@ const config: CapacitorConfig = {
     iosScheme: 'https',
   },
   android: {
+    /** Default Gradle product flavor (`play` = ARM-only; use `universal` for all ABIs). */
+    flavor: 'play',
     buildOptions: {
       keystorePath: process.env.ANDROID_KEYSTORE_PATH || undefined,
       keystorePassword: process.env.ANDROID_KEYSTORE_PASSWORD || undefined,

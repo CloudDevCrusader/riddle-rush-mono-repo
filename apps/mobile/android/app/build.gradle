@@ -41,16 +41,25 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // play = ARM-only (smaller; typical phones / Play). universal = all ABIs (x86 emulators, sideload).
+    flavorDimensions "abi"
+    productFlavors {
+        play {
+            dimension "abi"
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
+            }
+        }
+        universal {
+            dimension "abi"
+        }
+    }
     buildTypes {
         release {
             // Capacitor + WebView rely on reflection; R8/ProGuard need curated rules before enabling.
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            // Phone/tablet ARM only — smaller release artifacts; use debug builds for x86 emulators.
-            ndk {
-                abiFilters 'armeabi-v7a', 'arm64-v8a'
-            }
         }
     }
     compileOptions {
