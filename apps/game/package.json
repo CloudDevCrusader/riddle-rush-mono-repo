@@ -89,6 +89,8 @@
     "format:check": "prettier --check .",
     "generate": "npx nuxt generate",
     "generate:debug": "DEBUG_BUILD=true npx nuxt generate",
+    "assets:optimize": "node scripts/optimize-assets.mjs",
+    "assets:verify": "node -e \"const fs=require('fs');const path='public/assets';const walk=(d)=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(d+'/'+e.name):[d+'/'+e.name]);const png=walk(path).filter(f=>f.endsWith('.png'));const missing=png.filter(f=>!fs.existsSync(f.replace(/.png$/,'.webp')));if(missing.length){console.error('Missing .webp for:\\n'+missing.join('\\n'));process.exit(1)}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lighthouse": "unlighthouse --site http://localhost:3000 --output-path .lighthouse --enable-javascript",
