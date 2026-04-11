@@ -2,6 +2,8 @@
   "name": "@riddle-rush/game",
   "version": "1.4.3",
   "dependencies": {
+    "@fontsource-variable/baloo-2": "^5.2.7",
+    "@fontsource-variable/nunito": "^5.2.7",
     "@intlify/core-base": "^11.3.2",
     "@nuxt/hints": "^1.0.2",
     "@nuxtjs/i18n": "^10.2.4",
