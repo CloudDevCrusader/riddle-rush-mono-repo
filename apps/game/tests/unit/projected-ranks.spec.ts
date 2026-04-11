@@ -7,6 +7,8 @@ import orderBy from 'lodash-es/orderBy'
 interface PlayerForRank {
   id: string
   totalScore: number
+  /** Included in totalScore until pending replaces it (see assignPlayerScore). */
+  currentRoundScore?: number
 }
 
 function computeProjectedRanks(
@@ -16,7 +18,7 @@ function computeProjectedRanks(
   const ranked = orderBy(
     players.map((p) => ({
       id: p.id,
-      projected: p.totalScore + (pendingScores.get(p.id) ?? 0),
+      projected: p.totalScore - (p.currentRoundScore ?? 0) + (pendingScores.get(p.id) ?? 0),
     })),
     ['projected'],
     ['desc']
@@ -96,5 +98,22 @@ describe('computeProjectedRanks', () => {
 
     expect(ranks.get('underdog')).toBe(1)
     expect(ranks.get('leader')).toBe(2)
+  })
+
+  it('subtracts currentRoundScore so pending replaces this round, not stacks', () => {
+    const players: PlayerForRank[] = [
+      { id: 'p1', totalScore: 13, currentRoundScore: 3 },
+      { id: 'p2', totalScore: 10, currentRoundScore: 0 },
+    ]
+    const pending = new Map<string, number>([
+      ['p1', 5],
+      ['p2', 0],
+    ])
+
+    const ranks = computeProjectedRanks(players, pending)
+
+    // p1: 13 - 3 + 5 = 15, p2: 10
+    expect(ranks.get('p1')).toBe(1)
+    expect(ranks.get('p2')).toBe(2)
   })
 })

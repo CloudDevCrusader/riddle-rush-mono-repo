@@ -40,7 +40,7 @@
                     t('scoring.base_score', 'Score')
                   }}</span>
                   <span class="scoring-page__base-score-value"
-                    >{{ player.totalScore }} {{ t('scoring.points', 'pts') }}</span
+                    >{{ projectedTotalScore(player) }} {{ t('scoring.points', 'pts') }}</span
                   >
                 </p>
               </div>
@@ -192,6 +192,10 @@ const syncPendingScores = (nextPlayers: Player[]) => {
   }
 }
 
+/** Total score if pending round points were applied now (matches assignPlayerScore deltas). */
+const projectedTotalScore = (player: Player) =>
+  player.totalScore - player.currentRoundScore + (pendingScores.get(player.id) ?? 0)
+
 const gameId = computed(() => route.params.gameId as string | undefined)
 
 const isConfirming = ref(false)
@@ -204,12 +208,12 @@ const hasConfirmedRound = ref(false)
 
 const isDecisionFlow = computed(() => flowState.value === 'decision')
 
-// Projected ranks based on totalScore + pending scores
+// Projected ranks use same total as on-card display (totalScore includes currentRoundScore until adjusted)
 const projectedRanks = computed(() => {
   const ranked = orderBy(
     players.value.map((p) => ({
       id: p.id,
-      projected: p.totalScore + (pendingScores.get(p.id) ?? 0),
+      projected: projectedTotalScore(p),
     })),
     ['projected'],
     ['desc']
