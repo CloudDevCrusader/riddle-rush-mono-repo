@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { SevereServiceError } from 'webdriverio'
 
 function resolveAndroidSdkRoot(): string | undefined {
   const fromEnv = process.env.ANDROID_HOME?.trim() || process.env.ANDROID_SDK_ROOT?.trim()
@@ -47,7 +48,7 @@ function assertAndroidDeviceConnected(): void {
     process.env.ANDROID_SDK_ROOT?.trim() ||
     resolveAndroidSdkRoot()
   if (!root) {
-    throw new Error(
+    throw new SevereServiceError(
       'Android SDK not found. Set ANDROID_HOME or install the SDK (e.g. via Android Studio). ' +
         'See https://developer.android.com/studio/command-line/variables'
     )
@@ -57,13 +58,13 @@ function assertAndroidDeviceConnected(): void {
   try {
     out = execFileSync(adb, ['devices'], { encoding: 'utf8' })
   } catch {
-    throw new Error(
+    throw new SevereServiceError(
       `Failed to run "${adb} devices". Check that Android SDK platform-tools is installed.`
     )
   }
   const hasDevice = out.split('\n').some((line) => /\tdevice\s*$/.test(line))
   if (!hasDevice) {
-    throw new Error(
+    throw new SevereServiceError(
       'No Android device or emulator in the "device" state. Start an emulator (Device Manager) ' +
         'or connect a device with USB debugging, then check `adb devices`.'
     )
@@ -84,7 +85,7 @@ function assertApkExists(apkPath: string): void {
   if (existsSync(apkPath)) {
     return
   }
-  throw new Error(
+  throw new SevereServiceError(
     `APK not found: ${apkPath}\n` +
       'Build a universal debug APK for the emulator (x86/x86_64), then retry:\n' +
       '  pnpm android:build:universal\n' +
