@@ -198,6 +198,11 @@ if [[ $PLATFORM == "android" ]]; then
 		GRADLE_ARGS+=(--stacktrace --warning-mode all)
 	fi
 
+	# JVM unit tests (Capacitor config, version code, build constants) before packaging
+	if [[ $BUILD_TYPE == "debug" ]]; then
+		./gradlew "test${FLAVOR_CAP}DebugUnitTest" "${GRADLE_ARGS[@]}"
+	fi
+
 	./gradlew "$GRADLE_TASK" "${GRADLE_ARGS[@]}"
 
 	# --- Locate output ---
@@ -239,6 +244,14 @@ elif [[ $PLATFORM == "ios" ]]; then
 
 	if ! command -v xcodebuild &>/dev/null; then
 		die "Xcode Command Line Tools not found. Install Xcode from the App Store."
+	fi
+
+	if command -v swift &>/dev/null; then
+		info "Running NativeConfigTests (Capacitor JSON)..."
+		swift test --package-path "$MOBILE_DIR/ios/NativeConfigTests"
+		ok "NativeConfigTests passed"
+	else
+		warn "swift not on PATH — skipping NativeConfigTests"
 	fi
 
 	cd "$PLATFORM_DIR/App"
