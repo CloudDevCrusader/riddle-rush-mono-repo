@@ -3,7 +3,7 @@
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
   "version": "1.5.0",
   "devDependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.87",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.101",
     "@changesets/cli": "^2.30.0",
     "@composio/claude-agent-sdk": "^0.6.7",
     "@composio/core": "^0.6.7",
