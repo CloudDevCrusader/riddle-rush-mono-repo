@@ -34,6 +34,7 @@
                   :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
                   :show-indicator="false"
                   :show-answer="isAnswerInputEnabled"
+                  embedded
                   class="scoring-page__player-card-inner"
                 />
                 <p class="scoring-page__base-score" data-testid="base-score">
@@ -66,11 +67,16 @@
                 <span class="scoring-page__round-score-label">{{
                   t('scoring.round_points', 'Round')
                 }}</span>
-                <span
-                  class="scoring-page__round-score-value"
-                  :data-testid="`scoring-page-score-value-${index}`"
-                  >{{ pendingScores.get(player.id) ?? 0 }}</span
-                >
+                <span class="scoring-page__round-score-value">
+                  <span
+                    class="scoring-page__round-score-num"
+                    :data-testid="`scoring-page-score-value-${index}`"
+                    >{{ pendingScores.get(player.id) ?? 0 }}</span
+                  >
+                  <span class="scoring-page__round-score-unit">{{
+                    t('scoring.points', 'pts')
+                  }}</span>
+                </span>
               </div>
 
               <GameButton
@@ -361,13 +367,19 @@ useLocalizedPageSeo({
 .scoring-page__verbal-hint {
   max-width: 36rem;
   margin: calc(var(--spacing-xl) * -1) 0 0;
-  padding: 0 var(--spacing-md);
+  padding: mockup-clamp(12px) mockup-clamp(20px);
   font-family: var(--font-display);
   font-size: mockup-clamp(15px);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-white);
   text-align: center;
   line-height: 1.4;
+  border-radius: var(--radius-full);
+  background: rgba(8, 42, 108, 0.45);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 mockup-clamp(4px) mockup-clamp(12px) rgba(0, 0, 0, 0.15);
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.45),
     0 0 12px rgba(13, 61, 122, 0.35);
@@ -395,12 +407,19 @@ useLocalizedPageSeo({
   flex-direction: column;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
-  background: var(--color-panel-cream);
-  border: 3px solid var(--color-border-gold);
-  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    165deg,
+    rgba(44, 152, 255, 0.42) 0%,
+    rgba(13, 90, 180, 0.72) 45%,
+    rgba(8, 42, 108, 0.88) 100%
+  );
+  border: mockup-clamp(4px) solid var(--color-border-gold-dark);
+  border-radius: mockup-clamp(32px);
   box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.12),
-    0 12px 28px rgba(0, 0, 0, 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.12),
+    0 mockup-clamp(6px) 0 rgba(166, 126, 47, 0.55),
+    0 12px 28px rgba(0, 0, 0, 0.22);
 }
 
 .scoring-page__player-header {
@@ -421,21 +440,23 @@ useLocalizedPageSeo({
   width: 100%;
 }
 
-.scoring-page__player-card-inner :deep(.game-player-card) {
-  box-shadow: none;
-  border-width: 2px;
-  background: rgba(255, 255, 255, 0.92);
-}
-
 .scoring-page__rank {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: mockup-clamp(52px);
+  padding: mockup-clamp(8px) mockup-clamp(12px);
   font-family: var(--font-display);
-  font-size: mockup-clamp(20px);
+  font-size: mockup-clamp(18px);
   font-weight: var(--font-weight-black);
   color: var(--color-text-yellow);
-  min-width: 2.75rem;
   text-align: center;
   line-height: 1.1;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 213, 79, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
   text-shadow:
     0 2px 4px rgba(0, 0, 0, 0.35),
     0 0 12px rgba(255, 213, 79, 0.35);
@@ -447,45 +468,63 @@ useLocalizedPageSeo({
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--spacing-xs) var(--spacing-sm);
+  padding: mockup-clamp(8px) mockup-clamp(16px);
   font-family: var(--font-display);
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .scoring-page__base-score-label {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary-dark);
+  color: rgba(255, 255, 255, 0.92);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .scoring-page__base-score-value {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-black);
-  color: var(--color-text-dark);
+  color: var(--color-text-yellow);
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
 .scoring-page__score-controls {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: center;
   justify-content: space-between;
   gap: var(--spacing-md);
-  padding: var(--spacing-sm);
-  background: rgba(255, 255, 255, 0.65);
-  border: 2px solid rgba(200, 162, 67, 0.45);
-  border-radius: var(--radius-lg);
+  padding: var(--spacing-xs) 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 
-.scoring-page__delta-btn {
+.scoring-page__score-controls :deep(.scoring-page__delta-btn) {
   flex: 0 0 auto;
-  min-width: 3.25rem;
-  min-height: 3.25rem;
-  padding-left: var(--spacing-lg);
-  padding-right: var(--spacing-lg);
-  font-size: var(--font-size-2xl);
+  width: mockup-clamp(52px);
+  height: mockup-clamp(52px);
+  min-width: mockup-clamp(52px);
+  min-height: mockup-clamp(52px);
+  padding: 0;
+  border-radius: var(--radius-full);
+  font-size: mockup-clamp(28px);
   font-weight: var(--font-weight-black);
   line-height: 1;
-  border-width: 3px;
+  border-width: mockup-clamp(3px);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+    0 mockup-clamp(4px) 0 rgba(0, 0, 0, 0.2);
+
+  &:active:not(:disabled) {
+    transform: translateY(2px);
+  }
 }
 
 .scoring-page__round-score {
@@ -494,37 +533,64 @@ useLocalizedPageSeo({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: mockup-clamp(4px);
   min-width: 0;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-md);
-  background: linear-gradient(180deg, #0d3d7a 0%, #082a58 100%);
-  border: 3px solid var(--color-border-gold);
+  padding: mockup-clamp(10px) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  background: linear-gradient(180deg, rgba(12, 48, 102, 0.92) 0%, rgba(5, 28, 72, 0.96) 100%);
+  border: mockup-clamp(3px) solid rgba(255, 213, 79, 0.65);
   box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.35),
-    0 2px 0 rgba(255, 255, 255, 0.12);
+    inset 0 2px 8px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .scoring-page__round-score-label {
   font-family: var(--font-display);
-  font-size: var(--font-size-xs);
+  font-size: mockup-clamp(11px);
   font-weight: var(--font-weight-bold);
-  color: rgba(255, 255, 255, 0.88);
+  color: #eaf3ff;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 0 10px rgba(180, 220, 255, 0.35);
 }
 
 .scoring-page__round-score-value {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: mockup-clamp(4px);
   font-family: var(--font-display);
-  font-size: mockup-clamp(26px);
-  font-weight: var(--font-weight-black);
-  color: var(--color-text-white);
-  line-height: 1.1;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+  line-height: 1.05;
 }
 
-.scoring-page__button {
+.scoring-page__round-score-num {
+  font-size: mockup-clamp(28px);
+  font-weight: var(--font-weight-black);
+  color: #ffffff;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25),
+    0 mockup-clamp(3px) mockup-clamp(6px) rgba(0, 0, 0, 0.55);
+}
+
+.scoring-page__round-score-unit {
+  font-size: mockup-clamp(17px);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  text-shadow: 0 mockup-clamp(2px) mockup-clamp(4px) rgba(0, 0, 0, 0.45);
+  opacity: 0.98;
+}
+
+.scoring-page__column :deep(.scoring-page__button) {
   width: 100%;
+  border-radius: var(--radius-full);
+}
+
+.decision-content__actions :deep(.game-button) {
+  border-radius: var(--radius-full);
 }
 
 .decision-content {
@@ -533,6 +599,8 @@ useLocalizedPageSeo({
 
 .decision-content__text {
   font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-dark);
   margin-bottom: var(--spacing-xl);
 }
 
@@ -561,6 +629,7 @@ useLocalizedPageSeo({
 
   .scoring-page__player-card {
     padding: var(--spacing-md);
+    border-radius: mockup-clamp(26px);
   }
 
   .scoring-page__player-header {
@@ -583,14 +652,20 @@ useLocalizedPageSeo({
     padding: var(--spacing-xs);
   }
 
-  .scoring-page__delta-btn {
-    min-width: 2.85rem;
-    min-height: 2.85rem;
-    font-size: var(--font-size-xl);
+  .scoring-page__score-controls :deep(.scoring-page__delta-btn) {
+    width: mockup-clamp(46px);
+    height: mockup-clamp(46px);
+    min-width: mockup-clamp(46px);
+    min-height: mockup-clamp(46px);
+    font-size: mockup-clamp(24px);
   }
 
-  .scoring-page__round-score-value {
-    font-size: mockup-clamp(22px);
+  .scoring-page__round-score-num {
+    font-size: mockup-clamp(24px);
+  }
+
+  .scoring-page__round-score-unit {
+    font-size: mockup-clamp(15px);
   }
 
   .decision-content__text {
@@ -617,11 +692,12 @@ useLocalizedPageSeo({
     gap: var(--spacing-xs);
   }
 
-  .scoring-page__delta-btn {
-    min-width: 2.6rem;
-    min-height: 2.6rem;
-    padding-left: var(--spacing-md);
-    padding-right: var(--spacing-md);
+  .scoring-page__score-controls :deep(.scoring-page__delta-btn) {
+    width: mockup-clamp(42px);
+    height: mockup-clamp(42px);
+    min-width: mockup-clamp(42px);
+    min-height: mockup-clamp(42px);
+    font-size: mockup-clamp(22px);
   }
 }
 
