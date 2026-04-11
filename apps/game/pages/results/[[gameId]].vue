@@ -38,6 +38,7 @@
             <GameButton
               variant="danger"
               size="sm"
+              :sound-on-click="false"
               :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
               data-testid="score-decrement"
               @click="decrementScore(player.id)"
@@ -57,6 +58,7 @@
             <GameButton
               variant="primary"
               size="sm"
+              :sound-on-click="false"
               data-testid="score-increment"
               @click="incrementScore(player.id)"
             >

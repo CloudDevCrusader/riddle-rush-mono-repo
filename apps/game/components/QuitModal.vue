@@ -24,7 +24,6 @@
 <script setup lang="ts">
 const { t } = usePageSetup()
 const { gameStore } = useGameState()
-const audio = useAudio()
 
 interface Props {
   modelValue: boolean
@@ -44,13 +43,11 @@ const isVisible = computed({
 })
 
 const handleNo = () => {
-  audio.playClick()
   emit('cancel')
   isVisible.value = false
 }
 
 const handleYes = async () => {
-  audio.playClick()
   if (gameStore.hasActiveSession) {
     await gameStore.abandonGame()
   }

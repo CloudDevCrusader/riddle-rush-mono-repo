@@ -189,6 +189,7 @@ const {
 const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
 const gameActions = useGameActions()
+const audio = useAudio()
 const route = useRoute()
 
 // Handle game ID from route parameter
@@ -258,8 +259,10 @@ const submitAnswer = async () => {
     await gameStore.submitPlayerAnswer(player.id, answer)
 
     if (answer) {
+      void audio.playTada()
       toast.success(t('game.answer_submitted', [player.name]))
     } else {
+      void audio.playClick()
       toast.info(t('game.answer_skipped', [player.name]))
     }
 
@@ -289,6 +292,7 @@ const handleNext = async () => {
     flow !== 'round-complete' &&
     flow !== 'decision'
   ) {
+    void audio.playClick()
     toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
     return
   }
@@ -298,6 +302,8 @@ const handleNext = async () => {
     // Transition to round-complete state to trigger results flow
     gameStore.transitionToRoundComplete()
   }
+
+  void audio.playClick()
 
   // Navigate to results with game ID
   const currentGameId = gameStore.currentSession.value?.id ?? gameId.value

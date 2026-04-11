@@ -226,6 +226,36 @@ export function useAudio() {
     })
   }
 
+  /** Short “tada” fanfare when a player submits a non-empty answer. */
+  const playTada = () => {
+    const ctx = initAudioContext()
+    if (!ctx) return
+
+    const flourish = [
+      { freq: 523.25, delay: 0, duration: 0.1, vol: 0.22 },
+      { freq: 659.25, delay: 55, duration: 0.1, vol: 0.22 },
+      { freq: 783.99, delay: 110, duration: 0.1, vol: 0.24 },
+      { freq: 1046.5, delay: 165, duration: 0.14, vol: 0.26 },
+    ]
+
+    flourish.forEach(({ freq, delay, duration, vol }) => {
+      setTimeout(() => {
+        playTone(freq, duration, 'triangle', vol)
+        playTone(freq * 2, duration * 0.55, 'sine', vol * 0.35)
+      }, delay)
+    })
+
+    setTimeout(() => {
+      playTone(1046.5, 0.12, 'sine', 0.2)
+      setTimeout(() => {
+        playTone(1318.51, 0.14, 'sine', 0.18)
+        setTimeout(() => {
+          playTone(1567.98, 0.18, 'sine', 0.16)
+        }, 45)
+      }, 55)
+    }, 230)
+  }
+
   const getSettings = async (): Promise<CategorySettings> => {
     const { getSettings } = useIndexedDB()
     const settings = await getSettings()
@@ -247,5 +277,6 @@ export function useAudio() {
     playRoundComplete: () => playSoundIfEnabled(playRoundComplete),
     playButtonHover: () => playSoundIfEnabled(playButtonHover),
     playScoreIncrease: () => playSoundIfEnabled(playScoreIncrease),
+    playTada: () => playSoundIfEnabled(playTada),
   }
 }
