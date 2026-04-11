@@ -282,7 +282,15 @@ Resume file: None
 - **Commit:** 10867ce10
 
 ### Deployment: development
+
 - **Version:** 1.5.0
 - **Timestamp:** 20260412-011321
 - **Branch:** develop
 - **Commit:** 4e5006c48
+
+### Deployment: production
+
+- **Version:** 1.5.1
+- **Timestamp:** 20260412-012209
+- **Branch:** main
+- **Commit:** ee84fbf3c
