@@ -67,12 +67,17 @@ async function startGame(category: Category, letter: string) {
       return
     }
 
-    const gameId = gameStore.currentSession.value?.id
-    if (gameId) {
-      await goToGame(gameId)
-    } else {
-      await goToGame()
+    // Always pass the session id. Navigating to `/game` triggers session-guard to
+    // `navigateTo(/game/:id)` — a second navigation that feels like a double reload.
+    if (!session.id) {
+      const logger = useLogger()
+      logger.error('startGame: session missing id after startConfiguredRound')
+      startingGame.value = false
+      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+      return
     }
+
+    await goToGame(session.id)
   } catch (error) {
     const logger = useLogger()
     logger.error('Failed to start game:', error)
