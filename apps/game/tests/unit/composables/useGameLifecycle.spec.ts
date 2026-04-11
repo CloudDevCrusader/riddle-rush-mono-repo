@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { GameSession, Player, Category } from '@riddle-rush/types/game'
+import { gameSessionTestFixture } from '@riddle-rush/types/schemas'
 
 // Mock useStatistics
 const mockUpdateStatistics = vi.fn()
@@ -51,7 +52,7 @@ function createMockPlayer(overrides: Partial<Player> = {}): Player {
 
 // Helper to create a mock GameSession
 function createMockSession(overrides: Partial<GameSession> = {}): GameSession {
-  return {
+  return gameSessionTestFixture({
     id: 'test-session-1',
     players: [
       createMockPlayer(),
@@ -72,7 +73,7 @@ function createMockSession(overrides: Partial<GameSession> = {}): GameSession {
     status: 'active',
     roundHistory: [],
     ...overrides,
-  }
+  })
 }
 
 describe('useGameLifecycle', () => {

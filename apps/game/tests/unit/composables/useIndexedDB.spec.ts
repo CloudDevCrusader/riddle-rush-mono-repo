@@ -7,6 +7,8 @@ import type {
   LeaderboardEntry,
   CategorySettings,
 } from '@riddle-rush/types/game'
+import { gameSessionTestFixture } from '@riddle-rush/types/schemas'
+import { openDB } from 'idb'
 
 // Mock useLogger to avoid window/navigator references
 vi.mock('../../../composables/useLogger', () => ({
@@ -19,23 +21,8 @@ vi.mock('../../../composables/useLogger', () => ({
   }),
 }))
 
-/**
- * Factory for creating test game sessions
- */
-function createTestSession(overrides: Partial<GameSession> = {}): GameSession {
-  return {
-    id: overrides.id ?? `session-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-    players: [],
-    currentRound: 1,
-    currentPlayerIndex: 0,
-    category: {
-      id: 1,
-      name: 'Animals',
-      searchWord: 'animals',
-      key: 'animals',
-      searchProvider: 'offline',
-    },
-    letter: 'A',
+const createTestSession = (overrides: Partial<GameSession> = {}): GameSession =>
+  gameSessionTestFixture({
     startTime: Date.now() - 60000,
     endTime: Date.now(),
     score: 25,
@@ -44,10 +31,9 @@ function createTestSession(overrides: Partial<GameSession> = {}): GameSession {
       { term: 'Axolotl', found: true, timestamp: Date.now() - 40000 },
     ],
     status: 'completed',
-    roundHistory: [],
+    id: overrides.id ?? `session-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     ...overrides,
-  }
-}
+  })
 
 /**
  * Factory for creating test statistics
@@ -179,6 +165,16 @@ describe('useIndexedDB', () => {
 
       // Should not throw even though ID-based store fails
       await expect(db.saveGameSession(session)).resolves.not.toThrow()
+    })
+
+    it('should return null when stored current session fails Zod validation', async () => {
+      await db.getGameSession()
+      const rawDb = await openDB('riddle-rush-db', 3)
+      await rawDb.put('gameSession', { invalid: true }, 'current')
+      await rawDb.close()
+
+      const retrieved = await db.getGameSession()
+      expect(retrieved).toBeNull()
     })
   })
 

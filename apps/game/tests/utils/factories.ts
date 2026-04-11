@@ -6,6 +6,7 @@ import type {
   GameStatistics,
   Player,
 } from '@riddle-rush/types/game'
+import { gameSessionSchema } from '@riddle-rush/types/schemas'
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const WORD_CHARACTERS = 'abcdefghijklmnopqrstuvwxyz'
@@ -162,7 +163,7 @@ export const createGameSession = (overrides: Partial<GameSession> = {}): GameSes
   const category = overrides.category ?? createCategory()
   const score = overrides.score ?? attempts.filter((attempt) => attempt.found).length * 10
 
-  return {
+  return gameSessionSchema.parse({
     id: overrides.id ?? faker.string.uuid(),
     userId: overrides.userId ?? faker.string.uuid(),
     category,
@@ -178,7 +179,7 @@ export const createGameSession = (overrides: Partial<GameSession> = {}): GameSes
     roundHistory: overrides.roundHistory ?? [],
     gameName: overrides.gameName ?? faker.lorem.words(2),
     status: overrides.status ?? 'active',
-  }
+  }) as GameSession
 }
 
 export const createGameStatistics = (overrides: Partial<GameStatistics> = {}): GameStatistics => {

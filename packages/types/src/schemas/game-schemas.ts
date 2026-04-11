@@ -11,7 +11,8 @@ export const categorySchema = z.object({
   name: z.string(),
   searchWord: z.string(),
   key: z.string(),
-  searchProvider: searchProviderSchema,
+  /** Older IndexedDB rows may omit this; treat as offline. */
+  searchProvider: searchProviderSchema.default('offline'),
   additionalData: z.record(z.string(), z.unknown()).optional(),
   letter: z.string().optional(),
 })
@@ -26,9 +27,10 @@ export const playerSchema = z.object({
   id: z.string(),
   name: z.string(),
   totalScore: z.number(),
-  currentRoundScore: z.number(),
+  /** Legacy rows may omit round score / submission flags. */
+  currentRoundScore: z.number().default(0),
   currentRoundAnswer: z.string().optional(),
-  hasSubmitted: z.boolean(),
+  hasSubmitted: z.boolean().default(false),
   avatar: z.string().optional(),
 })
 
@@ -56,7 +58,7 @@ export const gameSessionSchema = z.object({
   id: z.string(),
   userId: z.string().optional(),
   gameName: z.string().optional(),
-  players: z.array(playerSchema),
+  players: z.array(playerSchema).default([]),
   currentRound: z.number(),
   currentPlayerIndex: z.number(),
   category: categorySchema,
@@ -66,7 +68,7 @@ export const gameSessionSchema = z.object({
   score: z.number().optional(),
   attempts: z.array(gameAttemptSchema).optional(),
   status: z.enum(['active', 'completed', 'abandoned']),
-  roundHistory: z.array(roundHistoryEntrySchema),
+  roundHistory: z.array(roundHistoryEntrySchema).default([]),
 })
 
 export const gameStatisticsSchema = z.object({
@@ -75,7 +77,7 @@ export const gameStatisticsSchema = z.object({
   correctAttempts: z.number(),
   totalScore: z.number(),
   totalPlayTime: z.number(),
-  categoriesPlayed: z.record(z.string(), z.number()),
+  categoriesPlayed: z.record(z.string(), z.number()).default({}),
   lastPlayed: z.number(),
   bestScore: z.number(),
   averageScore: z.number(),
@@ -97,8 +99,8 @@ export const leaderboardEntrySchema = z.object({
 })
 
 export const categorySettingsSchema = z.object({
-  enabledCategories: z.array(z.string()),
-  soundEnabled: z.boolean(),
+  enabledCategories: z.array(z.string()).default([]),
+  soundEnabled: z.boolean().default(true),
 })
 
 export const checkAnswerResponseSchema = z.object({
