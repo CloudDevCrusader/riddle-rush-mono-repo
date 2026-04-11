@@ -10,7 +10,7 @@
       <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
-          :src="`${baseUrl}assets/settings/BACKGROUND.png`"
+          :src="getAssetPath('assets/settings/BACKGROUND.png')"
           alt="Background"
           class="settings-bg"
           width="600"
@@ -19,13 +19,13 @@
 
         <!-- Back Button -->
         <button class="back-btn tap-highlight no-select" type="button" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" width="60" height="60" />
+          <img :src="getAssetPath('assets/settings/back.png')" alt="Back" width="60" height="60" />
         </button>
 
         <!-- Title -->
         <div class="title-container">
           <img
-            :src="`${baseUrl}assets/settings/options.png`"
+            :src="getAssetPath('assets/settings/options.png')"
             alt="OPTIONS"
             class="title-image"
             width="300"
@@ -39,7 +39,7 @@
           <div class="control-item">
             <div class="control-icon-wrapper">
               <img
-                :src="`${baseUrl}assets/settings/Sound.png`"
+                :src="getAssetPath('assets/settings/Sound.png')"
                 alt="Sound"
                 class="control-icon"
                 width="50"
@@ -70,7 +70,7 @@
           <div class="control-item">
             <div class="control-icon-wrapper">
               <img
-                :src="`${baseUrl}assets/settings/Music.png`"
+                :src="getAssetPath('assets/settings/Music.png')"
                 alt="Music"
                 class="control-icon"
                 width="50"
@@ -100,7 +100,7 @@
 
         <!-- OK Button -->
         <button class="ok-btn tap-highlight no-select" type="button" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" width="200" height="80" />
+          <img :src="getAssetPath('assets/settings/OK.png')" alt="OK" width="200" height="80" />
         </button>
       </div>
     </button>
@@ -118,8 +118,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
+const { getAssetPath } = useAssets()
 const settings = useSettings()
 const router = useRouter()
 const { t } = useI18n()

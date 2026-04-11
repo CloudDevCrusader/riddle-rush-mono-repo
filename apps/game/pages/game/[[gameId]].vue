@@ -12,7 +12,7 @@
         @click="handleBack"
       >
         <img
-          :src="`${baseUrl}assets/alphabets/back.png`"
+          :src="getAssetPath('assets/alphabets/back.png')"
           :alt="t('common.back')"
           class="back-icon"
           loading="eager"
@@ -54,7 +54,7 @@
       <!-- Category Panel -->
       <div class="category-panel" data-testid="game-category-info">
         <img
-          :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
+          :src="getAssetPath('assets/alphabets/CATEGORY.png')"
           :alt="t('common.category')"
           class="category-label-image"
           loading="lazy"
@@ -158,7 +158,7 @@
         @click="handleNext"
       >
         <img
-          :src="`${baseUrl}assets/alphabets/next.png`"
+          :src="getAssetPath('assets/alphabets/next.png')"
           :alt="t('common.next')"
           class="next-icon"
           loading="lazy"
@@ -172,7 +172,8 @@
 <script setup lang="ts">
 definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
 
-const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
+const { toast, t, goHome: navigateToHome } = usePageSetup()
+const { getAssetPath } = useAssets()
 const { goToResults, goToPlayers, goToRoundStart } = useNavigation()
 const {
   gameStore,

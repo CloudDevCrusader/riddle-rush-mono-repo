@@ -25,12 +25,11 @@
  * Menu Layout
  * Layout for main menu pages with menu toggle button
  */
-const config = useRuntimeConfig()
-const { baseUrl } = config.public
+const { getAssetPath } = useAssets()
 
 // Layout state
 const backgroundImage = ref<string | null>(null)
-const menuButtonImage = ref<string>(`${baseUrl}assets/main-menu/MENU.png`)
+const menuButtonImage = ref<string>(getAssetPath('assets/main-menu/MENU.png'))
 const showMenuButton = ref(true)
 const isMenuOpen = ref(false)
 

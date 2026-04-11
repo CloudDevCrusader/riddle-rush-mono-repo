@@ -20,13 +20,12 @@
  * Game Layout
  * Standard layout for game pages with background and back button
  */
-const config = useRuntimeConfig()
-const { baseUrl } = config.public
+const { getAssetPath } = useAssets()
 const router = useRouter()
 
 // Layout state
 const backgroundImage = ref<string | null>(null)
-const backButtonImage = ref<string>(`${baseUrl}assets/players/back.png`)
+const backButtonImage = ref<string>(getAssetPath('assets/players/back.png'))
 const showBackButton = ref(true)
 const onBackCallback = ref<(() => void) | null>(null)
 

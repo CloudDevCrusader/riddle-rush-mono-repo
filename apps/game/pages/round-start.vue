@@ -1,14 +1,13 @@
 <template>
   <div class="round-start-page">
-    <NuxtImg
-      :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
+    <img
+      :src="getAssetPath('assets/alphabets/BACKGROUND.png')"
       alt=""
       class="page-bg"
-      format="webp"
-      quality="80"
-      preset="background"
       loading="eager"
-      preload
+      fetchpriority="high"
+      width="1920"
+      height="1080"
     />
 
     <div class="top-bar">
@@ -38,7 +37,8 @@
 import type { Category } from '@riddle-rush/types/game'
 import type { FortuneWheelSelection } from '~/types/fortune-wheel'
 
-const { baseUrl, toast, t } = usePageSetup()
+const { toast, t } = usePageSetup()
+const { getAssetPath } = useAssets()
 const { goToGame } = useNavigation()
 const { startConfiguredRound } = useGameActions()
 const { gameStore } = useGameState()
