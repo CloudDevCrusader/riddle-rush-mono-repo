@@ -16,6 +16,8 @@ dist/
 distros
 distros/
 y**/dist/
+apps/game/.lighthouse/
+apps/game/.lighthouse-ci/
 playwright-report/
 **/playwright-report/
 .playwright-mcp/
@@ -144,6 +146,9 @@ gha-creds-*.json
 # Claude agents
 claude/agents/
 .claude/agents/
+
+# Claude Code worktrees (isolation mode creates gitlinks that look like submodules)
+.claude/worktrees/
 
 # GitHub Actions runner (local runner installation - credentials & binaries)
 tools/github/actions-runner/

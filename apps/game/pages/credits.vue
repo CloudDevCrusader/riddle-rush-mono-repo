@@ -73,14 +73,9 @@ const runtimeConfig = useRuntimeConfig()
 const appVersion = runtimeConfig.public.appVersion
 const { t } = useI18n()
 
-useHead({
-  title: t('credits.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('credits.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('credits.title'),
+  description: () => t('credits.description'),
 })
 </script>
 
@@ -186,7 +181,6 @@ useHead({
 @media (max-width: 768px) {
   .credits-panel {
     padding: var(--spacing-xl);
-    max-height: 400px;
   }
 }
 
@@ -198,7 +192,6 @@ useHead({
 
   .credits-panel {
     padding: var(--spacing-lg);
-    max-height: 300px;
     margin: 0 var(--spacing-sm);
   }
 
@@ -220,7 +213,6 @@ useHead({
 
   .credits-panel {
     padding: var(--spacing-md);
-    max-height: 260px;
     border-width: 3px;
     margin: 0;
   }

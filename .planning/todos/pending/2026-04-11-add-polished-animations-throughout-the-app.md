@@ -22,8 +22,3 @@ Audit the entire app for animation opportunities and add tasteful, performant an
 - **Leaderboard**: Rank change animations, score bar growth
 
 Use Vue `<Transition>` / `<TransitionGroup>`, CSS animations, and consider a lightweight library if needed. Keep animations short (150-300ms) and respect `prefers-reduced-motion`. This is an optional polish task — prioritize the most impactful spots first.
-
-## Progress (2026-04-11)
-
-- **Global route transition:** `app.vue` — `<NuxtPage>` `page-opacity` transition (~200ms fade, disabled when `prefers-reduced-motion`).
-- **Next increments:** modal enter/leave, list stagger (players/leaderboard), score +/- micro-feedback.

@@ -16,7 +16,7 @@
         </div>
         <button
           class="toast-close"
-          :aria-label="useNuxtApp().$i18n.t('common.close')"
+          :aria-label="t('common.close')"
           @click.stop="removeToast(toast.id)"
         >
           ✕
@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import type { ToastType } from '../composables/useToast'
 
+const { t } = useI18n()
 const { toasts, remove } = useToast()
 
 const getIcon = (type: ToastType) => {

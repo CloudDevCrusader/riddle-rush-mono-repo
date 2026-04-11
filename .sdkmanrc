@@ -1,0 +1,2 @@
+# Enable auto-env: sdk config auto_env=true
+java=21.0.10-amzn

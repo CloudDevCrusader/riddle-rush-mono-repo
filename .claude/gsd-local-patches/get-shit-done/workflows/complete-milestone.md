@@ -85,7 +85,7 @@ Requirements: {N}/{M} v1 requirements checked off
 MUST present 3 options:
 
 1. **Proceed anyway** — mark milestone complete with known gaps
-2. **Run audit first** — `/gsd-audit-milestone` to assess gap severity
+2. **Run audit first** — `/gsd:audit-milestone` to assess gap severity
 3. **Abort** — return to development
 
 If user selects "Proceed anyway": note incomplete requirements in MILESTONES.md under `### Known Gaps` with REQ-IDs and descriptions.
@@ -93,7 +93,7 @@ If user selects "Proceed anyway": note incomplete requirements in MILESTONES.md 
 <config-check>
 
 ```bash
-cat .planning/config.json 2>/dev/null || true
+cat .planning/config.json 2>/dev/null
 ```
 
 </config-check>
@@ -133,7 +133,7 @@ Calculate milestone statistics:
 ```bash
 git log --oneline --grep="feat(" | head -20
 git diff --stat FIRST_COMMIT..LAST_COMMIT | tail -1
-find . -name "*.swift" -o -name "*.ts" -o -name "*.py" | xargs wc -l 2>/dev/null || true
+find . -name "*.swift" -o -name "*.ts" -o -name "*.py" | xargs wc -l 2>/dev/null
 git log --format="%ai" FIRST_COMMIT | tail -1
 git log --format="%ai" LAST_COMMIT | head -1
 ```
@@ -160,7 +160,6 @@ Extract one-liners from SUMMARY.md files using summary-extract:
 ```bash
 # For each phase in milestone, extract one-liner
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
-  [ -e "$summary" ] || continue
   node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" summary-extract "$summary" --fields one_liner --pick one_liner
 done
 ```
@@ -405,7 +404,7 @@ mv .planning/phases/{phase-dir} .planning/milestones/v[X.Y]-phases/
 
 Verify: `✅ Phase directories archived to .planning/milestones/v[X.Y]-phases/`
 
-If "Skip": Phase directories remain in `.planning/phases/` as raw execution history. Use `/gsd-cleanup` later to archive retroactively.
+If "Skip": Phase directories remain in `.planning/phases/` as raw execution history. Use `/gsd:cleanup` later to archive retroactively.
 
 After archival, the AI still handles:
 
@@ -457,7 +456,7 @@ rm .planning/REQUIREMENTS.md
 Check for existing retrospective:
 
 ```bash
-ls .planning/RETROSPECTIVE.md 2>/dev/null || true
+ls .planning/RETROSPECTIVE.md 2>/dev/null
 ```
 
 **If exists:** Read the file, append new milestone section before the "## Cross-Milestone Trends" section.
@@ -555,16 +554,6 @@ if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 
 Extract `branching_strategy`, `phase_branch_template`, `milestone_branch_template`, and `commit_docs` from init JSON.
 
-Detect base branch:
-
-```bash
-BASE_BRANCH=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" config-get git.base_branch 2>/dev/null || echo "")
-if [ -z "$BASE_BRANCH" ] || [ "$BASE_BRANCH" = "null" ]; then
-  BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|^refs/remotes/origin/||')
-  BASE_BRANCH="${BASE_BRANCH:-main}"
-fi
-```
-
 **If "none":** Skip to git_tag.
 
 **For "phase" strategy:**
@@ -603,7 +592,7 @@ AskUserQuestion with options: Squash merge (Recommended), Merge with history, De
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current)
-git checkout ${BASE_BRANCH}
+git checkout main
 
 if [ "$BRANCHING_STRATEGY" = "phase" ]; then
   for branch in $PHASE_BRANCHES; do
@@ -632,7 +621,7 @@ git checkout "$CURRENT_BRANCH"
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current)
-git checkout ${BASE_BRANCH}
+git checkout main
 
 if [ "$BRANCHING_STRATEGY" = "phase" ]; then
   for branch in $PHASE_BRANCHES; do
@@ -743,9 +732,9 @@ Tag: v[X.Y]
 
 **Start Next Milestone** — questioning → research → requirements → roadmap
 
-`/clear` then:
+`/gsd:new-milestone`
 
-`/gsd-new-milestone`
+<sub>`/clear` first → fresh context window</sub>
 
 ---
 
@@ -796,7 +785,7 @@ Milestone completion is successful when:
 - [ ] Known gaps recorded in MILESTONES.md if user proceeded with incomplete requirements
 - [ ] RETROSPECTIVE.md updated with milestone section
 - [ ] Cross-milestone trends updated
-- [ ] User knows next step (/gsd-new-milestone)
+- [ ] User knows next step (/gsd:new-milestone)
 
 </success_criteria>
 ```

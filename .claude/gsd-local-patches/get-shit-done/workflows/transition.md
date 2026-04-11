@@ -2,16 +2,16 @@
 
 **This is an INTERNAL workflow — NOT a user-facing command.**
 
-There is no `/gsd-transition` command. This workflow is invoked automatically by
+There is no `/gsd:transition` command. This workflow is invoked automatically by
 `execute-phase` during auto-advance, or inline by the orchestrator after phase
-verification. Users should never be told to run `/gsd-transition`.
+verification. Users should never be told to run `/gsd:transition`.
 
 **Valid user commands for phase progression:**
 
-- `/gsd-discuss-phase {N}` — discuss a phase before planning
-- `/gsd-plan-phase {N}` — plan a phase
-- `/gsd-execute-phase {N}` — execute a phase
-- `/gsd-progress` — see roadmap progress
+- `/gsd:discuss-phase {N}` — discuss a phase before planning
+- `/gsd:plan-phase {N}` — plan a phase
+- `/gsd:execute-phase {N}` — execute a phase
+- `/gsd:progress` — see roadmap progress
 
 </internal_workflow>
 
@@ -42,8 +42,8 @@ Mark current phase complete and advance to next. This is the natural point where
 Before transition, read project state:
 
 ```bash
-cat .planning/STATE.md 2>/dev/null || true
-cat .planning/PROJECT.md 2>/dev/null || true
+cat .planning/STATE.md 2>/dev/null
+cat .planning/PROJECT.md 2>/dev/null
 ```
 
 Parse current position to verify we're transitioning the right phase.
@@ -56,8 +56,8 @@ Note accumulated context that may need updating after transition.
 Check current phase has all plan summaries:
 
 ```bash
-(ls .planning/phases/XX-current/*-PLAN.md 2>/dev/null || true) | sort
-(ls .planning/phases/XX-current/*-SUMMARY.md 2>/dev/null || true) | sort
+ls .planning/phases/XX-current/*-PLAN.md 2>/dev/null | sort
+ls .planning/phases/XX-current/*-SUMMARY.md 2>/dev/null | sort
 ```
 
 **Verification logic:**
@@ -70,7 +70,7 @@ Check current phase has all plan summaries:
 <config-check>
 
 ```bash
-cat .planning/config.json 2>/dev/null || true
+cat .planning/config.json 2>/dev/null
 ```
 
 </config-check>
@@ -94,7 +94,7 @@ Append to the completion confirmation message (regardless of mode):
 Outstanding verification items in this phase:
 {list filenames}
 
-These will carry forward as debt. Review: `/gsd-audit-uat`
+These will carry forward as debt. Review: `/gsd:audit-uat`
 ```
 
 This does NOT block transition — it ensures the user sees the debt before confirming.
@@ -152,7 +152,7 @@ Wait for user decision.
 Check for lingering handoffs:
 
 ```bash
-ls .planning/phases/XX-current/.continue-here*.md 2>/dev/null || true
+ls .planning/phases/XX-current/.continue-here*.md 2>/dev/null
 ```
 
 If found, delete them — phase is complete, handoffs are stale.
@@ -434,7 +434,7 @@ Read ROADMAP.md to get the next phase's name and goal.
 **Check if next phase has CONTEXT.md:**
 
 ```bash
-ls .planning/phases/*[X+1]*/*-CONTEXT.md 2>/dev/null || true
+ls .planning/phases/*[X+1]*/*-CONTEXT.md 2>/dev/null
 ```
 
 **If next phase exists:**
@@ -451,7 +451,7 @@ Next: Phase [X+1] — [Name]
 ⚡ Auto-continuing: Plan Phase [X+1] in detail
 ```
 
-Exit skill and invoke SlashCommand("/gsd-plan-phase [X+1] --auto ${GSD_WS}")
+Exit skill and invoke SlashCommand("/gsd:plan-phase [X+1] --auto ${GSD_WS}")
 
 **If CONTEXT.md does NOT exist:**
 
@@ -463,7 +463,7 @@ Next: Phase [X+1] — [Name]
 ⚡ Auto-continuing: Discuss Phase [X+1] first
 ```
 
-Exit skill and invoke SlashCommand("/gsd-discuss-phase [X+1] --auto ${GSD_WS}")
+Exit skill and invoke SlashCommand("/gsd:discuss-phase [X+1] --auto ${GSD_WS}")
 
 </if>
 
@@ -480,15 +480,15 @@ Exit skill and invoke SlashCommand("/gsd-discuss-phase [X+1] --auto ${GSD_WS}")
 
 **Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
 
-`/clear` then:
+`/gsd:discuss-phase [X+1] ${GSD_WS}` — gather context and clarify approach
 
-`/gsd-discuss-phase [X+1] ${GSD_WS}` — gather context and clarify approach
+<sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd-plan-phase [X+1] ${GSD_WS}` — skip discussion, plan directly
-- `/gsd-research-phase [X+1] ${GSD_WS}` — investigate unknowns
+- `/gsd:plan-phase [X+1] ${GSD_WS}` — skip discussion, plan directly
+- `/gsd:research-phase [X+1] ${GSD_WS}` — investigate unknowns
 
 ---
 ```
@@ -505,15 +505,15 @@ Exit skill and invoke SlashCommand("/gsd-discuss-phase [X+1] --auto ${GSD_WS}")
 **Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
 <sub>✓ Context gathered, ready to plan</sub>
 
-`/clear` then:
+`/gsd:plan-phase [X+1] ${GSD_WS}`
 
-`/gsd-plan-phase [X+1] ${GSD_WS}`
+<sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd-discuss-phase [X+1] ${GSD_WS}` — revisit context
-- `/gsd-research-phase [X+1] ${GSD_WS}` — investigate unknowns
+- `/gsd:discuss-phase [X+1] ${GSD_WS}` — revisit context
+- `/gsd:research-phase [X+1] ${GSD_WS}` — investigate unknowns
 
 ---
 ```
@@ -559,18 +559,18 @@ This workstream's phases are complete. Other workstreams are still active:
 
 Archive this workstream:
 
-`/gsd-workstreams complete {current_ws_name} ${GSD_WS}`
+`/gsd:workstreams complete {current_ws_name} ${GSD_WS}`
 
 See overall milestone progress:
 
-`/gsd-workstreams progress ${GSD_WS}`
+`/gsd:workstreams progress ${GSD_WS}`
 
 <sub>Milestone completion will be available once all workstreams finish.</sub>
 
 ---
 ```
 
-Do NOT suggest `/gsd-complete-milestone` or `/gsd-new-milestone`.
+Do NOT suggest `/gsd:complete-milestone` or `/gsd:new-milestone`.
 Do NOT auto-invoke any further slash commands.
 
 **Stop here.** The user must explicitly decide what to do next.
@@ -599,7 +599,7 @@ Phase {X} marked complete.
 ⚡ Auto-continuing: Complete milestone and archive
 ```
 
-Exit skill and invoke SlashCommand("/gsd-complete-milestone {version} ${GSD_WS}")
+Exit skill and invoke SlashCommand("/gsd:complete-milestone {version} ${GSD_WS}")
 
 </if>
 
@@ -616,9 +616,9 @@ Exit skill and invoke SlashCommand("/gsd-complete-milestone {version} ${GSD_WS}"
 
 **Complete Milestone {version}** — archive and prepare for next
 
-`/clear` then:
+`/gsd:complete-milestone {version} ${GSD_WS}`
 
-`/gsd-complete-milestone {version} ${GSD_WS}`
+<sub>`/clear` first → fresh context window</sub>
 
 ---
 

@@ -19,6 +19,8 @@ interface Props {
   disabled?: boolean
   loading?: boolean
   fullWidth?: boolean
+  /** Play UI click sound (Web Audio). Disable when the parent plays a custom sound for the same action. */
+  soundOnClick?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -28,11 +30,14 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   loading: false,
   fullWidth: false,
+  soundOnClick: true,
 })
 
 const emit = defineEmits<{
   click: [event: MouseEvent]
 }>()
+
+const audio = useAudio()
 
 const buttonClasses = computed(() => [
   'game-button',
@@ -47,6 +52,9 @@ const buttonClasses = computed(() => [
 
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled && !props.loading) {
+    if (props.soundOnClick) {
+      void audio.playClick()
+    }
     emit('click', event)
   }
 }

@@ -491,6 +491,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 19. Pinia to Zustand Migration        | 3/3            | Complete    | 2026-03-22 |
 | 20. Revert Zustand to Pinia           | 3/3            | Complete    | 2026-03-23 |
 | 21. Refactor and Fix E2E & Unit Tests | 10/11          | In Progress |            |
+| 22. Fortune Wheel Alphabet Selection  | 3/3            | Complete    | 2026-04-10 |
+| 23. Performance & Accessibility       | 4/4            | Complete    | 2026-04-11 |
 
 ### Phase 20: Revert Zustand to Pinia
 
@@ -585,3 +587,38 @@ Collected test-related todos from recent phases:
 3. Unit test coverage gaps for key composables
 4. Multi-round scoring workflow not fully tested end-to-end
 5. Integration tests for WebSocket and IndexedDB missing
+
+### Phase 22: Add fortune wheel for alphabet selection using vue-fortunewheel
+
+**Goal:** Replace the round-start flip-through with an interactive fortune wheel (vue-fortune-wheel) to select category and letter before entering gameplay, while preserving fallback and existing game-flow contracts.
+**Requirements**: PAGE-04
+**Depends on:** Phase 21
+**Plans:** 3/3 plans complete
+
+Plans:
+
+- [x] 22-01-PLAN.md — Add wheel dependency, typed selection adapter, reusable FortuneAlphabetWheel component, and unit tests
+- [x] 22-02-PLAN.md — Integrate FortuneAlphabetWheel into /round-start and align game-flow helper orchestration
+- [x] 22-03-PLAN.md — Harden E2E coverage for wheel flow and produce phase verification report
+
+### Phase 23: Improve performance and accessibility. Find out why there are images on prod that can not be loaded
+
+**Goal:** Improve runtime performance and production asset reliability by removing dead image payload, fixing static image delivery paths, self-hosting fonts, and enforcing measurable Lighthouse benchmarking.
+**Requirements**: PERF-01, PERF-02, PERF-03, PERF-04
+**Depends on:** Phase 22
+**Plans:** 4/4 plans complete
+
+**Success Criteria** (what must be TRUE):
+
+1. Production image references no longer generate broken `/_ipx` URLs on static deployment and all targeted screens load their assets correctly.
+2. Unreferenced legacy images are removed from shipped assets and remaining referenced assets are normalized + optimized (WebP pipeline in place).
+3. Google Fonts CDN runtime dependency is removed; fonts are self-hosted with stable fallback metrics.
+4. Lighthouse baseline and final reports are captured; final scores target 90+ across Performance, Accessibility, Best Practices, and SEO.
+5. Initial JS + asset footprint is reduced with documented before/after metrics.
+
+Plans:
+
+- [x] 23-01-PLAN.md — Add Lighthouse tooling and capture baseline metrics before optimization
+- [x] 23-02-PLAN.md — Consolidate asset path handling and fix static image rendering contracts
+- [x] 23-03-PLAN.md — Remove dead assets, normalize filenames, and run WebP optimization pipeline
+- [x] 23-04-PLAN.md — Self-host fonts, lazy-load non-critical overlays, and capture final performance results

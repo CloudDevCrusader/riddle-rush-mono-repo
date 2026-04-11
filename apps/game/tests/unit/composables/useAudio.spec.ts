@@ -476,6 +476,14 @@ describe('useAudio', () => {
       expect(mockAudioContext.createOscillator).toHaveBeenCalled()
     })
 
+    it('playTada should play fanfare notes', async () => {
+      const audio = useAudio()
+      await audio.playTada()
+      vi.advanceTimersByTime(400)
+
+      expect(mockAudioContext.createOscillator).toHaveBeenCalled()
+    })
+
     it('all exposed functions should be callable', () => {
       const audio = useAudio()
 
@@ -486,6 +494,7 @@ describe('useAudio', () => {
       expect(typeof audio.playRoundComplete).toBe('function')
       expect(typeof audio.playButtonHover).toBe('function')
       expect(typeof audio.playScoreIncrease).toBe('function')
+      expect(typeof audio.playTada).toBe('function')
     })
   })
 

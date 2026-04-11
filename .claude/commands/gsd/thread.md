@@ -22,11 +22,13 @@ doesn't belong to any specific phase.
 **If no arguments or $ARGUMENTS is empty:**
 
 List all threads:
+
 ```bash
 ls .planning/threads/*.md 2>/dev/null
 ```
 
 For each thread, read the first few lines to show title and status:
+
 ```
 ## Active Threads
 
@@ -38,15 +40,18 @@ For each thread, read the first few lines to show title and status:
 ```
 
 If no threads exist, show:
+
 ```
-No threads found. Create one with: /gsd:thread <description>
+No threads found. Create one with: /gsd-thread <description>
 ```
+
 </mode_list>
 
 <mode_resume>
 **If $ARGUMENTS matches an existing thread name (file exists):**
 
 Resume the thread — load its context into the current session:
+
 ```bash
 cat ".planning/threads/${THREAD_NAME}.md"
 ```
@@ -61,16 +66,19 @@ Update the thread's status to `IN PROGRESS` if it was `OPEN`.
 Create a new thread:
 
 1. Generate slug from description:
+
    ```bash
-   SLUG=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" generate-slug "$ARGUMENTS")
+   SLUG=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" generate-slug "$ARGUMENTS" --raw)
    ```
 
 2. Create the threads directory if needed:
+
    ```bash
    mkdir -p .planning/threads
    ```
 
 3. Write the thread file:
+
    ```bash
    cat > ".planning/threads/${SLUG}.md" << 'EOF'
    # Thread: {description}
@@ -100,28 +108,31 @@ Create a new thread:
    section.
 
 5. Commit:
+
    ```bash
    node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: create thread — ${ARGUMENTS}" --files ".planning/threads/${SLUG}.md"
    ```
 
 6. Report:
+
    ```
    ## 🧵 Thread Created
 
    Thread: {slug}
    File: .planning/threads/{slug}.md
 
-   Resume anytime with: /gsd:thread {slug}
+   Resume anytime with: /gsd-thread {slug}
    ```
-</mode_create>
+
+   </mode_create>
 
 </process>
 
 <notes>
 - Threads are NOT phase-scoped — they exist independently of the roadmap
-- Lighter weight than /gsd:pause-work — no phase state, no plan context
+- Lighter weight than /gsd-pause-work — no phase state, no plan context
 - The value is in Context and Next Steps — a cold-start session can pick up immediately
 - Threads can be promoted to phases or backlog items when they mature:
-  /gsd:add-phase or /gsd:add-backlog with context from the thread
+  /gsd-add-phase or /gsd-add-backlog with context from the thread
 - Thread files live in .planning/threads/ — no collision with phases or other GSD structures
 </notes>

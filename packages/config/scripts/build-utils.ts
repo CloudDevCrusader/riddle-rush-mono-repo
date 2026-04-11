@@ -107,9 +107,6 @@ export function isCI(): boolean {
 /**
  * Get environment-specific base URL
  */
-export function getBaseURL(environment?: string): string {
-  if (environment === 'production' || process.env.NODE_ENV === 'production') {
-    return process.env.BASE_URL || '/'
-  }
+export function getBaseURL(): string {
   return process.env.BASE_URL || '/'
 }

@@ -1,0 +1,688 @@
+import { _ as me } from './B-USiBHN.js'
+import {
+  d as V,
+  V as E,
+  A as s,
+  B as r,
+  C as a,
+  D as t,
+  S as G,
+  O as j,
+  W as O,
+  l as e,
+  G as _,
+  m as w,
+  _ as z,
+  X as pe,
+  Y as W,
+  Z as ge,
+  F as g,
+  $ as x,
+  a0 as U,
+  N as ye,
+  H as fe,
+  J as ve,
+  I as be,
+  K as A,
+  o as he,
+  M as we,
+  z as ke,
+  E as p,
+  R as $e,
+  a1 as Se,
+  i as P,
+  a2 as M,
+  a3 as Ce,
+} from './BI8BVXPj.js'
+import { _ as Re } from './D9TZGafa.js'
+import { _ as Ne } from './DRhZBw8o.js'
+import { _ as Ge } from './D3QXmhki.js'
+import { _ as Ie } from './BwE9VIQt.js'
+import { u as Le } from './CbjeSZOE.js'
+import { u as Be, b as Te } from './QhPvbTN-.js'
+import { u as De } from './CFwlYHw3.js'
+import './Ufk1xTYU.js'
+const Pe = { class: 'game-player-card' },
+  Fe = { class: 'game-player-card__info' },
+  Ve = { key: 0, class: 'game-player-card__label' },
+  ze = { class: 'game-player-card__name' },
+  Ae = { key: 1, class: 'game-player-card__answer' },
+  Me = V({
+    __name: 'GamePlayerCard',
+    props: {
+      player: {},
+      label: { default: void 0 },
+      showIndicator: { type: Boolean, default: !0 },
+      showAnswer: { type: Boolean, default: !0 },
+    },
+    setup(u) {
+      const o = u,
+        l = w(() =>
+          o.player.currentRoundScore > 0
+            ? 'game-player-card__indicator--positive'
+            : 'game-player-card__indicator--negative'
+        ),
+        S = (k) => (k > 0 ? `+${k}pts` : `${k}pts`)
+      return (k, I) => {
+        const $ = E('motion')
+        return (
+          s(),
+          r('div', Pe, [
+            a('div', Fe, [
+              u.label ? (s(), r('div', Ve, t(u.label), 1)) : G('', !0),
+              a('div', ze, t(u.player.name), 1),
+              u.showAnswer && u.player.currentRoundAnswer
+                ? (s(), r('div', Ae, t(u.player.currentRoundAnswer), 1))
+                : G('', !0),
+            ]),
+            u.showIndicator && u.player.currentRoundScore !== 0
+              ? j(
+                  (s(),
+                  r(
+                    'div',
+                    {
+                      key: 0,
+                      initial: { opacity: 0, scale: 0.9, x: -10 },
+                      enter: { opacity: 1, scale: 1, x: 0, transition: { duration: 350 } },
+                      class: O(['game-player-card__indicator', e(l)]),
+                    },
+                    [_(t(S(u.player.currentRoundScore)), 1)],
+                    2
+                  )),
+                  [[$]]
+                )
+              : G('', !0),
+          ])
+        )
+      }
+    },
+  }),
+  Ee = Object.assign(z(Me, [['__scopeId', 'data-v-27687ec5']]), { __name: 'GamePlayerCard' }),
+  je = { class: 'player-leaderboard-panel' },
+  Oe = { class: 'leaderboard-header' },
+  We = { key: 0 },
+  xe = { key: 1 },
+  Ue = { class: 'leaderboard-content' },
+  He = { key: 0, class: 'empty-state' },
+  Ye = { key: 1, class: 'players-list' },
+  Je = { class: 'rank' },
+  Ke = { key: 0, class: 'crown' },
+  Xe = { key: 1 },
+  Ze = { key: 2 },
+  qe = { key: 3 },
+  Qe = { key: 4, class: 'rank-number' },
+  et = { class: 'player-info' },
+  tt = { class: 'player-name' },
+  ot = { key: 0, class: 'winner-badge' },
+  at = { class: 'player-meta' },
+  st = { key: 0 },
+  nt = { class: 'player-score' },
+  rt = { class: 'score-label' },
+  it = { class: 'leaderboard-footer' },
+  ct = V({
+    __name: 'PlayerLeaderboard',
+    props: {
+      visible: { type: Boolean },
+      players: {},
+      isGameCompleted: { type: Boolean },
+      currentRound: {},
+    },
+    emits: ['close', 'continue', 'finish'],
+    setup(u) {
+      const { t: o } = pe(),
+        l = u,
+        S = w(() => o('leaderboard.winner_badge', 'Winner!')),
+        k = w(() => o('game.round', 'Round')),
+        I = w(() => o('leaderboard.points_this_round', 'pts this round')),
+        $ = w(() => o('scoring.points', 'pts'))
+      return (C, d) => (
+        s(),
+        W(
+          ge,
+          { name: 'player-leaderboard' },
+          {
+            default: g(() => [
+              l.visible
+                ? (s(),
+                  r(
+                    'div',
+                    {
+                      key: 0,
+                      class: 'player-leaderboard-overlay',
+                      'data-testid': 'player-leaderboard-overlay',
+                      onClick: d[4] || (d[4] = ye((c) => C.$emit('close'), ['self'])),
+                    },
+                    [
+                      a('div', je, [
+                        a('header', Oe, [
+                          a('h2', null, [
+                            l.isGameCompleted
+                              ? (s(),
+                                r(
+                                  'span',
+                                  We,
+                                  '🏆 ' + t(e(o)('leaderboard.winner_title', 'Final Standings')),
+                                  1
+                                ))
+                              : (s(),
+                                r(
+                                  'span',
+                                  xe,
+                                  '📊 ' +
+                                    t(e(o)('leaderboard.current_standings', 'Current Standings')),
+                                  1
+                                )),
+                          ]),
+                          a(
+                            'button',
+                            {
+                              class: 'close-btn tap-highlight',
+                              onClick: d[0] || (d[0] = (c) => C.$emit('close')),
+                            },
+                            '✕'
+                          ),
+                        ]),
+                        a('div', Ue, [
+                          l.players.length === 0
+                            ? (s(),
+                              r('div', He, [
+                                d[5] || (d[5] = a('span', { class: 'empty-icon' }, '🎮', -1)),
+                                a(
+                                  'p',
+                                  null,
+                                  t(e(o)('leaderboard.no_players', 'No players yet')),
+                                  1
+                                ),
+                              ]))
+                            : (s(),
+                              r('div', Ye, [
+                                (s(!0),
+                                r(
+                                  x,
+                                  null,
+                                  U(
+                                    l.players,
+                                    (c, y) => (
+                                      s(),
+                                      r(
+                                        'div',
+                                        {
+                                          key: c.id,
+                                          class: O([
+                                            'player-row',
+                                            {
+                                              winner: c.isWinner,
+                                              'top-three': Number(y) < 3,
+                                              [`rank-${Number(y) + 1}`]: Number(y) < 3,
+                                            },
+                                          ]),
+                                        },
+                                        [
+                                          a('div', Je, [
+                                            c.isWinner
+                                              ? (s(), r('span', Ke, '👑'))
+                                              : y === 0
+                                                ? (s(), r('span', Xe, '🥇'))
+                                                : y === 1
+                                                  ? (s(), r('span', Ze, '🥈'))
+                                                  : y === 2
+                                                    ? (s(), r('span', qe, '🥉'))
+                                                    : (s(), r('span', Qe, t(Number(y) + 1), 1)),
+                                          ]),
+                                          a('div', et, [
+                                            a('div', tt, [
+                                              _(t(c.name) + ' ', 1),
+                                              c.isWinner
+                                                ? (s(), r('span', ot, t(e(S)), 1))
+                                                : G('', !0),
+                                            ]),
+                                            a('div', at, [
+                                              _(t(e(k)) + ' ' + t(l.currentRound) + ' ', 1),
+                                              c.currentRoundScore !== 0
+                                                ? (s(),
+                                                  r(
+                                                    'span',
+                                                    st,
+                                                    ' · ' +
+                                                      t(
+                                                        c.currentRoundScore > 0
+                                                          ? `+${c.currentRoundScore}`
+                                                          : c.currentRoundScore
+                                                      ) +
+                                                      ' ' +
+                                                      t(e(I)),
+                                                    1
+                                                  ))
+                                                : G('', !0),
+                                            ]),
+                                          ]),
+                                          a('div', nt, [
+                                            _(t(c.totalScore) + ' ', 1),
+                                            a('span', rt, t(e($)), 1),
+                                          ]),
+                                        ],
+                                        2
+                                      )
+                                    )
+                                  ),
+                                  128
+                                )),
+                              ])),
+                        ]),
+                        a('footer', it, [
+                          l.isGameCompleted
+                            ? (s(),
+                              r(
+                                'button',
+                                {
+                                  key: 1,
+                                  class: 'btn btn-primary',
+                                  onClick: d[2] || (d[2] = (c) => C.$emit('finish')),
+                                },
+                                t(e(o)('common.finish', 'Finish Game')),
+                                1
+                              ))
+                            : (s(),
+                              r(
+                                'button',
+                                {
+                                  key: 0,
+                                  class: 'btn btn-primary',
+                                  onClick: d[1] || (d[1] = (c) => C.$emit('continue')),
+                                },
+                                t(e(o)('common.continue', 'Continue')),
+                                1
+                              )),
+                          a(
+                            'button',
+                            {
+                              class: 'btn btn-outline',
+                              onClick: d[3] || (d[3] = (c) => C.$emit('close')),
+                            },
+                            t(e(o)('common.close', 'Close')),
+                            1
+                          ),
+                        ]),
+                      ]),
+                    ]
+                  ))
+                : G('', !0),
+            ]),
+            _: 1,
+          }
+        )
+      )
+    },
+  }),
+  lt = Object.assign(z(ct, [['__scopeId', 'data-v-3a7e422d']]), { __name: 'PlayerLeaderboard' }),
+  dt = { class: 'scoring-page' },
+  ut = { class: 'scoring-page__list', 'data-testid': 'results-scores-container' },
+  _t = ['enter', 'data-testid'],
+  mt = { class: 'scoring-page__player-header' },
+  pt = ['data-testid'],
+  gt = { class: 'scoring-page__base-score', 'data-testid': 'base-score' },
+  yt = ['data-testid'],
+  ft = { class: 'decision-content' },
+  vt = { class: 'decision-content__text', 'data-testid': 'results-post-round-prompt' },
+  bt = { class: 'decision-content__actions' },
+  ht = V({
+    __name: '[[gameId]]',
+    setup(u) {
+      const { t: o } = Le(),
+        { gameStore: l, players: S, leaderboard: k, currentRound: I, flowState: $ } = Be(),
+        { goToRoundStart: C, goToLeaderboard: d, goToPlayers: c } = De(),
+        { playClick: y, playScoreIncrease: H } = Te(),
+        { isAnswerInputEnabled: Y } = fe(),
+        J = ve(),
+        K = be(),
+        f = Se(new Map()),
+        X = (i) => {
+          f.clear()
+          for (const n of i) f.set(n.id, n.currentRoundScore ?? 0)
+        },
+        Z = w(() => J.params.gameId),
+        B = P(!1),
+        T = P(!1),
+        v = P(!1)
+      let b = null
+      const D = P(!1),
+        q = w(() => $.value === 'decision'),
+        Q = w(() => {
+          const i = [...S.value]
+              .map((m) => ({ id: m.id, projected: m.totalScore + (f.get(m.id) ?? 0) }))
+              .sort((m, L) => L.projected - m.projected),
+            n = new Map()
+          return (i.forEach((m, L) => n.set(m.id, L + 1)), n)
+        }),
+        ee = (i) => {
+          const n = f.get(i) ?? 0
+          ;(f.set(i, n + M), y())
+        },
+        te = (i) => {
+          const n = f.get(i) ?? 0
+          ;(f.set(i, n - M), y())
+        },
+        F = () => {
+          ;(b && (clearTimeout(b), (b = null)), (T.value = !1), (v.value = !0))
+        },
+        oe = async () => {
+          if (B.value) return
+          if ($.value !== 'round-complete' || q.value || D.value) {
+            v.value = !0
+            return
+          }
+          B.value = !0
+          try {
+            for (const [n, m] of f) await l.assignPlayerScore(n, m)
+            ;(await l.completeRound(), (D.value = !0), H(), (T.value = !0), (b = setTimeout(F, Ce)))
+          } catch (n) {
+            K.error('Failed to confirm scores:', n)
+          } finally {
+            B.value = !1
+          }
+        },
+        ae = async () => {
+          ;((v.value = !1), await C())
+        },
+        se = async () => {
+          ;((v.value = !1), await l.completeGame(), await c())
+        },
+        ne = async () => {
+          ;((v.value = !1), await l.completeGame(), await d())
+        }
+      ;(A(
+        S,
+        (i) => {
+          X(i)
+        },
+        { immediate: !0 }
+      ),
+        A($, (i, n) => {
+          i === 'decision' &&
+            n !== 'decision' &&
+            ((D.value = !0), (v.value = !0), b && (clearTimeout(b), (b = null)), (T.value = !1))
+        }),
+        he(async () => {
+          const i = Z.value
+          if (i && l.currentSession.value?.id !== i)
+            try {
+              await l.loadSessionById(i)
+            } catch {
+              await l.loadFromDB()
+            }
+          $.value === 'decision' && ((D.value = !0), (v.value = !0))
+        }),
+        we(() => {
+          b && (clearTimeout(b), (b = null))
+        }))
+      const re = w(() => `${o('scoring.title', 'Scoring')} · ${o('game.round')} ${I.value || 1}`)
+      return (
+        ke({
+          title: re,
+          meta: [
+            {
+              name: 'description',
+              content: o('scoring.description', 'View round scoring results'),
+            },
+          ],
+        }),
+        (i, n) => {
+          const m = me,
+            L = Ee,
+            N = Re,
+            ie = Ne,
+            ce = lt,
+            le = Ge,
+            de = Ie,
+            ue = E('motion')
+          return (
+            s(),
+            W(de, null, {
+              default: g(() => [
+                a('div', dt, [
+                  p(
+                    m,
+                    { color: 'gold', 'data-testid': 'results-header' },
+                    { default: g(() => [_(t(e(o)('scoring.title', 'Scoring')), 1)]), _: 1 }
+                  ),
+                  a('div', ut, [
+                    (s(!0),
+                    r(
+                      x,
+                      null,
+                      U(e(S), (h, R) =>
+                        j(
+                          (s(),
+                          r(
+                            'div',
+                            {
+                              key: h.id,
+                              initial: { opacity: 0, y: 20 },
+                              enter: {
+                                opacity: 1,
+                                y: 0,
+                                transition: { duration: 300, delay: Number(R) * 50 },
+                              },
+                              class: 'scoring-page__player-entry',
+                              'data-testid': `results-player-entry-${R}`,
+                            },
+                            [
+                              a('div', mt, [
+                                a(
+                                  'span',
+                                  {
+                                    class: 'scoring-page__rank',
+                                    'data-testid': `predicted-rank-${R}`,
+                                  },
+                                  ' #' + t(e(Q).get(h.id) ?? Number(R) + 1),
+                                  9,
+                                  pt
+                                ),
+                                p(
+                                  L,
+                                  {
+                                    player: h,
+                                    label: `${e(o)('scoring.player', 'Player')} ${Number(R) + 1}`,
+                                    'show-indicator': !1,
+                                    'show-answer': e(Y),
+                                  },
+                                  null,
+                                  8,
+                                  ['player', 'label', 'show-answer']
+                                ),
+                                a(
+                                  'span',
+                                  gt,
+                                  t(e(o)('scoring.base_score', 'Score')) +
+                                    ': ' +
+                                    t(h.totalScore) +
+                                    ' ' +
+                                    t(e(o)('scoring.points', 'pts')),
+                                  1
+                                ),
+                              ]),
+                              a(
+                                'div',
+                                {
+                                  class: 'scoring-page__score-controls',
+                                  'data-testid': `results-score-controls-${R}`,
+                                },
+                                [
+                                  p(
+                                    N,
+                                    {
+                                      variant: 'danger',
+                                      size: 'sm',
+                                      disabled: (e(f).get(h.id) ?? 0) <= 0,
+                                      'data-testid': 'score-decrement',
+                                      onClick: (_e) => te(h.id),
+                                    },
+                                    {
+                                      default: g(() => [...(n[1] || (n[1] = [_(' − ', -1)]))]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ['disabled', 'onClick']
+                                  ),
+                                  p(
+                                    ie,
+                                    {
+                                      size: 'sm',
+                                      glow: !1,
+                                      class: 'scoring-page__score-value',
+                                      'data-testid': `scoring-page-score-value-${R}`,
+                                    },
+                                    { default: g(() => [_(t(e(f).get(h.id) ?? 0), 1)]), _: 2 },
+                                    1032,
+                                    ['data-testid']
+                                  ),
+                                  p(
+                                    N,
+                                    {
+                                      variant: 'primary',
+                                      size: 'sm',
+                                      'data-testid': 'score-increment',
+                                      onClick: (_e) => ee(h.id),
+                                    },
+                                    {
+                                      default: g(() => [...(n[2] || (n[2] = [_(' + ', -1)]))]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ['onClick']
+                                  ),
+                                ],
+                                8,
+                                yt
+                              ),
+                            ],
+                            8,
+                            _t
+                          )),
+                          [[ue]]
+                        )
+                      ),
+                      128
+                    )),
+                  ]),
+                  p(
+                    N,
+                    {
+                      variant: 'primary',
+                      size: 'lg',
+                      'full-width': '',
+                      loading: e(B),
+                      class: 'scoring-page__button',
+                      'data-testid': 'confirm-scores',
+                      onClick: oe,
+                    },
+                    {
+                      default: g(() => [_(t(e(o)('scoring.confirm_scores', 'Confirm Scores')), 1)]),
+                      _: 1,
+                    },
+                    8,
+                    ['loading']
+                  ),
+                ]),
+                p(
+                  ce,
+                  {
+                    'data-testid': 'player-leaderboard',
+                    visible: e(T),
+                    players: e(k),
+                    'is-game-completed': !1,
+                    'current-round': e(I),
+                    onClose: F,
+                    onContinue: F,
+                  },
+                  null,
+                  8,
+                  ['visible', 'players', 'current-round']
+                ),
+                p(
+                  le,
+                  {
+                    modelValue: e(v),
+                    'onUpdate:modelValue': n[0] || (n[0] = (h) => ($e(v) ? (v.value = h) : null)),
+                    'data-testid': 'post-round-modal',
+                    title: e(o)('scoring.round_complete', 'Round Complete!'),
+                    'close-on-backdrop': !1,
+                    'close-on-escape': !1,
+                  },
+                  {
+                    default: g(() => [
+                      a('div', ft, [
+                        a(
+                          'p',
+                          vt,
+                          t(
+                            e(o)(
+                              'scoring.post_round_prompt',
+                              'Do you want to play another round, or go to the leaderboard?'
+                            )
+                          ),
+                          1
+                        ),
+                        a('div', bt, [
+                          p(
+                            N,
+                            {
+                              variant: 'primary',
+                              size: 'lg',
+                              'full-width': '',
+                              'data-testid': 'next-round-button',
+                              onClick: ae,
+                            },
+                            {
+                              default: g(() => [_(t(e(o)('scoring.next_round', 'Next Round')), 1)]),
+                              _: 1,
+                            }
+                          ),
+                          p(
+                            N,
+                            {
+                              variant: 'secondary',
+                              size: 'lg',
+                              'full-width': '',
+                              'data-testid': 'new-game-button',
+                              onClick: se,
+                            },
+                            {
+                              default: g(() => [_(t(e(o)('scoring.new_game', 'New Game')), 1)]),
+                              _: 1,
+                            }
+                          ),
+                          p(
+                            N,
+                            {
+                              variant: 'secondary',
+                              size: 'lg',
+                              'full-width': '',
+                              'data-testid': 'leaderboard-button',
+                              onClick: ne,
+                            },
+                            {
+                              default: g(() => [
+                                _(t(e(o)('scoring.leaderboard', 'Leaderboard')), 1),
+                              ]),
+                              _: 1,
+                            }
+                          ),
+                        ]),
+                      ]),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ['modelValue', 'title']
+                ),
+              ]),
+              _: 1,
+            })
+          )
+        }
+      )
+    },
+  }),
+  Bt = z(ht, [['__scopeId', 'data-v-68bfa580']])
+export { Bt as default }

@@ -10,6 +10,7 @@ allowed-tools:
   - Agent
   - AskUserQuestion
 ---
+
 <objective>
 Run a focused codebase scan for a single area, producing targeted documents in `.planning/codebase/`.
 Accepts an optional `--focus` flag: `tech`, `arch`, `quality`, `concerns`, or `tech+arch` (default).

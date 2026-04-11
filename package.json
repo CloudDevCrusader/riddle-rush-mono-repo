@@ -1,31 +1,31 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "devDependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.87",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.101",
     "@changesets/cli": "^2.30.0",
-    "@composio/claude-agent-sdk": "^0.6.7",
-    "@composio/core": "^0.6.7",
+    "@composio/claude-agent-sdk": "^0.6.10",
+    "@composio/core": "^0.6.10",
     "@pnpm/filter-workspace-packages": "^1000.1.6",
-    "@trigger.dev/sdk": "^4.4.0",
-    "@types/node": "^25.5.0",
-    "@vitest/coverage-v8": "^4.1.2",
-    "eslint": "^10.1.0",
+    "@trigger.dev/sdk": "^4.4.3",
+    "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.4",
+    "eslint": "^10.2.0",
     "husky": "^9.1.7",
     "jest": "^30.3.0",
     "knip": "^5.88.1",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.2",
     "stylelint": "^17.6.0",
     "stylelint-config-prettier-scss": "^1.0.0",
     "stylelint-config-recommended-vue": "^1.6.1",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "syncpack": "^14.3.0",
-    "turbo": "^2.8.21",
+    "turbo": "^2.9.6",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   },
   "engines": {
     "node": ">=20.0.0",
@@ -35,7 +35,9 @@
   "private": true,
   "scripts": {
     "android:build": "./scripts/mobile-build.sh android",
+    "android:build:universal": "./scripts/mobile-build.sh android debug --universal",
     "android:build:release": "./scripts/mobile-build.sh android release",
+    "android:build:release:universal": "./scripts/mobile-build.sh android release --aab --universal",
     "android:open": "cd apps/mobile && pnpm android:open",
     "android:run": "./scripts/mobile-run.sh android",
     "android:sync": "cd apps/game && pnpm generate && cd ../mobile && pnpm android:sync",
@@ -97,6 +99,7 @@
     "test:e2e:ui": "turbo run test:e2e --filter=@riddle-rush/game --ui web",
     "test:e2e:docker": "./scripts/e2e-docker.sh",
     "test:e2e:appium:android": "pnpm --filter @riddle-rush/mobile test:e2e:appium:android",
+    "test:e2e:appium:android:full": "pnpm android:build:universal && pnpm test:e2e:appium:android",
     "test:e2e:appium:ios": "pnpm --filter @riddle-rush/mobile test:e2e:appium:ios",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
@@ -130,34 +133,6 @@
     "ai:zhelper": "npx @z_ai/coding-helper",
     "ai:just-every": "npx -y @just-every/code",
     "ai:update:gsd": "npx get-shit-done-cc@latest"
-  },
-  "pnpm": {
-    "packageExtensions": {
-      "@nuxt/kit": {
-        "dependencies": {
-          "@intlify/utils": "*"
-        }
-      }
-    }
-  },
-  "type": "module",
-  "bin": {
-    "riddlerush": "./bin/run.js"
-  },
-  "oclif": {
-    "bin": "riddlerush",
-    "commands": "./dist/commands",
-    "dirname": "riddlerush",
-    "topicSeparator": " "
-  },
-  "dependencies": {
-    "@e2b/code-interpreter": "^2.4.0",
-    "@langchain/openai": "^1.3.1",
-    "@voltagent/core": "^2.6.13",
-    "@voltagent/mcp-server": "^2.0.2",
-    "ai": "^6.0.141",
-    "langchain": "^1.2.36",
-    "zod": "^4.3.6"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -210,10 +185,41 @@
     "onlyBuiltDependencies": [
       "better-sqlite3",
       "core-js-pure",
-      "electron",
       "esbuild",
       "protobufjs",
+      "puppeteer",
       "yarn"
+    ],
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher",
+      "cwebp-bin",
+      "gifsicle",
+      "jpegtran-bin",
+      "mozjpeg",
+      "optipng-bin",
+      "pngquant-bin",
+      "sharp",
+      "unrs-resolver",
+      "vue-demi"
     ]
+  },
+  "type": "module",
+  "bin": {
+    "riddlerush": "./bin/run.js"
+  },
+  "oclif": {
+    "bin": "riddlerush",
+    "commands": "./dist/commands",
+    "dirname": "riddlerush",
+    "topicSeparator": " "
+  },
+  "dependencies": {
+    "@e2b/code-interpreter": "^2.4.0",
+    "@langchain/openai": "^1.4.4",
+    "@voltagent/core": "^2.7.0",
+    "@voltagent/mcp-server": "^2.0.2",
+    "ai": "^6.0.158",
+    "langchain": "^1.3.1",
+    "zod": "^4.3.6"
   }
 }

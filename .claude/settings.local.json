@@ -89,28 +89,20 @@
       "Bash(git check-ignore:*)",
       "Bash(pnpm --filter @riddle-rush/game run typecheck:*)",
       "Bash(wc:*)",
-      "Bash(grep:*)",
-      "Bash(npx skills:*)",
-      "Bash(xargs basename:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Skill(gsd:resume-work)",
       "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_take_screenshot",
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_click",
-      "mcp__playwright__browser_wait_for",
-      "Bash(git stash:*)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "Skill(gsd:quick)",
-      "mcp__playwright__browser_console_messages",
-      "mcp__playwright__browser_evaluate"
+      "mcp__playwright__browser_take_screenshot"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["playwright-test"],
   "enabledPlugins": {
     "voltagent-qa-sec@voltagent-subagents": true,
     "playwright-tools@claude-settings": true,
     "voltagent-lang@voltagent-subagents": true,
-    "huggingface-skills@claude-plugins-official": true
+    "claude-opus-4-5-migration@claude-code-plugins": true
   },
   "outputStyle": "Explanatory",
   "prefersReducedMotion": true

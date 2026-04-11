@@ -195,7 +195,7 @@ _File moves and parallel plan: `.planning/todos/TODOS-PARALLEL-EXECUTION-PLAN.md
 - Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
 - Add polished animations throughout the app (incremental PRs; see todo in `.planning/todos/pending/`).
 - Research and select feature-flag provider strategy (todo in `pending/`).
-- Burn down remaining `code-review-2026-03-08.md` items (see file header for 2026-04-11 progress).
+- Burn down `code-review-2026-03-08.md` items in small commits.
 - **Remaining:** audit `navigateTo` / full reload usage and simplify `game-flow.ts` workarounds now that results page has session loading + empty-state guard (todo `2026-04-11-review-code-optimize-weak-points-minimize-page-reloads-in-ga.md`).
 - Audit Figma mockups against the app and close design gaps (see `.planning/todos/pending/2026-04-11-audit-figma-mockups-and-implement-design-gaps.md`).
 

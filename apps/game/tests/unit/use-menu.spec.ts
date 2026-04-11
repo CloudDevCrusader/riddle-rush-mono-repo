@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-// @ts-expect-error Nuxt overrides vue module but these exports exist at runtime
 import { ref, watch, readonly } from 'vue'
 
 // Make ref, watch, and readonly globally available for the composable

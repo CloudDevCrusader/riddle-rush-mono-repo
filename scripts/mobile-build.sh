@@ -3,13 +3,16 @@
 # mobile-build.sh — Build the Riddle Rush mobile app (Android/iOS)
 #
 # Usage:
-#   ./scripts/mobile-build.sh <platform> [debug|release] [--apk|--aab]
+#   ./scripts/mobile-build.sh <platform> [debug|release] [--apk|--aab] [--universal]
 #
 # Examples:
-#   ./scripts/mobile-build.sh android                # debug APK (default)
-#   ./scripts/mobile-build.sh android debug          # debug APK
-#   ./scripts/mobile-build.sh android release        # release AAB (signed)
-#   ./scripts/mobile-build.sh android release --apk  # release APK (signed)
+#   ./scripts/mobile-build.sh android                # debug APK (default), play flavor (ARM)
+#   ./scripts/mobile-build.sh android debug          # debug APK, play
+#   ./scripts/mobile-build.sh android debug --universal   # debug APK, all ABIs (x86 emulators)
+#   ./scripts/mobile-build.sh android release        # release AAB (signed), play
+#   ./scripts/mobile-build.sh android release --apk  # release APK (signed), play
+#   ./scripts/mobile-build.sh android release --aab --universal  # fat AAB / sideload testing
+#   ANDROID_FLAVOR=universal ./scripts/mobile-build.sh android debug
 #   ./scripts/mobile-build.sh ios                    # debug build
 #   ./scripts/mobile-build.sh ios release            # release build
 #
@@ -47,7 +50,23 @@ die() {
 # --- Parse arguments ---
 PLATFORM="${1:-}"
 BUILD_TYPE="${2:-debug}"
-OUTPUT_FORMAT="${3:---apk}"
+OUTPUT_FORMAT=""
+ANDROID_FLAVOR="${ANDROID_FLAVOR:-play}"
+
+_parse_idx=3
+while [[ $_parse_idx -le $# ]]; do
+	eval "_pa=\${$_parse_idx}"
+	case "$_pa" in
+	--apk | --aab) OUTPUT_FORMAT="$_pa" ;;
+	--universal) ANDROID_FLAVOR=universal ;;
+	esac
+	_parse_idx=$((_parse_idx + 1))
+done
+unset _parse_idx _pa
+
+if [[ -z $OUTPUT_FORMAT ]]; then
+	OUTPUT_FORMAT="--apk"
+fi
 
 if [[ -z $PLATFORM ]]; then
 	die "Platform required. Usage: $0 <android|ios> [debug|release]"
@@ -61,7 +80,14 @@ if [[ $BUILD_TYPE != "debug" && $BUILD_TYPE != "release" ]]; then
 	die "Unknown build type: $BUILD_TYPE (expected 'debug' or 'release')"
 fi
 
-# Release defaults to AAB (Google Play format) for Android, debug defaults to APK
+if [[ $PLATFORM == "android" ]]; then
+	case "$ANDROID_FLAVOR" in
+	play | universal) ;;
+	*) die "ANDROID_FLAVOR must be 'play' or 'universal' (got: $ANDROID_FLAVOR)" ;;
+	esac
+fi
+
+# Release defaults to AAB (Google Play format) for Android unless --apk was passed
 if [[ $PLATFORM == "android" && $BUILD_TYPE == "release" && $OUTPUT_FORMAT != "--apk" ]]; then
 	OUTPUT_FORMAT="--aab"
 fi
@@ -91,6 +117,9 @@ if [[ $PLATFORM == "android" ]]; then
 	[[ -d $ANDROID_HOME ]] || die "Android SDK not found at $ANDROID_HOME"
 	export ANDROID_SDK_ROOT="$ANDROID_HOME"
 	info "ANDROID_HOME=$ANDROID_HOME"
+	if [[ $BUILD_TYPE == "debug" || $BUILD_TYPE == "release" ]]; then
+		info "ANDROID_FLAVOR=$ANDROID_FLAVOR (play=ARM-only, universal=all ABIs)"
+	fi
 fi
 
 # --- Preflight checks ---
@@ -149,16 +178,32 @@ if [[ $PLATFORM == "android" ]]; then
 	info "Building Android $BUILD_TYPE ($OUTPUT_FORMAT)..."
 	cd "$PLATFORM_DIR"
 
+	# Capitalize flavor for Gradle task names (play -> Play, universal -> Universal)
+	_fl_first=$(printf '%s' "$ANDROID_FLAVOR" | cut -c1 | tr '[:lower:]' '[:upper:]')
+	_fl_rest=$(printf '%s' "$ANDROID_FLAVOR" | cut -c2-)
+	FLAVOR_CAP="${_fl_first}${_fl_rest}"
+	unset _fl_first _fl_rest
+
 	# Determine Gradle task
 	if [[ $BUILD_TYPE == "debug" ]]; then
-		GRADLE_TASK="assembleDebug"
+		GRADLE_TASK="assemble${FLAVOR_CAP}Debug"
 	elif [[ $OUTPUT_FORMAT == "--aab" ]]; then
-		GRADLE_TASK="bundleRelease"
+		GRADLE_TASK="bundle${FLAVOR_CAP}Release"
 	else
-		GRADLE_TASK="assembleRelease"
+		GRADLE_TASK="assemble${FLAVOR_CAP}Release"
 	fi
 
-	./gradlew "$GRADLE_TASK" --no-daemon
+	GRADLE_ARGS=(--no-daemon)
+	if [[ -n ${CI-} ]]; then
+		GRADLE_ARGS+=(--stacktrace --warning-mode all)
+	fi
+
+	# JVM unit tests (Capacitor config, version code, build constants) before packaging
+	if [[ $BUILD_TYPE == "debug" ]]; then
+		./gradlew "test${FLAVOR_CAP}DebugUnitTest" "${GRADLE_ARGS[@]}"
+	fi
+
+	./gradlew "$GRADLE_TASK" "${GRADLE_ARGS[@]}"
 
 	# --- Locate output ---
 	echo ""
@@ -166,19 +211,19 @@ if [[ $PLATFORM == "android" ]]; then
 	echo ""
 
 	if [[ $BUILD_TYPE == "debug" ]]; then
-		APK_PATH="$PLATFORM_DIR/app/build/outputs/apk/debug/app-debug.apk"
+		APK_PATH="$PLATFORM_DIR/app/build/outputs/apk/$ANDROID_FLAVOR/debug/app-${ANDROID_FLAVOR}-debug.apk"
 		if [[ -f $APK_PATH ]]; then
 			SIZE=$(du -h "$APK_PATH" | cut -f1)
 			ok "APK: $APK_PATH ($SIZE)"
 		fi
 	elif [[ $OUTPUT_FORMAT == "--aab" ]]; then
-		AAB_PATH="$PLATFORM_DIR/app/build/outputs/bundle/release/app-release.aab"
+		AAB_PATH="$PLATFORM_DIR/app/build/outputs/bundle/${ANDROID_FLAVOR}Release/app-${ANDROID_FLAVOR}-release.aab"
 		if [[ -f $AAB_PATH ]]; then
 			SIZE=$(du -h "$AAB_PATH" | cut -f1)
 			ok "AAB: $AAB_PATH ($SIZE)"
 		fi
 	else
-		APK_PATH="$PLATFORM_DIR/app/build/outputs/apk/release/app-release-unsigned.apk"
+		APK_PATH="$PLATFORM_DIR/app/build/outputs/apk/$ANDROID_FLAVOR/release/app-${ANDROID_FLAVOR}-release-unsigned.apk"
 		if [[ -f $APK_PATH ]]; then
 			SIZE=$(du -h "$APK_PATH" | cut -f1)
 			ok "APK: $APK_PATH ($SIZE)"
@@ -201,17 +246,25 @@ elif [[ $PLATFORM == "ios" ]]; then
 		die "Xcode Command Line Tools not found. Install Xcode from the App Store."
 	fi
 
+	if command -v swift &>/dev/null; then
+		info "Running NativeConfigTests (Capacitor JSON)..."
+		swift test --package-path "$MOBILE_DIR/ios/NativeConfigTests"
+		ok "NativeConfigTests passed"
+	else
+		warn "swift not on PATH — skipping NativeConfigTests"
+	fi
+
 	cd "$PLATFORM_DIR/App"
 
 	if [[ $BUILD_TYPE == "debug" ]]; then
-		xcodebuild -workspace App.xcworkspace \
+		xcodebuild -project App.xcodeproj \
 			-scheme App \
 			-configuration Debug \
 			-destination 'generic/platform=iOS Simulator' \
 			-derivedDataPath build \
 			build
 	else
-		xcodebuild -workspace App.xcworkspace \
+		xcodebuild -project App.xcodeproj \
 			-scheme App \
 			-configuration Release \
 			-destination 'generic/platform=iOS' \

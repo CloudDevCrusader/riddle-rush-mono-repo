@@ -10,24 +10,26 @@
       <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
-          :src="`${baseUrl}assets/settings/BACKGROUND.png`"
+          :src="getAssetPath('assets/settings/background.png')"
           alt="Background"
           class="settings-bg"
+          loading="lazy"
           width="600"
           height="800"
         />
 
         <!-- Back Button -->
         <button class="back-btn tap-highlight no-select" type="button" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" width="60" height="60" />
+          <img :src="getAssetPath('assets/settings/back.png')" alt="Back" width="60" height="60" />
         </button>
 
         <!-- Title -->
         <div class="title-container">
           <img
-            :src="`${baseUrl}assets/settings/options.png`"
+            :src="getAssetPath('assets/settings/options.png')"
             alt="OPTIONS"
             class="title-image"
+            loading="lazy"
             width="300"
             height="100"
           />
@@ -39,9 +41,10 @@
           <div class="control-item">
             <div class="control-icon-wrapper">
               <img
-                :src="`${baseUrl}assets/settings/Sound.png`"
+                :src="getAssetPath('assets/settings/sound.png')"
                 alt="Sound"
                 class="control-icon"
+                loading="lazy"
                 width="50"
                 height="50"
               />
@@ -70,9 +73,10 @@
           <div class="control-item">
             <div class="control-icon-wrapper">
               <img
-                :src="`${baseUrl}assets/settings/Music.png`"
+                :src="getAssetPath('assets/settings/music.png')"
                 alt="Music"
                 class="control-icon"
+                loading="lazy"
                 width="50"
                 height="50"
               />
@@ -96,11 +100,42 @@
               </div>
             </div>
           </div>
+
+          <!-- Fortune wheel: confirm vs auto-start (below sound / music) -->
+          <div v-if="isFortuneWheelEnabled" class="control-item control-item--fortune-redraw">
+            <div class="control-icon-wrapper" aria-hidden="true">
+              <span class="control-icon-emoji">{{ wheelOptionEmoji }}</span>
+            </div>
+            <div class="control-content">
+              <div class="control-label">{{ t('settings.fortune_wheel_redraw') }}</div>
+              <button
+                type="button"
+                class="fortune-redraw-toggle tap-highlight no-select"
+                :aria-pressed="fortuneWheelAllowRedraw"
+                :aria-label="t('settings.fortune_wheel_redraw')"
+                @click="settings.toggleFortuneWheelAllowRedraw()"
+              >
+                <span
+                  class="fortune-redraw-toggle__track"
+                  :class="{ 'is-on': fortuneWheelAllowRedraw }"
+                >
+                  <span class="fortune-redraw-toggle__thumb" />
+                </span>
+              </button>
+              <p class="fortune-redraw-hint">{{ t('settings.fortune_wheel_redraw_hint') }}</p>
+            </div>
+          </div>
         </div>
 
         <!-- OK Button -->
         <button class="ok-btn tap-highlight no-select" type="button" @click="closeModal">
-          <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" width="200" height="80" />
+          <img
+            :src="getAssetPath('assets/settings/ok.png')"
+            alt="OK"
+            loading="lazy"
+            width="200"
+            height="80"
+          />
         </button>
       </div>
     </button>
@@ -118,11 +153,15 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
-const config = useRuntimeConfig()
-const baseUrl = config.public.baseUrl
+const { getAssetPath } = useAssets()
 const settings = useSettings()
+const { isFortuneWheelEnabled } = useFeatureFlags()
 const router = useRouter()
 const { t } = useI18n()
+
+const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value)
+/** Slot machine — avoids mojibake in some editor encodings */
+const wheelOptionEmoji = '\u{1F3B0}'
 
 const soundVolume = ref(settings.soundVolume.value)
 const musicVolume = ref(settings.musicVolume.value)
@@ -280,6 +319,66 @@ onUnmounted(() => {
 
 .control-item:last-child {
   margin-bottom: 0;
+}
+
+.control-icon-emoji {
+  font-size: 2.25rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.control-item--fortune-redraw .control-content {
+  gap: var(--spacing-sm);
+}
+
+.fortune-redraw-toggle {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fortune-redraw-toggle__track {
+  position: relative;
+  display: block;
+  width: 52px;
+  height: 28px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(0, 0, 0, 0.15) 100%);
+  border: 2px solid rgba(255, 215, 0, 0.65);
+  transition: background 0.2s ease;
+}
+
+.fortune-redraw-toggle__track.is-on {
+  background: linear-gradient(180deg, #9dff4d 0%, #5fc423 100%);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.fortune-redraw-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fffef8;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.fortune-redraw-toggle__track.is-on .fortune-redraw-toggle__thumb {
+  transform: translateX(24px);
+}
+
+.fortune-redraw-hint {
+  margin: 0;
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  max-width: 100%;
 }
 
 .control-icon-wrapper {

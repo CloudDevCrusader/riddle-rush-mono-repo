@@ -119,11 +119,20 @@ export default defineNuxtConfig({
         { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+        { name: 'theme-color', content: '#ff6b35' },
+        { name: 'color-scheme', content: 'light dark' },
+        { name: 'referrer', content: 'strict-origin-when-cross-origin' },
+        { name: 'format-detection', content: 'telephone=no' },
       ],
     },
   },
 
-  css: ['~/assets/scss/design-system.scss', '~/assets/css/figma-tokens.generated.css'],
+  css: [
+    '@fontsource-variable/baloo-2',
+    '@fontsource-variable/nunito',
+    '~/assets/scss/design-system.scss',
+    '~/assets/css/figma-tokens.generated.css',
+  ],
 
   // Color mode configuration
   colorMode: {
@@ -144,6 +153,8 @@ export default defineNuxtConfig({
       cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
       cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
       debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
+      /** Dev-only: full URL for debug-button-align ingest; when empty, no requests are sent */
+      debugButtonAlignIngestUrl: process.env.NUXT_PUBLIC_DEBUG_BUTTON_ALIGN_INGEST_URL || '',
       // Feature flags - env vars override Terraform
       gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
       gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
@@ -331,7 +342,7 @@ export default defineNuxtConfig({
 
   // Font optimization
   fontMetrics: {
-    fonts: ['Inter', 'system-ui'],
+    fonts: ['Baloo 2 Variable', 'Nunito Variable', 'Inter', 'system-ui'],
   },
 
   i18n: {
@@ -526,8 +537,7 @@ export default defineNuxtConfig({
       navigateFallback: '/',
       navigateFallbackAllowlist: [/^\/(?!api\/)/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2,json}'],
-      // Allow larger files in debug/development builds (unminified code with sourcemaps)
-      maximumFileSizeToCacheInBytes: isDebugBuild || isDev ? 5 * 1024 * 1024 : 2 * 1024 * 1024,
+      maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MiB
       // Performance: Optimize cache strategies
       cleanupOutdatedCaches: true,
       skipWaiting: true,
@@ -562,24 +572,6 @@ export default defineNuxtConfig({
             expiration: {
               maxEntries: 10,
               maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-            },
-          },
-        },
-        {
-          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'google-fonts-stylesheets',
-          },
-        },
-        {
-          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'google-fonts-webfonts',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 365 * 24 * 60 * 60,
             },
           },
         },

@@ -18,44 +18,44 @@
 // Action: Advisory (does not block) — injects read-first guidance
 // Only fires when the target file already exists on disk.
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
 
-let input = '';
-const stdinTimeout = setTimeout(() => process.exit(0), 3000);
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => input += chunk);
+let input = ''
+const stdinTimeout = setTimeout(() => process.exit(0), 3000)
+process.stdin.setEncoding('utf8')
+process.stdin.on('data', (chunk) => (input += chunk))
 process.stdin.on('end', () => {
-  clearTimeout(stdinTimeout);
+  clearTimeout(stdinTimeout)
   try {
-    const data = JSON.parse(input);
-    const toolName = data.tool_name;
+    const data = JSON.parse(input)
+    const toolName = data.tool_name
 
     // Only intercept Write and Edit tool calls
     if (toolName !== 'Write' && toolName !== 'Edit') {
-      process.exit(0);
+      process.exit(0)
     }
 
-    const filePath = data.tool_input?.file_path || '';
+    const filePath = data.tool_input?.file_path || ''
     if (!filePath) {
-      process.exit(0);
+      process.exit(0)
     }
 
     // Only inject guidance when the file already exists.
     // New files don't need a prior Read — the runtime allows creating them directly.
-    let fileExists = false;
+    let fileExists = false
     try {
-      fs.accessSync(filePath, fs.constants.F_OK);
-      fileExists = true;
+      fs.accessSync(filePath, fs.constants.F_OK)
+      fileExists = true
     } catch {
       // File does not exist — no guidance needed
     }
 
     if (!fileExists) {
-      process.exit(0);
+      process.exit(0)
     }
 
-    const fileName = path.basename(filePath);
+    const fileName = path.basename(filePath)
 
     // Advisory guidance — does not block the operation
     const output = {
@@ -67,11 +67,11 @@ process.stdin.on('end', () => {
           'you MUST Read it first before editing. The runtime will reject edits to files that ' +
           'have not been read. Use the Read tool on this file path, then retry your edit.',
       },
-    };
+    }
 
-    process.stdout.write(JSON.stringify(output));
+    process.stdout.write(JSON.stringify(output))
   } catch {
     // Silent fail — never block tool execution
-    process.exit(0);
+    process.exit(0)
   }
-});
+})

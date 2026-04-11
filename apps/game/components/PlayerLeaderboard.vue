@@ -3,8 +3,8 @@
     <div
       v-if="props.visible"
       class="player-leaderboard-overlay"
-      data-testid="player-leaderboard-overlay"
-      @click.self="$emit('close')"
+      data-testid="player-leaderboard"
+      @click.self="emitClose"
     >
       <div class="player-leaderboard-panel">
         <header class="leaderboard-header">
@@ -14,7 +14,7 @@
             >
             <span v-else>📊 {{ t('leaderboard.current_standings', 'Current Standings') }}</span>
           </h2>
-          <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
+          <button class="close-btn tap-highlight" @click="emitClose">✕</button>
         </header>
 
         <div class="leaderboard-content">
@@ -70,13 +70,13 @@
         </div>
 
         <footer class="leaderboard-footer">
-          <button v-if="!props.isGameCompleted" class="btn btn-primary" @click="$emit('continue')">
+          <button v-if="!props.isGameCompleted" class="btn btn-primary" @click="emitContinue">
             {{ t('common.continue', 'Continue') }}
           </button>
-          <button v-else class="btn btn-primary" @click="$emit('finish')">
+          <button v-else class="btn btn-primary" @click="emitFinish">
             {{ t('common.finish', 'Finish Game') }}
           </button>
-          <button class="btn btn-outline" @click="$emit('close')">
+          <button class="btn btn-outline" @click="emitClose">
             {{ t('common.close', 'Close') }}
           </button>
         </footer>
@@ -89,6 +89,7 @@
 import type { PlayerWithRank } from '@riddle-rush/types/game'
 
 const { t } = useI18n()
+const audio = useAudio()
 
 const props = defineProps<{
   visible: boolean
@@ -97,16 +98,31 @@ const props = defineProps<{
   currentRound: number
 }>()
 
+const emit = defineEmits<{
+  close: []
+  continue: []
+  finish: []
+}>()
+
 const winnerBadgeLabel = computed(() => t('leaderboard.winner_badge', 'Winner!'))
 const roundLabel = computed(() => t('game.round', 'Round'))
 const roundScoreLabel = computed(() => t('leaderboard.points_this_round', 'pts this round'))
 const pointsLabel = computed(() => t('scoring.points', 'pts'))
 
-defineEmits<{
-  close: []
-  continue: []
-  finish: []
-}>()
+const emitClose = () => {
+  void audio.playClick()
+  emit('close')
+}
+
+const emitContinue = () => {
+  void audio.playClick()
+  emit('continue')
+}
+
+const emitFinish = () => {
+  void audio.playClick()
+  emit('finish')
+}
 </script>
 
 <style scoped>

@@ -2,6 +2,7 @@
  * Dev-only: measure GameButton layout vs parents for alignment debugging (session 157a4d).
  */
 export default defineNuxtPlugin((nuxtApp) => {
+  // #region agent log
   if (!import.meta.dev) return
 
   const endpoint = useRuntimeConfig().public.debugButtonAlignIngestUrl?.trim()
@@ -123,4 +124,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   nuxtApp.hook('page:finish', schedule)
+  // #endregion
 })

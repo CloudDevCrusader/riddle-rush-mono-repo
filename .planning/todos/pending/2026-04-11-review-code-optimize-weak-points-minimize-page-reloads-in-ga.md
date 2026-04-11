@@ -10,14 +10,6 @@ files:
   - apps/game/composables/useGameState.ts
 ---
 
-## Progress (2026-04-11)
-
-- **Done:** Results page `sessionViewReady` gate + loading UI (`results-session-loading`); empty session path with `results-go-players`. Default layout full-height flex (`layouts/default.vue`).
-- **Done:** `navigateToResults` waits for `results-session-loading` hidden, then player rows; simplified retry (one `goto` fallback).
-- **Still open:** Broader `navigateTo` audit across game pages (replace full reloads where safe); optional store-level loading flag.
-
----
-
 ## Problem
 
 During E2E test debugging, we discovered that the game flow uses full page reloads (`page.goto()` / `navigateTo()`) in several transitions, most notably when navigating to the results page. This causes:

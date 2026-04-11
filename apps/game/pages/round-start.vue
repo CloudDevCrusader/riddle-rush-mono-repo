@@ -1,108 +1,87 @@
 <template>
   <div class="round-start-page">
-    <!-- Background Image -->
-    <NuxtImg
-      :src="`${baseUrl}assets/alphabets/BACKGROUND.png`"
-      alt="Background"
+    <img
+      :src="getAssetPath('assets/alphabets/background.png')"
+      alt=""
       class="page-bg"
-      format="webp"
-      quality="80"
-      preset="background"
       loading="eager"
-      preload
+      fetchpriority="high"
+      width="1920"
+      height="1080"
     />
 
-    <!-- Top Bar -->
-    <div class="top-bar">
-      <!-- Round Indicator -->
-      <div class="round-indicator" data-testid="round-indicator">
-        <div class="round-text">{{ t('game.round', 'Round') }} {{ currentRoundNumber }}</div>
-      </div>
-    </div>
+    <header class="round-start-header">
+      <button
+        type="button"
+        class="game-back-btn game-back-btn--red tap-highlight no-select"
+        data-testid="round-start-back-button"
+        :disabled="startingGame"
+        :aria-label="t('common.back')"
+        @click="handleRoundStartBack"
+      >
+        <img
+          :src="getAssetPath('assets/alphabets/back.png')"
+          :alt="t('common.back')"
+          class="round-start-back-icon"
+          loading="eager"
+          width="32"
+          height="32"
+        />
+      </button>
+    </header>
 
-    <!-- Main Container -->
     <div class="container">
-      <!-- Dual Wheels Phase (only shown if feature is enabled) -->
-      <transition name="wheel-fade">
+      <div v-if="isFortuneWheelEnabled && !startingGame" class="round-start-wheel-block">
+        <GameHeader color="gold" class="round-start-headline" data-testid="round-start-headline">
+          {{ t('game.round_start_title') }}
+        </GameHeader>
         <div
-          v-if="isFortuneWheelEnabled && !startingGame"
-          class="double-wheel-layout"
-          data-testid="round-wheels-container"
+          v-if="showRoundStartCategoryLine"
+          class="round-start-category-selection"
+          data-testid="round-start-category-row"
         >
-          <!-- Top Wheel (Category) -->
-          <div class="wheel-wrapper top-wheel">
-            <div class="wheel-label">
-              {{ t('common.category', 'Category') }}
-            </div>
-            <div class="wheel-container flipped">
-              <FortuneWheel
-                ref="categoryWheelRef"
-                v-model="selectedCategory"
-                :items="displayCategories"
-                :get-item-key="getCategoryKey"
-                :get-item-label="getCategoryLabel"
-                :get-item-icon="getCategoryIcon"
-                center-icon="🎯"
-                @spin-complete="onCategoryComplete"
-              />
-            </div>
-            <transition name="result-pop">
-              <div
-                v-if="categorySpinComplete"
-                class="inline-result"
-                data-testid="round-category-inline-result"
-              >
-                <span class="inline-result-icon">{{ selectedCategoryIcon }}</span>
-                <span class="inline-result-text">{{ selectedCategoryName }}</span>
-              </div>
-            </transition>
-          </div>
-
-          <!-- Central Spin Button -->
-          <div class="spin-button-zone">
-            <button
-              data-testid="spin-button"
-              @click="spinBothWheels"
-              class="spin-button tap-highlight"
-              :disabled="categorySpinComplete || letterSpinComplete || isSpinning"
+          <div class="round-start-selection-row">
+            <span class="round-start-selection-row__label"
+              >{{ t('common.category', 'Category') }}:</span
             >
-              <div class="spin-button-inner">
-                <span class="spin-text">SPIN</span>
-              </div>
-            </button>
-          </div>
-
-          <!-- Bottom Wheel (Letter) -->
-          <div class="wheel-wrapper bottom-wheel">
-            <div class="wheel-label">
-              {{ t('common.letter', 'Letter') }}
-            </div>
-            <div class="wheel-container">
-              <FortuneWheel
-                ref="letterWheelRef"
-                v-model="selectedLetter"
-                :items="alphabet"
-                :get-item-key="getLetterKey"
-                :get-item-label="getLetterLabel"
-                :get-item-icon="getNoIcon"
-                center-icon="🎯"
-                @spin-complete="onLetterComplete"
-              />
-            </div>
-            <transition name="result-pop">
+            <div
+              class="round-start-category-strip"
+              :class="{
+                'round-start-category-strip--spinning': fortuneCategoryDisplay?.isSpinning,
+                'round-start-category-strip--settled': categoryStripSettled,
+                'round-start-category-strip--placeholder': categoryStripPlaceholder,
+                'round-start-category-strip--land-pulse': fortuneCategoryDisplay?.landedPulse,
+              }"
+              role="group"
+              :aria-label="t('common.category', 'Category')"
+            >
               <div
-                v-if="letterSpinComplete"
-                class="inline-result"
-                data-testid="round-letter-inline-result"
+                v-for="slot in categoryStripSlots"
+                :key="slot.offset"
+                class="round-start-strip-cell"
+                :data-offset="slot.offset"
+                :class="{ 'round-start-strip-cell--center': slot.offset === 0 }"
               >
-                <span class="inline-result-text inline-result-letter">{{ selectedLetter }}</span>
+                <span class="round-start-strip-cell__emoji" aria-hidden="true">{{
+                  slot.emoji
+                }}</span>
+                <span
+                  class="round-start-strip-cell__text"
+                  :data-testid="slot.offset === 0 ? 'fortune-wheel-selected-category' : undefined"
+                  >{{ slot.label }}</span
+                >
               </div>
-            </transition>
+            </div>
           </div>
         </div>
-      </transition>
+        <FortuneAlphabetWheel
+          :categories="allCategories"
+          :embed-category-row="false"
+          @category-display="onFortuneCategoryDisplay"
+          @selection-ready="onSelectionReady"
+        />
+      </div>
 
-      <!-- Loading indicator -->
       <div v-if="startingGame" class="loading-container" data-testid="round-loading">
         <Spinner />
         <p class="loading-text">
@@ -115,155 +94,117 @@
 
 <script setup lang="ts">
 import type { Category } from '@riddle-rush/types/game'
-import { RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
+import {
+  type FortuneWheelCategoryDisplay,
+  type FortuneWheelSelection,
+  FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI,
+  FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL,
+} from '~/types/fortune-wheel'
 
-const { baseUrl, toast, t } = usePageSetup()
-const { goToGame } = useNavigation()
+const { toast, t } = usePageSetup()
+const { getAssetPath } = useAssets()
+const { goToGame, goToPlayers } = useNavigation()
+const { startConfiguredRound } = useGameActions()
 const { gameStore } = useGameState()
 const { isFortuneWheelEnabled } = useFeatureFlags()
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-const selectedCategory = ref<Category | null>(null)
-const selectedLetter = ref<string | null>(null)
-const displayCategories = ref<Category[]>([])
-const categoryWheelRef = ref()
-const letterWheelRef = ref()
-
-const categorySpinComplete = ref(false)
-const letterSpinComplete = ref(false)
-const wheelsComplete = ref(false)
 const startingGame = ref(false)
-const isSpinning = ref(false)
 
-const categoryIconMap: Record<string, string> = {
-  female_name: '👩',
-  male_name: '👨',
-  water_vehicle: '⛵',
-  flowers: '🌸',
-  plants: '🌿',
-  profession: '👔',
-  insect: '🐛',
-  animal: '🦁',
-  city: '🏙️',
-  country: '🌍',
-  food: '🍕',
-  drink: '🧃',
-  sport: '⚽',
-  music: '🎵',
-  movie: '🎬',
+const allCategories = ref<Category[]>([])
+const fortuneCategoryDisplay = ref<FortuneWheelCategoryDisplay | null>(null)
+
+function handleRoundStartBack() {
+  if (startingGame.value) return
+  void goToPlayers()
 }
 
-const selectedCategoryIcon = computed(() => {
-  if (!selectedCategory.value) return '📦'
-  return getCategoryIcon(selectedCategory.value)
+function onFortuneCategoryDisplay(payload: FortuneWheelCategoryDisplay) {
+  fortuneCategoryDisplay.value = payload
+}
+
+const showRoundStartCategoryLine = computed(
+  () => isFortuneWheelEnabled.value && !startingGame.value && allCategories.value.length > 0
+)
+
+/** No pick yet (or idle) — centre shows * / -, side slots hidden. */
+const categoryStripPlaceholder = computed(() => {
+  const d = fortuneCategoryDisplay.value
+  if (!d) return true
+  return !d.isSpinning && d.categoryId == null
 })
 
-const selectedCategoryName = computed(() => {
-  if (!selectedCategory.value) return ''
-  return t(`categories.${selectedCategory.value.searchWord}`, selectedCategory.value.name)
+/** Side neighbours visible while spinning; after stop only the centre remains. */
+const categoryStripSettled = computed(() => {
+  const d = fortuneCategoryDisplay.value
+  return !!(d && !d.isSpinning && d.categoryId != null)
 })
 
-const currentRoundNumber = computed(() => {
-  // No session yet = first round setup
-  const session = gameStore.currentSession.value
-  if (!session) return 1
+const STRIP_OFFSETS = [-2, -1, 0, 1, 2] as const
 
-  // Check if current round has been completed (saved to roundHistory)
-  const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
+function categoryIndexAtOffset(centerIdx: number, offset: number, n: number): number {
+  if (n <= 0) return 0
+  return (centerIdx + offset + n * 100) % n
+}
 
-  // If current round is completed, we're about to start the next round
-  // Otherwise, show the current round number (e.g., on refresh)
-  return isCurrentRoundCompleted ? session.currentRound + 1 : session.currentRound
+const centerCategoryIndex = computed(() => {
+  const d = fortuneCategoryDisplay.value
+  const id = d?.categoryId
+  if (id == null) return 0
+  const list = allCategories.value
+  const idx = list.findIndex((c) => c.id === id)
+  return idx >= 0 ? idx : 0
 })
 
-onMounted(async () => {
-  // Fetch all categories
+const categoryStripSlots = computed(() => {
+  const list = allCategories.value
+  const n = list.length
+  const d = fortuneCategoryDisplay.value
+  const placeholder = !d || (!d.isSpinning && d.categoryId == null)
+
+  if (placeholder) {
+    return STRIP_OFFSETS.map((offset) => ({
+      offset,
+      category: null as Category | null,
+      label: offset === 0 ? FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL : '\u00a0',
+      emoji: offset === 0 ? FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI : '',
+    }))
+  }
+
+  const ci = centerCategoryIndex.value
+  return STRIP_OFFSETS.map((offset) => {
+    const cat = n ? list[categoryIndexAtOffset(ci, offset, n)]! : null
+    return {
+      offset,
+      category: cat,
+      label: cat ? t(`categories.${cat.searchWord}`, cat.name) : '—',
+      emoji: gameStore.categoryEmoji(cat?.name ?? null),
+    }
+  })
+})
+
+async function startGame(category: Category, letter: string) {
   await gameStore.fetchCategories()
-  const allCategories = gameStore.categories.value
-
-  // If fortune wheel is disabled, skip directly to game
-  if (!isFortuneWheelEnabled.value) {
-    // Select random category and letter
-    const randomCategory = allCategories[Math.floor(Math.random() * allCategories.length)]
-    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
-
-    selectedCategory.value = randomCategory ?? null
-    selectedLetter.value = randomLetter ?? null
-
-    // Start game immediately
-    await startGame()
-    return
-  }
-
-  // Select up to 12 categories for the wheel
-  displayCategories.value = allCategories.slice(0, 12)
-})
-
-const spinBothWheels = () => {
-  if (isSpinning.value) return
-  isSpinning.value = true
-  categorySpinComplete.value = false
-  letterSpinComplete.value = false
-
-  categoryWheelRef.value?.spinRandom()
-
-  // Stagger the spins slightly for better visual effect
-  setTimeout(() => {
-    letterWheelRef.value?.spinRandom()
-  }, 150)
-}
-
-const getCategoryIcon = (category: Category): string => {
-  return categoryIconMap[category.searchWord] || '📦'
-}
-
-const getCategoryKey = (cat: Category, idx: number): string | number => cat?.searchWord || idx
-const getCategoryLabel = (cat: Category): string => t(`categories.${cat.searchWord}`, cat.name)
-const getLetterKey = (letter: string, _idx: number): string => letter
-const getLetterLabel = (letter: string): string => letter
-const getNoIcon = (): string => ''
-
-const onCategoryComplete = (category: Category) => {
-  if (!isSpinning.value) return
-  selectedCategory.value = category
-  categorySpinComplete.value = true
-  checkBothComplete()
-}
-
-const onLetterComplete = (letter: string) => {
-  if (!isSpinning.value) return
-  selectedLetter.value = letter
-  letterSpinComplete.value = true
-  checkBothComplete()
-}
-
-const checkBothComplete = () => {
-  if (categorySpinComplete.value && letterSpinComplete.value) {
-    if (wheelsComplete.value) return
-    isSpinning.value = false
-    wheelsComplete.value = true
-    // Brief pause to let users see both results, then navigate
-    setTimeout(() => {
-      startGame()
-    }, RESULTS_DISPLAY_DURATION_MS)
-  }
-}
-
-const startGame = async () => {
-  if (!selectedCategory.value || !selectedLetter.value) return
-
   startingGame.value = true
 
   try {
-    await gameStore.advanceToConfiguredRound(selectedCategory.value, selectedLetter.value)
-
-    const gameId = gameStore.currentSession.value?.id
-    if (gameId) {
-      await goToGame(gameId)
-    } else {
-      await goToGame()
+    const session = await startConfiguredRound(category, letter)
+    if (!session) {
+      startingGame.value = false
+      return
     }
-    // Do not set startingGame to false on success so the spinner stays visible during navigation
+
+    // Always pass the session id. Navigating to `/game` triggers session-guard to
+    // `navigateTo(/game/:id)` — a second navigation that feels like a double reload.
+    if (!session.id) {
+      const logger = useLogger()
+      logger.error('startGame: session missing id after startConfiguredRound')
+      startingGame.value = false
+      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+      return
+    }
+
+    await goToGame(session.id)
   } catch (error) {
     const logger = useLogger()
     logger.error('Failed to start game:', error)
@@ -272,14 +213,51 @@ const startGame = async () => {
   }
 }
 
-useHead({
-  title: 'Round Start',
-  meta: [
-    {
-      name: 'description',
-      content: 'Spinning for category and letter',
-    },
-  ],
+async function startFallbackRound(categories: Category[]) {
+  const randomCategory = categories[Math.floor(Math.random() * categories.length)]
+  const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
+
+  if (!randomCategory || !randomLetter) {
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+    return
+  }
+
+  await startGame(randomCategory, randomLetter)
+}
+
+async function onSelectionReady(selection: FortuneWheelSelection) {
+  if (startingGame.value) return
+
+  const selectedCategory = allCategories.value.find(
+    (category) => category.id === selection.categoryId
+  )
+
+  if (!selectedCategory) {
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+    return
+  }
+
+  await startGame(selectedCategory, selection.letter)
+}
+
+onMounted(async () => {
+  await gameStore.fetchCategories()
+  const categories = gameStore.categories.value
+  allCategories.value = categories
+
+  if (!categories.length) {
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+    return
+  }
+
+  if (!isFortuneWheelEnabled.value) {
+    await startFallbackRound(categories)
+  }
+})
+
+useLocalizedPageSeo({
+  title: () => t('game.round_start_title'),
+  description: () => t('game.round_start_description'),
 })
 </script>
 
@@ -288,11 +266,27 @@ useHead({
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   background: #1a1a2e;
 }
 
-/* Background Image */
+.round-start-header {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: max(var(--spacing-md), env(safe-area-inset-top)) var(--spacing-md) var(--spacing-sm);
+}
+
+.round-start-back-icon {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
 .page-bg {
   position: absolute;
   top: 0;
@@ -303,228 +297,244 @@ useHead({
   z-index: 1;
 }
 
-/* Top Bar */
-.top-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  padding: var(--spacing-xl);
-}
-
-.round-indicator {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-md) var(--spacing-xl);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 0 20px rgba(255, 215, 0, 0.1);
-}
-
-.round-text {
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-2xl));
-  font-weight: var(--font-weight-black);
-  color: var(--color-white);
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-/* Container */
 .container {
   position: relative;
   z-index: 2;
-  min-height: 100vh;
-  min-height: 100dvh;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(var(--spacing-xl), 8vh, var(--spacing-3xl)) var(--spacing-xl);
+  padding: var(--spacing-sm) var(--spacing-xl) max(var(--spacing-xl), env(safe-area-inset-bottom));
 }
 
-/* Vertical Double Wheel Layout */
-.double-wheel-layout {
+.round-start-wheel-block {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
-  max-width: 500px;
-  position: relative;
-  gap: 0; /* Remove gap so we can control overlap */
 }
 
-.wheel-wrapper {
+.round-start-headline {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 1;
+  max-width: min(420px, 100%);
+  margin-bottom: clamp(var(--spacing-md), 2vh, var(--spacing-xl));
 }
 
-.wheel-container {
+.round-start-category-selection {
   width: 100%;
-  max-width: 380px;
-  position: relative;
-}
-
-.wheel-container.flipped {
-  /* Rotate top wheel so pointer is pointing down towards center button */
-  transform: rotate(180deg);
-}
-
-/* Fix text rotation in flipped wheel label */
-.wheel-wrapper.top-wheel .wheel-label {
+  max-width: min(420px, 100%);
   margin-bottom: var(--spacing-md);
 }
 
-.wheel-wrapper.bottom-wheel .wheel-label {
-  margin-top: var(--spacing-md);
-  order: 2; /* Put label below wheel */
-}
-
-/* Make wheels overlap slightly with the central button */
-.top-wheel {
-  margin-bottom: -30px;
-}
-
-.bottom-wheel {
-  margin-top: -30px;
-}
-
-/* Central Spin Button */
-.spin-button-zone {
-  z-index: 10;
-  position: relative;
+.round-start-selection-row {
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.spin-button {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: var(--color-border-gold);
-  border: 4px solid var(--color-white);
-  padding: 6px;
-  cursor: pointer;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(255, 215, 0, 0.4),
-    inset 0 4px 10px rgba(255, 255, 255, 0.6),
-    inset 0 -4px 10px rgba(0, 0, 0, 0.2);
-  transition:
-    transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    box-shadow 0.2s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.spin-button:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(255, 215, 0, 0.6),
-    inset 0 4px 10px rgba(255, 255, 255, 0.7);
-}
-
-.spin-button:active:not(:disabled) {
-  transform: scale(0.95);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(255, 215, 0, 0.3),
-    inset 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.spin-button:disabled {
-  filter: grayscale(0.5) brightness(0.8);
-  cursor: not-allowed;
-  transform: scale(0.95);
-}
-
-.spin-button-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ff5252 0%, #d32f2f 70%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow:
-    inset 0 -4px 8px rgba(0, 0, 0, 0.4),
-    inset 0 4px 8px rgba(255, 255, 255, 0.4);
-  border: 2px solid rgba(0, 0, 0, 0.1);
-}
-
-.spin-text {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 900;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  letter-spacing: 2px;
-}
-
-.wheel-label {
-  font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 4vw, var(--font-size-xl));
-  font-weight: var(--font-weight-black);
-  color: var(--color-white);
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-/* Inline Results (appear under wheel on completion) */
-.inline-result {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--spacing-sm);
-  margin-top: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: rgba(255, 215, 0, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-lg);
-  border: 2px solid rgba(255, 215, 0, 0.4);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-}
-
-.inline-result-icon {
-  font-size: clamp(24px, 4vw, 36px);
-}
-
-.inline-result-text {
   font-family: var(--font-display);
-  font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-xl));
-  font-weight: var(--font-weight-black);
+  font-size: clamp(var(--font-size-base), 2.8vw, var(--font-size-xl));
+  font-weight: var(--font-weight-semibold);
   color: var(--color-white);
   text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.4);
+    0 1px 4px rgba(0, 0, 0, 0.45),
+    0 0 12px rgba(11, 59, 118, 0.35);
 }
 
-.inline-result-letter {
-  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-2xl));
-  background: linear-gradient(135deg, #ffd700, #ffa500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.round-start-selection-row__label {
+  flex-shrink: 0;
 }
 
-/* Loading */
+/* Horizontal “picker”: centre = current category; sides fade while spinning, then collapse. */
+.round-start-category-strip {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.25rem, 1.5vw, 0.65rem);
+  width: 100%;
+  min-height: 3.25rem;
+  padding: var(--spacing-xs) 0;
+  mask-image: linear-gradient(90deg, transparent 0%, black 9%, black 91%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 9%, black 91%, transparent 100%);
+}
+
+.round-start-category-strip--spinning {
+  animation: round-start-strip-reveal 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes round-start-strip-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.round-start-strip-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.15em;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 22%;
+  text-align: center;
+  opacity: 0.38;
+  transform: scale(0.9);
+  filter: blur(0.35px);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    flex 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.round-start-strip-cell[data-offset='-1'],
+.round-start-strip-cell[data-offset='1'] {
+  opacity: 0.52;
+  transform: scale(0.94);
+  filter: blur(0.15px);
+}
+
+.round-start-strip-cell--center {
+  opacity: 1;
+  transform: scale(1.06);
+  max-width: 46%;
+  filter: none;
+  z-index: 1;
+}
+
+.round-start-strip-cell__emoji {
+  font-size: clamp(1.15rem, 3.8vw, 1.65rem);
+  line-height: 1;
+  transition:
+    opacity 0.22s cubic-bezier(0.25, 0.8, 0.35, 1),
+    transform 0.26s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+.round-start-strip-cell__text {
+  display: block;
+  width: 100%;
+  font-size: 0.72em;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition:
+    opacity 0.22s cubic-bezier(0.25, 0.8, 0.35, 1),
+    transform 0.26s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+.round-start-strip-cell--center .round-start-strip-cell__emoji {
+  font-size: clamp(1.35rem, 4.5vw, 1.95rem);
+}
+
+.round-start-strip-cell--center .round-start-strip-cell__text {
+  font-size: 0.88em;
+  font-weight: var(--font-weight-black);
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* After spin: only the winner stays; neighbours disappear */
+.round-start-category-strip--settled .round-start-strip-cell:not(.round-start-strip-cell--center) {
+  opacity: 0;
+  max-width: 0;
+  min-width: 0;
+  flex: 0 0 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  transform: scale(0.88);
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.round-start-category-strip--settled {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/* Before spin: only centre placeholder (* / -). */
+.round-start-category-strip--placeholder
+  .round-start-strip-cell:not(.round-start-strip-cell--center) {
+  opacity: 0;
+  max-width: 0;
+  min-width: 0;
+  flex: 0 0 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.round-start-category-strip--placeholder {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.round-start-category-strip--placeholder .round-start-strip-cell--center {
+  max-width: 100%;
+  flex: 1 1 auto;
+  transform: scale(1);
+  opacity: 1;
+  filter: none;
+}
+
+.round-start-category-strip--settled .round-start-strip-cell--center {
+  max-width: 100%;
+  flex: 1 1 auto;
+  transform: scale(1);
+}
+
+.round-start-category-strip--land-pulse .round-start-strip-cell--center {
+  animation: round-start-strip-land-pop 0.62s cubic-bezier(0.28, 1.15, 0.4, 1);
+}
+
+@keyframes round-start-strip-land-pop {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Narrow: three slots (offsets -1, 0, +1) */
+@media (max-width: 520px) {
+  .round-start-strip-cell[data-offset='-2'],
+  .round-start-strip-cell[data-offset='2'] {
+    display: none;
+  }
+
+  .round-start-strip-cell:not(.round-start-strip-cell--center) {
+    max-width: 28%;
+  }
+
+  .round-start-strip-cell--center {
+    max-width: 52%;
+  }
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -538,76 +548,5 @@ useHead({
   font-weight: var(--font-weight-semibold);
   color: var(--color-white);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-/* Transitions */
-.wheel-fade-enter-active,
-.wheel-fade-leave-active {
-  transition: all 0.8s ease-out;
-}
-
-.wheel-fade-enter-from {
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-.wheel-fade-leave-to {
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-/* Result pop transition */
-.result-pop-enter-active {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.result-pop-enter-from {
-  opacity: 0;
-  transform: scale(0.5) translateY(-10px);
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .spin-button {
-    width: 100px;
-    height: 100px;
-  }
-
-  .spin-text {
-    font-size: 22px;
-  }
-
-  .top-wheel {
-    margin-bottom: -20px;
-  }
-
-  .bottom-wheel {
-    margin-top: -20px;
-  }
-}
-
-/* Extremely tall/narrow screens might need adjustment to fit both wheels */
-@media (max-height: 800px) {
-  .wheel-container {
-    max-width: 300px; /* Make wheels slightly smaller to fit vertically */
-  }
-
-  .spin-button {
-    width: 90px;
-    height: 90px;
-    border-width: 3px;
-  }
-
-  .spin-text {
-    font-size: 20px;
-  }
-
-  .top-wheel {
-    margin-bottom: -15px;
-  }
-
-  .bottom-wheel {
-    margin-top: -15px;
-  }
 }
 </style>

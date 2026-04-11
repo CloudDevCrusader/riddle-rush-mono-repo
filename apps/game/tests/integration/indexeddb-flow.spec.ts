@@ -24,6 +24,7 @@ import type {
   LeaderboardEntry,
   CategorySettings,
 } from '@riddle-rush/types/game'
+import { gameSessionTestFixture } from '@riddle-rush/types/schemas'
 
 // ──────────────────────────────────────────────
 // Mocks
@@ -50,27 +51,20 @@ let useIndexedDB: typeof import('../../composables/useIndexedDB').useIndexedDB
 // ──────────────────────────────────────────────
 
 function createTestSession(overrides: Partial<GameSession> = {}): GameSession {
-  return {
+  return gameSessionTestFixture({
     id: overrides.id ?? `session-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-    players: overrides.players ?? [],
-    currentRound: overrides.currentRound ?? 1,
-    currentPlayerIndex: overrides.currentPlayerIndex ?? 0,
-    category: overrides.category ?? {
-      id: 1,
-      name: 'Animals',
-      searchWord: 'animals',
-      key: 'animals',
-      searchProvider: 'offline',
-    },
-    letter: overrides.letter ?? 'A',
-    startTime: overrides.startTime ?? Date.now() - 60_000,
-    endTime: overrides.endTime ?? Date.now(),
-    score: overrides.score ?? 10,
-    attempts: overrides.attempts ?? [],
-    status: overrides.status ?? 'completed',
-    roundHistory: overrides.roundHistory ?? [],
+    players: [],
+    currentRound: 1,
+    currentPlayerIndex: 0,
+    letter: 'A',
+    startTime: Date.now() - 60_000,
+    endTime: Date.now(),
+    score: 10,
+    attempts: [],
+    status: 'completed',
+    roundHistory: [],
     ...overrides,
-  }
+  })
 }
 
 function createTestStats(overrides: Partial<GameStatistics> = {}): GameStatistics {
@@ -97,11 +91,11 @@ function createTestLeaderboardEntry(overrides: Partial<LeaderboardEntry> = {}): 
     category: overrides.category ?? 'Animals',
     categoryKey: overrides.categoryKey ?? 'animals',
     playerName: overrides.playerName ?? 'Alice',
-    attempts: overrides.attempts ?? 1,
-    correctAttempts: overrides.correctAttempts ?? 1,
+    attempts: overrides.attempts ?? 10,
+    correctAttempts: overrides.correctAttempts ?? 5,
+    letter: overrides.letter ?? 'A',
     timestamp: overrides.timestamp ?? Date.now(),
     duration: overrides.duration ?? 120,
-    letter: overrides.letter ?? 'A',
     ...overrides,
   }
 }
@@ -340,14 +334,15 @@ describe('IndexedDB', () => {
   describe('leaderboard persistence', () => {
     it('saves and retrieves a leaderboard entry', async () => {
       const db = useIndexedDB()
-      const entry = createTestLeaderboardEntry({ score: 75, playerName: 'Bob' })
+      const entry = createTestLeaderboardEntry({ score: 75, attempts: 8 })
 
       await db.saveLeaderboardEntry(entry)
       const leaderboard = await db.getLeaderboard()
 
       expect(leaderboard).toHaveLength(1)
       expect(leaderboard[0]!.score).toBe(75)
-      expect(leaderboard[0]!.playerName).toBe('Bob')
+      expect(leaderboard[0]!.playerName).toBe('Alice')
+      expect(leaderboard[0]!.attempts).toBe(8)
     })
 
     it('returns entries sorted highest-score-first', async () => {

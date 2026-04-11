@@ -1,0 +1,88 @@
+# Capacitor Android CI — debug only (assemblePlayDebug → app-play-debug.apk).
+#
+# Trigger: push any git tag (e.g. git tag v1.5.0 && git push origin v1.5.0).
+#
+# Runs inside the same Node major as local Docker Compose (`dev` → node:22-alpine).
+# Image: node:22-bookworm (Debian/glibc for Android SDK; Alpine is a poor fit for sdkmanager).
+#
+# Uses: scripts/mobile-build.sh android debug
+# Artifact: riddle-rush-android-debug (app-play-debug.apk, ARM)
+# Universal debug: ANDROID_FLAVOR=universal ./scripts/mobile-build.sh android debug --universal
+# Install: adb install -r app-play-debug.apk
+#
+name: Capacitor Android debug APK
+
+on:
+  push:
+    tags:
+      - '*'
+
+concurrency:
+  group: capacitor-android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Match docker-compose `dev` service (node:22)
+  NODE_VERSION: '22'
+
+jobs:
+  android-apk:
+    name: Android debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: node:22-bookworm
+    steps:
+      # Container jobs need git for actions/checkout
+      - name: Install Git
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates
+          rm -rf /var/lib/apt/lists/*
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: >-
+            platform-tools
+            platforms;android-36
+            build-tools;35.0.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build debug APK (generate + cap sync + gradle)
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: bash scripts/mobile-build.sh android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: riddle-rush-android-debug
+          path: apps/mobile/android/app/build/outputs/apk/play/debug/app-play-debug.apk
+          if-no-files-found: error

@@ -8,6 +8,20 @@
 
 import { openDB } from 'idb'
 
+const ERROR_LOGS_DB_NAME = 'ErrorLogs'
+/** Bumped so DBs missing `errors` (or stuck partial upgrades) recreate the store */
+const ERROR_LOGS_DB_VERSION = 3
+
+async function openErrorLogsDb() {
+  return openDB(ERROR_LOGS_DB_NAME, ERROR_LOGS_DB_VERSION, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains('errors')) {
+        db.createObjectStore('errors', { keyPath: 'timestamp' })
+      }
+    },
+  })
+}
+
 interface ErrorLog {
   level: 'error' | 'warning' | 'info'
   message: string
@@ -110,13 +124,7 @@ export const useErrorSync = () => {
    */
   const storeErrorLocally = async (errorLog: ErrorLog) => {
     try {
-      const db = await openDB('ErrorLogs', 1, {
-        upgrade(db) {
-          if (!db.objectStoreNames.contains('errors')) {
-            db.createObjectStore('errors', { keyPath: 'timestamp' })
-          }
-        },
-      })
+      const db = await openErrorLogsDb()
 
       const tx = db.transaction('errors', 'readwrite')
       const store = tx.store
@@ -149,7 +157,7 @@ export const useErrorSync = () => {
 
       // Try IndexedDB first
       try {
-        const db = await openDB('ErrorLogs', 1)
+        const db = await openErrorLogsDb()
         const tx = db.transaction('errors', 'readwrite')
         const store = tx.store
         const allErrors = await store.getAll()
@@ -167,7 +175,10 @@ export const useErrorSync = () => {
         // Fallback to localStorage
         const storedErrors = localStorage.getItem('errorLogsQueue')
         if (storedErrors) {
-          errorsToSync = JSON.parse(storedErrors)
+          const parsed = JSON.parse(storedErrors)
+          if (Array.isArray(parsed)) {
+            errorsToSync = parsed
+          }
           localStorage.removeItem('errorLogsQueue')
         }
       }
@@ -177,9 +188,10 @@ export const useErrorSync = () => {
       }
 
       // Send to CloudWatch via API Gateway
-      const cloudWatchEndpoint =
-        runtimeConfig.public.cloudWatchEndpoint ||
-        'https://your-api-gateway.execute-api.region.amazonaws.com/prod/logs'
+      const cloudWatchEndpoint = runtimeConfig.public.cloudWatchEndpoint
+      if (!cloudWatchEndpoint) {
+        return
+      }
 
       const response = await fetch(cloudWatchEndpoint, {
         method: 'POST',

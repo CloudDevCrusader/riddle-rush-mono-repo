@@ -1,7 +1,7 @@
 ---
 name: gsd:secure-phase
 description: Retroactively verify threat mitigations for a completed phase
-argument-hint: "[phase number]"
+argument-hint: '[phase number]'
 allowed-tools:
   - Read
   - Write
@@ -12,6 +12,7 @@ allowed-tools:
   - Task
   - AskUserQuestion
 ---
+
 <objective>
 Verify threat mitigations for a completed phase. Three states:
 - (A) SECURITY.md exists — audit and verify mitigations

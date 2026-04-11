@@ -4,20 +4,18 @@ import { hideDevtools } from './helpers/game-flow'
 test.describe('Language Selection Page', () => {
   test('should load language page successfully', async ({ page }) => {
     await page.goto('/language')
-    await page.waitForLoadState('networkidle')
 
     // Check page title (supports both German and English)
     await expect(page).toHaveTitle(/Language Selection|Sprachauswahl|Riddle Rush/i)
 
-    // Check for language page container
-    const languagePage = page.locator('[data-testid="language-page"]')
-    await expect(languagePage).toBeVisible({ timeout: 10000 })
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.locator('[data-testid="language-page"]')).toBeVisible({ timeout: 5000 })
+    await expect(page.locator('[data-testid="language-card"]')).toBeVisible({ timeout: 5000 })
   })
 
   test('should display language options', async ({ page }) => {
     await page.goto('/language')
-
-    // Wait for page to load
     await page.waitForLoadState('networkidle')
 
     // Check for English option
@@ -29,7 +27,7 @@ test.describe('Language Selection Page', () => {
     // Check for German option
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /DEUTSCH/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await expect(germanOption).toBeVisible()
 
     // Check for flag containers
@@ -39,7 +37,6 @@ test.describe('Language Selection Page', () => {
 
   test('should show checkmark on selected language', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
 
     // Wait a moment for the page to initialize
@@ -57,7 +54,6 @@ test.describe('Language Selection Page', () => {
 
   test('should allow selecting English', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
 
     // Click on English option
@@ -75,13 +71,12 @@ test.describe('Language Selection Page', () => {
 
   test('should allow selecting German', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
 
     // Click on German option
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /DEUTSCH/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await germanOption.click()
 
     // Wait for state update
@@ -93,7 +88,6 @@ test.describe('Language Selection Page', () => {
 
   test('should switch between languages', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
 
     // Click English
@@ -109,7 +103,7 @@ test.describe('Language Selection Page', () => {
     // Click German
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /DEUTSCH/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await germanOption.click()
     await page.waitForTimeout(200)
 
@@ -119,7 +113,6 @@ test.describe('Language Selection Page', () => {
 
   test('should have working OK button', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
 
     // Select a language first
@@ -129,27 +122,15 @@ test.describe('Language Selection Page', () => {
     await englishOption.click()
     await page.waitForTimeout(200)
 
-    // Look for OK button (OK button contains an image, not text)
     const okButton = page.locator('[data-testid="language-ok-button"]')
+    await expect(okButton.first()).toBeVisible()
+    await okButton.first().click()
 
-    if ((await okButton.count()) > 0) {
-      await expect(okButton.first()).toBeVisible()
-
-      // Click OK button — this triggers a page reload (stays on /language)
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-        okButton.first().click(),
-      ])
-
-      // Confirm page reloaded successfully (still on /language with lang query)
-      await page.waitForLoadState('networkidle')
-      expect(page.url()).toContain('/language')
-    }
+    await expect.poll(() => page.url(), { timeout: 8000 }).not.toContain('/language')
   })
 
   test('should confirm language selection with OK button', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
 
     // Select English
@@ -162,28 +143,21 @@ test.describe('Language Selection Page', () => {
     // Verify English is selected
     await expect(englishOption).toHaveClass(/selected/)
 
-    // Click OK to confirm — triggers a page reload (stays on /language)
+    // Click OK to confirm (OK button contains an image, not text)
     const okButton = page.locator('[data-testid="language-ok-button"]').first()
     await expect(okButton).toBeVisible({ timeout: 5000 })
+    await okButton.click()
 
-    await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
-
-    // Confirm page reloaded successfully with lang query param
-    await page.waitForLoadState('networkidle')
-    expect(page.url()).toContain('/language')
-    expect(page.url()).toContain('lang=en')
+    await expect.poll(() => page.url(), { timeout: 8000 }).not.toContain('/language')
   })
 
   test('should display flags correctly', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
-    await page.waitForSelector('[data-testid="language-page"]', { timeout: 10000 })
 
     // Check for flag containers
     const flagContainers = page.locator('[data-testid^="language-flag-"]')
-    await expect(flagContainers.first()).toBeVisible({ timeout: 5000 })
-    expect(await flagContainers.count()).toBe(2)
+    await expect(flagContainers).toHaveCount(2)
 
     // Check that flags are visible
     for (let i = 0; i < (await flagContainers.count()); i++) {
@@ -194,7 +168,6 @@ test.describe('Language Selection Page', () => {
 
   test('should have proper page styling', async ({ page }) => {
     await page.goto('/language')
-
     await page.waitForLoadState('networkidle')
 
     // Check that the page has content
@@ -236,7 +209,7 @@ test.describe('Language Switching Behavior', () => {
 
     const germanOption = page
       .locator('[data-testid^="language-option-"]')
-      .filter({ hasText: /DEUTSCH/i })
+      .filter({ hasText: /DEUTSCH|GERMAN/i })
     await germanOption.click()
 
     const okButton = page.locator('[data-testid="language-ok-button"]').first()
@@ -248,8 +221,8 @@ test.describe('Language Switching Behavior', () => {
     await hideDevtools(page)
 
     await page.locator('[data-testid="main-menu-menu"]').click()
-    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText('Sprache')
-    await expect(page.locator('[data-testid="main-menu-settings"]')).toContainText('Einstellungen')
+    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText(/sprache/i)
+    await expect(page.locator('[data-testid="main-menu-settings"]')).toContainText(/einstellungen/i)
   })
 
   test('respects ?lang query and preserves it when selecting a different locale', async ({
@@ -261,7 +234,7 @@ test.describe('Language Switching Behavior', () => {
 
     await page.locator('[data-testid="main-menu-menu"]').click()
     const germanMenuItem = page.locator('[data-testid="main-menu-language"]')
-    await expect(germanMenuItem).toContainText('Sprache')
+    await expect(germanMenuItem).toContainText(/sprache/i)
 
     await germanMenuItem.click()
     await page.waitForLoadState('networkidle')
@@ -277,13 +250,12 @@ test.describe('Language Switching Behavior', () => {
     await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
 
     await page.waitForLoadState('networkidle')
-    expect(page.url()).toContain('lang=en')
+    await expect.poll(() => page.url(), { timeout: 8000 }).toContain('lang=en')
 
-    // Navigate to home page with lang=en to verify English menu items
     await page.goto('/?lang=en', { waitUntil: 'networkidle' })
     await hideDevtools(page)
 
     await page.locator('[data-testid="main-menu-menu"]').click()
-    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText('Language')
+    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText(/language/i)
   })
 })

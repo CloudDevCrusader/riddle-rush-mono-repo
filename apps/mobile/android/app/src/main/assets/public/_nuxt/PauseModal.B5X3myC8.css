@@ -1,0 +1,37 @@
+.pause-content[data-v-2b01e650] {
+  text-align: center;
+}
+.pause-message[data-v-2b01e650] {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+  margin: 0 0 var(--spacing-xl);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.pause-actions[data-v-2b01e650] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+.button-icon[data-v-2b01e650] {
+  flex-shrink: 0;
+  height: 24px;
+  width: 24px;
+}
+[data-v-2b01e650] .game-modal-body {
+  background: var(--gradient-bg);
+}
+@media (max-width: 480px) {
+  .pause-message[data-v-2b01e650] {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+  .pause-actions[data-v-2b01e650] {
+    gap: var(--spacing-sm);
+  }
+  .button-icon[data-v-2b01e650] {
+    height: 20px;
+    width: 20px;
+  }
+}

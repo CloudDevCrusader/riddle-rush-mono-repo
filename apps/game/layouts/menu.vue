@@ -17,10 +17,6 @@
     <transition name="menu-fade">
       <slot v-if="isMenuOpen" name="menu" :close-menu="closeMenu" />
     </transition>
-
-    <div class="footer">
-      <div v-if="isDev" class="version-tag">v{{ appVersion }} ({{ environment }})</div>
-    </div>
   </div>
 </template>
 
@@ -29,17 +25,11 @@
  * Menu Layout
  * Layout for main menu pages with menu toggle button
  */
-const config = useRuntimeConfig()
-const { baseUrl } = config.public
-
-// App version and environment for dev footer
-const appVersion = config.public.appVersion
-const environment = config.public.environment
-const isDev = environment === 'development'
+const { getAssetPath } = useAssets()
 
 // Layout state
 const backgroundImage = ref<string | null>(null)
-const menuButtonImage = ref<string>(`${baseUrl}assets/main-menu/MENU.png`)
+const menuButtonImage = ref<string>(getAssetPath('assets/main-menu/menu.png'))
 const showMenuButton = ref(true)
 const isMenuOpen = ref(false)
 
@@ -147,27 +137,5 @@ const closeMenu = () => {
   .menu-icon {
     width: 50px;
   }
-}
-
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  pointer-events: none;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  padding-bottom: env(safe-area-inset-bottom, 8px);
-}
-
-.version-tag {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 10px;
-  padding: 2px 6px;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  pointer-events: auto;
 }
 </style>

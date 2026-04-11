@@ -17,7 +17,7 @@ export function useSettings() {
     offlineMode: computed(() => store.offlineMode),
     language: computed(() => store.language),
     fortuneWheelEnabled: computed(() => store.fortuneWheelEnabled),
-    websocketEnabled: computed(() => store.websocketEnabled),
+    fortuneWheelAllowRedraw: computed(() => store.fortuneWheelAllowRedraw ?? true),
     answerInputEnabled: computed(() => store.answerInputEnabled),
 
     // Getters
@@ -25,7 +25,6 @@ export function useSettings() {
     isLeaderboardEnabled: computed(() => store.isLeaderboardEnabled),
     shouldShowLeaderboard: computed(() => store.shouldShowLeaderboard),
     isFortuneWheelEnabled: computed(() => store.isFortuneWheelEnabled),
-    isWebSocketEnabled: computed(() => store.isWebSocketEnabled),
     isAnswerInputEnabled: computed(() => store.isAnswerInputEnabled),
 
     // Actions
@@ -34,7 +33,7 @@ export function useSettings() {
     toggleLeaderboard: store.toggleLeaderboard,
     toggleSound: store.toggleSound,
     toggleFortuneWheel: store.toggleFortuneWheel,
-    toggleWebSocket: store.toggleWebSocket,
+    toggleFortuneWheelAllowRedraw: store.toggleFortuneWheelAllowRedraw,
     toggleAnswerInput: store.toggleAnswerInput,
     setOfflineMode: store.setOfflineMode,
     resetToDefaults: store.resetToDefaults,

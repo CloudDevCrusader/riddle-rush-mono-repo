@@ -85,6 +85,17 @@ const route = useRoute()
 // Stage selection locally (does not apply until OK pressed)
 const selectedLocale = ref(locale.value)
 
+// Update the reactive selectedLocale when the actual locale changes
+watch(
+  locale,
+  (newLocale) => {
+    if (newLocale && newLocale !== selectedLocale.value) {
+      selectedLocale.value = newLocale
+    }
+  },
+  { immediate: true }
+)
+
 type LocaleCode = 'de' | 'en'
 
 const selectLanguage = (lang: LocaleCode) => {
@@ -92,43 +103,26 @@ const selectLanguage = (lang: LocaleCode) => {
 }
 
 const confirmSelection = async () => {
+  const lang = selectedLocale.value as LocaleCode
   try {
-    // Save language preference first
-    settingsStore.setLanguage(selectedLocale.value as LocaleCode)
+    settingsStore.setLanguage(lang)
+    await setLocale(lang)
 
-    // Set the locale
-    await setLocale(selectedLocale.value as LocaleCode)
-
-    await updateLanguageQuery(selectedLocale.value as LocaleCode)
-
-    // Force page reload to ensure all translations update
-    // This is the most reliable way to handle language switching in SPAs
-    if (typeof window !== 'undefined') {
-      window.location.reload()
+    if (typeof window === 'undefined') {
+      return
     }
+
+    const query = { ...route.query, lang } as Record<string, string | string[] | undefined>
+    await router.push({ path: '/', query })
   } catch (error) {
     console.error('Failed to change language:', error)
-    // Fallback: navigate back without reload
-    goBack()
+    await router.push({ path: '/', query: { lang } })
   }
 }
 
-const updateLanguageQuery = async (lang: LocaleCode) => {
-  if (typeof window === 'undefined') return
-
-  const query = { ...route.query } as Record<string, string | string[] | undefined>
-  query.lang = lang
-  await router.replace({ query })
-}
-
-useHead({
-  title: t('language.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('language.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('language.title'),
+  description: () => t('language.description'),
 })
 </script>
 

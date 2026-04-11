@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash-es/cloneDeep'
 import { openDB, type IDBPDatabase } from 'idb'
 import { useLogger } from './useLogger'
 import type {
@@ -6,6 +7,12 @@ import type {
   LeaderboardEntry,
   CategorySettings,
 } from '@riddle-rush/types/game'
+import {
+  safeParseCategorySettings,
+  safeParseGameSession,
+  safeParseGameStatistics,
+  safeParseLeaderboardEntry,
+} from '@riddle-rush/types/schemas'
 
 const DB_NAME = 'riddle-rush-db'
 const DB_VERSION = 3
@@ -80,9 +87,8 @@ export function useIndexedDB() {
     try {
       const db = await getDB()
 
-      // Only serialize if the session is not already a plain object
-      const serialized =
-        session && typeof session === 'object' ? JSON.parse(JSON.stringify(session)) : session
+      // Deep clone plain objects so IndexedDB gets a serializable snapshot
+      const serialized = session && typeof session === 'object' ? cloneDeep(session) : session
 
       // Use transaction for atomic operations
       const tx = db.transaction([GAME_SESSION_STORE, GAME_SESSIONS_BY_ID_STORE], 'readwrite')
@@ -110,8 +116,14 @@ export function useIndexedDB() {
   const getGameSession = async (): Promise<GameSession | null> => {
     try {
       const db = await getDB()
-      const session = await db.get(GAME_SESSION_STORE, 'current')
-      return session || null
+      const raw = await db.get(GAME_SESSION_STORE, 'current')
+      if (raw == null) return null
+      const parsed = safeParseGameSession(raw)
+      if (!parsed.success) {
+        logger.warn('Invalid stored game session', parsed.error.flatten())
+        return null
+      }
+      return parsed.data as GameSession
     } catch (error) {
       logger.error('Error getting game session:', error)
       return null
@@ -121,8 +133,14 @@ export function useIndexedDB() {
   const getGameSessionById = async (sessionId: string): Promise<GameSession | null> => {
     try {
       const db = await getDB()
-      const session = await db.get(GAME_SESSIONS_BY_ID_STORE, sessionId)
-      return session || null
+      const raw = await db.get(GAME_SESSIONS_BY_ID_STORE, sessionId)
+      if (raw == null) return null
+      const parsed = safeParseGameSession(raw)
+      if (!parsed.success) {
+        logger.warn('Invalid game session by id', sessionId, parsed.error.flatten())
+        return null
+      }
+      return parsed.data as GameSession
     } catch (error) {
       logger.error('Error getting game session by ID:', error)
       return null
@@ -163,7 +181,9 @@ export function useIndexedDB() {
       let cursor = await index.openCursor(null, 'prev') // Start from end (newest first)
 
       while (cursor && sessions.length < limit) {
-        sessions.push(cursor.value)
+        const parsed = safeParseGameSession(cursor.value)
+        if (parsed.success) sessions.push(parsed.data as GameSession)
+        else logger.warn('Skipping invalid history session', parsed.error.flatten())
         cursor = await cursor.continue()
       }
 
@@ -186,8 +206,14 @@ export function useIndexedDB() {
   const getStatistics = async (): Promise<GameStatistics | null> => {
     try {
       const db = await getDB()
-      const stats = await db.get(STATISTICS_STORE, 'current')
-      return stats || null
+      const raw = await db.get(STATISTICS_STORE, 'current')
+      if (raw == null) return null
+      const parsed = safeParseGameStatistics(raw)
+      if (!parsed.success) {
+        logger.warn('Invalid stored statistics', parsed.error.flatten())
+        return null
+      }
+      return parsed.data as GameStatistics
     } catch (error) {
       logger.error('Error getting statistics:', error)
       return null
@@ -231,7 +257,9 @@ export function useIndexedDB() {
       let cursor = await index.openCursor(null, 'prev') // Start from highest scores
 
       while (cursor && entries.length < limit) {
-        entries.push(cursor.value)
+        const parsed = safeParseLeaderboardEntry(cursor.value)
+        if (parsed.success) entries.push(parsed.data as LeaderboardEntry)
+        else logger.warn('Skipping invalid leaderboard row', parsed.error.flatten())
         cursor = await cursor.continue()
       }
 
@@ -254,8 +282,14 @@ export function useIndexedDB() {
   const getSettings = async (): Promise<CategorySettings | null> => {
     try {
       const db = await getDB()
-      const settings = await db.get(SETTINGS_STORE, 'current')
-      return settings || null
+      const raw = await db.get(SETTINGS_STORE, 'current')
+      if (raw == null) return null
+      const parsed = safeParseCategorySettings(raw)
+      if (!parsed.success) {
+        logger.warn('Invalid stored settings', parsed.error.flatten())
+        return null
+      }
+      return parsed.data as CategorySettings
     } catch (error) {
       logger.error('Error getting settings:', error)
       return null

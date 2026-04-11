@@ -7,10 +7,9 @@
           <!-- No route transition in E2E: opacity enter/leave makes Playwright visibility flaky. -->
           <NuxtPage :transition="nuxtRouteTransition" />
         </NuxtLayout>
-        <ConnectionStatus data-testid="offline-indicator" />
         <Toast />
-        <DebugPanel />
-        <StoryboardDevOverlay />
+        <LazyDebugPanel />
+        <LazyStoryboardDevOverlay />
       </div>
     </Transition>
   </div>
@@ -22,7 +21,33 @@ import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 const gameSession = useGameSession()
 const installPrompt = useInstallPrompt()
 const settings = useSettings()
-const { setLocale } = useI18n()
+const { setLocale, t } = useI18n()
+
+useDocumentLang()
+
+const jsonLdPayload = computed(() =>
+  JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: t('seo.site_name'),
+    description: t('seo.json_ld_description'),
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Web',
+    browserRequirements: 'Requires JavaScript. Progressive Web App.',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    inLanguage: ['de-DE', 'en-US'],
+  })
+)
+
+useHead(() => ({
+  script: [
+    {
+      key: 'jsonld-webapp',
+      type: 'application/ld+json',
+      innerHTML: jsonLdPayload.value,
+    },
+  ],
+}))
 
 // Disable splash screen in E2E tests
 const playwrightE2EWindow = () =>
@@ -32,9 +57,7 @@ const playwrightE2EWindow = () =>
 const isE2E = process.env.NODE_ENV === 'test' || playwrightE2EWindow()
 
 /** Ref + onBeforeMount so transition turns off if the flag appears after first setup tick. */
-const nuxtRouteTransition = shallowRef<
-  false | { name: string; mode: 'out-in' }
->(
+const nuxtRouteTransition = shallowRef<false | { name: string; mode: 'out-in' }>(
   isE2E
     ? false
     : {
@@ -104,12 +127,6 @@ onUnmounted(() => {
 
 useHead({
   link: [
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap',
-    },
     { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
     { rel: 'apple-touch-startup-image', href: '/pwa-512x512.png' },
   ],

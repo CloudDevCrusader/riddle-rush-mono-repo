@@ -1,5 +1,7 @@
 import type { CategorySettings } from '@riddle-rush/types/game'
 
+import { fireNativeClickHaptic } from '~/utils/nativeHaptics'
+
 let audioContext: AudioContext | null = null
 const masterVolume = ref(1.0)
 const isMuted = ref(false)
@@ -66,7 +68,7 @@ export function useAudio() {
 
   const playSuccess = () => {
     const ctx = initAudioContext()
-    if (!ctx) throw new TypeError('AudioContext unavailable')
+    if (!ctx) return
 
     // Play a triumphant major chord with harmonics for a richer sound
     const frequencies = [
@@ -133,7 +135,7 @@ export function useAudio() {
     osc2.stop(now + 0.25)
   }
 
-  const playClick = () => {
+  const playClickTone = () => {
     const ctx = initAudioContext()
     if (!ctx) throw new TypeError('AudioContext unavailable')
 
@@ -155,6 +157,15 @@ export function useAudio() {
 
     oscillator.start(now)
     oscillator.stop(now + 0.03)
+  }
+
+  /** Haptic + optional click tone in one turn (Capacitor: haptic matches sound onset). */
+  const playClick = async () => {
+    const settings = await getSettings()
+    fireNativeClickHaptic()
+    if (settings.soundEnabled) {
+      playClickTone()
+    }
   }
 
   const playNewRound = () => {
@@ -226,6 +237,36 @@ export function useAudio() {
     })
   }
 
+  /** Short “tada” fanfare when a player submits a non-empty answer. */
+  const playTada = () => {
+    const ctx = initAudioContext()
+    if (!ctx) return
+
+    const flourish = [
+      { freq: 523.25, delay: 0, duration: 0.1, vol: 0.22 },
+      { freq: 659.25, delay: 55, duration: 0.1, vol: 0.22 },
+      { freq: 783.99, delay: 110, duration: 0.1, vol: 0.24 },
+      { freq: 1046.5, delay: 165, duration: 0.14, vol: 0.26 },
+    ]
+
+    flourish.forEach(({ freq, delay, duration, vol }) => {
+      setTimeout(() => {
+        playTone(freq, duration, 'triangle', vol)
+        playTone(freq * 2, duration * 0.55, 'sine', vol * 0.35)
+      }, delay)
+    })
+
+    setTimeout(() => {
+      playTone(1046.5, 0.12, 'sine', 0.2)
+      setTimeout(() => {
+        playTone(1318.51, 0.14, 'sine', 0.18)
+        setTimeout(() => {
+          playTone(1567.98, 0.18, 'sine', 0.16)
+        }, 45)
+      }, 55)
+    }, 230)
+  }
+
   const getSettings = async (): Promise<CategorySettings> => {
     const { getSettings } = useIndexedDB()
     const settings = await getSettings()
@@ -242,10 +283,11 @@ export function useAudio() {
   return {
     playSuccess: () => playSoundIfEnabled(playSuccess),
     playError: () => playSoundIfEnabled(playError),
-    playClick: () => playSoundIfEnabled(playClick),
+    playClick,
     playNewRound: () => playSoundIfEnabled(playNewRound),
     playRoundComplete: () => playSoundIfEnabled(playRoundComplete),
     playButtonHover: () => playSoundIfEnabled(playButtonHover),
     playScoreIncrease: () => playSoundIfEnabled(playScoreIncrease),
+    playTada: () => playSoundIfEnabled(playTada),
   }
 }
