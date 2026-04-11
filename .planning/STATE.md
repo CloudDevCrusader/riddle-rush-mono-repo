@@ -4,7 +4,7 @@ milestone: v1.0.3
 milestone_name: milestone
 status: Phase 23 complete — all 4 plans executed, verification passed
 stopped_at: Phase 23 fully complete (all gates passed)
-last_updated: '2026-04-11T06:45:00.000Z'
+last_updated: '2026-04-11T16:52:45.000Z'
 progress:
   total_phases: 24
   completed_phases: 23
@@ -187,19 +187,17 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
+_File moves and parallel plan: `.planning/todos/TODOS-PARALLEL-EXECUTION-PLAN.md`_
+
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~352 lines) for further simplification and bug risk.
-- **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
-- **[New]** Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag).
-- ~~Refactor game mode to single source of truth with documented state flow chart.~~ Done (18-05) — flow state bug fixed, duplicate guards removed, state-flow doc created.
-- **[New]** Verify category selection in fortune wheel flip-through animation (fortune wheel replaced by flip-through in round-start.vue).
-- **[New]** Verify Android build is universal (fails at some customers).
-- **[New]** Fix mobile website not being full page (2/3 of screen is gray).
-- **[New]** Fix remaining E2E failures in language.spec.ts (~12 tests) — UI/testid mismatches (missing credits-title-image, language-flag-_, menu-item-_ elements).
-- **[New]** Fix remaining E2E failures in scoring-flow.spec.ts (~4 tests) — wrong testid names (player-leaderboard-overlay, next-round don't exist in app).
-- **[New]** Add polished animations throughout the app (page transitions, micro-interactions, component mounts, game flow moments).
-- **[New]** Review code, optimize weak points, minimize page reloads in game flow (async hydration races, unnecessary navigateTo reloads, missing v-if guards on async data).
+- Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
+- Add polished animations throughout the app (incremental PRs; see todo in `.planning/todos/pending/`).
+- Research and select feature-flag provider strategy (todo in `pending/`).
+- Burn down `code-review-2026-03-08.md` items in small commits.
+- **Remaining:** audit `navigateTo` / full reload usage and simplify `game-flow.ts` workarounds now that results page has session loading + empty-state guard (todo `2026-04-11-review-code-optimize-weak-points-minimize-page-reloads-in-ga.md`).
+- Audit Figma mockups against the app and close design gaps (see `.planning/todos/pending/2026-04-11-audit-figma-mockups-and-implement-design-gaps.md`).
 
 ### Completed Todos (2026-02-14)
 
@@ -230,8 +228,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-11T04:40:48.068Z
-Stopped at: Completed 23-04-PLAN.md
+Last session: 2026-04-11 (resume via /gsd-resume-work)
+Stopped at: Session resumed — Phase 23 complete; awaiting next action from user
 Resume file: None
 
 ### Deployment: development
