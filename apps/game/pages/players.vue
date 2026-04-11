@@ -9,7 +9,7 @@
               type="button"
               data-testid="players-back-button"
               :aria-label="t('common.back', 'Back')"
-              @click="goBack"
+              @click="goHome"
             >
               ‹
             </button>
@@ -103,7 +103,7 @@ import uniq from 'lodash-es/uniq'
 
 definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
 
-const { t, goBack, toast } = usePageSetup()
+const { t, goHome, toast } = usePageSetup()
 const { goToRoundStart } = useNavigation()
 const { gameStore } = useGameState()
 const runtimeConfig = useRuntimeConfig()
@@ -174,7 +174,7 @@ const startGame = () => {
 }
 
 const { pageElement } = usePageSwipe({
-  onSwipeRight: () => goBack(),
+  onSwipeRight: () => goHome(),
   threshold: 80,
 })
 

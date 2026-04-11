@@ -263,12 +263,19 @@ useLocalizedPageSeo({
 
 <style scoped>
 .round-start-page {
-  min-height: 100vh;
-  min-height: 100dvh;
+  box-sizing: border-box;
   position: relative;
   display: flex;
   flex-direction: column;
+  /* Lock to one viewport height so spin/scale animations cannot grow the document     (avoids vertical scrollbar flashing on body). */
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   overflow: hidden;
+  overscroll-behavior: none;
   background: #1a1a2e;
 }
 
@@ -297,6 +304,7 @@ useLocalizedPageSeo({
   align-items: center;
   justify-content: center;
   padding: var(--spacing-sm) var(--spacing-xl) max(var(--spacing-xl), env(safe-area-inset-bottom));
+  overflow: hidden;
 }
 
 .round-start-wheel-block {
@@ -304,6 +312,8 @@ useLocalizedPageSeo({
   flex-direction: column;
   align-items: center;
   width: 100%;
+  min-height: 0;
+  max-width: 100%;
 }
 
 .round-start-headline {
@@ -377,29 +387,25 @@ useLocalizedPageSeo({
   text-align: center;
   opacity: 0.38;
   transform: scale(0.9);
-  filter: blur(0.35px);
   transition:
     opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     max-width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
     flex 0.55s cubic-bezier(0.22, 1, 0.36, 1),
     margin 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    padding 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    padding 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .round-start-strip-cell[data-offset='-1'],
 .round-start-strip-cell[data-offset='1'] {
   opacity: 0.52;
   transform: scale(0.94);
-  filter: blur(0.15px);
 }
 
 .round-start-strip-cell--center {
   opacity: 1;
   transform: scale(1.06);
   max-width: 46%;
-  filter: none;
   z-index: 1;
 }
 
@@ -449,7 +455,6 @@ useLocalizedPageSeo({
   padding: 0;
   overflow: hidden;
   transform: scale(0.88);
-  filter: blur(5px);
   pointer-events: none;
 }
 
@@ -481,7 +486,6 @@ useLocalizedPageSeo({
   flex: 1 1 auto;
   transform: scale(1);
   opacity: 1;
-  filter: none;
 }
 
 .round-start-category-strip--settled .round-start-strip-cell--center {
