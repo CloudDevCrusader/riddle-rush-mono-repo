@@ -21,23 +21,30 @@
             v-motion
             :initial="{ opacity: 0, y: 20 }"
             :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 50 } }"
-            class="scoring-page__player-entry"
+            class="scoring-page__player-card"
             :data-testid="`results-player-entry-${index}`"
           >
             <div class="scoring-page__player-header">
               <span class="scoring-page__rank" :data-testid="`predicted-rank-${index}`">
                 #{{ projectedRanks.get(player.id) ?? Number(index) + 1 }}
               </span>
-              <GamePlayerCard
-                :player="player"
-                :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
-                :show-indicator="false"
-                :show-answer="isAnswerInputEnabled"
-              />
-              <span class="scoring-page__base-score" data-testid="base-score">
-                {{ t('scoring.base_score', 'Score') }}: {{ player.totalScore }}
-                {{ t('scoring.points', 'pts') }}
-              </span>
+              <div class="scoring-page__player-main">
+                <GamePlayerCard
+                  :player="player"
+                  :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
+                  :show-indicator="false"
+                  :show-answer="isAnswerInputEnabled"
+                  class="scoring-page__player-card-inner"
+                />
+                <p class="scoring-page__base-score" data-testid="base-score">
+                  <span class="scoring-page__base-score-label">{{
+                    t('scoring.base_score', 'Score')
+                  }}</span>
+                  <span class="scoring-page__base-score-value"
+                    >{{ player.totalScore }} {{ t('scoring.points', 'pts') }}</span
+                  >
+                </p>
+              </div>
             </div>
 
             <div
@@ -47,26 +54,29 @@
               <GameButton
                 variant="danger"
                 size="sm"
+                class="scoring-page__delta-btn"
                 :sound-on-click="false"
-                :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
                 data-testid="score-decrement"
                 @click="decrementScore(player.id)"
               >
                 −
               </GameButton>
 
-              <GameDisplay
-                size="sm"
-                :glow="false"
-                class="scoring-page__score-value"
-                :data-testid="`scoring-page-score-value-${index}`"
-              >
-                {{ pendingScores.get(player.id) ?? 0 }}
-              </GameDisplay>
+              <div class="scoring-page__round-score" aria-live="polite">
+                <span class="scoring-page__round-score-label">{{
+                  t('scoring.round_points', 'Round')
+                }}</span>
+                <span
+                  class="scoring-page__round-score-value"
+                  :data-testid="`scoring-page-score-value-${index}`"
+                  >{{ pendingScores.get(player.id) ?? 0 }}</span
+                >
+              </div>
 
               <GameButton
                 variant="primary"
                 size="sm"
+                class="scoring-page__delta-btn"
                 :sound-on-click="false"
                 data-testid="score-increment"
                 @click="incrementScore(player.id)"
@@ -355,9 +365,12 @@ useLocalizedPageSeo({
   font-family: var(--font-display);
   font-size: mockup-clamp(15px);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-dark);
+  color: var(--color-text-white);
   text-align: center;
   line-height: 1.4;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 0 12px rgba(13, 61, 122, 0.35);
 }
 
 .scoring-page__column {
@@ -373,47 +386,141 @@ useLocalizedPageSeo({
 .scoring-page__list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
   width: 100%;
 }
 
-.scoring-page__player-entry {
+.scoring-page__player-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--color-panel-cream);
+  border: 3px solid var(--color-border-gold);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.12),
+    0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.scoring-page__player-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.scoring-page__player-main {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
 }
 
-.scoring-page__player-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
+.scoring-page__player-card-inner {
+  width: 100%;
+}
+
+.scoring-page__player-card-inner :deep(.game-player-card) {
+  box-shadow: none;
+  border-width: 2px;
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .scoring-page__rank {
-  font-size: var(--font-size-lg);
-  font-weight: bold;
-  color: var(--color-gold, #ffd700);
-  min-width: 2.5rem;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: mockup-clamp(20px);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-yellow);
+  min-width: 2.75rem;
   text-align: center;
+  line-height: 1.1;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    0 0 12px rgba(255, 213, 79, 0.35);
 }
 
 .scoring-page__base-score {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--spacing-xs) var(--spacing-sm);
+  font-family: var(--font-display);
+}
+
+.scoring-page__base-score-label {
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted, #aaa);
-  white-space: nowrap;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.scoring-page__base-score-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-dark);
 }
 
 .scoring-page__score-controls {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: space-between;
   gap: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.65);
+  border: 2px solid rgba(200, 162, 67, 0.45);
+  border-radius: var(--radius-lg);
 }
 
-.scoring-page__score-value {
-  min-width: 60px;
-  text-align: center;
+.scoring-page__delta-btn {
+  flex: 0 0 auto;
+  min-width: 3.25rem;
+  min-height: 3.25rem;
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  line-height: 1;
+  border-width: 3px;
+}
+
+.scoring-page__round-score {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #0d3d7a 0%, #082a58 100%);
+  border: 3px solid var(--color-border-gold);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.35),
+    0 2px 0 rgba(255, 255, 255, 0.12);
+}
+
+.scoring-page__round-score-label {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: rgba(255, 255, 255, 0.88);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.scoring-page__round-score-value {
+  font-family: var(--font-display);
+  font-size: mockup-clamp(26px);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-white);
+  line-height: 1.1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
 }
 
 .scoring-page__button {
@@ -449,31 +556,41 @@ useLocalizedPageSeo({
   }
 
   .scoring-page__list {
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+
+  .scoring-page__player-card {
+    padding: var(--spacing-md);
   }
 
   .scoring-page__player-header {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .scoring-page__rank {
-    font-size: var(--font-size-base);
-    min-width: 2rem;
+    font-size: var(--font-size-lg);
+    min-width: 2.25rem;
   }
 
   .scoring-page__base-score {
-    font-size: var(--font-size-xs);
-    width: 100%;
-    text-align: center;
-    margin-top: var(--spacing-xs);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
   }
 
   .scoring-page__score-controls {
     gap: var(--spacing-sm);
+    padding: var(--spacing-xs);
   }
 
-  .scoring-page__score-value {
-    min-width: 50px;
+  .scoring-page__delta-btn {
+    min-width: 2.85rem;
+    min-height: 2.85rem;
+    font-size: var(--font-size-xl);
+  }
+
+  .scoring-page__round-score-value {
+    font-size: mockup-clamp(22px);
   }
 
   .decision-content__text {
@@ -498,6 +615,13 @@ useLocalizedPageSeo({
 
   .scoring-page__score-controls {
     gap: var(--spacing-xs);
+  }
+
+  .scoring-page__delta-btn {
+    min-width: 2.6rem;
+    min-height: 2.6rem;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
   }
 }
 

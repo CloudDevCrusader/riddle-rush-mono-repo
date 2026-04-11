@@ -95,7 +95,7 @@ const formatScore = (score: number): string => {
   font-family: var(--font-display);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-secondary);
+  color: var(--color-primary-dark);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -104,16 +104,17 @@ const formatScore = (score: number): string => {
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  color: var(--color-text-dark);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .game-player-card__answer {
-  font-family: var(--font-sans);
+  font-family: var(--font-primary);
   font-size: var(--font-size-base);
-  color: var(--color-text-secondary);
+  color: var(--color-dark-light);
+  font-weight: var(--font-weight-semibold);
   font-style: italic;
   overflow: hidden;
   text-overflow: ellipsis;
