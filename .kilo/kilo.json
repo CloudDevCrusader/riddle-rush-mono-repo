@@ -1,0 +1,10 @@
+{
+  "permission": {
+    "read": {
+      "/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-shit-done/*": "allow"
+    },
+    "external_directory": {
+      "/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-shit-done/*": "allow"
+    }
+  }
+}

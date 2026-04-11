@@ -1,7 +1,7 @@
 ---
 name: gsd:plant-seed
 description: Capture a forward-looking idea with trigger conditions — surfaces automatically at the right milestone
-argument-hint: '[idea summary]'
+argument-hint: "[idea summary]"
 allowed-tools:
   - Read
   - Write

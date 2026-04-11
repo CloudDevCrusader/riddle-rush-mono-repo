@@ -1,5 +1,5 @@
 import { setActivePinia, createPinia } from 'pinia'
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { useLoadingStore } from '../../stores/loadingStore'
 import { useLoading } from '../../stores/hooks/useLoading'
 
@@ -155,6 +155,96 @@ describe('loadingStore', () => {
       expect(loadingStore.isLoading).toBe(true)
 
       loadingStore.hideLoading() // count: 0
+      expect(loadingStore.isLoading).toBe(false)
+    })
+  })
+
+  describe('forceHide', () => {
+    it('should reset all state regardless of loading count', () => {
+      loadingStore.showLoading()
+      loadingStore.showLoading()
+      loadingStore.showLoading()
+      loadingStore.setProgress(75)
+      expect(loadingStore.loadingCount).toBe(3)
+
+      loadingStore.forceHide()
+      expect(loadingStore.isLoading).toBe(false)
+      expect(loadingStore.loadingCount).toBe(0)
+      expect(loadingStore.progress).toBe(0)
+      expect(loadingStore.showProgress).toBe(false)
+    })
+
+    it('should work when nothing is loading', () => {
+      loadingStore.forceHide()
+      expect(loadingStore.isLoading).toBe(false)
+      expect(loadingStore.loadingCount).toBe(0)
+    })
+  })
+
+  describe('getState', () => {
+    it('should return full state object', () => {
+      const state = loadingStore.getState()
+      expect(state).toHaveProperty('isLoading', false)
+      expect(state).toHaveProperty('loadingCount', 0)
+      expect(state).toHaveProperty('progress', 0)
+      expect(state).toHaveProperty('showProgress', false)
+    })
+
+    it('should reflect current mutations', () => {
+      loadingStore.showLoading()
+      loadingStore.setProgress(60)
+      const state = loadingStore.getState()
+      expect(state.isLoading).toBe(true)
+      expect(state.loadingCount).toBe(1)
+      expect(state.progress).toBe(60)
+      expect(state.showProgress).toBe(true)
+    })
+  })
+
+  describe('safety timer', () => {
+    beforeEach(() => {
+      vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('should force-hide after 10s timeout', () => {
+      loadingStore.showLoading()
+      expect(loadingStore.isLoading).toBe(true)
+
+      vi.advanceTimersByTime(10_000)
+
+      expect(loadingStore.isLoading).toBe(false)
+      expect(loadingStore.loadingCount).toBe(0)
+    })
+
+    it('should not force-hide before timeout', () => {
+      loadingStore.showLoading()
+      vi.advanceTimersByTime(9_999)
+      expect(loadingStore.isLoading).toBe(true)
+    })
+
+    it('should clear timer on hide', () => {
+      loadingStore.showLoading()
+      loadingStore.hideLoading()
+      vi.advanceTimersByTime(10_000)
+      // No error — timer was cleared
+      expect(loadingStore.isLoading).toBe(false)
+    })
+
+    it('should reset timer on subsequent showLoading', () => {
+      loadingStore.showLoading()
+      vi.advanceTimersByTime(8_000)
+      // Still loading, show again (resets timer)
+      loadingStore.showLoading()
+      vi.advanceTimersByTime(8_000)
+      // 8s after second show — still within 10s window
+      expect(loadingStore.isLoading).toBe(true)
+
+      vi.advanceTimersByTime(2_000)
+      // 10s after second show — force hide triggers
       expect(loadingStore.isLoading).toBe(false)
     })
   })

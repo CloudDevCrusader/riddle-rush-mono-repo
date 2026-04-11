@@ -28,6 +28,11 @@ async function getDB() {
 
   // Create new promise to open DB
   dbPromise = openDB(DB_NAME, DB_VERSION, {
+    blocking() {
+      dbInstance?.close()
+      dbInstance = null
+      dbPromise = null
+    },
     upgrade(db, _oldVersion) {
       // Create object stores if they don't exist
       if (!db.objectStoreNames.contains(GAME_SESSION_STORE)) {

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// gsd-hook-version: 1.27.0
+// gsd-hook-version: 1.34.2
 // Claude Code Statusline - GSD Edition
 // Shows: model | current task | directory | context usage
 
-const fs = require('node:fs')
-const path = require('node:path')
-const os = require('node:os')
+const fs = require('fs')
+const path = require('path')
+const os = require('os')
 
 // Read JSON from stdin
 let input = ''
@@ -38,7 +38,10 @@ process.stdin.on('end', () => {
 
       // Write context metrics to bridge file for the context-monitor PostToolUse hook.
       // The monitor reads this file to inject agent-facing warnings when context is low.
-      if (session) {
+      // Reject session IDs with path separators or traversal sequences to prevent
+      // a malicious session_id from writing files outside the temp directory.
+      const sessionSafe = session && !/[/\\]|\.\./.test(session)
+      if (sessionSafe) {
         try {
           const bridgePath = path.join(os.tmpdir(), `claude-ctx-${session}.json`)
           const bridgeData = JSON.stringify({
@@ -48,7 +51,7 @@ process.stdin.on('end', () => {
             timestamp: Math.floor(Date.now() / 1000),
           })
           fs.writeFileSync(bridgePath, bridgeData)
-        } catch {
+        } catch (e) {
           // Silent fail -- bridge is best-effort, don't break statusline
         }
       }
@@ -59,13 +62,13 @@ process.stdin.on('end', () => {
 
       // Color based on usable context thresholds
       if (used < 50) {
-        ctx = ` \x1B[32m${bar} ${used}%\x1B[0m`
+        ctx = ` \x1b[32m${bar} ${used}%\x1b[0m`
       } else if (used < 65) {
-        ctx = ` \x1B[33m${bar} ${used}%\x1B[0m`
+        ctx = ` \x1b[33m${bar} ${used}%\x1b[0m`
       } else if (used < 80) {
-        ctx = ` \x1B[38;5;208m${bar} ${used}%\x1B[0m`
+        ctx = ` \x1b[38;5;208m${bar} ${used}%\x1b[0m`
       } else {
-        ctx = ` \x1B[5;31m💀 ${bar} ${used}%\x1B[0m`
+        ctx = ` \x1b[5;31m💀 ${bar} ${used}%\x1b[0m`
       }
     }
 
@@ -88,42 +91,42 @@ process.stdin.on('end', () => {
             const todos = JSON.parse(fs.readFileSync(path.join(todosDir, files[0].name), 'utf8'))
             const inProgress = todos.find((t) => t.status === 'in_progress')
             if (inProgress) task = inProgress.activeForm || ''
-          } catch {
-            /* ignore */
-          }
+          } catch (e) {}
         }
-      } catch {
+      } catch (e) {
         // Silently fail on file system errors - don't break statusline
       }
     }
 
     // GSD update available?
+    // Check shared cache first (#1421), fall back to runtime-specific cache for
+    // backward compatibility with older gsd-check-update.js versions.
     let gsdUpdate = ''
-    const cacheFile = path.join(claudeDir, 'cache', 'gsd-update-check.json')
+    const sharedCacheFile = path.join(homeDir, '.cache', 'gsd', 'gsd-update-check.json')
+    const legacyCacheFile = path.join(claudeDir, 'cache', 'gsd-update-check.json')
+    const cacheFile = fs.existsSync(sharedCacheFile) ? sharedCacheFile : legacyCacheFile
     if (fs.existsSync(cacheFile)) {
       try {
         const cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'))
         if (cache.update_available) {
-          gsdUpdate = '\x1B[33m⬆ /gsd:update\x1B[0m │ '
+          gsdUpdate = '\x1b[33m⬆ /gsd-update\x1b[0m │ '
         }
         if (cache.stale_hooks && cache.stale_hooks.length > 0) {
-          gsdUpdate += '\x1B[31m⚠ stale hooks — run /gsd:update\x1B[0m │ '
+          gsdUpdate += '\x1b[31m⚠ stale hooks — run /gsd-update\x1b[0m │ '
         }
-      } catch {
-        /* ignore */
-      }
+      } catch (e) {}
     }
 
     // Output
     const dirname = path.basename(dir)
     if (task) {
       process.stdout.write(
-        `${gsdUpdate}\x1B[2m${model}\x1B[0m │ \x1B[1m${task}\x1B[0m │ \x1B[2m${dirname}\x1B[0m${ctx}`
+        `${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`
       )
     } else {
-      process.stdout.write(`${gsdUpdate}\x1B[2m${model}\x1B[0m │ \x1B[2m${dirname}\x1B[0m${ctx}`)
+      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`)
     }
-  } catch {
+  } catch (e) {
     // Silent fail - don't break statusline on parse errors
   }
 })

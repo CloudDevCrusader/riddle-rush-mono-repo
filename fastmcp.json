@@ -4,6 +4,13 @@
       "source": "node /home/cloudcrusader/projects/riddle-rush-mono-repo/tools/voltagent/mcp-server.mjs",
       "tools": ["*"],
       "description": "VoltAgent MCP subagents for repository automation"
+    },    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    }   
+ 	"chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
     },
     "nuxt-ui": {
       "source": "npx https://ui.nuxt.com/mcp",

@@ -4,7 +4,8 @@
       <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
       <div v-else class="main-content">
         <NuxtLayout>
-          <NuxtPage />
+          <!-- No route transition in E2E: opacity enter/leave makes Playwright visibility flaky. -->
+          <NuxtPage :transition="nuxtRouteTransition" />
         </NuxtLayout>
         <ConnectionStatus data-testid="offline-indicator" />
         <Toast />
@@ -24,10 +25,30 @@ const settings = useSettings()
 const { setLocale } = useI18n()
 
 // Disable splash screen in E2E tests
-const isE2E =
-  process.env.NODE_ENV === 'test' ||
-  (typeof window !== 'undefined' &&
-    (window as Window & { playwrightTest?: boolean }).playwrightTest)
+const playwrightE2EWindow = () =>
+  typeof window !== 'undefined' &&
+  Boolean((window as Window & { playwrightTest?: boolean }).playwrightTest)
+
+const isE2E = process.env.NODE_ENV === 'test' || playwrightE2EWindow()
+
+/** Ref + onBeforeMount so transition turns off if the flag appears after first setup tick. */
+const nuxtRouteTransition = shallowRef<
+  false | { name: string; mode: 'out-in' }
+>(
+  isE2E
+    ? false
+    : {
+        name: 'page-opacity',
+        mode: 'out-in',
+      }
+)
+
+onBeforeMount(() => {
+  if (process.env.NODE_ENV === 'test' || playwrightE2EWindow()) {
+    nuxtRouteTransition.value = false
+  }
+})
+
 const showSplash = ref(!isE2E)
 
 const onSplashComplete = () => {
@@ -127,6 +148,16 @@ useHead({
   min-height: 100dvh;
 }
 
+/* Route-level fade (short; respects reduced motion below) */
+.page-opacity-enter-active,
+.page-opacity-leave-active {
+  transition: opacity 0.2s ease;
+}
+.page-opacity-enter-from,
+.page-opacity-leave-to {
+  opacity: 0;
+}
+
 /* Forward navigation: slide left */
 .slide-left-enter-active,
 .slide-left-leave-active {
@@ -157,6 +188,11 @@ useHead({
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
+  .page-opacity-enter-active,
+  .page-opacity-leave-active {
+    transition: none;
+  }
+
   .slide-left-enter-active,
   .slide-left-leave-active,
   .slide-right-enter-active,

@@ -3,6 +3,17 @@
 Comprehensive review of `apps/game` by code-review-expert.
 Critical bugs (#1, #2) and i18n interpolation (#3) fixed separately.
 
+## Touched in repo (2026-04-11)
+
+- **#5:** `stores/game.ts` → use `gameStore.ts`; no `useScoringEngine` import found (likely obsolete).
+- **#6:** `app.vue` already removes listeners in `onUnmounted`.
+- **#12:** Main pages use `useLocalizedPageSeo` + `t()` for titles.
+- **#13:** Splash uses image assets; no hardcoded `LOADING....` string in `SplashScreen.vue`.
+- **#14:** `useAudio` `playSuccess` no longer throws when `AudioContext` is missing (early return).
+- **#16:** `useIndexedDB` `openDB` now has `blocking()` to drop stale connection on version change.
+- **#4:** `useErrorSync` still uses `console.*` by design — documented circular dependency with `useLogger`.
+- **#7 / #8 / #9 / #11 / #15 / #17–#20:** Not changed this pass; pick up in a follow-up commit.
+
 ## High Priority
 
 ### 4. Raw console.\* calls bypass useLogger

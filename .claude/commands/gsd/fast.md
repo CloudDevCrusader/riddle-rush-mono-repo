@@ -1,7 +1,7 @@
 ---
 name: gsd:fast
 description: Execute a trivial task inline — no subagents, no planning overhead
-argument-hint: '[task description]'
+argument-hint: "[task description]"
 allowed-tools:
   - Read
   - Write

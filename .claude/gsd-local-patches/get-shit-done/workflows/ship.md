@@ -25,6 +25,17 @@ CONFIG=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-sh
 ```
 
 Extract: `branching_strategy`, `branch_name`.
+
+Detect base branch for PRs and merges:
+
+```bash
+BASE_BRANCH=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/bin/gsd-tools.cjs" config-get git.base_branch 2>/dev/null || echo "")
+if [ -z "$BASE_BRANCH" ] || [ "$BASE_BRANCH" = "null" ]; then
+  BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|^refs/remotes/origin/||')
+  BASE_BRANCH="${BASE_BRANCH:-main}"
+fi
+```
+
 </step>
 
 <step name="preflight_checks">
@@ -53,7 +64,7 @@ Verify the work is ready to ship:
    CURRENT_BRANCH=$(git branch --show-current)
    ```
 
-   If on `main`/`master`: warn — should be on a feature branch.
+   If on `${BASE_BRANCH}`: warn — should be on a feature branch.
    If branching_strategy is `none`: offer to create a branch now.
 
 4. **Remote configured?**
@@ -84,7 +95,7 @@ If push fails (e.g., no upstream): set upstream:
 git push --set-upstream origin ${CURRENT_BRANCH} 2>&1
 ```
 
-Report: "Pushed `{branch}` to origin ({commit_count} commits ahead of main)"
+Report: "Pushed `{branch}` to origin ({commit_count} commits ahead of ${BASE_BRANCH})"
 </step>
 
 <step name="generate_pr_body">
@@ -159,7 +170,7 @@ Create the PR using the generated body:
 gh pr create \
   --title "Phase ${PHASE_NUMBER}: ${PHASE_NAME}" \
   --body "${PR_BODY}" \
-  --base main
+  --base ${BASE_BRANCH}
 ```
 
 If `--draft` flag was passed: add `--draft`.
@@ -215,7 +226,7 @@ node "/Users/markuswagner/projects/riddle-rush-mono-repo/.claude/get-shit-done/b
 ## ✓ Phase {X}: {Name} — Shipped
 
 PR: #{number} ({url})
-Branch: {branch} → main
+Branch: {branch} → ${BASE_BRANCH}
 Commits: {count}
 Verification: ✓ Passed
 Requirements: {N} REQ-IDs addressed
@@ -224,8 +235,8 @@ Next steps:
 
 - Review/approve PR
 - Merge when CI passes
-- /gsd:complete-milestone (if last phase in milestone)
-- /gsd:progress (to see what's next)
+- /gsd-complete-milestone (if last phase in milestone)
+- /gsd-progress (to see what's next)
 
 ───────────────────────────────────────────────────────────────
 
@@ -237,9 +248,9 @@ Next steps:
 <offer_next>
 After shipping:
 
-- /gsd:complete-milestone — if all phases in milestone are done
-- /gsd:progress — see overall project state
-- /gsd:execute-phase {next} — continue to next phase
+- /gsd-complete-milestone — if all phases in milestone are done
+- /gsd-progress — see overall project state
+- /gsd-execute-phase {next} — continue to next phase
 </offer_next>
 
 <success_criteria>

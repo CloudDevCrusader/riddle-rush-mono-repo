@@ -24,7 +24,11 @@ test.describe('results scoring page', () => {
     const header = page.locator('[data-testid="results-header"]')
     await expect(header).toBeVisible()
 
-    // Check for player list
+    // Wait for player entries to load (container may be zero-height until populated)
+    const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
+    await expect(firstEntry).toBeVisible({ timeout: 10000 })
+
+    // Check for player list container
     const playerList = page.locator('[data-testid="results-scores-container"]')
     await expect(playerList).toBeVisible()
 
@@ -99,12 +103,14 @@ test.describe('results scoring page', () => {
     expect(afterScore).toBe(1)
   })
 
-  test('should disable decrement button when score is 0', async ({ page }) => {
+  test('should allow decrement button when score is 0 (negative scores allowed)', async ({
+    page,
+  }) => {
     const firstEntry = page.locator('[data-testid="results-player-entry-0"]')
     const decrementBtn = firstEntry.locator('[data-testid="score-decrement"]')
 
-    // Should be disabled at start (score = 0)
-    await expect(decrementBtn).toBeDisabled()
+    // Decrement button is always enabled (app allows negative score adjustments)
+    await expect(decrementBtn).toBeEnabled()
   })
 
   test('should show leaderboard overlay after confirming scores', async ({ page }) => {

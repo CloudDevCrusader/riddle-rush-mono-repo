@@ -2,14 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0.3
 milestone_name: milestone
-status: Milestone Complete
-stopped_at: Completed 21-09-PLAN.md (all 70 plans done — milestone complete)
-last_updated: '2026-03-24T02:35:00.000Z'
+status: Phase 23 complete — all 4 plans executed, verification passed
+stopped_at: Phase 23 fully complete (all gates passed)
+last_updated: '2026-04-11T16:52:45.000Z'
 progress:
-  total_phases: 21
-  completed_phases: 21
-  total_plans: 70
-  completed_plans: 70
+  total_phases: 24
+  completed_phases: 23
+  total_plans: 77
+  completed_plans: 78
+  percent: 100
 ---
 
 # Project State
@@ -19,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Every screen in the app must visually match its corresponding mockup at 1080×1920 base resolution while scaling responsively to all screen sizes.
-**Current focus:** Phase 21 — refactor-and-fix-e2e-and-unit-tests
+**Current focus:** Phase 23 COMPLETE — performance optimization, image fixes, font self-hosting, Lighthouse tooling
 
 ## Current Position
 
-Phase: 21 (refactor-and-fix-e2e-and-unit-tests) — COMPLETE
-Plan: 9 of 9 (all plans done)
+Phase: 23 (improve-performance-and-accessibility-find-out-why-there-are) — COMPLETE
+Plan: 4 of 4 — ALL DONE
 
 ## Performance Metrics
 
@@ -70,6 +71,13 @@ _Updated after each plan completion_
 | Phase 21 P05 | 8 | 4 tasks | 8 files |
 | Phase 21 P06 | 8 | 2 tasks | 3 files |
 | Phase 21 P08 | 8 | 3 tasks | 2 files |
+| Phase 22 P01 | 45m | 3 tasks | 7 files |
+| Phase 22 P02 | 70m | 2 tasks | 5 files |
+| Phase 22 P03 | 40m | 2 tasks | 3 files |
+| Phase 23 P01 | 15min | 2 tasks | 1 files |
+| Phase 23 P02 | 1min | 2 tasks | 0 files |
+| Phase 23 P03 | 2min | 2 tasks | 0 files |
+| Phase 23 P04 | 8min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -78,6 +86,8 @@ _Updated after each plan completion_
 - Phase 18 added: enable fortune-wheel as default review/refactor if implementation works and looks good
 - Phase 19 added: Move from Pinia to Zustand
 - Phase 21 added: Refactor and fix E2E and unit tests
+- Phase 22 added: Add fortune wheel for alphabet selection using vue-fortunewheel
+- Phase 23 added: Improve performance and accessibility. Find out why there are images on prod that can not be loaded
 
 ### Decisions
 
@@ -167,15 +177,27 @@ Recent decisions affecting current work:
 - [Phase 21]: Expose useLogger on globalThis for integration tests instead of vi.mock since useWebSocket uses it as Nuxt auto-import (no explicit import)
 - [Phase 21]: Extend vitest include to tests/integration/\*_/_.spec.ts in vitest.config.ts rather than a separate config file
 - [Phase 21]: GameFlowState in gameStore.ts is already the single source of truth — no new type needed
+- [Phase 22]: Use adapter validation boundary to emit only trusted categoryId+letter payloads from wheel wrapper.
+- [Phase 22]: Round-start route keeps startConfiguredRound as sole orchestration API; wheel wrapper remains side-effect free.
+- [Phase 22]: Phase verification captures command-level evidence in 22-E2E-VERIFICATION.md with explicit pass-rate reporting.
+- [Phase 23]: Lighthouse baseline captured against production (riddlerush.de) for real-world accuracy; Task 1 pre-satisfied from research phase
+- [Phase 23]: Plan 23-02 pre-satisfied: all asset path canonicalization, dead helper removal, and NuxtImg replacement were already in codebase
+- [Phase 23]: Plan 23-03 pre-satisfied: asset cleanup, filename normalization, WebP pipeline, and lazy-loading policy were already in codebase
+- [Phase 23]: All Plan 23-04 code changes pre-satisfied; verified and documented rather than re-implemented
 
 ### Pending Todos
+
+_File moves and parallel plan: `.planning/todos/TODOS-PARALLEL-EXECUTION-PLAN.md`_
 
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~352 lines) for further simplification and bug risk.
-- **[New]** Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
-- **[New]** Test and fix full game workflow with multi-round scoring (modal 3 options, predicted rank, answer input feature flag).
-- ~~Refactor game mode to single source of truth with documented state flow chart.~~ Done (18-05) — flow state bug fixed, duplicate guards removed, state-flow doc created.
+- Investigate and fix intermittent `nuxi typecheck` error related to `@vite-pwa/nuxt`.
+- Add polished animations throughout the app (incremental PRs; see todo in `.planning/todos/pending/`).
+- Research and select feature-flag provider strategy (todo in `pending/`).
+- Burn down remaining `code-review-2026-03-08.md` items (see file header for 2026-04-11 progress).
+- **Remaining:** audit `navigateTo` / full reload usage and simplify `game-flow.ts` workarounds now that results page has session loading + empty-state guard (todo `2026-04-11-review-code-optimize-weak-points-minimize-page-reloads-in-ga.md`).
+- Audit Figma mockups against the app and close design gaps (see `.planning/todos/pending/2026-04-11-audit-figma-mockups-and-implement-design-gaps.md`).
 
 ### Completed Todos (2026-02-14)
 
@@ -193,23 +215,21 @@ Recent decisions affecting current work:
 
 ### Quick Tasks Completed
 
-| #          | Description                                         | Date       | Commit    | Directory                                                                                                           |
-| ---------- | --------------------------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
-| 001        | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/)               |
-| 002        | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)                 |
-| 003        | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                                   |
-| 004        | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                                |
-| 005        | Fix crypto.randomUUID TypeError on Safari           | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/)               |
-| 006        | Hide answer display when feature flag disabled      | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/)               |
-| 007        | Fix page reload on game start causing wrong player  | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)                   |
-| 008        | Fix i18n and score display bugs                     | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                                     |
-| 260331-vtk | Fix round-start: redirect, spinner, inline results  | 2026-03-31 | 89c4fe323 | [260331-vtk-fix-round-start-redirect-not-working-sec](./quick/260331-vtk-fix-round-start-redirect-not-working-sec/) |
+| #   | Description                                         | Date       | Commit    | Directory                                                                                             |
+| --- | --------------------------------------------------- | ---------- | --------- | ----------------------------------------------------------------------------------------------------- |
+| 001 | Fix Docker image and push working version to GitHub | 2026-02-14 | 47e0140   | [001-fix-docker-image-and-push-working-versio](./quick/001-fix-docker-image-and-push-working-versio/) |
+| 002 | Fix missing i18n keys and i18n lazy-load race       | 2026-02-19 | 402088fa1 | [002-fix-missing-i18n-keys-and-investigate-in](./quick/2-fix-missing-i18n-keys-and-investigate-in/)   |
+| 003 | Host Tolgee on AWS EC2                              | 2026-02-19 | 9d80b2f   | [003-host-tolgee-on-aws-ec2](./quick/003-host-tolgee-on-aws-ec2/)                                     |
+| 004 | Update all dependencies to latest versions          | 2026-02-20 | ca3745379 | [004-update-all-dependencies](./quick/004-update-all-dependencies-including-to-loc/)                  |
+| 005 | Fix crypto.randomUUID TypeError on Safari           | 2026-03-04 | 82540829a | [005-fix-crypto-randomuuid-not-a-function-err](./quick/005-fix-crypto-randomuuid-not-a-function-err/) |
+| 006 | Hide answer display when feature flag disabled      | 2026-03-04 | 7cc79e5a2 | [006-hide-answer-input-and-related-ui-when-fe](./quick/006-hide-answer-input-and-related-ui-when-fe/) |
+| 007 | Fix page reload on game start causing wrong player  | 2026-03-08 | f205f0de3 | [7-fix-page-reload-on-game-start-causing-wr](./quick/7-fix-page-reload-on-game-start-causing-wr/)     |
+| 008 | Fix i18n and score display bugs                     | 2026-03-08 | 87653cc8d | [8-fix-i18n-and-score-display-bugs](./quick/8-fix-i18n-and-score-display-bugs/)                       |
 
 ## Session Continuity
 
-Last activity: 2026-03-31 - Completed quick task 260331-vtk: fix round-start redirect, spinner, inline results
-Last session: 2026-03-31T20:54:40.614Z
-Stopped at: Quick task 260331-vtk complete
+Last session: 2026-04-11 (resume via /gsd-resume-work)
+Stopped at: Session resumed — Phase 23 complete; awaiting next action from user
 Resume file: None
 
 ### Deployment: development
@@ -235,14 +255,28 @@ Resume file: None
 
 ### Deployment: development
 
-- **Version:** 1.5.0
-- **Timestamp:** 20260325-023642
+- **Version:** 1.4.3
+- **Timestamp:** 20260409-235815
+- **Branch:** release/v1.4.3
+- **Commit:** 2cea4935f
+
+### Deployment: development
+
+- **Version:** 1.4.3
+- **Timestamp:** 20260410-001240
+- **Branch:** release/v1.4.3
+- **Commit:** 97c5d80d7
+
+### Deployment: development
+
+- **Version:** 1.4.3
+- **Timestamp:** 20260411-013743
 - **Branch:** main
-- **Commit:** e5ddd0e9c
+- **Commit:** bf3f2d051
 
 ### Deployment: development
 
 - **Version:** 1.5.0
-- **Timestamp:** 20260327-202550
-- **Branch:** development
-- **Commit:** 9fd946e55
+- **Timestamp:** 20260411-064416
+- **Branch:** main
+- **Commit:** 10867ce10

@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/primary.swiftdeps"
+  },
+  "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/Tests/NativeConfigTests/CapacitorConfigTests.swift": {
+    "dependencies": "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.d",
+    "object": "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.swift.o",
+    "swiftmodule": "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.swiftdeps",
+    "diagnostics": "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.dia"
+  }
+}

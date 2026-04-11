@@ -1,6 +1,9 @@
 /**
  * Error Synchronization Utility
  * Syncs error logs to CloudWatch and other services
+ *
+ * Note: Avoid useLogger() here — useLogger.error() calls syncErrorLog, which would
+ * recurse. Use guarded console.* only for pipeline bootstrap failures.
  */
 
 import { openDB } from 'idb'

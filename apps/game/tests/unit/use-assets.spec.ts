@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 // Create a mock for useRuntimeConfig BEFORE any modules import it
 const mockUseRuntimeConfig = vi.fn(() => ({
@@ -83,6 +85,17 @@ describe('useAssets', () => {
       expect(result).toBe('/test-base/folder/subfolder/image.png')
     })
 
+    it('should prefix canonical assets path for relative and slash-prefixed paths', () => {
+      const assets = useAssets()
+
+      expect(assets.getAssetPath('assets/splash/logo.png')).toBe(
+        '/test-base/assets/splash/logo.png'
+      )
+      expect(assets.getAssetPath('/assets/splash/logo.png')).toBe(
+        '/test-base/assets/splash/logo.png'
+      )
+    })
+
     it('should handle empty string', () => {
       const assets = useAssets()
 
@@ -109,23 +122,6 @@ describe('useAssets', () => {
     })
   })
 
-  describe('getGameAsset', () => {
-    it('should return game asset path', () => {
-      const assets = useAssets()
-
-      const result = assets.getGameAsset('character.png')
-
-      expect(result).toBe('/test-base/assets/game/character.png')
-    })
-
-    it('should handle different game asset filenames', () => {
-      const assets = useAssets()
-
-      expect(assets.getGameAsset('tile.png')).toBe('/test-base/assets/game/tile.png')
-      expect(assets.getGameAsset('sprite.gif')).toBe('/test-base/assets/game/sprite.gif')
-    })
-  })
-
   describe('getSettingsAsset', () => {
     it('should return settings asset path', () => {
       const assets = useAssets()
@@ -143,20 +139,41 @@ describe('useAssets', () => {
     })
   })
 
-  describe('getIconAsset', () => {
-    it('should return icon asset path', () => {
+  describe('getSplashAsset', () => {
+    it('should return splash asset path', () => {
       const assets = useAssets()
+      expect(assets.getSplashAsset('logo.png')).toBe('/test-base/assets/splash/logo.png')
+    })
+  })
 
-      const result = assets.getIconAsset('star.svg')
+  describe('getAlphabetAsset', () => {
+    it('should return alphabet asset path', () => {
+      const assets = useAssets()
+      expect(assets.getAlphabetAsset('A.png')).toBe('/test-base/assets/alphabets/A.png')
+    })
+  })
 
-      expect(result).toBe('/test-base/assets/icons/star.svg')
+  describe('getPlayersAsset', () => {
+    it('should return players asset path', () => {
+      const assets = useAssets()
+      expect(assets.getPlayersAsset('avatar.png')).toBe('/test-base/assets/players/avatar.png')
+    })
+  })
+
+  describe('source contracts', () => {
+    it('should not reference dead assets/icons or assets/game helper paths', () => {
+      const sourcePath = resolve(process.cwd(), 'composables/useAssets.ts')
+      const source = readFileSync(sourcePath, 'utf-8')
+
+      expect(source).not.toContain('assets/icons/')
+      expect(source).not.toContain('assets/game/')
     })
 
-    it('should handle different icon asset filenames', () => {
-      const assets = useAssets()
+    it('should not define a duplicate getAssetPath in usePageSetup', () => {
+      const sourcePath = resolve(process.cwd(), 'composables/usePageSetup.ts')
+      const source = readFileSync(sourcePath, 'utf-8')
 
-      expect(assets.getIconAsset('heart.svg')).toBe('/test-base/assets/icons/heart.svg')
-      expect(assets.getIconAsset('trophy.png')).toBe('/test-base/assets/icons/trophy.png')
+      expect(source).not.toContain('const getAssetPath =')
     })
   })
 
@@ -184,6 +201,42 @@ describe('useAssets', () => {
       instances[0]!.onerror?.(error)
 
       await expect(promise).rejects.toThrow('Load failed')
+    })
+
+    it('should resolve when Image is not available', async () => {
+      const assets = useAssets()
+      // Make Image throw on construction AND on function call
+      vi.stubGlobal('Image', null)
+
+      await expect(assets.preloadImage('/test/image.png')).resolves.toBeUndefined()
+    })
+
+    it('should fall back to function call when constructor throws', async () => {
+      const assets = useAssets()
+      const instances: MockImageElement[] = []
+
+      // First `new Image()` throws, then fallback `Image()` works
+      let callCount = 0
+      const fakeFn = function (this: MockImageElement) {
+        callCount++
+        const img: MockImageElement = { src: '', onload: null, onerror: null }
+        instances.push(img)
+        return img
+      }
+      // Make it throw when called with `new`
+      Object.defineProperty(fakeFn, Symbol.hasInstance, { value: () => true })
+      const throwingCtor = new Proxy(fakeFn, {
+        construct() {
+          throw new Error('not a constructor')
+        },
+      })
+      vi.stubGlobal('Image', throwingCtor)
+
+      const promise = assets.preloadImage('/test/fallback.png')
+      instances[0]!.onload?.()
+
+      await expect(promise).resolves.toBeUndefined()
+      expect(instances[0]!.src).toBe('/test/fallback.png')
     })
   })
 
@@ -237,16 +290,18 @@ describe('useAssets', () => {
       expect(assets).toHaveProperty('baseUrl')
       expect(assets).toHaveProperty('getAssetPath')
       expect(assets).toHaveProperty('getMenuAsset')
-      expect(assets).toHaveProperty('getGameAsset')
+      expect(assets).toHaveProperty('getSplashAsset')
       expect(assets).toHaveProperty('getSettingsAsset')
-      expect(assets).toHaveProperty('getIconAsset')
+      expect(assets).toHaveProperty('getAlphabetAsset')
+      expect(assets).toHaveProperty('getPlayersAsset')
       expect(assets).toHaveProperty('preloadImage')
       expect(assets).toHaveProperty('preloadImages')
       expect(typeof assets.getAssetPath).toBe('function')
       expect(typeof assets.getMenuAsset).toBe('function')
-      expect(typeof assets.getGameAsset).toBe('function')
+      expect(typeof assets.getSplashAsset).toBe('function')
       expect(typeof assets.getSettingsAsset).toBe('function')
-      expect(typeof assets.getIconAsset).toBe('function')
+      expect(typeof assets.getAlphabetAsset).toBe('function')
+      expect(typeof assets.getPlayersAsset).toBe('function')
       expect(typeof assets.preloadImage).toBe('function')
       expect(typeof assets.preloadImages).toBe('function')
     })

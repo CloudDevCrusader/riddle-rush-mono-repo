@@ -3,6 +3,10 @@
     "Tabby MCP": {
       "type": "streamable_http",
       "url": "http://localhost:3001/mcp"
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
     }
   }
 }
