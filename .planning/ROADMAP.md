@@ -598,3 +598,25 @@ Plans:
 - [x] 22-01-PLAN.md — Add wheel dependency, typed selection adapter, reusable FortuneAlphabetWheel component, and unit tests
 - [x] 22-02-PLAN.md — Integrate FortuneAlphabetWheel into /round-start and align game-flow helper orchestration
 - [x] 22-03-PLAN.md — Harden E2E coverage for wheel flow and produce phase verification report
+
+### Phase 23: Improve performance and accessibility. Find out why there are images on prod that can not be loaded
+
+**Goal:** Improve runtime performance and production asset reliability by removing dead image payload, fixing static image delivery paths, self-hosting fonts, and enforcing measurable Lighthouse benchmarking.
+**Requirements**: PERF-01, PERF-02, PERF-03, PERF-04
+**Depends on:** Phase 22
+**Plans:** 4 plans
+
+**Success Criteria** (what must be TRUE):
+
+1. Production image references no longer generate broken `/_ipx` URLs on static deployment and all targeted screens load their assets correctly.
+2. Unreferenced legacy images are removed from shipped assets and remaining referenced assets are normalized + optimized (WebP pipeline in place).
+3. Google Fonts CDN runtime dependency is removed; fonts are self-hosted with stable fallback metrics.
+4. Lighthouse baseline and final reports are captured; final scores target 90+ across Performance, Accessibility, Best Practices, and SEO.
+5. Initial JS + asset footprint is reduced with documented before/after metrics.
+
+Plans:
+
+- [ ] 23-01-PLAN.md — Add Lighthouse tooling and capture baseline metrics before optimization
+- [ ] 23-02-PLAN.md — Consolidate asset path handling and fix static image rendering contracts
+- [ ] 23-03-PLAN.md — Remove dead assets, normalize filenames, and run WebP optimization pipeline
+- [ ] 23-04-PLAN.md — Self-host fonts, lazy-load non-critical overlays, and capture final performance results
