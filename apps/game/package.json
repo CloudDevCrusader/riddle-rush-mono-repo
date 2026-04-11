@@ -44,7 +44,7 @@
     "@unocss/nuxt": "^66.6.8",
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
     "@vitejs/plugin-vue": "^6.0.5",
-    "@vitest/coverage-v8": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.4",
     "@vitest/ui": "^4.1.2",
     "@vue/test-utils": "^2.4.6",
     "@vueuse/motion": "^3.0.3",
@@ -70,7 +70,7 @@
     "vite-plugin-inspect": "^11.3.3",
     "vite-plugin-vue-devtools": "^8.1.1",
     "vite-plugin-vue-inspector": "^5.4.0",
-    "vitest": "^4.1.2",
+    "vitest": "^4.1.4",
     "vue-tsc": "^3.2.6",
     "zod": "^4.3.6"
   },
