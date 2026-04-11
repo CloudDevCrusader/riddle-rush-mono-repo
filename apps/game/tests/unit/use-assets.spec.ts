@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 // Create a mock for useRuntimeConfig BEFORE any modules import it
 const mockUseRuntimeConfig = vi.fn(() => ({
@@ -83,6 +85,17 @@ describe('useAssets', () => {
       expect(result).toBe('/test-base/folder/subfolder/image.png')
     })
 
+    it('should prefix canonical assets path for relative and slash-prefixed paths', () => {
+      const assets = useAssets()
+
+      expect(assets.getAssetPath('assets/splash/logo.png')).toBe(
+        '/test-base/assets/splash/logo.png'
+      )
+      expect(assets.getAssetPath('/assets/splash/logo.png')).toBe(
+        '/test-base/assets/splash/logo.png'
+      )
+    })
+
     it('should handle empty string', () => {
       const assets = useAssets()
 
@@ -109,23 +122,6 @@ describe('useAssets', () => {
     })
   })
 
-  describe('getGameAsset', () => {
-    it('should return game asset path', () => {
-      const assets = useAssets()
-
-      const result = assets.getGameAsset('character.png')
-
-      expect(result).toBe('/test-base/assets/game/character.png')
-    })
-
-    it('should handle different game asset filenames', () => {
-      const assets = useAssets()
-
-      expect(assets.getGameAsset('tile.png')).toBe('/test-base/assets/game/tile.png')
-      expect(assets.getGameAsset('sprite.gif')).toBe('/test-base/assets/game/sprite.gif')
-    })
-  })
-
   describe('getSettingsAsset', () => {
     it('should return settings asset path', () => {
       const assets = useAssets()
@@ -143,20 +139,20 @@ describe('useAssets', () => {
     })
   })
 
-  describe('getIconAsset', () => {
-    it('should return icon asset path', () => {
-      const assets = useAssets()
+  describe('source contracts', () => {
+    it('should not reference dead assets/icons or assets/game helper paths', () => {
+      const sourcePath = resolve(process.cwd(), 'composables/useAssets.ts')
+      const source = readFileSync(sourcePath, 'utf-8')
 
-      const result = assets.getIconAsset('star.svg')
-
-      expect(result).toBe('/test-base/assets/icons/star.svg')
+      expect(source).not.toContain('assets/icons/')
+      expect(source).not.toContain('assets/game/')
     })
 
-    it('should handle different icon asset filenames', () => {
-      const assets = useAssets()
+    it('should not define a duplicate getAssetPath in usePageSetup', () => {
+      const sourcePath = resolve(process.cwd(), 'composables/usePageSetup.ts')
+      const source = readFileSync(sourcePath, 'utf-8')
 
-      expect(assets.getIconAsset('heart.svg')).toBe('/test-base/assets/icons/heart.svg')
-      expect(assets.getIconAsset('trophy.png')).toBe('/test-base/assets/icons/trophy.png')
+      expect(source).not.toContain('const getAssetPath =')
     })
   })
 
@@ -237,16 +233,12 @@ describe('useAssets', () => {
       expect(assets).toHaveProperty('baseUrl')
       expect(assets).toHaveProperty('getAssetPath')
       expect(assets).toHaveProperty('getMenuAsset')
-      expect(assets).toHaveProperty('getGameAsset')
       expect(assets).toHaveProperty('getSettingsAsset')
-      expect(assets).toHaveProperty('getIconAsset')
       expect(assets).toHaveProperty('preloadImage')
       expect(assets).toHaveProperty('preloadImages')
       expect(typeof assets.getAssetPath).toBe('function')
       expect(typeof assets.getMenuAsset).toBe('function')
-      expect(typeof assets.getGameAsset).toBe('function')
       expect(typeof assets.getSettingsAsset).toBe('function')
-      expect(typeof assets.getIconAsset).toBe('function')
       expect(typeof assets.preloadImage).toBe('function')
       expect(typeof assets.preloadImages).toBe('function')
     })
