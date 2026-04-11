@@ -199,6 +199,7 @@ Recent decisions affecting current work:
 - **[New]** Fix remaining E2E failures in language.spec.ts (~12 tests) — UI/testid mismatches (missing credits-title-image, language-flag-_, menu-item-_ elements).
 - **[New]** Fix remaining E2E failures in scoring-flow.spec.ts (~4 tests) — wrong testid names (player-leaderboard-overlay, next-round don't exist in app).
 - **[New]** Add polished animations throughout the app (page transitions, micro-interactions, component mounts, game flow moments).
+- **[New]** Review code, optimize weak points, minimize page reloads in game flow (async hydration races, unnecessary navigateTo reloads, missing v-if guards on async data).
 
 ### Completed Todos (2026-02-14)
 
