@@ -537,8 +537,6 @@ export default defineNuxtConfig({
       navigateFallback: '/',
       navigateFallbackAllowlist: [/^\/(?!api\/)/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2,json}'],
-      // Allow larger files to be precached (main bundle can exceed 5MB due to
-      // circular dependency constraints preventing manual chunk splitting)
       maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MiB
       // Performance: Optimize cache strategies
       cleanupOutdatedCaches: true,
