@@ -1,7 +1,7 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.101",
     "@changesets/cli": "^2.30.0",
@@ -183,11 +183,14 @@
       "serialize-javascript@<=7.0.2": "^7.0.3"
     },
     "onlyBuiltDependencies": [
+      "appium",
+      "appium-ios-tuntap",
       "better-sqlite3",
       "core-js-pure",
+      "edgedriver",
       "esbuild",
+      "geckodriver",
       "protobufjs",
-      "puppeteer",
       "yarn"
     ],
     "ignoredBuiltDependencies": [
