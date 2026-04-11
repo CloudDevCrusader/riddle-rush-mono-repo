@@ -491,6 +491,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 19. Pinia to Zustand Migration        | 3/3            | Complete    | 2026-03-22 |
 | 20. Revert Zustand to Pinia           | 3/3            | Complete    | 2026-03-23 |
 | 21. Refactor and Fix E2E & Unit Tests | 10/11          | In Progress |            |
+| 22. Fortune Wheel Alphabet Selection  | 3/3            | Complete    | 2026-04-10 |
+| 23. Performance & Accessibility       | 4/4            | Complete    | 2026-04-11 |
 
 ### Phase 20: Revert Zustand to Pinia
 
@@ -604,7 +606,7 @@ Plans:
 **Goal:** Improve runtime performance and production asset reliability by removing dead image payload, fixing static image delivery paths, self-hosting fonts, and enforcing measurable Lighthouse benchmarking.
 **Requirements**: PERF-01, PERF-02, PERF-03, PERF-04
 **Depends on:** Phase 22
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 **Success Criteria** (what must be TRUE):
 
@@ -619,4 +621,4 @@ Plans:
 - [x] 23-01-PLAN.md — Add Lighthouse tooling and capture baseline metrics before optimization
 - [x] 23-02-PLAN.md — Consolidate asset path handling and fix static image rendering contracts
 - [x] 23-03-PLAN.md — Remove dead assets, normalize filenames, and run WebP optimization pipeline
-- [ ] 23-04-PLAN.md — Self-host fonts, lazy-load non-critical overlays, and capture final performance results
+- [x] 23-04-PLAN.md — Self-host fonts, lazy-load non-critical overlays, and capture final performance results
