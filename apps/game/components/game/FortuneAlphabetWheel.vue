@@ -5,7 +5,9 @@
         <FortuneWheel
           ref="wheelRef"
           :verify="true"
+          :use-weight="true"
           :disabled="isSpinning || !hasSegments"
+          :canvas="wheelCanvasOptions"
           :prizes="wheelPrizes"
           :prize-id="targetPrizeId"
           @rotate-start="onRotateStart"
@@ -54,8 +56,30 @@ import { useFortuneWheelSelection } from '~/composables/useFortuneWheelSelection
 
 interface WheelPrize {
   id: number
+  name: string
   value: string
   weight: number
+  bgColor: string
+  color: string
+}
+
+/** Canvas wedge colors — vue-fortune-wheel draws `name` / `bgColor` / `color` in canvas mode. */
+const WHEEL_SEGMENT_PALETTE: ReadonlyArray<{ bg: string; fg: string }> = [
+  { bg: '#0b7ad6', fg: '#ffffff' },
+  { bg: '#5fc423', fg: '#0b3b76' },
+  { bg: '#44c8ff', fg: '#0b3b76' },
+  { bg: '#ff9500', fg: '#ffffff' },
+  { bg: '#9bb6da', fg: '#0b3b76' },
+  { bg: '#ffd54f', fg: '#0b3b76' },
+]
+
+const wheelCanvasOptions = {
+  borderColor: 'rgba(255, 213, 79, 0.55)',
+  borderWidth: 4,
+  btnText: ' ',
+  fontSize: 28,
+  textLength: 8,
+  lineHeight: 22,
 }
 
 interface RotateStartCallback {
@@ -80,7 +104,7 @@ const { mapCategoriesToSegments, validateSelection } = useFortuneWheelSelection(
 
 const wheelRef = ref<WheelRef | null>(null)
 const isSpinning = ref(false)
-const targetPrizeId = ref(0)
+const targetPrizeId = ref(1)
 const pendingSegment = ref<FortuneWheelSegment | null>(null)
 const pendingSelection = ref<FortuneWheelSelection | null>(null)
 const fallbackTimer = ref<ReturnType<typeof setTimeout> | null>(null)
@@ -89,11 +113,33 @@ const segments = computed(() => mapCategoriesToSegments(props.categories, props.
 const hasSegments = computed(() => segments.value.length > 0)
 
 const wheelPrizes = computed<WheelPrize[]>(() =>
-  segments.value.map((segment) => ({
-    id: segment.id,
-    value: `${segment.categoryName} · ${segment.letter}`,
-    weight: segment.weight ?? 1,
-  }))
+  segments.value.map((segment, index) => {
+    const { bg, fg } = WHEEL_SEGMENT_PALETTE[index % WHEEL_SEGMENT_PALETTE.length]!
+    const shortLabel =
+      segment.categoryName.length > 14
+        ? `${segment.categoryName.slice(0, 12)}…`
+        : segment.categoryName
+    return {
+      id: segment.id,
+      name: `${segment.letter}\n${shortLabel}`,
+      value: `${segment.categoryName} · ${segment.letter}`,
+      weight: segment.weight ?? 1,
+      bgColor: bg,
+      color: fg,
+    }
+  })
+)
+
+watch(
+  () => segments.value,
+  (next) => {
+    if (!next.length) return
+    const valid = next.some((s) => s.id === targetPrizeId.value)
+    if (!valid) {
+      targetPrizeId.value = next[0]!.id
+    }
+  },
+  { immediate: true }
 )
 
 const selectedCategoryLabel = computed(() => {
@@ -199,6 +245,21 @@ onBeforeUnmount(() => {
 .selection-row {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-md);
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-base), 2.8vw, var(--font-size-xl));
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  text-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.45),
+    0 0 12px rgba(11, 59, 118, 0.35);
+}
+
+.selection-row strong {
+  font-weight: var(--font-weight-black);
+  color: var(--color-white);
+  text-align: right;
 }
 
 .fortune-wheel-actions {
