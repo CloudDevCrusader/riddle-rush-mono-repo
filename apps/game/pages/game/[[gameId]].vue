@@ -51,32 +51,40 @@
 
     <!-- Main Game Area -->
     <div class="game-container">
-      <!-- Category Panel -->
-      <div class="category-panel" data-testid="game-category-info">
-        <img
-          :src="getAssetPath('assets/alphabets/category.png')"
-          :alt="t('common.category')"
-          class="category-label-image"
-          loading="lazy"
-          width="200"
-          height="50"
-        />
-        <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
-        <div class="category-name">
-          {{
-            currentCategory
-              ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
-              : t('common.loading')
-          }}
-        </div>
-      </div>
+      <Transition name="round-reveal" appear mode="out-in">
+        <div v-if="currentCategory" :key="roundRevealKey" class="round-reveal-stack">
+          <!-- Category Panel -->
+          <div class="category-panel" data-testid="game-category-info">
+            <img
+              :src="getAssetPath('assets/alphabets/category.png')"
+              :alt="t('common.category')"
+              class="category-label-image"
+              loading="lazy"
+              width="200"
+              height="50"
+            />
+            <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
+            <div class="category-name">
+              <span
+                class="category-name__emoji"
+                data-testid="game-category-emoji"
+                aria-hidden="true"
+                >{{ currentCategoryEmoji }}</span
+              >
+              <span class="category-name__text">{{
+                t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
+              }}</span>
+            </div>
+          </div>
 
-      <!-- Large Letter Display -->
-      <div class="letter-display" data-testid="game-letter-info">
-        <span class="letter-value">
-          {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
-        </span>
-      </div>
+          <!-- Large Letter Display -->
+          <div class="letter-display" data-testid="game-letter-info">
+            <span class="letter-value">
+              {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
+            </span>
+          </div>
+        </div>
+      </Transition>
 
       <!-- Player Turn Section (for multiplayer) -->
       <div
@@ -228,6 +236,15 @@ const formattedRound = computed(() => {
   const round = currentRound.value || 1
   return round.toString().padStart(2, '0')
 })
+
+const roundRevealKey = computed(
+  () =>
+    `${currentCategory.value?.id ?? '0'}-${(currentLetter.value ?? '').toString().toUpperCase()}`
+)
+
+const currentCategoryEmoji = computed(() =>
+  currentCategory.value ? gameStore.categoryEmoji(currentCategory.value.name) : ''
+)
 
 const goHome = () => {
   navigateToHome()
@@ -539,6 +556,36 @@ useLocalizedPageSeo({
   min-height: 0; /* Allow flex shrinking */
 }
 
+.round-reveal-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: var(--spacing-3xl);
+}
+
+.round-reveal-enter-active {
+  transition:
+    opacity 0.48s ease,
+    transform 0.52s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.round-reveal-leave-active {
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+
+.round-reveal-enter-from {
+  opacity: 0;
+  transform: translateY(-18px) scale(0.93);
+}
+
+.round-reveal-leave-to {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+}
+
 /* Category Panel - Two-part design matching mockup */
 .category-panel {
   width: 100%;
@@ -606,10 +653,27 @@ useLocalizedPageSeo({
 .category-name {
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  text-align: center;
+}
+
+.category-name__emoji {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.category-name__text {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 6vw, 3.5rem);
   font-weight: var(--font-weight-black);
-  /* Gold 3D text effect */
   color: #d4a017;
   text-shadow:
     -2px -2px 0 #8b6914,
@@ -618,8 +682,6 @@ useLocalizedPageSeo({
     2px 2px 0 #8b6914,
     0 4px 0 #7a5c12,
     0 6px 8px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  padding: var(--spacing-lg) var(--spacing-xl);
   letter-spacing: 3px;
 }
 
@@ -941,8 +1003,16 @@ useLocalizedPageSeo({
   }
 
   .category-name {
-    font-size: clamp(1.8rem, 5vw, 2.5rem);
     padding: var(--spacing-md) var(--spacing-lg);
+    gap: var(--spacing-xs);
+  }
+
+  .category-name__emoji {
+    font-size: clamp(1.6rem, 5vw, 2.5rem);
+  }
+
+  .category-name__text {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
   }
 
   .letter-display {
@@ -1004,8 +1074,16 @@ useLocalizedPageSeo({
   }
 
   .category-name {
-    font-size: clamp(1.5rem, 4vw, 2rem);
     padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-xs);
+  }
+
+  .category-name__emoji {
+    font-size: clamp(1.35rem, 4vw, 1.85rem);
+  }
+
+  .category-name__text {
+    font-size: clamp(1.5rem, 4vw, 2rem);
   }
 
   .letter-value {

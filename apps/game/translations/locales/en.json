@@ -109,6 +109,7 @@
     "error_next_round": "Failed to start next round",
     "error_resuming": "Failed to load game. Starting fresh.",
     "error_starting": "Failed to start game. Please try again.",
+    "fortune_wheel_spin": "SPIN",
     "error_submitting": "Failed to submit answer",
     "game_ended": "Game ended! Check your statistics.",
     "go_to_scoring": "Go to Scoring",
@@ -242,6 +243,8 @@
     "sound": "Sound",
     "sound_disabled": "Sound disabled",
     "sound_enabled": "Sound enabled",
+    "fortune_wheel_redraw": "Confirm wheel result",
+    "fortune_wheel_redraw_hint": "When off, the game starts automatically after the spin. When on, tap OK and you can spin again for a new letter.",
     "system_default": "System Default",
     "theme": "Theme",
     "title": "Settings"
@@ -306,6 +309,7 @@
     "player": "Player",
     "points": "pts",
     "post_round_prompt": "What would you like to do next?",
+    "round_points": "This round",
     "round_complete": "Round Complete!",
     "title": "Scoring"
   },

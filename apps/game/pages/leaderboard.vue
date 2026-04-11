@@ -6,13 +6,6 @@
         {{ t('leaderboard.title', 'Leaderboard') }}
       </GameHeader>
 
-      <!-- Ranking subtitle panel -->
-      <GamePanel variant="blue" padding="sm">
-        <h2 class="leaderboard-page__subtitle">
-          {{ t('leaderboard.ranking', 'Ranking') }}
-        </h2>
-      </GamePanel>
-
       <!-- Ranked player list -->
       <GameScrollList :show-ranks="true" max-height="500px">
         <div
@@ -100,16 +93,6 @@ useLocalizedPageSeo({
   padding: var(--spacing-2xl) var(--spacing-md);
   min-height: 100vh;
   min-height: 100dvh;
-}
-
-.leaderboard-page__subtitle {
-  font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: white;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .leaderboard-action-shelf {

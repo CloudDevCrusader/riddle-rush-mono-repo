@@ -389,7 +389,10 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
   if (/\/round-start/.test(page.url())) {
     await expect(wheelContainer).toBeVisible({ timeout: 10000 })
     await expect(spinButton).toBeVisible({ timeout: 10000 })
-    await expect(confirmButton).toBeVisible({ timeout: 10000 })
+    const confirmVisible = await confirmButton.isVisible().catch(() => false)
+    if (confirmVisible) {
+      await expect(confirmButton).toBeVisible({ timeout: 10000 })
+    }
 
     await expect
       .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
@@ -403,10 +406,13 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
           if (/\/game/.test(page.url())) return 'game'
           if (await loadingState.isVisible().catch(() => false)) return 'loading'
           if (!(await confirmButton.isDisabled().catch(() => true))) return 'confirm-enabled'
-          if ((await selectedCategory.textContent().catch(() => '-')) !== '-')
-            return 'category-selected'
-          if ((await selectedLetter.textContent().catch(() => '-')) !== '-')
-            return 'letter-selected'
+
+          const catText = (await selectedCategory.textContent().catch(() => ''))?.trim() ?? ''
+          if (catText !== '-' && catText !== '—' && catText.length > 0) return 'category-selected'
+
+          const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? ''
+          if (/^[A-Z]$/.test(letterText)) return 'letter-selected'
+
           return 'waiting'
         },
         { timeout: 30000 }
@@ -414,28 +420,33 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
       .not.toBe('waiting')
 
     if (/\/round-start/.test(page.url())) {
-      for (let attempt = 0; attempt < 4; attempt++) {
-        if (/\/game/.test(page.url())) break
-        if (await loadingState.isVisible().catch(() => false)) break
+      const hasConfirm = await confirmButton.isVisible().catch(() => false)
+      if (!hasConfirm) {
+        await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
+      } else {
+        for (let attempt = 0; attempt < 4; attempt++) {
+          if (/\/game/.test(page.url())) break
+          if (await loadingState.isVisible().catch(() => false)) break
 
-        const confirmVisible = await confirmButton.isVisible().catch(() => false)
-        if (!confirmVisible) {
+          const confirmVisible = await confirmButton.isVisible().catch(() => false)
+          if (!confirmVisible) {
+            await page.waitForTimeout(300)
+            continue
+          }
+
+          const confirmDisabled = await confirmButton.isDisabled().catch(() => true)
+          if (confirmDisabled) {
+            await page.waitForTimeout(300)
+            continue
+          }
+
+          try {
+            await confirmButton.click({ timeout: 2000 })
+          } catch {
+            await confirmButton.click({ force: true, timeout: 1000 }).catch(() => {})
+          }
           await page.waitForTimeout(300)
-          continue
         }
-
-        const confirmDisabled = await confirmButton.isDisabled().catch(() => true)
-        if (confirmDisabled) {
-          await page.waitForTimeout(300)
-          continue
-        }
-
-        try {
-          await confirmButton.click({ timeout: 2000 })
-        } catch {
-          await confirmButton.click({ force: true, timeout: 1000 }).catch(() => {})
-        }
-        await page.waitForTimeout(300)
       }
     }
   }

@@ -170,6 +170,7 @@ const exportDebugInfo = () => {
       offlineMode: settings.offlineMode.value,
       language: settings.language.value,
       fortuneWheelEnabled: settings.fortuneWheelEnabled.value,
+      fortuneWheelAllowRedraw: settings.fortuneWheelAllowRedraw.value,
       answerInputEnabled: settings.answerInputEnabled.value,
     },
     stats: stats.value,

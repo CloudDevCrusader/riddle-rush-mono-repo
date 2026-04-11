@@ -1,10 +1,5 @@
 <template>
   <div class="layout-container">
-    <!-- Browser online/offline (no Socket.IO) -->
-    <div class="connection-indicator">
-      <NetworkStatusIndicator />
-    </div>
-
     <!-- Background Image (if provided by page) -->
     <img
       v-if="backgroundImage"

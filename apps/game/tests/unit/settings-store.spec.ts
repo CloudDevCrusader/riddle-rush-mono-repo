@@ -59,6 +59,11 @@ describe('Settings Store', () => {
       const store = settingsStore
       expect(store.fortuneWheelEnabled).toBe(true)
     })
+
+    it('allows fortune wheel redraw (confirm step) by default', () => {
+      const store = settingsStore
+      expect(store.fortuneWheelAllowRedraw).toBe(true)
+    })
   })
 
   describe('Getters', () => {
@@ -95,6 +100,14 @@ describe('Settings Store', () => {
       expect(settingsStore.fortuneWheelEnabled).toBe(true)
       settingsStore.updateSetting('fortuneWheelEnabled', false)
       expect(settingsStore.fortuneWheelEnabled).toBe(false)
+    })
+
+    it('toggleFortuneWheelAllowRedraw flips redraw flag', () => {
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(true)
+      settingsStore.toggleFortuneWheelAllowRedraw()
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(false)
+      settingsStore.toggleFortuneWheelAllowRedraw()
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(true)
     })
   })
 

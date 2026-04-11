@@ -1,5 +1,5 @@
 <template>
-  <div class="game-player-card">
+  <div class="game-player-card" :class="{ 'game-player-card--embedded': embedded }">
     <div class="game-player-card__info">
       <div v-if="label" class="game-player-card__label">
         {{ label }}
@@ -7,7 +7,11 @@
       <div class="game-player-card__name">
         {{ player.name }}
       </div>
-      <div v-if="showAnswer && player.currentRoundAnswer" class="game-player-card__answer">
+      <div
+        v-if="showAnswer && player.currentRoundAnswer"
+        class="game-player-card__answer"
+        :class="{ 'game-player-card__answer--pill': embedded }"
+      >
         {{ player.currentRoundAnswer }}
       </div>
     </div>
@@ -37,12 +41,15 @@ interface Props {
   showIndicator?: boolean
   /** Whether to show the player's answer */
   showAnswer?: boolean
+  /** Flat layout + mockup colors for scoring on blue gradient cards */
+  embedded?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   label: undefined,
   showIndicator: true,
   showAnswer: true,
+  embedded: false,
 })
 
 const indicatorVariant = computed(() => {
@@ -80,6 +87,21 @@ const formatScore = (score: number): string => {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  &--embedded {
+    align-items: flex-start;
+    padding: 0;
+    gap: var(--spacing-xs);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
   }
 }
 
@@ -119,6 +141,41 @@ const formatScore = (score: number): string => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  &--pill {
+    align-self: flex-start;
+    max-width: 100%;
+    margin-top: var(--spacing-xs);
+    padding: mockup-clamp(6px) mockup-clamp(14px);
+    font-family: var(--font-display);
+    font-size: var(--font-size-sm);
+    font-style: normal;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary-dark);
+    background: linear-gradient(180deg, #c8e8ff 0%, #9fd4ff 100%);
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    border-radius: var(--radius-full);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      0 2px 4px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.game-player-card--embedded .game-player-card__label {
+  font-size: mockup-clamp(16px);
+  color: var(--color-text-yellow);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35),
+    0 mockup-clamp(2px) 0 #7a5a12,
+    0 mockup-clamp(4px) mockup-clamp(6px) rgba(0, 0, 0, 0.35);
+}
+
+.game-player-card--embedded .game-player-card__name {
+  font-size: mockup-clamp(18px);
+  color: var(--color-text-white);
+  text-shadow: 0 mockup-clamp(2px) mockup-clamp(4px) rgba(0, 0, 0, 0.35);
 }
 
 .game-player-card__indicator {

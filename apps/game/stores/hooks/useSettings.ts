@@ -17,6 +17,7 @@ export function useSettings() {
     offlineMode: computed(() => store.offlineMode),
     language: computed(() => store.language),
     fortuneWheelEnabled: computed(() => store.fortuneWheelEnabled),
+    fortuneWheelAllowRedraw: computed(() => store.fortuneWheelAllowRedraw ?? true),
     answerInputEnabled: computed(() => store.answerInputEnabled),
 
     // Getters
@@ -32,6 +33,7 @@ export function useSettings() {
     toggleLeaderboard: store.toggleLeaderboard,
     toggleSound: store.toggleSound,
     toggleFortuneWheel: store.toggleFortuneWheel,
+    toggleFortuneWheelAllowRedraw: store.toggleFortuneWheelAllowRedraw,
     toggleAnswerInput: store.toggleAnswerInput,
     setOfflineMode: store.setOfflineMode,
     resetToDefaults: store.resetToDefaults,

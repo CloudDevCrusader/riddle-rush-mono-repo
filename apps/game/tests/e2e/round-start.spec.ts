@@ -30,18 +30,32 @@ test.describe('round-start page round-start', () => {
     await startGameFromPlayers(page)
   })
 
+  test('back button returns to players to fix names', async ({ page }) => {
+    await expect(page.locator('[data-testid="round-start-back-button"]')).toBeVisible({
+      timeout: 8000,
+    })
+    await page.locator('[data-testid="round-start-back-button"]').click()
+    await expect(page).toHaveURL(/\/players/, { timeout: 10000 })
+  })
+
   test('shows wheel interaction before transitioning to game', async ({ page }) => {
-    const roundIndicator = page.locator('[data-testid="round-indicator"]')
     const wheelContainer = page.locator('[data-testid="fortune-wheel-container"]')
     const legacyFlipContainer = page.locator('[data-testid="flip-container"]')
-
-    await expect(roundIndicator).toBeVisible()
-    await expect(roundIndicator).toContainText('1')
 
     await expect(wheelContainer).toBeVisible({ timeout: 8000 })
     await expect(legacyFlipContainer).toHaveCount(0)
     await expect(page.locator('[data-testid="fortune-wheel-spin-button"]')).toBeVisible()
     await expect(page.locator('[data-testid="fortune-wheel-confirm-button"]')).toBeVisible()
+
+    const categoryRow = page.locator('[data-testid="round-start-category-row"]')
+    await expect(categoryRow).toBeVisible({ timeout: 8000 })
+    await expect(page.locator('[data-testid="fortune-wheel-selected-category"]')).toHaveText('-', {
+      timeout: 8000,
+    })
+    const inlineCategory = page.locator('[data-testid="fortune-wheel-inline-category"]')
+    await expect(inlineCategory).toBeVisible()
+    await expect(inlineCategory).toContainText('-')
+    await expect(inlineCategory).toContainText('*')
 
     await completeFortuneWheel(page)
     await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
@@ -53,29 +67,23 @@ test.describe('Round Counter Logic', () => {
     await resetPersistedGameState(page)
   })
 
-  test('should display "Round 1" on initial game start', async ({ page }) => {
+  test('should display round 1 on game screen after first wheel completion', async ({ page }) => {
     await startGameFromPlayers(page)
-
-    // Check round indicator shows "Round 1"
-    const roundIndicator = page.locator('[data-testid="round-indicator"]')
-    await expect(roundIndicator).toBeVisible()
-    await expect(roundIndicator).toContainText('1')
+    await completeFortuneWheel(page)
+    await expect(page).toHaveURL(/\/game\//, { timeout: 35000 })
+    await expect(page.locator('[data-testid="game-round-indicator"]')).toContainText('1')
   })
 
   test('page refresh should not increment round counter', async ({ page }) => {
     await startGameFromPlayers(page)
 
-    // Check initial round is 1
-    const roundIndicator = page.locator('[data-testid="round-indicator"]')
-    await expect(roundIndicator).toContainText('1')
-
-    // Refresh the page
     await page.reload()
     await page.waitForLoadState('networkidle')
 
-    // Round should still show 1 (not increment)
     await expect(page).toHaveURL(/\/round-start/)
-    await expect(page.locator('[data-testid="round-indicator"]')).toContainText('1')
+    await completeFortuneWheel(page)
+    await expect(page).toHaveURL(/\/game\//, { timeout: 35000 })
+    await expect(page.locator('[data-testid="game-round-indicator"]')).toContainText('1')
   })
 
   test('navigating back to round-start during active game should not increment round', async ({
@@ -84,15 +92,16 @@ test.describe('Round Counter Logic', () => {
     await startGameFromPlayers(page)
 
     await completeFortuneWheel(page)
-    await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
+    await expect(page).toHaveURL(/\/game\//, { timeout: 35000 })
 
-    // Manually navigate back to round-start (simulating a refresh/back)
+    const gameUrl = page.url()
+
     await page.goto('/round-start')
     await page.waitForLoadState('networkidle')
+    await expect(page).toHaveURL(/\/round-start/)
 
-    // Round indicator should still show 1, not 2
-    const roundIndicator = page.locator('[data-testid="round-indicator"]')
-    await expect(roundIndicator).toBeVisible()
-    await expect(roundIndicator).toContainText('1')
+    await page.goto(gameUrl)
+    await expect(page).toHaveURL(new RegExp(gameUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+    await expect(page.locator('[data-testid="game-round-indicator"]')).toContainText('1')
   })
 })

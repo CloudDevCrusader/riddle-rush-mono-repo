@@ -6,6 +6,5 @@ test.describe('performance smoke', () => {
 
     await expect(page.locator('[data-testid="main-menu-play"]')).toBeVisible()
     await expect(page.locator('[data-testid="main-menu-options"]')).toBeVisible()
-    await expect(page.locator('[data-testid="offline-indicator"]')).toBeVisible()
   })
 })

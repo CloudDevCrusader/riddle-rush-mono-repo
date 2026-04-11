@@ -1,5 +1,5 @@
 import type { Category } from '@riddle-rush/types/game'
-import type { FortuneWheelSegment, FortuneWheelSelection } from '~/types/fortune-wheel'
+import type { AlphabetWheelSegment, FortuneWheelSelection } from '~/types/fortune-wheel'
 
 const DEFAULT_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
@@ -8,27 +8,28 @@ function normalizeLetter(letter: string): string | null {
   return /^[A-Z]$/.test(normalized) ? normalized : null
 }
 
-function mapCategoriesToSegments(
-  categories: Category[],
-  letters: string[] = DEFAULT_ALPHABET
-): FortuneWheelSegment[] {
-  if (categories.length === 0 || letters.length === 0) return []
+/**
+ * Map a letter list to wheel wedges (ids 1…n). Invalid letters are skipped.
+ */
+function mapAlphabetToSegments(letters: string[] = DEFAULT_ALPHABET): AlphabetWheelSegment[] {
+  if (letters.length === 0) return []
 
-  return categories.map((category, index) => {
-    const mappedLetter = letters[index % letters.length] ?? 'A'
-    return {
-      id: index + 1,
-      categoryId: category.id,
-      categoryKey: category.key,
-      categoryName: category.name,
-      letter: normalizeLetter(mappedLetter) ?? 'A',
-      weight: 1,
-    }
-  })
+  const seen = new Set<string>()
+  const segments: AlphabetWheelSegment[] = []
+  let id = 1
+
+  for (const raw of letters) {
+    const letter = normalizeLetter(raw)
+    if (!letter || seen.has(letter)) continue
+    seen.add(letter)
+    segments.push({ id: id++, letter, weight: 1 })
+  }
+
+  return segments
 }
 
 function validateSelection(
-  segment: Partial<FortuneWheelSegment> | null | undefined,
+  segment: { categoryId?: number; letter?: string } | null | undefined,
   categories: Category[]
 ): FortuneWheelSelection | null {
   if (!segment || typeof segment.categoryId !== 'number' || typeof segment.letter !== 'string') {
@@ -53,7 +54,7 @@ function validateSelection(
 
 export function useFortuneWheelSelection() {
   return {
-    mapCategoriesToSegments,
+    mapAlphabetToSegments,
     normalizeLetter,
     validateSelection,
   }

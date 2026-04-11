@@ -20,21 +20,17 @@ const categories: Category[] = [
 ]
 
 describe('useFortuneWheelSelection', () => {
-  it('maps categories to deterministic wheel segments with normalized letters', () => {
-    const { mapCategoriesToSegments } = useFortuneWheelSelection()
-    const segments = mapCategoriesToSegments(categories, ['a', ' b '])
+  it('maps alphabet letters to wheel segments with normalized letters and stable ids', () => {
+    const { mapAlphabetToSegments } = useFortuneWheelSelection()
+    const segments = mapAlphabetToSegments(['a', ' b ', 'A'])
 
     expect(segments).toHaveLength(2)
     expect(segments[0]).toMatchObject({
       id: 1,
-      categoryId: 10,
-      categoryName: 'Animals',
       letter: 'A',
     })
     expect(segments[1]).toMatchObject({
       id: 2,
-      categoryId: 11,
-      categoryName: 'Cities',
       letter: 'B',
     })
   })

@@ -5,12 +5,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   // #region agent log
   if (!import.meta.dev) return
 
-  const ENDPOINT = 'http://127.0.0.1:7415/ingest/610fa15c-6243-4b1c-b501-22abb9c42dd5'
+  const endpoint = useRuntimeConfig().public.debugButtonAlignIngestUrl?.trim()
+  if (!endpoint) return
+
   const SESSION = '157a4d'
   const router = useRouter()
 
   const send = (payload: Record<string, unknown>) => {
-    fetch(ENDPOINT, {
+    fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

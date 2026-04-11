@@ -153,6 +153,8 @@ export default defineNuxtConfig({
       cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
       cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
       debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
+      /** Dev-only: full URL for debug-button-align ingest; when empty, no requests are sent */
+      debugButtonAlignIngestUrl: process.env.NUXT_PUBLIC_DEBUG_BUTTON_ALIGN_INGEST_URL || '',
       // Feature flags - env vars override Terraform
       gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
       gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',

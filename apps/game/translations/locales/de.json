@@ -109,6 +109,7 @@
     "error_next_round": "Fehler beim Starten der nächsten Runde",
     "error_resuming": "Fehler beim Laden des Spiels. Starte neu.",
     "error_starting": "Fehler beim Starten des Spiels. Bitte versuche es erneut.",
+    "fortune_wheel_spin": "DREHEN",
     "error_submitting": "Fehler beim Einreichen der Antwort",
     "game_ended": "Spiel beendet! Sieh dir deine Statistiken an.",
     "go_to_scoring": "Zur Auswertung",
@@ -242,6 +243,8 @@
     "sound": "Sound",
     "sound_disabled": "Sound deaktiviert",
     "sound_enabled": "Sound aktiviert",
+    "fortune_wheel_redraw": "Glücksrad bestätigen",
+    "fortune_wheel_redraw_hint": "Aus: Nach dem Drehen startet das Spiel automatisch. An: Mit OK bestätigen und mit Drehen neu würfeln.",
     "system_default": "Systemstandard",
     "theme": "Design",
     "title": "Einstellungen"
@@ -295,7 +298,7 @@
   "scoring": {
     "base_score": "Punktestand",
     "confirm_scores": "Punkte bestätigen",
-    "verbal_hint": "Die Antworten wurden in der Runde gesagt — + für richtig, − für falsch. Diese Rundpunkte zählen.",
+    "verbal_hint": "Die Antworten wurden in der Runde gesagt: + für richtig, − für falsch. Diese Punkte zählen.",
     "description": "Rundenergebnisse ansehen",
     "error_saving": "Fehler beim Speichern der Punkte. Bitte erneut versuchen.",
     "finish_game": "Spiel beenden",
@@ -306,6 +309,7 @@
     "player": "Spieler",
     "points": "Pkt",
     "post_round_prompt": "Wie wollt ihr weitermachen?",
+    "round_points": "Diese Runde",
     "round_complete": "Runde abgeschlossen!",
     "title": "Punktevergabe"
   },

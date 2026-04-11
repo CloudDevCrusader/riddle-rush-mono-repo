@@ -620,21 +620,18 @@ export async function getRoundState(
 }
 
 /**
- * Wait until the network status indicator is visible (app shell ready).
- * Legacy name kept for helpers that ran when Socket.IO was still used.
+ * Wait until the client app shell is ready (Nuxt root mounted).
+ * Legacy name kept for helpers that ran when Socket.IO / connection UI was still used.
  */
 export async function waitForWebSocketConnection(
   page: Page,
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
-  console.log('[waitForWebSocketConnection] Waiting for network status indicator...')
+  console.log('[waitForWebSocketConnection] Waiting for app shell...')
 
   try {
-    await page.locator('[data-testid="offline-indicator"]').waitFor({
-      state: 'visible',
-      timeout,
-    })
+    await page.locator('#__nuxt').waitFor({ state: 'attached', timeout })
     console.log(`[waitForWebSocketConnection] Ready in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForWebSocketConnection:timeout')

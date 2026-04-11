@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/game",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "dependencies": {
     "@fontsource-variable/baloo-2": "^5.2.7",
     "@fontsource-variable/nunito": "^5.2.7",
