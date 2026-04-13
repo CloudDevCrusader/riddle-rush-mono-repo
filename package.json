@@ -3,7 +3,7 @@
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
   "version": "1.5.1",
   "devDependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.101",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.104",
     "@changesets/cli": "^2.30.0",
     "@composio/claude-agent-sdk": "^0.6.10",
     "@composio/core": "^0.6.10",
@@ -17,7 +17,7 @@
     "knip": "^5.88.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.2",
-    "stylelint": "^17.6.0",
+    "stylelint": "^17.7.0",
     "stylelint-config-prettier-scss": "^1.0.0",
     "stylelint-config-recommended-vue": "^1.6.1",
     "stylelint-config-standard": "^40.0.0",
