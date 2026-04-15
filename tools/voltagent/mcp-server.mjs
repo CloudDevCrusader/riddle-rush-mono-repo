@@ -17,6 +17,8 @@ const COMMANDS = {
   // eslint-disable-next-line @stylistic/quote-props
   lint: { command: 'pnpm', args: ['run', 'lint'] },
   'test:unit': { command: 'pnpm', args: ['run', 'test:unit'] },
+  'mcp:health': { command: 'pnpm', args: ['run', 'agent:mcp-health'] },
+  'mcp:config': { command: 'pnpm', args: ['run', 'agent:mcp-config'] },
 }
 
 const runRepoCommand = {
@@ -42,8 +44,8 @@ const runRepoCommand = {
 
 const mcpServer = new MCPServer({
   name: 'riddle-rush-subagents',
-  version: '1.0.0',
-  description: 'VoltAgent MCP subagents for Riddle Rush automation.',
+  version: '2.0.0',
+  description: 'VoltAgent MCP subagents for Riddle Rush automation with MCP management.',
   protocols: {
     stdio: true,
     http: false,

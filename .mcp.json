@@ -6,7 +6,14 @@
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["-y", "chrome-devtools-mcp@latest"],
+      "description": "Chrome DevTools integration for web debugging"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "args_after": ["/Users/markuswagner/projects/riddle-rush-mono-repo"],
+      "description": "Safe filesystem operations within project directory"
     }
   }
 }

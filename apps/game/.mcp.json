@@ -1,8 +1,17 @@
 {
   "mcpServers": {
     "vercel": {
-      "type": "http",
-      "url": "https://mcp.vercel.com"
+      "command": "npx",
+      "args": ["-y", "@vercel/mcp"],
+      "tools": ["*"],
+      "description": "Vercel deployment and management"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "args_after": ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/game"],
+      "tools": ["*"],
+      "description": "Safe filesystem operations within game app directory"
     }
   }
 }

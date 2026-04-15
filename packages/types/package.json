@@ -6,7 +6,7 @@
     "@types/node": "^25.6.0",
     "@vue/compiler-sfc": "^3.5.31",
     "eslint": "^10.2.0",
-    "prettier": "^3.8.2",
+    "prettier": "^3.8.3",
     "typescript": "^5.9.3"
   },
   "exports": {
