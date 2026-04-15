@@ -1,89 +1,187 @@
 ---
-scope: full-roadmap
-reviewers: [opencode/gemini-3.1-pro]
-reviewed_at: '2026-04-11T21:01:00.000Z'
-artifacts_reviewed: [ROADMAP.md, STATE.md, REQUIREMENTS.md, PROJECT.md]
-failed_reviewers:
-  gemini: Docker sandbox image missing (v0.37.1)
-  codex: Anthropic API key configured instead of OpenAI key
-  coderabbit: Reviews git diffs only — cannot review custom prompts
-  opencode/gpt: OpenAI billing not active on account
+scope: full-project
+reviewers: [claude]
+attempted: [gemini, codex, coderabbit, opencode]
+failed:
+  gemini: 'sandbox/MCP errors — CLI v0.37.1 stuck on API calls'
+  codex: '401 Unauthorized — configured with Anthropic API key instead of OpenAI'
+  coderabbit: 'diff-only review mode — no pending git changes to review'
+  opencode: 'TUI-only app — no non-interactive CLI mode available'
+reviewed_at: '2026-04-15T11:30:00.000Z'
+project_version: 1.5.1
+phases_reviewed: 23 (complete project)
 ---
 
-# Cross-AI Roadmap Review — Full Project
+# Cross-AI Project Review — Riddle Rush v1.5.1
 
-## OpenCode Review (Gemini 3.1 Pro)
+## Reviewer Status
 
-### 1. Summary
+| CLI                       | Status      | Notes                                                          |
+| ------------------------- | ----------- | -------------------------------------------------------------- |
+| Claude (separate session) | **SUCCESS** | 183-line structured review with grades                         |
+| Gemini                    | FAILED      | Sandbox image missing, MCP errors, stuck on API calls          |
+| Codex                     | FAILED      | 401 Unauthorized — wrong API key (Anthropic key, needs OpenAI) |
+| CodeRabbit                | FAILED      | Diff-only mode — no pending changes to review                  |
+| OpenCode                  | FAILED      | TUI app only — no non-interactive `run` subcommand             |
 
-The Riddle Rush roadmap execution demonstrates a highly structured and comprehensive approach to overhauling a Nuxt 4 PWA game. Completing 23 of 24 phases is a significant achievement, covering everything from core design system foundations to deep architectural optimizations. The team showed excellent pragmatism by attempting a state management migration (Zustand) and prudently reverting it (Pinia) when stability was compromised. However, the accumulation of unresolved gameplay bugs, skipped test verification (Phase 21 Plan 09), and stale requirement tracking suggests the project is currently prioritizing forward momentum over stabilization. The project is in need of a dedicated hardening phase before moving to v2.
+> **Note:** Only 1 of 5 CLIs succeeded. To improve future reviews:
+>
+> - Fix Codex: set `OPENAI_API_KEY` (not `ANTHROPIC_API_KEY`)
+> - Fix Gemini: update to latest version (`brew upgrade gemini-cli`) or check Docker daemon
+> - CodeRabbit: only useful for PR/diff reviews, not project-wide assessments
+> - OpenCode: no CLI mode available for non-interactive prompts
 
-### 2. Strengths
+---
 
-- **Logical Sequencing:** Starting with design tokens and foundational components (Phases 1-5) before moving to page overhauls (Phases 6-10) ensured maximum visual consistency.
-- **Pragmatic Adaptability:** The willingness to revert the Zustand migration (Phase 20) rather than succumbing to the sunk-cost fallacy protected the app's stability.
-- **Holistic Scope:** The roadmap effectively balanced UI/UX redesign with necessary technical maintenance, test refactoring, and performance/accessibility optimizations.
+## Claude Review (Separate Session)
 
-### 3. Gaps & Concerns
+### 1. Overall Assessment
 
-- **[HIGH] Unverified E2E Test Suite:** Skipping Phase 21 Plan 09 means the app currently lacks a reliable safety net. If E2E tests do not have a verified 100% pass rate, regressions cannot be confidently caught.
-- **[HIGH] Core Gameplay Bug:** The multiplayer round flow bug (Todo #2) breaks the primary user experience and compromises the integrity of the game loop.
-- **[MEDIUM] Fragile Routing/State Workarounds:** The need to audit `navigateTo` and `game-flow.ts` workarounds (Todo #8) indicates that the Pinia revert or prior refactors left behind brittle navigation logic.
-- **[MEDIUM] Stale Traceability:** A desynced `REQUIREMENTS.md` makes it impossible to guarantee that all original business and design needs were actually met.
-- **[LOW] Incomplete i18n & Store Bloat:** Missing translation keys (Todo #1) degrade the localized experience, while a 350+ line Pinia store (Todo #3) is a maintainability minor risk.
+Riddle Rush is a **mature, well-architected PWA** that has successfully navigated 23 phases of visual redesign and optimization. The monorepo structure is exemplary — clean package boundaries, proper tooling (Turborepo, Syncpack, Husky), and a comprehensive SCSS design token system aligned with Figma. The core game logic is sound with proper separation between Pinia stores, composables, and IndexedDB persistence. However, the project carries **moderate technical debt** from its ambitious roadmap: CI quality gates are permissive (E2E tests and security scans don't block deployment), CSP headers are too relaxed, coverage enforcement is disabled, and several pages have grown oversized. The Pinia→Zustand→Pinia migration cycle was cleanly reverted with no residual code leaking into production. At v1.5.1 deployed to production, the project is **stable and functional but would benefit from hardening its quality gates and security posture** before the next major version.
 
-### 4. Phase 24 Recommendations
+### 2. Architecture Review
 
-The project is **not** ready for v2 requirements (dark mode, sounds, particles). The next phases must prioritize hardening v1.
+**Monorepo Structure — Grade: A**
 
-**Phase 24: v1 Hardening & Bug Squash (Highest Priority)**
+| Aspect             | Assessment                                                                              |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| Package boundaries | Clean. `@riddle-rush/types`, `shared`, `config` have focused exports, no circular deps  |
+| Turborepo          | Well-configured (123 lines). Smart caching, proper `dependsOn` chains, env var tracking |
+| Syncpack           | Strict version consistency enforced. 40+ CVE patches in pnpmOverrides                   |
+| pnpm workspace     | Clean 3-directory layout (apps/packages/tools)                                          |
 
-- **Goal:** Stabilize the core application, fix critical game-breaking bugs, and ensure the test suite is a reliable safety net.
-- **Success Criteria:**
-  - 100% pass rate for E2E tests achieved (resolving Phase 21 Plan 09).
-  - Multiplayer round flow bug is investigated and resolved (Todo #2).
-  - Intermittent `nuxi typecheck` PWA error is fixed (Todo #4).
-  - `navigateTo` workarounds in `game-flow.ts` are removed/refactored (Todo #8).
+**Design System — Grade: A-**
 
-**Phase 25: Design Alignment & Polish**
+The 1,081-line SCSS design system is the project's strongest architectural asset. The `mockup-clamp()` fluid scaling function ensures pixel-fidelity across 360px–1080px viewports. 25 design colors, 7 spacing tiers, 7 font sizes, 6 transition timings, and 9 animation keyframes are all tokenized. Figma sync pipeline generates CSS custom properties that cascade correctly.
 
-- **Goal:** Close the final gaps between the implementation, Figma mockups, and localization requirements.
-- **Success Criteria:**
-  - Figma design audit completed and discrepancies resolved (Todo #9).
-  - All hardcoded strings replaced with i18n translation keys (Todo #1).
-  - Remaining code review items from March 8 are closed out (Todo #7).
+One concern: UnoCSS and SCSS coexist as a "hybrid" CSS strategy. Documented and intentional, but increases learning curve.
 
-**Phase 26: Architectural Debt Reduction**
+**State Management — Grade: B+**
 
-- **Goal:** Refactor bloated architecture to prepare a clean slate for v2 features.
-- **Success Criteria:** `gameStore` reduced in size by extracting logic (Todo #3); polished animations added to core interactions (Todo #5); feature-flag strategy selected (Todo #6).
+Pinia used correctly with well-defined pattern: stores hold state + getters + actions, while 32 composables handle domain logic. The `gameStore.ts` (612 lines) acts as a **Facade** dispatching to focused composables like `usePlayerManager`, `useScoringEngine`, and `usePersistence`.
 
-### 5. Stale Tracking
+Key finding: 3 fire-and-forget IndexedDB saves (`void this.saveSessionToDB()`) — intentional UX optimizations, acceptable but should be documented inline.
 
-Since 23 phases are complete, many "Pending" items in `REQUIREMENTS.md` are likely false positives.
+**Component Architecture — Grade: B+**
 
-- **Action Required:** Execute a "Traceability Sync." Manually cross-reference all "Pending" items against the completed phases — especially focusing on accessibility, performance, and the design system pages. Mark verified items as "Complete" to restore the document as a source of truth.
+26 components with consistent `Game[Component]` naming. Average size 276 lines. Two outlier pages (`players.vue`, `round-start.vue` at ~15K lines each) warrant decomposition.
 
-### 6. Risk Assessment
+### 3. Strengths
 
-**Project Risk Level: MEDIUM**
+- **Token-based design system** with fluid responsive scaling (`mockup-clamp`), Figma sync pipeline, and comprehensive SCSS effects (glossy, embossed, 3D text, shadows)
+- **Clean Zustand migration revert** — zero residual Zustand code in active codebase
+- **Well-factored composables** — 32 composables averaging 130 lines each with clear single responsibilities
+- **Robust IndexedDB persistence** — singleton instance caching, Zod schema validation on load, graceful error handling
+- **Strong local quality gates** — pre-commit (lint-staged + secret scanning + TypeScript), commit-msg (Conventional Commits), pre-push (typecheck + unit tests + syncpack)
+- **Comprehensive test suite** — 41 unit test files (90.31% line coverage, 93.25% function coverage), 16 E2E test files with `data-testid` selectors
+- **PWA done right** — cache versioning, CacheFirst for fonts/images, NetworkFirst for start URL, auto-update with skipWaiting
+- **CI parallelization** — 6 parallel E2E shards, multi-environment builds, Turbo cache integration
+- **Monorepo discipline** — Syncpack prevents version skew, Changesets for versioning, clean package exports
+- **Zod runtime validation** for IndexedDB data (catches schema drift between versions)
 
-**Justification:** The foundational architecture (Nuxt 4 + Pinia + PWA) is solid, and the visual redesign successfully modernized the app. However, a known core gameplay bug mixed with an unverified E2E test suite introduces significant regression risks. Furthermore, a failed state migration (Zustand) often leaves residual technical debt or fragmented logic (evidenced by the need to audit `game-flow.ts`). Attempting to add complex v2 features (animations, sounds) right now will likely break existing flows. By dedicating the next phases entirely to hardening, the risk level can easily be lowered to LOW, creating a stable platform for future development.
+### 4. Concerns
+
+#### HIGH Severity
+
+- **CSP allows `unsafe-inline` + `unsafe-eval`** — effectively disables XSS protection. Permits any HTTPS script source with no domain whitelist.
+- **E2E tests don't block deployment** (`continue-on-error: true`) — failing E2E suite won't prevent broken code reaching production.
+- **Coverage enforcement disabled** (`enabled: false`, Codecov `fail_ci_if_error=false`) — 90% coverage could silently regress.
+- **Security scan continues on error** — CodeQL failures don't block the pipeline.
+
+#### MEDIUM Severity
+
+- **Oversized pages** — `players.vue` and `round-start.vue` at ~15K lines each need decomposition.
+- **gameStore branch coverage only 59.88%** — central game logic store has lowest branch coverage.
+- **innerHTML usage for JSON-LD** and **gtagId interpolation in inline script** — minor XSS vectors if runtime config is compromised.
+- **IndexedDB stores unencrypted data** including player answers, scores, and error logs — accessible to any XSS attack.
+- **Only 1 integration test** for IndexedDB despite it being the persistence backbone.
+- **Multiplayer statistics not tracked** — `useStatistics` skips multiplayer games entirely.
+- **`FortuneAlphabetWheel.vue` at 664 lines** — complex with tightly coupled logic.
+
+#### LOW Severity
+
+- **lodash-es (118KB)** could be replaced by es-toolkit (~60% smaller).
+- **Dual image optimizer plugins** installed — redundant.
+- **No font preload hints** despite using @fontsource-variable packages.
+- **Capacitor keystore env vars** not validated before build.
+- **E2E only runs `@smoke` tests in CI** — full game workflow tests don't run in pipeline.
+
+### 5. Technical Debt
+
+**Must Address Before Next Major Version:**
+
+1. **Fix CSP headers** — remove `unsafe-inline`/`unsafe-eval`, implement nonce-based CSP
+2. **Re-enable coverage enforcement** — set 80% thresholds, make Codecov blocking
+3. **Make E2E + security scans blocking** — remove `continue-on-error: true`
+4. **Decompose oversized pages** — break `players.vue` and `round-start.vue` into sub-components
+
+**Should Address:**
+
+5. Increase gameStore branch coverage from 59.88% to ≥80%
+6. Add integration tests for IndexedDB persistence flows
+7. Replace lodash-es with es-toolkit or native alternatives
+8. Remove dual image optimizer — keep only one
+9. Clean up .backup files from Zustand migration
+
+**Nice To Have:**
+
+10. Add font preload hints for Baloo 2 and Nunito Variable
+11. Implement error sampling for CloudWatch
+12. Document fire-and-forget saves with inline comments
+
+### 6. Suggestions (Prioritized)
+
+1. **[P0 — Security]** Implement nonce-based CSP. Generate nonce per request, use for all inline scripts. Remove `unsafe-inline`/`unsafe-eval`.
+2. **[P0 — Quality Gates]** Make CI enforcement strict — remove `continue-on-error: true` from E2E and CodeQL jobs.
+3. **[P1 — Testing]** Re-enable vitest coverage with thresholds (lines: 80, branches: 75, functions: 85).
+4. **[P1 — Architecture]** Split `players.vue` and `round-start.vue` into focused components.
+5. **[P2 — State]** Consider splitting `gameStore.ts` into domain stores at 612 lines.
+6. **[P2 — Bundle]** Replace lodash-es with es-toolkit. Run bundle analysis on CI.
+7. **[P2 — Testing]** Run full E2E suite on `main` merges, keep `@smoke` for PRs.
+8. **[P3 — Mobile]** Add keystore environment validation in Capacitor build scripts.
+9. **[P3 — DX]** Remove `.backup` files from the Zustand revert.
+
+### 7. Risk Assessment
+
+**Overall Project Risk: MEDIUM (trending toward LOW)**
+
+| Risk Dimension     | Level       | Justification                                                          |
+| ------------------ | ----------- | ---------------------------------------------------------------------- |
+| Stability          | LOW         | v1.5.1 in production, functional, no major runtime issues              |
+| Security           | MEDIUM-HIGH | CSP effectively disabled; IndexedDB unencrypted; inline script vectors |
+| Quality Regression | MEDIUM      | Coverage disabled; E2E non-blocking; gameStore undertested             |
+| Architecture       | LOW         | Clean monorepo, proper package boundaries, well-factored composables   |
+| Technical Debt     | MEDIUM      | Oversized pages, dual plugins, backup files, lodash weight             |
+| Migration Risk     | LOW         | Zustand revert was clean, no residual artifacts                        |
+| Deployment         | LOW         | CI/CD mature with parallelization, Turbo caching, multi-env            |
+| Mobile             | LOW-MEDIUM  | Capacitor sound but keystore validation missing                        |
+
+### Key Insights
+
+1. **The design system is the project's greatest asset.** The `mockup-clamp()` fluid scaling, 25-color token palette, and Figma sync pipeline represent genuinely strong CSS architecture.
+
+2. **The gap between local and CI quality gates is the biggest risk.** Locally, Husky hooks enforce everything. In CI, E2E tests, security scans, and coverage all use `continue-on-error: true`.
+
+3. **The Zustand migration cycle was the right kind of mistake.** Trying it, discovering it didn't fit Nuxt, and reverting cleanly shows good engineering judgment.
 
 ---
 
 ## Consensus Summary
 
-> Only one external reviewer completed successfully. Consensus analysis requires 2+ reviewers.
-> To improve CLI availability, fix:
->
-> 1. **Gemini CLI**: Update to fix Docker sandbox image pull (`brew upgrade gemini-cli`)
-> 2. **Codex CLI**: Set `OPENAI_API_KEY` instead of Anthropic key
-> 3. **OpenCode**: Add payment method for GPT/GLM/Kimi models (Gemini works)
+With only 1 successful reviewer, a full consensus summary is not applicable. The Claude review provides comprehensive coverage across architecture, security, testing, performance, and risk.
 
-### Key Takeaways (Single Reviewer)
+### Top Priority Actions
 
-1. **Harden v1 before starting v2** — the pending bugs and skipped E2E verification are real risks
-2. **Fix the multiplayer round-skip bug** — it's the highest-impact user-facing issue
-3. **Sync REQUIREMENTS.md** — many "Pending" items are actually complete
-4. **Proposed next phases**: Hardening (24) → Design alignment (25) → Debt reduction (26)
+1. **Harden CSP** — `unsafe-inline`/`unsafe-eval` must go before any new features
+2. **Make CI gates blocking** — E2E and security scans should fail the pipeline
+3. **Re-enable coverage** — prevent silent regression of 90% line coverage
+4. **Decompose oversized pages** — `players.vue` and `round-start.vue` need splitting
+
+### CLI Fixes for Future Reviews
+
+| CLI        | Fix                                                                 |
+| ---------- | ------------------------------------------------------------------- |
+| Gemini     | `brew upgrade gemini-cli` or check Docker daemon for sandbox images |
+| Codex      | Set `OPENAI_API_KEY` env var (currently has Anthropic key)          |
+| CodeRabbit | N/A — only useful for diff/PR reviews                               |
+| OpenCode   | N/A — no non-interactive CLI mode available                         |
