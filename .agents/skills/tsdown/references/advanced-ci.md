@@ -39,7 +39,7 @@ export default defineConfig({
   dts: 'local-only', // Skip DTS in CI for faster builds
   publint: 'ci-only', // Only run publint in CI
   failOnWarn: 'ci-only', // Fail on warnings in CI only (default)
-})
+});
 ```
 
 ### Object Form
@@ -56,7 +56,7 @@ export default defineConfig({
     enabled: 'ci-only',
     profile: 'node16',
   },
-})
+});
 ```
 
 ### Config Function
@@ -67,7 +67,7 @@ The config function receives a `ci` boolean in its context:
 export default defineConfig((_, { ci }) => ({
   minify: ci,
   sourcemap: !ci,
-}))
+}));
 ```
 
 ## Typical CI Configuration
@@ -80,7 +80,7 @@ export default defineConfig({
   failOnWarn: 'ci-only',
   publint: 'ci-only',
   attw: 'ci-only',
-})
+});
 ```
 
 ## Related Options

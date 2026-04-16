@@ -1,4 +1,4 @@
-import { defineConfig, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss'
+import { defineConfig, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss';
 
 export default defineConfig({
   // Tailwind-compatible utilities
@@ -119,4 +119,4 @@ export default defineConfig({
       include: [/\.vue$/, /\.ts$/, /\.tsx$/],
     },
   },
-})
+});

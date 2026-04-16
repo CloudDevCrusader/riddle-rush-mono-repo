@@ -20,7 +20,7 @@ tsdown --unbundle
 export default defineConfig({
   entry: ['src/**/*.ts', '!**/*.test.ts'],
   unbundle: true,
-})
+});
 ```
 
 ## How It Works
@@ -45,7 +45,7 @@ src/
 export default defineConfig({
   entry: ['src/index.ts'],
   unbundle: true,
-})
+});
 ```
 
 **Output:**
@@ -100,7 +100,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   unbundle: true,
   dts: true,
-})
+});
 ```
 
 **Benefits:**
@@ -113,8 +113,8 @@ export default defineConfig({
 
 ```ts
 // Users can import specific utilities
-import { helper } from 'my-lib/utils/helper'
-import { Button } from 'my-lib/components/button'
+import { helper } from 'my-lib/utils/helper';
+import { Button } from 'my-lib/components/button';
 ```
 
 ### Monorepo Shared Package
@@ -125,7 +125,7 @@ export default defineConfig({
   format: ['esm'],
   unbundle: true,
   outDir: 'dist',
-})
+});
 ```
 
 ### TypeScript Compilation Only
@@ -138,7 +138,7 @@ export default defineConfig({
   minify: false,
   treeshake: false,
   dts: true,
-})
+});
 ```
 
 Pure TypeScript to JavaScript transformation.
@@ -150,7 +150,7 @@ export default defineConfig((options) => ({
   entry: ['src/**/*.ts'],
   unbundle: options.watch, // Unbundle in dev only
   minify: !options.watch,
-}))
+}));
 ```
 
 Fast rebuilds during development, optimized for production.
@@ -163,7 +163,7 @@ Fast rebuilds during development, optimized for production.
 export default defineConfig({
   entry: ['src/**/*.ts', '!**/*.test.ts', '!**/*.spec.ts', '!**/fixtures/**'],
   unbundle: true,
-})
+});
 ```
 
 ### Multiple Entry Points
@@ -175,7 +175,7 @@ export default defineConfig({
     cli: 'src/cli.ts',
   },
   unbundle: true,
-})
+});
 ```
 
 Both entry files and all imports preserved.
@@ -189,7 +189,7 @@ export default defineConfig({
   entry: ['src/**/*.ts'],
   unbundle: true,
   outExtensions: () => ({ js: '.js' }),
-})
+});
 ```
 
 ### Preserve Directory
@@ -199,7 +199,7 @@ export default defineConfig({
   entry: ['src/**/*.ts'],
   unbundle: true,
   outDir: 'lib',
-})
+});
 ```
 
 **Output:**

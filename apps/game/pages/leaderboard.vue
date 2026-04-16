@@ -51,37 +51,37 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
+definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } });
 
-const { t, toast } = usePageSetup()
-const { goHome, goToRoundStart } = useNavigation()
-const { gameStore, leaderboard, isGameCompleted } = useGameState()
+const { t, toast } = usePageSetup();
+const { goHome, goToRoundStart } = useNavigation();
+const { gameStore, leaderboard, isGameCompleted } = useGameState();
 
-const isFinishing = ref(false)
+const isFinishing = ref(false);
 
 const handleFinish = async () => {
-  if (isFinishing.value) return
+  if (isFinishing.value) return;
 
-  isFinishing.value = true
+  isFinishing.value = true;
   try {
-    await gameStore.endGame()
-    await goHome()
+    await gameStore.endGame();
+    await goHome();
   } catch (error) {
-    const logger = useLogger()
-    logger.error('Error finishing game:', error)
-    toast.error(t('leaderboard.finish_error', 'Failed to finish game. Please try again.'))
-    isFinishing.value = false
+    const logger = useLogger();
+    logger.error('Error finishing game:', error);
+    toast.error(t('leaderboard.finish_error', 'Failed to finish game. Please try again.'));
+    isFinishing.value = false;
   }
-}
+};
 
 const handleNextRound = async () => {
-  await goToRoundStart()
-}
+  await goToRoundStart();
+};
 
 useLocalizedPageSeo({
   title: () => t('leaderboard.title'),
   description: () => t('leaderboard.description'),
-})
+});
 </script>
 
 <style scoped lang="scss">

@@ -21,9 +21,9 @@ tags: [vue3, sfc, scoped-css, dynamic-content, v-html]
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const htmlContent = ref('<p class="dynamic">This is dynamic content</p>')
+const htmlContent = ref('<p class="dynamic">This is dynamic content</p>');
 </script>
 
 <template>
@@ -45,9 +45,9 @@ const htmlContent = ref('<p class="dynamic">This is dynamic content</p>')
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const htmlContent = ref('<p class="dynamic">This is dynamic content</p>')
+const htmlContent = ref('<p class="dynamic">This is dynamic content</p>');
 </script>
 
 <template>
@@ -94,8 +94,8 @@ Vue scoped CSS adds a unique data attribute (e.g., `data-v-7ba5bd90`) to:
 
 ```vue
 <script setup>
-import { ref } from 'vue'
-const htmlContent = ref('<p class="my-component-dynamic">Dynamic text</p>')
+import { ref } from 'vue';
+const htmlContent = ref('<p class="my-component-dynamic">Dynamic text</p>');
 </script>
 
 <template>
@@ -118,14 +118,14 @@ When using third-party libraries that manipulate the DOM:
 
 ```vue
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
 
-const editorRef = ref(null)
+const editorRef = ref(null);
 
 onMounted(() => {
   // Third-party editor that injects its own DOM elements
-  initRichEditor(editorRef.value)
-})
+  initRichEditor(editorRef.value);
+});
 </script>
 
 <template>
@@ -157,16 +157,16 @@ Instead of dynamic HTML, use Vue's reactive system when possible:
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 // BAD: Dynamic HTML that needs special style handling
-const badHtml = ref('<span class="highlight">text</span>')
+const badHtml = ref('<span class="highlight">text</span>');
 
 // GOOD: Reactive data that templates handle
 const items = ref([
   { text: 'Item 1', isHighlighted: true },
   { text: 'Item 2', isHighlighted: false },
-])
+]);
 </script>
 
 <template>

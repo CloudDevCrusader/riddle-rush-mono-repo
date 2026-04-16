@@ -100,11 +100,11 @@ This is one of the most common mistakes when using Vue transitions, especially f
 </template>
 
 <script setup>
-import { shallowRef } from 'vue'
-import Home from './Home.vue'
-import About from './About.vue'
+import { shallowRef } from 'vue';
+import Home from './Home.vue';
+import About from './About.vue';
 
-const currentView = shallowRef(Home)
+const currentView = shallowRef(Home);
 </script>
 ```
 

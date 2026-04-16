@@ -11,9 +11,9 @@
  * Or use the terraform outputs directly in your deployment pipeline.
  */
 
-import { readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { execSync } from 'node:child_process'
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { execSync } from 'node:child_process';
 
 interface TerraformOutputs {
   bucket_name?: string
@@ -31,9 +31,9 @@ export function getTerraformOutputs(environment: string = 'prod'): TerraformOutp
   try {
     const outputFile = join(
       process.cwd(),
-      `infrastructure/environments/${environment}/terraform-outputs.json`
-    )
-    const outputs = JSON.parse(readFileSync(outputFile, 'utf-8'))
+      `infrastructure/environments/${environment}/terraform-outputs.json`,
+    );
+    const outputs = JSON.parse(readFileSync(outputFile, 'utf-8'));
 
     return {
       bucket_name: outputs.bucket_name?.value,
@@ -41,11 +41,11 @@ export function getTerraformOutputs(environment: string = 'prod'): TerraformOutp
       cloudfront_domain_name: outputs.cloudfront_domain_name?.value,
       website_url: outputs.website_url?.value,
       aws_region: outputs.aws_region?.value || 'eu-central-1',
-    }
+    };
   } catch {
     // If file doesn't exist, return empty object
     // This allows the app to work without Terraform outputs
-    return {}
+    return {};
   }
 }
 
@@ -60,7 +60,7 @@ export function getTerraformOutputsFromEnv(): TerraformOutputs {
     cloudfront_domain_name: process.env.CLOUDFRONT_DOMAIN,
     website_url: process.env.WEBSITE_URL,
     aws_region: process.env.AWS_REGION || 'eu-central-1',
-  }
+  };
 }
 
 /**
@@ -69,14 +69,14 @@ export function getTerraformOutputsFromEnv(): TerraformOutputs {
  */
 export function exportTerraformOutputs(environment: string = 'development'): void {
   try {
-    const outputDir = join(process.cwd(), `infrastructure/environments/${environment}`)
-    const outputs = execSync(`cd ${outputDir} && terraform output -json`, { encoding: 'utf-8' })
-    const outputFile = join(outputDir, 'terraform-outputs.json')
+    const outputDir = join(process.cwd(), `infrastructure/environments/${environment}`);
+    const outputs = execSync(`cd ${outputDir} && terraform output -json`, { encoding: 'utf-8' });
+    const outputFile = join(outputDir, 'terraform-outputs.json');
 
-    writeFileSync(outputFile, outputs)
+    writeFileSync(outputFile, outputs);
     // eslint-disable-next-line no-console
-    console.log(`✅ Terraform outputs exported to ${outputFile}`)
+    console.log(`✅ Terraform outputs exported to ${outputFile}`);
   } catch (error) {
-    console.error('❌ Failed to export Terraform outputs:', error)
+    console.error('❌ Failed to export Terraform outputs:', error);
   }
 }

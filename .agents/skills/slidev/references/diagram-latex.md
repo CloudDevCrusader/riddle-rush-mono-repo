@@ -42,9 +42,9 @@ $$
 Enable mhchem extension in `vite.config.ts`:
 
 ```ts
-import 'katex/contrib/mhchem'
+import 'katex/contrib/mhchem';
 
-export default {}
+export default {};
 ```
 
 Then use:

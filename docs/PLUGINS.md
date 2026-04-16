@@ -23,12 +23,12 @@ This document describes all the plugins and modules integrated into the Riddle R
 ```typescript
 // stores/game.ts
 export const useGameStore = defineStore('game', () => {
-  const score = ref(0)
-  return { score }
-})
+  const score = ref(0);
+  return { score };
+});
 
 // In components
-const gameStore = useGameStore()
+const gameStore = useGameStore();
 ```
 
 ### @nuxtjs/i18n
@@ -53,9 +53,9 @@ const gameStore = useGameStore()
 
 ```typescript
 // No imports needed!
-const { x, y } = useMouse()
-const isDark = useDark()
-const { isSupported, coords } = useGeolocation()
+const { x, y } = useMouse();
+const isDark = useDark();
+const { isSupported, coords } = useGeolocation();
 ```
 
 ### @nuxt/eslint
@@ -125,10 +125,10 @@ build: {
 </template>
 
 <script setup>
-const colorMode = useColorMode()
+const colorMode = useColorMode();
 
 function toggleColorMode() {
-  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
 }
 </script>
 ```
@@ -150,7 +150,7 @@ colorMode: {
 **Usage**: Access device information in components
 
 ```typescript
-const { isMobile, isTablet, isDesktop } = useDevice()
+const { isMobile, isTablet, isDesktop } = useDevice();
 
 if (isMobile) {
   // Mobile-specific logic
@@ -278,9 +278,9 @@ security: {
 
 <script setup lang="ts">
 defineProps<{
-  title: string
-  description: string
-}>()
+  title: string;
+  description: string;
+}>();
 </script>
 ```
 
@@ -294,15 +294,15 @@ defineProps<{
 </template>
 
 <script setup lang="ts">
-const { isMobile, isTablet } = useDevice()
+const { isMobile, isTablet } = useDevice();
 
 const deviceClass = computed(() => ({
   'mobile-layout': isMobile,
   'tablet-layout': isTablet,
   'desktop-layout': !isMobile && !isTablet,
-}))
+}));
 
-const layoutComponent = computed(() => (isMobile ? 'MobileLayout' : 'DesktopLayout'))
+const layoutComponent = computed(() => (isMobile ? 'MobileLayout' : 'DesktopLayout'));
 </script>
 ```
 
@@ -334,22 +334,22 @@ const layoutComponent = computed(() => (isMobile ? 'MobileLayout' : 'DesktopLayo
 
 ```typescript
 // Mouse tracking
-const { x, y } = useMouse()
+const { x, y } = useMouse();
 
 // Network status
-const { isOnline } = useNetwork()
+const { isOnline } = useNetwork();
 
 // Local storage with reactivity
 const gameSettings = useLocalStorage('game-settings', {
   volume: 100,
   difficulty: 'medium',
-})
+});
 
 // Clipboard
-const { text, copy, copied, isSupported } = useClipboard()
+const { text, copy, copied, isSupported } = useClipboard();
 
 // Window focus
-const { focused } = useWindowFocus()
+const { focused } = useWindowFocus();
 ```
 
 ---
@@ -370,7 +370,7 @@ pnpm add -D <plugin-name>
 modules: [
   // ... existing modules
   '<plugin-name>',
-]
+];
 ```
 
 3. Configure (if needed):
@@ -403,7 +403,7 @@ The following popular plugins are **not compatible** with Nuxt 4 as of January 2
 **Alternative**: Import lodash-es directly
 
 ```typescript
-import { debounce, throttle } from 'lodash-es'
+import { debounce, throttle } from 'lodash-es';
 ```
 
 ### nuxt-gtag
@@ -421,7 +421,7 @@ import { debounce, throttle } from 'lodash-es'
         async: true,
       },
     ],
-  })
+  });
 </script>
 ```
 
@@ -432,7 +432,7 @@ import { debounce, throttle } from 'lodash-es'
 1. **Code Splitting**: Use dynamic imports for large components
 
 ```typescript
-const HeavyComponent = defineAsyncComponent(() => import('~/components/HeavyComponent.vue'))
+const HeavyComponent = defineAsyncComponent(() => import('~/components/HeavyComponent.vue'));
 ```
 
 2. **Image Optimization**: Use `@nuxt/image` (already installed)
@@ -447,9 +447,9 @@ const HeavyComponent = defineAsyncComponent(() => import('~/components/HeavyComp
 const { stop } = useIntersectionObserver(target, ([{ isIntersecting }]) => {
   if (isIntersecting) {
     // Load content
-    stop()
+    stop();
   }
-})
+});
 ```
 
 4. **PWA Caching**: Configure Workbox for offline assets

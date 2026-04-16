@@ -144,7 +144,7 @@ For more complex scenarios, use `.pnpmfile.cjs`:
 function readPackage(pkg, context) {
   // Override dependency version
   if (pkg.dependencies?.lodash) {
-    pkg.dependencies.lodash = '^4.17.21'
+    pkg.dependencies.lodash = '^4.17.21';
   }
 
   // Add missing peer dependency
@@ -152,17 +152,17 @@ function readPackage(pkg, context) {
     pkg.peerDependencies = {
       ...pkg.peerDependencies,
       react: '*',
-    }
+    };
   }
 
-  return pkg
+  return pkg;
 }
 
 module.exports = {
   hooks: {
     readPackage,
   },
-}
+};
 ```
 
 ## Overrides vs Catalogs

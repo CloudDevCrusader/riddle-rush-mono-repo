@@ -38,26 +38,26 @@ const CATEGORY_EMOJI_MAP: Record<string, string> = {
   Bildhauer: '🗿',
   Komponist: '🎼',
   Sänger: '🎤',
-}
+};
 
 /**
  * Composable for resolving category emojis
  */
 export function useCategoryEmoji() {
   const resolve = (name?: string | null): string => {
-    if (!name) return '🎯'
+    if (!name) return '🎯';
 
     for (const [key, emoji] of Object.entries(CATEGORY_EMOJI_MAP)) {
       if (name.toLowerCase().includes(key.toLowerCase())) {
-        return emoji
+        return emoji;
       }
     }
 
-    return '🎯'
-  }
+    return '🎯';
+  };
 
   return {
     resolve,
     emojiMap: CATEGORY_EMOJI_MAP,
-  }
+  };
 }

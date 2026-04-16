@@ -1,7 +1,7 @@
 ---
 name: gsd-audit-fix
 description: Autonomous audit-to-fix pipeline — find issues, classify, fix, test, commit
-argument-hint: "--source <audit-uat> [--severity <medium|high|all>] [--max N] [--dry-run]"
+argument-hint: '--source <audit-uat> [--severity <medium|high|all>] [--max N] [--dry-run]'
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Agent, AskUserQuestion
 ---
 
@@ -10,11 +10,12 @@ Run an audit, classify findings as auto-fixable vs manual-only, then autonomousl
 auto-fixable issues with test verification and atomic commits.
 
 Flags:
+
 - `--max N` — maximum findings to fix (default: 5)
 - `--severity high|medium|all` — minimum severity to process (default: medium)
 - `--dry-run` — classify findings without fixing (shows classification table)
 - `--source <audit>` — which audit to run (default: audit-uat)
-</objective>
+  </objective>
 
 <execution_context>
 @.github/get-shit-done/workflows/audit-fix.md

@@ -6,9 +6,9 @@
  * The game store delegates to these functions while still owning all reactive state.
  */
 
-import type { Player, PlayerWithRank } from '@riddle-rush/types/game'
-import orderBy from 'lodash-es/orderBy'
-import { generateUUID } from '~/utils/uuid'
+import type { Player, PlayerWithRank } from '@riddle-rush/types/game';
+import orderBy from 'lodash-es/orderBy';
+import { generateUUID } from '~/utils/uuid';
 
 /**
  * Composable providing player management utilities.
@@ -36,7 +36,7 @@ export function usePlayerManager() {
       currentRoundScore: 0,
       currentRoundAnswer: undefined,
       hasSubmitted: false,
-    }))
+    }));
   }
 
   /**
@@ -47,7 +47,7 @@ export function usePlayerManager() {
    * @returns The index of the player, or -1 if not found
    */
   function findPlayerIndex(players: Player[], playerId: string): number {
-    return players.findIndex((p) => p.id === playerId)
+    return players.findIndex((p) => p.id === playerId);
   }
 
   /**
@@ -58,7 +58,7 @@ export function usePlayerManager() {
    * @returns The matching Player, or null if not found
    */
   function getPlayerById(players: Player[], playerId: string): Player | null {
-    return players.find((p) => p.id === playerId) ?? null
+    return players.find((p) => p.id === playerId) ?? null;
   }
 
   /**
@@ -69,8 +69,8 @@ export function usePlayerManager() {
    * @param answer - The answer to submit
    */
   function submitPlayerAnswer(player: Player, answer: string): void {
-    player.currentRoundAnswer = answer
-    player.hasSubmitted = true
+    player.currentRoundAnswer = answer;
+    player.hasSubmitted = true;
   }
 
   /**
@@ -82,9 +82,9 @@ export function usePlayerManager() {
    * @param points - The score to assign for the current round
    */
   function assignPlayerScore(player: Player, points: number): void {
-    const delta = points - player.currentRoundScore
-    player.totalScore += delta
-    player.currentRoundScore = points
+    const delta = points - player.currentRoundScore;
+    player.totalScore += delta;
+    player.currentRoundScore = points;
   }
 
   /**
@@ -95,7 +95,7 @@ export function usePlayerManager() {
    * @param avatarUrl - The avatar URL to set
    */
   function updatePlayerAvatar(player: Player, avatarUrl: string): void {
-    player.avatar = avatarUrl
+    player.avatar = avatarUrl;
   }
 
   /**
@@ -111,10 +111,10 @@ export function usePlayerManager() {
    */
   function resetPlayerSubmissions(players: Player[]): void {
     players.forEach((player) => {
-      player.hasSubmitted = false
-      player.currentRoundAnswer = undefined
-      player.currentRoundScore = 0
-    })
+      player.hasSubmitted = false;
+      player.currentRoundAnswer = undefined;
+      player.currentRoundScore = 0;
+    });
   }
 
   /**
@@ -125,10 +125,10 @@ export function usePlayerManager() {
    */
   function resetPlayerRoundState(players: Player[]): void {
     players.forEach((player) => {
-      player.currentRoundScore = 0
-      player.currentRoundAnswer = undefined
-      player.hasSubmitted = false
-    })
+      player.currentRoundScore = 0;
+      player.currentRoundAnswer = undefined;
+      player.hasSubmitted = false;
+    });
   }
 
   /**
@@ -141,16 +141,16 @@ export function usePlayerManager() {
    * @returns Ranked player array with rank and isWinner fields
    */
   function buildLeaderboard(players: Player[], isGameCompleted: boolean): PlayerWithRank[] {
-    if (players.length === 0) return []
+    if (players.length === 0) return [];
 
-    const sorted = orderBy(players, ['totalScore'], ['desc'])
-    const topScore = sorted[0]?.totalScore ?? 0
+    const sorted = orderBy(players, ['totalScore'], ['desc']);
+    const topScore = sorted[0]?.totalScore ?? 0;
 
     return sorted.map((player, index) => ({
       ...player,
       rank: index + 1,
       isWinner: isGameCompleted && index === 0 && topScore > 0,
-    }))
+    }));
   }
 
   /**
@@ -162,7 +162,7 @@ export function usePlayerManager() {
    * @returns The player at the given index, or null if index is out of bounds
    */
   function getCurrentPlayerTurn(players: Player[], currentPlayerIndex: number): Player | null {
-    return players[currentPlayerIndex] ?? null
+    return players[currentPlayerIndex] ?? null;
   }
 
   /**
@@ -174,7 +174,7 @@ export function usePlayerManager() {
    * @returns The next player index
    */
   function advancePlayerIndex(currentIndex: number, _playerCount: number): number {
-    return currentIndex + 1
+    return currentIndex + 1;
   }
 
   /**
@@ -184,8 +184,8 @@ export function usePlayerManager() {
    * @returns True if all players have submitted, false if array is empty or any haven't
    */
   function allPlayersSubmitted(players: Player[]): boolean {
-    if (players.length === 0) return false
-    return players.every((p) => p.hasSubmitted)
+    if (players.length === 0) return false;
+    return players.every((p) => p.hasSubmitted);
   }
 
   return {
@@ -201,5 +201,5 @@ export function usePlayerManager() {
     getCurrentPlayerTurn,
     advancePlayerIndex,
     allPlayersSubmitted,
-  }
+  };
 }

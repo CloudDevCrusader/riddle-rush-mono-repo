@@ -39,12 +39,12 @@ Provides templates for:
 
 ```ts
 // src/index.ts
-import { hello } from './hello.ts'
-hello()
+import { hello } from './hello.ts';
+hello();
 
 // src/hello.ts
 export function hello() {
-  console.log('Hello tsdown!')
+  console.log('Hello tsdown!');
 }
 ```
 
@@ -52,11 +52,11 @@ export function hello() {
 
 ```ts
 // tsdown.config.ts
-import { defineConfig } from 'tsdown'
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['./src/index.ts'],
-})
+});
 ```
 
 ### 3. Run Build
@@ -119,7 +119,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   clean: true,
-})
+});
 ```
 
 ### Browser Library (IIFE)
@@ -131,7 +131,7 @@ export default defineConfig({
   globalName: 'MyLib',
   platform: 'browser',
   minify: true,
-})
+});
 ```
 
 ### Multiple Entry Points
@@ -145,7 +145,7 @@ export default defineConfig({
   },
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 ## Using Plugins
@@ -153,12 +153,12 @@ export default defineConfig({
 Add Rolldown, Rollup, or Unplugin plugins:
 
 ```ts
-import SomePlugin from 'some-plugin'
+import SomePlugin from 'some-plugin';
 
 export default defineConfig({
   entry: ['src/index.ts'],
   plugins: [SomePlugin()],
-})
+});
 ```
 
 ## Watch Mode

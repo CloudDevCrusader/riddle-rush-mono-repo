@@ -31,15 +31,15 @@ components/
 ```vue
 <!-- components/UserCard.vue - Everything in one file -->
 <script setup>
-import { computed } from 'vue'
-import { useUserStatus } from '@/composables/useUserStatus'
+import { computed } from 'vue';
+import { useUserStatus } from '@/composables/useUserStatus';
 
 const props = defineProps({
   user: { type: Object, required: true },
-})
+});
 
-const { isOnline } = useUserStatus(props.user.id)
-const displayName = computed(() => `${props.user.firstName} ${props.user.lastName}`)
+const { isOnline } = useUserStatus(props.user.id);
+const displayName = computed(() => `${props.user.firstName} ${props.user.lastName}`);
 </script>
 
 <template>
@@ -100,7 +100,7 @@ Template, logic, and styles within a component are inherently coupled:
 ```vue
 <!-- Everything references each other -->
 <script setup>
-const isExpanded = ref(false) // Used by template and affects styling
+const isExpanded = ref(false); // Used by template and affects styling
 </script>
 
 <template>
@@ -189,10 +189,10 @@ export function useDataTable(initialData: Ref<Item[]>) {
 ```vue
 <!-- DataTable.vue - Component stays focused -->
 <script setup>
-import { useDataTable } from '@/composables/useDataTable'
+import { useDataTable } from '@/composables/useDataTable';
 
-const props = defineProps(['items'])
-const { sortedData, sort, goToPage } = useDataTable(toRef(props, 'items'))
+const props = defineProps(['items']);
+const { sortedData, sort, goToPage } = useDataTable(toRef(props, 'items'));
 </script>
 ```
 

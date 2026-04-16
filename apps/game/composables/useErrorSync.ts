@@ -6,32 +6,32 @@
  * recurse. Use guarded console.* only for pipeline bootstrap failures.
  */
 
-import { openDB } from 'idb'
+import { openDB } from 'idb';
 
-const ERROR_LOGS_DB_NAME = 'ErrorLogs'
+const ERROR_LOGS_DB_NAME = 'ErrorLogs';
 /** Bumped so DBs missing `errors` (or stuck partial upgrades) recreate the store */
-const ERROR_LOGS_DB_VERSION = 3
+const ERROR_LOGS_DB_VERSION = 3;
 
 async function openErrorLogsDb() {
   return openDB(ERROR_LOGS_DB_NAME, ERROR_LOGS_DB_VERSION, {
     upgrade(db) {
       if (!db.objectStoreNames.contains('errors')) {
-        db.createObjectStore('errors', { keyPath: 'timestamp' })
+        db.createObjectStore('errors', { keyPath: 'timestamp' });
       }
     },
-  })
+  });
 }
 
 interface ErrorLog {
-  level: 'error' | 'warning' | 'info'
-  message: string
-  error?: unknown
-  context?: Record<string, unknown>
-  timestamp: string
-  environment: string
-  appVersion: string
-  url: string
-  userAgent: string
+  level: 'error' | 'warning' | 'info';
+  message: string;
+  error?: unknown;
+  context?: Record<string, unknown>;
+  timestamp: string;
+  environment: string;
+  appVersion: string;
+  url: string;
+  userAgent: string;
 }
 
 export const useErrorSync = () => {
@@ -47,9 +47,9 @@ export const useErrorSync = () => {
             cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
             debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
           },
-        }
+        };
 
-  const isProduction = process.env.NODE_ENV === 'production'
+  const isProduction = process.env.NODE_ENV === 'production';
 
   /**
    * Sync error logs to CloudWatch via API Gateway
@@ -63,7 +63,7 @@ export const useErrorSync = () => {
     try {
       // Only sync in production or if explicitly enabled
       if (!isProduction && !runtimeConfig.public.debugErrorSync) {
-        return
+        return;
       }
 
       const errorLog: ErrorLog = {
@@ -76,22 +76,22 @@ export const useErrorSync = () => {
         appVersion: runtimeConfig.public.appVersion,
         url: typeof window !== 'undefined' ? window.location.href : 'server',
         userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'server',
-      }
+      };
 
       // Store in IndexedDB for offline sync
-      await storeErrorLocally(errorLog)
+      await storeErrorLocally(errorLog);
 
       // Try to sync immediately if online
       if (navigator.onLine) {
-        await syncErrorsToCloudWatch()
+        await syncErrorsToCloudWatch();
       }
     } catch (syncError) {
       if (process.env.NODE_ENV !== 'production') {
-        console.error('Failed to sync error log:', syncError)
+        console.error('Failed to sync error log:', syncError);
       }
       // If syncing fails, we'll rely on the offline queue
     }
-  }
+  };
 
   /**
    * Format error for serialization
@@ -102,21 +102,21 @@ export const useErrorSync = () => {
         name: error.name,
         message: error.message,
         stack: error.stack,
-      }
+      };
 
       // Add cause property if it exists (ES2022+ feature)
       if ('cause' in error) {
-        ;(errorData as Record<string, unknown>).cause = error.cause
+        (errorData as Record<string, unknown>).cause = error.cause;
       }
 
-      return JSON.stringify(errorData)
+      return JSON.stringify(errorData);
     }
-    return String(error)
-  }
+    return String(error);
+  };
 
   // Export for testing
   if (process.env.NODE_ENV === 'test') {
-    ;(useErrorSync as unknown as Record<string, unknown>).formatError = formatError
+    (useErrorSync as unknown as Record<string, unknown>).formatError = formatError;
   }
 
   /**
@@ -124,28 +124,28 @@ export const useErrorSync = () => {
    */
   const storeErrorLocally = async (errorLog: ErrorLog) => {
     try {
-      const db = await openErrorLogsDb()
+      const db = await openErrorLogsDb();
 
-      const tx = db.transaction('errors', 'readwrite')
-      const store = tx.store
-      await store.put(errorLog)
-      await tx.done
+      const tx = db.transaction('errors', 'readwrite');
+      const store = tx.store;
+      await store.put(errorLog);
+      await tx.done;
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
-        console.error('Failed to store error locally:', error)
+        console.error('Failed to store error locally:', error);
       }
       // Fallback to localStorage if IndexedDB fails
       try {
-        const existingErrors = JSON.parse(localStorage.getItem('errorLogsQueue') || '[]')
-        existingErrors.push(errorLog)
-        localStorage.setItem('errorLogsQueue', JSON.stringify(existingErrors))
+        const existingErrors = JSON.parse(localStorage.getItem('errorLogsQueue') || '[]');
+        existingErrors.push(errorLog);
+        localStorage.setItem('errorLogsQueue', JSON.stringify(existingErrors));
       } catch (fallbackError) {
         if (process.env.NODE_ENV !== 'production') {
-          console.error('Failed to store error in localStorage:', fallbackError)
+          console.error('Failed to store error in localStorage:', fallbackError);
         }
       }
     }
-  }
+  };
 
   /**
    * Sync stored errors to CloudWatch
@@ -153,44 +153,44 @@ export const useErrorSync = () => {
   const syncErrorsToCloudWatch = async () => {
     try {
       // Check if we have errors to sync
-      let errorsToSync: ErrorLog[] = []
+      let errorsToSync: ErrorLog[] = [];
 
       // Try IndexedDB first
       try {
-        const db = await openErrorLogsDb()
-        const tx = db.transaction('errors', 'readwrite')
-        const store = tx.store
-        const allErrors = await store.getAll()
+        const db = await openErrorLogsDb();
+        const tx = db.transaction('errors', 'readwrite');
+        const store = tx.store;
+        const allErrors = await store.getAll();
 
         if (allErrors.length > 0) {
-          errorsToSync = allErrors
+          errorsToSync = allErrors;
           // Clear the store after reading
-          const clearTx = db.transaction('errors', 'readwrite')
-          await clearTx.store.clear()
+          const clearTx = db.transaction('errors', 'readwrite');
+          await clearTx.store.clear();
         }
       } catch (indexedDBError) {
         if (process.env.NODE_ENV !== 'production') {
-          console.warn('IndexedDB not available, trying localStorage:', indexedDBError)
+          console.warn('IndexedDB not available, trying localStorage:', indexedDBError);
         }
         // Fallback to localStorage
-        const storedErrors = localStorage.getItem('errorLogsQueue')
+        const storedErrors = localStorage.getItem('errorLogsQueue');
         if (storedErrors) {
-          const parsed = JSON.parse(storedErrors)
+          const parsed = JSON.parse(storedErrors);
           if (Array.isArray(parsed)) {
-            errorsToSync = parsed
+            errorsToSync = parsed;
           }
-          localStorage.removeItem('errorLogsQueue')
+          localStorage.removeItem('errorLogsQueue');
         }
       }
 
       if (errorsToSync.length === 0) {
-        return
+        return;
       }
 
       // Send to CloudWatch via API Gateway
-      const cloudWatchEndpoint = runtimeConfig.public.cloudWatchEndpoint
+      const cloudWatchEndpoint = runtimeConfig.public.cloudWatchEndpoint;
       if (!cloudWatchEndpoint) {
-        return
+        return;
       }
 
       const response = await fetch(cloudWatchEndpoint, {
@@ -205,22 +205,22 @@ export const useErrorSync = () => {
           version: runtimeConfig.public.appVersion,
           logs: errorsToSync,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error(`CloudWatch sync failed: ${response.status} ${response.statusText}`)
+        throw new Error(`CloudWatch sync failed: ${response.status} ${response.statusText}`);
       }
 
       if (process.env.NODE_ENV !== 'production') {
-        console.log(`Successfully synced ${errorsToSync.length} error logs to CloudWatch`)
+        console.log(`Successfully synced ${errorsToSync.length} error logs to CloudWatch`);
       }
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
-        console.error('Failed to sync errors to CloudWatch:', error)
+        console.error('Failed to sync errors to CloudWatch:', error);
       }
       // Errors will remain in storage and be retried later
     }
-  }
+  };
 
   /**
    * Setup periodic sync for offline errors
@@ -228,30 +228,30 @@ export const useErrorSync = () => {
   const setupPeriodicSync = () => {
     if (typeof window !== 'undefined') {
       // Sync every 5 minutes
-      setInterval(syncErrorsToCloudWatch, 5 * 60 * 1000)
+      setInterval(syncErrorsToCloudWatch, 5 * 60 * 1000);
 
       // Sync when coming back online
-      window.addEventListener('online', syncErrorsToCloudWatch)
+      window.addEventListener('online', syncErrorsToCloudWatch);
 
       // Sync on page visibility change
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-          syncErrorsToCloudWatch()
+          syncErrorsToCloudWatch();
         }
-      })
+      });
     }
-  }
+  };
 
   // Initialize periodic sync
   if (isProduction) {
-    setupPeriodicSync()
+    setupPeriodicSync();
   }
 
   return {
     syncErrorLog,
     syncErrorsToCloudWatch,
     setupPeriodicSync,
-  }
-}
+  };
+};
 
-export type { ErrorLog }
+export type { ErrorLog };

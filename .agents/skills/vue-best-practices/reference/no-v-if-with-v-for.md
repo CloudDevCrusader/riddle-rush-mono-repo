@@ -54,11 +54,11 @@ The ESLint rule `vue/no-use-v-if-with-v-for` enforces this best practice.
 </template>
 
 <script setup>
-  import { computed } from 'vue'
+  import { computed } from 'vue';
 
-  const props = defineProps(['users'])
+  const props = defineProps(['users']);
 
-  const activeUsers = computed(() => props.users.filter((user) => user.isActive))
+  const activeUsers = computed(() => props.users.filter((user) => user.isActive));
 </script>
 ```
 
@@ -105,7 +105,7 @@ The ESLint rule `vue/no-use-v-if-with-v-for` enforces this best practice.
 // 4. Testable - can unit test the filtering logic
 // 5. No ambiguity about intent
 
-const activeUsers = computed(() => users.value.filter((u) => u.isActive))
+const activeUsers = computed(() => users.value.filter((u) => u.isActive));
 
 // Can add more complex filtering
 const filteredUsers = computed(() =>
@@ -113,7 +113,7 @@ const filteredUsers = computed(() =>
     .filter((u) => u.isActive)
     .filter((u) => u.role === selectedRole.value)
     .sort((a, b) => a.name.localeCompare(b.name))
-)
+);
 ```
 
 ## Reference

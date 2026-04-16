@@ -31,8 +31,8 @@ Custom directives are designed for direct DOM manipulation on native HTML elemen
 </template>
 
 <script setup>
-import MyComponent from './MyComponent.vue'
-import MultiRootComponent from './MultiRootComponent.vue'
+import MyComponent from './MyComponent.vue';
+import MultiRootComponent from './MultiRootComponent.vue';
 
 // MultiRootComponent.vue has:
 // <template>
@@ -59,7 +59,7 @@ import MultiRootComponent from './MultiRootComponent.vue'
 </template>
 
 <script setup>
-import MyComponent from './MyComponent.vue'
+import MyComponent from './MyComponent.vue';
 </script>
 ```
 
@@ -97,19 +97,19 @@ However, this is still not recommended because:
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue';
 
 const props = defineProps({
   autofocus: Boolean,
-})
+});
 
-const inputRef = ref(null)
+const inputRef = ref(null);
 
 onMounted(() => {
   if (props.autofocus) {
-    inputRef.value?.focus()
+    inputRef.value?.focus();
   }
-})
+});
 </script>
 
 <!-- Usage -->
@@ -125,13 +125,13 @@ onMounted(() => {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const inputRef = ref(null)
+const inputRef = ref(null);
 
-const focus = () => inputRef.value?.focus()
+const focus = () => inputRef.value?.focus();
 
-defineExpose({ focus })
+defineExpose({ focus });
 </script>
 
 <!-- Parent.vue -->
@@ -140,13 +140,13 @@ defineExpose({ focus })
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
 
-const myInput = ref(null)
+const myInput = ref(null);
 
 onMounted(() => {
-  myInput.value?.focus()
-})
+  myInput.value?.focus();
+});
 </script>
 ```
 

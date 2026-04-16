@@ -26,7 +26,7 @@ Vue applies special boolean casting rules, but String appearing before Boolean d
 // WRONG: String before Boolean disables boolean casting
 defineProps({
   disabled: [String, Boolean], // disabled="" is parsed as empty string ""
-})
+});
 </script>
 
 <!-- In parent template -->
@@ -40,7 +40,7 @@ defineProps({
   // PROBLEMATIC: Order matters and may cause confusion
   loading: [String, Boolean], // <Component loading /> gives ""
   active: [Boolean, String], // <Component active /> gives true
-})
+});
 </script>
 ```
 
@@ -51,7 +51,7 @@ defineProps({
 // CORRECT: Boolean before String enables boolean casting
 defineProps({
   disabled: [Boolean, String], // <Component disabled /> parsed as true
-})
+});
 </script>
 
 <!-- All of these work as expected -->
@@ -70,7 +70,7 @@ defineProps({
 // BEST: Use only Boolean if you don't need String values
 defineProps({
   disabled: Boolean, // Clear intent, no ambiguity
-})
+});
 </script>
 ```
 
@@ -98,7 +98,7 @@ defineProps({
     type: [Boolean, String], // Boolean first for casting
     default: false,
   },
-})
+});
 </script>
 
 <!-- Usage examples -->

@@ -10,6 +10,7 @@ node "/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-shit-done/bin
 ```
 
 Output:
+
 ```json
 {
   "found": true,
@@ -20,6 +21,7 @@ Output:
 ```
 
 With existing decimals:
+
 ```json
 {
   "found": true,
@@ -37,6 +39,7 @@ BASE_PHASE=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-
 ```
 
 Or with --raw flag:
+
 ```bash
 DECIMAL_PHASE=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-shit-done/bin/gsd-tools.cjs" phase next-decimal "${AFTER_PHASE}" --raw)
 # Returns just: 06.1
@@ -44,12 +47,12 @@ DECIMAL_PHASE=$(node "/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/g
 
 ## Examples
 
-| Existing Phases | Next Phase |
-|-----------------|------------|
-| 06 only | 06.1 |
-| 06, 06.1 | 06.2 |
-| 06, 06.1, 06.2 | 06.3 |
-| 06, 06.1, 06.3 (gap) | 06.4 |
+| Existing Phases      | Next Phase |
+| -------------------- | ---------- |
+| 06 only              | 06.1       |
+| 06, 06.1             | 06.2       |
+| 06, 06.1, 06.2       | 06.3       |
+| 06, 06.1, 06.3 (gap) | 06.4       |
 
 ## Directory Naming
 

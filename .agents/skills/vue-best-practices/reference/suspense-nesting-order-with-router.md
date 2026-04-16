@@ -91,13 +91,13 @@ Each of these components wraps and controls its child in specific ways. Incorrec
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
-const route = useRoute()
+const route = useRoute();
 
 // Only cache specific routes
-const cachedViews = computed(() => ['Dashboard', 'Profile', 'Settings'])
+const cachedViews = computed(() => ['Dashboard', 'Profile', 'Settings']);
 </script>
 ```
 

@@ -19,18 +19,18 @@ Add to Nuxt config:
 // nuxt.config.ts
 export default defineNuxtConfig({
   modules: ['@unocss/nuxt'],
-})
+});
 ```
 
 Create config file:
 
 ```ts
 // uno.config.ts
-import { defineConfig, presetWind3 } from 'unocss'
+import { defineConfig, presetWind3 } from 'unocss';
 
 export default defineConfig({
   presets: [presetWind3()],
-})
+});
 ```
 
 **Note:** The `uno.css` entry is automatically injected by the module.
@@ -52,14 +52,14 @@ Use a dedicated config file for best IDE support:
 
 ```ts
 // uno.config.ts
-import { defineConfig, presetWind3, presetIcons } from 'unocss'
+import { defineConfig, presetWind3, presetIcons } from 'unocss';
 
 export default defineConfig({
   presets: [presetWind3(), presetIcons()],
   shortcuts: {
     btn: 'py-2 px-4 font-semibold rounded-lg',
   },
-})
+});
 ```
 
 ### Nuxt Layers Support
@@ -72,24 +72,24 @@ export default defineNuxtConfig({
   unocss: {
     nuxtLayers: true,
   },
-})
+});
 ```
 
 Then in your root config:
 
 ```ts
 // uno.config.ts
-import config from './.nuxt/uno.config.mjs'
+import config from './.nuxt/uno.config.mjs';
 
-export default config
+export default config;
 ```
 
 Or extend the merged config:
 
 ```ts
 // uno.config.ts
-import { mergeConfigs } from '@unocss/core'
-import config from './.nuxt/uno.config.mjs'
+import { mergeConfigs } from '@unocss/core';
+import config from './.nuxt/uno.config.mjs';
 
 export default mergeConfigs([
   config,
@@ -99,7 +99,7 @@ export default mergeConfigs([
       custom: 'text-red-500',
     },
   },
-])
+]);
 ```
 
 ## Common Setup Example
@@ -108,7 +108,7 @@ export default mergeConfigs([
 // nuxt.config.ts
 export default defineNuxtConfig({
   modules: ['@unocss/nuxt'],
-})
+});
 ```
 
 ```ts
@@ -122,7 +122,7 @@ import {
   presetWind3,
   transformerDirectives,
   transformerVariantGroup,
-} from 'unocss'
+} from 'unocss';
 
 export default defineConfig({
   presets: [
@@ -146,7 +146,7 @@ export default defineConfig({
       'px-4 py-1 rounded inline-block bg-teal-600 text-white cursor-pointer hover:bg-teal-700 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50',
     ],
   ],
-})
+});
 ```
 
 ## Usage in Components

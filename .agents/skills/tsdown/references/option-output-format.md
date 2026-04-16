@@ -38,7 +38,7 @@ tsdown --format esm,cjs
 export default defineConfig({
   entry: ['src/index.ts'],
   format: 'esm',
-})
+});
 ```
 
 #### Multiple Formats
@@ -47,7 +47,7 @@ export default defineConfig({
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
-})
+});
 ```
 
 ## Per-Format Configuration
@@ -65,7 +65,7 @@ export default defineConfig({
       target: ['node20'],
     },
   },
-})
+});
 ```
 
 This allows different targets, platforms, or other settings per format.
@@ -79,7 +79,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 Output:
@@ -97,7 +97,7 @@ export default defineConfig({
   globalName: 'MyLib',
   platform: 'browser',
   minify: true,
-})
+});
 ```
 
 Output: `dist/index.global.js` (IIFE with global `MyLib`)
@@ -110,7 +110,7 @@ export default defineConfig({
   format: ['umd'],
   globalName: 'MyLib',
   platform: 'neutral',
-})
+});
 ```
 
 Works with AMD, CommonJS, and browser globals.
@@ -124,7 +124,7 @@ export default defineConfig({
   platform: 'node',
   dts: true,
   shims: true, // Add __dirname, __filename for CJS compat
-})
+});
 ```
 
 ### Framework Component Library
@@ -135,7 +135,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   external: ['react', 'react-dom'], // Don't bundle dependencies
   dts: true,
-})
+});
 ```
 
 ## Format-Specific Outputs
@@ -160,7 +160,7 @@ export default defineConfig({
   outExtensions: ({ format }) => ({
     js: format === 'esm' ? '.js' : '.cjs',
   }),
-})
+});
 ```
 
 ## Tips

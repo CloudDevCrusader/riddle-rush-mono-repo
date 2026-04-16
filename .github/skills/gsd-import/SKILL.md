@@ -1,10 +1,9 @@
 ---
 name: gsd-import
 description: Ingest external plans with conflict detection against project decisions before writing anything.
-argument-hint: "--from <filepath>"
+argument-hint: '--from <filepath>'
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion, Task
 ---
-
 
 <objective>
 Import external plan files into the GSD planning system with conflict detection against PROJECT.md decisions.

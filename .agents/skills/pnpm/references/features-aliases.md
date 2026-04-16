@@ -41,8 +41,8 @@ Install different versions side by side:
 Usage:
 
 ```js
-import lodash3 from 'lodash3'
-import lodash4 from 'lodash4'
+import lodash3 from 'lodash3';
+import lodash4 from 'lodash4';
 ```
 
 ### Replace Package with Fork

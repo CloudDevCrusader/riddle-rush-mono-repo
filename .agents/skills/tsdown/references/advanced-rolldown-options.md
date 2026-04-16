@@ -17,7 +17,7 @@ export default defineConfig({
   inputOptions: {
     cwd: './custom-directory',
   },
-})
+});
 ```
 
 ### Using a Function
@@ -27,10 +27,10 @@ Dynamically modify options based on the output format:
 ```ts
 export default defineConfig({
   inputOptions(inputOptions, format) {
-    inputOptions.cwd = './custom-directory'
-    return inputOptions
+    inputOptions.cwd = './custom-directory';
+    return inputOptions;
   },
-})
+});
 ```
 
 ## Output Options
@@ -42,7 +42,7 @@ export default defineConfig({
   outputOptions: {
     legalComments: 'inline',
   },
-})
+});
 ```
 
 ### Using a Function
@@ -51,11 +51,11 @@ export default defineConfig({
 export default defineConfig({
   outputOptions(outputOptions, format) {
     if (format === 'esm') {
-      outputOptions.legalComments = 'inline'
+      outputOptions.legalComments = 'inline';
     }
-    return outputOptions
+    return outputOptions;
   },
-})
+});
 ```
 
 ## Common Use Cases
@@ -68,7 +68,7 @@ export default defineConfig({
   outputOptions: {
     legalComments: 'inline',
   },
-})
+});
 ```
 
 ### Custom Working Directory
@@ -79,7 +79,7 @@ export default defineConfig({
   inputOptions: {
     cwd: './packages/my-lib',
   },
-})
+});
 ```
 
 ### Format-Specific Options
@@ -90,11 +90,11 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   outputOptions(outputOptions, format) {
     if (format === 'esm') {
-      outputOptions.legalComments = 'inline'
+      outputOptions.legalComments = 'inline';
     }
-    return outputOptions
+    return outputOptions;
   },
-})
+});
 ```
 
 ## When to Use

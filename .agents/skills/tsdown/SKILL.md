@@ -38,14 +38,14 @@ npx tsdown-migrate
 ## Basic Configuration
 
 ```ts
-import { defineConfig } from 'tsdown'
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['./src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
   clean: true,
-})
+});
 ```
 
 ## Core References
@@ -116,7 +116,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   clean: true,
-})
+});
 ```
 
 ### Multiple Entry Points
@@ -130,7 +130,7 @@ export default defineConfig({
   },
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 ### Browser Library (IIFE/UMD)
@@ -142,7 +142,7 @@ export default defineConfig({
   globalName: 'MyLib',
   platform: 'browser',
   minify: true,
-})
+});
 ```
 
 ### React Component Library
@@ -156,7 +156,7 @@ export default defineConfig({
   plugins: [
     // React Fast Refresh support
   ],
-})
+});
 ```
 
 ### Preserve Directory Structure
@@ -167,7 +167,7 @@ export default defineConfig({
   unbundle: true, // Preserve file structure
   format: ['esm'],
   dts: true,
-})
+});
 ```
 
 ### CI-Aware Configuration
@@ -180,19 +180,19 @@ export default defineConfig({
   failOnWarn: 'ci-only',
   publint: 'ci-only',
   attw: 'ci-only',
-})
+});
 ```
 
 ### WASM Support
 
 ```ts
-import { wasm } from 'rolldown-plugin-wasm'
-import { defineConfig } from 'tsdown'
+import { wasm } from 'rolldown-plugin-wasm';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts'],
   plugins: [wasm()],
-})
+});
 ```
 
 ### Advanced with Hooks
@@ -204,13 +204,13 @@ export default defineConfig({
   dts: true,
   hooks: {
     'build:before': async (context) => {
-      console.log('Building...')
+      console.log('Building...');
     },
     'build:done': async (context) => {
-      console.log('Build complete!')
+      console.log('Build complete!');
     },
   },
-})
+});
 ```
 
 ## Configuration Features
@@ -231,7 +231,7 @@ export default defineConfig([
     format: ['esm'],
     platform: 'node',
   },
-])
+]);
 ```
 
 ### Conditional Config
@@ -240,14 +240,14 @@ Use functions for dynamic configuration:
 
 ```ts
 export default defineConfig((options) => {
-  const isDev = options.watch
+  const isDev = options.watch;
   return {
     entry: ['src/index.ts'],
     format: ['esm', 'cjs'],
     minify: !isDev,
     sourcemap: isDev,
-  }
-})
+  };
+});
 ```
 
 ### Workspace/Monorepo
@@ -260,7 +260,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 ## CLI Quick Reference
@@ -295,7 +295,7 @@ tsdown --clean                 # Clean output directory
 
    ```ts
    {
-     dts: true
+     dts: true;
    }
    ```
 
@@ -303,7 +303,7 @@ tsdown --clean                 # Clean output directory
 
    ```ts
    {
-     external: [/^react/, /^@myorg\//]
+     external: [/^react/, /^@myorg\//];
    }
    ```
 
@@ -311,7 +311,7 @@ tsdown --clean                 # Clean output directory
 
    ```ts
    {
-     treeshake: true
+     treeshake: true;
    }
    ```
 
@@ -319,7 +319,7 @@ tsdown --clean                 # Clean output directory
 
    ```ts
    {
-     minify: true
+     minify: true;
    }
    ```
 
@@ -327,7 +327,7 @@ tsdown --clean                 # Clean output directory
 
    ```ts
    {
-     shims: true
+     shims: true;
    } // Adds __dirname, __filename, etc.
    ```
 
@@ -335,7 +335,7 @@ tsdown --clean                 # Clean output directory
 
    ```ts
    {
-     exports: true
+     exports: true;
    } // Creates proper exports field
    ```
 
@@ -349,7 +349,7 @@ tsdown --clean                 # Clean output directory
 
    ```ts
    {
-     unbundle: true
+     unbundle: true;
    } // Keep directory structure
    ```
 

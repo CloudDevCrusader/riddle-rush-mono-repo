@@ -78,7 +78,7 @@ tags: [vue3, events, modifiers, scroll, touch, performance]
 <script setup>
   function handleTouchMove(event) {
     if (shouldPreventScroll.value) {
-      event.preventDefault()
+      event.preventDefault();
     }
     // ... handle touch
   }
@@ -97,7 +97,7 @@ tags: [vue3, events, modifiers, scroll, touch, performance]
 // 3. Reduce jank and stuttering
 
 // Equivalent to:
-element.addEventListener('scroll', handler, { passive: true })
+element.addEventListener('scroll', handler, { passive: true });
 ```
 
 ## When to Use .passive

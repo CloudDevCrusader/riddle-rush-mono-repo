@@ -39,10 +39,10 @@ tags: [vue3, animation, key, autoanimate, rerender, dom]
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const message = ref('Hello')
-const imageUrl = ref('/images/photo1.jpg')
+const message = ref('Hello');
+const imageUrl = ref('/images/photo1.jpg');
 
 // Changing these won't trigger animations because
 // Vue updates the existing elements rather than replacing them
@@ -68,14 +68,14 @@ const imageUrl = ref('/images/photo1.jpg')
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const message = ref('Hello')
-const imageUrl = ref('/images/photo1.jpg')
+const message = ref('Hello');
+const imageUrl = ref('/images/photo1.jpg');
 
 // Now changing these will trigger animations
 function updateMessage() {
-  message.value = 'World' // Triggers enter animation for new <p>
+  message.value = 'World'; // Triggers enter animation for new <p>
 }
 </script>
 ```

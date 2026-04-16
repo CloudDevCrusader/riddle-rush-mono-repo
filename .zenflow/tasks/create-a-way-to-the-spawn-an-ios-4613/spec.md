@@ -162,13 +162,13 @@ No data model changes. The Playwright config additions follow existing TypeScrip
 
 ```typescript
 // apps/game/playwright.ios.config.ts shape
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: 'tests/e2e',
   use: { headless: false }, // always visible
   projects: [{ name: 'mobile-safari-iphone15', use: { ...devices['iPhone 15'] } }],
   // ...
-})
+});
 ```
 
 ---

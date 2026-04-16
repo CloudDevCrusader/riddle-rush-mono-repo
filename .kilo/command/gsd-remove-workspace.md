@@ -1,11 +1,12 @@
 ---
 description: Remove a GSD workspace and clean up worktrees
-argument-hint: "<workspace-name>"
+argument-hint: '<workspace-name>'
 tools:
   bash: true
   read: true
   question: true
 ---
+
 <context>
 **Arguments:**
 - `<workspace-name>` (required) — Name of the workspace to remove

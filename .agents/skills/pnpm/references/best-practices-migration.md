@@ -53,7 +53,7 @@ pnpm is strict about dependencies. If code imports a package not in `package.jso
 
 ```js
 // Works with npm (hoisted), fails with pnpm
-import lodash from 'lodash' // Not in dependencies, installed by another package
+import lodash from 'lodash'; // Not in dependencies, installed by another package
 ```
 
 **Solution:** Add missing dependencies explicitly:

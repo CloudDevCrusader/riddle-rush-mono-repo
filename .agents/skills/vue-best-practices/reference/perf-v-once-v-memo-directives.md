@@ -58,10 +58,10 @@ Use `v-once` for truly static content and `v-memo` for conditionally-static cont
 
 <script setup>
 // These values are set once at component creation
-const termsVersion = '2.1'
-const termsContent = fetchedTermsHTML
-const copyrightYear = 2024
-const companyName = 'Acme Corp'
+const termsVersion = '2.1';
+const termsContent = fetchedTermsHTML;
+const copyrightYear = 2024;
+const companyName = 'Acme Corp';
 </script>
 ```
 
@@ -93,12 +93,12 @@ const companyName = 'Acme Corp'
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 const list = ref([
   /* many items */
-])
-const selectedId = ref(null)
+]);
+const selectedId = ref(null);
 
 // When selectedId changes:
 // - Only the previously-selected item re-renders (selected: true -> false)
@@ -122,11 +122,11 @@ const selectedId = ref(null)
 </template>
 
 <script setup>
-const selectedId = ref(null)
-const editingId = ref(null)
+const selectedId = ref(null);
+const editingId = ref(null);
 const items = ref([
   /* ... */
-])
+]);
 </script>
 ```
 
@@ -175,12 +175,12 @@ const items = ref([
 
 ```vue
 <script setup>
-import { onUpdated } from 'vue'
+import { onUpdated } from 'vue';
 
 // This won't fire if v-memo prevents update
 onUpdated(() => {
-  console.log('Component updated')
-})
+  console.log('Component updated');
+});
 </script>
 ```
 

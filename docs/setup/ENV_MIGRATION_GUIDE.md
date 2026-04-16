@@ -133,7 +133,7 @@ Accessed directly via `process.env`:
 
 ```javascript
 // capacitor.config.ts
-webContentsDebuggingEnabled: process.env.NODE_ENV !== 'production'
+webContentsDebuggingEnabled: process.env.NODE_ENV !== 'production';
 ```
 
 ### Runtime Variables
@@ -144,7 +144,7 @@ Accessed via `useRuntimeConfig()`:
 // composables/useAssets.ts
 const {
   public: { baseUrl },
-} = useRuntimeConfig()
+} = useRuntimeConfig();
 ```
 
 ### Nuxt Configuration

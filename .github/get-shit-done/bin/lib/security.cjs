@@ -128,7 +128,7 @@ const INJECTION_PATTERNS = [
 
   // Role/identity manipulation
   /you\s+are\s+now\s+(?:a|an|the)\s+/i,
-  /act\s+as\s+(?:a|an|the)\s+(?!plan|phase|wave)/i,  // allow "act as a plan"
+  /act\s+as\s+(?:a|an|the)\s+(?!plan|phase|wave)/i, // allow "act as a plan"
   /pretend\s+(?:you(?:'re| are)\s+|to\s+be\s+)/i,
   /from\s+now\s+on,?\s+you\s+(?:are|will|should|must)/i,
 
@@ -210,14 +210,18 @@ function scanForInjection(text, opts = {}) {
     // Layer 1: Unicode tag block U+E0000–U+E007F (2025 supply-chain attack vector)
     // These characters are invisible and can embed hidden instructions
     if (/[\uDB40\uDC00-\uDB40\uDC7F]/u.test(text) || /[\u{E0000}-\u{E007F}]/u.test(text)) {
-      findings.push('Contains Unicode tag block characters (U+E0000–E007F) — invisible instruction injection vector');
+      findings.push(
+        'Contains Unicode tag block characters (U+E0000–E007F) — invisible instruction injection vector'
+      );
     }
 
     // Check for extremely long strings that could be prompt stuffing.
     // Normalize CRLF → LF before measuring so Windows checkouts don't inflate the count.
     const normalizedLength = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').length;
     if (normalizedLength > 50000) {
-      findings.push(`Suspicious text length: ${normalizedLength} chars (potential prompt stuffing)`);
+      findings.push(
+        `Suspicious text length: ${normalizedLength} chars (potential prompt stuffing)`
+      );
     }
   }
 
@@ -245,8 +249,10 @@ function sanitizeForPrompt(text) {
   // Neutralize XML/HTML tags that mimic system boundaries
   // Replace < > with full-width equivalents to prevent tag interpretation
   // Note: <instructions> is excluded — GSD uses it as legitimate prompt structure
-  sanitized = sanitized.replace(/<(\/?)(?:system|assistant|human)>/gi,
-    (_, slash) => `＜${slash || ''}system-text＞`);
+  sanitized = sanitized.replace(
+    /<(\/?)(?:system|assistant|human)>/gi,
+    (_, slash) => `＜${slash || ''}system-text＞`
+  );
 
   // Neutralize [SYSTEM] / [INST] markers
   sanitized = sanitized.replace(/\[(SYSTEM|INST)\]/gi, '[$1-TEXT]');
@@ -276,7 +282,7 @@ function sanitizeForDisplay(text) {
 
   sanitized = sanitized
     .split('\n')
-    .filter(line => !protocolLeakPatterns.some(pattern => pattern.test(line)))
+    .filter((line) => !protocolLeakPatterns.some((pattern) => pattern.test(line)))
     .join('\n');
 
   return sanitized;
@@ -332,7 +338,10 @@ function safeJsonParse(text, opts = {}) {
   }
 
   if (text.length > maxLength) {
-    return { ok: false, error: `${label}: input exceeds ${maxLength} byte limit (got ${text.length})` };
+    return {
+      ok: false,
+      error: `${label}: input exceeds ${maxLength} byte limit (got ${text.length})`,
+    };
   }
 
   try {
@@ -396,8 +405,14 @@ function validateFieldName(field) {
 // ─── Layer 3: Structural Schema Validation ───────────────────────────────────
 
 const KNOWN_VALID_TAGS = new Set([
-  'objective', 'process', 'step', 'success_criteria', 'critical_rules',
-  'available_agent_types', 'purpose', 'required_reading',
+  'objective',
+  'process',
+  'step',
+  'success_criteria',
+  'critical_rules',
+  'available_agent_types',
+  'purpose',
+  'required_reading',
 ]);
 
 /**

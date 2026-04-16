@@ -10,7 +10,7 @@ Easily use web fonts from Google Fonts and other providers.
 ## Installation
 
 ```ts
-import { defineConfig, presetWebFonts, presetWind3 } from 'unocss'
+import { defineConfig, presetWebFonts, presetWind3 } from 'unocss';
 
 export default defineConfig({
   presets: [
@@ -23,7 +23,7 @@ export default defineConfig({
       },
     }),
   ],
-})
+});
 ```
 
 ## Providers
@@ -72,7 +72,7 @@ fonts: {
 Self-host fonts:
 
 ```ts
-import { createLocalFontProcessor } from '@unocss/preset-web-fonts/local'
+import { createLocalFontProcessor } from '@unocss/preset-web-fonts/local';
 
 presetWebFonts({
   provider: 'none',
@@ -82,7 +82,7 @@ presetWebFonts({
     fontAssetsDir: 'public/assets/fonts',
     fontServeBaseUrl: '/assets/fonts',
   }),
-})
+});
 ```
 
 <!--

@@ -1,2 +1,2 @@
-export * from './game-schemas'
-export * from './fixtures'
+export * from './game-schemas';
+export * from './fixtures';

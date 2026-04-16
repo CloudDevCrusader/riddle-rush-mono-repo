@@ -80,9 +80,9 @@ metadata:
 
 ```js
 // eslint.config.mjs
-import antfu from '@antfu/eslint-config'
+import antfu from '@antfu/eslint-config';
 
-export default antfu()
+export default antfu();
 ```
 
 When completing tasks, run `pnpm run lint --fix` to format the code and fix coding style.

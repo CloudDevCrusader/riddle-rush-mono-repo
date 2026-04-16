@@ -3,34 +3,34 @@
  * Uses Vue 3 Composition API for reactive state management
  */
 export function useMenu() {
-  const isOpen = ref(false)
-  const activeItem = ref<string | null>(null)
+  const isOpen = ref(false);
+  const activeItem = ref<string | null>(null);
 
   const open = () => {
-    isOpen.value = true
-  }
+    isOpen.value = true;
+  };
 
   const close = () => {
-    isOpen.value = false
-    activeItem.value = null
-  }
+    isOpen.value = false;
+    activeItem.value = null;
+  };
 
   const toggle = () => {
-    isOpen.value = !isOpen.value
-  }
+    isOpen.value = !isOpen.value;
+  };
 
   const setActiveItem = (item: string) => {
-    activeItem.value = item
-  }
+    activeItem.value = item;
+  };
 
   // Close menu on route change
-  const route = useRoute()
+  const route = useRoute();
   watch(
     () => route.path,
     () => {
-      close()
+      close();
     }
-  )
+  );
 
   return {
     isOpen: readonly(isOpen),
@@ -39,5 +39,5 @@ export function useMenu() {
     close,
     toggle,
     setActiveItem,
-  }
+  };
 }

@@ -1,59 +1,59 @@
 <script setup lang="ts">
-const { goHome } = useNavigation()
-const { t } = useI18n()
+const { goHome } = useNavigation();
+const { t } = useI18n();
 
-const progress = ref(0)
-const canSkip = ref(false)
-const isNavigating = ref(false)
+const progress = ref(0);
+const canSkip = ref(false);
+const isNavigating = ref(false);
 
-let progressInterval: ReturnType<typeof setInterval> | null = null
-let navTimeout: ReturnType<typeof setTimeout> | null = null
-let skipTimeout: ReturnType<typeof setTimeout> | null = null
+let progressInterval: ReturnType<typeof setInterval> | null = null;
+let navTimeout: ReturnType<typeof setTimeout> | null = null;
+let skipTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const handleSkip = () => {
-  if (!canSkip.value || isNavigating.value) return
-  isNavigating.value = true
-  void goHome()
-}
+  if (!canSkip.value || isNavigating.value) return;
+  isNavigating.value = true;
+  void goHome();
+};
 
 onMounted(() => {
-  const intervalMs = 50
-  const step = 100 / (2000 / intervalMs)
+  const intervalMs = 50;
+  const step = 100 / (2000 / intervalMs);
 
   progressInterval = setInterval(() => {
-    progress.value = Math.min(100, progress.value + step)
+    progress.value = Math.min(100, progress.value + step);
 
     if (progress.value >= 100) {
       if (progressInterval) {
-        clearInterval(progressInterval)
-        progressInterval = null
+        clearInterval(progressInterval);
+        progressInterval = null;
       }
 
       if (!isNavigating.value) {
-        isNavigating.value = true
+        isNavigating.value = true;
         navTimeout = setTimeout(() => {
-          void goHome()
-        }, 300)
+          void goHome();
+        }, 300);
       }
     }
-  }, intervalMs)
+  }, intervalMs);
 
   skipTimeout = setTimeout(() => {
-    canSkip.value = true
-  }, 1000)
-})
+    canSkip.value = true;
+  }, 1000);
+});
 
 onBeforeUnmount(() => {
-  if (progressInterval) clearInterval(progressInterval)
-  if (navTimeout) clearTimeout(navTimeout)
-  if (skipTimeout) clearTimeout(skipTimeout)
-})
+  if (progressInterval) clearInterval(progressInterval);
+  if (navTimeout) clearTimeout(navTimeout);
+  if (skipTimeout) clearTimeout(skipTimeout);
+});
 
 useLocalizedPageSeo({
   title: () => t('app.title'),
   description: () => t('app.description'),
   noindex: true,
-})
+});
 </script>
 
 <template>

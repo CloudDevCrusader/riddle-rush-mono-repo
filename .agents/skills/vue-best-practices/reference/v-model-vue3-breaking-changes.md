@@ -37,10 +37,10 @@ export default {
   props: ['value'], // WRONG in Vue 3
   methods: {
     update(val) {
-      this.$emit('input', val) // WRONG in Vue 3
+      this.$emit('input', val); // WRONG in Vue 3
     },
   },
-}
+};
 </script>
 
 <template>
@@ -58,10 +58,10 @@ export default {
   emits: ['update:modelValue'], // Declare emits
   methods: {
     update(val) {
-      this.$emit('update:modelValue', val) // Changed from 'input'
+      this.$emit('update:modelValue', val); // Changed from 'input'
     },
   },
-}
+};
 </script>
 
 <template>
@@ -74,7 +74,7 @@ export default {
 ```vue
 <!-- Vue 3 Child Component - Recommended -->
 <script setup>
-const model = defineModel() // Handles prop and emit automatically
+const model = defineModel(); // Handles prop and emit automatically
 </script>
 
 <template>
@@ -98,10 +98,10 @@ export default {
   props: ['title'],
   methods: {
     updateTitle(val) {
-      this.$emit('update:title', val) // .sync pattern
+      this.$emit('update:title', val); // .sync pattern
     },
   },
-}
+};
 </script>
 ```
 
@@ -113,7 +113,7 @@ export default {
 
 <!-- Child with defineModel -->
 <script setup>
-const title = defineModel('title')
+const title = defineModel('title');
 </script>
 
 <template>
@@ -122,8 +122,8 @@ const title = defineModel('title')
 
 <!-- Child with manual props/emits -->
 <script setup>
-const props = defineProps(['title'])
-const emit = defineEmits(['update:title'])
+const props = defineProps(['title']);
+const emit = defineEmits(['update:title']);
 </script>
 
 <template>
@@ -145,7 +145,7 @@ export default {
     event: 'change',
   },
   props: ['checked'],
-}
+};
 </script>
 ```
 
@@ -158,7 +158,7 @@ export default {
 
 <!-- Child -->
 <script setup>
-const checked = defineModel('checked')
+const checked = defineModel('checked');
 </script>
 ```
 
@@ -172,9 +172,9 @@ Vue 3 allows multiple v-model directives on a single component:
 
 <!-- Child -->
 <script setup>
-const firstName = defineModel('firstName')
-const lastName = defineModel('lastName')
-const email = defineModel('email')
+const firstName = defineModel('firstName');
+const lastName = defineModel('lastName');
+const email = defineModel('email');
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
 
 /**
  * Faker helper utilities for E2E tests
@@ -10,7 +10,7 @@ import { faker } from '@faker-js/faker'
  * @returns A random first name
  */
 export function generatePlayerName(): string {
-  return faker.person.firstName()
+  return faker.person.firstName();
 }
 
 /**
@@ -19,7 +19,7 @@ export function generatePlayerName(): string {
  * @returns Array of random first names
  */
 export function generatePlayerNames(count: number): string[] {
-  return Array.from({ length: count }, () => generatePlayerName())
+  return Array.from({ length: count }, () => generatePlayerName());
 }
 
 /**
@@ -27,7 +27,7 @@ export function generatePlayerNames(count: number): string[] {
  * @returns A random word
  */
 export function generateAnswer(): string {
-  return faker.word.noun()
+  return faker.word.noun();
 }
 
 /**
@@ -36,7 +36,7 @@ export function generateAnswer(): string {
  * @returns Array of random words
  */
 export function generateAnswers(count: number): string[] {
-  return Array.from({ length: count }, () => generateAnswer())
+  return Array.from({ length: count }, () => generateAnswer());
 }
 
 /**
@@ -45,12 +45,12 @@ export function generateAnswers(count: number): string[] {
  * @param seed Optional seed value (default: test name hash)
  */
 export function setFakerSeed(seed?: number): void {
-  faker.seed(seed ?? Date.now())
+  faker.seed(seed ?? Date.now());
 }
 
 /**
  * Reset Faker to random mode (non-deterministic)
  */
 export function resetFaker(): void {
-  faker.seed()
+  faker.seed();
 }

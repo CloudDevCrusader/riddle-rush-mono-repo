@@ -86,28 +86,28 @@
 </template>
 
 <script setup lang="ts">
-import FortuneWheel from 'vue-fortune-wheel'
-import 'vue-fortune-wheel/style.css'
-import type { Category } from '@riddle-rush/types/game'
+import FortuneWheel from 'vue-fortune-wheel';
+import 'vue-fortune-wheel/style.css';
+import type { Category } from '@riddle-rush/types/game';
 import {
   type AlphabetWheelSegment,
   type FortuneWheelCategoryDisplay,
   type FortuneWheelSelection,
   FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI,
   FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL,
-} from '~/types/fortune-wheel'
-import { useCategoryEmoji } from '~/composables/useCategoryEmoji'
-import { useFortuneWheelSelection } from '~/composables/useFortuneWheelSelection'
+} from '~/types/fortune-wheel';
+import { useCategoryEmoji } from '~/composables/useCategoryEmoji';
+import { useFortuneWheelSelection } from '~/composables/useFortuneWheelSelection';
 
-const { resolve: resolveCategoryEmoji } = useCategoryEmoji()
+const { resolve: resolveCategoryEmoji } = useCategoryEmoji();
 
 interface WheelPrize {
-  id: number
-  name: string
-  value: string
-  weight: number
-  bgColor: string
-  color: string
+  id: number;
+  name: string;
+  value: string;
+  weight: number;
+  bgColor: string;
+  color: string;
 }
 
 /** Canvas wedge colors — vue-fortune-wheel draws `name` / `bgColor` / `color` in canvas mode. */
@@ -118,69 +118,69 @@ const WHEEL_SEGMENT_PALETTE: ReadonlyArray<{ bg: string; fg: string }> = [
   { bg: '#ff9500', fg: '#ffffff' },
   { bg: '#9bb6da', fg: '#0b3b76' },
   { bg: '#ffd54f', fg: '#0b3b76' },
-]
+];
 
 /** How often the preview category advances while the wheel spins (round-start strip + embedded row). */
-const CATEGORY_FLIP_INTERVAL_MS = 132
+const CATEGORY_FLIP_INTERVAL_MS = 132;
 
 interface RotateStartCallback {
-  (): void
+  (): void;
 }
 
 interface WheelRef {
-  startRotate: () => void
+  startRotate: () => void;
 }
 
 const props = withDefaults(
   defineProps<{
-    categories: Category[]
-    letters?: string[]
+    categories: Category[];
+    letters?: string[];
     /** When false, omit the category row here; parent should listen to `category-display`. */
-    embedCategoryRow?: boolean
+    embedCategoryRow?: boolean;
   }>(),
   { letters: () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''), embedCategoryRow: true }
-)
+);
 
 const emit = defineEmits<{
-  (event: 'selection-ready', payload: FortuneWheelSelection): void
-  (event: 'category-display', payload: FortuneWheelCategoryDisplay): void
-}>()
+  (event: 'selection-ready', payload: FortuneWheelSelection): void;
+  (event: 'category-display', payload: FortuneWheelCategoryDisplay): void;
+}>();
 
-const { t } = useI18n()
-const { mapAlphabetToSegments, validateSelection } = useFortuneWheelSelection()
-const { fortuneWheelAllowRedraw } = useSettings()
+const { t } = useI18n();
+const { mapAlphabetToSegments, validateSelection } = useFortuneWheelSelection();
+const { fortuneWheelAllowRedraw } = useSettings();
 
-const wheelRef = ref<WheelRef | null>(null)
-const isSpinning = ref(false)
-const targetPrizeId = ref(1)
-const pendingSegment = ref<AlphabetWheelSegment | null>(null)
-const pendingSelection = ref<FortuneWheelSelection | null>(null)
-const fallbackTimer = ref<ReturnType<typeof setTimeout> | null>(null)
+const wheelRef = ref<WheelRef | null>(null);
+const isSpinning = ref(false);
+const targetPrizeId = ref(1);
+const pendingSegment = ref<AlphabetWheelSegment | null>(null);
+const pendingSelection = ref<FortuneWheelSelection | null>(null);
+const fallbackTimer = ref<ReturnType<typeof setTimeout> | null>(null);
 /** Set when the spin ends — pairs with the letter from the wheel. */
-const pickedCategoryId = ref<number | null>(null)
+const pickedCategoryId = ref<number | null>(null);
 /** Random category chosen at spin start; revealed when the wheel stops. */
-const spinOutcomeCategoryId = ref<number | null>(null)
+const spinOutcomeCategoryId = ref<number | null>(null);
 /** Index into `categories` while spinning — steps like a carousel for smoother motion. */
-const categoryFlipIndex = ref(0)
+const categoryFlipIndex = ref(0);
 /** +1 / -1 while flipping; occasional reversal adds variety without random jumps. */
-const categoryFlipDirection = ref(1)
-const categoryFlipIntervalId = ref<ReturnType<typeof setInterval> | null>(null)
-const autoAdvanceTimer = ref<ReturnType<typeof setTimeout> | null>(null)
-const showCategoryLandPulse = ref(false)
+const categoryFlipDirection = ref(1);
+const categoryFlipIntervalId = ref<ReturnType<typeof setInterval> | null>(null);
+const autoAdvanceTimer = ref<ReturnType<typeof setTimeout> | null>(null);
+const showCategoryLandPulse = ref(false);
 
-const segments = computed(() => mapAlphabetToSegments(props.letters))
-const hasSegments = computed(() => segments.value.length > 0 && props.categories.length > 0)
+const segments = computed(() => mapAlphabetToSegments(props.letters));
+const hasSegments = computed(() => segments.value.length > 0 && props.categories.length > 0);
 
 const spinButtonDisabled = computed(
   () =>
     isSpinning.value ||
     !hasSegments.value ||
     (!fortuneWheelAllowRedraw.value && !!pendingSelection.value)
-)
+);
 
 const wheelCanvasOptions = computed(() => {
-  const n = segments.value.length
-  const fontSize = n > 20 ? 15 : n > 14 ? 20 : 26
+  const n = segments.value.length;
+  const fontSize = n > 20 ? 15 : n > 14 ? 20 : 26;
   return {
     borderColor: 'rgba(255, 213, 79, 0.55)',
     borderWidth: 4,
@@ -188,12 +188,12 @@ const wheelCanvasOptions = computed(() => {
     fontSize,
     textLength: 2,
     lineHeight: Math.max(14, fontSize - 2),
-  }
-})
+  };
+});
 
 const wheelPrizes = computed<WheelPrize[]>(() =>
   segments.value.map((segment, index) => {
-    const { bg, fg } = WHEEL_SEGMENT_PALETTE[index % WHEEL_SEGMENT_PALETTE.length]!
+    const { bg, fg } = WHEEL_SEGMENT_PALETTE[index % WHEEL_SEGMENT_PALETTE.length]!;
     return {
       id: segment.id,
       name: segment.letter,
@@ -201,246 +201,246 @@ const wheelPrizes = computed<WheelPrize[]>(() =>
       weight: segment.weight ?? 1,
       bgColor: bg,
       color: fg,
-    }
+    };
   })
-)
+);
 
 watch(
   () => props.categories.map((c) => c.id).join(','),
   () => {
-    pickedCategoryId.value = null
-    pendingSelection.value = null
-    spinOutcomeCategoryId.value = null
+    pickedCategoryId.value = null;
+    pendingSelection.value = null;
+    spinOutcomeCategoryId.value = null;
   }
-)
+);
 
 watch(
   () => segments.value,
   (next) => {
-    if (!next.length) return
-    const valid = next.some((s) => s.id === targetPrizeId.value)
+    if (!next.length) return;
+    const valid = next.some((s) => s.id === targetPrizeId.value);
     if (!valid) {
-      targetPrizeId.value = next[0]!.id
+      targetPrizeId.value = next[0]!.id;
     }
   },
   { immediate: true }
-)
+);
 
 function labelForCategoryId(id: number | null): string {
-  if (id == null) return FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL
-  const category = props.categories.find((entry) => entry.id === id)
-  return category ? t(`categories.${category.searchWord}`, category.name) : '—'
+  if (id == null) return FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL;
+  const category = props.categories.find((entry) => entry.id === id);
+  return category ? t(`categories.${category.searchWord}`, category.name) : '—';
 }
 
 const selectedCategoryLabel = computed(() => {
   if (isSpinning.value && props.categories.length) {
-    const category = props.categories[categoryFlipIndex.value % props.categories.length]
+    const category = props.categories[categoryFlipIndex.value % props.categories.length];
     return category
       ? t(`categories.${category.searchWord}`, category.name)
-      : FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL
+      : FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL;
   }
-  return labelForCategoryId(pendingSelection.value?.categoryId ?? pickedCategoryId.value)
-})
+  return labelForCategoryId(pendingSelection.value?.categoryId ?? pickedCategoryId.value);
+});
 
 const displayedCategoryId = computed(() => {
   if (isSpinning.value && props.categories.length) {
-    const category = props.categories[categoryFlipIndex.value % props.categories.length]
-    return category?.id ?? null
+    const category = props.categories[categoryFlipIndex.value % props.categories.length];
+    return category?.id ?? null;
   }
-  return pendingSelection.value?.categoryId ?? pickedCategoryId.value
-})
+  return pendingSelection.value?.categoryId ?? pickedCategoryId.value;
+});
 
 const categoryDisplayPayload = computed<FortuneWheelCategoryDisplay>(() => ({
   categoryId: displayedCategoryId.value,
   label: selectedCategoryLabel.value,
   isSpinning: isSpinning.value,
   landedPulse: showCategoryLandPulse.value,
-}))
+}));
 
 watch(
   categoryDisplayPayload,
   (payload) => {
     if (!props.embedCategoryRow) {
-      emit('category-display', payload)
+      emit('category-display', payload);
     }
   },
   { immediate: true }
-)
+);
 
 const wheelCategoryEmoji = computed(() => {
-  const id = displayedCategoryId.value
-  if (id == null) return FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI
-  const cat = props.categories.find((c) => c.id === id)
-  return resolveCategoryEmoji(cat?.name)
-})
+  const id = displayedCategoryId.value;
+  if (id == null) return FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI;
+  const cat = props.categories.find((c) => c.id === id);
+  return resolveCategoryEmoji(cat?.name);
+});
 
 /** Large letter in wheel hub (game screen–style); not the legacy “Letter:” row. */
 const hubLetterDisplay = computed(() => {
-  const settled = pendingSelection.value?.letter
-  if (settled) return settled.toUpperCase()
+  const settled = pendingSelection.value?.letter;
+  if (settled) return settled.toUpperCase();
   if (isSpinning.value && pendingSegment.value?.letter) {
-    return pendingSegment.value.letter.toUpperCase()
+    return pendingSegment.value.letter.toUpperCase();
   }
-  return '?'
-})
+  return '?';
+});
 
 const hubLetterIdle = computed(
   () => !isSpinning.value && !pendingSelection.value && !pendingSegment.value
-)
+);
 
 function chooseRandomSegment(): AlphabetWheelSegment | null {
-  if (!segments.value.length) return null
-  const index = Math.floor(Math.random() * segments.value.length)
-  return segments.value[index] ?? null
+  if (!segments.value.length) return null;
+  const index = Math.floor(Math.random() * segments.value.length);
+  return segments.value[index] ?? null;
 }
 
 function resolvePendingFromLetter(letter: string) {
-  const catId = pickedCategoryId.value
-  if (catId == null) return null
-  return validateSelection({ categoryId: catId, letter }, props.categories)
+  const catId = pickedCategoryId.value;
+  if (catId == null) return null;
+  return validateSelection({ categoryId: catId, letter }, props.categories);
 }
 
 function stopCategoryFlip() {
   if (categoryFlipIntervalId.value) {
-    clearInterval(categoryFlipIntervalId.value)
-    categoryFlipIntervalId.value = null
+    clearInterval(categoryFlipIntervalId.value);
+    categoryFlipIntervalId.value = null;
   }
 }
 
 function startCategoryFlip() {
-  stopCategoryFlip()
-  const n = props.categories.length
+  stopCategoryFlip();
+  const n = props.categories.length;
   if (n) {
-    categoryFlipIndex.value = Math.floor(Math.random() * n)
-    categoryFlipDirection.value = Math.random() < 0.5 ? 1 : -1
+    categoryFlipIndex.value = Math.floor(Math.random() * n);
+    categoryFlipDirection.value = Math.random() < 0.5 ? 1 : -1;
   }
 
   const tick = () => {
-    const len = props.categories.length
-    if (!len) return
+    const len = props.categories.length;
+    if (!len) return;
     // Mostly move one slot (neighbours on the strip update smoothly); rare jump avoids a mechanical feel.
     if (Math.random() < 0.09) {
-      categoryFlipIndex.value = Math.floor(Math.random() * len)
+      categoryFlipIndex.value = Math.floor(Math.random() * len);
     } else {
-      const d = categoryFlipDirection.value
-      categoryFlipIndex.value = (categoryFlipIndex.value + d + len * 32) % len
+      const d = categoryFlipDirection.value;
+      categoryFlipIndex.value = (categoryFlipIndex.value + d + len * 32) % len;
     }
     if (Math.random() < 0.07) {
-      categoryFlipDirection.value *= -1
+      categoryFlipDirection.value *= -1;
     }
-  }
-  tick()
-  categoryFlipIntervalId.value = setInterval(tick, CATEGORY_FLIP_INTERVAL_MS)
+  };
+  tick();
+  categoryFlipIntervalId.value = setInterval(tick, CATEGORY_FLIP_INTERVAL_MS);
 }
 
 function finalizeSpin(letter: string | null) {
-  stopCategoryFlip()
-  isSpinning.value = false
+  stopCategoryFlip();
+  isSpinning.value = false;
 
-  const outcomeId = spinOutcomeCategoryId.value
+  const outcomeId = spinOutcomeCategoryId.value;
   if (outcomeId != null) {
-    pickedCategoryId.value = outcomeId
+    pickedCategoryId.value = outcomeId;
   }
 
-  pendingSelection.value = letter ? resolvePendingFromLetter(letter) : null
-  pendingSegment.value = null
-  spinOutcomeCategoryId.value = null
+  pendingSelection.value = letter ? resolvePendingFromLetter(letter) : null;
+  pendingSegment.value = null;
+  spinOutcomeCategoryId.value = null;
 
-  const sel = pendingSelection.value
+  const sel = pendingSelection.value;
   if (sel) {
-    showCategoryLandPulse.value = true
+    showCategoryLandPulse.value = true;
     setTimeout(() => {
-      showCategoryLandPulse.value = false
-    }, 550)
+      showCategoryLandPulse.value = false;
+    }, 550);
   }
 
   if (sel && !fortuneWheelAllowRedraw.value) {
     if (autoAdvanceTimer.value) {
-      clearTimeout(autoAdvanceTimer.value)
+      clearTimeout(autoAdvanceTimer.value);
     }
     autoAdvanceTimer.value = setTimeout(() => {
-      autoAdvanceTimer.value = null
-      emit('selection-ready', sel)
-    }, 720)
+      autoAdvanceTimer.value = null;
+      emit('selection-ready', sel);
+    }, 720);
   }
 }
 
 function startSpin() {
   if (autoAdvanceTimer.value) {
-    clearTimeout(autoAdvanceTimer.value)
-    autoAdvanceTimer.value = null
+    clearTimeout(autoAdvanceTimer.value);
+    autoAdvanceTimer.value = null;
   }
 
-  if (isSpinning.value || !hasSegments.value) return
+  if (isSpinning.value || !hasSegments.value) return;
 
-  const nextSegment = chooseRandomSegment()
-  if (!nextSegment) return
+  const nextSegment = chooseRandomSegment();
+  if (!nextSegment) return;
 
-  const list = props.categories
-  const categoryIdx = Math.floor(Math.random() * list.length)
-  spinOutcomeCategoryId.value = list[categoryIdx]!.id
+  const list = props.categories;
+  const categoryIdx = Math.floor(Math.random() * list.length);
+  spinOutcomeCategoryId.value = list[categoryIdx]!.id;
 
-  isSpinning.value = true
-  pendingSelection.value = null
-  pendingSegment.value = nextSegment
-  targetPrizeId.value = nextSegment.id
-  startCategoryFlip()
+  isSpinning.value = true;
+  pendingSelection.value = null;
+  pendingSegment.value = nextSegment;
+  targetPrizeId.value = nextSegment.id;
+  startCategoryFlip();
 
   if (fallbackTimer.value) {
-    clearTimeout(fallbackTimer.value)
+    clearTimeout(fallbackTimer.value);
   }
 
   fallbackTimer.value = setTimeout(() => {
-    if (!pendingSegment.value) return
-    const letter = pendingSegment.value.letter
+    if (!pendingSegment.value) return;
+    const letter = pendingSegment.value.letter;
     if (!pendingSelection.value) {
-      finalizeSpin(letter)
+      finalizeSpin(letter);
     }
-  }, 4500)
+  }, 4500);
 
-  const startRotate = wheelRef.value?.startRotate
+  const startRotate = wheelRef.value?.startRotate;
   if (typeof startRotate === 'function') {
-    startRotate()
+    startRotate();
   }
 }
 
 function onRotateStart(rotate?: RotateStartCallback) {
-  isSpinning.value = true
+  isSpinning.value = true;
   if (typeof rotate === 'function') {
-    rotate()
+    rotate();
   }
 }
 
 function onRotateEnd(prize: { id?: number }) {
   if (fallbackTimer.value) {
-    clearTimeout(fallbackTimer.value)
-    fallbackTimer.value = null
+    clearTimeout(fallbackTimer.value);
+    fallbackTimer.value = null;
   }
 
   const resolvedPrizeId =
-    typeof prize.id === 'number' ? prize.id : typeof prize.id === 'string' ? Number(prize.id) : NaN
+    typeof prize.id === 'number' ? prize.id : typeof prize.id === 'string' ? Number(prize.id) : NaN;
 
   const selectedSegment =
-    segments.value.find((segment) => segment.id === resolvedPrizeId) ?? pendingSegment.value
+    segments.value.find((segment) => segment.id === resolvedPrizeId) ?? pendingSegment.value;
 
-  const letter = selectedSegment?.letter ?? null
-  finalizeSpin(letter)
+  const letter = selectedSegment?.letter ?? null;
+  finalizeSpin(letter);
 }
 
 function confirmSelection() {
-  if (!pendingSelection.value || isSpinning.value) return
-  emit('selection-ready', pendingSelection.value)
+  if (!pendingSelection.value || isSpinning.value) return;
+  emit('selection-ready', pendingSelection.value);
 }
 
 onBeforeUnmount(() => {
-  stopCategoryFlip()
+  stopCategoryFlip();
   if (fallbackTimer.value) {
-    clearTimeout(fallbackTimer.value)
+    clearTimeout(fallbackTimer.value);
   }
   if (autoAdvanceTimer.value) {
-    clearTimeout(autoAdvanceTimer.value)
+    clearTimeout(autoAdvanceTimer.value);
   }
-})
+});
 </script>
 
 <style scoped>

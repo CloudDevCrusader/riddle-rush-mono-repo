@@ -34,38 +34,38 @@ Before creating a custom directive, consider if the same result can be achieved 
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const isVisible = ref(true)
-const isActive = ref(false)
-const textColor = ref('blue')
+const isVisible = ref(true);
+const isActive = ref(false);
+const textColor = ref('blue');
 
 // Unnecessary custom directives
 const vVisibility = {
   mounted(el, binding) {
-    el.style.display = binding.value ? '' : 'none'
+    el.style.display = binding.value ? '' : 'none';
   },
   updated(el, binding) {
-    el.style.display = binding.value ? '' : 'none'
+    el.style.display = binding.value ? '' : 'none';
   },
-}
+};
 
 const vAddClass = {
   mounted(el, binding) {
     Object.entries(binding.value).forEach(([cls, active]) => {
-      el.classList.toggle(cls, active)
-    })
+      el.classList.toggle(cls, active);
+    });
   },
   updated(el, binding) {
     Object.entries(binding.value).forEach(([cls, active]) => {
-      el.classList.toggle(cls, active)
-    })
+      el.classList.toggle(cls, active);
+    });
   },
-}
+};
 
 const vSetColor = (el, binding) => {
-  el.style.color = binding.value
-}
+  el.style.color = binding.value;
+};
 </script>
 ```
 
@@ -84,11 +84,11 @@ const vSetColor = (el, binding) => {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const isVisible = ref(true)
-const isActive = ref(false)
-const textColor = ref('blue')
+const isVisible = ref(true);
+const isActive = ref(false);
+const textColor = ref('blue');
 // No custom directives needed!
 </script>
 ```
@@ -103,9 +103,9 @@ Custom directives are appropriate when you need:
 // GOOD: Focus management requires DOM API
 const vFocus = {
   mounted(el) {
-    el.focus()
+    el.focus();
   },
-}
+};
 
 // Usage: Works on dynamic insertion, not just page load
 // <input v-focus />
@@ -120,15 +120,15 @@ const vTippy = {
     el._tippy = tippy(el, {
       content: binding.value,
       ...binding.modifiers,
-    })
+    });
   },
   updated(el, binding) {
-    el._tippy?.setContent(binding.value)
+    el._tippy?.setContent(binding.value);
   },
   unmounted(el) {
-    el._tippy?.destroy()
+    el._tippy?.destroy();
   },
-}
+};
 ```
 
 ### 3. Event Handling Outside Vue's Scope
@@ -139,15 +139,15 @@ const vClickOutside = {
   mounted(el, binding) {
     el._clickOutside = (e) => {
       if (!el.contains(e.target)) {
-        binding.value(e)
+        binding.value(e);
       }
-    }
-    document.addEventListener('click', el._clickOutside)
+    };
+    document.addEventListener('click', el._clickOutside);
   },
   unmounted(el) {
-    document.removeEventListener('click', el._clickOutside)
+    document.removeEventListener('click', el._clickOutside);
   },
-}
+};
 ```
 
 ### 4. Intersection/Mutation/Resize Observers
@@ -158,16 +158,16 @@ const vLazyLoad = {
   mounted(el, binding) {
     el._observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        el.src = binding.value
-        el._observer.disconnect()
+        el.src = binding.value;
+        el._observer.disconnect();
       }
-    })
-    el._observer.observe(el)
+    });
+    el._observer.observe(el);
   },
   unmounted(el) {
-    el._observer?.disconnect()
+    el._observer?.disconnect();
   },
-}
+};
 ```
 
 ## Consider Composables Instead
@@ -176,24 +176,24 @@ For complex logic, a composable might be better than a directive:
 
 ```javascript
 // Composable approach - more flexible and testable
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue';
 
 export function useClickOutside(elementRef, callback) {
   const handler = (e) => {
     if (elementRef.value && !elementRef.value.contains(e.target)) {
-      callback(e)
+      callback(e);
     }
-  }
+  };
 
-  onMounted(() => document.addEventListener('click', handler))
-  onUnmounted(() => document.removeEventListener('click', handler))
+  onMounted(() => document.addEventListener('click', handler));
+  onUnmounted(() => document.removeEventListener('click', handler));
 }
 
 // Usage in component
-const dropdownRef = ref(null)
+const dropdownRef = ref(null);
 useClickOutside(dropdownRef, () => {
-  isOpen.value = false
-})
+  isOpen.value = false;
+});
 ```
 
 ## SSR Considerations
@@ -204,21 +204,21 @@ Custom directives don't run on the server, which can cause hydration issues:
 // PROBLEM: This directive modifies DOM, causing hydration mismatch
 const vHydrationProblem = {
   mounted(el) {
-    el.textContent = 'Client-side only text'
+    el.textContent = 'Client-side only text';
   },
-}
+};
 
 // SOLUTION: Use built-in directives or ensure server/client match
 // Or handle hydration explicitly:
 const vSafeForSSR = {
   mounted(el, binding) {
     // Only add behavior, don't modify content
-    el.addEventListener('click', binding.value)
+    el.addEventListener('click', binding.value);
   },
   unmounted(el, binding) {
-    el.removeEventListener('click', binding.value)
+    el.removeEventListener('click', binding.value);
   },
-}
+};
 ```
 
 ## Reference

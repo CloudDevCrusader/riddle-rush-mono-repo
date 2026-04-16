@@ -46,16 +46,15 @@ const ORM_INFO = {
   payload: {
     pushCommand: 'npx payload migrate',
     envHint: 'CI=true PAYLOAD_MIGRATING=true npx payload migrate',
-    interactiveWarning: 'Payload migrate may require interactive prompts — use CI=true PAYLOAD_MIGRATING=true to suppress',
-    evidencePatterns: [
-      /payload\s+migrate/i,
-      /PAYLOAD_MIGRATING/,
-    ],
+    interactiveWarning:
+      'Payload migrate may require interactive prompts — use CI=true PAYLOAD_MIGRATING=true to suppress',
+    evidencePatterns: [/payload\s+migrate/i, /PAYLOAD_MIGRATING/],
   },
   prisma: {
     pushCommand: 'npx prisma db push',
     envHint: 'npx prisma db push --accept-data-loss (if destructive changes are intended)',
-    interactiveWarning: 'Prisma db push may prompt for confirmation on destructive changes — use --accept-data-loss to bypass',
+    interactiveWarning:
+      'Prisma db push may prompt for confirmation on destructive changes — use --accept-data-loss to bypass',
     evidencePatterns: [
       /prisma\s+db\s+push/i,
       /prisma\s+migrate\s+deploy/i,
@@ -66,28 +65,20 @@ const ORM_INFO = {
     pushCommand: 'npx drizzle-kit push',
     envHint: 'npx drizzle-kit push',
     interactiveWarning: null,
-    evidencePatterns: [
-      /drizzle-kit\s+push/i,
-      /drizzle-kit\s+migrate/i,
-    ],
+    evidencePatterns: [/drizzle-kit\s+push/i, /drizzle-kit\s+migrate/i],
   },
   supabase: {
     pushCommand: 'supabase db push',
     envHint: 'supabase db push',
-    interactiveWarning: 'Supabase db push may require authentication — ensure SUPABASE_ACCESS_TOKEN is set',
-    evidencePatterns: [
-      /supabase\s+db\s+push/i,
-      /supabase\s+migration\s+up/i,
-    ],
+    interactiveWarning:
+      'Supabase db push may require authentication — ensure SUPABASE_ACCESS_TOKEN is set',
+    evidencePatterns: [/supabase\s+db\s+push/i, /supabase\s+migration\s+up/i],
   },
   typeorm: {
     pushCommand: 'npx typeorm migration:run',
     envHint: 'npx typeorm migration:run -d src/data-source.ts',
     interactiveWarning: null,
-    evidencePatterns: [
-      /typeorm\s+migration:run/i,
-      /typeorm\s+schema:sync/i,
-    ],
+    evidencePatterns: [/typeorm\s+migration:run/i, /typeorm\s+schema:sync/i],
   },
 };
 
@@ -165,7 +156,7 @@ function checkSchemaDrift(changedFiles, executionLog, options = {}) {
     const info = ORM_INFO[orm];
     if (!info) continue;
 
-    const hasPushEvidence = info.evidencePatterns.some(p => p.test(executionLog));
+    const hasPushEvidence = info.evidencePatterns.some((p) => p.test(executionLog));
     if (hasPushEvidence) {
       pushedOrms.add(orm);
     } else {
@@ -188,7 +179,7 @@ function checkSchemaDrift(changedFiles, executionLog, options = {}) {
 
   // Build actionable message
   const pushCommands = unpushedOrms
-    .map(orm => {
+    .map((orm) => {
       const info = ORM_INFO[orm];
       return info ? `  ${orm}: ${info.envHint || info.pushCommand}` : null;
     })

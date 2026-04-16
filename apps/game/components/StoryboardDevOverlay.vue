@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import type { WorkflowStateId } from '../plugins/storyboard.client'
+import type { WorkflowStateId } from '../plugins/storyboard.client';
 
 const {
   flow,
@@ -130,94 +130,94 @@ const {
   getAverageTimePerState,
   resetFlow,
   WORKFLOW_STATES,
-} = useStoryboard()
+} = useStoryboard();
 
-const toastStore = useToast()
+const toastStore = useToast();
 
 // Get recent history (last 10)
 const recentHistory = computed(() => {
-  return flow.value.history.slice(-10).reverse()
-})
+  return flow.value.history.slice(-10).reverse();
+});
 
 // Format duration from seconds
 const formatDuration = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const secs = seconds % 60
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
 
   if (hours > 0) {
-    return `${hours}h ${minutes}m ${secs}s`
+    return `${hours}h ${minutes}m ${secs}s`;
   }
   if (minutes > 0) {
-    return `${minutes}m ${secs}s`
+    return `${minutes}m ${secs}s`;
   }
-  return `${secs}s`
-}
+  return `${secs}s`;
+};
 
 // Format timestamp
 const formatTime = (timestamp: number): string => {
-  const date = new Date(timestamp)
+  const date = new Date(timestamp);
   return new Intl.DateTimeFormat(undefined, {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
-  }).format(date)
-}
+  }).format(date);
+};
 
 // Get state name by ID
 const getStateName = (stateId: WorkflowStateId): string => {
   const state = Object.values(WORKFLOW_STATES).find(
     (s: any) => typeof s === 'object' && s?.id === stateId
-  ) as any
-  return state?.name || stateId
-}
+  ) as any;
+  return state?.name || stateId;
+};
 
 // Clear history
 const clearHistory = () => {
   if (confirm('Are you sure you want to clear the history?')) {
-    resetFlow()
-    toastStore.success('History cleared')
+    resetFlow();
+    toastStore.success('History cleared');
   }
-}
+};
 
 // Export flow data
 const exportFlow = () => {
   try {
-    const dataStr = JSON.stringify(flow.value, null, 2)
-    const dataBlob = new Blob([dataStr], { type: 'application/json' })
-    const url = URL.createObjectURL(dataBlob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `storyboard-flow-${Date.now()}.json`
-    link.click()
-    URL.revokeObjectURL(url)
-    toastStore.success('Flow exported')
+    const dataStr = JSON.stringify(flow.value, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `storyboard-flow-${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toastStore.success('Flow exported');
   } catch (error) {
-    console.error('Export error:', error)
-    toastStore.error('Failed to export flow')
+    console.error('Export error:', error);
+    toastStore.error('Failed to export flow');
   }
-}
+};
 
 // Copy to clipboard
 const copyToClipboard = async () => {
   try {
-    const dataStr = JSON.stringify(flow.value, null, 2)
-    await navigator.clipboard.writeText(dataStr)
-    toastStore.success('Flow data copied to clipboard')
+    const dataStr = JSON.stringify(flow.value, null, 2);
+    await navigator.clipboard.writeText(dataStr);
+    toastStore.success('Flow data copied to clipboard');
   } catch (error) {
-    console.error('Copy error:', error)
-    toastStore.error('Failed to copy to clipboard')
+    console.error('Copy error:', error);
+    toastStore.error('Failed to copy to clipboard');
   }
-}
+};
 
 // Handle reset with confirmation
 const handleReset = () => {
   if (confirm('Are you sure you want to reset the entire flow? This cannot be undone.')) {
-    resetFlow()
-    toastStore.success('Flow reset successfully')
+    resetFlow();
+    toastStore.success('Flow reset successfully');
   }
-}
+};
 </script>
 
 <style scoped>

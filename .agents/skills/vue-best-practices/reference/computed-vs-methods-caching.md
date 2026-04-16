@@ -30,26 +30,26 @@ When you need to derive a value from reactive state, prefer computed properties 
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 const items = ref([
   /* large array */
-])
-const prices = ref([100, 200, 300])
+]);
+const prices = ref([100, 200, 300]);
 
 // BAD: Expensive operation runs every render
 function getFilteredItems() {
-  return items.value.filter((item) => item.active).sort((a, b) => a.name.localeCompare(b.name))
+  return items.value.filter((item) => item.active).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 // BAD: Calculation runs every render even if prices unchanged
 function calculateTotal() {
-  return prices.value.reduce((sum, price) => sum + price, 0)
+  return prices.value.reduce((sum, price) => sum + price, 0);
 }
 
 // This looks like a computed use case, but Date.now() is non-reactive
 function getCurrentTime() {
-  return Date.now() // Will appear to work but won't update reactively
+  return Date.now(); // Will appear to work but won't update reactively
 }
 </script>
 ```
@@ -66,27 +66,27 @@ function getCurrentTime() {
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
 const items = ref([
   /* large array */
-])
-const prices = ref([100, 200, 300])
+]);
+const prices = ref([100, 200, 300]);
 
 // GOOD: Cached - only recalculates when items.value changes
 const filteredItems = computed(() => {
-  return items.value.filter((item) => item.active).sort((a, b) => a.name.localeCompare(b.name))
-})
+  return items.value.filter((item) => item.active).sort((a, b) => a.name.localeCompare(b.name));
+});
 
 // GOOD: Cached - only recalculates when prices change
 const total = computed(() => {
-  return prices.value.reduce((sum, price) => sum + price, 0)
-})
+  return prices.value.reduce((sum, price) => sum + price, 0);
+});
 
 // GOOD: Use method for non-reactive values
 // (or use setInterval to update a ref)
 function getCurrentTime() {
-  return Date.now()
+  return Date.now();
 }
 </script>
 ```
@@ -108,13 +108,13 @@ Computed properties only track reactive dependencies. Non-reactive values like `
 
 ```javascript
 // BAD: Date.now() is not reactive - computed will never update
-const now = computed(() => Date.now())
+const now = computed(() => Date.now());
 
 // GOOD: Use a ref with setInterval for live time
-const now = ref(Date.now())
+const now = ref(Date.now());
 setInterval(() => {
-  now.value = Date.now()
-}, 1000)
+  now.value = Date.now();
+}, 1000);
 ```
 
 ## Reference

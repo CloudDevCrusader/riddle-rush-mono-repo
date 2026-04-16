@@ -198,14 +198,14 @@ Screenshots are automatically captured on failure in `test-results/`
 ### Test Structure
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
 test.describe('Feature Name', () => {
   test('should do something', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/');
     // Your test code
-  })
-})
+  });
+});
 ```
 
 ### Best Practices
@@ -220,17 +220,17 @@ test.describe('Feature Name', () => {
 
 ```typescript
 // Wait for navigation
-await page.waitForURL(/game/)
+await page.waitForURL(/game/);
 
 // Wait for network to be idle
-await page.waitForLoadState('networkidle')
+await page.waitForLoadState('networkidle');
 
 // Check visibility with timeout
-await expect(element).toBeVisible({ timeout: 5000 })
+await expect(element).toBeVisible({ timeout: 5000 });
 
 // Handle optional elements
 if ((await element.count()) > 0) {
-  await expect(element).toBeVisible()
+  await expect(element).toBeVisible();
 }
 ```
 
@@ -259,7 +259,7 @@ npx playwright install
 Increase timeouts in `playwright.config.ts` or use:
 
 ```typescript
-await expect(element).toBeVisible({ timeout: 10000 })
+await expect(element).toBeVisible({ timeout: 10000 });
 ```
 
 ## CI Pipeline Workflow
@@ -427,9 +427,9 @@ Unit tests are configured in `vitest.config.ts` with:
 Create test files alongside your code or in `tests/unit/`:
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
-import MyComponent from '@/components/MyComponent.vue'
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { mount } from '@vue/test-utils';
+import MyComponent from '@/components/MyComponent.vue';
 
 describe('MyComponent', () => {
   it('renders correctly', () => {
@@ -437,80 +437,80 @@ describe('MyComponent', () => {
       props: {
         title: 'Test Title',
       },
-    })
+    });
 
-    expect(wrapper.text()).toContain('Test Title')
-  })
+    expect(wrapper.text()).toContain('Test Title');
+  });
 
   it('handles user interaction', async () => {
-    const wrapper = mount(MyComponent)
-    await wrapper.find('button').trigger('click')
+    const wrapper = mount(MyComponent);
+    await wrapper.find('button').trigger('click');
 
-    expect(wrapper.emitted('clicked')).toBeTruthy()
-  })
-})
+    expect(wrapper.emitted('clicked')).toBeTruthy();
+  });
+});
 ```
 
 ### Testing Composables
 
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { useMyComposable } from '@/composables/useMyComposable'
+import { describe, it, expect } from 'vitest';
+import { useMyComposable } from '@/composables/useMyComposable';
 
 describe('useMyComposable', () => {
   it('returns expected values', () => {
-    const { value, increment } = useMyComposable()
+    const { value, increment } = useMyComposable();
 
-    expect(value.value).toBe(0)
-    increment()
-    expect(value.value).toBe(1)
-  })
-})
+    expect(value.value).toBe(0);
+    increment();
+    expect(value.value).toBe(1);
+  });
+});
 ```
 
 ### Testing Pinia Stores
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useGameStore } from '@/stores/game'
+import { describe, it, expect, beforeEach } from 'vitest';
+import { setActivePinia, createPinia } from 'pinia';
+import { useGameStore } from '@/stores/game';
 
 describe('Game Store', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
-  })
+    setActivePinia(createPinia());
+  });
 
   it('initializes with correct state', () => {
-    const store = useGameStore()
-    expect(store.score).toBe(0)
-  })
+    const store = useGameStore();
+    expect(store.score).toBe(0);
+  });
 
   it('updates score correctly', () => {
-    const store = useGameStore()
-    store.incrementScore()
-    expect(store.score).toBe(1)
-  })
-})
+    const store = useGameStore();
+    store.incrementScore();
+    expect(store.score).toBe(1);
+  });
+});
 ```
 
 ### Mocking
 
 ```typescript
-import { vi } from 'vitest'
+import { vi } from 'vitest';
 
 // Mock a function
-const mockFn = vi.fn()
-mockFn.mockReturnValue(42)
+const mockFn = vi.fn();
+mockFn.mockReturnValue(42);
 
 // Mock a module
 vi.mock('@/services/api', () => ({
   fetchData: vi.fn(() => Promise.resolve({ data: 'test' })),
-}))
+}));
 
 // Mock timers
-vi.useFakeTimers()
-vi.advanceTimersByTime(1000)
-vi.useRealTimers()
+vi.useFakeTimers();
+vi.advanceTimersByTime(1000);
+vi.useRealTimers();
 ```
 
 ## E2E Testing with Playwright
@@ -531,63 +531,63 @@ E2E tests are configured in `playwright.config.ts` with:
 Create test files in `tests/e2e/`:
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
 test.describe('Homepage', () => {
   test('should load and display title', async ({ page }) => {
-    await page.goto('/')
-    await expect(page).toHaveTitle(/Guess Game/)
-  })
+    await page.goto('/');
+    await expect(page).toHaveTitle(/Guess Game/);
+  });
 
   test('should navigate to game page', async ({ page }) => {
-    await page.goto('/')
-    await page.click('text=Start Game')
-    await expect(page).toHaveURL(/.*game/)
-  })
-})
+    await page.goto('/');
+    await page.click('text=Start Game');
+    await expect(page).toHaveURL(/.*game/);
+  });
+});
 ```
 
 ### Testing Forms
 
 ```typescript
 test('should submit form correctly', async ({ page }) => {
-  await page.goto('/form')
+  await page.goto('/form');
 
-  await page.fill('input[name="username"]', 'testuser')
-  await page.fill('input[name="email"]', 'test@example.com')
-  await page.click('button[type="submit"]')
+  await page.fill('input[name="username"]', 'testuser');
+  await page.fill('input[name="email"]', 'test@example.com');
+  await page.click('button[type="submit"]');
 
-  await expect(page.locator('.success-message')).toBeVisible()
-})
+  await expect(page.locator('.success-message')).toBeVisible();
+});
 ```
 
 ### Testing PWA Features
 
 ```typescript
 test('should register service worker', async ({ page, context }) => {
-  await page.goto('/')
+  await page.goto('/');
 
   // Wait for service worker to register
   await page.waitForFunction(() => {
-    return navigator.serviceWorker.controller !== null
-  })
+    return navigator.serviceWorker.controller !== null;
+  });
 
-  const serviceWorker = await context.serviceWorkers()[0]
-  expect(serviceWorker).toBeTruthy()
-})
+  const serviceWorker = await context.serviceWorkers()[0];
+  expect(serviceWorker).toBeTruthy();
+});
 
 test('should work offline', async ({ page, context }) => {
-  await page.goto('/')
+  await page.goto('/');
 
   // Go offline
-  await context.setOffline(true)
+  await context.setOffline(true);
 
   // Navigate to another page
-  await page.goto('/game')
+  await page.goto('/game');
 
   // Should still load from cache
-  await expect(page.locator('h1')).toBeVisible()
-})
+  await expect(page.locator('h1')).toBeVisible();
+});
 ```
 
 ### Mobile Testing
@@ -596,16 +596,16 @@ Playwright automatically tests on mobile viewport (Pixel 5). You can also test s
 
 ```typescript
 test('should be installable as PWA', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/');
 
   // Check for manifest
   const manifest = await page.evaluate(() => {
-    const link = document.querySelector('link[rel="manifest"]')
-    return link?.getAttribute('href')
-  })
+    const link = document.querySelector('link[rel="manifest"]');
+    return link?.getAttribute('href');
+  });
 
-  expect(manifest).toBeTruthy()
-})
+  expect(manifest).toBeTruthy();
+});
 ```
 
 ## Coverage Reports
@@ -922,8 +922,8 @@ All text is now in `locales/de.json`:
 
   <!-- In script -->
   <script setup>
-    const { t } = useI18n()
-    const message = t('game.correct')
+    const { t } = useI18n();
+    const message = t('game.correct');
   </script>
 </template>
 ```
@@ -1022,13 +1022,13 @@ All interactive elements have `data-testid` attributes:
 **❌ Don't do this:**
 
 ```typescript
-await page.click('text=Start Playing') // Breaks with different languages
+await page.click('text=Start Playing'); // Breaks with different languages
 ```
 
 **✅ Do this:**
 
 ```typescript
-await page.getByTestId('quick-start-button').click() // Works in any language
+await page.getByTestId('quick-start-button').click(); // Works in any language
 ```
 
 ## 🔧 Troubleshooting

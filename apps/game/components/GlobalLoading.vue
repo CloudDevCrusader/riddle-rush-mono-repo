@@ -63,9 +63,9 @@
 </template>
 
 <script lang="ts" setup>
-const { getAssetPath } = useAssets()
+const { getAssetPath } = useAssets();
 
-const { isLoading, progress, showProgress } = useLoading()
+const { isLoading, progress, showProgress } = useLoading();
 </script>
 
 <style lang="scss" scoped>

@@ -10,11 +10,11 @@ Use CSS utilities directly as HTML tag names.
 ## Installation
 
 ```ts
-import { defineConfig, presetTagify } from 'unocss'
+import { defineConfig, presetTagify } from 'unocss';
 
 export default defineConfig({
   presets: [presetTagify()],
-})
+});
 ```
 
 ## Basic Usage
@@ -42,7 +42,7 @@ Works exactly the same!
 ```ts
 presetTagify({
   prefix: 'un-',
-})
+});
 ```
 
 ```html
@@ -61,7 +61,7 @@ Add CSS properties to matched tags:
 presetTagify({
   // Add display: inline-block to icons
   extraProperties: (matched) => (matched.startsWith('i-') ? { display: 'inline-block' } : {}),
-})
+});
 ```
 
 Or apply to all:
@@ -69,7 +69,7 @@ Or apply to all:
 ```ts
 presetTagify({
   extraProperties: { display: 'block' },
-})
+});
 ```
 
 ## Options
@@ -87,7 +87,7 @@ presetTagify({
 
   // Enable default extractor
   defaultExtractor: true,
-})
+});
 ```
 
 ## Excluded Tags
@@ -109,7 +109,7 @@ presetTagify({
     'article', // Add custom exclusions
     /^my-/, // Exclude tags starting with 'my-'
   ],
-})
+});
 ```
 
 ## Use Cases

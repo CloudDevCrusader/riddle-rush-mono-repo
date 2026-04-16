@@ -12,9 +12,9 @@ This is a common source of confusion. Developers expect Suspense to show the fal
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const activeTab = ref('dashboard')
+const activeTab = ref('dashboard');
 </script>
 
 <template>
@@ -41,15 +41,15 @@ const activeTab = ref('dashboard')
 
 ```vue
 <script setup>
-import { ref, defineAsyncComponent } from 'vue'
+import { ref, defineAsyncComponent } from 'vue';
 
-const activeTab = ref('dashboard')
+const activeTab = ref('dashboard');
 
 const tabs = {
   dashboard: defineAsyncComponent(() => import('./Dashboard.vue')),
   settings: defineAsyncComponent(() => import('./Settings.vue')),
   profile: defineAsyncComponent(() => import('./Profile.vue')),
-}
+};
 </script>
 
 <template>
@@ -91,18 +91,18 @@ const tabs = {
 
 ```vue
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
 
-const activeTab = ref('dashboard')
-const isTabLoading = ref(false)
+const activeTab = ref('dashboard');
+const isTabLoading = ref(false);
 
 watch(activeTab, () => {
-  isTabLoading.value = true
-})
+  isTabLoading.value = true;
+});
 
 const onTabLoaded = () => {
-  isTabLoading.value = false
-}
+  isTabLoading.value = false;
+};
 </script>
 
 <template>

@@ -1,8 +1,8 @@
 /**
  * Zod-backed test fixtures — every object is validated with the same schemas as IndexedDB reads.
  */
-import type { Category, GameSession } from '../game'
-import { categorySchema, gameSessionSchema } from './game-schemas'
+import type { Category, GameSession } from '../game';
+import { categorySchema, gameSessionSchema } from './game-schemas';
 
 const defaultCategory: Category = {
   id: 1,
@@ -10,7 +10,7 @@ const defaultCategory: Category = {
   searchWord: 'animals',
   key: 'animals',
   searchProvider: 'offline',
-}
+};
 
 /**
  * Build a {@link GameSession} for tests; merges partial overrides and runs `gameSessionSchema.parse`.
@@ -19,7 +19,7 @@ export function gameSessionTestFixture(overrides: Partial<GameSession> = {}): Ga
   const category: Category = categorySchema.parse({
     ...defaultCategory,
     ...(overrides.category ?? {}),
-  })
+  });
 
   const base: GameSession = {
     id: 'test-session',
@@ -31,7 +31,7 @@ export function gameSessionTestFixture(overrides: Partial<GameSession> = {}): Ga
     startTime: Date.now(),
     status: 'active',
     roundHistory: [],
-  }
+  };
 
   const merged: GameSession = {
     ...base,
@@ -39,7 +39,7 @@ export function gameSessionTestFixture(overrides: Partial<GameSession> = {}): Ga
     category,
     players: overrides.players ?? base.players,
     roundHistory: overrides.roundHistory ?? base.roundHistory,
-  }
+  };
 
-  return gameSessionSchema.parse(merged) as GameSession
+  return gameSessionSchema.parse(merged) as GameSession;
 }

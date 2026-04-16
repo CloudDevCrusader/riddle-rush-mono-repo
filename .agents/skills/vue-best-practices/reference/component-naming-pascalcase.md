@@ -21,7 +21,7 @@ tags: [vue3, component-registration, naming-conventions, pascalcase, ide-support
 
 ```vue
 <script setup>
-import userProfile from './user-profile.vue'
+import userProfile from './user-profile.vue';
 </script>
 
 <template>
@@ -36,7 +36,7 @@ import userProfile from './user-profile.vue'
 
 ```vue
 <script setup>
-import UserProfile from './UserProfile.vue'
+import UserProfile from './UserProfile.vue';
 </script>
 
 <template>
@@ -115,7 +115,7 @@ Vue automatically resolves PascalCase components to both casings:
 
 ```vue
 <script setup>
-import MyComponent from './MyComponent.vue'
+import MyComponent from './MyComponent.vue';
 </script>
 
 <template>

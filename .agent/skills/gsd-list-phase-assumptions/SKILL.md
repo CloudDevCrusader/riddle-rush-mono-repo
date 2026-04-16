@@ -3,7 +3,6 @@ name: gsd-list-phase-assumptions
 description: Surface the agent's assumptions about a phase approach before planning
 ---
 
-
 <objective>
 Analyze a phase and present the agent's assumptions about technical approach, implementation order, scope boundaries, risk areas, and dependencies.
 

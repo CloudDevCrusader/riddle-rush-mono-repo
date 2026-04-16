@@ -16,14 +16,14 @@
 </template>
 
 <script setup lang="ts">
-import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
+import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game';
 
-const gameSession = useGameSession()
-const installPrompt = useInstallPrompt()
-const settings = useSettings()
-const { setLocale, t } = useI18n()
+const gameSession = useGameSession();
+const installPrompt = useInstallPrompt();
+const settings = useSettings();
+const { setLocale, t } = useI18n();
 
-useDocumentLang()
+useDocumentLang();
 
 const jsonLdPayload = computed(() =>
   JSON.stringify({
@@ -37,7 +37,7 @@ const jsonLdPayload = computed(() =>
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
     inLanguage: ['de-DE', 'en-US'],
   })
-)
+);
 
 useHead(() => ({
   script: [
@@ -47,90 +47,90 @@ useHead(() => ({
       innerHTML: jsonLdPayload.value,
     },
   ],
-}))
+}));
 
 // Disable splash screen in E2E tests
 const playwrightE2EWindow = () =>
   typeof window !== 'undefined' &&
-  Boolean((window as Window & { playwrightTest?: boolean }).playwrightTest)
+  Boolean((window as Window & { playwrightTest?: boolean }).playwrightTest);
 
-const isE2E = process.env.NODE_ENV === 'test' || playwrightE2EWindow()
+const isE2E = process.env.NODE_ENV === 'test' || playwrightE2EWindow();
 
 /** Ref + onBeforeMount so transition turns off if the flag appears after first setup tick. */
-const nuxtRouteTransition = shallowRef<false | { name: string; mode: 'out-in' }>(
+/** No `mode: out-in` — that clears the whole page between routes and feels like a reload. */
+const nuxtRouteTransition = shallowRef<false | { name: string }>(
   isE2E
     ? false
     : {
         name: 'page-opacity',
-        mode: 'out-in',
       }
-)
+);
 
 onBeforeMount(() => {
   if (process.env.NODE_ENV === 'test' || playwrightE2EWindow()) {
-    nuxtRouteTransition.value = false
+    nuxtRouteTransition.value = false;
   }
-})
+});
 
-const showSplash = ref(!isE2E)
+const showSplash = ref(!isE2E);
 
 const onSplashComplete = () => {
-  showSplash.value = false
-}
+  showSplash.value = false;
+};
 
 // Named handlers for proper cleanup
-const handleOnline = () => gameSession.setOnlineStatus(true)
-const handleOffline = () => gameSession.setOnlineStatus(false)
+const handleOnline = () => gameSession.setOnlineStatus(true);
+const handleOffline = () => gameSession.setOnlineStatus(false);
 const handleInstallPrompt = (e: Event) => {
-  e.preventDefault()
-  installPrompt.setInstallPrompt(e as BeforeInstallPromptEvent)
-}
+  e.preventDefault();
+  installPrompt.setInstallPrompt(e as BeforeInstallPromptEvent);
+};
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-    e.preventDefault()
-    settings.toggleDebugMode()
+    e.preventDefault();
+    settings.toggleDebugMode();
   }
-}
+};
 
 onMounted(async () => {
   // Load persisted state
-  await gameSession.loadFromDB()
+  await gameSession.loadFromDB();
 
   // Set the saved language preference
-  const savedLanguage = settings.getLanguage()
+  const savedLanguage = settings.getLanguage();
   if (savedLanguage && (savedLanguage === 'de' || savedLanguage === 'en')) {
     try {
-      await setLocale(savedLanguage as 'de' | 'en')
+      await setLocale(savedLanguage as 'de' | 'en');
     } catch (error) {
-      const logger = useLogger()
-      logger.error('Failed to set saved language:', error)
+      const logger = useLogger();
+      logger.error('Failed to set saved language:', error);
     }
   }
 
   // Monitor online status
-  window.addEventListener('online', handleOnline)
-  window.addEventListener('offline', handleOffline)
+  window.addEventListener('online', handleOnline);
+  window.addEventListener('offline', handleOffline);
 
   // PWA install prompt
-  window.addEventListener('beforeinstallprompt', handleInstallPrompt)
+  window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
   // Debug mode shortcut: Ctrl+Shift+D
-  window.addEventListener('keydown', handleKeydown)
-})
+  window.addEventListener('keydown', handleKeydown);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('online', handleOnline)
-  window.removeEventListener('offline', handleOffline)
-  window.removeEventListener('beforeinstallprompt', handleInstallPrompt)
-  window.removeEventListener('keydown', handleKeydown)
-})
+  window.removeEventListener('online', handleOnline);
+  window.removeEventListener('offline', handleOffline);
+  window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+  window.removeEventListener('keydown', handleKeydown);
+});
 
 useHead({
   link: [
     { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
     { rel: 'apple-touch-startup-image', href: '/pwa-512x512.png' },
   ],
-})
+});
 </script>
 
 <style lang="scss">

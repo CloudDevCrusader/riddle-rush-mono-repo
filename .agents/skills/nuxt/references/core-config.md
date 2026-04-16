@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   // Configuration options
   devtools: { enabled: true },
   modules: ['@nuxt/ui'],
-})
+});
 ```
 
 ### Environment Overrides
@@ -39,7 +39,7 @@ export default defineNuxtConfig({
       // Staging environment config
     },
   },
-})
+});
 ```
 
 Use `--envName` flag to select environment: `nuxt build --envName staging`
@@ -59,7 +59,7 @@ export default defineNuxtConfig({
       apiBase: '/api',
     },
   },
-})
+});
 ```
 
 Override with environment variables:
@@ -74,7 +74,7 @@ Access in components/composables:
 
 ```vue
 <script setup lang="ts">
-const config = useRuntimeConfig()
+const config = useRuntimeConfig();
 // Server: config.apiSecret, config.public.apiBase
 // Client: config.public.apiBase only
 </script>
@@ -94,14 +94,14 @@ export default defineAppConfig({
       primary: '#ff0000',
     },
   },
-})
+});
 ```
 
 Access in components:
 
 ```vue
 <script setup lang="ts">
-const appConfig = useAppConfig()
+const appConfig = useAppConfig();
 </script>
 ```
 
@@ -139,7 +139,7 @@ export default defineNuxtConfig({
   postcss: {
     // postcss options
   },
-})
+});
 ```
 
 ## Vue Configuration
@@ -151,7 +151,7 @@ export default defineNuxtConfig({
   vue: {
     propsDestructure: true,
   },
-})
+});
 ```
 
 <!--

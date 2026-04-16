@@ -23,39 +23,39 @@ This is a subtle but common source of bugs, especially with short-circuit evalua
 
 ```vue
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
-const isEnabled = ref(false)
-const data = ref('important data')
+const isEnabled = ref(false);
+const data = ref('important data');
 
 // BAD: If isEnabled is false initially, data.value is never accessed
 // Vue won't track 'data' as a dependency!
 const result = computed(() => {
   if (!isEnabled.value) {
-    return 'disabled'
+    return 'disabled';
   }
-  return data.value // This dependency may not be tracked
-})
+  return data.value; // This dependency may not be tracked
+});
 
 // BAD: Short-circuit prevents second access
-const password = ref('')
-const confirmPassword = ref('')
+const password = ref('');
+const confirmPassword = ref('');
 
 const isValid = computed(() => {
   // If password is empty, confirmPassword is never accessed
-  return password.value && password.value === confirmPassword.value
-})
+  return password.value && password.value === confirmPassword.value;
+});
 
 // BAD: Early return prevents dependency access
-const user = ref(null)
-const permissions = ref(['read', 'write'])
+const user = ref(null);
+const permissions = ref(['read', 'write']);
 
 const canEdit = computed(() => {
   if (!user.value) {
-    return false // permissions.value never accessed when user is null
+    return false; // permissions.value never accessed when user is null
   }
-  return permissions.value.includes('write')
-})
+  return permissions.value.includes('write');
+});
 </script>
 ```
 
@@ -63,46 +63,46 @@ const canEdit = computed(() => {
 
 ```vue
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
-const isEnabled = ref(false)
-const data = ref('important data')
+const isEnabled = ref(false);
+const data = ref('important data');
 
 // GOOD: Access all dependencies first
 const result = computed(() => {
-  const enabled = isEnabled.value
-  const currentData = data.value // Always accessed
+  const enabled = isEnabled.value;
+  const currentData = data.value; // Always accessed
 
   if (!enabled) {
-    return 'disabled'
+    return 'disabled';
   }
-  return currentData
-})
+  return currentData;
+});
 
 // GOOD: Access both values before comparison
-const password = ref('')
-const confirmPassword = ref('')
+const password = ref('');
+const confirmPassword = ref('');
 
 const isValid = computed(() => {
-  const pwd = password.value
-  const confirm = confirmPassword.value // Always accessed
+  const pwd = password.value;
+  const confirm = confirmPassword.value; // Always accessed
 
-  return pwd && pwd === confirm
-})
+  return pwd && pwd === confirm;
+});
 
 // GOOD: Access all reactive sources upfront
-const user = ref(null)
-const permissions = ref(['read', 'write'])
+const user = ref(null);
+const permissions = ref(['read', 'write']);
 
 const canEdit = computed(() => {
-  const currentUser = user.value
-  const currentPermissions = permissions.value // Always accessed
+  const currentUser = user.value;
+  const currentPermissions = permissions.value; // Always accessed
 
   if (!currentUser) {
-    return false
+    return false;
   }
-  return currentPermissions.includes('write')
-})
+  return currentPermissions.includes('write');
+});
 </script>
 ```
 
@@ -121,10 +121,10 @@ const computed = computed(() => {
   // Vue starts tracking here
   if (conditionA.value) {
     // conditionA is tracked
-    return valueB.value // valueB is ONLY tracked if conditionA is true
+    return valueB.value; // valueB is ONLY tracked if conditionA is true
   }
-  return 'default' // If conditionA is false, valueB is NOT tracked!
-})
+  return 'default'; // If conditionA is false, valueB is NOT tracked!
+});
 ```
 
 ## Pattern: Destructure All Dependencies First
@@ -133,16 +133,16 @@ const computed = computed(() => {
 // GOOD PATTERN: Destructure/access everything at the top
 const result = computed(() => {
   // Access all potential dependencies
-  const { user, settings, items } = toRefs(store)
-  const userVal = user.value
-  const settingsVal = settings.value
-  const itemsVal = items.value
+  const { user, settings, items } = toRefs(store);
+  const userVal = user.value;
+  const settingsVal = settings.value;
+  const itemsVal = items.value;
 
   // Now use conditional logic safely
-  if (!userVal) return []
-  if (!settingsVal.enabled) return []
-  return itemsVal.filter((i) => i.active)
-})
+  if (!userVal) return [];
+  if (!settingsVal.enabled) return [];
+  return itemsVal.filter((i) => i.active);
+});
 ```
 
 ## Reference

@@ -28,7 +28,7 @@ tsdown 'src/*.ts'
 ```ts
 export default defineConfig({
   entry: 'src/index.ts',
-})
+});
 ```
 
 #### Multiple Entries (Array)
@@ -36,7 +36,7 @@ export default defineConfig({
 ```ts
 export default defineConfig({
   entry: ['src/entry1.ts', 'src/entry2.ts'],
-})
+});
 ```
 
 #### Named Entries (Object)
@@ -48,7 +48,7 @@ export default defineConfig({
     utils: 'src/utils.ts',
     cli: 'src/cli.ts',
   },
-})
+});
 ```
 
 Output files will match the keys:
@@ -66,7 +66,7 @@ Match multiple files dynamically using glob patterns:
 ```ts
 export default defineConfig({
   entry: 'src/**/*.ts',
-})
+});
 ```
 
 ### Exclude Test Files
@@ -74,7 +74,7 @@ export default defineConfig({
 ```ts
 export default defineConfig({
   entry: ['src/*.ts', '!src/*.test.ts'],
-})
+});
 ```
 
 ### Object Entries with Glob Patterns
@@ -87,7 +87,7 @@ export default defineConfig({
     // Maps src/foo.ts → dist/lib/foo.js, src/bar.ts → dist/lib/bar.js
     'lib/*': 'src/*.ts',
   },
-})
+});
 ```
 
 #### Negation Patterns in Object Entries
@@ -99,7 +99,7 @@ export default defineConfig({
   entry: {
     'hooks/*': ['src/hooks/*.ts', '!src/hooks/index.ts'],
   },
-})
+});
 ```
 
 Multiple positive and negation patterns:
@@ -114,7 +114,7 @@ export default defineConfig({
       '!src/utils/internal.ts',
     ],
   },
-})
+});
 ```
 
 **Warning:** Multiple positive patterns in an array value must share the same base directory.
@@ -126,7 +126,7 @@ Mix strings, glob patterns, and object entries in an array:
 ```ts
 export default defineConfig({
   entry: ['src/*', '!src/foo.ts', { main: 'index.ts' }, { 'lib/*': ['src/*.ts', '!src/bar.ts'] }],
-})
+});
 ```
 
 Object entries take precedence when output names conflict.
@@ -137,10 +137,10 @@ Use forward slashes `/` instead of backslashes `\` on Windows:
 
 ```ts
 // ✅ Correct
-entry: 'src/utils/*.ts'
+entry: 'src/utils/*.ts';
 
 // ❌ Wrong on Windows
-entry: 'src\\utils\\*.ts'
+entry: 'src\\utils\\*.ts';
 ```
 
 ## Common Patterns
@@ -152,7 +152,7 @@ export default defineConfig({
   entry: 'src/index.ts',
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 ### Library with Multiple Exports
@@ -166,7 +166,7 @@ export default defineConfig({
   },
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 ### CLI Tool
@@ -178,7 +178,7 @@ export default defineConfig({
   },
   format: ['esm'],
   platform: 'node',
-})
+});
 ```
 
 ### Preserve Directory Structure
@@ -191,7 +191,7 @@ export default defineConfig({
   unbundle: true,
   format: ['esm'],
   dts: true,
-})
+});
 ```
 
 This will output files matching the source structure:

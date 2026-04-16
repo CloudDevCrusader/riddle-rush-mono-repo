@@ -32,8 +32,8 @@ This is one of the most common causes of "my transition isn't working" issues.
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const count = ref(0)
+import { ref } from 'vue';
+const count = ref(0);
 </script>
 
 <!-- The span just updates its text content, never triggers enter/leave -->
@@ -64,8 +64,8 @@ const count = ref(0)
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const count = ref(0)
+import { ref } from 'vue';
+const count = ref(0);
 </script>
 
 <!-- Now each number change triggers a full enter/leave transition -->
@@ -106,8 +106,8 @@ const count = ref(0)
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const count = ref(0)
+import { ref } from 'vue';
+const count = ref(0);
 </script>
 
 <style>
@@ -156,15 +156,15 @@ const count = ref(0)
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import TabContent from './TabContent.vue'
+import { ref } from 'vue';
+import TabContent from './TabContent.vue';
 
 const tabs = [
   { id: 'home', label: 'Home' },
   { id: 'profile', label: 'Profile' },
   { id: 'settings', label: 'Settings' },
-]
-const currentTab = ref('home')
+];
+const currentTab = ref('home');
 </script>
 ```
 

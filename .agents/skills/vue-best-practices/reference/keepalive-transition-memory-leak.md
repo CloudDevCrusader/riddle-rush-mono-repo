@@ -104,14 +104,14 @@ Force fresh instances when needed:
 
 ```vue
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
-const currentView = ref('Dashboard')
-const cacheKey = ref(0)
+const currentView = ref('Dashboard');
+const cacheKey = ref(0);
 
 function switchViewFresh(view) {
-  currentView.value = view
-  cacheKey.value++ // Force new instance
+  currentView.value = view;
+  cacheKey.value++; // Force new instance
 }
 </script>
 

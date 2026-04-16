@@ -8,16 +8,16 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    size?: 'sm' | 'md' | 'lg'
-    label?: string
-    overlay?: boolean
+    size?: 'sm' | 'md' | 'lg';
+    label?: string;
+    overlay?: boolean;
   }>(),
   {
     size: 'md',
     label: '',
     overlay: false,
   }
-)
+);
 </script>
 
 <style scoped>

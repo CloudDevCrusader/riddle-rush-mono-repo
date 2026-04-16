@@ -22,18 +22,18 @@ tags: [vue3, slots, renderless-components, composables, performance, composition
 ```vue
 <!-- MouseTracker.vue - Renderless component -->
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue';
 
-const x = ref(0)
-const y = ref(0)
+const x = ref(0);
+const y = ref(0);
 
 function update(event) {
-  x.value = event.pageX
-  y.value = event.pageY
+  x.value = event.pageX;
+  y.value = event.pageY;
 }
 
-onMounted(() => window.addEventListener('mousemove', update))
-onUnmounted(() => window.removeEventListener('mousemove', update))
+onMounted(() => window.addEventListener('mousemove', update));
+onUnmounted(() => window.removeEventListener('mousemove', update));
 </script>
 
 <template>
@@ -53,30 +53,30 @@ onUnmounted(() => window.removeEventListener('mousemove', update))
 
 ```typescript
 // composables/useMouse.ts
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue';
 
 export function useMouse() {
-  const x = ref(0)
-  const y = ref(0)
+  const x = ref(0);
+  const y = ref(0);
 
   function update(event: MouseEvent) {
-    x.value = event.pageX
-    y.value = event.pageY
+    x.value = event.pageX;
+    y.value = event.pageY;
   }
 
-  onMounted(() => window.addEventListener('mousemove', update))
-  onUnmounted(() => window.removeEventListener('mousemove', update))
+  onMounted(() => window.addEventListener('mousemove', update));
+  onUnmounted(() => window.removeEventListener('mousemove', update));
 
-  return { x, y }
+  return { x, y };
 }
 ```
 
 ```vue
 <!-- Usage - simpler, no extra component -->
 <script setup>
-import { useMouse } from '@/composables/useMouse'
+import { useMouse } from '@/composables/useMouse';
 
-const { x, y } = useMouse()
+const { x, y } = useMouse();
 </script>
 
 <template>
@@ -112,21 +112,21 @@ const { x, y } = useMouse()
 ```typescript
 // Data fetching
 export function useFetch<T>(url: string) {
-  const data = ref<T | null>(null)
-  const error = ref<Error | null>(null)
-  const loading = ref(true)
+  const data = ref<T | null>(null);
+  const error = ref<Error | null>(null);
+  const loading = ref(true);
   // ... fetch logic
-  return { data, error, loading }
+  return { data, error, loading };
 }
 
 // Form validation
 export function useForm(initialValues) {
-  const values = ref(initialValues)
-  const errors = ref({})
+  const values = ref(initialValues);
+  const errors = ref({});
   const validate = () => {
     /* ... */
-  }
-  return { values, errors, validate }
+  };
+  return { values, errors, validate };
 }
 ```
 

@@ -32,7 +32,7 @@ This is especially important for large lists or complex filter/sort operations w
 ```javascript
 // Method recalculates every time component re-renders
 function getActiveItems() {
-  return items.value.filter((item) => item.isActive)
+  return items.value.filter((item) => item.isActive);
 }
 ```
 
@@ -43,21 +43,21 @@ const items = ref([
   { id: 1, name: 'Item 1', isActive: true },
   { id: 2, name: 'Item 2', isActive: false },
   { id: 3, name: 'Item 3', isActive: true },
-])
+]);
 
 // Computed: Only recalculates when items changes
 const activeItems = computed(() => {
-  return items.value.filter((item) => item.isActive)
-})
+  return items.value.filter((item) => item.isActive);
+});
 
 const sortedItems = computed(() => {
-  return [...items.value].sort((a, b) => a.name.localeCompare(b.name))
-})
+  return [...items.value].sort((a, b) => a.name.localeCompare(b.name));
+});
 
 // Combine filtering and sorting
 const activeSortedItems = computed(() => {
-  return items.value.filter((item) => item.isActive).sort((a, b) => a.name.localeCompare(b.name))
-})
+  return items.value.filter((item) => item.isActive).sort((a, b) => a.name.localeCompare(b.name));
+});
 ```
 
 ```html
@@ -72,7 +72,7 @@ Use methods when you need to pass parameters, such as in nested v-for loops:
 ```javascript
 // Method is necessary here because we need to pass 'category' as parameter
 function getItemsByCategory(category) {
-  return items.value.filter((item) => item.category === category)
+  return items.value.filter((item) => item.category === category);
 }
 ```
 

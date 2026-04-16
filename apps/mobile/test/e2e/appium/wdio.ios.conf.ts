@@ -1,9 +1,9 @@
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const mobileRoot = join(__dirname, '../../..')
-const defaultApp = join(mobileRoot, 'ios/App/build/Build/Products/Debug-iphonesimulator/App.app')
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const mobileRoot = join(__dirname, '../../..');
+const defaultApp = join(mobileRoot, 'ios/App/build/Build/Products/Debug-iphonesimulator/App.app');
 
 export const config = {
   runner: 'local',
@@ -46,4 +46,4 @@ export const config = {
   autoCompileOpts: {
     autoCompile: true,
   },
-}
+};

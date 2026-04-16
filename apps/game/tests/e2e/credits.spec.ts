@@ -1,150 +1,150 @@
-import { test, expect } from '@playwright/test'
-import { waitForSplashComplete, hideDevtools } from './helpers/game-flow'
+import { test, expect } from '@playwright/test';
+import { waitForSplashComplete, hideDevtools } from './helpers/game-flow';
 
 test.describe('Credits Page', () => {
   test('should load credits page successfully', async ({ page }) => {
-    await page.goto('/credits')
+    await page.goto('/credits');
 
     // Wait for page to load and Vue to hydrate
-    await page.waitForLoadState('networkidle')
-    await hideDevtools(page)
-    await waitForSplashComplete(page)
+    await page.waitForLoadState('networkidle');
+    await hideDevtools(page);
+    await waitForSplashComplete(page);
 
     // Wait for the main container to appear (sign that Vue has mounted)
-    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 });
 
     // Check for header
-    const header = page.locator('[data-testid="credits-header"]')
-    await expect(header).toBeVisible({ timeout: 10000 })
+    const header = page.locator('[data-testid="credits-header"]');
+    await expect(header).toBeVisible({ timeout: 10000 });
 
     // Check for credits panel
-    const creditsPanel = page.locator('[data-testid="credits-panel"]')
-    await expect(creditsPanel).toBeVisible({ timeout: 10000 })
-  })
+    const creditsPanel = page.locator('[data-testid="credits-panel"]');
+    await expect(creditsPanel).toBeVisible({ timeout: 10000 });
+  });
 
   test('should display team credits', async ({ page }) => {
-    await page.goto('/credits')
+    await page.goto('/credits');
 
     // Wait for page to load and Vue to hydrate
-    await page.waitForLoadState('networkidle')
-    await hideDevtools(page)
-    await waitForSplashComplete(page)
-    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
+    await page.waitForLoadState('networkidle');
+    await hideDevtools(page);
+    await waitForSplashComplete(page);
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 });
 
     // Check for credits panel
-    const creditsPanel = page.locator('[data-testid="credits-panel"]')
-    await expect(creditsPanel).toBeVisible({ timeout: 10000 })
+    const creditsPanel = page.locator('[data-testid="credits-panel"]');
+    await expect(creditsPanel).toBeVisible({ timeout: 10000 });
 
     // Check for all three credit sections (use exact pattern to avoid matching heading elements)
     const creditSections = page.locator(
       '[data-testid="credits-section-0"], [data-testid="credits-section-1"], [data-testid="credits-section-2"]'
-    )
-    await expect(creditSections).toHaveCount(3)
+    );
+    await expect(creditSections).toHaveCount(3);
 
     // Check for Game Design section heading (use testid, text may be translated)
-    const gameDesignHeading = page.locator('[data-testid="credits-section-heading-0"]')
-    await expect(gameDesignHeading).toBeVisible()
+    const gameDesignHeading = page.locator('[data-testid="credits-section-heading-0"]');
+    await expect(gameDesignHeading).toBeVisible();
 
     // Check for team members (Tobi and Sophia)
-    const tobi = page.locator('[data-testid="credits-name-0"]')
-    const sophia = page.locator('[data-testid="credits-name-1"]')
-    await expect(tobi).toBeVisible()
-    await expect(sophia).toBeVisible()
+    const tobi = page.locator('[data-testid="credits-name-0"]');
+    const sophia = page.locator('[data-testid="credits-name-1"]');
+    await expect(tobi).toBeVisible();
+    await expect(sophia).toBeVisible();
 
     // Check for Programming section heading
-    const programmingHeading = page.locator('[data-testid="credits-section-heading-1"]')
-    await expect(programmingHeading).toBeVisible()
+    const programmingHeading = page.locator('[data-testid="credits-section-heading-1"]');
+    await expect(programmingHeading).toBeVisible();
 
     // Check for Markus
-    const markus = page.locator('[data-testid="credits-name-2"]')
-    await expect(markus).toBeVisible()
+    const markus = page.locator('[data-testid="credits-name-2"]');
+    await expect(markus).toBeVisible();
 
     // Check for Art section heading
-    const artHeading = page.locator('[data-testid="credits-section-heading-2"]')
-    await expect(artHeading).toBeVisible()
+    const artHeading = page.locator('[data-testid="credits-section-heading-2"]');
+    await expect(artHeading).toBeVisible();
 
     // Check for Sarmad Ali
-    const sarmad = page.locator('[data-testid="credits-name-3"]')
-    await expect(sarmad).toBeVisible()
-  })
+    const sarmad = page.locator('[data-testid="credits-name-3"]');
+    await expect(sarmad).toBeVisible();
+  });
 
   test('should have working back button', async ({ page }) => {
-    await page.goto('/credits')
+    await page.goto('/credits');
 
-    await page.waitForLoadState('networkidle')
-    await hideDevtools(page)
-    await waitForSplashComplete(page)
-    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
+    await page.waitForLoadState('networkidle');
+    await hideDevtools(page);
+    await waitForSplashComplete(page);
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 });
 
     // Look for back button
-    const backButton = page.locator('[data-testid="credits-back-button"], button:has-text("←")')
+    const backButton = page.locator('[data-testid="credits-back-button"], button:has-text("←")');
 
     if ((await backButton.count()) > 0) {
-      await expect(backButton.first()).toBeVisible({ timeout: 10000 })
+      await expect(backButton.first()).toBeVisible({ timeout: 10000 });
 
       // Click back button
-      await backButton.first().click()
+      await backButton.first().click();
 
       // Should navigate back (URL should change)
-      await page.waitForTimeout(500)
-      const url = page.url()
-      expect(url).not.toContain('/credits')
+      await page.waitForTimeout(500);
+      const url = page.url();
+      expect(url).not.toContain('/credits');
     }
-  })
+  });
 
   test('should have working OK button', async ({ page }) => {
-    await page.goto('/credits')
+    await page.goto('/credits');
 
-    await page.waitForLoadState('networkidle')
-    await hideDevtools(page)
-    await waitForSplashComplete(page)
-    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
+    await page.waitForLoadState('networkidle');
+    await hideDevtools(page);
+    await waitForSplashComplete(page);
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 });
 
     // Look for OK button
-    const okButton = page.locator('[data-testid="credits-ok-button"]')
+    const okButton = page.locator('[data-testid="credits-ok-button"]');
 
     if ((await okButton.count()) > 0) {
-      await expect(okButton.first()).toBeVisible({ timeout: 10000 })
+      await expect(okButton.first()).toBeVisible({ timeout: 10000 });
 
       // Click OK button
-      await okButton.first().click()
+      await okButton.first().click();
 
       // Should navigate back (URL should change)
-      await page.waitForTimeout(500)
-      const url = page.url()
-      expect(url).not.toContain('/credits')
+      await page.waitForTimeout(500);
+      const url = page.url();
+      expect(url).not.toContain('/credits');
     }
-  })
+  });
 
   test.skip('should display coins UI element', async ({ page }) => {
     // Coin display removed per requirements - no coins in the app
-    await page.goto('/credits')
+    await page.goto('/credits');
 
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('networkidle');
 
     // Check for coins display (should not exist)
-    const coinsDisplay = page.locator('[data-testid="credits-coins-display"]')
-    await expect(coinsDisplay).toHaveCount(0)
-  })
+    const coinsDisplay = page.locator('[data-testid="credits-coins-display"]');
+    await expect(coinsDisplay).toHaveCount(0);
+  });
 
   test('should have proper page styling', async ({ page }) => {
-    await page.goto('/credits')
+    await page.goto('/credits');
 
-    await page.waitForLoadState('networkidle')
-    await hideDevtools(page)
-    await waitForSplashComplete(page)
-    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 })
+    await page.waitForLoadState('networkidle');
+    await hideDevtools(page);
+    await waitForSplashComplete(page);
+    await page.waitForSelector('[data-testid="credits-page"]', { timeout: 10000 });
 
     // Check that the page has the main container
-    const container = page.locator('[data-testid="credits-page"]')
-    await expect(container).toBeVisible({ timeout: 10000 })
+    const container = page.locator('[data-testid="credits-page"]');
+    await expect(container).toBeVisible({ timeout: 10000 });
 
     // Check for credits panel with proper styling
-    const creditsPanel = page.locator('[data-testid="credits-panel"]')
-    await expect(creditsPanel).toBeVisible({ timeout: 10000 })
+    const creditsPanel = page.locator('[data-testid="credits-panel"]');
+    await expect(creditsPanel).toBeVisible({ timeout: 10000 });
 
     // Verify background is present
-    const backgroundImage = page.locator('.game-background')
-    await expect(backgroundImage).toBeVisible()
-  })
-})
+    const backgroundImage = page.locator('.game-background');
+    await expect(backgroundImage).toBeVisible();
+  });
+});

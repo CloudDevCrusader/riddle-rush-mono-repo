@@ -15,12 +15,12 @@ Create `.pnpmfile.cjs` at workspace root:
 // .pnpmfile.cjs
 function readPackage(pkg, context) {
   // Modify package metadata
-  return pkg
+  return pkg;
 }
 
 function afterAllResolved(lockfile, context) {
   // Modify lockfile
-  return lockfile
+  return lockfile;
 }
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
     readPackage,
     afterAllResolved,
   },
-}
+};
 ```
 
 ## readPackage Hook
@@ -43,10 +43,10 @@ function readPackage(pkg, context) {
     pkg.peerDependencies = {
       ...pkg.peerDependencies,
       react: '*',
-    }
-    context.log(`Added react peer dep to ${pkg.name}`)
+    };
+    context.log(`Added react peer dep to ${pkg.name}`);
   }
-  return pkg
+  return pkg;
 }
 ```
 
@@ -56,12 +56,12 @@ function readPackage(pkg, context) {
 function readPackage(pkg, context) {
   // Fix all lodash versions
   if (pkg.dependencies?.lodash) {
-    pkg.dependencies.lodash = '^4.17.21'
+    pkg.dependencies.lodash = '^4.17.21';
   }
   if (pkg.devDependencies?.lodash) {
-    pkg.devDependencies.lodash = '^4.17.21'
+    pkg.devDependencies.lodash = '^4.17.21';
   }
-  return pkg
+  return pkg;
 }
 ```
 
@@ -71,9 +71,9 @@ function readPackage(pkg, context) {
 function readPackage(pkg, context) {
   // Remove optional dependency that causes issues
   if (pkg.optionalDependencies?.fsevents) {
-    delete pkg.optionalDependencies.fsevents
+    delete pkg.optionalDependencies.fsevents;
   }
-  return pkg
+  return pkg;
 }
 ```
 
@@ -83,10 +83,10 @@ function readPackage(pkg, context) {
 function readPackage(pkg, context) {
   // Replace deprecated package
   if (pkg.dependencies?.['old-package']) {
-    pkg.dependencies['new-package'] = pkg.dependencies['old-package']
-    delete pkg.dependencies['old-package']
+    pkg.dependencies['new-package'] = pkg.dependencies['old-package'];
+    delete pkg.dependencies['old-package'];
   }
-  return pkg
+  return pkg;
 }
 ```
 
@@ -101,9 +101,9 @@ function readPackage(pkg, context) {
         import: './dist/index.mjs',
         require: './dist/index.cjs',
       },
-    }
+    };
   }
-  return pkg
+  return pkg;
 }
 ```
 
@@ -114,10 +114,10 @@ Called after the lockfile is generated. Use for post-resolution modifications.
 ```js
 function afterAllResolved(lockfile, context) {
   // Log all resolved packages
-  context.log(`Resolved ${Object.keys(lockfile.packages || {}).length} packages`)
+  context.log(`Resolved ${Object.keys(lockfile.packages || {}).length} packages`);
 
   // Modify lockfile if needed
-  return lockfile
+  return lockfile;
 }
 ```
 
@@ -128,9 +128,9 @@ The `context` object provides utilities:
 ```js
 function readPackage(pkg, context) {
   // Log messages
-  context.log('Processing package...')
+  context.log('Processing package...');
 
-  return pkg
+  return pkg;
 }
 ```
 
@@ -147,14 +147,14 @@ For type hints, use JSDoc:
  * @returns {import('type-fest').PackageJson}
  */
 function readPackage(pkg, context) {
-  return pkg
+  return pkg;
 }
 
 module.exports = {
   hooks: {
     readPackage,
   },
-}
+};
 ```
 
 ## Common Patterns
@@ -165,13 +165,13 @@ module.exports = {
 function readPackage(pkg, context) {
   switch (pkg.name) {
     case 'package-a':
-      pkg.dependencies.foo = '^2.0.0'
-      break
+      pkg.dependencies.foo = '^2.0.0';
+      break;
     case 'package-b':
-      delete pkg.optionalDependencies.bar
-      break
+      delete pkg.optionalDependencies.bar;
+      break;
   }
-  return pkg
+  return pkg;
 }
 ```
 
@@ -181,9 +181,9 @@ function readPackage(pkg, context) {
 function readPackage(pkg, context) {
   // Remove all optional fsevents
   if (pkg.optionalDependencies) {
-    delete pkg.optionalDependencies.fsevents
+    delete pkg.optionalDependencies.fsevents;
   }
-  return pkg
+  return pkg;
 }
 ```
 
@@ -192,10 +192,10 @@ function readPackage(pkg, context) {
 ```js
 function readPackage(pkg, context) {
   if (process.env.DEBUG_PNPM) {
-    context.log(`${pkg.name}@${pkg.version}`)
-    context.log(`  deps: ${Object.keys(pkg.dependencies || {}).join(', ')}`)
+    context.log(`${pkg.name}@${pkg.version}`);
+    context.log(`  deps: ${Object.keys(pkg.dependencies || {}).join(', ')}`);
   }
-  return pkg
+  return pkg;
 }
 ```
 

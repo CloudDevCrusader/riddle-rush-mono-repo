@@ -27,7 +27,7 @@ export default defineConfig({
       ],
     },
   },
-})
+});
 ```
 
 ### Filesystem Extraction
@@ -39,7 +39,7 @@ export default defineConfig({
   content: {
     filesystem: ['src/**/*.php', 'public/*.html'],
   },
-})
+});
 ```
 
 ### Inline Text Extraction
@@ -52,7 +52,7 @@ export default defineConfig({
       async () => (await fetch('https://example.com')).text(),
     ],
   },
-})
+});
 ```
 
 ## Magic Comments
@@ -65,7 +65,7 @@ Force scan a file:
 // @unocss-include
 export const classes = {
   active: 'bg-primary text-white',
-}
+};
 ```
 
 ### @unocss-ignore
@@ -101,7 +101,7 @@ UnoCSS works at **build time** - dynamic classes don't work:
 **1. Safelist** - Pre-generate known values:
 
 ```ts
-safelist: ['p-1', 'p-2', 'p-3', 'p-4']
+safelist: ['p-1', 'p-2', 'p-3', 'p-4'];
 ```
 
 **2. Static mapping** - List combinations statically:
@@ -110,7 +110,7 @@ safelist: ['p-1', 'p-2', 'p-3', 'p-4']
 const colors = {
   red: 'text-red border-red',
   blue: 'text-blue border-blue',
-}
+};
 ```
 
 **3. Runtime** - Use `@unocss/runtime` for true runtime generation.
@@ -122,10 +122,10 @@ extractors: [
   {
     name: 'my-extractor',
     extract({ code }) {
-      return code.match(/class:[\w-]+/g) || []
+      return code.match(/class:[\w-]+/g) || [];
     },
   },
-]
+];
 ```
 
 <!--

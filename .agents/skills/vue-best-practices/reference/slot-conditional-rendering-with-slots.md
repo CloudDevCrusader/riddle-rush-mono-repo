@@ -109,19 +109,19 @@ Now clean DOM:
 
 ```vue
 <script setup>
-import { useSlots, computed } from 'vue'
+import { useSlots, computed } from 'vue';
 
-const slots = useSlots()
+const slots = useSlots();
 
-const hasHeader = computed(() => !!slots.header)
-const hasFooter = computed(() => !!slots.footer)
+const hasHeader = computed(() => !!slots.header);
+const hasFooter = computed(() => !!slots.footer);
 
 // Can also check slot content conditionally in logic
 function getLayoutClass() {
-  if (slots.header && slots.footer) return 'full-layout'
-  if (slots.header) return 'header-only'
-  if (slots.footer) return 'footer-only'
-  return 'minimal'
+  if (slots.header && slots.footer) return 'full-layout';
+  if (slots.header) return 'header-only';
+  if (slots.footer) return 'footer-only';
+  return 'minimal';
 }
 </script>
 

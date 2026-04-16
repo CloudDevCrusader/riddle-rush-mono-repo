@@ -6,11 +6,11 @@
  */
 
 export const useOptimizedImage = () => {
-  const runtimeConfig = useRuntimeConfig()
-  const baseUrl = runtimeConfig.public.baseUrl || ''
+  const runtimeConfig = useRuntimeConfig();
+  const baseUrl = runtimeConfig.public.baseUrl || '';
 
   // Cache for format detection to avoid repeated checks
-  let cachedFormat: 'webp' | 'avif' | 'png' | null = null
+  let cachedFormat: 'webp' | 'avif' | 'png' | null = null;
 
   /**
    * Get optimized image source with WebP fallback
@@ -25,21 +25,21 @@ export const useOptimizedImage = () => {
   const getOptimizedImageSrc = (
     src: string,
     _options: {
-      format?: 'webp' | 'avif' | 'png' | 'jpg'
-      quality?: number
-      width?: number
-      height?: number
-      preset?: 'background' | 'thumbnail' | 'avatar' | 'icon' | 'hero'
+      format?: 'webp' | 'avif' | 'png' | 'jpg';
+      quality?: number;
+      width?: number;
+      height?: number;
+      preset?: 'background' | 'thumbnail' | 'avatar' | 'icon' | 'hero';
     } = {}
   ): string => {
     // Remove leading slash if present
-    const cleanSrc = src.startsWith('/') ? src.slice(1) : src
-    const fullPath = `${baseUrl}${cleanSrc}`
+    const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
+    const fullPath = `${baseUrl}${cleanSrc}`;
 
     // If @nuxt/image is available, use it for optimization
     // Otherwise, return the original path
-    return fullPath
-  }
+    return fullPath;
+  };
 
   /**
    * Get responsive image sources for different screen sizes
@@ -48,75 +48,75 @@ export const useOptimizedImage = () => {
     src: string,
     sizes: { width: number; breakpoint?: string }[]
   ): string[] => {
-    return sizes.map((size) => getOptimizedImageSrc(src, { width: size.width }))
-  }
+    return sizes.map((size) => getOptimizedImageSrc(src, { width: size.width }));
+  };
 
   /**
    * Check if WebP is supported by the browser (cached)
    */
   const supportsWebP = (): boolean => {
-    if (typeof window === 'undefined') return false
+    if (typeof window === 'undefined') return false;
 
     // Return cached result if available
     if (cachedFormat === 'webp' || cachedFormat === 'png') {
-      return cachedFormat === 'webp'
+      return cachedFormat === 'webp';
     }
 
-    const canvas = document.createElement('canvas')
-    canvas.width = 1
-    canvas.height = 1
-    const supports = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0
-    cachedFormat = supports ? 'webp' : 'png'
-    return supports
-  }
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    const supports = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    cachedFormat = supports ? 'webp' : 'png';
+    return supports;
+  };
 
   /**
    * Get image format based on browser support (cached)
    */
   const getBestFormat = (): 'webp' | 'avif' | 'png' => {
-    if (typeof window === 'undefined') return 'webp'
+    if (typeof window === 'undefined') return 'webp';
 
     // Return cached result if available
-    if (cachedFormat) return cachedFormat
+    if (cachedFormat) return cachedFormat;
 
     // Check for AVIF support first (best compression)
-    const canvas = document.createElement('canvas')
-    canvas.width = 1
-    canvas.height = 1
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
 
     if (canvas.toDataURL('image/avif').indexOf('data:image/avif') === 0) {
-      cachedFormat = 'avif'
-      return 'avif'
+      cachedFormat = 'avif';
+      return 'avif';
     }
 
     // Fallback to WebP
     if (supportsWebP()) {
-      return 'webp'
+      return 'webp';
     }
 
     // Final fallback to PNG
-    cachedFormat = 'png'
-    return 'png'
-  }
+    cachedFormat = 'png';
+    return 'png';
+  };
 
   /**
    * Preload images for better performance
    * @param imageUrls - Array of image URLs to preload
    */
   const preloadImages = (imageUrls: string[]): Promise<void> => {
-    if (typeof window === 'undefined') return Promise.resolve()
+    if (typeof window === 'undefined') return Promise.resolve();
 
     return Promise.all(
       imageUrls.map((url) => {
         return new Promise<void>((resolve) => {
-          const img = new Image()
-          img.src = url
-          img.onload = () => resolve()
-          img.onerror = () => resolve() // Don't fail on error, just continue
-        })
+          const img = new Image();
+          img.src = url;
+          img.onload = () => resolve();
+          img.onerror = () => resolve(); // Don't fail on error, just continue
+        });
       })
-    ).then(() => {})
-  }
+    ).then(() => {});
+  };
 
   /**
    * Get optimized image with lazy loading attributes
@@ -127,8 +127,8 @@ export const useOptimizedImage = () => {
       alt,
       loading: 'lazy' as const,
       decoding: 'async' as const,
-    }
-  }
+    };
+  };
 
   return {
     getOptimizedImageSrc,
@@ -137,5 +137,5 @@ export const useOptimizedImage = () => {
     getBestFormat,
     preloadImages,
     getLazyImageAttributes,
-  }
-}
+  };
+};

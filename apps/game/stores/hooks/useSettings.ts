@@ -1,8 +1,8 @@
-import { computed } from '#imports'
-import { useSettingsStore as settingsStore } from '../settingsStore'
+import { computed } from '#imports';
+import { useSettingsStore as settingsStore } from '../settingsStore';
 
 export function useSettings() {
-  const store = settingsStore()
+  const store = settingsStore();
 
   return {
     // State
@@ -39,5 +39,5 @@ export function useSettings() {
     resetToDefaults: store.resetToDefaults,
     setLanguage: store.setLanguage,
     getLanguage: store.getLanguage,
-  }
+  };
 }

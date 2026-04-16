@@ -4,10 +4,10 @@
  */
 
 export default defineNuxtPlugin((nuxtApp: any) => {
-  const { syncErrorLog, setupPeriodicSync } = useErrorSync()
+  const { syncErrorLog, setupPeriodicSync } = useErrorSync();
 
   // Setup periodic sync
-  setupPeriodicSync()
+  setupPeriodicSync();
 
   // Global error handler with detailed logging
   if (import.meta.client) {
@@ -20,7 +20,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         error: event.error,
         stack: event.error?.stack,
         timestamp: new Date().toISOString(),
-      })
+      });
 
       // Log detailed error information
       if (event.error) {
@@ -28,7 +28,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           name: event.error.name,
           message: event.error.message,
           stack: event.error.stack,
-        })
+        });
       }
 
       syncErrorLog('error', 'Unhandled error', event.error, {
@@ -38,29 +38,29 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         colno: event.colno,
         message: event.message,
         stack: event.error?.stack,
-      })
-    })
+      });
+    });
 
     window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
       console.error('[Runtime Error Handler] Unhandled promise rejection:', {
         reason: event.reason,
         timestamp: new Date().toISOString(),
-      })
+      });
 
       if (event.reason instanceof Error) {
         console.error('[Runtime Error Handler] Rejection error details:', {
           name: event.reason.name,
           message: event.reason.message,
           stack: event.reason.stack,
-        })
+        });
       }
 
       syncErrorLog('error', 'Unhandled promise rejection', event.reason, {
         type: 'unhandled_rejection',
         message: event.reason instanceof Error ? event.reason.message : String(event.reason),
         stack: event.reason instanceof Error ? event.reason.stack : undefined,
-      })
-    })
+      });
+    });
 
     // Vue error handler
     nuxtApp.vueApp.config.errorHandler = (error: unknown, instance: any, info: string) => {
@@ -68,12 +68,12 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         type: 'vue_error',
         component: instance?.$options?.name || 'unknown',
         info,
-      })
-    }
+      });
+    };
   }
 
   // Add to nuxtApp for global access
   nuxtApp.provide('errorSync', {
     syncErrorLog,
-  })
-})
+  });
+});

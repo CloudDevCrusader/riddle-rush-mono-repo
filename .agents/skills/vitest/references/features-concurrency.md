@@ -22,7 +22,7 @@ defineConfig({
     // Pool type: 'threads', 'forks', 'vmThreads'
     pool: 'threads',
   },
-})
+});
 ```
 
 ## Concurrent Tests
@@ -32,18 +32,18 @@ Run tests within a file in parallel:
 ```ts
 // Individual concurrent tests
 test.concurrent('test 1', async ({ expect }) => {
-  expect(await fetch1()).toBe('result')
-})
+  expect(await fetch1()).toBe('result');
+});
 
 test.concurrent('test 2', async ({ expect }) => {
-  expect(await fetch2()).toBe('result')
-})
+  expect(await fetch2()).toBe('result');
+});
 
 // All tests in suite concurrent
 describe.concurrent('parallel suite', () => {
-  test('test 1', async ({ expect }) => {})
-  test('test 2', async ({ expect }) => {})
-})
+  test('test 1', async ({ expect }) => {});
+  test('test 2', async ({ expect }) => {});
+});
 ```
 
 **Important:** Use `{ expect }` from context for concurrent tests.
@@ -54,18 +54,18 @@ Force sequential execution:
 
 ```ts
 describe.concurrent('mostly parallel', () => {
-  test('parallel 1', async () => {})
-  test('parallel 2', async () => {})
+  test('parallel 1', async () => {});
+  test('parallel 2', async () => {});
 
-  test.sequential('must run alone 1', async () => {})
-  test.sequential('must run alone 2', async () => {})
-})
+  test.sequential('must run alone 1', async () => {});
+  test.sequential('must run alone 2', async () => {});
+});
 
 // Or entire suite
 describe.sequential('sequential suite', () => {
-  test('first', () => {})
-  test('second', () => {})
-})
+  test('first', () => {});
+  test('second', () => {});
+});
 ```
 
 ## Max Concurrency
@@ -77,7 +77,7 @@ defineConfig({
   test: {
     maxConcurrency: 5, // Max concurrent tests per file
   },
-})
+});
 ```
 
 ## Isolation
@@ -90,7 +90,7 @@ defineConfig({
     // Disable isolation for faster runs (less safe)
     isolate: false,
   },
-})
+});
 ```
 
 ## Sharding
@@ -157,7 +157,7 @@ defineConfig({
       concurrent: true,
     },
   },
-})
+});
 ```
 
 ## Shuffle Tests
@@ -192,7 +192,7 @@ defineConfig({
       },
     },
   },
-})
+});
 ```
 
 ### Forks
@@ -210,7 +210,7 @@ defineConfig({
       },
     },
   },
-})
+});
 ```
 
 ### VM Threads
@@ -222,7 +222,7 @@ defineConfig({
   test: {
     pool: 'vmThreads',
   },
-})
+});
 ```
 
 ## Bail on Failure

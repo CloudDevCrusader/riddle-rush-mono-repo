@@ -4,13 +4,23 @@
 
 const fs = require('fs');
 const path = require('path');
-const { escapeRegex, getMilestonePhaseFilter, extractOneLinerFromBody, normalizeMd, planningPaths, output, error } = require('./core.cjs');
+const {
+  escapeRegex,
+  getMilestonePhaseFilter,
+  extractOneLinerFromBody,
+  normalizeMd,
+  planningPaths,
+  output,
+  error,
+} = require('./core.cjs');
 const { extractFrontmatter } = require('./frontmatter.cjs');
 const { writeStateMd, stateReplaceFieldWithFallback } = require('./state.cjs');
 
 function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
   if (!reqIdsRaw || reqIdsRaw.length === 0) {
-    error('requirement IDs required. Usage: requirements mark-complete REQ-01,REQ-02 or REQ-01 REQ-02');
+    error(
+      'requirement IDs required. Usage: requirements mark-complete REQ-01,REQ-02 or REQ-01 REQ-02'
+    );
   }
 
   // Accept comma-separated, space-separated, or bracket-wrapped: [REQ-01, REQ-02]
@@ -18,7 +28,7 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
     .join(' ')
     .replace(/[\[\]]/g, '')
     .split(/[,\s]+/)
-    .map(r => r.trim())
+    .map((r) => r.trim())
     .filter(Boolean);
 
   if (reqIds.length === 0) {
@@ -27,7 +37,11 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
 
   const reqPath = planningPaths(cwd).requirements;
   if (!fs.existsSync(reqPath)) {
-    output({ updated: false, reason: 'REQUIREMENTS.md not found', ids: reqIds }, raw, 'no requirements file');
+    output(
+      { updated: false, reason: 'REQUIREMENTS.md not found', ids: reqIds },
+      raw,
+      'no requirements file'
+    );
     return;
   }
 
@@ -48,7 +62,10 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
     }
 
     // Update traceability table: | REQ-ID | Phase N | Pending | → | REQ-ID | Phase N | Complete |
-    const tablePattern = new RegExp(`(\\|\\s*${reqEscaped}\\s*\\|[^|]+\\|)\\s*Pending\\s*(\\|)`, 'gi');
+    const tablePattern = new RegExp(
+      `(\\|\\s*${reqEscaped}\\s*\\|[^|]+\\|)\\s*Pending\\s*(\\|)`,
+      'gi'
+    );
     if (tablePattern.test(reqContent)) {
       // Re-read since test() advances lastIndex for global regex
       reqContent = reqContent.replace(
@@ -76,13 +93,17 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
     fs.writeFileSync(reqPath, reqContent, 'utf-8');
   }
 
-  output({
-    updated: updated.length > 0,
-    marked_complete: updated,
-    already_complete: alreadyComplete,
-    not_found: notFound,
-    total: reqIds.length,
-  }, raw, `${updated.length}/${reqIds.length} requirements marked complete`);
+  output(
+    {
+      updated: updated.length > 0,
+      marked_complete: updated,
+      already_complete: alreadyComplete,
+      not_found: notFound,
+      total: reqIds.length,
+    },
+    raw,
+    `${updated.length}/${reqIds.length} requirements marked complete`
+  );
 }
 
 function cmdMilestoneComplete(cwd, version, options, raw) {
@@ -115,15 +136,18 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
 
   try {
     const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
-    const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort();
+    const dirs = entries
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name)
+      .sort();
 
     for (const dir of dirs) {
       if (!isDirInMilestone(dir)) continue;
 
       phaseCount++;
       const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
-      const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
-      const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
+      const plans = phaseFiles.filter((f) => f.endsWith('-PLAN.md') || f === 'PLAN.md');
+      const summaries = phaseFiles.filter((f) => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
       totalPlans += plans.length;
 
       // Extract one-liners from summaries
@@ -145,10 +169,14 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
             const mdTaskMatches = content.match(/##\s*Task\s*\d+/gi) || [];
             totalTasks += xmlTaskMatches.length || mdTaskMatches.length;
           }
-        } catch { /* intentionally empty */ }
+        } catch {
+          /* intentionally empty */
+        }
       }
     }
-  } catch { /* intentionally empty */ }
+  } catch {
+    /* intentionally empty */
+  }
 
   // Archive ROADMAP.md
   if (fs.existsSync(roadmapPath)) {
@@ -160,7 +188,11 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
   if (fs.existsSync(reqPath)) {
     const reqContent = fs.readFileSync(reqPath, 'utf-8');
     const archiveHeader = `# Requirements Archive: ${version} ${milestoneName}\n\n**Archived:** ${today}\n**Status:** SHIPPED\n\nFor current requirements, see \`.planning/REQUIREMENTS.md\`.\n\n---\n\n`;
-    fs.writeFileSync(path.join(archiveDir, `${version}-REQUIREMENTS.md`), archiveHeader + reqContent, 'utf-8');
+    fs.writeFileSync(
+      path.join(archiveDir, `${version}-REQUIREMENTS.md`),
+      archiveHeader + reqContent,
+      'utf-8'
+    );
   }
 
   // Archive audit file if exists
@@ -170,7 +202,7 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
   }
 
   // Create/append MILESTONES.md entry
-  const accomplishmentsList = accomplishments.map(a => `- ${a}`).join('\n');
+  const accomplishmentsList = accomplishments.map((a) => `- ${a}`).join('\n');
   const milestoneEntry = `## ${version} ${milestoneName} (Shipped: ${today})\n\n**Phases completed:** ${phaseCount} phases, ${totalPlans} plans, ${totalTasks} tasks\n\n**Key accomplishments:**\n${accomplishmentsList || '- (none recorded)'}\n\n---\n\n`;
 
   if (fs.existsSync(milestonesPath)) {
@@ -198,10 +230,24 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
   if (fs.existsSync(statePath)) {
     let stateContent = fs.readFileSync(statePath, 'utf-8');
 
-    stateContent = stateReplaceFieldWithFallback(stateContent, 'Status', null, `${version} milestone complete`);
-    stateContent = stateReplaceFieldWithFallback(stateContent, 'Last Activity', 'Last activity', today);
-    stateContent = stateReplaceFieldWithFallback(stateContent, 'Last Activity Description', null,
-      `${version} milestone completed and archived`);
+    stateContent = stateReplaceFieldWithFallback(
+      stateContent,
+      'Status',
+      null,
+      `${version} milestone complete`
+    );
+    stateContent = stateReplaceFieldWithFallback(
+      stateContent,
+      'Last Activity',
+      'Last activity',
+      today
+    );
+    stateContent = stateReplaceFieldWithFallback(
+      stateContent,
+      'Last Activity Description',
+      null,
+      `${version} milestone completed and archived`
+    );
 
     writeStateMd(statePath, stateContent, cwd);
   }
@@ -214,7 +260,7 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
       fs.mkdirSync(phaseArchiveDir, { recursive: true });
 
       const phaseEntries = fs.readdirSync(phasesDir, { withFileTypes: true });
-      const phaseDirNames = phaseEntries.filter(e => e.isDirectory()).map(e => e.name);
+      const phaseDirNames = phaseEntries.filter((e) => e.isDirectory()).map((e) => e.name);
       let archivedCount = 0;
       for (const dir of phaseDirNames) {
         if (!isDirInMilestone(dir)) continue;
@@ -222,7 +268,9 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
         archivedCount++;
       }
       phasesArchived = archivedCount > 0;
-    } catch { /* intentionally empty */ }
+    } catch {
+      /* intentionally empty */
+    }
   }
 
   const result = {
@@ -253,12 +301,12 @@ function cmdPhasesClear(cwd, raw, args) {
 
   if (fs.existsSync(phasesDir)) {
     const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
-    const dirs = entries.filter(e => e.isDirectory() && !/^999(?:\.|$)/.test(e.name));
+    const dirs = entries.filter((e) => e.isDirectory() && !/^999(?:\.|$)/.test(e.name));
 
     if (dirs.length > 0 && !confirm) {
       error(
         `phases clear would delete ${dirs.length} phase director${dirs.length === 1 ? 'y' : 'ies'}. ` +
-        `Pass --confirm to proceed.`
+          `Pass --confirm to proceed.`
       );
     }
 

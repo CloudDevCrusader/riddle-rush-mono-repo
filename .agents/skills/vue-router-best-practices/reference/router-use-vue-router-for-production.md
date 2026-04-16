@@ -22,18 +22,18 @@ tags: [vue3, vue-router, spa, production, architecture]
 ```vue
 <!-- Only for: learning, prototypes, or micro-apps with 2-3 pages -->
 <script setup>
-import { ref, computed } from 'vue'
-import Home from './Home.vue'
-import About from './About.vue'
+import { ref, computed } from 'vue';
+import Home from './Home.vue';
+import About from './About.vue';
 
-const routes = { '/': Home, '/about': About }
-const currentPath = ref(window.location.hash.slice(1) || '/')
+const routes = { '/': Home, '/about': About };
+const currentPath = ref(window.location.hash.slice(1) || '/');
 
 window.addEventListener('hashchange', () => {
-  currentPath.value = window.location.hash.slice(1) || '/'
-})
+  currentPath.value = window.location.hash.slice(1) || '/';
+});
 
-const currentView = computed(() => routes[currentPath.value])
+const currentView = computed(() => routes[currentPath.value]);
 </script>
 
 <template>
@@ -66,7 +66,7 @@ const currentView = computed(() => routes[currentPath.value])
 
 ```javascript
 // router/index.js
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
   {
@@ -99,33 +99,33 @@ const routes = [
     name: 'NotFound',
     component: () => import('@/views/NotFound.vue'),
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    return savedPosition || { top: 0 }
+    return savedPosition || { top: 0 };
   },
-})
+});
 
 // Global navigation guard
 router.beforeEach((to, from) => {
   if (to.meta.requiresAuth && !isAuthenticated()) {
-    return { name: 'Login', query: { redirect: to.fullPath } }
+    return { name: 'Login', query: { redirect: to.fullPath } };
   }
-})
+});
 
-export default router
+export default router;
 ```
 
 ```javascript
 // main.js
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
 
-createApp(App).use(router).mount('#app')
+createApp(App).use(router).mount('#app');
 ```
 
 ```vue
@@ -154,16 +154,16 @@ const routes = [
     component: UserProfile,
     // Load data at route level
     loader: async (route) => {
-      return { user: await fetchUser(route.params.id) }
+      return { user: await fetchUser(route.params.id) };
     },
   },
-]
+];
 
 // View Transitions API integration
 const router = createRouter({
   // Enable native browser view transitions
   // Requires browser support (Chrome 111+)
-})
+});
 ```
 
 ## Key Points

@@ -114,16 +114,16 @@ function readPackage(pkg, context) {
     pkg.peerDependencies = {
       ...pkg.peerDependencies,
       react: '*',
-    }
+    };
   }
-  return pkg
+  return pkg;
 }
 
 module.exports = {
   hooks: {
     readPackage,
   },
-}
+};
 ```
 
 ## Peer Dependencies in Workspaces

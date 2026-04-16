@@ -1,6 +1,6 @@
 ---
 description: Retroactively verify threat mitigations for a completed phase
-argument-hint: "[phase number]"
+argument-hint: '[phase number]'
 tools:
   read: true
   write: true
@@ -11,6 +11,7 @@ tools:
   task: true
   question: true
 ---
+
 <objective>
 Verify threat mitigations for a completed phase. Three states:
 - (A) SECURITY.md exists — audit and verify mitigations

@@ -24,23 +24,23 @@ tags: [vue3, provide-inject, state-management, architecture, debugging]
 ```vue
 <!-- Provider.vue -->
 <script setup>
-import { ref, provide } from 'vue'
+import { ref, provide } from 'vue';
 
-const user = ref({ name: 'John', preferences: { theme: 'dark' } })
-provide('user', user)
+const user = ref({ name: 'John', preferences: { theme: 'dark' } });
+provide('user', user);
 </script>
 ```
 
 ```vue
 <!-- DeepChild.vue -->
 <script setup>
-import { inject } from 'vue'
+import { inject } from 'vue';
 
-const user = inject('user')
+const user = inject('user');
 
 // PROBLEMATIC: Mutating from anywhere in the tree
 function updateTheme(theme) {
-  user.value.preferences.theme = theme // Where did this change come from?
+  user.value.preferences.theme = theme; // Where did this change come from?
 }
 </script>
 ```
@@ -59,31 +59,31 @@ function updateTheme(theme) {
 ```vue
 <!-- Provider.vue -->
 <script setup>
-import { ref, provide, readonly } from 'vue'
+import { ref, provide, readonly } from 'vue';
 
-const user = ref({ name: 'John', preferences: { theme: 'dark' } })
+const user = ref({ name: 'John', preferences: { theme: 'dark' } });
 
 // Mutation function with validation
 function updateUserPreferences(preferences) {
   // Centralized validation
   if (preferences.theme && !['dark', 'light', 'system'].includes(preferences.theme)) {
-    console.warn('Invalid theme')
-    return false
+    console.warn('Invalid theme');
+    return false;
   }
 
   // Centralized side effects
-  Object.assign(user.value.preferences, preferences)
-  localStorage.setItem('userPrefs', JSON.stringify(user.value.preferences))
-  return true
+  Object.assign(user.value.preferences, preferences);
+  localStorage.setItem('userPrefs', JSON.stringify(user.value.preferences));
+  return true;
 }
 
 function updateUserName(name) {
   if (!name || name.length < 2) {
-    console.warn('Name must be at least 2 characters')
-    return false
+    console.warn('Name must be at least 2 characters');
+    return false;
   }
-  user.value.name = name
-  return true
+  user.value.name = name;
+  return true;
 }
 
 // Provide readonly data + update functions
@@ -91,20 +91,20 @@ provide('user', {
   data: readonly(user),
   updatePreferences: updateUserPreferences,
   updateName: updateUserName,
-})
+});
 </script>
 ```
 
 ```vue
 <!-- DeepChild.vue -->
 <script setup>
-import { inject } from 'vue'
+import { inject } from 'vue';
 
-const { data: user, updatePreferences } = inject('user')
+const { data: user, updatePreferences } = inject('user');
 
 function changeTheme(theme) {
   // Clear intent: calling provider's update function
-  const success = updatePreferences({ theme })
+  const success = updatePreferences({ theme });
   if (!success) {
     // Handle validation failure
   }
@@ -125,20 +125,20 @@ Use `readonly()` to enforce the pattern at runtime:
 ```vue
 <!-- Provider.vue -->
 <script setup>
-import { ref, provide, readonly } from 'vue'
+import { ref, provide, readonly } from 'vue';
 
-const cart = ref([])
+const cart = ref([]);
 
 function addItem(item) {
-  cart.value.push(item)
+  cart.value.push(item);
 }
 
 function removeItem(id) {
-  cart.value = cart.value.filter((item) => item.id !== id)
+  cart.value = cart.value.filter((item) => item.id !== id);
 }
 
 function clearCart() {
-  cart.value = []
+  cart.value = [];
 }
 
 // Provide readonly cart + controlled mutations
@@ -147,16 +147,16 @@ provide('cart', {
   addItem,
   removeItem,
   clearCart,
-})
+});
 </script>
 ```
 
 ```vue
 <!-- CartDisplay.vue -->
 <script setup>
-import { inject } from 'vue'
+import { inject } from 'vue';
 
-const { items, removeItem } = inject('cart')
+const { items, removeItem } = inject('cart');
 
 // items.push(newItem) would trigger a warning in dev mode
 // Must use provided removeItem function

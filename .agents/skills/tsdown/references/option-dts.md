@@ -32,7 +32,7 @@ tsdown --dts
 ```ts
 export default defineConfig({
   dts: true,
-})
+});
 ```
 
 ## Performance
@@ -75,7 +75,7 @@ export default defineConfig({
   dts: {
     sourcemap: true,
   },
-})
+});
 ```
 
 ## Advanced Options
@@ -91,7 +91,7 @@ export default defineConfig({
       removeComments: false,
     },
   },
-})
+});
 ```
 
 ## Build Process
@@ -108,7 +108,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 Output:
@@ -127,7 +127,7 @@ export default defineConfig({
   },
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 Output:
@@ -144,7 +144,7 @@ export default defineConfig({
   dts: {
     sourcemap: true, // Enable declaration maps
   },
-})
+});
 ```
 
 ### Fast Build (Isolated Declarations)
@@ -166,7 +166,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true, // Will use fast oxc-transform
-})
+});
 ```
 
 ## Troubleshooting
@@ -200,7 +200,7 @@ export default defineConfig({
   dts: {
     vue: true,
   },
-})
+});
 ```
 
 ### Oxc Transform
@@ -212,7 +212,7 @@ export default defineConfig({
   dts: {
     oxc: true, // Use oxc-transform (fast, requires isolatedDeclarations)
   },
-})
+});
 ```
 
 ### Custom TSConfig
@@ -224,7 +224,7 @@ export default defineConfig({
   dts: {
     tsconfig: './tsconfig.build.json',
   },
-})
+});
 ```
 
 ## Available DTS Options

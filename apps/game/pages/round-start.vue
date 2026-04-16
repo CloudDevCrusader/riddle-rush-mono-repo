@@ -93,74 +93,74 @@
 </template>
 
 <script setup lang="ts">
-import type { Category } from '@riddle-rush/types/game'
+import type { Category } from '@riddle-rush/types/game';
 import {
   type FortuneWheelCategoryDisplay,
   type FortuneWheelSelection,
   FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI,
   FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL,
-} from '~/types/fortune-wheel'
+} from '~/types/fortune-wheel';
 
-const { toast, t } = usePageSetup()
-const { getAssetPath } = useAssets()
-const { goToGame, goToPlayers } = useNavigation()
-const { startConfiguredRound } = useGameActions()
-const { gameStore } = useGameState()
-const { isFortuneWheelEnabled } = useFeatureFlags()
+const { toast, t } = usePageSetup();
+const { getAssetPath } = useAssets();
+const { goToGame, goToPlayers } = useNavigation();
+const { startConfiguredRound } = useGameActions();
+const { gameStore } = useGameState();
+const { isFortuneWheelEnabled } = useFeatureFlags();
 
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-const startingGame = ref(false)
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const startingGame = ref(false);
 
-const allCategories = ref<Category[]>([])
-const fortuneCategoryDisplay = ref<FortuneWheelCategoryDisplay | null>(null)
+const allCategories = ref<Category[]>([]);
+const fortuneCategoryDisplay = ref<FortuneWheelCategoryDisplay | null>(null);
 
 function handleRoundStartBack() {
-  if (startingGame.value) return
-  void goToPlayers()
+  if (startingGame.value) return;
+  void goToPlayers();
 }
 
 function onFortuneCategoryDisplay(payload: FortuneWheelCategoryDisplay) {
-  fortuneCategoryDisplay.value = payload
+  fortuneCategoryDisplay.value = payload;
 }
 
 const showRoundStartCategoryLine = computed(
   () => isFortuneWheelEnabled.value && !startingGame.value && allCategories.value.length > 0
-)
+);
 
 /** No pick yet (or idle) — centre shows * / -, side slots hidden. */
 const categoryStripPlaceholder = computed(() => {
-  const d = fortuneCategoryDisplay.value
-  if (!d) return true
-  return !d.isSpinning && d.categoryId == null
-})
+  const d = fortuneCategoryDisplay.value;
+  if (!d) return true;
+  return !d.isSpinning && d.categoryId == null;
+});
 
 /** Side neighbours visible while spinning; after stop only the centre remains. */
 const categoryStripSettled = computed(() => {
-  const d = fortuneCategoryDisplay.value
-  return !!(d && !d.isSpinning && d.categoryId != null)
-})
+  const d = fortuneCategoryDisplay.value;
+  return !!(d && !d.isSpinning && d.categoryId != null);
+});
 
-const STRIP_OFFSETS = [-2, -1, 0, 1, 2] as const
+const STRIP_OFFSETS = [-2, -1, 0, 1, 2] as const;
 
 function categoryIndexAtOffset(centerIdx: number, offset: number, n: number): number {
-  if (n <= 0) return 0
-  return (centerIdx + offset + n * 100) % n
+  if (n <= 0) return 0;
+  return (centerIdx + offset + n * 100) % n;
 }
 
 const centerCategoryIndex = computed(() => {
-  const d = fortuneCategoryDisplay.value
-  const id = d?.categoryId
-  if (id == null) return 0
-  const list = allCategories.value
-  const idx = list.findIndex((c) => c.id === id)
-  return idx >= 0 ? idx : 0
-})
+  const d = fortuneCategoryDisplay.value;
+  const id = d?.categoryId;
+  if (id == null) return 0;
+  const list = allCategories.value;
+  const idx = list.findIndex((c) => c.id === id);
+  return idx >= 0 ? idx : 0;
+});
 
 const categoryStripSlots = computed(() => {
-  const list = allCategories.value
-  const n = list.length
-  const d = fortuneCategoryDisplay.value
-  const placeholder = !d || (!d.isSpinning && d.categoryId == null)
+  const list = allCategories.value;
+  const n = list.length;
+  const d = fortuneCategoryDisplay.value;
+  const placeholder = !d || (!d.isSpinning && d.categoryId == null);
 
   if (placeholder) {
     return STRIP_OFFSETS.map((offset) => ({
@@ -168,97 +168,97 @@ const categoryStripSlots = computed(() => {
       category: null as Category | null,
       label: offset === 0 ? FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL : '\u00a0',
       emoji: offset === 0 ? FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI : '',
-    }))
+    }));
   }
 
-  const ci = centerCategoryIndex.value
+  const ci = centerCategoryIndex.value;
   return STRIP_OFFSETS.map((offset) => {
-    const cat = n ? list[categoryIndexAtOffset(ci, offset, n)]! : null
+    const cat = n ? list[categoryIndexAtOffset(ci, offset, n)]! : null;
     return {
       offset,
       category: cat,
       label: cat ? t(`categories.${cat.searchWord}`, cat.name) : '—',
       emoji: gameStore.categoryEmoji(cat?.name ?? null),
-    }
-  })
-})
+    };
+  });
+});
 
 async function startGame(category: Category, letter: string) {
-  await gameStore.fetchCategories()
-  startingGame.value = true
+  await gameStore.fetchCategories();
+  startingGame.value = true;
 
   try {
-    const session = await startConfiguredRound(category, letter)
+    const session = await startConfiguredRound(category, letter);
     if (!session) {
-      startingGame.value = false
-      return
+      startingGame.value = false;
+      return;
     }
 
     // Always pass the session id. Navigating to `/game` triggers session-guard to
     // `navigateTo(/game/:id)` — a second navigation that feels like a double reload.
     if (!session.id) {
-      const logger = useLogger()
-      logger.error('startGame: session missing id after startConfiguredRound')
-      startingGame.value = false
-      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
-      return
+      const logger = useLogger();
+      logger.error('startGame: session missing id after startConfiguredRound');
+      startingGame.value = false;
+      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'));
+      return;
     }
 
-    await goToGame(session.id)
+    await goToGame(session.id);
   } catch (error) {
-    const logger = useLogger()
-    logger.error('Failed to start game:', error)
-    startingGame.value = false
-    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
+    const logger = useLogger();
+    logger.error('Failed to start game:', error);
+    startingGame.value = false;
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'));
   }
 }
 
 async function startFallbackRound(categories: Category[]) {
-  const randomCategory = categories[Math.floor(Math.random() * categories.length)]
-  const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
+  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+  const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
 
   if (!randomCategory || !randomLetter) {
-    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
-    return
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'));
+    return;
   }
 
-  await startGame(randomCategory, randomLetter)
+  await startGame(randomCategory, randomLetter);
 }
 
 async function onSelectionReady(selection: FortuneWheelSelection) {
-  if (startingGame.value) return
+  if (startingGame.value) return;
 
   const selectedCategory = allCategories.value.find(
     (category) => category.id === selection.categoryId
-  )
+  );
 
   if (!selectedCategory) {
-    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
-    return
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'));
+    return;
   }
 
-  await startGame(selectedCategory, selection.letter)
+  await startGame(selectedCategory, selection.letter);
 }
 
 onMounted(async () => {
-  await gameStore.fetchCategories()
-  const categories = gameStore.categories.value
-  allCategories.value = categories
+  await gameStore.fetchCategories();
+  const categories = gameStore.categories.value;
+  allCategories.value = categories;
 
   if (!categories.length) {
-    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
-    return
+    toast.error(t('game.error_starting', 'Failed to start game. Please try again.'));
+    return;
   }
 
   if (!isFortuneWheelEnabled.value) {
-    await startFallbackRound(categories)
+    await startFallbackRound(categories);
   }
-})
+});
 
 useLocalizedPageSeo({
   title: () => t('game.round_start_title'),
   description: () => t('game.round_start_description'),
-})
+});
 </script>
 
 <style scoped>

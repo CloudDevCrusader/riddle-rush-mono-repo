@@ -38,31 +38,31 @@ metadata:
 
 ```vue
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue';
 
 const props = defineProps<{
-  title: string
-  count?: number
-}>()
+  title: string;
+  count?: number;
+}>();
 
 const emit = defineEmits<{
-  update: [value: string]
-}>()
+  update: [value: string];
+}>();
 
-const model = defineModel<string>()
+const model = defineModel<string>();
 
-const doubled = computed(() => (props.count ?? 0) * 2)
+const doubled = computed(() => (props.count ?? 0) * 2);
 
 watch(
   () => props.title,
   (newVal) => {
-    console.log('Title changed:', newVal)
+    console.log('Title changed:', newVal);
   }
-)
+);
 
 onMounted(() => {
-  console.log('Component mounted')
-})
+  console.log('Component mounted');
+});
 </script>
 
 <template>
@@ -74,10 +74,10 @@ onMounted(() => {
 
 ```ts
 // Reactivity
-import { ref, shallowRef, computed, reactive, readonly, toRef, toRefs, toValue } from 'vue'
+import { ref, shallowRef, computed, reactive, readonly, toRef, toRefs, toValue } from 'vue';
 
 // Watchers
-import { watch, watchEffect, watchPostEffect, onWatcherCleanup } from 'vue'
+import { watch, watchEffect, watchPostEffect, onWatcherCleanup } from 'vue';
 
 // Lifecycle
 import {
@@ -87,8 +87,8 @@ import {
   onBeforeMount,
   onBeforeUpdate,
   onBeforeUnmount,
-} from 'vue'
+} from 'vue';
 
 // Utilities
-import { nextTick, defineComponent, defineAsyncComponent } from 'vue'
+import { nextTick, defineComponent, defineAsyncComponent } from 'vue';
 ```

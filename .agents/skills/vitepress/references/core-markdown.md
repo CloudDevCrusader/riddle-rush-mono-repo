@@ -32,8 +32,8 @@ Or in script:
 
 ```vue
 <script setup>
-import { useData } from 'vitepress'
-const { frontmatter } = useData()
+import { useData } from 'vitepress';
+const { frontmatter } = useData();
 </script>
 ```
 
@@ -194,13 +194,13 @@ Tab groups for code variants:
 ```js [config.js]
 export default {
   /* ... */
-}
+};
 ```
 
 ```ts [config.ts]
 export default defineConfig({
   /* ... */
-})
+});
 ```
 
 :::
@@ -231,7 +231,7 @@ export default {
   markdown: {
     math: true,
   },
-}
+};
 ```
 
 Then use LaTeX:
@@ -255,7 +255,7 @@ export default {
       lazyLoading: true,
     },
   },
-}
+};
 ```
 
 ## Raw Container

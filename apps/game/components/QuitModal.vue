@@ -22,38 +22,38 @@
 </template>
 
 <script setup lang="ts">
-const { t } = usePageSetup()
-const { gameStore } = useGameState()
+const { t } = usePageSetup();
+const { gameStore } = useGameState();
 
 interface Props {
-  modelValue: boolean
+  modelValue: boolean;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  confirm: []
-  cancel: []
-}>()
+  'update:modelValue': [value: boolean];
+  confirm: [];
+  cancel: [];
+}>();
 
 const isVisible = computed({
   get: () => props.modelValue,
   set: (value: boolean) => emit('update:modelValue', value),
-})
+});
 
 const handleNo = () => {
-  emit('cancel')
-  isVisible.value = false
-}
+  emit('cancel');
+  isVisible.value = false;
+};
 
 const handleYes = async () => {
   if (gameStore.hasActiveSession) {
-    await gameStore.abandonGame()
+    await gameStore.abandonGame();
   }
-  emit('confirm')
-  isVisible.value = false
-}
+  emit('confirm');
+  isVisible.value = false;
+};
 </script>
 
 <style scoped lang="scss">

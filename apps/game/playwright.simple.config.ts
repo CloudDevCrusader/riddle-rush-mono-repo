@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from '@playwright/test';
 
 // Simple configuration for critical E2E tests
 // This config assumes the server is already running or uses a deployed URL
@@ -50,4 +50,4 @@ export default defineConfig({
   expect: {
     timeout: 10000,
   },
-})
+});

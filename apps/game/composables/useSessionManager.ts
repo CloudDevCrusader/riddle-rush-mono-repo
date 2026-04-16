@@ -6,9 +6,9 @@
  * The game store delegates to these functions while still owning all reactive state.
  */
 
-import type { GameSession, Category, Player } from '@riddle-rush/types/game'
-import cloneDeep from 'lodash-es/cloneDeep'
-import { generateUUID } from '~/utils/uuid'
+import type { GameSession, Category, Player } from '@riddle-rush/types/game';
+import cloneDeep from 'lodash-es/cloneDeep';
+import { generateUUID } from '~/utils/uuid';
 
 /**
  * Composable providing game session lifecycle utilities.
@@ -48,7 +48,7 @@ export function useSessionManager() {
       startTime: Date.now(),
       status: 'active',
       roundHistory: [],
-    }
+    };
   }
 
   /**
@@ -72,7 +72,7 @@ export function useSessionManager() {
       currentPlayerIndex: 0,
       roundHistory: [],
       status: 'active',
-    }
+    };
   }
 
   /**
@@ -82,7 +82,7 @@ export function useSessionManager() {
    * @returns A deep-cloned copy of the session
    */
   function cloneSessionForHistory(session: GameSession): GameSession {
-    return cloneDeep(session)
+    return cloneDeep(session);
   }
 
   /**
@@ -92,7 +92,7 @@ export function useSessionManager() {
    * @returns True if the session exists and has 'active' status
    */
   function isSessionActive(session: GameSession | null): boolean {
-    return session !== null && session.status === 'active'
+    return session !== null && session.status === 'active';
   }
 
   /**
@@ -103,9 +103,9 @@ export function useSessionManager() {
    * @returns Duration in milliseconds
    */
   function getSessionDuration(session: GameSession | null): number {
-    if (!session) return 0
-    const endTime = session.endTime ?? Date.now()
-    return endTime - session.startTime
+    if (!session) return 0;
+    const endTime = session.endTime ?? Date.now();
+    return endTime - session.startTime;
   }
 
   return {
@@ -114,5 +114,5 @@ export function useSessionManager() {
     cloneSessionForHistory,
     isSessionActive,
     getSessionDuration,
-  }
+  };
 }

@@ -24,7 +24,7 @@ tsdown --no-clean
 export default defineConfig({
   entry: ['src/index.ts'],
   clean: true, // Default
-})
+});
 ```
 
 ## Behavior
@@ -50,7 +50,7 @@ Build outputs are added to existing files:
 ```ts
 export default defineConfig({
   clean: false,
-})
+});
 ```
 
 **Use when:**
@@ -70,7 +70,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   clean: true, // Ensure clean output
   minify: true,
-})
+});
 ```
 
 ### Development Mode
@@ -80,7 +80,7 @@ export default defineConfig((options) => ({
   entry: ['src/index.ts'],
   clean: !options.watch, // Don't clean in watch mode
   sourcemap: options.watch,
-}))
+}));
 ```
 
 ### Multiple Builds
@@ -97,7 +97,7 @@ export default defineConfig([
     outDir: 'dist',
     clean: false, // Don't clean, add to same dir
   },
-])
+]);
 ```
 
 ### Monorepo Package
@@ -107,7 +107,7 @@ export default defineConfig({
   workspace: 'packages/*',
   entry: ['src/index.ts'],
   clean: true, // Clean each package's dist
-})
+});
 ```
 
 ### Preserve Static Files
@@ -117,7 +117,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   clean: false, // Keep manually added files
   outDir: 'dist',
-})
+});
 
 // Manually copy files first
 // Then run tsdown --no-clean
@@ -128,18 +128,18 @@ export default defineConfig({
 ### Selective Cleaning
 
 ```ts
-import { rmSync } from 'fs'
+import { rmSync } from 'fs';
 
 export default defineConfig({
   clean: false, // Disable auto clean
   hooks: {
     'build:prepare': () => {
       // Custom cleaning logic
-      rmSync('dist/*.js', { force: true })
+      rmSync('dist/*.js', { force: true });
       // Keep other files
     },
   },
-})
+});
 ```
 
 ### Clean Specific Directories
@@ -149,14 +149,14 @@ export default defineConfig({
   clean: false,
   hooks: {
     'build:prepare': async () => {
-      const { rm } = await import('fs/promises')
+      const { rm } = await import('fs/promises');
       // Only clean specific subdirectories
-      await rm('dist/esm', { recursive: true, force: true })
-      await rm('dist/cjs', { recursive: true, force: true })
+      await rm('dist/esm', { recursive: true, force: true });
+      await rm('dist/cjs', { recursive: true, force: true });
       // Keep dist/types
     },
   },
-})
+});
 ```
 
 ## Watch Mode Behavior
@@ -170,7 +170,7 @@ export default defineConfig((options) => ({
   entry: ['src/index.ts'],
   watch: options.watch,
   clean: !options.watch, // Only clean initial build
-}))
+}));
 ```
 
 **Result:**
@@ -184,7 +184,7 @@ export default defineConfig((options) => ({
 export default defineConfig({
   watch: true,
   clean: true, // Clean every rebuild
-})
+});
 ```
 
 **Trade-off:** Slower rebuilds, but always fresh output.
@@ -250,7 +250,7 @@ export default defineConfig({
   watch: true,
   clean: false, // Faster rebuilds
   sourcemap: true,
-})
+});
 ```
 
 ### Multi-Stage Build
@@ -268,7 +268,7 @@ export default defineConfig([
     outDir: 'dist',
     clean: false, // Add to same directory
   },
-])
+]);
 ```
 
 ## Related Options

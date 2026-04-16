@@ -7,12 +7,12 @@
 
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
-  size?: 'sm' | 'md' | 'lg'
-  type?: 'button' | 'submit' | 'reset'
-  disabled?: boolean
-  loading?: boolean
-  fullWidth?: boolean
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  loading?: boolean;
+  fullWidth?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -22,11 +22,11 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   loading: false,
   fullWidth: false,
-})
+});
 
 const emit = defineEmits<{
-  click: [event: MouseEvent]
-}>()
+  click: [event: MouseEvent];
+}>();
 
 const buttonClasses = computed(() => [
   'base-button',
@@ -37,13 +37,13 @@ const buttonClasses = computed(() => [
     'base-button--loading': props.loading,
     'base-button--full-width': props.fullWidth,
   },
-])
+]);
 
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled && !props.loading) {
-    emit('click', event)
+    emit('click', event);
   }
-}
+};
 </script>
 
 <style scoped>

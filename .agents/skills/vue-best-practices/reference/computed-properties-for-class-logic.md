@@ -45,7 +45,7 @@ When class bindings involve multiple conditions or complex logic, extract them i
 
 ```vue
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
   type: { type: String, default: 'primary' },
@@ -53,7 +53,7 @@ const props = defineProps({
   disabled: Boolean,
   isLoading: Boolean,
   label: String,
-})
+});
 
 const buttonClasses = computed(() => ({
   btn: true,
@@ -62,7 +62,7 @@ const buttonClasses = computed(() => ({
   'btn-loading': props.isLoading,
   'btn-large': props.size === 'large',
   'btn-small': props.size === 'small',
-}))
+}));
 </script>
 
 <template>
@@ -78,20 +78,20 @@ The same principle applies to style bindings:
 
 ```vue
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
   color: String,
   fontSize: Number,
   isHighlighted: Boolean,
-})
+});
 
 const textStyles = computed(() => ({
   color: props.color,
   fontSize: `${props.fontSize}px`,
   backgroundColor: props.isHighlighted ? 'yellow' : 'transparent',
   fontWeight: props.isHighlighted ? 'bold' : 'normal',
-}))
+}));
 </script>
 
 <template>
@@ -105,12 +105,12 @@ Use array syntax to combine static classes with computed dynamic classes:
 
 ```vue
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const dynamicClasses = computed(() => ({
   'is-active': isActive.value,
   'is-disabled': isDisabled.value,
-}))
+}));
 </script>
 
 <template>

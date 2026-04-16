@@ -1,10 +1,9 @@
 ---
 name: gsd-list-phase-assumptions
 description: Surface the agent's assumptions about a phase approach before planning
-argument-hint: "[phase]"
+argument-hint: '[phase]'
 allowed-tools: Read, Bash, Grep, Glob
 ---
-
 
 <objective>
 Analyze a phase and present the agent's assumptions about technical approach, implementation order, scope boundaries, risk areas, and dependencies.

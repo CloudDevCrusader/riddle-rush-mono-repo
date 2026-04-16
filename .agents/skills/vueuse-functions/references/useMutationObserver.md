@@ -10,21 +10,21 @@ Watch for changes being made to the DOM tree. [MutationObserver MDN](https://dev
 
 ```vue
 <script setup lang="ts">
-import { useMutationObserver } from '@vueuse/core'
-import { ref, useTemplateRef } from 'vue'
+import { useMutationObserver } from '@vueuse/core';
+import { ref, useTemplateRef } from 'vue';
 
-const el = useTemplateRef('el')
-const messages = ref([])
+const el = useTemplateRef('el');
+const messages = ref([]);
 
 useMutationObserver(
   el,
   (mutations) => {
-    if (mutations[0]) messages.value.push(mutations[0].attributeName)
+    if (mutations[0]) messages.value.push(mutations[0].attributeName);
   },
   {
     attributes: true,
   }
-)
+);
 </script>
 
 <template>
@@ -50,9 +50,9 @@ export declare function useMutationObserver(
   callback: MutationCallback,
   options?: UseMutationObserverOptions
 ): {
-  isSupported: ComputedRef<boolean>
-  stop: () => void
-  takeRecords: () => MutationRecord[] | undefined
-}
-export type UseMutationObserverReturn = ReturnType<typeof useMutationObserver>
+  isSupported: ComputedRef<boolean>;
+  stop: () => void;
+  takeRecords: () => MutationRecord[] | undefined;
+};
+export type UseMutationObserverReturn = ReturnType<typeof useMutationObserver>;
 ```

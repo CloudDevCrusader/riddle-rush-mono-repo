@@ -1,59 +1,59 @@
 /* eslint-disable no-console */
-const { DynamoDBClient } = require('@aws-sdk/client-dynamodb')
-const { DynamoDBDocumentClient, PutCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb')
-const { CloudWatchClient, PutMetricDataCommand } = require('@aws-sdk/client-cloudwatch')
-const { v4: uuidv4 } = require('uuid')
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, PutCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+const { CloudWatchClient, PutMetricDataCommand } = require('@aws-sdk/client-cloudwatch');
+const { v4: uuidv4 } = require('uuid');
 
-const dynamoClient = new DynamoDBClient({})
-const docClient = DynamoDBDocumentClient.from(dynamoClient)
-const cloudwatchClient = new CloudWatchClient({})
+const dynamoClient = new DynamoDBClient({});
+const docClient = DynamoDBDocumentClient.from(dynamoClient);
+const cloudwatchClient = new CloudWatchClient({});
 
-const NAMESPACE = process.env.CLOUDWATCH_NAMESPACE || 'RiddleRush'
+const NAMESPACE = process.env.CLOUDWATCH_NAMESPACE || 'RiddleRush';
 
 exports.handler = async (event) => {
-  console.log('WebSocket Message Event:', JSON.stringify(event, null, 2))
+  console.log('WebSocket Message Event:', JSON.stringify(event, null, 2));
 
-  const connectionId = event.requestContext.connectionId
-  let body
+  const connectionId = event.requestContext.connectionId;
+  let body;
 
   try {
-    body = JSON.parse(event.body)
+    body = JSON.parse(event.body);
   } catch (error) {
-    console.error('Invalid JSON body:', error)
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
+    console.error('Invalid JSON body:', error);
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
-  const { action, data } = body
+  const { action, data } = body;
 
   try {
     switch (action) {
       case 'logPerformance':
-        return await handlePerformanceLog(data, connectionId)
+        return await handlePerformanceLog(data, connectionId);
       case 'updateLeaderboard':
-        return await handleLeaderboardUpdate(data, connectionId)
+        return await handleLeaderboardUpdate(data, connectionId);
       case 'getUserStats':
-        return await handleGetUserStats(data)
+        return await handleGetUserStats(data);
       default:
-        return { statusCode: 400, body: JSON.stringify({ error: 'Unknown action' }) }
+        return { statusCode: 400, body: JSON.stringify({ error: 'Unknown action' }) };
     }
   } catch (error) {
-    console.error('Error handling message:', error)
+    console.error('Error handling message:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Internal server error', message: error.message }),
-    }
+    };
   }
-}
+};
 
 async function handlePerformanceLog(data, connectionId) {
-  const { userId, metricName, duration, timestamp, metadata = {} } = data
+  const { userId, metricName, duration, timestamp, metadata = {} } = data;
 
   if (!userId || !metricName || duration === undefined) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) }
+    return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
   }
 
-  const metricId = uuidv4()
-  const now = timestamp || Date.now()
+  const metricId = uuidv4();
+  const now = timestamp || Date.now();
 
   // Store performance metric in DynamoDB
   await docClient.send(
@@ -70,7 +70,7 @@ async function handlePerformanceLog(data, connectionId) {
         ttl: Math.floor(Date.now() / 1000) + 2592000, // 30 days TTL
       },
     })
-  )
+  );
 
   // Send metric to CloudWatch
   await cloudwatchClient.send(
@@ -89,9 +89,9 @@ async function handlePerformanceLog(data, connectionId) {
         },
       ],
     })
-  )
+  );
 
-  console.log(`Performance logged: ${metricName} = ${duration}ms for user ${userId}`)
+  console.log(`Performance logged: ${metricName} = ${duration}ms for user ${userId}`);
 
   return {
     statusCode: 200,
@@ -99,17 +99,17 @@ async function handlePerformanceLog(data, connectionId) {
       message: 'Performance metric logged',
       metricId,
     }),
-  }
+  };
 }
 
 async function handleLeaderboardUpdate(data, connectionId) {
-  const { userId, gameMode, score, playerName, timestamp } = data
+  const { userId, gameMode, score, playerName, timestamp } = data;
 
   if (!userId || !gameMode || score === undefined) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) }
+    return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
   }
 
-  const now = timestamp || Date.now()
+  const now = timestamp || Date.now();
 
   // Store leaderboard entry in DynamoDB
   await docClient.send(
@@ -125,7 +125,7 @@ async function handleLeaderboardUpdate(data, connectionId) {
         ttl: Math.floor(Date.now() / 1000) + 7776000, // 90 days TTL
       },
     })
-  )
+  );
 
   // Send custom metric to CloudWatch
   await cloudwatchClient.send(
@@ -144,9 +144,9 @@ async function handleLeaderboardUpdate(data, connectionId) {
         },
       ],
     })
-  )
+  );
 
-  console.log(`Leaderboard updated: ${gameMode} - ${score} points for user ${userId}`)
+  console.log(`Leaderboard updated: ${gameMode} - ${score} points for user ${userId}`);
 
   return {
     statusCode: 200,
@@ -155,14 +155,14 @@ async function handleLeaderboardUpdate(data, connectionId) {
       gameMode,
       score,
     }),
-  }
+  };
 }
 
 async function handleGetUserStats(data) {
-  const { userId } = data
+  const { userId } = data;
 
   if (!userId) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Missing userId' }) }
+    return { statusCode: 400, body: JSON.stringify({ error: 'Missing userId' }) };
   }
 
   try {
@@ -178,7 +178,7 @@ async function handleGetUserStats(data) {
         Limit: 100,
         ScanIndexForward: false, // Get latest first
       })
-    )
+    );
 
     // Get user's leaderboard entries
     const leaderboardResult = await docClient.send(
@@ -192,7 +192,7 @@ async function handleGetUserStats(data) {
         Limit: 50,
         ScanIndexForward: false,
       })
-    )
+    );
 
     return {
       statusCode: 200,
@@ -201,9 +201,9 @@ async function handleGetUserStats(data) {
         performanceMetrics: performanceResult.Items || [],
         leaderboardEntries: leaderboardResult.Items || [],
       }),
-    }
+    };
   } catch (error) {
-    console.error('Error fetching user stats:', error)
-    throw error
+    console.error('Error fetching user stats:', error);
+    throw error;
   }
 }

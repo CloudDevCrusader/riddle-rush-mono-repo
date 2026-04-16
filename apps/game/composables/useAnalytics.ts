@@ -3,14 +3,14 @@
  * Uses Google Analytics 4 via custom gtag plugin
  */
 export const useAnalytics = () => {
-  const nuxtApp = useNuxtApp()
-  const config = useRuntimeConfig()
+  const nuxtApp = useNuxtApp();
+  const config = useRuntimeConfig();
 
   const isEnabled = computed(() => {
-    return config.public.environment === 'production' && !!config.public.gtagId
-  })
+    return config.public.environment === 'production' && !!config.public.gtagId;
+  });
 
-  const gtag = nuxtApp.$gtag as ((...args: any[]) => void) | undefined
+  const gtag = nuxtApp.$gtag as ((...args: any[]) => void) | undefined;
 
   /**
    * Track a custom event
@@ -19,9 +19,9 @@ export const useAnalytics = () => {
    */
   const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
     if (import.meta.client && isEnabled.value && gtag) {
-      gtag('event', eventName, params)
+      gtag('event', eventName, params);
     }
-  }
+  };
 
   /**
    * Track a page view
@@ -33,42 +33,42 @@ export const useAnalytics = () => {
       gtag('event', 'page_view', {
         page_path: pagePath,
         page_title: pageTitle,
-      })
+      });
     }
-  }
+  };
 
   /**
    * Track game-specific events
    */
   const trackGameEvent = {
     start: (category?: string) => {
-      trackEvent('game_start', { category })
+      trackEvent('game_start', { category });
     },
     answerCorrect: (category: string, itemName: string) => {
-      trackEvent('answer_correct', { category, item_name: itemName })
+      trackEvent('answer_correct', { category, item_name: itemName });
     },
     answerIncorrect: (category: string, itemName: string) => {
-      trackEvent('answer_incorrect', { category, item_name: itemName })
+      trackEvent('answer_incorrect', { category, item_name: itemName });
     },
     gameComplete: (category: string, score: number, duration: number) => {
       trackEvent('game_complete', {
         category,
         score,
         duration_seconds: duration,
-      })
+      });
     },
     categorySelect: (category: string) => {
-      trackEvent('category_select', { category })
+      trackEvent('category_select', { category });
     },
     skipItem: (category: string, itemName: string) => {
-      trackEvent('skip_item', { category, item_name: itemName })
+      trackEvent('skip_item', { category, item_name: itemName });
     },
-  }
+  };
 
   return {
     isEnabled,
     trackEvent,
     trackPageView,
     trackGameEvent,
-  }
-}
+  };
+};

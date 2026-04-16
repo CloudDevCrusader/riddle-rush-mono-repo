@@ -41,19 +41,19 @@ tags: [vue3, animation, css, class-binding, state]
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const showError = ref(false)
+const showError = ref(false);
 
 function submitForm() {
   if (!isValid()) {
     // Trigger shake animation
-    showError.value = true
+    showError.value = true;
 
     // Auto-remove class after animation completes
     setTimeout(() => {
-      showError.value = false
-    }, 820) // Match animation duration
+      showError.value = false;
+    }, 820); // Match animation duration
   }
 }
 </script>
@@ -98,14 +98,14 @@ function submitForm() {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const saved = ref(false)
+const saved = ref(false);
 
 async function save() {
-  await saveData()
-  saved.value = true
-  setTimeout(() => (saved.value = false), 1000)
+  await saveData();
+  saved.value = true;
+  setTimeout(() => (saved.value = false), 1000);
 }
 </script>
 
@@ -134,15 +134,15 @@ async function save() {
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
 
-const value = ref(0)
-const justUpdated = ref(false)
+const value = ref(0);
+const justUpdated = ref(false);
 
 watch(value, () => {
-  justUpdated.value = true
-  setTimeout(() => (justUpdated.value = false), 1000)
-})
+  justUpdated.value = true;
+  setTimeout(() => (justUpdated.value = false), 1000);
+});
 </script>
 
 <style>
@@ -171,12 +171,12 @@ watch(value, () => {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const needsAttention = ref(false)
+const needsAttention = ref(false);
 
 function notifyUser() {
-  needsAttention.value = true
+  needsAttention.value = true;
   // No setTimeout needed - using animationend event
 }
 </script>
@@ -208,12 +208,12 @@ Instead of `setTimeout`, use the `animationend` event for cleaner code:
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const isAnimating = ref(false)
+const isAnimating = ref(false);
 
 function triggerAnimation() {
-  isAnimating.value = true
+  isAnimating.value = true;
   // Class is automatically removed when animation ends
 }
 </script>
@@ -223,31 +223,31 @@ function triggerAnimation() {
 
 ```javascript
 // composables/useAnimation.js
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 export function useAnimation(duration = 500) {
-  const isAnimating = ref(false)
+  const isAnimating = ref(false);
 
   function trigger() {
-    isAnimating.value = true
+    isAnimating.value = true;
     setTimeout(() => {
-      isAnimating.value = false
-    }, duration)
+      isAnimating.value = false;
+    }, duration);
   }
 
   return {
     isAnimating,
     trigger,
-  }
+  };
 }
 ```
 
 ```vue
 <script setup>
-import { useAnimation } from '@/composables/useAnimation'
+import { useAnimation } from '@/composables/useAnimation';
 
-const shake = useAnimation(820)
-const pulse = useAnimation(500)
+const shake = useAnimation(820);
+const pulse = useAnimation(500);
 </script>
 
 <template>

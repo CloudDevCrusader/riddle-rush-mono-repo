@@ -42,7 +42,7 @@ docs/
 
 ```ts
 // .vitepress/config.ts
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   locales: {
@@ -61,7 +61,7 @@ export default defineConfig({
       link: '/fr/',
     },
   },
-})
+});
 ```
 
 ## Locale-Specific Config
@@ -112,13 +112,13 @@ Each locale can override:
 
 ```ts
 interface LocaleSpecificConfig {
-  lang?: string
-  dir?: string // 'ltr' or 'rtl'
-  title?: string
-  titleTemplate?: string | boolean
-  description?: string
-  head?: HeadConfig[] // Merged with existing
-  themeConfig?: ThemeConfig // Shallow merged
+  lang?: string;
+  dir?: string; // 'ltr' or 'rtl'
+  title?: string;
+  titleTemplate?: string | boolean;
+  description?: string;
+  head?: HeadConfig[]; // Merged with existing
+  themeConfig?: ThemeConfig; // Shallow merged
 }
 ```
 
@@ -207,17 +207,17 @@ Set cookie on language change:
 ```vue
 <!-- .vitepress/theme/Layout.vue -->
 <script setup>
-import DefaultTheme from 'vitepress/theme'
-import { useData, inBrowser } from 'vitepress'
-import { watchEffect } from 'vue'
+import DefaultTheme from 'vitepress/theme';
+import { useData, inBrowser } from 'vitepress';
+import { watchEffect } from 'vue';
 
-const { lang } = useData()
+const { lang } = useData();
 
 watchEffect(() => {
   if (inBrowser) {
-    document.cookie = `nf_lang=${lang.value}; expires=Mon, 1 Jan 2030 00:00:00 UTC; path=/`
+    document.cookie = `nf_lang=${lang.value}; expires=Mon, 1 Jan 2030 00:00:00 UTC; path=/`;
   }
-})
+});
 </script>
 
 <template>
@@ -243,7 +243,7 @@ Requires PostCSS plugin like `postcss-rtlcss`:
 
 ```ts
 // postcss.config.js
-import rtlcss from 'postcss-rtlcss'
+import rtlcss from 'postcss-rtlcss';
 
 export default {
   plugins: [
@@ -252,7 +252,7 @@ export default {
       rtlPrefix: ':where([dir="rtl"])',
     }),
   ],
-}
+};
 ```
 
 ## Organizing Config
@@ -270,10 +270,10 @@ Split config into separate files:
 
 ```ts
 // .vitepress/config/index.ts
-import { defineConfig } from 'vitepress'
-import { shared } from './shared'
-import { en } from './en'
-import { zh } from './zh'
+import { defineConfig } from 'vitepress';
+import { shared } from './shared';
+import { en } from './en';
+import { zh } from './zh';
 
 export default defineConfig({
   ...shared,
@@ -281,7 +281,7 @@ export default defineConfig({
     root: { label: 'English', ...en },
     zh: { label: '简体中文', ...zh },
   },
-})
+});
 ```
 
 ## Key Points

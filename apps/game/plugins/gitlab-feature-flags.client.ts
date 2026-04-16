@@ -1,9 +1,9 @@
-import { UnleashClient } from 'unleash-proxy-client'
-import { attachUnleashListener } from '~/composables/useFeatureFlags'
+import { UnleashClient } from 'unleash-proxy-client';
+import { attachUnleashListener } from '~/composables/useFeatureFlags';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const config = useRuntimeConfig()
-  const logger = useLogger()
+  const config = useRuntimeConfig();
+  const logger = useLogger();
 
   // GitLab Feature Flags uses the Unleash protocol
   // URL format: https://gitlab.com/api/v4/feature_flags/unleash/:project_id
@@ -13,42 +13,42 @@ export default defineNuxtPlugin((nuxtApp) => {
     appName: 'riddle-rush',
     environment: config.public.environment || 'development',
     refreshInterval: 30, // Refresh every 30 seconds
-  }
+  };
 
   // Only initialize if both URL and token are configured
   if (!gitlabConfig.url || !gitlabConfig.clientKey) {
     logger.info(
       '[Feature Flags] GitLab Feature Flags not configured — falling back to runtimeConfig/local settings only.'
-    )
-    nuxtApp.provide('featureFlags', null)
-    return
+    );
+    nuxtApp.provide('featureFlags', null);
+    return;
   }
 
   try {
-    const unleashClient = new UnleashClient(gitlabConfig)
+    const unleashClient = new UnleashClient(gitlabConfig);
 
     // Handle errors
     unleashClient.on('error', (error: Error) => {
-      logger.error('[Feature Flags] Error:', { error })
-    })
+      logger.error('[Feature Flags] Error:', { error });
+    });
 
     // Log when ready (only in dev)
     if (import.meta.dev) {
       unleashClient.on('ready', () => {
-        logger.info('[Feature Flags] GitLab client ready')
-      })
+        logger.info('[Feature Flags] GitLab client ready');
+      });
     }
 
     // Wire up Vue reactivity bridge before start() so 'ready' is never missed
-    attachUnleashListener(unleashClient)
+    attachUnleashListener(unleashClient);
 
     // Start the client
-    unleashClient.start()
+    unleashClient.start();
 
     // Make available globally
-    nuxtApp.provide('featureFlags', unleashClient)
+    nuxtApp.provide('featureFlags', unleashClient);
   } catch (error) {
-    logger.error('[Feature Flags] Failed to initialize:', { error })
-    nuxtApp.provide('featureFlags', null)
+    logger.error('[Feature Flags] Failed to initialize:', { error });
+    nuxtApp.provide('featureFlags', null);
   }
-})
+});

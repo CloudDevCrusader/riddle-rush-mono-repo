@@ -20,7 +20,7 @@ tags: [vue3, slots, scoped-slots, named-slots, compilation-error]
 
 ```vue
 <script setup>
-import MyComponent from './MyComponent.vue'
+import MyComponent from './MyComponent.vue';
 </script>
 
 <template>
@@ -45,7 +45,7 @@ This causes a compilation error because Vue cannot determine:
 
 ```vue
 <script setup>
-import MyComponent from './MyComponent.vue'
+import MyComponent from './MyComponent.vue';
 </script>
 
 <template>
@@ -67,7 +67,7 @@ import MyComponent from './MyComponent.vue'
 
 ```vue
 <script setup>
-import MyComponent from './MyComponent.vue'
+import MyComponent from './MyComponent.vue';
 </script>
 
 <template>

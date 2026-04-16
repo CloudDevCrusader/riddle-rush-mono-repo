@@ -10,11 +10,11 @@ Enables shorthand syntax for grouping utilities with common prefixes.
 ## Installation
 
 ```ts
-import { defineConfig, transformerVariantGroup } from 'unocss'
+import { defineConfig, transformerVariantGroup } from 'unocss';
 
 export default defineConfig({
   transformers: [transformerVariantGroup()],
-})
+});
 ```
 
 ## Usage

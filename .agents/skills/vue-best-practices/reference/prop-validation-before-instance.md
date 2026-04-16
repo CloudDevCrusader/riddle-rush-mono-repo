@@ -28,32 +28,32 @@ export default {
     return {
       validOptions: ['a', 'b', 'c'],
       defaultMessage: 'Hello',
-    }
+    };
   },
   props: {
     option: {
       type: String,
       // WRONG: 'this' is undefined during prop validation
       validator(value) {
-        return this.validOptions.includes(value) // TypeError!
+        return this.validOptions.includes(value); // TypeError!
       },
     },
     message: {
       type: String,
       // WRONG: Cannot access data properties
       default() {
-        return this.defaultMessage // TypeError!
+        return this.defaultMessage; // TypeError!
       },
     },
     config: {
       type: Object,
       // WRONG: Cannot access computed properties
       default() {
-        return this.computedDefaults // TypeError!
+        return this.computedDefaults; // TypeError!
       },
     },
   },
-}
+};
 </script>
 ```
 
@@ -62,8 +62,8 @@ export default {
 ```vue
 <script>
 // Define validation data outside the component
-const VALID_OPTIONS = ['a', 'b', 'c']
-const DEFAULT_MESSAGE = 'Hello'
+const VALID_OPTIONS = ['a', 'b', 'c'];
+const DEFAULT_MESSAGE = 'Hello';
 
 export default {
   props: {
@@ -71,7 +71,7 @@ export default {
       type: String,
       // CORRECT: Use external constants
       validator(value) {
-        return VALID_OPTIONS.includes(value)
+        return VALID_OPTIONS.includes(value);
       },
     },
     message: {
@@ -83,11 +83,11 @@ export default {
       type: Object,
       // CORRECT: Factory function with no instance dependencies
       default() {
-        return { theme: 'light', size: 'medium' }
+        return { theme: 'light', size: 'medium' };
       },
     },
   },
-}
+};
 </script>
 ```
 
@@ -111,10 +111,10 @@ const props = defineProps({
     required: true,
     // CORRECT: Access other props via second parameter
     validator(value, props) {
-      return value >= props.min && value <= props.max
+      return value >= props.min && value <= props.max;
     },
   },
-})
+});
 </script>
 ```
 
@@ -134,10 +134,10 @@ defineProps({
     // Access other prop values via rawProps parameter
     default(rawProps) {
       // Use size to determine default padding
-      return rawProps.size === 'large' ? 20 : 10
+      return rawProps.size === 'large' ? 20 : 10;
     },
   },
-})
+});
 </script>
 ```
 
@@ -147,20 +147,20 @@ For validation that needs instance access, use lifecycle hooks:
 
 ```vue
 <script setup>
-import { onMounted, inject, warn } from 'vue'
+import { onMounted, inject, warn } from 'vue';
 
 const props = defineProps({
   theme: String,
-})
+});
 
-const availableThemes = inject('availableThemes', [])
+const availableThemes = inject('availableThemes', []);
 
 // Validation that needs injected values
 onMounted(() => {
   if (props.theme && !availableThemes.includes(props.theme)) {
-    console.warn(`Invalid theme "${props.theme}". Available: ${availableThemes.join(', ')}`)
+    console.warn(`Invalid theme "${props.theme}". Available: ${availableThemes.join(', ')}`);
   }
-})
+});
 </script>
 ```
 

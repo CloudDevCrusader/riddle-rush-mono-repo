@@ -30,10 +30,10 @@ rules: [
   [
     /^text-(.*)$/,
     ([, c], { theme }) => {
-      if (theme.colors[c]) return { color: theme.colors[c] }
+      if (theme.colors[c]) return { color: theme.colors[c] };
     },
   ],
-]
+];
 ```
 
 ## Using Theme in Variants
@@ -46,7 +46,7 @@ variants: [
       // Access theme.breakpoints, theme.colors, etc.
     },
   },
-]
+];
 ```
 
 ## Using Theme in Shortcuts
@@ -56,10 +56,10 @@ shortcuts: [
   [
     /^badge-(.*)$/,
     ([, c], { theme }) => {
-      if (Object.keys(theme.colors).includes(c)) return `bg-${c}4:10 text-${c}5 rounded`
+      if (Object.keys(theme.colors).includes(c)) return `bg-${c}4:10 text-${c}5 rounded`;
     },
   ],
-]
+];
 ```
 
 ## Breakpoints
@@ -90,8 +90,8 @@ extendTheme: (theme) => {
       sm: '320px',
       md: '640px',
     },
-  }
-}
+  };
+};
 ```
 
 **Note:** `verticalBreakpoints` works the same for vertical layout.
@@ -120,11 +120,11 @@ theme: {
 
 ```ts
 extendTheme: (theme) => {
-  theme.colors.veryCool = '#0000ff'
+  theme.colors.veryCool = '#0000ff';
   theme.colors.brand = {
     primary: 'hsl(var(--hue, 217) 78% 51%)',
-  }
-}
+  };
+};
 ```
 
 ### Replace Theme
@@ -139,8 +139,8 @@ extendTheme: (theme) => {
       ...theme.colors,
       veryCool: '#0000ff',
     },
-  }
-}
+  };
+};
 ```
 
 ## Theme Differences in Presets

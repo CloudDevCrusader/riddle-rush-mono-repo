@@ -38,7 +38,7 @@ tsdown --log-level info
 export default defineConfig({
   entry: ['src/index.ts'],
   logLevel: 'error',
-})
+});
 ```
 
 ## Available Levels
@@ -58,7 +58,7 @@ export default defineConfig({
 export default defineConfig({
   entry: ['src/index.ts'],
   logLevel: 'error', // Only show errors in CI
-})
+});
 ```
 
 ### Scripting
@@ -67,7 +67,7 @@ export default defineConfig({
 export default defineConfig({
   entry: ['src/index.ts'],
   logLevel: 'silent', // No output for automation
-})
+});
 ```
 
 ## Fail on Warnings
@@ -79,7 +79,7 @@ export default defineConfig({
   failOnWarn: 'ci-only', // Default: fail on warnings only in CI
   // failOnWarn: true,   // Always fail on warnings
   // failOnWarn: false,  // Never fail on warnings
-})
+});
 ```
 
 See [CI Environment](advanced-ci.md) for more about CI-aware options.

@@ -3,13 +3,13 @@
  */
 export default defineNuxtPlugin((nuxtApp) => {
   // #region agent log
-  if (!import.meta.dev) return
+  if (!import.meta.dev) return;
 
-  const endpoint = useRuntimeConfig().public.debugButtonAlignIngestUrl?.trim()
-  if (!endpoint) return
+  const endpoint = useRuntimeConfig().public.debugButtonAlignIngestUrl?.trim();
+  if (!endpoint) return;
 
-  const SESSION = '157a4d'
-  const router = useRouter()
+  const SESSION = '157a4d';
+  const router = useRouter();
 
   const send = (payload: Record<string, unknown>) => {
     fetch(endpoint, {
@@ -24,19 +24,19 @@ export default defineNuxtPlugin((nuxtApp) => {
         runId: 'align-responsive-320',
         ...payload,
       }),
-    }).catch(() => {})
-  }
+    }).catch(() => {});
+  };
 
   const measureButtons = () => {
-    const root = document.querySelector('#__nuxt') ?? document.body
-    const buttons = root.querySelectorAll<HTMLElement>('.game-button')
-    const entries: Record<string, unknown>[] = []
+    const root = document.querySelector('#__nuxt') ?? document.body;
+    const buttons = root.querySelectorAll<HTMLElement>('.game-button');
+    const entries: Record<string, unknown>[] = [];
 
     buttons.forEach((el, index) => {
-      const r = el.getBoundingClientRect()
-      const parent = el.parentElement
-      const pr = parent?.getBoundingClientRect()
-      const testId = el.getAttribute('data-testid') ?? ''
+      const r = el.getBoundingClientRect();
+      const parent = el.parentElement;
+      const pr = parent?.getBoundingClientRect();
+      const testId = el.getAttribute('data-testid') ?? '';
       entries.push({
         hypothesisId: 'H1-H5',
         index,
@@ -48,8 +48,8 @@ export default defineNuxtPlugin((nuxtApp) => {
         parentW: pr ? Math.round(pr.width) : null,
         deltaParentMinusBtn: pr ? Math.round(pr.width - r.width) : null,
         fullWidth: el.classList.contains('game-button--full-width'),
-      })
-    })
+      });
+    });
 
     const groupSelectors = [
       '.leaderboard-page__actions',
@@ -63,16 +63,16 @@ export default defineNuxtPlugin((nuxtApp) => {
       '.pause-actions',
       '.scoring-page__column',
       '.scoring-page__list',
-    ]
+    ];
 
-    const groups: Record<string, unknown>[] = []
+    const groups: Record<string, unknown>[] = [];
     for (const sel of groupSelectors) {
-      const el = root.querySelector<HTMLElement>(sel)
-      if (!el) continue
-      const gr = el.getBoundingClientRect()
-      const childBtns = el.querySelectorAll<HTMLElement>('.game-button')
-      const widths: number[] = []
-      childBtns.forEach((b) => widths.push(Math.round(b.getBoundingClientRect().width)))
+      const el = root.querySelector<HTMLElement>(sel);
+      if (!el) continue;
+      const gr = el.getBoundingClientRect();
+      const childBtns = el.querySelectorAll<HTMLElement>('.game-button');
+      const widths: number[] = [];
+      childBtns.forEach((b) => widths.push(Math.round(b.getBoundingClientRect().width)));
       groups.push({
         hypothesisId: 'H1-H5',
         selector: sel,
@@ -80,24 +80,24 @@ export default defineNuxtPlugin((nuxtApp) => {
         buttonCount: childBtns.length,
         buttonWidths: widths,
         widthSpread: widths.length > 1 ? Math.max(...widths) - Math.min(...widths) : 0,
-      })
+      });
     }
 
-    const scoringCompare: Record<string, unknown> = {}
-    const sp = root.querySelector<HTMLElement>('.scoring-page')
-    const spl = root.querySelector<HTMLElement>('.scoring-page__list')
-    const scol = root.querySelector<HTMLElement>('.scoring-page__column')
-    const confirmEl = root.querySelector<HTMLElement>('[data-testid="confirm-scores"]')
+    const scoringCompare: Record<string, unknown> = {};
+    const sp = root.querySelector<HTMLElement>('.scoring-page');
+    const spl = root.querySelector<HTMLElement>('.scoring-page__list');
+    const scol = root.querySelector<HTMLElement>('.scoring-page__column');
+    const confirmEl = root.querySelector<HTMLElement>('[data-testid="confirm-scores"]');
     if (sp && spl && confirmEl) {
-      scoringCompare.hypothesisId = 'H2-H3'
-      scoringCompare.viewportW = typeof window !== 'undefined' ? window.innerWidth : null
-      scoringCompare.scoringPageW = Math.round(sp.getBoundingClientRect().width)
-      scoringCompare.scoringColumnW = scol ? Math.round(scol.getBoundingClientRect().width) : null
-      scoringCompare.scoringListW = Math.round(spl.getBoundingClientRect().width)
-      scoringCompare.confirmBtnW = Math.round(confirmEl.getBoundingClientRect().width)
+      scoringCompare.hypothesisId = 'H2-H3';
+      scoringCompare.viewportW = typeof window !== 'undefined' ? window.innerWidth : null;
+      scoringCompare.scoringPageW = Math.round(sp.getBoundingClientRect().width);
+      scoringCompare.scoringColumnW = scol ? Math.round(scol.getBoundingClientRect().width) : null;
+      scoringCompare.scoringListW = Math.round(spl.getBoundingClientRect().width);
+      scoringCompare.confirmBtnW = Math.round(confirmEl.getBoundingClientRect().width);
       scoringCompare.listMinusConfirm = Math.round(
         spl.getBoundingClientRect().width - confirmEl.getBoundingClientRect().width
-      )
+      );
     }
 
     send({
@@ -112,17 +112,17 @@ export default defineNuxtPlugin((nuxtApp) => {
         groups,
         scoringCompare: Object.keys(scoringCompare).length > 0 ? scoringCompare : null,
       },
-    })
-  }
+    });
+  };
 
   const schedule = () => {
     nextTick(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(measureButtons)
-      })
-    })
-  }
+        requestAnimationFrame(measureButtons);
+      });
+    });
+  };
 
-  nuxtApp.hook('page:finish', schedule)
+  nuxtApp.hook('page:finish', schedule);
   // #endregion
-})
+});

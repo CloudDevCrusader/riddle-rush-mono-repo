@@ -27,19 +27,19 @@ description: Vue/Nuxt/UnoCSS application conventions. Use when building web apps
 ```vue
 <script setup lang="ts">
 interface Props {
-  title: string
-  count?: number
+  title: string;
+  count?: number;
 }
 
 interface Emits {
-  (e: 'update', value: number): void
-  (e: 'close'): void
+  (e: 'update', value: number): void;
+  (e: 'close'): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   count: 0,
-})
+});
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 </script>
 ```

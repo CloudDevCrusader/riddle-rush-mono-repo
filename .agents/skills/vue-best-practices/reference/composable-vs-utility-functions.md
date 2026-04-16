@@ -27,35 +27,35 @@ Wrapping utility functions as composables adds unnecessary abstraction, makes co
 // Adds no value - no reactive state
 export function useFormatters() {
   const formatDate = (date) => {
-    return new Intl.DateTimeFormat('en-US').format(date)
-  }
+    return new Intl.DateTimeFormat('en-US').format(date);
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
   const capitalize = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
-  }
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
 
-  return { formatDate, formatCurrency, capitalize }
+  return { formatDate, formatCurrency, capitalize };
 }
 
 // WRONG: Pure calculation, no reactive state
 export function useMath() {
-  const add = (a, b) => a + b
-  const multiply = (a, b) => a * b
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+  const add = (a, b) => a + b;
+  const multiply = (a, b) => a * b;
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-  return { add, multiply, clamp }
+  return { add, multiply, clamp };
 }
 
 // Usage adds ceremony for no benefit
-const { formatDate, formatCurrency } = useFormatters()
-const { clamp } = useMath()
+const { formatDate, formatCurrency } = useFormatters();
+const { clamp } = useMath();
 ```
 
 **Correct:**
@@ -65,28 +65,28 @@ const { clamp } = useMath()
 
 // utils/formatters.js
 export function formatDate(date) {
-  return new Intl.DateTimeFormat('en-US').format(date)
+  return new Intl.DateTimeFormat('en-US').format(date);
 }
 
 export function formatCurrency(amount) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-  }).format(amount)
+  }).format(amount);
 }
 
 export function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // utils/math.js
 export function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max)
+  return Math.min(Math.max(value, min), max);
 }
 
 // Usage - simple and direct
-import { formatDate, formatCurrency } from '@/utils/formatters'
-import { clamp } from '@/utils/math'
+import { formatDate, formatCurrency } from '@/utils/formatters';
+import { clamp } from '@/utils/math';
 ```
 
 ## When to Use Composables vs Utilities
@@ -105,46 +105,46 @@ import { clamp } from '@/utils/math'
 ```javascript
 // COMPOSABLE: Has reactive state and lifecycle
 export function useWindowSize() {
-  const width = ref(window.innerWidth)
-  const height = ref(window.innerHeight)
+  const width = ref(window.innerWidth);
+  const height = ref(window.innerHeight);
 
   function update() {
-    width.value = window.innerWidth
-    height.value = window.innerHeight
+    width.value = window.innerWidth;
+    height.value = window.innerHeight;
   }
 
-  onMounted(() => window.addEventListener('resize', update))
-  onUnmounted(() => window.removeEventListener('resize', update))
+  onMounted(() => window.addEventListener('resize', update));
+  onUnmounted(() => window.removeEventListener('resize', update));
 
-  return { width, height }
+  return { width, height };
 }
 
 // UTILITY: Pure transformation, no state
 export function parseQueryString(queryString) {
-  return Object.fromEntries(new URLSearchParams(queryString))
+  return Object.fromEntries(new URLSearchParams(queryString));
 }
 
 // COMPOSABLE: Manages form state over time
 export function useForm(initialValues) {
-  const values = ref({ ...initialValues })
-  const errors = ref({})
-  const isDirty = computed(() => JSON.stringify(values.value) !== JSON.stringify(initialValues))
+  const values = ref({ ...initialValues });
+  const errors = ref({});
+  const isDirty = computed(() => JSON.stringify(values.value) !== JSON.stringify(initialValues));
 
   function reset() {
-    values.value = { ...initialValues }
-    errors.value = {}
+    values.value = { ...initialValues };
+    errors.value = {};
   }
 
-  return { values, errors, isDirty, reset }
+  return { values, errors, isDirty, reset };
 }
 
 // UTILITY: Stateless validation
 export function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export function validateRequired(value) {
-  return value !== null && value !== undefined && value !== ''
+  return value !== null && value !== undefined && value !== '';
 }
 ```
 
@@ -155,19 +155,19 @@ It's perfectly fine for composables to use utility functions:
 ```javascript
 // utils/validators.js
 export function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 // composables/useEmailInput.js
-import { ref, computed } from 'vue'
-import { validateEmail } from '@/utils/validators'
+import { ref, computed } from 'vue';
+import { validateEmail } from '@/utils/validators';
 
 export function useEmailInput(initialValue = '') {
-  const email = ref(initialValue)
-  const isValid = computed(() => validateEmail(email.value))
-  const error = computed(() => (email.value && !isValid.value ? 'Invalid email format' : null))
+  const email = ref(initialValue);
+  const isValid = computed(() => validateEmail(email.value));
+  const error = computed(() => (email.value && !isValid.value ? 'Invalid email format' : null));
 
-  return { email, isValid, error }
+  return { email, isValid, error };
 }
 ```
 

@@ -1,25 +1,25 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { ref } from 'vue'
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ref } from 'vue';
 
 // Create a mock for useSwipe BEFORE any modules import it
-const mockUseSwipeFn = vi.fn()
+const mockUseSwipeFn = vi.fn();
 
 // Ensure ref and useSwipe are globally available for the composable
-;(globalThis as any).ref = ref
-;(globalThis as any).useSwipe = mockUseSwipeFn
+(globalThis as any).ref = ref;
+(globalThis as any).useSwipe = mockUseSwipeFn;
 
 // Mock useSwipe from @vueuse/core BEFORE importing the composable
 vi.mock('@vueuse/core', () => ({
   useSwipe: mockUseSwipeFn,
-}))
+}));
 
 // Import after mocking to ensure mocks are applied
-const { usePageSwipe } = await import('../../composables/usePageSwipe')
-const mockUseSwipe = mockUseSwipeFn
+const { usePageSwipe } = await import('../../composables/usePageSwipe');
+const mockUseSwipe = mockUseSwipeFn;
 
 describe('usePageSwipe', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.clearAllMocks();
 
     // Default useSwipe mock implementation
     mockUseSwipe.mockReturnValue({
@@ -27,12 +27,12 @@ describe('usePageSwipe', () => {
       direction: { value: 'none' },
       lengthX: { value: 0 },
       lengthY: { value: 0 },
-    })
-  })
+    });
+  });
 
   describe('initialization', () => {
     it('should initialize with default options', () => {
-      usePageSwipe()
+      usePageSwipe();
 
       expect(mockUseSwipe).toHaveBeenCalledWith(
         expect.any(Object),
@@ -40,225 +40,225 @@ describe('usePageSwipe', () => {
           threshold: 50,
           onSwipeEnd: expect.any(Function),
         })
-      )
-    })
+      );
+    });
 
     it('should use custom threshold when provided', () => {
-      usePageSwipe({ threshold: 100 })
+      usePageSwipe({ threshold: 100 });
 
       expect(mockUseSwipe).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
           threshold: 100,
         })
-      )
-    })
+      );
+    });
 
     it('should initialize without callbacks', () => {
-      const result = usePageSwipe()
+      const result = usePageSwipe();
 
-      expect(result).toHaveProperty('pageElement')
-      expect(result).toHaveProperty('isSwiping')
-      expect(result).toHaveProperty('direction')
-      expect(result).toHaveProperty('lengthX')
-      expect(result).toHaveProperty('lengthY')
-    })
-  })
+      expect(result).toHaveProperty('pageElement');
+      expect(result).toHaveProperty('isSwiping');
+      expect(result).toHaveProperty('direction');
+      expect(result).toHaveProperty('lengthX');
+      expect(result).toHaveProperty('lengthY');
+    });
+  });
 
   describe('swipe callbacks', () => {
     it('should call onSwipeLeft when swiping left', () => {
-      const onSwipeLeft = vi.fn()
-      let swipeEndCallback: (e: Event, dir: string) => void
+      const onSwipeLeft = vi.fn();
+      let swipeEndCallback: (e: Event, dir: string) => void;
 
       mockUseSwipe.mockImplementation((el, options) => {
-        swipeEndCallback = options.onSwipeEnd
+        swipeEndCallback = options.onSwipeEnd;
         return {
           isSwiping: { value: false },
           direction: { value: 'left' },
           lengthX: { value: 100 },
           lengthY: { value: 0 },
-        }
-      })
+        };
+      });
 
-      usePageSwipe({ onSwipeLeft })
+      usePageSwipe({ onSwipeLeft });
 
       // Simulate swipe end
-      swipeEndCallback!(new Event('touchend'), 'left')
+      swipeEndCallback!(new Event('touchend'), 'left');
 
-      expect(onSwipeLeft).toHaveBeenCalledTimes(1)
-    })
+      expect(onSwipeLeft).toHaveBeenCalledTimes(1);
+    });
 
     it('should call onSwipeRight when swiping right', () => {
-      const onSwipeRight = vi.fn()
-      let swipeEndCallback: (e: Event, dir: string) => void
+      const onSwipeRight = vi.fn();
+      let swipeEndCallback: (e: Event, dir: string) => void;
 
       mockUseSwipe.mockImplementation((el, options) => {
-        swipeEndCallback = options.onSwipeEnd
+        swipeEndCallback = options.onSwipeEnd;
         return {
           isSwiping: { value: false },
           direction: { value: 'right' },
           lengthX: { value: -100 },
           lengthY: { value: 0 },
-        }
-      })
+        };
+      });
 
-      usePageSwipe({ onSwipeRight })
+      usePageSwipe({ onSwipeRight });
 
-      swipeEndCallback!(new Event('touchend'), 'right')
+      swipeEndCallback!(new Event('touchend'), 'right');
 
-      expect(onSwipeRight).toHaveBeenCalledTimes(1)
-    })
+      expect(onSwipeRight).toHaveBeenCalledTimes(1);
+    });
 
     it('should call onSwipeUp when swiping up', () => {
-      const onSwipeUp = vi.fn()
-      let swipeEndCallback: (e: Event, dir: string) => void
+      const onSwipeUp = vi.fn();
+      let swipeEndCallback: (e: Event, dir: string) => void;
 
       mockUseSwipe.mockImplementation((el, options) => {
-        swipeEndCallback = options.onSwipeEnd
+        swipeEndCallback = options.onSwipeEnd;
         return {
           isSwiping: { value: false },
           direction: { value: 'up' },
           lengthX: { value: 0 },
           lengthY: { value: 100 },
-        }
-      })
+        };
+      });
 
-      usePageSwipe({ onSwipeUp })
+      usePageSwipe({ onSwipeUp });
 
-      swipeEndCallback!(new Event('touchend'), 'up')
+      swipeEndCallback!(new Event('touchend'), 'up');
 
-      expect(onSwipeUp).toHaveBeenCalledTimes(1)
-    })
+      expect(onSwipeUp).toHaveBeenCalledTimes(1);
+    });
 
     it('should call onSwipeDown when swiping down', () => {
-      const onSwipeDown = vi.fn()
-      let swipeEndCallback: (e: Event, dir: string) => void
+      const onSwipeDown = vi.fn();
+      let swipeEndCallback: (e: Event, dir: string) => void;
 
       mockUseSwipe.mockImplementation((el, options) => {
-        swipeEndCallback = options.onSwipeEnd
+        swipeEndCallback = options.onSwipeEnd;
         return {
           isSwiping: { value: false },
           direction: { value: 'down' },
           lengthX: { value: 0 },
           lengthY: { value: -100 },
-        }
-      })
+        };
+      });
 
-      usePageSwipe({ onSwipeDown })
+      usePageSwipe({ onSwipeDown });
 
-      swipeEndCallback!(new Event('touchend'), 'down')
+      swipeEndCallback!(new Event('touchend'), 'down');
 
-      expect(onSwipeDown).toHaveBeenCalledTimes(1)
-    })
+      expect(onSwipeDown).toHaveBeenCalledTimes(1);
+    });
 
     it('should not call callbacks when direction does not match', () => {
-      const onSwipeLeft = vi.fn()
-      const onSwipeRight = vi.fn()
-      let swipeEndCallback: (e: Event, dir: string) => void
+      const onSwipeLeft = vi.fn();
+      const onSwipeRight = vi.fn();
+      let swipeEndCallback: (e: Event, dir: string) => void;
 
       mockUseSwipe.mockImplementation((el, options) => {
-        swipeEndCallback = options.onSwipeEnd
+        swipeEndCallback = options.onSwipeEnd;
         return {
           isSwiping: { value: false },
           direction: { value: 'up' },
           lengthX: { value: 0 },
           lengthY: { value: 100 },
-        }
-      })
+        };
+      });
 
-      usePageSwipe({ onSwipeLeft, onSwipeRight })
+      usePageSwipe({ onSwipeLeft, onSwipeRight });
 
-      swipeEndCallback!(new Event('touchend'), 'up')
+      swipeEndCallback!(new Event('touchend'), 'up');
 
-      expect(onSwipeLeft).not.toHaveBeenCalled()
-      expect(onSwipeRight).not.toHaveBeenCalled()
-    })
+      expect(onSwipeLeft).not.toHaveBeenCalled();
+      expect(onSwipeRight).not.toHaveBeenCalled();
+    });
 
     it('should not throw when callback is not provided', () => {
-      let swipeEndCallback: (e: Event, dir: string) => void
+      let swipeEndCallback: (e: Event, dir: string) => void;
 
       mockUseSwipe.mockImplementation((el, options) => {
-        swipeEndCallback = options.onSwipeEnd
+        swipeEndCallback = options.onSwipeEnd;
         return {
           isSwiping: { value: false },
           direction: { value: 'left' },
           lengthX: { value: 100 },
           lengthY: { value: 0 },
-        }
-      })
+        };
+      });
 
-      usePageSwipe()
+      usePageSwipe();
 
       expect(() => {
-        swipeEndCallback!(new Event('touchend'), 'left')
-      }).not.toThrow()
-    })
-  })
+        swipeEndCallback!(new Event('touchend'), 'left');
+      }).not.toThrow();
+    });
+  });
 
   describe('return values', () => {
     it('should return pageElement ref', () => {
-      const result = usePageSwipe()
+      const result = usePageSwipe();
 
-      expect(result.pageElement).toBeDefined()
-      expect(result.pageElement.value).toBeNull()
-    })
+      expect(result.pageElement).toBeDefined();
+      expect(result.pageElement.value).toBeNull();
+    });
 
     it('should return isSwiping from useSwipe', () => {
-      const mockIsSwiping = { value: true }
+      const mockIsSwiping = { value: true };
       mockUseSwipe.mockReturnValue({
         isSwiping: mockIsSwiping,
         direction: { value: 'none' },
         lengthX: { value: 0 },
         lengthY: { value: 0 },
-      })
+      });
 
-      const result = usePageSwipe()
+      const result = usePageSwipe();
 
-      expect(result.isSwiping.value).toBe(true)
-    })
+      expect(result.isSwiping.value).toBe(true);
+    });
 
     it('should return direction from useSwipe', () => {
-      const mockDirection = { value: 'left' }
+      const mockDirection = { value: 'left' };
       mockUseSwipe.mockReturnValue({
         isSwiping: { value: false },
         direction: mockDirection,
         lengthX: { value: 100 },
         lengthY: { value: 0 },
-      })
+      });
 
-      const result = usePageSwipe()
+      const result = usePageSwipe();
 
-      expect(result.direction.value).toBe('left')
-    })
+      expect(result.direction.value).toBe('left');
+    });
 
     it('should return lengthX from useSwipe', () => {
-      const mockLengthX = { value: 150 }
+      const mockLengthX = { value: 150 };
       mockUseSwipe.mockReturnValue({
         isSwiping: { value: false },
         direction: { value: 'left' },
         lengthX: mockLengthX,
         lengthY: { value: 0 },
-      })
+      });
 
-      const result = usePageSwipe()
+      const result = usePageSwipe();
 
-      expect(result.lengthX.value).toBe(150)
-    })
+      expect(result.lengthX.value).toBe(150);
+    });
 
     it('should return lengthY from useSwipe', () => {
-      const mockLengthY = { value: 200 }
+      const mockLengthY = { value: 200 };
       mockUseSwipe.mockReturnValue({
         isSwiping: { value: false },
         direction: { value: 'up' },
         lengthX: { value: 0 },
         lengthY: mockLengthY,
-      })
+      });
 
-      const result = usePageSwipe()
+      const result = usePageSwipe();
 
-      expect(result.lengthY.value).toBe(200)
-    })
-  })
+      expect(result.lengthY.value).toBe(200);
+    });
+  });
 
   describe('multiple callbacks', () => {
     it('should support all callbacks at once', () => {
@@ -267,34 +267,34 @@ describe('usePageSwipe', () => {
         onSwipeRight: vi.fn(),
         onSwipeUp: vi.fn(),
         onSwipeDown: vi.fn(),
-      }
+      };
 
-      let swipeEndCallback: (e: Event, dir: string) => void
+      let swipeEndCallback: (e: Event, dir: string) => void;
 
       mockUseSwipe.mockImplementation((el, options) => {
-        swipeEndCallback = options.onSwipeEnd
+        swipeEndCallback = options.onSwipeEnd;
         return {
           isSwiping: { value: false },
           direction: { value: 'none' },
           lengthX: { value: 0 },
           lengthY: { value: 0 },
-        }
-      })
+        };
+      });
 
-      usePageSwipe(callbacks)
+      usePageSwipe(callbacks);
 
       // Test each direction
-      swipeEndCallback!(new Event('touchend'), 'left')
-      expect(callbacks.onSwipeLeft).toHaveBeenCalledTimes(1)
+      swipeEndCallback!(new Event('touchend'), 'left');
+      expect(callbacks.onSwipeLeft).toHaveBeenCalledTimes(1);
 
-      swipeEndCallback!(new Event('touchend'), 'right')
-      expect(callbacks.onSwipeRight).toHaveBeenCalledTimes(1)
+      swipeEndCallback!(new Event('touchend'), 'right');
+      expect(callbacks.onSwipeRight).toHaveBeenCalledTimes(1);
 
-      swipeEndCallback!(new Event('touchend'), 'up')
-      expect(callbacks.onSwipeUp).toHaveBeenCalledTimes(1)
+      swipeEndCallback!(new Event('touchend'), 'up');
+      expect(callbacks.onSwipeUp).toHaveBeenCalledTimes(1);
 
-      swipeEndCallback!(new Event('touchend'), 'down')
-      expect(callbacks.onSwipeDown).toHaveBeenCalledTimes(1)
-    })
-  })
-})
+      swipeEndCallback!(new Event('touchend'), 'down');
+      expect(callbacks.onSwipeDown).toHaveBeenCalledTimes(1);
+    });
+  });
+});

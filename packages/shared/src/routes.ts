@@ -12,16 +12,16 @@ export const ROUTES = {
   SETTINGS: '/settings',
   LANGUAGE: '/language',
   CREDITS: '/credits',
-} as const
+} as const;
 
-export type RouteKey = keyof typeof ROUTES
-export type RoutePath = (typeof ROUTES)[RouteKey]
+export type RouteKey = keyof typeof ROUTES;
+export type RoutePath = (typeof ROUTES)[RouteKey];
 
 // Helper functions for game routes
 export function getGameRoute(gameId: string): string {
-  return `/game/${gameId}`
+  return `/game/${gameId}`;
 }
 
 export function getResultsRoute(gameId: string): string {
-  return `/results/${gameId}`
+  return `/results/${gameId}`;
 }

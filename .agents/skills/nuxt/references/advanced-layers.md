@@ -15,7 +15,7 @@ Layers allow sharing and reusing partial Nuxt applications across projects. They
 // nuxt.config.ts
 export default defineNuxtConfig({
   extends: ['@my-org/base-layer', '@nuxtjs/ui-layer'],
-})
+});
 ```
 
 ### From Git Repository
@@ -31,7 +31,7 @@ export default defineNuxtConfig({
     'gitlab:username/repo',
     'bitbucket:username/repo',
   ],
-})
+});
 ```
 
 ### From Local Directory
@@ -40,7 +40,7 @@ export default defineNuxtConfig({
 // nuxt.config.ts
 export default defineNuxtConfig({
   extends: ['../base-layer', './layers/shared'],
-})
+});
 ```
 
 ### Auto-scanned Layers
@@ -89,7 +89,7 @@ export default defineNuxtConfig({
   },
   // Shared modules
   modules: ['@nuxt/ui'],
-})
+});
 ```
 
 ### Layer Components
@@ -116,9 +116,9 @@ Use in consuming project:
 ```ts
 // my-layer/app/composables/useTheme.ts
 export function useTheme() {
-  const isDark = useState('theme-dark', () => false)
-  const toggle = () => (isDark.value = !isDark.value)
-  return { isDark, toggle }
+  const isDark = useState('theme-dark', () => false);
+  const toggle = () => (isDark.value = !isDark.value);
+  return { isDark, toggle };
 }
 ```
 
@@ -144,7 +144,7 @@ Access layer files:
 
 ```ts
 // Auto-scanned layers get aliases
-import Component from '#layers/base/components/Component.vue'
+import Component from '#layers/base/components/Component.vue';
 ```
 
 Named aliases:
@@ -155,12 +155,12 @@ export default defineNuxtConfig({
   $meta: {
     name: 'my-layer',
   },
-})
+});
 ```
 
 ```ts
 // In consuming project
-import { something } from '#layers/my-layer/utils'
+import { something } from '#layers/my-layer/utils';
 ```
 
 ## Publishing Layers
@@ -196,14 +196,14 @@ export GIGET_AUTH=<github-token>
 
 ```ts
 // my-layer/nuxt.config.ts
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
-const currentDir = dirname(fileURLToPath(import.meta.url))
+const currentDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineNuxtConfig({
   css: [join(currentDir, './assets/main.css')],
-})
+});
 ```
 
 ### Install Dependencies
@@ -212,7 +212,7 @@ export default defineNuxtConfig({
 // nuxt.config.ts
 export default defineNuxtConfig({
   extends: [['github:user/layer', { install: true }]],
-})
+});
 ```
 
 ### Disable Layer Modules
@@ -224,7 +224,7 @@ export default defineNuxtConfig({
   // Disable modules from layer
   image: false, // Disables @nuxt/image
   pinia: false, // Disables @pinia/nuxt
-})
+});
 ```
 
 ## Starter Template
@@ -256,7 +256,7 @@ theme-layer/
 // theme-layer/nuxt.config.ts
 export default defineNuxtConfig({
   css: ['~/assets/theme.css'],
-})
+});
 ```
 
 ```ts
@@ -266,21 +266,21 @@ export default defineAppConfig({
     primaryColor: '#00dc82',
     darkMode: false,
   },
-})
+});
 ```
 
 ```ts
 // consuming-app/nuxt.config.ts
 export default defineNuxtConfig({
   extends: ['theme-layer'],
-})
+});
 
 // consuming-app/app/app.config.ts
 export default defineAppConfig({
   theme: {
     primaryColor: '#ff0000', // Override
   },
-})
+});
 ```
 
 <!--

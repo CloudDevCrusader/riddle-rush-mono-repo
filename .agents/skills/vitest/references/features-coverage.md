@@ -46,7 +46,7 @@ defineConfig({
       },
     },
   },
-})
+});
 ```
 
 ## Providers
@@ -116,7 +116,7 @@ coverage: {
 ```ts
 /* v8 ignore next -- @preserve */
 function ignored() {
-  return 'not covered'
+  return 'not covered';
 }
 
 /* v8 ignore start -- @preserve */

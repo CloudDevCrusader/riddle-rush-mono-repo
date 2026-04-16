@@ -51,7 +51,7 @@
 
     <!-- Main Game Area -->
     <div class="game-container">
-      <Transition name="round-reveal" appear mode="out-in">
+      <Transition name="round-reveal" appear>
         <div v-if="currentCategory" :key="roundRevealKey" class="round-reveal-stack">
           <!-- Category Panel -->
           <div class="category-panel" data-testid="game-category-info">
@@ -182,11 +182,11 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
+definePageMeta({ pageTransition: { name: 'slide-left' } });
 
-const { toast, t, goHome: navigateToHome } = usePageSetup()
-const { getAssetPath } = useAssets()
-const { goToResults, goToPlayers, goToRoundStart } = useNavigation()
+const { toast, t, goHome: navigateToHome } = usePageSetup();
+const { getAssetPath } = useAssets();
+const { goToResults, goToPlayers, goToRoundStart } = useNavigation();
 const {
   gameStore,
   currentCategory,
@@ -198,119 +198,119 @@ const {
   currentPlayerTurn,
   allPlayersSubmitted,
   hasActiveSession,
-} = useGameState()
-const { isAnswerInputEnabled } = useFeatureFlags()
-const logger = useLogger()
-const gameActions = useGameActions()
-const audio = useAudio()
-const route = useRoute()
+} = useGameState();
+const { isAnswerInputEnabled } = useFeatureFlags();
+const logger = useLogger();
+const gameActions = useGameActions();
+const audio = useAudio();
+const route = useRoute();
 
 // Handle game ID from route parameter
-const gameId = computed(() => route.params.gameId as string | undefined)
+const gameId = computed(() => route.params.gameId as string | undefined);
 
-const playerAnswer = ref('')
-const showPauseModal = ref(false)
-const showQuitModal = ref(false)
-const isSubmitting = ref(false)
+const playerAnswer = ref('');
+const showPauseModal = ref(false);
+const showQuitModal = ref(false);
+const isSubmitting = ref(false);
 
 const handleEscapeKey = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && !showPauseModal.value) {
-    showPauseModal.value = true
+    showPauseModal.value = true;
   }
-}
+};
 
 // Clear stale input when flag toggles off mid-session
 watch(isAnswerInputEnabled, (enabled: boolean) => {
   if (!enabled) {
-    playerAnswer.value = ''
+    playerAnswer.value = '';
   }
-})
+});
 
 const formattedRound = computed(() => {
-  const round = currentRound.value || 1
-  return round.toString().padStart(2, '0')
-})
+  const round = currentRound.value || 1;
+  return round.toString().padStart(2, '0');
+});
 
 const roundRevealKey = computed(
   () =>
     `${currentCategory.value?.id ?? '0'}-${(currentLetter.value ?? '').toString().toUpperCase()}`
-)
+);
 
 const currentCategoryEmoji = computed(() =>
   currentCategory.value ? gameStore.categoryEmoji(currentCategory.value.name) : ''
-)
+);
 
 const goHome = () => {
-  navigateToHome()
-}
+  navigateToHome();
+};
 
 const handleBack = () => {
   if (hasActiveSession.value) {
-    showQuitModal.value = true
+    showQuitModal.value = true;
   } else {
-    goHome()
+    goHome();
   }
-}
+};
 
 const handleQuitConfirmed = () => {
-  showQuitModal.value = false
-  goHome()
-}
+  showQuitModal.value = false;
+  goHome();
+};
 
 // Sanitize input to prevent XSS and limit special characters
 // Optimized: Direct mutation is faster than debouncing for simple sanitization
 const sanitizeInput = () => {
   // Remove potentially dangerous characters
-  playerAnswer.value = playerAnswer.value.replace(/[<>]/g, '')
+  playerAnswer.value = playerAnswer.value.replace(/[<>]/g, '');
   // Limit length
   if (playerAnswer.value.length > 50) {
-    playerAnswer.value = playerAnswer.value.slice(0, 50)
+    playerAnswer.value = playerAnswer.value.slice(0, 50);
   }
-}
+};
 
 const submitAnswer = async () => {
-  const player = currentPlayerTurn.value
+  const player = currentPlayerTurn.value;
   if (!player) {
-    return
+    return;
   }
 
-  isSubmitting.value = true
+  isSubmitting.value = true;
   try {
     // Typed mode: empty = skipped turn. Verbal mode: answer is always spoken — nothing is typed.
-    const answer = playerAnswer.value.trim() || ''
-    await gameStore.submitPlayerAnswer(player.id, answer)
+    const answer = playerAnswer.value.trim() || '';
+    await gameStore.submitPlayerAnswer(player.id, answer);
 
     if (answer) {
-      void audio.playTada()
-      toast.success(t('game.answer_submitted', [player.name]))
+      void audio.playTada();
+      toast.success(t('game.answer_submitted', [player.name]));
     } else if (isAnswerInputEnabled.value) {
-      void audio.playClick()
-      toast.info(t('game.answer_skipped', [player.name]))
+      void audio.playClick();
+      toast.info(t('game.answer_skipped', [player.name]));
     } else {
-      void audio.playClick()
-      toast.success(t('game.verbal_turn_recorded', [player.name]))
+      void audio.playClick();
+      toast.success(t('game.verbal_turn_recorded', [player.name]));
     }
 
-    playerAnswer.value = ''
+    playerAnswer.value = '';
 
     if (allPlayersSubmitted.value) {
       toast.info(
         isAnswerInputEnabled.value ? t('game.all_submitted') : t('game.all_submitted_verbal')
-      )
+      );
     }
   } catch (error) {
-    logger.error('Error submitting answer:', error)
-    toast.error(t('game.error_submitting', 'Failed to submit answer'))
+    logger.error('Error submitting answer:', error);
+    toast.error(t('game.error_submitting', 'Failed to submit answer'));
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
-}
+};
 
 const handleNext = async () => {
   // In round-based flow, NEXT goes to results/scoring screen
   // Use unified flow state to determine readiness
-  const flow = flowState.value
-  const hasMultiplayerPlayers = players.value.length > 0
+  const flow = flowState.value;
+  const hasMultiplayerPlayers = players.value.length > 0;
 
   if (
     hasMultiplayerPlayers &&
@@ -318,107 +318,107 @@ const handleNext = async () => {
     flow !== 'round-complete' &&
     flow !== 'decision'
   ) {
-    void audio.playClick()
-    toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
-    return
+    void audio.playClick();
+    toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'));
+    return;
   }
 
   // Ensure proper flow transition before navigation
   if (flow === 'in-round' && allPlayersSubmitted.value) {
     // Transition to round-complete state to trigger results flow
-    gameStore.transitionToRoundComplete()
+    gameStore.transitionToRoundComplete();
   }
 
-  void audio.playClick()
+  void audio.playClick();
 
   // Navigate to results with game ID
-  const currentGameId = gameStore.currentSession.value?.id ?? gameId.value
+  const currentGameId = gameStore.currentSession.value?.id ?? gameId.value;
   if (currentGameId) {
-    goToResults(currentGameId)
+    goToResults(currentGameId);
   } else {
-    goToResults()
+    goToResults();
   }
-}
+};
 
 const handleResume = () => {
   // Modal already sets showPauseModal to false via v-model
   // No additional logic needed - game continues
-}
+};
 
 const handleRestart = () => {
   // Modal already handles abandonGame and sets showPauseModal to false
   // Navigate to players page to start new game
-  goToPlayers()
-}
+  goToPlayers();
+};
 
 const handleHome = () => {
   // Modal already handles abandonGame, navigation, and sets showPauseModal to false
   // No additional logic needed
-}
+};
 
 // Handle ESC key to pause
 onMounted(async () => {
   // Load game session based on route parameter
   if (gameId.value) {
     try {
-      let loadedSession = await gameStore.loadSessionById(gameId.value)
+      let loadedSession = await gameStore.loadSessionById(gameId.value);
 
       // Route transitions can arrive before storage hydration; retry briefly before failing.
       if (!loadedSession) {
         for (let attempt = 0; attempt < 4; attempt++) {
-          await gameStore.loadFromDB()
-          loadedSession = await gameStore.loadSessionById(gameId.value)
+          await gameStore.loadFromDB();
+          loadedSession = await gameStore.loadSessionById(gameId.value);
           if (loadedSession) {
-            break
+            break;
           }
-          await new Promise((resolve) => setTimeout(resolve, 150))
+          await new Promise((resolve) => setTimeout(resolve, 150));
         }
       }
 
       if (!loadedSession) {
         logger.warn('No matching session for game route, redirecting to players setup', {
           gameId: gameId.value,
-        })
-        toast.error(t('game.error_loading', 'Failed to load game session'))
-        useLoadingStore().forceHide()
-        goToPlayers()
-        return
+        });
+        toast.error(t('game.error_loading', 'Failed to load game session'));
+        useLoadingStore().forceHide();
+        goToPlayers();
+        return;
       }
     } catch (error) {
-      logger.error('Failed to load game session:', error)
-      toast.error(t('game.error_loading', 'Failed to load game session'))
-      useLoadingStore().forceHide()
-      goToPlayers()
-      return
+      logger.error('Failed to load game session:', error);
+      toast.error(t('game.error_loading', 'Failed to load game session'));
+      useLoadingStore().forceHide();
+      goToPlayers();
+      return;
     }
   } else if (!hasActiveSession.value) {
     // Multiplayer flow contract: /game without active session should not create
     // an implicit single-player session. Resume setup flow instead.
-    useLoadingStore().forceHide()
+    useLoadingStore().forceHide();
     if (gameStore.pendingPlayerNames.value.length > 0) {
-      await goToRoundStart()
+      await goToRoundStart();
     } else {
-      await goToPlayers()
+      await goToPlayers();
     }
-    return
+    return;
   }
 
   // Add ESC key listener for pause
-  window.addEventListener('keydown', handleEscapeKey)
-})
+  window.addEventListener('keydown', handleEscapeKey);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleEscapeKey)
-})
+  window.removeEventListener('keydown', handleEscapeKey);
+});
 
 const pageTitle = computed(
   () => `${t('game.page_title')} · ${t('game.round')} ${formattedRound.value}`
-)
+);
 
 useLocalizedPageSeo({
   title: () => pageTitle.value,
   description: () => t('game.meta_description'),
-})
+});
 </script>
 
 <style scoped>

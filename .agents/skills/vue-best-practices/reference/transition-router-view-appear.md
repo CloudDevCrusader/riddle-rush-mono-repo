@@ -78,19 +78,19 @@ Since the component wasn't present in the initial render and is "inserted" after
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-const isInitialLoad = ref(true)
-const router = useRouter()
+const isInitialLoad = ref(true);
+const router = useRouter();
 
 // After first navigation completes, enable transitions
 router.isReady().then(() => {
   // Small delay to ensure initial render is complete
   setTimeout(() => {
-    isInitialLoad.value = false
-  }, 0)
-})
+    isInitialLoad.value = false;
+  }, 0);
+});
 </script>
 ```
 
@@ -106,15 +106,15 @@ router.isReady().then(() => {
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const isInitialLoad = ref(true)
-const router = useRouter()
+const isInitialLoad = ref(true);
+const router = useRouter();
 
 router.isReady().then(() => {
-  isInitialLoad.value = false
-})
+  isInitialLoad.value = false;
+});
 </script>
 
 <style>
@@ -187,7 +187,7 @@ const routes = [
     component: About,
     meta: { transition: 'slide' }, // Custom transition for this route
   },
-]
+];
 ```
 
 ## Reference

@@ -3,9 +3,9 @@
  * Interface for interacting with the storyboard plugin
  */
 export const useStoryboard = () => {
-  const nuxtApp = useNuxtApp()
+  const nuxtApp = useNuxtApp();
   // Use any to avoid type issues with provide/inject
-  const storyboard = (nuxtApp as any).$storyboard || (nuxtApp as any)._provided?.storyboard
+  const storyboard = (nuxtApp as any).$storyboard || (nuxtApp as any)._provided?.storyboard;
 
   if (!storyboard) {
     // Return a mock object if storyboard is not available to avoid crashes
@@ -31,7 +31,7 @@ export const useStoryboard = () => {
       getSessionDuration: () => 0,
       getAverageTimePerState: () => 0,
       WORKFLOW_STATES: {},
-    }
+    };
   }
 
   return {
@@ -57,5 +57,5 @@ export const useStoryboard = () => {
 
     // Constants
     WORKFLOW_STATES: storyboard.WORKFLOW_STATES,
-  }
-}
+  };
+};

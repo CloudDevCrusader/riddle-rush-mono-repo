@@ -1,25 +1,25 @@
-import type { Category, CheckAnswerResponse } from '@riddle-rush/types/game'
-import { useLogger } from './useLogger'
+import type { Category, CheckAnswerResponse } from '@riddle-rush/types/game';
+import { useLogger } from './useLogger';
 import {
   PETSCAN_MAX_SITELINK_COUNT,
   PETSCAN_MAX_RESULTS,
   PETSCAN_LANGUAGE,
   PETSCAN_PROJECT,
   MAX_SUGGESTIONS,
-} from '@riddle-rush/shared/constants'
+} from '@riddle-rush/shared/constants';
 
 interface PetScanResult {
-  found: boolean
-  other: string[]
+  found: boolean;
+  other: string[];
 }
 
 // Cache categories to avoid repeated fetches
-let categoriesCache: Category[] | null = null
-let categoriesCacheTime = 0
-const CATEGORIES_CACHE_DURATION_MS = 5 * 60 * 1000 // 5 minutes
+let categoriesCache: Category[] | null = null;
+let categoriesCacheTime = 0;
+const CATEGORIES_CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
 export function useAnswerCheck() {
-  const logger = useLogger()
+  const logger = useLogger();
 
   async function searchPetScan(category: string): Promise<string[]> {
     try {
@@ -39,48 +39,48 @@ export function useAnswerCheck() {
         'edits[anons]': 'both',
         'ns[0]': '1',
         doit: '',
-      })
+      });
 
-      const url = `https://petscan.wmflabs.org/?${params.toString()}`
+      const url = `https://petscan.wmflabs.org/?${params.toString()}`;
 
-      const res = await fetch(url)
+      const res = await fetch(url);
       if (!res.ok) {
-        throw new Error(`PetScan API error: ${res.status} ${res.statusText}`)
+        throw new Error(`PetScan API error: ${res.status} ${res.statusText}`);
       }
       const data = (await res.json()) as {
-        '*'?: Array<{ a?: { '*'?: Array<{ title: string }> } }>
-      }
-      const results = data?.['*']?.[0]?.['a']?.['*']
+        '*'?: Array<{ a?: { '*'?: Array<{ title: string }> } }>;
+      };
+      const results = data?.['*']?.[0]?.['a']?.['*'];
 
       if (!results) {
-        return []
+        return [];
       }
 
       return results
         .map((e: { title: string }) => e.title.split('_')[0])
-        .filter((e): e is string => !!e && e !== category)
+        .filter((e): e is string => !!e && e !== category);
     } catch (error) {
-      logger.error('Error fetching from PetScan:', error)
-      return []
+      logger.error('Error fetching from PetScan:', error);
+      return [];
     }
   }
 
-  type OfflineAnswers = Record<string, Record<string, string[]>>
+  type OfflineAnswers = Record<string, Record<string, string[]>>;
 
   async function searchOffline(category: string, letter: string): Promise<string[]> {
     try {
-      const offlineAnswers = await $fetch<OfflineAnswers>('/data/offlineAnswers.json')
-      const categoryAnswers = offlineAnswers[category]
+      const offlineAnswers = await $fetch<OfflineAnswers>('/data/offlineAnswers.json');
+      const categoryAnswers = offlineAnswers[category];
 
       if (!categoryAnswers) {
-        logger.warn(`No offline data for category: ${category}`)
-        return []
+        logger.warn(`No offline data for category: ${category}`);
+        return [];
       }
 
-      return categoryAnswers[letter.toLowerCase()] || []
+      return categoryAnswers[letter.toLowerCase()] || [];
     } catch (error) {
-      logger.error('Error loading offline answers:', error)
-      return []
+      logger.error('Error loading offline answers:', error);
+      return [];
     }
   }
 
@@ -90,7 +90,7 @@ export function useAnswerCheck() {
     term: string,
     categoryItem: Category
   ): PetScanResult {
-    let items = list
+    let items = list;
 
     if (categoryItem.additionalData) {
       // Convert additionalData values to array if it's an object
@@ -98,33 +98,33 @@ export function useAnswerCheck() {
         ? categoryItem.additionalData
         : Object.values(categoryItem.additionalData).filter(
             (v): v is string => typeof v === 'string'
-          )
-      items = [...items, ...additionalItems]
+          );
+      items = [...items, ...additionalItems];
     }
 
-    const results = items.filter((e) => e.toUpperCase().startsWith(letter.toUpperCase()))
+    const results = items.filter((e) => e.toUpperCase().startsWith(letter.toUpperCase()));
 
-    const normalizedTerm = term.trim().toLowerCase()
-    const found = results.some((res) => res.toLowerCase() === normalizedTerm)
+    const normalizedTerm = term.trim().toLowerCase();
+    const found = results.some((res) => res.toLowerCase() === normalizedTerm);
     const other = results
       .filter((res) => res.toLowerCase() !== normalizedTerm)
-      .slice(0, MAX_SUGGESTIONS)
+      .slice(0, MAX_SUGGESTIONS);
 
-    return { found, other }
+    return { found, other };
   }
 
   async function getCategories(): Promise<Category[]> {
-    const now = Date.now()
+    const now = Date.now();
     // Return cached categories if still valid
     if (categoriesCache && now - categoriesCacheTime < CATEGORIES_CACHE_DURATION_MS) {
-      return categoriesCache
+      return categoriesCache;
     }
 
     // Fetch and cache
-    const categories = await $fetch<Category[]>('/data/categories.json')
-    categoriesCache = categories
-    categoriesCacheTime = now
-    return categories
+    const categories = await $fetch<Category[]>('/data/categories.json');
+    categoriesCache = categories;
+    categoriesCacheTime = now;
+    return categories;
   }
 
   async function checkAnswer(
@@ -132,29 +132,29 @@ export function useAnswerCheck() {
     letter: string,
     term: string
   ): Promise<CheckAnswerResponse> {
-    const categories = await getCategories()
-    const currentCategory = categories.find((e) => e.searchWord === searchWord)
+    const categories = await getCategories();
+    const currentCategory = categories.find((e) => e.searchWord === searchWord);
 
     if (!currentCategory) {
-      throw new Error(`Category not found: ${searchWord}`)
+      throw new Error(`Category not found: ${searchWord}`);
     }
 
-    let result: string[]
+    let result: string[];
     switch (currentCategory.searchProvider) {
       case 'petscan':
-        result = await searchPetScan(currentCategory.searchWord)
-        return generateResult(result, letter, term, currentCategory)
+        result = await searchPetScan(currentCategory.searchWord);
+        return generateResult(result, letter, term, currentCategory);
       case 'offline':
-        result = await searchOffline(currentCategory.searchWord, letter)
-        return generateResult(result, letter, term, currentCategory)
+        result = await searchOffline(currentCategory.searchWord, letter);
+        return generateResult(result, letter, term, currentCategory);
       case 'wikipedia':
-        throw new Error('Wikipedia search provider not yet implemented')
+        throw new Error('Wikipedia search provider not yet implemented');
       default:
-        throw new Error(`Unknown search provider: ${currentCategory.searchProvider}`)
+        throw new Error(`Unknown search provider: ${currentCategory.searchProvider}`);
     }
   }
 
   return {
     checkAnswer,
-  }
+  };
 }

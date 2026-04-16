@@ -1,5 +1,5 @@
-import type { UnleashClient } from 'unleash-proxy-client'
-import { useSettingsStore } from '~/stores/settingsStore'
+import type { UnleashClient } from 'unleash-proxy-client';
+import { useSettingsStore } from '~/stores/settingsStore';
 
 /**
  * Module-level reactive bridge between the Unleash EventEmitter and Vue's
@@ -9,13 +9,13 @@ import { useSettingsStore } from '~/stores/settingsStore'
  * Increments on every Unleash `update`/`ready` event. Computed properties
  * that read this ref will re-evaluate when flags change.
  */
-const flagVersion = ref(0)
-let attachedClient: UnleashClient | null = null
+const flagVersion = ref(0);
+let attachedClient: UnleashClient | null = null;
 
 // Stable reference so the same function can be passed to both on() and off()
 const bump = () => {
-  flagVersion.value++
-}
+  flagVersion.value++;
+};
 
 /**
  * Attach Unleash event listeners that bridge into Vue reactivity.
@@ -25,17 +25,17 @@ const bump = () => {
  * missing the initial `ready` event.
  */
 export function attachUnleashListener(client: UnleashClient) {
-  if (attachedClient === client) return
+  if (attachedClient === client) return;
 
   // Clean up listeners from the previous client instance
   if (attachedClient) {
-    attachedClient.off('update', bump)
-    attachedClient.off('ready', bump)
+    attachedClient.off('update', bump);
+    attachedClient.off('ready', bump);
   }
 
-  attachedClient = client
-  client.on('update', bump)
-  client.on('ready', bump)
+  attachedClient = client;
+  client.on('update', bump);
+  client.on('ready', bump);
 }
 
 /**
@@ -43,21 +43,21 @@ export function attachUnleashListener(client: UnleashClient) {
  * GitLab Feature Flags uses the Unleash protocol
  */
 export function useFeatureFlags() {
-  const { $featureFlags } = useNuxtApp()
-  const gitlabClient = $featureFlags as UnleashClient | null
+  const { $featureFlags } = useNuxtApp();
+  const gitlabClient = $featureFlags as UnleashClient | null;
 
-  const config = useRuntimeConfig()
+  const config = useRuntimeConfig();
 
-  const logger = useLogger()
+  const logger = useLogger();
 
-  type ManagedFlag = 'fortune-wheel' | 'answer-input'
-  type SettingsFlagKey = 'fortuneWheelEnabled' | 'answerInputEnabled'
+  type ManagedFlag = 'fortune-wheel' | 'answer-input';
+  type SettingsFlagKey = 'fortuneWheelEnabled' | 'answerInputEnabled';
 
   interface ResolveManagedFlagOptions {
-    flagName: ManagedFlag
-    settingsKey: SettingsFlagKey
-    defaultValue: boolean
-    runtimeForceDisabled?: boolean
+    flagName: ManagedFlag;
+    settingsKey: SettingsFlagKey;
+    defaultValue: boolean;
+    runtimeForceDisabled?: boolean;
   }
 
   /**
@@ -76,25 +76,25 @@ export function useFeatureFlags() {
     runtimeForceDisabled = false,
   }: ResolveManagedFlagOptions): boolean => {
     if (runtimeForceDisabled) {
-      return false
+      return false;
     }
 
     try {
       if (gitlabClient) {
-        return gitlabClient.isEnabled(flagName)
+        return gitlabClient.isEnabled(flagName);
       }
 
-      const localValue = useSettingsStore()[settingsKey]
-      return typeof localValue === 'boolean' ? localValue : defaultValue
+      const localValue = useSettingsStore()[settingsKey];
+      return typeof localValue === 'boolean' ? localValue : defaultValue;
     } catch (error) {
-      logger.warn(`Failed to resolve feature flag ${flagName}:`, error)
-      return defaultValue
+      logger.warn(`Failed to resolve feature flag ${flagName}:`, error);
+      return defaultValue;
     }
-  }
+  };
 
   // Lazy fallback: attach listener if the plugin didn't already
   if (gitlabClient) {
-    attachUnleashListener(gitlabClient)
+    attachUnleashListener(gitlabClient);
   }
 
   /**
@@ -111,7 +111,7 @@ export function useFeatureFlags() {
         flagName,
         settingsKey: 'fortuneWheelEnabled',
         defaultValue,
-      })
+      });
     }
 
     if (flagName === 'answer-input') {
@@ -122,56 +122,56 @@ export function useFeatureFlags() {
         // Runtime config override is intentionally supported only for answer input,
         // so E2E/dev can hard-disable this UI path regardless of remote/local flags.
         runtimeForceDisabled: config.public.featureAnswerInput === false,
-      })
+      });
     }
 
     try {
       if (gitlabClient) {
-        return gitlabClient.isEnabled(flagName)
+        return gitlabClient.isEnabled(flagName);
       }
     } catch (error) {
-      logger.warn(`Failed to check feature flag ${flagName}:`, error)
+      logger.warn(`Failed to check feature flag ${flagName}:`, error);
     }
 
-    return defaultValue
-  }
+    return defaultValue;
+  };
 
   /**
    * Get variant for a feature flag
    */
   const getVariant = (flagName: string) => {
     if (!gitlabClient) {
-      return { name: 'disabled', enabled: false }
+      return { name: 'disabled', enabled: false };
     }
 
     try {
-      return gitlabClient.getVariant(flagName)
+      return gitlabClient.getVariant(flagName);
     } catch (error) {
-      logger.warn(`Failed to get variant for ${flagName}:`, error)
-      return { name: 'disabled', enabled: false }
+      logger.warn(`Failed to get variant for ${flagName}:`, error);
+      return { name: 'disabled', enabled: false };
     }
-  }
+  };
 
   /**
    * Check if fortune wheel feature is enabled
    */
   const isFortuneWheelEnabled = computed(() => {
-    void flagVersion.value // reactive dependency: re-run when flags update
-    return isEnabled('fortune-wheel', true)
-  })
+    void flagVersion.value; // reactive dependency: re-run when flags update
+    return isEnabled('fortune-wheel', true);
+  });
 
   /**
    * Check if answer input feature is enabled
    */
   const isAnswerInputEnabled = computed(() => {
-    void flagVersion.value // reactive dependency: re-run when flags update
-    return isEnabled('answer-input', false)
-  })
+    void flagVersion.value; // reactive dependency: re-run when flags update
+    return isEnabled('answer-input', false);
+  });
 
   return {
     isEnabled,
     getVariant,
     isAnswerInputEnabled,
     isFortuneWheelEnabled,
-  }
+  };
 }

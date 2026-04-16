@@ -49,7 +49,7 @@ Use `~icon~` syntax in title:
 
 ````md
 ```js [npm ~i-uil:github~]
-console.log('Hello!')
+console.log('Hello!');
 ```
 ````
 
@@ -61,5 +61,5 @@ Requires:
 ```ts
 export default defineConfig({
   safelist: ['i-uil:github'],
-})
+});
 ```

@@ -102,20 +102,20 @@ Fallback content can include multiple elements and logic:
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
   user: Object,
-})
+});
 
 const initials = computed(() => {
-  if (!props.user?.name) return '?'
+  if (!props.user?.name) return '?';
   return props.user.name
     .split(' ')
     .map((n) => n[0])
     .join('')
-    .toUpperCase()
-})
+    .toUpperCase();
+});
 </script>
 ```
 

@@ -25,7 +25,7 @@ tsdown -d lib
 export default defineConfig({
   entry: ['src/index.ts'],
   outDir: 'build',
-})
+});
 ```
 
 ## Common Patterns
@@ -38,7 +38,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   outDir: 'dist', // Default
   dts: true,
-})
+});
 ```
 
 **Output:**
@@ -64,7 +64,7 @@ export default defineConfig([
     format: ['cjs'],
     outDir: 'dist/cjs',
   },
-])
+]);
 ```
 
 **Output:**
@@ -84,7 +84,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   outDir: 'lib', // Custom directory
   clean: true,
-})
+});
 ```
 
 ### Build to Root
@@ -94,7 +94,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   outDir: '.', // Output to project root (not recommended)
   clean: false, // Don't clean root!
-})
+});
 ```
 
 **Warning:** Be careful when outputting to root to avoid deleting important files.
@@ -113,9 +113,9 @@ export default defineConfig({
   outExtensions({ format }) {
     return {
       js: format === 'esm' ? '.mjs' : '.cjs',
-    }
+    };
   },
-})
+});
 ```
 
 ### Default Extensions
@@ -134,7 +134,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   outExtensions: () => ({ js: '.js' }),
-})
+});
 ```
 
 Requires `"type": "module"` in package.json.
@@ -152,7 +152,7 @@ export default defineConfig({
     utils: 'src/utils.ts',
   },
   outDir: 'dist',
-})
+});
 ```
 
 **Output:**
@@ -170,7 +170,7 @@ export default defineConfig({
   entry: ['src/**/*.ts', '!**/*.test.ts'],
   outDir: 'dist',
   unbundle: true, // Preserve structure
-})
+});
 ```
 
 **Output:**
@@ -200,7 +200,7 @@ export default defineConfig([
     outDir: 'dist',
     clean: false, // Don't clean again
   },
-])
+]);
 ```
 
 ### Different Output Directories
@@ -217,7 +217,7 @@ export default defineConfig([
     format: ['esm'],
     outDir: 'dist/bin',
   },
-])
+]);
 ```
 
 ## CLI Examples

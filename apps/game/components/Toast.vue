@@ -27,28 +27,28 @@
 </template>
 
 <script setup lang="ts">
-import type { ToastType } from '../composables/useToast'
+import type { ToastType } from '../composables/useToast';
 
-const { t } = useI18n()
-const { toasts, remove } = useToast()
+const { t } = useI18n();
+const { toasts, remove } = useToast();
 
 const getIcon = (type: ToastType) => {
   switch (type) {
     case 'success':
-      return '✓'
+      return '✓';
     case 'error':
-      return '✗'
+      return '✗';
     case 'warning':
-      return '⚠'
+      return '⚠';
     case 'info':
     default:
-      return 'ℹ'
+      return 'ℹ';
   }
-}
+};
 
 const removeToast = (id: string) => {
-  remove(id)
-}
+  remove(id);
+};
 </script>
 
 <style scoped>

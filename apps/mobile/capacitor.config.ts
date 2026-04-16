@@ -1,7 +1,7 @@
-import type { CapacitorConfig } from '@capacitor/cli'
+import type { CapacitorConfig } from '@capacitor/cli';
 
 /** Matches PWA `theme_color` / game shell (`apps/game/nuxt.config.ts`). */
-const BRAND_ORANGE = '#ff6b35'
+const BRAND_ORANGE = '#ff6b35';
 
 const config: CapacitorConfig = {
   appId: 'com.riddlerush.game',
@@ -56,6 +56,6 @@ const config: CapacitorConfig = {
       resizeOnFullScreen: true,
     },
   },
-}
+};
 
-export default config
+export default config;

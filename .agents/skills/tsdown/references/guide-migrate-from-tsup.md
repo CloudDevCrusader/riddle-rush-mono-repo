@@ -51,7 +51,7 @@ export default defineConfig({
   nodeProtocol: true, // Add node: prefix (fs → node:fs)
   nodeProtocol: 'strip', // Remove node: prefix (node:fs → fs)
   nodeProtocol: false, // Keep as-is (default)
-})
+});
 ```
 
 #### Better Workspace Support
@@ -59,7 +59,7 @@ export default defineConfig({
 ```ts
 export default defineConfig({
   workspace: 'packages/*', // Build all packages
-})
+});
 ```
 
 ## Migration Checklist
@@ -82,7 +82,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs', 'esm'],
   dts: true,
-})
+});
 ```
 
 **After (tsdown):**
@@ -93,7 +93,7 @@ export default defineConfig({
   format: ['esm', 'cjs'], // ESM now default
   dts: true,
   clean: true, // Now enabled by default
-})
+});
 ```
 
 ### With Custom Target
@@ -104,7 +104,7 @@ export default defineConfig({
 export default defineConfig({
   entry: ['src/index.ts'],
   target: 'es2020',
-})
+});
 ```
 
 **After (tsdown):**
@@ -115,7 +115,7 @@ export default defineConfig({
   // target auto-reads from package.json engines.node
   // Or override explicitly:
   target: 'es2020',
-})
+});
 ```
 
 ### CLI Scripts

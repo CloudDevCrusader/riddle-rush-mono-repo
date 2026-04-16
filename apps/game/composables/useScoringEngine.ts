@@ -5,8 +5,8 @@
  * These are **pure functions** — no state, no side effects. Accept data, return results.
  */
 
-import { SCORE_PER_CORRECT_ANSWER } from '@riddle-rush/shared/constants'
-import type { Player } from '@riddle-rush/types/game'
+import { SCORE_PER_CORRECT_ANSWER } from '@riddle-rush/shared/constants';
+import type { Player } from '@riddle-rush/types/game';
 
 /**
  * Composable providing scoring and display utilities.
@@ -27,7 +27,7 @@ export function useScoringEngine() {
    * @returns SCORE_PER_CORRECT_ANSWER if found, 0 otherwise
    */
   function calculateAttemptScore(found: boolean): number {
-    return found ? SCORE_PER_CORRECT_ANSWER : 0
+    return found ? SCORE_PER_CORRECT_ANSWER : 0;
   }
 
   /**
@@ -37,15 +37,15 @@ export function useScoringEngine() {
    * @returns The rank with ordinal suffix (e.g., "1st", "2nd", "3rd", "4th")
    */
   function getRankSuffix(rank: number): string {
-    const suffixes = ['th', 'st', 'nd', 'rd']
-    const remainder = rank % 100
+    const suffixes = ['th', 'st', 'nd', 'rd'];
+    const remainder = rank % 100;
 
     // Special case for 11th, 12th, 13th
     if (remainder >= 11 && remainder <= 13) {
-      return `${rank}th`
+      return `${rank}th`;
     }
 
-    return `${rank}${suffixes[rank % 10] || 'th'}`
+    return `${rank}${suffixes[rank % 10] || 'th'}`;
   }
 
   /**
@@ -55,9 +55,9 @@ export function useScoringEngine() {
    * @returns Formatted string: "+5", "-3", or "0"
    */
   function getScoreDisplay(score: number): string {
-    if (score > 0) return `+${score}`
-    if (score < 0) return `${score}`
-    return '0'
+    if (score > 0) return `+${score}`;
+    if (score < 0) return `${score}`;
+    return '0';
   }
 
   /**
@@ -68,12 +68,12 @@ export function useScoringEngine() {
    * @returns Array of players with the highest score, or empty array if no players
    */
   function determineWinners(players: Player[]): Player[] {
-    if (players.length === 0) return []
+    if (players.length === 0) return [];
 
-    const maxScore = Math.max(...players.map((p) => p.totalScore))
-    if (maxScore <= 0) return []
+    const maxScore = Math.max(...players.map((p) => p.totalScore));
+    if (maxScore <= 0) return [];
 
-    return players.filter((p) => p.totalScore === maxScore)
+    return players.filter((p) => p.totalScore === maxScore);
   }
 
   return {
@@ -81,5 +81,5 @@ export function useScoringEngine() {
     getRankSuffix,
     getScoreDisplay,
     determineWinners,
-  }
+  };
 }

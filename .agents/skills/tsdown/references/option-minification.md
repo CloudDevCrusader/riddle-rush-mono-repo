@@ -39,7 +39,7 @@ tsdown --no-minify
 export default defineConfig({
   entry: ['src/index.ts'],
   minify: true,
-})
+});
 ```
 
 ### DCE-Only Mode
@@ -50,7 +50,7 @@ Remove dead code without full minification (keeps readable output):
 export default defineConfig({
   entry: ['src/index.ts'],
   minify: 'dce-only',
-})
+});
 ```
 
 ## Example Output
@@ -59,25 +59,25 @@ export default defineConfig({
 
 ```js
 // dist/index.mjs
-const x = 1
+const x = 1;
 
 function hello(x$1) {
-  console.log('Hello World')
-  console.log(x$1)
+  console.log('Hello World');
+  console.log(x$1);
 }
 
-hello(x)
+hello(x);
 ```
 
 ### With Minification
 
 ```js
 // dist/index.mjs
-const e = 1
+const e = 1;
 function t(e) {
-  ;(console.log(`Hello World`), console.log(e))
+  (console.log(`Hello World`), console.log(e));
 }
-t(e)
+t(e);
 ```
 
 ## Common Patterns
@@ -90,7 +90,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   minify: true,
   clean: true,
-})
+});
 ```
 
 ### Conditional Minification
@@ -100,7 +100,7 @@ export default defineConfig((options) => ({
   entry: ['src/index.ts'],
   format: ['esm'],
   minify: !options.watch, // Only minify in production
-}))
+}));
 ```
 
 ### Browser Library
@@ -112,7 +112,7 @@ export default defineConfig({
   platform: 'browser',
   globalName: 'MyLib',
   minify: true,
-})
+});
 ```
 
 ### Multiple Builds
@@ -133,7 +133,7 @@ export default defineConfig([
     minify: true,
     outDir: 'dist/prod',
   },
-])
+]);
 ```
 
 ## CLI Examples

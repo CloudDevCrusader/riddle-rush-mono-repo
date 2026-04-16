@@ -176,7 +176,7 @@ Create a dedicated stylesheet for modal/overlay components:
 
 ```vue
 <script setup>
-import './modal-styles.css'
+import './modal-styles.css';
 </script>
 
 <template>

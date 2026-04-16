@@ -15,7 +15,7 @@ Simple mapping from class name to CSS properties:
 rules: [
   ['m-1', { margin: '0.25rem' }],
   ['font-bold', { 'font-weight': 700 }],
-]
+];
 ```
 
 Usage: `<div class="m-1">` generates `.m-1 { margin: 0.25rem; }`
@@ -33,7 +33,7 @@ rules: [
 
   // Access theme and context
   [/^p-(\d+)$/, (match, ctx) => ({ padding: `${match[1] / 4}rem` })],
-]
+];
 ```
 
 The function receives:
@@ -54,7 +54,7 @@ rules: [
       ['height', `${d}dvh`],
     ],
   ],
-]
+];
 ```
 
 Generates: `.h-100dvh { height: 100vh; height: 100dvh; }`
@@ -64,7 +64,7 @@ Generates: `.h-100dvh { height: 100vh; height: 100dvh; }`
 Control CSS output with symbols from `@unocss/core`:
 
 ```ts
-import { symbols } from '@unocss/core'
+import { symbols } from '@unocss/core';
 
 rules: [
   [
@@ -74,7 +74,7 @@ rules: [
       display: 'grid',
     },
   ],
-]
+];
 ```
 
 ### Available Symbols
@@ -99,14 +99,14 @@ rules: [
   [
     /^button-(.*)$/,
     function* ([, color], { symbols }) {
-      yield { background: color }
+      yield { background: color };
       yield {
         [symbols.selector]: (selector) => `${selector}:hover`,
         background: `color-mix(in srgb, ${color} 90%, black)`,
-      }
+      };
     },
   ],
-]
+];
 ```
 
 Generates both `.button-red { background: red; }` and `.button-red:hover { ... }`
@@ -116,23 +116,23 @@ Generates both `.button-red { background: red; }` and `.button-red:hover { ... }
 Return a string for complete CSS control (advanced):
 
 ```ts
-import { defineConfig, toEscapedSelector as e } from 'unocss'
+import { defineConfig, toEscapedSelector as e } from 'unocss';
 
 rules: [
   [
     /^custom-(.+)$/,
     ([, name], { rawSelector, theme }) => {
-      const selector = e(rawSelector)
+      const selector = e(rawSelector);
       return `
 ${selector} { font-size: ${theme.fontSize.sm}; }
 ${selector}::after { content: 'after'; }
 @media (min-width: ${theme.breakpoints.sm}) {
   ${selector} { font-size: ${theme.fontSize.lg}; }
 }
-`
+`;
     },
   ],
-]
+];
 ```
 
 **Warning:** Fully controlled rules don't work with variants like `hover:`.
@@ -154,7 +154,7 @@ rules: [
       [symbols.selector]: (selector) => `:is(${selector})`,
     },
   ],
-]
+];
 ```
 
 ## Rule Ordering

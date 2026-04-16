@@ -143,77 +143,77 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
 
 defineProps<{
-  modelValue: boolean
-}>()
+  modelValue: boolean;
+}>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-}>()
+  'update:modelValue': [value: boolean];
+}>();
 
-const { getAssetPath } = useAssets()
-const settings = useSettings()
-const { isFortuneWheelEnabled } = useFeatureFlags()
-const router = useRouter()
-const { t } = useI18n()
+const { getAssetPath } = useAssets();
+const settings = useSettings();
+const { isFortuneWheelEnabled } = useFeatureFlags();
+const router = useRouter();
+const { t } = useI18n();
 
-const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value)
+const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value);
 /** Slot machine — avoids mojibake in some editor encodings */
-const wheelOptionEmoji = '\u{1F3B0}'
+const wheelOptionEmoji = '\u{1F3B0}';
 
-const soundVolume = ref(settings.soundVolume.value)
-const musicVolume = ref(settings.musicVolume.value)
+const soundVolume = ref(settings.soundVolume.value);
+const musicVolume = ref(settings.musicVolume.value);
 
 const handleOverlayClick = (event: MouseEvent) => {
   // Only close if clicking directly on overlay (not on card content)
   if ((event.target as HTMLElement).classList.contains('settings-overlay')) {
-    closeModal()
+    closeModal();
   }
-}
+};
 
 const closeModal = () => {
-  console.log('SettingsModal closeModal called')
-  emit('update:modelValue', false)
+  console.log('SettingsModal closeModal called');
+  emit('update:modelValue', false);
 
   // Force navigation immediately as a backup
   setTimeout(() => {
-    console.log('Force navigating home from modal')
-    router.push('/')
-  }, 100)
-}
+    console.log('Force navigating home from modal');
+    router.push('/');
+  }, 100);
+};
 
 const updateSoundVolume = () => {
-  settings.updateSetting('soundVolume', soundVolume.value)
-  settings.updateSetting('soundEnabled', soundVolume.value > 0)
-}
+  settings.updateSetting('soundVolume', soundVolume.value);
+  settings.updateSetting('soundEnabled', soundVolume.value > 0);
+};
 
 const updateMusicVolume = () => {
-  settings.updateSetting('musicVolume', musicVolume.value)
-  settings.updateSetting('musicEnabled', musicVolume.value > 0)
-}
+  settings.updateSetting('musicVolume', musicVolume.value);
+  settings.updateSetting('musicEnabled', musicVolume.value > 0);
+};
 
 // Handle escape key
 const handleEscape = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
-    closeModal()
+    closeModal();
   }
-}
+};
 
 // Load settings on mount
 onMounted(() => {
-  soundVolume.value = settings.soundVolume.value
-  musicVolume.value = settings.musicVolume.value
+  soundVolume.value = settings.soundVolume.value;
+  musicVolume.value = settings.musicVolume.value;
 
   // Add escape key listener
-  window.addEventListener('keydown', handleEscape)
-})
+  window.addEventListener('keydown', handleEscape);
+});
 
 // Cleanup on unmount
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleEscape)
-})
+  window.removeEventListener('keydown', handleEscape);
+});
 </script>
 
 <style scoped>

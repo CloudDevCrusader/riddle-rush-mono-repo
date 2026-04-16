@@ -87,7 +87,7 @@ Dynamic layout:
 </template>
 
 <script setup>
-const layout = computed(() => (isAdmin ? 'admin' : 'default'))
+const layout = computed(() => (isAdmin ? 'admin' : 'default'));
 </script>
 ```
 
@@ -140,7 +140,7 @@ Catch and handle errors in child components:
 
 <script setup>
 function handleError(error) {
-  console.error('Error caught:', error)
+  console.error('Error caught:', error);
 }
 </script>
 ```

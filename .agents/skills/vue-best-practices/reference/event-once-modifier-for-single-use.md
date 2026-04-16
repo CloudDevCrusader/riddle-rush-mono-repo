@@ -32,12 +32,12 @@ tags: [vue3, events, modifiers, once, event-handling]
 
 <script setup>
 function handleInit(data) {
-  console.log('Component initialized:', data)
+  console.log('Component initialized:', data);
   // This only runs once, even if child emits 'initialized' multiple times
 }
 
 function trackFirstSubmit() {
-  analytics.track('first_form_submit')
+  analytics.track('first_form_submit');
 }
 </script>
 ```
@@ -67,8 +67,8 @@ function trackFirstSubmit() {
 function onChartReady(chartInstance) {
   // Store reference, configure chart
   // Only need to do this once
-  chartRef.value = chartInstance
-  chartInstance.setOption(customOptions)
+  chartRef.value = chartInstance;
+  chartInstance.setOption(customOptions);
 }
 </script>
 ```
@@ -87,7 +87,7 @@ function onChartReady(chartInstance) {
 function trackEngagement() {
   analytics.track('article_first_click', {
     articleId: article.id,
-  })
+  });
 }
 </script>
 ```
@@ -107,12 +107,12 @@ function trackEngagement() {
 </template>
 
 <script setup>
-const loaded = ref(false)
-const data = ref(null)
+const loaded = ref(false);
+const data = ref(null);
 
 async function loadHeavyContent() {
-  data.value = await fetchData()
-  loaded.value = true
+  data.value = await fetchData();
+  loaded.value = true;
 }
 </script>
 ```
@@ -155,14 +155,14 @@ Without `.once`, you'd need to manually track and remove:
 
 ```vue
 <script setup>
-const hasHandled = ref(false)
+const hasHandled = ref(false);
 
 function handleClickManually() {
-  if (hasHandled.value) return
-  hasHandled.value = true
+  if (hasHandled.value) return;
+  hasHandled.value = true;
 
   // Do one-time action
-  doSomething()
+  doSomething();
 }
 </script>
 

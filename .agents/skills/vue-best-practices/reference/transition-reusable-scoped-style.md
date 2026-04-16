@@ -190,9 +190,9 @@ defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-defineEmits(['before-enter', 'enter', 'after-enter', 'before-leave', 'leave', 'after-leave'])
+defineEmits(['before-enter', 'enter', 'after-enter', 'before-leave', 'leave', 'after-leave']);
 </script>
 
 <!-- Unscoped so styles apply to slotted content -->

@@ -62,21 +62,21 @@ This is useful for notification stacks, modal layering, and tooltip systems.
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const notifications = ref([])
+const notifications = ref([]);
 
 function notify(message, type = 'info') {
-  const id = Date.now()
-  notifications.value.push({ id, message, type })
-  setTimeout(() => dismiss(id), 5000)
+  const id = Date.now();
+  notifications.value.push({ id, message, type });
+  setTimeout(() => dismiss(id), 5000);
 }
 
 function dismiss(id) {
-  notifications.value = notifications.value.filter((n) => n.id !== id)
+  notifications.value = notifications.value.filter((n) => n.id !== id);
 }
 
-defineExpose({ notify })
+defineExpose({ notify });
 </script>
 ```
 

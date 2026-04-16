@@ -18,24 +18,24 @@ Function provides modifiers in options
 
 ```vue
 <script setup lang="ts">
-import { onLongPress } from '@vueuse/core'
-import { shallowRef, useTemplateRef } from 'vue'
+import { onLongPress } from '@vueuse/core';
+import { shallowRef, useTemplateRef } from 'vue';
 
-const htmlRefHook = useTemplateRef('htmlRefHook')
-const longPressedHook = shallowRef(false)
+const htmlRefHook = useTemplateRef('htmlRefHook');
+const longPressedHook = shallowRef(false);
 
 function onLongPressCallbackHook(e: PointerEvent) {
-  longPressedHook.value = true
+  longPressedHook.value = true;
 }
 function resetHook() {
-  longPressedHook.value = false
+  longPressedHook.value = false;
 }
 
 onLongPress(htmlRefHook, onLongPressCallbackHook, {
   modifiers: {
     prevent: true,
   },
-})
+});
 </script>
 
 <template>
@@ -51,16 +51,16 @@ onLongPress(htmlRefHook, onLongPressCallbackHook, {
 
 ```vue
 <script setup lang="ts">
-import { OnLongPress } from '@vueuse/components'
-import { shallowRef } from 'vue'
+import { OnLongPress } from '@vueuse/components';
+import { shallowRef } from 'vue';
 
-const longPressedComponent = shallowRef(false)
+const longPressedComponent = shallowRef(false);
 
 function onLongPressCallbackComponent(e: PointerEvent) {
-  longPressedComponent.value = true
+  longPressedComponent.value = true;
 }
 function resetComponent() {
-  longPressedComponent.value = false
+  longPressedComponent.value = false;
 }
 </script>
 
@@ -79,16 +79,16 @@ function resetComponent() {
 
 ```vue
 <script setup lang="ts">
-import { vOnLongPress } from '@vueuse/components'
-import { shallowRef } from 'vue'
+import { vOnLongPress } from '@vueuse/components';
+import { shallowRef } from 'vue';
 
-const longPressedDirective = shallowRef(false)
+const longPressedDirective = shallowRef(false);
 
 function onLongPressCallbackDirective(e: PointerEvent) {
-  longPressedDirective.value = true
+  longPressedDirective.value = true;
 }
 function resetDirective() {
-  longPressedDirective.value = false
+  longPressedDirective.value = false;
 }
 </script>
 
@@ -119,33 +119,33 @@ export interface OnLongPressOptions {
    *
    * @default 500
    */
-  delay?: number | ((ev: PointerEvent) => number)
-  modifiers?: OnLongPressModifiers
+  delay?: number | ((ev: PointerEvent) => number);
+  modifiers?: OnLongPressModifiers;
   /**
    * Allowance of moving distance in pixels,
    * The action will get canceled When moving too far from the pointerdown position.
    * @default 10
    */
-  distanceThreshold?: number | false
+  distanceThreshold?: number | false;
   /**
    * Function called when the ref element is released.
    * @param duration how long the element was pressed in ms
    * @param distance distance from the pointerdown position
    * @param isLongPress whether the action was a long press or not
    */
-  onMouseUp?: (duration: number, distance: number, isLongPress: boolean) => void
+  onMouseUp?: (duration: number, distance: number, isLongPress: boolean) => void;
 }
 export interface OnLongPressModifiers {
-  stop?: boolean
-  once?: boolean
-  prevent?: boolean
-  capture?: boolean
-  self?: boolean
+  stop?: boolean;
+  once?: boolean;
+  prevent?: boolean;
+  capture?: boolean;
+  self?: boolean;
 }
 export declare function onLongPress(
   target: MaybeElementRef,
   handler: (evt: PointerEvent) => void,
   options?: OnLongPressOptions
-): () => void
-export type UseOnLongPressReturn = ReturnType<typeof onLongPress>
+): () => void;
+export type UseOnLongPressReturn = ReturnType<typeof onLongPress>;
 ```

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-'use strict'
+'use strict';
 
-const net = require('node:net')
-const os = require('node:os')
-const path = require('node:path')
-const { spawn } = require('node:child_process')
+const net = require('node:net');
+const os = require('node:os');
+const path = require('node:path');
+const { spawn } = require('node:child_process');
 
 const session = [
   process.env.OPENCODE_BROWSER_AGENT_SESSION,
@@ -13,51 +13,51 @@ const session = [
   'default',
 ]
   .find(Boolean)
-  .trim()
+  .trim();
 
 const socketPath =
   process.env.OPENCODE_BROWSER_AGENT_SOCKET ||
-  path.join(os.tmpdir(), `agent-browser-${session}.sock`)
+  path.join(os.tmpdir(), `agent-browser-${session}.sock`);
 
 function getPortForSession(name) {
-  let hash = 0
+  let hash = 0;
   for (let i = 0; i < name.length; i++) {
-    hash = (hash << 5) - hash + name.charCodeAt(i)
-    hash |= 0
+    hash = (hash << 5) - hash + name.charCodeAt(i);
+    hash |= 0;
   }
-  return 49152 + (Math.abs(hash) % 16383)
+  return 49152 + (Math.abs(hash) % 16383);
 }
 
 const host =
   process.env.OPENCODE_BROWSER_AGENT_GATEWAY_HOST ||
   process.env.OPENCODE_BROWSER_AGENT_HOST ||
-  '0.0.0.0'
+  '0.0.0.0';
 
 const portEnv =
-  process.env.OPENCODE_BROWSER_AGENT_GATEWAY_PORT || process.env.OPENCODE_BROWSER_AGENT_PORT
-const port = Number(portEnv) || getPortForSession(session)
+  process.env.OPENCODE_BROWSER_AGENT_GATEWAY_PORT || process.env.OPENCODE_BROWSER_AGENT_PORT;
+const port = Number(portEnv) || getPortForSession(session);
 
 function resolveDaemonPath() {
-  const override = process.env.OPENCODE_BROWSER_AGENT_DAEMON
-  if (override) return override
+  const override = process.env.OPENCODE_BROWSER_AGENT_DAEMON;
+  if (override) return override;
   try {
-    return require.resolve('agent-browser/dist/daemon.js')
+    return require.resolve('agent-browser/dist/daemon.js');
   } catch {
-    return null
+    return null;
   }
 }
 
 function shouldAutoStart() {
-  const autoStart = (process.env.OPENCODE_BROWSER_AGENT_AUTOSTART || '').toLowerCase()
-  return !['0', 'false', 'no'].includes(autoStart)
+  const autoStart = (process.env.OPENCODE_BROWSER_AGENT_AUTOSTART || '').toLowerCase();
+  return !['0', 'false', 'no'].includes(autoStart);
 }
 
 function startDaemon() {
-  if (!shouldAutoStart()) return
-  const daemonPath = resolveDaemonPath()
+  if (!shouldAutoStart()) return;
+  const daemonPath = resolveDaemonPath();
   if (!daemonPath) {
-    console.error('[agent-gateway] agent-browser dependency not found.')
-    return
+    console.error('[agent-gateway] agent-browser dependency not found.');
+    return;
   }
   try {
     const child = spawn(process.execPath, [daemonPath], {
@@ -68,80 +68,80 @@ function startDaemon() {
         AGENT_BROWSER_SESSION: session,
         AGENT_BROWSER_DAEMON: '1',
       },
-    })
-    child.unref()
+    });
+    child.unref();
   } catch (err) {
-    console.error('[agent-gateway] Failed to start daemon:', err?.message || err)
+    console.error('[agent-gateway] Failed to start daemon:', err?.message || err);
   }
 }
 
 async function sleep(ms) {
-  return await new Promise((resolve) => setTimeout(resolve, ms))
+  return await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function connectAgentSocket() {
   return await new Promise((resolve, reject) => {
-    const socket = net.createConnection(socketPath)
-    socket.once('connect', () => resolve(socket))
-    socket.once('error', (err) => reject(err))
-  })
+    const socket = net.createConnection(socketPath);
+    socket.once('connect', () => resolve(socket));
+    socket.once('error', (err) => reject(err));
+  });
 }
 
 async function createAgentConnection() {
   try {
-    return await connectAgentSocket()
+    return await connectAgentSocket();
   } catch {
-    startDaemon()
+    startDaemon();
     for (let attempt = 0; attempt < 20; attempt++) {
-      await sleep(100)
+      await sleep(100);
       try {
-        return await connectAgentSocket()
+        return await connectAgentSocket();
       } catch {
         /* retry silently */
       }
     }
-    throw new Error(`Could not connect to agent-browser socket at ${socketPath}`)
+    throw new Error(`Could not connect to agent-browser socket at ${socketPath}`);
   }
 }
 
 const server = net.createServer(async (client) => {
-  let upstream = null
+  let upstream = null;
   try {
-    upstream = await createAgentConnection()
+    upstream = await createAgentConnection();
   } catch (err) {
-    client.end()
-    console.error('[agent-gateway] Connection failed:', err?.message || err)
-    return
+    client.end();
+    console.error('[agent-gateway] Connection failed:', err?.message || err);
+    return;
   }
 
-  client.pipe(upstream)
-  upstream.pipe(client)
+  client.pipe(upstream);
+  upstream.pipe(client);
 
   const close = () => {
     try {
-      client.destroy()
+      client.destroy();
     } catch {
       /* socket already destroyed */
     }
     try {
-      upstream.destroy()
+      upstream.destroy();
     } catch {
       /* socket already destroyed */
     }
-  }
+  };
 
-  client.on('error', close)
-  upstream.on('error', close)
-  client.on('close', close)
-  upstream.on('close', close)
-})
+  client.on('error', close);
+  upstream.on('error', close);
+  client.on('close', close);
+  upstream.on('close', close);
+});
 
 server.on('error', (err) => {
-  console.error('[agent-gateway] Server error:', err?.message || err)
-  process.exit(1)
-})
+  console.error('[agent-gateway] Server error:', err?.message || err);
+  process.exit(1);
+});
 
 server.listen(port, host, () => {
-  console.log(`[agent-gateway] Listening on ${host}:${port}`)
-  console.log(`[agent-gateway] Proxying to ${socketPath}`)
-})
+  console.log(`[agent-gateway] Listening on ${host}:${port}`);
+  console.log(`[agent-gateway] Proxying to ${socketPath}`);
+});

@@ -66,21 +66,21 @@ Vue's provide/inject API allows ancestor components to share data with any desce
 ```vue
 <!-- App.vue -->
 <script setup>
-import { provide, ref, readonly } from 'vue'
+import { provide, ref, readonly } from 'vue';
 
-const user = ref({ name: 'John', role: 'admin' })
-const theme = ref('dark')
-const locale = ref('en')
+const user = ref({ name: 'John', role: 'admin' });
+const theme = ref('dark');
+const locale = ref('en');
 
 // Provide to all descendants
-provide('user', readonly(user)) // readonly prevents mutations
-provide('theme', theme)
-provide('locale', locale)
+provide('user', readonly(user)); // readonly prevents mutations
+provide('theme', theme);
+provide('locale', locale);
 
 // Provide update functions if needed
 provide('updateTheme', (newTheme) => {
-  theme.value = newTheme
-})
+  theme.value = newTheme;
+});
 </script>
 
 <template>
@@ -111,10 +111,10 @@ provide('updateTheme', (newTheme) => {
 ```vue
 <!-- UserMenu.vue -->
 <script setup>
-import { inject } from 'vue'
+import { inject } from 'vue';
 
 // Inject from any ancestor
-const user = inject('user')
+const user = inject('user');
 </script>
 
 <template>
@@ -125,13 +125,13 @@ const user = inject('user')
 ```vue
 <!-- ThemeToggle.vue -->
 <script setup>
-import { inject } from 'vue'
+import { inject } from 'vue';
 
-const theme = inject('theme')
-const updateTheme = inject('updateTheme')
+const theme = inject('theme');
+const updateTheme = inject('updateTheme');
 
 function toggleTheme() {
-  updateTheme(theme.value === 'dark' ? 'light' : 'dark')
+  updateTheme(theme.value === 'dark' ? 'light' : 'dark');
 }
 </script>
 
@@ -148,26 +148,26 @@ Avoid string key collisions with symbols:
 
 ```js
 // keys.js
-export const UserKey = Symbol('user')
-export const ThemeKey = Symbol('theme')
+export const UserKey = Symbol('user');
+export const ThemeKey = Symbol('theme');
 ```
 
 ```vue
 <script setup>
-import { provide } from 'vue'
-import { UserKey, ThemeKey } from './keys'
+import { provide } from 'vue';
+import { UserKey, ThemeKey } from './keys';
 
-provide(UserKey, user)
-provide(ThemeKey, theme)
+provide(UserKey, user);
+provide(ThemeKey, theme);
 </script>
 ```
 
 ```vue
 <script setup>
-import { inject } from 'vue'
-import { UserKey } from './keys'
+import { inject } from 'vue';
+import { UserKey } from './keys';
 
-const user = inject(UserKey)
+const user = inject(UserKey);
 </script>
 ```
 
@@ -177,13 +177,13 @@ Handle cases where no ancestor provides the value:
 
 ```vue
 <script setup>
-import { inject } from 'vue'
+import { inject } from 'vue';
 
 // With default value
-const theme = inject('theme', 'light')
+const theme = inject('theme', 'light');
 
 // With factory function for objects (avoids shared reference)
-const config = inject('config', () => ({ debug: false }), true)
+const config = inject('config', () => ({ debug: false }), true);
 </script>
 ```
 
@@ -193,17 +193,17 @@ Prevent descendants from mutating provided data:
 
 ```vue
 <script setup>
-import { provide, ref, readonly } from 'vue'
+import { provide, ref, readonly } from 'vue';
 
-const user = ref({ name: 'John' })
+const user = ref({ name: 'John' });
 
 // Descendants can read but not mutate
-provide('user', readonly(user))
+provide('user', readonly(user));
 
 // Provide separate method for updates
 provide('updateUser', (updates) => {
-  Object.assign(user.value, updates)
-})
+  Object.assign(user.value, updates);
+});
 </script>
 ```
 
@@ -211,15 +211,15 @@ provide('updateUser', (updates) => {
 
 ```vue
 <script setup>
-import { provide, computed } from 'vue'
+import { provide, computed } from 'vue';
 
-const items = ref([1, 2, 3])
+const items = ref([1, 2, 3]);
 
 // Descendants will reactively update
 provide(
   'itemCount',
   computed(() => items.value.length)
-)
+);
 </script>
 ```
 

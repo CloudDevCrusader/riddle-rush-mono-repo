@@ -23,7 +23,7 @@ tags: [vue3, component-registration, self-reference, recursive-components, sfc]
 <script setup>
 defineProps({
   item: Object,
-})
+});
 </script>
 
 <template>
@@ -40,7 +40,7 @@ defineProps({
 <script setup>
 defineProps({
   comment: Object,
-})
+});
 </script>
 
 <template>
@@ -60,7 +60,7 @@ defineProps({
 <!-- FooBar.vue -->
 <script setup>
 // If you import a component named FooBar, it takes precedence
-import FooBar from './different/FooBar.vue'
+import FooBar from './different/FooBar.vue';
 </script>
 
 <template>
@@ -74,7 +74,7 @@ To explicitly self-reference when there's a naming conflict:
 ```vue
 <!-- FooBar.vue -->
 <script setup>
-import OtherFooBar from './different/FooBar.vue'
+import OtherFooBar from './different/FooBar.vue';
 // No way to explicitly import "self" in script setup
 // Must rename the import to avoid conflict
 </script>
@@ -97,7 +97,7 @@ export default {
   props: {
     items: Array,
   },
-}
+};
 </script>
 
 <template>
@@ -126,7 +126,7 @@ defineProps({
   node: Object,
   maxDepth: { type: Number, default: 10 },
   currentDepth: { type: Number, default: 0 },
-})
+});
 </script>
 
 <template>

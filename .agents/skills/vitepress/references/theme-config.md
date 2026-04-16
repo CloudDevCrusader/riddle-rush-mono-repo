@@ -27,7 +27,7 @@ export default {
       { text: 'GitHub', link: 'https://github.com/...' },
     ],
   },
-}
+};
 ```
 
 ### Dropdown Menu
@@ -54,7 +54,7 @@ nav: [
       },
     ],
   },
-]
+];
 ```
 
 ### Active Match
@@ -68,7 +68,7 @@ nav: [
     link: '/guide/',
     activeMatch: '/guide/', // Regex pattern
   },
-]
+];
 ```
 
 ## Sidebar
@@ -84,7 +84,7 @@ sidebar: [
       { text: 'Getting Started', link: '/guide/getting-started' },
     ],
   },
-]
+];
 ```
 
 ### Multiple Sidebars
@@ -154,7 +154,7 @@ sidebar: {
 ```ts
 themeConfig: {
   search: {
-    provider: 'local'
+    provider: 'local';
   }
 }
 ```
@@ -201,7 +201,7 @@ socialLinks: [
     link: 'https://...',
     ariaLabel: 'Custom Link',
   },
-]
+];
 ```
 
 ## Footer
@@ -233,7 +233,7 @@ Enable in site config:
 ```ts
 export default {
   lastUpdated: true, // Get timestamp from git
-}
+};
 ```
 
 Customize display:
@@ -262,9 +262,9 @@ outline: {
 Or just the level:
 
 ```ts
-outline: 'deep' // Same as [2, 6]
-outline: 2 // Only h2
-outline: [2, 4] // h2 through h4
+outline: 'deep'; // Same as [2, 6]
+outline: 2; // Only h2
+outline: [2, 4]; // h2 through h4
 ```
 
 ## Doc Footer Navigation
@@ -284,7 +284,7 @@ docFooter: {
 ## External Link Icon
 
 ```ts
-externalLinkIcon: true // Show icon on external links
+externalLinkIcon: true; // Show icon on external links
 ```
 
 ## Appearance Toggle Labels

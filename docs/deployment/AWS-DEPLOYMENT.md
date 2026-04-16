@@ -220,7 +220,7 @@ export default defineNuxtConfig({
       environment: process.env.NODE_ENV || 'production',
     },
   },
-})
+});
 ```
 
 ## CloudFront Setup (Optional)

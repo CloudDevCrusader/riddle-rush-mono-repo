@@ -26,7 +26,7 @@ tsdown --no-treeshake
 export default defineConfig({
   entry: ['src/index.ts'],
   treeshake: true, // Default
-})
+});
 ```
 
 ## How It Works
@@ -38,16 +38,16 @@ export default defineConfig({
 ```ts
 // src/util.ts
 export function unused() {
-  console.log("I'm unused")
+  console.log("I'm unused");
 }
 
 export function hello(x: number) {
-  console.log('Hello World', x)
+  console.log('Hello World', x);
 }
 
 // src/index.ts
-import { hello } from './util'
-hello(1)
+import { hello } from './util';
+hello(1);
 ```
 
 **Output:**
@@ -55,9 +55,9 @@ hello(1)
 ```js
 // dist/index.mjs
 function hello(x) {
-  console.log('Hello World', x)
+  console.log('Hello World', x);
 }
-hello(1)
+hello(1);
 ```
 
 `unused()` function is removed because it's never imported.
@@ -69,13 +69,13 @@ hello(1)
 ```js
 // dist/index.mjs
 function unused() {
-  console.log("I'm unused")
+  console.log("I'm unused");
 }
 
 function hello(x) {
-  console.log('Hello World', x)
+  console.log('Hello World', x);
 }
-hello(1)
+hello(1);
 ```
 
 All code is included, even if unused.
@@ -87,7 +87,7 @@ All code is included, even if unused.
 ```ts
 export default defineConfig({
   treeshake: true,
-})
+});
 ```
 
 Uses Rolldown's default tree shaking.
@@ -101,7 +101,7 @@ export default defineConfig({
     propertyReadSideEffects: false,
     unknownGlobalSideEffects: false,
   },
-})
+});
 ```
 
 See [Rolldown docs](https://rolldown.rs/reference/config-options#treeshake) for all options.
@@ -111,7 +111,7 @@ See [Rolldown docs](https://rolldown.rs/reference/config-options#treeshake) for 
 ```ts
 export default defineConfig({
   treeshake: false,
-})
+});
 ```
 
 ## Side Effects
@@ -141,10 +141,10 @@ export default defineConfig({
   treeshake: {
     moduleSideEffects: (id) => {
       // Preserve side effects for polyfills
-      return id.includes('polyfill')
+      return id.includes('polyfill');
     },
   },
-})
+});
 ```
 
 ## Common Patterns
@@ -157,7 +157,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   treeshake: true,
   minify: true,
-})
+});
 ```
 
 ### Development Build
@@ -166,7 +166,7 @@ export default defineConfig({
 export default defineConfig((options) => ({
   entry: ['src/index.ts'],
   treeshake: !options.watch, // Disable in dev
-}))
+}));
 ```
 
 ### Library with Side Effects
@@ -176,10 +176,10 @@ export default defineConfig({
   entry: ['src/index.ts'],
   treeshake: {
     moduleSideEffects: (id) => {
-      return id.includes('.css') || id.includes('polyfill') || id.includes('side-effect')
+      return id.includes('.css') || id.includes('polyfill') || id.includes('side-effect');
     },
   },
-})
+});
 ```
 
 ### Utilities Library
@@ -190,13 +190,13 @@ export default defineConfig({
   format: ['esm'],
   treeshake: true,
   dts: true,
-})
+});
 ```
 
 Users can import only what they need:
 
 ```ts
-import { onlyWhatINeed } from 'my-utils'
+import { onlyWhatINeed } from 'my-utils';
 ```
 
 ## Benefits
@@ -228,7 +228,7 @@ During development to see all code:
 ```ts
 export default defineConfig((options) => ({
   treeshake: !options.watch,
-}))
+}));
 ```
 
 ### Side Effect Code
@@ -237,7 +237,7 @@ Code with global side effects:
 
 ```ts
 // This has side effects
-window.myGlobal = {}
+window.myGlobal = {};
 
 export function setup() {
   // ...
@@ -259,7 +259,7 @@ Include all code for coverage:
 ```ts
 export default defineConfig({
   treeshake: false,
-})
+});
 ```
 
 ## Tips
@@ -297,15 +297,15 @@ export default defineConfig({
 ```ts
 // utils.ts - perfect for tree shaking
 export function add(a, b) {
-  return a + b
+  return a + b;
 }
 
 export function multiply(a, b) {
-  return a * b
+  return a * b;
 }
 
 // Only 'add' imported = only 'add' bundled
-import { add } from './utils'
+import { add } from './utils';
 ```
 
 ### With Side Effects
@@ -315,10 +315,10 @@ import { add } from './utils'
 if (!Array.prototype.at) {
   Array.prototype.at = function (index) {
     // polyfill implementation
-  }
+  };
 }
 
-export {} // Need to export something
+export {}; // Need to export something
 ```
 
 ```json

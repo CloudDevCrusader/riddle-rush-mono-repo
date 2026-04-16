@@ -26,8 +26,8 @@ pnpm add -D unplugin-vue vue-tsc
 
 ```ts
 // tsdown.config.ts
-import { defineConfig } from 'tsdown'
-import Vue from 'unplugin-vue/rolldown'
+import { defineConfig } from 'tsdown';
+import Vue from 'unplugin-vue/rolldown';
 
 export default defineConfig({
   entry: ['./src/index.ts'],
@@ -38,7 +38,7 @@ export default defineConfig({
   dts: {
     vue: true, // Enable Vue type generation
   },
-})
+});
 ```
 
 ## How It Works
@@ -68,14 +68,14 @@ Generates TypeScript declarations:
 <!-- src/Button.vue -->
 <script setup lang="ts">
 interface Props {
-  type?: 'primary' | 'secondary'
-  disabled?: boolean
+  type?: 'primary' | 'secondary';
+  disabled?: boolean;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 defineEmits<{
-  click: []
-}>()
+  click: [];
+}>();
 </script>
 
 <template>
@@ -101,12 +101,12 @@ defineEmits<{
 
 ```ts
 // src/index.ts
-export { default as Button } from './Button.vue'
-export { default as Input } from './Input.vue'
-export { default as Modal } from './Modal.vue'
+export { default as Button } from './Button.vue';
+export { default as Input } from './Input.vue';
+export { default as Modal } from './Modal.vue';
 
 // Re-export types
-export type { ButtonProps } from './Button.vue'
+export type { ButtonProps } from './Button.vue';
 ```
 
 ## Common Patterns
@@ -131,7 +131,7 @@ export default defineConfig({
     vue: true,
   },
   clean: true,
-})
+});
 ```
 
 ### Multiple Components
@@ -148,20 +148,20 @@ export default defineConfig({
   external: ['vue'],
   plugins: [Vue({ isProduction: true })],
   dts: { vue: true },
-})
+});
 ```
 
 ### With Composition Utilities
 
 ```ts
 // src/composables/useCounter.ts
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 export function useCounter(initial = 0) {
-  const count = ref(initial)
-  const increment = () => count.value++
-  const decrement = () => count.value--
-  return { count, increment, decrement }
+  const count = ref(initial);
+  const increment = () => count.value++;
+  const decrement = () => count.value--;
+  return { count, increment, decrement };
 }
 ```
 
@@ -172,7 +172,7 @@ export default defineConfig({
   external: ['vue'],
   plugins: [Vue({ isProduction: true })],
   dts: { vue: true },
-})
+});
 ```
 
 ### TypeScript Configuration
@@ -234,8 +234,8 @@ export default defineConfig({
 Some Vite Vue plugins may work:
 
 ```ts
-import Vue from 'unplugin-vue/rolldown'
-import Components from 'unplugin-vue-components/rolldown'
+import Vue from 'unplugin-vue/rolldown';
+import Components from 'unplugin-vue-components/rolldown';
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -247,7 +247,7 @@ export default defineConfig({
     }),
   ],
   dts: { vue: true },
-})
+});
 ```
 
 ### JSX Support
@@ -272,7 +272,7 @@ export default defineConfig({
     },
   },
   dts: { vue: true },
-})
+});
 ```
 
 ### Monorepo Vue Packages
@@ -285,7 +285,7 @@ export default defineConfig({
   external: ['vue', /^@mycompany\//],
   plugins: [Vue({ isProduction: true })],
   dts: { vue: true },
-})
+});
 ```
 
 ## Plugin Options
@@ -307,7 +307,7 @@ Vue({
       isCustomElement: (tag) => tag.startsWith('custom-'),
     },
   },
-})
+});
 ```
 
 ## Tips
@@ -333,7 +333,7 @@ Enable in config:
 
 ```ts
 dts: {
-  vue: true
+  vue: true;
 }
 ```
 
@@ -355,7 +355,7 @@ Check TypeScript config:
 Add to external:
 
 ```ts
-external: ['vue']
+external: ['vue'];
 ```
 
 ### SFC Compilation Errors

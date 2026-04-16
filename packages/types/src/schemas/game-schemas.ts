@@ -2,9 +2,9 @@
  * Zod schemas for game domain types — runtime validation for IndexedDB, APIs, and imports.
  * Static types remain in `game.ts`; keep field shapes in sync when either side changes.
  */
-import { z } from 'zod'
+import { z } from 'zod';
 
-export const searchProviderSchema = z.enum(['petscan', 'offline', 'wikipedia'])
+export const searchProviderSchema = z.enum(['petscan', 'offline', 'wikipedia']);
 
 export const categorySchema = z.object({
   id: z.number(),
@@ -15,13 +15,13 @@ export const categorySchema = z.object({
   searchProvider: searchProviderSchema.default('offline'),
   additionalData: z.record(z.string(), z.unknown()).optional(),
   letter: z.string().optional(),
-})
+});
 
 export const gameAttemptSchema = z.object({
   term: z.string(),
   found: z.boolean(),
   timestamp: z.number(),
-})
+});
 
 export const playerSchema = z.object({
   id: z.string(),
@@ -32,19 +32,19 @@ export const playerSchema = z.object({
   currentRoundAnswer: z.string().optional(),
   hasSubmitted: z.boolean().default(false),
   avatar: z.string().optional(),
-})
+});
 
 export const playerWithRankSchema = playerSchema.extend({
   rank: z.number(),
   isWinner: z.boolean(),
-})
+});
 
 const roundPlayerResultSchema = z.object({
   playerId: z.string(),
   playerName: z.string(),
   answer: z.string(),
   score: z.number(),
-})
+});
 
 const roundHistoryEntrySchema = z.object({
   roundNumber: z.number(),
@@ -52,7 +52,7 @@ const roundHistoryEntrySchema = z.object({
   letter: z.string(),
   timestamp: z.number(),
   playerResults: z.array(roundPlayerResultSchema),
-})
+});
 
 export const gameSessionSchema = z.object({
   id: z.string(),
@@ -69,7 +69,7 @@ export const gameSessionSchema = z.object({
   attempts: z.array(gameAttemptSchema).optional(),
   status: z.enum(['active', 'completed', 'abandoned']),
   roundHistory: z.array(roundHistoryEntrySchema).default([]),
-})
+});
 
 export const gameStatisticsSchema = z.object({
   totalGames: z.number(),
@@ -83,7 +83,7 @@ export const gameStatisticsSchema = z.object({
   averageScore: z.number(),
   streakCurrent: z.number(),
   streakBest: z.number(),
-})
+});
 
 export const leaderboardEntrySchema = z.object({
   sessionId: z.string(),
@@ -96,69 +96,69 @@ export const leaderboardEntrySchema = z.object({
   timestamp: z.number(),
   duration: z.number(),
   letter: z.string(),
-})
+});
 
 export const categorySettingsSchema = z.object({
   enabledCategories: z.array(z.string()).default([]),
   soundEnabled: z.boolean().default(true),
-})
+});
 
 export const checkAnswerResponseSchema = z.object({
   found: z.boolean(),
   other: z.array(z.string()),
-})
+});
 
 /** Inferred shapes — use when you want schema-derived types without importing interfaces. */
-export type CategoryParsed = z.infer<typeof categorySchema>
-export type GameAttemptParsed = z.infer<typeof gameAttemptSchema>
-export type PlayerParsed = z.infer<typeof playerSchema>
-export type PlayerWithRankParsed = z.infer<typeof playerWithRankSchema>
-export type GameSessionParsed = z.infer<typeof gameSessionSchema>
-export type GameStatisticsParsed = z.infer<typeof gameStatisticsSchema>
-export type LeaderboardEntryParsed = z.infer<typeof leaderboardEntrySchema>
-export type CategorySettingsParsed = z.infer<typeof categorySettingsSchema>
-export type CheckAnswerResponseParsed = z.infer<typeof checkAnswerResponseSchema>
+export type CategoryParsed = z.infer<typeof categorySchema>;
+export type GameAttemptParsed = z.infer<typeof gameAttemptSchema>;
+export type PlayerParsed = z.infer<typeof playerSchema>;
+export type PlayerWithRankParsed = z.infer<typeof playerWithRankSchema>;
+export type GameSessionParsed = z.infer<typeof gameSessionSchema>;
+export type GameStatisticsParsed = z.infer<typeof gameStatisticsSchema>;
+export type LeaderboardEntryParsed = z.infer<typeof leaderboardEntrySchema>;
+export type CategorySettingsParsed = z.infer<typeof categorySettingsSchema>;
+export type CheckAnswerResponseParsed = z.infer<typeof checkAnswerResponseSchema>;
 
 export function parseCategory(data: unknown): CategoryParsed {
-  return categorySchema.parse(data)
+  return categorySchema.parse(data);
 }
 
 export function parseGameSession(data: unknown): GameSessionParsed {
-  return gameSessionSchema.parse(data)
+  return gameSessionSchema.parse(data);
 }
 
 export function safeParseGameSession(data: unknown) {
-  return gameSessionSchema.safeParse(data)
+  return gameSessionSchema.safeParse(data);
 }
 
 export function parsePlayer(data: unknown): PlayerParsed {
-  return playerSchema.parse(data)
+  return playerSchema.parse(data);
 }
 
 export function parseGameStatistics(data: unknown): GameStatisticsParsed {
-  return gameStatisticsSchema.parse(data)
+  return gameStatisticsSchema.parse(data);
 }
 
 export function safeParseGameStatistics(data: unknown) {
-  return gameStatisticsSchema.safeParse(data)
+  return gameStatisticsSchema.safeParse(data);
 }
 
 export function parseLeaderboardEntry(data: unknown): LeaderboardEntryParsed {
-  return leaderboardEntrySchema.parse(data)
+  return leaderboardEntrySchema.parse(data);
 }
 
 export function safeParseLeaderboardEntry(data: unknown) {
-  return leaderboardEntrySchema.safeParse(data)
+  return leaderboardEntrySchema.safeParse(data);
 }
 
 export function parseCategorySettings(data: unknown): CategorySettingsParsed {
-  return categorySettingsSchema.parse(data)
+  return categorySettingsSchema.parse(data);
 }
 
 export function safeParseCategorySettings(data: unknown) {
-  return categorySettingsSchema.safeParse(data)
+  return categorySettingsSchema.safeParse(data);
 }
 
 export function parseCheckAnswerResponse(data: unknown): CheckAnswerResponseParsed {
-  return checkAnswerResponseSchema.parse(data)
+  return checkAnswerResponseSchema.parse(data);
 }

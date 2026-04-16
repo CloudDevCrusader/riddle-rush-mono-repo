@@ -12,7 +12,7 @@ This behavior causes confusion when developers configure loading and error state
 
 ```vue
 <script setup>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from 'vue';
 
 // These options will be IGNORED if a parent Suspense exists
 const AsyncDashboard = defineAsyncComponent({
@@ -20,7 +20,7 @@ const AsyncDashboard = defineAsyncComponent({
   loadingComponent: LoadingSpinner, // Won't show!
   errorComponent: ErrorDisplay, // Won't show!
   timeout: 3000, // Ignored!
-})
+});
 </script>
 
 <template>
@@ -33,7 +33,7 @@ const AsyncDashboard = defineAsyncComponent({
 
 ```vue
 <script setup>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from 'vue';
 
 // Use suspensible: false to keep control of loading/error states
 const AsyncDashboard = defineAsyncComponent({
@@ -42,7 +42,7 @@ const AsyncDashboard = defineAsyncComponent({
   errorComponent: ErrorDisplay,
   timeout: 3000,
   suspensible: false, // Component controls its own loading state
-})
+});
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
+import { createConfigForNuxt } from '@nuxt/eslint-config/flat';
 
 export default createConfigForNuxt({
   features: {
@@ -19,8 +19,9 @@ export default createConfigForNuxt({
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
       'no-var': 'error',
+      /* trunk-ignore(eslint/@stylistic/quote-props) */
       eqeqeq: ['error', 'always', { null: 'ignore' }],
-      '@stylistic/semi': ['error', 'never'],
+      '@stylistic/semi': ['error', 'always'],
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/brace-style': ['error', '1tbs'],
@@ -45,10 +46,12 @@ export default createConfigForNuxt({
       '*.min.js',
       'scripts/',
       '.claude/',
+      '.agents/',
+      '.agent/',
       '.opencode/',
       '.planning/',
       '.zenflow/',
       'openspec/',
       'android/',
     ],
-  })
+  });

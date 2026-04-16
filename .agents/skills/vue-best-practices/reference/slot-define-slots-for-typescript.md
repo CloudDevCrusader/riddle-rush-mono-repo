@@ -23,14 +23,14 @@ tags: [vue3, slots, typescript, type-safety, defineSlots, vue3.3]
 <!-- FancyList.vue -->
 <script setup lang="ts">
 interface Item {
-  id: number
-  name: string
-  price: number
+  id: number;
+  name: string;
+  price: number;
 }
 
 const props = defineProps<{
-  items: Item[]
-}>()
+  items: Item[];
+}>();
 </script>
 
 <template>
@@ -59,21 +59,21 @@ const props = defineProps<{
 <!-- FancyList.vue -->
 <script setup lang="ts">
 interface Item {
-  id: number
-  name: string
-  price: number
+  id: number;
+  name: string;
+  price: number;
 }
 
 const props = defineProps<{
-  items: Item[]
-}>()
+  items: Item[];
+}>();
 
 // Define slot types
 defineSlots<{
-  default(props: { item: Item; index: number }): any
-  header(props: { count: number }): any
-  empty(): any // Slot with no props
-}>()
+  default(props: { item: Item; index: number }): any;
+  header(props: { count: number }): any;
+  empty(): any; // Slot with no props
+}>();
 </script>
 
 <template>
@@ -98,9 +98,9 @@ defineSlots<{
 ```vue
 <!-- Consumer.vue - Full type checking! -->
 <script setup lang="ts">
-import FancyList from './FancyList.vue'
+import FancyList from './FancyList.vue';
 
-const products = ref([{ id: 1, name: 'Widget', price: 9.99 }])
+const products = ref([{ id: 1, name: 'Widget', price: 9.99 }]);
 </script>
 
 <template>
@@ -130,12 +130,12 @@ For components with generic item types:
 ```vue
 <script setup lang="ts" generic="T">
 defineProps<{
-  items: T[]
-}>()
+  items: T[];
+}>();
 
 defineSlots<{
-  default(props: { item: T; index: number }): any
-}>()
+  default(props: { item: T; index: number }): any;
+}>();
 </script>
 ```
 
@@ -157,8 +157,8 @@ Consider renaming slot props to be more specific when collisions are likely:
 
 ```typescript
 defineSlots<{
-  default(props: { listItem: T; itemIndex: number }): any
-}>()
+  default(props: { listItem: T; itemIndex: number }): any;
+}>();
 ```
 
 ## Requirements

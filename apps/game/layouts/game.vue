@@ -33,32 +33,32 @@
  * Game Layout
  * Standard layout for game pages with background and back button
  */
-const { getAssetPath } = useAssets()
-const router = useRouter()
+const { getAssetPath } = useAssets();
+const router = useRouter();
 
 // Layout state
-const backgroundImage = ref<string | null>(null)
-const backButtonImage = ref<string>(getAssetPath('assets/players/back.png'))
-const showBackButton = ref(true)
-const onBackCallback = ref<(() => void) | null>(null)
+const backgroundImage = ref<string | null>(null);
+const backButtonImage = ref<string>(getAssetPath('assets/players/back.png'));
+const showBackButton = ref(true);
+const onBackCallback = ref<(() => void) | null>(null);
 
 // Provide methods for pages to customize layout
 provide('setBackground', (src: string) => {
-  backgroundImage.value = src
-})
+  backgroundImage.value = src;
+});
 
 provide('setBackButton', (config: { visible?: boolean; image?: string; onBack?: () => void }) => {
-  if (config.visible !== undefined) showBackButton.value = config.visible
-  if (config.image) backButtonImage.value = config.image
-  if (config.onBack) onBackCallback.value = config.onBack
-})
+  if (config.visible !== undefined) showBackButton.value = config.visible;
+  if (config.image) backButtonImage.value = config.image;
+  if (config.onBack) onBackCallback.value = config.onBack;
+});
 
 // Handle back button click
 const handleBack = () => {
   if (onBackCallback.value) {
-    onBackCallback.value()
+    onBackCallback.value();
   } else {
-    router.back()
+    router.back();
   }
-}
+};
 </script>

@@ -18,14 +18,14 @@ Use tsdown with these options enabled:
 
 ```ts
 // tsdown.config.ts
-import { defineConfig } from 'tsdown'
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   dts: true,
   exports: true,
-})
+});
 ```
 
 | Option    | Value     | Purpose                                       |
@@ -42,7 +42,7 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   exports: true,
-})
+});
 ```
 
 The `exports: true` option auto-generates the `exports` field in `package.json` when running `tsdown`.

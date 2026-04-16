@@ -18,26 +18,26 @@
 
 <script setup lang="ts">
 interface Props {
-  imageSrc: string
-  hoverImageSrc?: string
-  alt: string
-  disabled?: boolean
+  imageSrc: string;
+  hoverImageSrc?: string;
+  alt: string;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   hoverImageSrc: undefined,
   disabled: false,
-})
+});
 
 const emit = defineEmits<{
-  click: [event: MouseEvent]
-}>()
+  click: [event: MouseEvent];
+}>();
 
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled) {
-    emit('click', event)
+    emit('click', event);
   }
-}
+};
 </script>
 
 <style scoped>

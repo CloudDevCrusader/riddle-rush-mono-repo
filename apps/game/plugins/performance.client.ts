@@ -4,56 +4,56 @@
  */
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const { mark, measure, measureFn, logReport, isSupported } = usePerformance()
-  const { log } = useLogger()
+  const { mark, measure, measureFn, logReport, isSupported } = usePerformance();
+  const { log } = useLogger();
 
   if (!isSupported) {
-    log('Performance API not supported')
-    return
+    log('Performance API not supported');
+    return;
   }
 
   // Mark app initialization
-  mark('app-init')
+  mark('app-init');
 
   // Measure app mount time
   nuxtApp.hook('app:mounted', () => {
-    measure('app-init')
-    log('App mounted')
-  })
+    measure('app-init');
+    log('App mounted');
+  });
 
   // Measure page transitions
   nuxtApp.hook('page:start', () => {
-    mark('page-transition')
-  })
+    mark('page-transition');
+  });
 
   nuxtApp.hook('page:finish', () => {
-    measure('page-transition')
-  })
+    measure('page-transition');
+  });
 
   // Measure Vue component rendering
   nuxtApp.hook('vue:setup', () => {
-    mark('vue-setup')
-  })
+    mark('vue-setup');
+  });
 
   nuxtApp.hook('app:rendered', () => {
-    measure('vue-setup')
-  })
+    measure('vue-setup');
+  });
 
   // Log performance report in development on app error
   if (process.env.NODE_ENV === 'development') {
     nuxtApp.hook('app:error', () => {
-      logReport()
-    })
+      logReport();
+    });
 
     // Expose performance utils globally in development
     if (import.meta.client) {
-      ;(window as any).__performance__ = {
+      (window as any).__performance__ = {
         mark,
         measure,
         measureFn,
         logReport,
-      }
-      log('Performance tools available at window.__performance__')
+      };
+      log('Performance tools available at window.__performance__');
     }
   }
 
@@ -67,5 +67,5 @@ export default defineNuxtPlugin((nuxtApp) => {
         logReport,
       },
     },
-  }
-})
+  };
+});

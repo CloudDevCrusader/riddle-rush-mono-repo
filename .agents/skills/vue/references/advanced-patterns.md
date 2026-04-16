@@ -64,7 +64,7 @@ Animate enter/leave of a single element or component.
 <script setup lang="ts">
 function onEnter(el: Element, done: () => void) {
   // Animate with JS library
-  gsap.to(el, { opacity: 1, onComplete: done })
+  gsap.to(el, { opacity: 1, onComplete: done });
 }
 </script>
 ```
@@ -165,7 +165,7 @@ Suspense waits for:
 ```vue
 <!-- AsyncComponent.vue -->
 <script setup lang="ts">
-const data = await fetch('/api/data').then((r) => r.json())
+const data = await fetch('/api/data').then((r) => r.json());
 </script>
 ```
 
@@ -207,17 +207,17 @@ Cache component instances when toggled.
 ### Lifecycle Hooks
 
 ```ts
-import { onActivated, onDeactivated } from 'vue'
+import { onActivated, onDeactivated } from 'vue';
 
 onActivated(() => {
   // Called when component is inserted from cache
-  fetchLatestData()
-})
+  fetchLatestData();
+});
 
 onDeactivated(() => {
   // Called when component is removed to cache
-  pauseTimers()
-})
+  pauseTimers();
+});
 ```
 
 ## v-memo
@@ -255,22 +255,22 @@ Create reusable DOM manipulations.
 // Directive definition
 const vFocus: Directive<HTMLElement> = {
   mounted: (el) => el.focus(),
-}
+};
 
 // Full hooks
 const vColor: Directive<HTMLElement, string> = {
   created(el, binding, vnode, prevVnode) {},
   beforeMount(el, binding) {},
   mounted(el, binding) {
-    el.style.color = binding.value
+    el.style.color = binding.value;
   },
   beforeUpdate(el, binding) {},
   updated(el, binding) {
-    el.style.color = binding.value
+    el.style.color = binding.value;
   },
   beforeUnmount(el, binding) {},
   unmounted(el, binding) {},
-}
+};
 ```
 
 ### Directive Arguments & Modifiers
@@ -299,7 +299,7 @@ const vColor: Directive<HTMLElement, string> = {
 // main.ts
 app.directive('focus', {
   mounted: (el) => el.focus(),
-})
+});
 ```
 
 <!--

@@ -16,11 +16,11 @@ pnpm add -D @unocss/preset-icons @iconify-json/[collection-name]
 Example: `@iconify-json/mdi` for Material Design Icons, `@iconify-json/carbon` for Carbon icons.
 
 ```ts
-import { defineConfig, presetIcons } from 'unocss'
+import { defineConfig, presetIcons } from 'unocss';
 
 export default defineConfig({
   presets: [presetIcons()],
-})
+});
 ```
 
 ## Usage
@@ -80,7 +80,7 @@ presetIcons({
   warn: true, // Warn on missing icons
   autoInstall: true, // Auto-install missing icon sets
   cdn: 'https://esm.sh/', // CDN for browser usage
-})
+});
 ```
 
 ## Custom Icon Collections
@@ -94,7 +94,7 @@ presetIcons({
       circle: '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50"></circle></svg>',
     },
   },
-})
+});
 ```
 
 Usage: `<span class="i-custom:circle"></span>`
@@ -102,7 +102,7 @@ Usage: `<span class="i-custom:circle"></span>`
 ### File System Loader
 
 ```ts
-import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
+import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders';
 
 presetIcons({
   collections: {
@@ -110,19 +110,19 @@ presetIcons({
       svg.replace(/#fff/, 'currentColor')
     ),
   },
-})
+});
 ```
 
 ### Dynamic Import (Browser)
 
 ```ts
-import presetIcons from '@unocss/preset-icons/browser'
+import presetIcons from '@unocss/preset-icons/browser';
 
 presetIcons({
   collections: {
     carbon: () => import('@iconify-json/carbon/icons.json').then((i) => i.default),
   },
-})
+});
 ```
 
 ## Icon Customization
@@ -132,22 +132,22 @@ presetIcons({
   customizations: {
     // Transform SVG
     transform(svg, collection, icon) {
-      return svg.replace(/#fff/, 'currentColor')
+      return svg.replace(/#fff/, 'currentColor');
     },
     // Global sizing
     customize(props) {
-      props.width = '2em'
-      props.height = '2em'
-      return props
+      props.width = '2em';
+      props.height = '2em';
+      return props;
     },
     // Per-collection
     iconCustomizer(collection, icon, props) {
       if (collection === 'mdi') {
-        props.width = '2em'
+        props.width = '2em';
       }
     },
   },
-})
+});
 ```
 
 ## CSS Directive

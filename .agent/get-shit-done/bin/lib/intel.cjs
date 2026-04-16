@@ -23,7 +23,7 @@ const INTEL_FILES = {
   apis: 'apis.json',
   deps: 'deps.json',
   arch: 'arch.md',
-  stack: 'stack.json'
+  stack: 'stack.json',
 };
 
 // ─── Internal helpers ────────────────────────────────────────────────────────
@@ -67,7 +67,10 @@ function isIntelEnabled(planningDir) {
  * @returns {{ disabled: true, message: string }}
  */
 function disabledResponse() {
-  return { disabled: true, message: 'Intel system disabled. Set intel.enabled=true in config.json to activate.' };
+  return {
+    disabled: true,
+    message: 'Intel system disabled. Set intel.enabled=true in config.json to activate.',
+  };
 }
 
 /**
@@ -160,10 +163,10 @@ function matchesInValue(value, lowerTerm) {
     return value.toLowerCase().includes(lowerTerm);
   }
   if (Array.isArray(value)) {
-    return value.some(v => matchesInValue(v, lowerTerm));
+    return value.some((v) => matchesInValue(v, lowerTerm));
   }
   if (value && typeof value === 'object') {
-    return Object.values(value).some(v => matchesInValue(v, lowerTerm));
+    return Object.values(value).some((v) => matchesInValue(v, lowerTerm));
   }
   return false;
 }
@@ -182,7 +185,7 @@ function searchArchMd(filePath, term) {
     const content = fs.readFileSync(filePath, 'utf8');
     const lowerTerm = term.toLowerCase();
     const lines = content.split(/\r?\n/);
-    return lines.filter(line => line.toLowerCase().includes(lowerTerm));
+    return lines.filter((line) => line.toLowerCase().includes(lowerTerm));
   } catch (_e) {
     return [];
   }
@@ -336,7 +339,7 @@ function intelUpdate(planningDir) {
 
   return {
     action: 'spawn_agent',
-    message: 'Run gsd-tools intel update or spawn gsd-intel-updater agent for full refresh'
+    message: 'Run gsd-tools intel update or spawn gsd-intel-updater agent for full refresh',
   };
 }
 
@@ -363,11 +366,19 @@ function saveRefreshSnapshot(planningDir) {
 
   const timestamp = new Date().toISOString();
   const snapshotPath = path.join(intelPath, '.last-refresh.json');
-  fs.writeFileSync(snapshotPath, JSON.stringify({
-    hashes,
-    timestamp,
-    version: 1
-  }, null, 2), 'utf8');
+  fs.writeFileSync(
+    snapshotPath,
+    JSON.stringify(
+      {
+        hashes,
+        timestamp,
+        version: 1,
+      },
+      null,
+      2
+    ),
+    'utf8'
+  );
 
   return { saved: true, timestamp, files: fileCount };
 }
@@ -425,7 +436,9 @@ function intelValidate(planningDir) {
     if (data._meta && data._meta.updated_at) {
       const age = now - new Date(data._meta.updated_at).getTime();
       if (age > STALE_MS) {
-        warnings.push(`${filename}: _meta.updated_at is ${Math.round(age / 3600000)} hours old (>24 hr)`);
+        warnings.push(
+          `${filename}: _meta.updated_at is ${Math.round(age / 3600000)} hours old (>24 hr)`
+        );
       }
     } else {
       warnings.push(`${filename}: missing _meta.updated_at`);
@@ -439,7 +452,9 @@ function intelValidate(planningDir) {
           if (entry.exports && Array.isArray(entry.exports)) {
             for (const exp of entry.exports) {
               if (typeof exp === 'string' && exp.includes(' ')) {
-                warnings.push(`${filename}: "${entryPath}" export "${exp}" looks like a description (contains space)`);
+                warnings.push(
+                  `${filename}: "${entryPath}" export "${exp}" looks like a description (contains space)`
+                );
               }
             }
           }
@@ -656,5 +671,5 @@ module.exports = {
 
   // Constants
   INTEL_FILES,
-  INTEL_DIR
+  INTEL_DIR,
 };

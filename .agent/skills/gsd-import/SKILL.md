@@ -3,7 +3,6 @@ name: gsd-import
 description: Ingest external plans with conflict detection against project decisions before writing anything.
 ---
 
-
 <objective>
 Import external plan files into the GSD planning system with conflict detection against PROJECT.md decisions.
 

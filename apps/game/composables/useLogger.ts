@@ -14,7 +14,7 @@ export const useLogger = () => {
             appVersion: process.env.APP_VERSION || '1.0.0',
             debugErrorSync: false,
           },
-        }
+        };
 
   // Import error sync dynamically
   const { syncErrorLog } =
@@ -22,27 +22,27 @@ export const useLogger = () => {
       ? useErrorSync()
       : {
           syncErrorLog: async () => {},
-        }
+        };
 
-  const isProduction = process.env.NODE_ENV === 'production'
-  const isDevelopment = process.env.NODE_ENV === 'development'
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const log = (message: string, ...args: unknown[]) => {
     if (isDevelopment) {
-      console.log(`[LOG] ${message}`, ...args)
+      console.log(`[LOG] ${message}`, ...args);
     }
     // In production, we don't log regular messages to avoid performance impact
-  }
+  };
 
   const warn = (message: string, ...args: unknown[]) => {
     if (isDevelopment) {
-      console.warn(`[WARN] ${message}`, ...args)
+      console.warn(`[WARN] ${message}`, ...args);
     }
     // In production, we could send warnings to monitoring
     if (isProduction) {
-      syncErrorLog('warning', message, ...args)
+      syncErrorLog('warning', message, ...args);
     }
-  }
+  };
 
   const error = (message: string, error?: unknown, context: Record<string, unknown> = {}) => {
     const errorContext = {
@@ -52,27 +52,27 @@ export const useLogger = () => {
       url: window.location.href,
       userAgent: navigator.userAgent,
       ...context,
-    }
+    };
 
     if (isDevelopment) {
-      console.error(`[ERROR] ${message}`, error, errorContext)
+      console.error(`[ERROR] ${message}`, error, errorContext);
     }
 
     // Always sync errors in production and development for debugging
-    syncErrorLog('error', message, error, errorContext)
-  }
+    syncErrorLog('error', message, error, errorContext);
+  };
 
   const debug = (message: string, ...args: unknown[]) => {
     if (isDevelopment) {
-      console.debug(`[DEBUG] ${message}`, ...args)
+      console.debug(`[DEBUG] ${message}`, ...args);
     }
-  }
+  };
 
   const info = (message: string, ...args: unknown[]) => {
     if (isDevelopment) {
-      console.info(`[INFO] ${message}`, ...args)
+      console.info(`[INFO] ${message}`, ...args);
     }
-  }
+  };
 
   return {
     log,
@@ -80,5 +80,5 @@ export const useLogger = () => {
     error,
     debug,
     info,
-  }
-}
+  };
+};

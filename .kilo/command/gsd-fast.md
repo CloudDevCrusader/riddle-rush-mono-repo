@@ -1,6 +1,6 @@
 ---
 description: Execute a trivial task inline — no subagents, no planning overhead
-argument-hint: "[task description]"
+argument-hint: '[task description]'
 tools:
   read: true
   write: true

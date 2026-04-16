@@ -1,15 +1,15 @@
-import { fileURLToPath } from 'node:url'
-import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants'
-import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
-import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
-import { filterSsrPlugins } from './utils/filter-ssr-plugins'
-import { withTrailingSlash } from 'ufo'
-import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema'
+import { fileURLToPath } from 'node:url';
+import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants';
+import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform';
+import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite';
+import { filterSsrPlugins } from './utils/filter-ssr-plugins';
+import { withTrailingSlash } from 'ufo';
+import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema';
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
-const isDev = process.env.NODE_ENV !== 'production'
-const isDebugBuild = process.env.DEBUG_BUILD === 'true'
+const isDev = process.env.NODE_ENV !== 'production';
+const isDebugBuild = process.env.DEBUG_BUILD === 'true';
 const isLocalhostBuild = [
   process.env.BASE_URL,
   process.env.NUXT_PUBLIC_BASE_URL,
@@ -18,20 +18,20 @@ const isLocalhostBuild = [
   process.env.NUXT_HOST,
 ]
   .filter(Boolean)
-  .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
+  .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'));
 
-const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
+const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild';
 const resolvedBaseUrl = (() => {
-  const baseUrl = process.env.BASE_URL || process.env.NUXT_PUBLIC_BASE_URL || ''
-  return baseUrl ? withTrailingSlash(baseUrl) : '/'
-})()
+  const baseUrl = process.env.BASE_URL || process.env.NUXT_PUBLIC_BASE_URL || '';
+  return baseUrl ? withTrailingSlash(baseUrl) : '/';
+})();
 
 // Helper function to filter out problematic i18n plugins
 function filterProblematicPlugins(app: NuxtAppSchema) {
   if (app.plugins && Array.isArray(app.plugins)) {
-    const originalLength = app.plugins.length
+    const originalLength = app.plugins.length;
     app.plugins = app.plugins.filter((plugin: NuxtPlugin) => {
-      const src = plugin.src
+      const src = plugin.src;
       if (src && typeof src === 'string') {
         // Remove SSR-only plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
         // NOTE: Do NOT filter the preload plugin — it's required to load locale messages
@@ -42,23 +42,23 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
           src.includes('route-locale-detect') ||
           src.includes('ssg-detect') ||
           src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
-          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
+          src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect');
 
         if (isProblematicPlugin) {
           // Only log in development to avoid cluttering production logs
           if (process.env.NODE_ENV === 'development') {
-            console.warn(`[nuxt.config] Filtering out problematic plugin: ${src}`)
+            console.warn(`[nuxt.config] Filtering out problematic plugin: ${src}`);
           }
-          return false
+          return false;
         }
       }
-      return true
-    })
+      return true;
+    });
     // Only log in development
     if (process.env.NODE_ENV === 'development' && app.plugins.length < originalLength) {
       console.log(
         `[nuxt.config] Filtered ${originalLength - app.plugins.length} problematic plugin(s)`
-      )
+      );
     }
   }
 }
@@ -168,7 +168,7 @@ export default defineNuxtConfig({
       defaultPlayers: Number(process.env.NUXT_PUBLIC_DEFAULT_PLAYERS) || DEFAULT_PLAYERS,
       // Additional variables with safe Terraform fallback
       ...((): Record<string, string> => {
-        const terraform = getTerraformOutputsFromEnv()
+        const terraform = getTerraformOutputsFromEnv();
         return {
           cdnURL: process.env.CDN_URL || '',
           awsRegion: process.env.AWS_REGION || terraform.aws_region || 'eu-central-1',
@@ -180,7 +180,7 @@ export default defineNuxtConfig({
           ...(terraform.bucket_name && !process.env.BASE_URL
             ? { bucket_name: terraform.bucket_name }
             : {}),
-        }
+        };
       })(),
     },
   },
@@ -285,15 +285,15 @@ export default defineNuxtConfig({
           // Suppress circular dependency warnings in production, but log them in debug
           if (warning.code === 'CIRCULAR_DEPENDENCY') {
             if (isDebugBuild || isDev) {
-              console.warn('Circular dependency detected:', warning.message)
+              console.warn('Circular dependency detected:', warning.message);
               console.warn(
                 'Check this before deploying, might fail after build',
                 JSON.stringify(warning, null, 2)
-              )
+              );
             }
-            return
+            return;
           }
-          warn(warning)
+          warn(warning);
         },
         // NOTE: Do not use manualChunks here. Vue, Nuxt runtime, and @nuxtjs/i18n
         // have circular module dependencies. Splitting them into separate chunks causes
@@ -325,12 +325,12 @@ export default defineNuxtConfig({
       // This helps prevent "Cannot access 'NuxtPluginIndicator' before initialization" errors
       if (process.env.NODE_ENV === 'development') {
         // Log only in development mode for debugging
-        console.warn('Development mode: Ensuring proper plugin initialization order')
+        console.warn('Development mode: Ensuring proper plugin initialization order');
       }
     },
     // Filter out problematic i18n plugins at app resolution stage
     'app:resolve': (app: NuxtAppSchema) => {
-      filterProblematicPlugins(app)
+      filterProblematicPlugins(app);
     },
   },
 
@@ -603,4 +603,4 @@ export default defineNuxtConfig({
         },
       }
     : {}),
-})
+});

@@ -53,12 +53,12 @@
 
 <script setup lang="ts">
 interface Props {
-  modelValue: boolean
-  title?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  showClose?: boolean
-  closeOnOverlay?: boolean
-  persistent?: boolean
+  modelValue: boolean;
+  title?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  showClose?: boolean;
+  closeOnOverlay?: boolean;
+  persistent?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -67,54 +67,54 @@ const props = withDefaults(defineProps<Props>(), {
   showClose: true,
   closeOnOverlay: true,
   persistent: false,
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  close: []
-}>()
+  'update:modelValue': [value: boolean];
+  close: [];
+}>();
 
-const modalClasses = computed(() => [`modal-container--${props.size}`])
+const modalClasses = computed(() => [`modal-container--${props.size}`]);
 
 const close = () => {
   if (!props.persistent) {
-    emit('update:modelValue', false)
-    emit('close')
+    emit('update:modelValue', false);
+    emit('close');
   }
-}
+};
 
 const handleOverlayClick = () => {
   if (props.closeOnOverlay) {
-    close()
+    close();
   }
-}
+};
 
 // Handle escape key
 const handleEscape = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && props.modelValue && !props.persistent) {
-    close()
+    close();
   }
-}
+};
 
 onMounted(() => {
-  document.addEventListener('keydown', handleEscape)
-})
+  document.addEventListener('keydown', handleEscape);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleEscape)
-})
+  document.removeEventListener('keydown', handleEscape);
+});
 
 // Lock body scroll when modal is open
 watch(
   () => props.modelValue,
   (isOpen: boolean) => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = '';
     }
   }
-)
+);
 </script>
 
 <style scoped>

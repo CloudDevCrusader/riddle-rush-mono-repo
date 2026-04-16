@@ -30,7 +30,7 @@ tsdown --platform neutral
 export default defineConfig({
   entry: ['src/index.ts'],
   platform: 'browser',
-})
+});
 ```
 
 ## Platform Details
@@ -43,7 +43,7 @@ export default defineConfig({
 export default defineConfig({
   entry: ['src/index.ts'],
   platform: 'node',
-})
+});
 ```
 
 **Characteristics:**
@@ -62,7 +62,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   platform: 'browser',
   format: ['esm'],
-})
+});
 ```
 
 **Characteristics:**
@@ -81,7 +81,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   platform: 'neutral',
   format: ['esm'],
-})
+});
 ```
 
 **Characteristics:**
@@ -101,7 +101,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs'],
   platform: 'browser', // Ignored for CJS
-})
+});
 ```
 
 See [rolldown PR #4693](https://github.com/rolldown/rolldown/pull/4693#issuecomment-2912229545) for details.
@@ -137,7 +137,7 @@ export default defineConfig({
       mainFields: ['module', 'main'],
     },
   },
-})
+});
 ```
 
 ## Common Patterns
@@ -150,7 +150,7 @@ export default defineConfig({
   format: ['esm'],
   platform: 'node',
   shims: true,
-})
+});
 ```
 
 ### Browser Library (IIFE)
@@ -162,7 +162,7 @@ export default defineConfig({
   platform: 'browser',
   globalName: 'MyLib',
   minify: true,
-})
+});
 ```
 
 ### Universal Library
@@ -177,7 +177,7 @@ export default defineConfig({
       mainFields: ['module', 'main'],
     },
   },
-})
+});
 ```
 
 ### React Component Library
@@ -188,7 +188,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   platform: 'browser',
   external: ['react', 'react-dom'],
-})
+});
 ```
 
 ### Node.js + Browser Builds
@@ -205,7 +205,7 @@ export default defineConfig([
     format: ['esm'],
     platform: 'browser',
   },
-])
+]);
 ```
 
 ## Troubleshooting
@@ -238,7 +238,7 @@ export default defineConfig({
       conditions: ['import', 'require'],
     },
   },
-})
+});
 ```
 
 ## Tips

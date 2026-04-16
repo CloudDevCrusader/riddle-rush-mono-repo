@@ -10,11 +10,11 @@ The Tailwind CSS v4 compatible preset. Enhances preset-wind3 with modern CSS fea
 ## Installation
 
 ```ts
-import { defineConfig, presetWind4 } from 'unocss'
+import { defineConfig, presetWind4 } from 'unocss';
 
 export default defineConfig({
   presets: [presetWind4()],
-})
+});
 ```
 
 ## Key Differences from Wind3
@@ -25,15 +25,15 @@ No need for `@unocss/reset` - reset is built-in:
 
 ```ts
 // Remove these imports
-import '@unocss/reset/tailwind.css' // ❌ Not needed
-import '@unocss/reset/tailwind-compat.css' // ❌ Not needed
+import '@unocss/reset/tailwind.css'; // ❌ Not needed
+import '@unocss/reset/tailwind-compat.css'; // ❌ Not needed
 
 // Enable in config
 presetWind4({
   preflights: {
     reset: true,
   },
-})
+});
 ```
 
 ### OKLCH Color Model
@@ -98,7 +98,7 @@ presetWind4({
     // @property CSS rules
     property: true,
   },
-})
+});
 ```
 
 ### Theme Variable Processing
@@ -106,7 +106,7 @@ presetWind4({
 Convert rem to px for theme variables:
 
 ```ts
-import { createRemToPxProcessor } from '@unocss/preset-wind4/utils'
+import { createRemToPxProcessor } from '@unocss/preset-wind4/utils';
 
 presetWind4({
   preflights: {
@@ -115,12 +115,12 @@ presetWind4({
       process: createRemToPxProcessor(),
     },
   },
-})
+});
 
 // Also apply to utilities
 export default defineConfig({
   postprocess: [createRemToPxProcessor()],
-})
+});
 ```
 
 ### Property Layer Customization
@@ -135,7 +135,7 @@ presetWind4({
       selector: ':where(*, ::before, ::after)',
     },
   },
-})
+});
 ```
 
 Remove `@supports` wrapper:
@@ -147,7 +147,7 @@ presetWind4({
       parent: false,
     },
   },
-})
+});
 ```
 
 ## Generated Layers
@@ -163,7 +163,7 @@ presetWind4({
 Global default configuration for reset styles:
 
 ```ts
-import type { Theme } from '@unocss/preset-wind4/theme'
+import type { Theme } from '@unocss/preset-wind4/theme';
 
 const defaults: Theme['default'] = {
   transition: {
@@ -179,7 +179,7 @@ const defaults: Theme['default'] = {
     family: 'var(--font-mono)',
     // ...
   },
-}
+};
 ```
 
 ## Compatibility Notes
@@ -195,7 +195,7 @@ presetWind4({
       process: createRemToPxProcessor(),
     },
   },
-})
+});
 ```
 
 ### presetLegacyCompat

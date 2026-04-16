@@ -10,14 +10,14 @@ Prose classes for adding typographic defaults to vanilla HTML content.
 ## Installation
 
 ```ts
-import { defineConfig, presetTypography, presetWind3 } from 'unocss'
+import { defineConfig, presetTypography, presetWind3 } from 'unocss';
 
 export default defineConfig({
   presets: [
     presetWind3(), // Required!
     presetTypography(),
   ],
-})
+});
 ```
 
 ## Basic Usage
@@ -83,7 +83,7 @@ presetTypography({
     code: { color: '#8b5cf6' },
     'a:hover': { color: '#f43f5e' },
   },
-})
+});
 ```
 
 <!--

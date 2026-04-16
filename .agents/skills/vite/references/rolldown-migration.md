@@ -36,7 +36,7 @@ export default defineConfig({
       output: { globals: { vue: 'Vue' } },
     },
   },
-})
+});
 
 // After (Vite 8)
 export default defineConfig({
@@ -46,7 +46,7 @@ export default defineConfig({
       output: { globals: { vue: 'Vue' } },
     },
   },
-})
+});
 ```
 
 ### esbuild → oxc
@@ -58,7 +58,7 @@ export default defineConfig({
     jsxFactory: 'h',
     jsxFragment: 'Fragment',
   },
-})
+});
 
 // After (Vite 8)
 export default defineConfig({
@@ -69,7 +69,7 @@ export default defineConfig({
       pragmaFrag: 'Fragment',
     },
   },
-})
+});
 ```
 
 ### JSX Configuration
@@ -83,7 +83,7 @@ export default defineConfig({
     },
     jsxInject: `import React from 'react'`, // auto-inject
   },
-})
+});
 ```
 
 ### Custom Transform Targets
@@ -94,7 +94,7 @@ export default defineConfig({
     include: ['**/*.ts', '**/*.tsx'],
     exclude: ['node_modules/**'],
   },
-})
+});
 ```
 
 ## Plugin Compatibility

@@ -22,16 +22,16 @@ Using `watchEffect()` to mutate a ref works but creates unnecessary indirection:
 **Incorrect:**
 
 ```javascript
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue';
 
-const A0 = ref(1)
-const A1 = ref(2)
-const A2 = ref() // Unnecessary ref
+const A0 = ref(1);
+const A1 = ref(2);
+const A2 = ref(); // Unnecessary ref
 
 // WRONG: Using watchEffect to derive state
 watchEffect(() => {
-  A2.value = A0.value + A1.value
-})
+  A2.value = A0.value + A1.value;
+});
 
 // Problems:
 // 1. A2 is writable when it shouldn't be
@@ -42,24 +42,24 @@ watchEffect(() => {
 
 ```javascript
 // WRONG: Complex derived state with watchEffect
-const items = ref([{ price: 10 }, { price: 20 }])
-const total = ref(0)
+const items = ref([{ price: 10 }, { price: 20 }]);
+const total = ref(0);
 
 watchEffect(() => {
-  total.value = items.value.reduce((sum, item) => sum + item.price, 0)
-})
+  total.value = items.value.reduce((sum, item) => sum + item.price, 0);
+});
 ```
 
 **Correct:**
 
 ```javascript
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
-const A0 = ref(1)
-const A1 = ref(2)
+const A0 = ref(1);
+const A1 = ref(2);
 
 // CORRECT: Declarative derived state
-const A2 = computed(() => A0.value + A1.value)
+const A2 = computed(() => A0.value + A1.value);
 
 // Benefits:
 // 1. A2 is read-only by default
@@ -70,40 +70,40 @@ const A2 = computed(() => A0.value + A1.value)
 
 ```javascript
 // CORRECT: Complex derived state with computed
-const items = ref([{ price: 10 }, { price: 20 }])
+const items = ref([{ price: 10 }, { price: 20 }]);
 
 const total = computed(() => {
-  return items.value.reduce((sum, item) => sum + item.price, 0)
-})
+  return items.value.reduce((sum, item) => sum + item.price, 0);
+});
 
 // Multiple derived values
-const itemCount = computed(() => items.value.length)
-const averagePrice = computed(() => (items.value.length ? total.value / itemCount.value : 0))
+const itemCount = computed(() => items.value.length);
+const averagePrice = computed(() => (items.value.length ? total.value / itemCount.value : 0));
 ```
 
 **When watchEffect IS appropriate:**
 
 ```javascript
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue';
 
-const searchQuery = ref('')
+const searchQuery = ref('');
 
 // CORRECT: watchEffect for side effects
 watchEffect(() => {
   // Logging
-  console.log(`Search query changed: ${searchQuery.value}`)
+  console.log(`Search query changed: ${searchQuery.value}`);
 
   // DOM manipulation
-  document.title = `Search: ${searchQuery.value}`
-})
+  document.title = `Search: ${searchQuery.value}`;
+});
 
 // CORRECT: watchEffect for async side effects
 watchEffect(async () => {
   if (searchQuery.value) {
     // API call (side effect, not derived state)
-    await api.logSearch(searchQuery.value)
+    await api.logSearch(searchQuery.value);
   }
-})
+});
 ```
 
 **Summary of when to use each:**
@@ -113,15 +113,15 @@ watchEffect(async () => {
 // - You're deriving a value from reactive state
 // - The result is pure (no side effects)
 // - You want caching
-const fullName = computed(() => `${firstName.value} ${lastName.value}`)
+const fullName = computed(() => `${firstName.value} ${lastName.value}`);
 
 // Use watchEffect() when:
 // - You need to perform side effects
 // - You're interacting with external systems
 // - You need to run async operations
 watchEffect(() => {
-  document.title = fullName.value // Side effect
-})
+  document.title = fullName.value; // Side effect
+});
 ```
 
 ## Reference

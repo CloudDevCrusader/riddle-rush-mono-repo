@@ -22,50 +22,50 @@ While both `ref()` and `reactive()` create reactive state, `reactive()` has seve
 **Incorrect:**
 
 ```javascript
-import { reactive } from 'vue'
+import { reactive } from 'vue';
 
 // reactive() has multiple gotchas:
 
 // 1. Cannot use with primitives
-const count = reactive(0) // Won't work - not reactive
+const count = reactive(0); // Won't work - not reactive
 
 // 2. Cannot reassign the entire object
-let state = reactive({ items: [] })
-state = reactive({ items: [1, 2, 3] }) // Loses reactivity!
+let state = reactive({ items: [] });
+state = reactive({ items: [1, 2, 3] }); // Loses reactivity!
 
 // 3. Destructuring breaks reactivity
-const { items } = state // items is not reactive
+const { items } = state; // items is not reactive
 
 // 4. Passing to functions can lose reactivity
-someFunction(state.items) // May lose reactivity depending on usage
+someFunction(state.items); // May lose reactivity depending on usage
 ```
 
 **Correct:**
 
 ```javascript
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 // ref() works universally:
 
 // 1. Works with primitives
-const count = ref(0)
-count.value++ // Works!
+const count = ref(0);
+count.value++; // Works!
 
 // 2. Can reassign the entire object
-const state = ref({ items: [] })
-state.value = { items: [1, 2, 3] } // Reactivity preserved!
+const state = ref({ items: [] });
+state.value = { items: [1, 2, 3] }; // Reactivity preserved!
 
 // 3. No destructuring issues (you work with .value)
-const items = state.value.items // If you need just the value
+const items = state.value.items; // If you need just the value
 
 // 4. Passing refs is explicit
-someFunction(state) // Pass the ref
-someFunction(state.value) // Or pass the value explicitly
+someFunction(state); // Pass the ref
+someFunction(state.value); // Or pass the value explicitly
 ```
 
 ```javascript
 // When reactive() makes sense: grouping related state
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs } from 'vue';
 
 // Acceptable use case: form state with many related fields
 const form = reactive({
@@ -73,10 +73,10 @@ const form = reactive({
   email: '',
   password: '',
   confirmPassword: '',
-})
+});
 
 // But always use toRefs() if you need to destructure
-const { username, email } = toRefs(form)
+const { username, email } = toRefs(form);
 ```
 
 ## Reference

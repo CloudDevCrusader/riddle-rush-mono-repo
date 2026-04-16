@@ -52,31 +52,31 @@ const 'v-focus' = {  // Syntax error
 // CORRECT: v prefix with camelCase
 const vFocus = {
   mounted: (el) => el.focus(),
-}
+};
 
 const vHighlight = {
   mounted: (el) => {
-    el.classList.add('is-highlight')
+    el.classList.add('is-highlight');
   },
-}
+};
 
 // CORRECT: Multi-word directive
 const vClickOutside = {
   mounted(el, binding) {
     el._handler = (e) => {
-      if (!el.contains(e.target)) binding.value(e)
-    }
-    document.addEventListener('click', el._handler)
+      if (!el.contains(e.target)) binding.value(e);
+    };
+    document.addEventListener('click', el._handler);
   },
   unmounted(el) {
-    document.removeEventListener('click', el._handler)
+    document.removeEventListener('click', el._handler);
   },
-}
+};
 
 // CORRECT: Function shorthand with v prefix
 const vColor = (el, binding) => {
-  el.style.color = binding.value
-}
+  el.style.color = binding.value;
+};
 </script>
 
 <template>
@@ -96,11 +96,11 @@ In templates, directives should use kebab-case:
 <script setup>
 const vMyLongDirectiveName = (el) => {
   /* ... */
-}
-const vAutoFocusInput = (el) => el.focus()
+};
+const vAutoFocusInput = (el) => el.focus();
 const vLazyLoadImage = {
   /* ... */
-}
+};
 </script>
 
 <template>
@@ -136,7 +136,7 @@ export default {
       },
     },
   },
-}
+};
 ```
 
 ## Global Registration
@@ -145,15 +145,15 @@ For global directives, register on the app instance:
 
 ```javascript
 // main.js
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
 
-const app = createApp(App)
+const app = createApp(App);
 
 // Global directive - name without v- prefix
 app.directive('focus', {
   mounted: (el) => el.focus(),
-})
+});
 
 // Multi-word directive
 app.directive('click-outside', {
@@ -163,14 +163,14 @@ app.directive('click-outside', {
   unmounted(el) {
     /* ... */
   },
-})
+});
 
 // Function shorthand
 app.directive('color', (el, binding) => {
-  el.style.color = binding.value
-})
+  el.style.color = binding.value;
+});
 
-app.mount('#app')
+app.mount('#app');
 ```
 
 ## Importing Directives

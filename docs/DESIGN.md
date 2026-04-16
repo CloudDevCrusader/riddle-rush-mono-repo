@@ -1028,7 +1028,7 @@ Generated: 2025-12-31
 **Fix:** Remove `/alphabet` from `protectedPages` array
 
 ```typescript
-const protectedPages = ['/game', '/categories'] // Remove '/alphabet'
+const protectedPages = ['/game', '/categories']; // Remove '/alphabet'
 ```
 
 ---
@@ -1109,11 +1109,11 @@ const protectedPages = ['/game', '/categories'] // Remove '/alphabet'
 
 ```typescript
 export const useHaptics = () => {
-  const light = () => navigator.vibrate?.(10) // Light tap
-  const medium = () => navigator.vibrate?.(25) // Button press
-  const success = () => navigator.vibrate?.([50, 50, 100]) // Success pattern
-  const error = () => navigator.vibrate?.([100, 50, 100, 50, 100]) // Error pattern
-}
+  const light = () => navigator.vibrate?.(10); // Light tap
+  const medium = () => navigator.vibrate?.(25); // Button press
+  const success = () => navigator.vibrate?.([50, 50, 100]); // Success pattern
+  const error = () => navigator.vibrate?.([100, 50, 100, 50, 100]); // Error pattern
+};
 ```
 
 **Apply to:**
@@ -1236,7 +1236,7 @@ export const useHaptics = () => {
 **Fix:** Lock to portrait during active game
 
 ```typescript
-screen.orientation?.lock('portrait')
+screen.orientation?.lock('portrait');
 ```
 
 ---
@@ -1355,7 +1355,7 @@ navigator.share({
   title: 'My Riddle Rush Score!',
   text: `I scored ${score} points!`,
   url: window.location.href,
-})
+});
 ```
 
 **Share from:**

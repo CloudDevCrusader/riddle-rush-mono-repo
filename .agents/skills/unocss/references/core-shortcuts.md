@@ -39,7 +39,7 @@ shortcuts: [
   },
   // Dynamic shortcut
   [/^btn-(.*)$/, ([, c]) => `bg-${c}-400 text-${c}-100 py-2 px-4 rounded-lg`],
-]
+];
 ```
 
 Now `btn-green` and `btn-red` generate:
@@ -64,10 +64,10 @@ shortcuts: [
   [
     /^badge-(.*)$/,
     ([, c], { theme }) => {
-      if (Object.keys(theme.colors).includes(c)) return `bg-${c}4:10 text-${c}5 rounded`
+      if (Object.keys(theme.colors).includes(c)) return `bg-${c}4:10 text-${c}5 rounded`;
     },
   ],
-]
+];
 ```
 
 ## Shortcuts Layer
@@ -75,7 +75,7 @@ shortcuts: [
 Shortcuts are output to the `shortcuts` layer by default. Configure with:
 
 ```ts
-shortcutsLayer: 'my-shortcuts-layer'
+shortcutsLayer: 'my-shortcuts-layer';
 ```
 
 ## Key Points

@@ -40,37 +40,37 @@ export default {
 
 ```js
 // CORRECT: Import h from vue
-import { h } from 'vue'
+import { h } from 'vue';
 
 export default {
   render() {
-    return h('div', [h('span', 'Hello')])
+    return h('div', [h('span', 'Hello')]);
   },
-}
+};
 ```
 
 ## With Composition API
 
 ```js
-import { h, ref } from 'vue'
+import { h, ref } from 'vue';
 
 export default {
   setup() {
-    const count = ref(0)
+    const count = ref(0);
 
     // Return a render function from setup
-    return () => h('div', [h('button', { onClick: () => count.value++ }, `Count: ${count.value}`)])
+    return () => h('div', [h('button', { onClick: () => count.value++ }, `Count: ${count.value}`)]);
   },
-}
+};
 ```
 
 ## With script setup (Not Recommended)
 
 ```vue
 <script setup>
-import { h, ref } from 'vue'
+import { h, ref } from 'vue';
 
-const count = ref(0)
+const count = ref(0);
 
 // Cannot return render function from script setup
 // Must use a separate render option or template
@@ -88,14 +88,14 @@ If you need render functions with `<script setup>`, use the `render` option:
 
 ```vue
 <script>
-import { h, ref } from 'vue'
+import { h, ref } from 'vue';
 
 export default {
   setup() {
-    const count = ref(0)
-    return () => h('button', { onClick: () => count.value++ }, count.value)
+    const count = ref(0);
+    return () => h('button', { onClick: () => count.value++ }, count.value);
   },
-}
+};
 </script>
 ```
 

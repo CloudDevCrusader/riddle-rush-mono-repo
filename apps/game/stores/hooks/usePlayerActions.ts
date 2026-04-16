@@ -1,7 +1,7 @@
-import { useGameStore } from '~/stores/gameStore'
+import { useGameStore } from '~/stores/gameStore';
 
 export function usePlayerActions() {
-  const store = useGameStore()
+  const store = useGameStore();
 
   return {
     // Actions (all stable references from the store)
@@ -12,5 +12,5 @@ export function usePlayerActions() {
     startNextRound: store.startNextRound,
     resetPlayerSubmissions: store.resetPlayerSubmissions,
     getPlayerById: store.getPlayerById,
-  }
+  };
 }

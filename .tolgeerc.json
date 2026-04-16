@@ -9,6 +9,6 @@
     "language": ["de", "en"]
   },
   "pull": {
-    "path": "./apps/game/translations/locales/"
+    "path": "./apps/game/trasdk nslations/locales/"
   }
 }

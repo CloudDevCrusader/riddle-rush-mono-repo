@@ -76,37 +76,37 @@ Even with `max`, cached components hold resources. Clean up when deactivated:
 
 ```vue
 <script setup>
-import { ref, onActivated, onDeactivated, onUnmounted } from 'vue'
+import { ref, onActivated, onDeactivated, onUnmounted } from 'vue';
 
-const chartInstance = ref(null)
-const websocket = ref(null)
-const intervalId = ref(null)
+const chartInstance = ref(null);
+const websocket = ref(null);
+const intervalId = ref(null);
 
 onActivated(() => {
   // Resume or recreate resources
-  websocket.value = new WebSocket('...')
-  intervalId.value = setInterval(fetchData, 5000)
-})
+  websocket.value = new WebSocket('...');
+  intervalId.value = setInterval(fetchData, 5000);
+});
 
 onDeactivated(() => {
   // IMPORTANT: Clean up to reduce memory footprint while cached
-  chartInstance.value?.destroy()
-  chartInstance.value = null
+  chartInstance.value?.destroy();
+  chartInstance.value = null;
 
-  websocket.value?.close()
-  websocket.value = null
+  websocket.value?.close();
+  websocket.value = null;
 
-  clearInterval(intervalId.value)
-  intervalId.value = null
-})
+  clearInterval(intervalId.value);
+  intervalId.value = null;
+});
 
 // Final cleanup when truly destroyed
 onUnmounted(() => {
   // Same cleanup for when component is evicted from cache
-  chartInstance.value?.destroy()
-  websocket.value?.close()
-  clearInterval(intervalId.value)
-})
+  chartInstance.value?.destroy();
+  websocket.value?.close();
+  clearInterval(intervalId.value);
+});
 </script>
 ```
 
@@ -116,26 +116,26 @@ Libraries that manipulate the DOM outside Vue need explicit cleanup:
 
 ```vue
 <script setup>
-import { ref, onMounted, onDeactivated, onUnmounted } from 'vue'
+import { ref, onMounted, onDeactivated, onUnmounted } from 'vue';
 
-const mapContainer = ref(null)
-let mapInstance = null
+const mapContainer = ref(null);
+let mapInstance = null;
 
 onMounted(() => {
-  mapInstance = new MapLibrary(mapContainer.value)
-})
+  mapInstance = new MapLibrary(mapContainer.value);
+});
 
 onDeactivated(() => {
   // Some map libraries hold significant memory
   // Destroy and recreate on reactivation if needed
-  mapInstance?.remove()
-  mapInstance = null
-})
+  mapInstance?.remove();
+  mapInstance = null;
+});
 
 onUnmounted(() => {
-  mapInstance?.remove()
-  mapInstance = null
-})
+  mapInstance?.remove();
+  mapInstance = null;
+});
 </script>
 ```
 
@@ -145,7 +145,7 @@ Some components should NOT be cached:
 
 ```vue
 <script setup>
-const heavyComponents = ['VideoPlayer', 'LargeDataGrid', 'MapView']
+const heavyComponents = ['VideoPlayer', 'LargeDataGrid', 'MapView'];
 </script>
 
 <template>
@@ -160,16 +160,16 @@ const heavyComponents = ['VideoPlayer', 'LargeDataGrid', 'MapView']
 
 ```vue
 <script setup>
-import { onActivated, onDeactivated } from 'vue'
+import { onActivated, onDeactivated } from 'vue';
 
 if (import.meta.env.DEV) {
   onActivated(() => {
-    console.log('Activated - Memory:', performance.memory?.usedJSHeapSize)
-  })
+    console.log('Activated - Memory:', performance.memory?.usedJSHeapSize);
+  });
 
   onDeactivated(() => {
-    console.log('Deactivated - Memory:', performance.memory?.usedJSHeapSize)
-  })
+    console.log('Deactivated - Memory:', performance.memory?.usedJSHeapSize);
+  });
 }
 </script>
 ```

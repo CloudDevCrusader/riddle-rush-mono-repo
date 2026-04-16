@@ -13,37 +13,39 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineProps<{
-  showText?: boolean
-}>()
+  showText?: boolean;
+}>();
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const online = ref(true)
+const online = ref(true);
 
 const syncOnline = () => {
-  online.value = typeof navigator !== 'undefined' && navigator.onLine
-}
+  online.value = typeof navigator !== 'undefined' && navigator.onLine;
+};
 
 onMounted(() => {
-  syncOnline()
-  window.addEventListener('online', syncOnline)
-  window.addEventListener('offline', syncOnline)
-})
+  syncOnline();
+  window.addEventListener('online', syncOnline);
+  window.addEventListener('offline', syncOnline);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('online', syncOnline)
-  window.removeEventListener('offline', syncOnline)
-})
+  window.removeEventListener('online', syncOnline);
+  window.removeEventListener('offline', syncOnline);
+});
 
-const connectionStatus = computed(() => (online.value ? 'online' : 'offline'))
+const connectionStatus = computed(() => (online.value ? 'online' : 'offline'));
 
-const statusColor = computed(() => (online.value ? '#10b981' : '#6b7280'))
+const statusColor = computed(() => (online.value ? '#10b981' : '#6b7280'));
 
-const statusText = computed(() => (online.value ? t('connection.online') : t('connection.offline')))
+const statusText = computed(() =>
+  online.value ? t('connection.online') : t('connection.offline')
+);
 </script>
 
 <style scoped>

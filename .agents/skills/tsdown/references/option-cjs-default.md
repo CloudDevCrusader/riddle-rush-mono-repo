@@ -21,7 +21,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs'],
   cjsDefault: true, // default behavior
-})
+});
 ```
 
 ### Disabled
@@ -31,7 +31,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs'],
   cjsDefault: false,
-})
+});
 ```
 
 ## How It Works
@@ -45,7 +45,7 @@ When your module has **only a single default export**, tsdown transforms:
 ```ts
 // src/index.ts
 export default function greet() {
-  console.log('Hello, world!')
+  console.log('Hello, world!');
 }
 ```
 
@@ -54,17 +54,17 @@ export default function greet() {
 ```js
 // dist/index.cjs
 function greet() {
-  console.log('Hello, world!')
+  console.log('Hello, world!');
 }
-module.exports = greet
+module.exports = greet;
 ```
 
 **Generated Declaration:**
 
 ```ts
 // dist/index.d.cts
-declare function greet(): void
-export = greet
+declare function greet(): void;
+export = greet;
 ```
 
 This allows consumers to use `const greet = require('your-module')` directly.
@@ -76,9 +76,9 @@ The default export stays as `exports.default`:
 ```js
 // dist/index.cjs
 function greet() {
-  console.log('Hello, world!')
+  console.log('Hello, world!');
 }
-exports.default = greet
+exports.default = greet;
 ```
 
 Consumers need `require('your-module').default`.

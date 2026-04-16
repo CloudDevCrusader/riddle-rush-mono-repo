@@ -1,13 +1,13 @@
-import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
-import { fileURLToPath } from 'node:url'
-import { dirname, resolve } from 'node:path'
-import { MCPServer } from '@voltagent/mcp-server'
-import { z } from 'zod'
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+import { MCPServer } from '@voltagent/mcp-server';
+import { z } from 'zod';
 
-const execFileAsync = promisify(execFile)
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const repoRoot = resolve(__dirname, '../..')
+const execFileAsync = promisify(execFile);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(__dirname, '../..');
 
 const COMMANDS = {
   'git:status': { command: 'git', args: ['status', '-sb'] },
@@ -19,7 +19,7 @@ const COMMANDS = {
   'test:unit': { command: 'pnpm', args: ['run', 'test:unit'] },
   'mcp:health': { command: 'pnpm', args: ['run', 'agent:mcp-health'] },
   'mcp:config': { command: 'pnpm', args: ['run', 'agent:mcp-config'] },
-}
+};
 
 const runRepoCommand = {
   id: 'run-repo-command',
@@ -29,18 +29,18 @@ const runRepoCommand = {
     task: z.enum(Object.keys(COMMANDS)),
   }),
   async execute({ task }) {
-    const entry = COMMANDS[task]
+    const entry = COMMANDS[task];
     const { stdout, stderr } = await execFileAsync(entry.command, entry.args, {
       cwd: repoRoot,
       env: process.env,
-    })
-    const output = [stdout, stderr].filter(Boolean).join('\n').trim()
+    });
+    const output = [stdout, stderr].filter(Boolean).join('\n').trim();
     return {
       task,
       output: output.slice(0, 12000),
-    }
+    };
   },
-}
+};
 
 const mcpServer = new MCPServer({
   name: 'riddle-rush-subagents',
@@ -54,7 +54,7 @@ const mcpServer = new MCPServer({
   tools: {
     runRepoCommand,
   },
-})
+});
 
-await mcpServer.startConfiguredTransports()
-await new Promise(() => {})
+await mcpServer.startConfiguredTransports();
+await new Promise(() => {});

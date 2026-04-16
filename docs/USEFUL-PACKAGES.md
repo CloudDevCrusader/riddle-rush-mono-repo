@@ -63,7 +63,7 @@ pnpm add -D @nuxt/scripts
 scripts: {
   config: {
     gtag: {
-      id: process.env.GOOGLE_ANALYTICS_ID
+      id: process.env.GOOGLE_ANALYTICS_ID;
     }
   }
 }
@@ -314,7 +314,7 @@ export default defineNuxtConfig({
     // Optional: configure icon sets
     provider: 'iconify',
   },
-})
+});
 ```
 
 ### @nuxt/scripts
@@ -330,7 +330,7 @@ export default defineNuxtConfig({
       },
     },
   },
-})
+});
 ```
 
 ### @nuxtjs/seo
@@ -344,7 +344,7 @@ export default defineNuxtConfig({
     name: 'Riddle Rush',
     description: 'The Ultimate Guessing Game',
   },
-})
+});
 ```
 
 ## Priority Recommendations

@@ -86,43 +86,43 @@
 </template>
 
 <script setup lang="ts">
-import type { PlayerWithRank } from '@riddle-rush/types/game'
+import type { PlayerWithRank } from '@riddle-rush/types/game';
 
-const { t } = useI18n()
-const audio = useAudio()
+const { t } = useI18n();
+const audio = useAudio();
 
 const props = defineProps<{
-  visible: boolean
-  players: PlayerWithRank[]
-  isGameCompleted: boolean
-  currentRound: number
-}>()
+  visible: boolean;
+  players: PlayerWithRank[];
+  isGameCompleted: boolean;
+  currentRound: number;
+}>();
 
 const emit = defineEmits<{
-  close: []
-  continue: []
-  finish: []
-}>()
+  close: [];
+  continue: [];
+  finish: [];
+}>();
 
-const winnerBadgeLabel = computed(() => t('leaderboard.winner_badge', 'Winner!'))
-const roundLabel = computed(() => t('game.round', 'Round'))
-const roundScoreLabel = computed(() => t('leaderboard.points_this_round', 'pts this round'))
-const pointsLabel = computed(() => t('scoring.points', 'pts'))
+const winnerBadgeLabel = computed(() => t('leaderboard.winner_badge', 'Winner!'));
+const roundLabel = computed(() => t('game.round', 'Round'));
+const roundScoreLabel = computed(() => t('leaderboard.points_this_round', 'pts this round'));
+const pointsLabel = computed(() => t('scoring.points', 'pts'));
 
 const emitClose = () => {
-  void audio.playClick()
-  emit('close')
-}
+  void audio.playClick();
+  emit('close');
+};
 
 const emitContinue = () => {
-  void audio.playClick()
-  emit('continue')
-}
+  void audio.playClick();
+  emit('continue');
+};
 
 const emitFinish = () => {
-  void audio.playClick()
-  emit('finish')
-}
+  void audio.playClick();
+  emit('finish');
+};
 </script>
 
 <style scoped>

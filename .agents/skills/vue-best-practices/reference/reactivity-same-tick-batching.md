@@ -22,23 +22,23 @@ Understanding this behavior is essential for debugging scenarios where you expec
 **Example of batching behavior:**
 
 ```javascript
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
 
-const count = ref(0)
+const count = ref(0);
 
 watch(count, (newValue) => {
-  console.log('Count changed to:', newValue)
-})
+  console.log('Count changed to:', newValue);
+});
 
 // Multiple synchronous changes in the same tick
 function multipleUpdates() {
-  count.value = 1
-  count.value = 2
-  count.value = 3
-  count.value = 4
+  count.value = 1;
+  count.value = 2;
+  count.value = 3;
+  count.value = 4;
 }
 
-multipleUpdates()
+multipleUpdates();
 // Console output: "Count changed to: 4"
 // NOT: 1, 2, 3, 4 - only the final value is observed!
 ```
@@ -46,16 +46,16 @@ multipleUpdates()
 **The console logs you WON'T see:**
 
 ```javascript
-const items = reactive([])
+const items = reactive([]);
 
 watch(items, (newItems) => {
-  console.log('Items count:', newItems.length)
-})
+  console.log('Items count:', newItems.length);
+});
 
 // Batch of changes
-items.push('a') // length: 1
-items.push('b') // length: 2
-items.push('c') // length: 3
+items.push('a'); // length: 1
+items.push('b'); // length: 2
+items.push('c'); // length: 3
 
 // Output: "Items count: 3"
 // You won't see 1, 2, 3 logged separately
@@ -64,22 +64,22 @@ items.push('c') // length: 3
 **Using flush: 'sync' for immediate watching (use with caution):**
 
 ```javascript
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
 
-const count = ref(0)
+const count = ref(0);
 
 // Sync watcher fires immediately on each change
 watch(
   count,
   (newValue) => {
-    console.log('Immediate:', newValue)
+    console.log('Immediate:', newValue);
   },
   { flush: 'sync' }
-)
+);
 
-count.value = 1 // Logs: "Immediate: 1"
-count.value = 2 // Logs: "Immediate: 2"
-count.value = 3 // Logs: "Immediate: 3"
+count.value = 1; // Logs: "Immediate: 1"
+count.value = 2; // Logs: "Immediate: 2"
+count.value = 3; // Logs: "Immediate: 3"
 
 // WARNING: flush: 'sync' can cause performance issues
 // and creates less predictable behavior. Avoid if possible.
@@ -88,24 +88,24 @@ count.value = 3 // Logs: "Immediate: 3"
 **Using nextTick to separate batches:**
 
 ```javascript
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue';
 
-const count = ref(0)
+const count = ref(0);
 
 watch(count, (newValue) => {
-  console.log('Count:', newValue)
-})
+  console.log('Count:', newValue);
+});
 
 async function separatedUpdates() {
-  count.value = 1
-  await nextTick() // Force flush
+  count.value = 1;
+  await nextTick(); // Force flush
   // Output: "Count: 1"
 
-  count.value = 2
-  await nextTick()
+  count.value = 2;
+  await nextTick();
   // Output: "Count: 2"
 
-  count.value = 3
+  count.value = 3;
   // Output: "Count: 3"
 }
 ```
@@ -116,24 +116,24 @@ async function separatedUpdates() {
 const formData = reactive({
   email: '',
   password: '',
-})
+});
 
-const validationErrors = ref([])
+const validationErrors = ref([]);
 
 // This watcher only fires once, with final form state
 watch(
   formData,
   (data) => {
     // Runs once after all fields are updated
-    validateForm(data)
+    validateForm(data);
   },
   { deep: true }
-)
+);
 
 // When user submits, you might update multiple fields
 function populateFromSavedData(saved) {
-  formData.email = saved.email
-  formData.password = saved.password
+  formData.email = saved.email;
+  formData.password = saved.password;
   // Validation runs once with both fields set
 }
 ```
@@ -142,11 +142,11 @@ function populateFromSavedData(saved) {
 
 ```javascript
 // Without batching, this would trigger 1000 watcher/render cycles
-const list = reactive([])
+const list = reactive([]);
 
 function addManyItems() {
   for (let i = 0; i < 1000; i++) {
-    list.push(i)
+    list.push(i);
   }
 }
 // With batching: renders once with all 1000 items
@@ -157,22 +157,22 @@ function addManyItems() {
 
 ```javascript
 // If you need to observe every change for debugging:
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
 
-const count = ref(0)
+const count = ref(0);
 
 // Method 1: Sync watcher (not recommended for production)
-watch(count, (val) => console.log('DEBUG:', val), { flush: 'sync' })
+watch(count, (val) => console.log('DEBUG:', val), { flush: 'sync' });
 
 // Method 2: Track history manually
-const history = []
-const originalSet = count.value
+const history = [];
+const originalSet = count.value;
 Object.defineProperty(count, 'value', {
   set(val) {
-    history.push(val)
-    originalSet.call(this, val)
+    history.push(val);
+    originalSet.call(this, val);
   },
-})
+});
 ```
 
 ## Reference

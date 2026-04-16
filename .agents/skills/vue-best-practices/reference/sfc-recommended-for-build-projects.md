@@ -34,14 +34,14 @@ export default {
     </div>
   `,
   data() {
-    return { title: 'Hello' }
+    return { title: 'Hello' };
   },
   methods: {
     handleClick() {
       /* ... */
     },
   },
-}
+};
 ```
 
 **Correct:**
@@ -49,9 +49,9 @@ export default {
 ```vue
 <!-- Component.vue - Single-File Component -->
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const title = ref('Hello')
+const title = ref('Hello');
 
 function handleClick() {
   // ...
@@ -98,13 +98,13 @@ h1 {
 </div>
 
 <script type="module">
-  import { createApp, ref } from 'vue'
+  import { createApp, ref } from 'vue';
 
   createApp({
     setup() {
-      return { count: ref(0) }
+      return { count: ref(0) };
     },
-  }).mount('#app')
+  }).mount('#app');
 </script>
 ```
 

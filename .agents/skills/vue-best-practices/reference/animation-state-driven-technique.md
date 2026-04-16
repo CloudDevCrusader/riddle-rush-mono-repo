@@ -32,14 +32,14 @@ tags: [vue3, animation, css, transition, style-binding, state, interactive]
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const hue = ref(0)
+const hue = ref(0);
 
 function onMousemove(e) {
   // Map mouse X position to hue (0-360)
-  const rect = e.currentTarget.getBoundingClientRect()
-  hue.value = Math.round(((e.clientX - rect.left) / rect.width) * 360)
+  const rect = e.currentTarget.getBoundingClientRect();
+  hue.value = Math.round(((e.clientX - rect.left) / rect.width) * 360);
 }
 </script>
 
@@ -72,15 +72,15 @@ function onMousemove(e) {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const x = ref(0)
-const y = ref(0)
+const x = ref(0);
+const y = ref(0);
 
 function onMousemove(e) {
-  const rect = e.currentTarget.getBoundingClientRect()
-  x.value = e.clientX - rect.left
-  y.value = e.clientY - rect.top
+  const rect = e.currentTarget.getBoundingClientRect();
+  x.value = e.clientX - rect.left;
+  y.value = e.clientY - rect.top;
 }
 </script>
 
@@ -115,9 +115,9 @@ function onMousemove(e) {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const progress = ref(0)
+const progress = ref(0);
 </script>
 
 <style>
@@ -152,29 +152,29 @@ const progress = ref(0)
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
-const scrollY = ref(0)
+const scrollY = ref(0);
 
 const heroOpacity = computed(() => {
-  return Math.max(0, 1 - scrollY.value / 300)
-})
+  return Math.max(0, 1 - scrollY.value / 300);
+});
 
 const scrollOffset = computed(() => {
-  return scrollY.value * 0.5 // Parallax effect
-})
+  return scrollY.value * 0.5; // Parallax effect
+});
 
 function handleScroll() {
-  scrollY.value = window.scrollY
+  scrollY.value = window.scrollY;
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll, { passive: true })
-})
+  window.addEventListener('scroll', handleScroll, { passive: true });
+});
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style>
@@ -199,19 +199,19 @@ onUnmounted(() => {
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
-const isDark = ref(false)
+const isDark = ref(false);
 
 const themeStyles = computed(() => ({
   '--bg-color': isDark.value ? '#1a1a1a' : '#ffffff',
   '--text-color': isDark.value ? '#ffffff' : '#1a1a1a',
   backgroundColor: 'var(--bg-color)',
   color: 'var(--text-color)',
-}))
+}));
 
 function toggleTheme() {
-  isDark.value = !isDark.value
+  isDark.value = !isDark.value;
 }
 </script>
 
@@ -238,22 +238,22 @@ For smooth number animations (counters, stats), use watchers with animation libr
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
-import gsap from 'gsap'
+import { ref, reactive, watch } from 'vue';
+import gsap from 'gsap';
 
-const targetNumber = ref(0)
-const tweened = reactive({ value: 0 })
+const targetNumber = ref(0);
+const tweened = reactive({ value: 0 });
 
 // Computed for display
-const displayNumber = computed(() => tweened.value)
+const displayNumber = computed(() => tweened.value);
 
 watch(targetNumber, (newValue) => {
   gsap.to(tweened, {
     duration: 0.5,
     value: Number(newValue) || 0,
     ease: 'power2.out',
-  })
-})
+  });
+});
 </script>
 ```
 

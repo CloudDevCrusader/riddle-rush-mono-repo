@@ -1,7 +1,7 @@
 // Vite plugin to filter out SSR plugins at build time
 // This prevents SSR plugins from being included in the client bundle
 
-import type { Plugin } from 'vite'
+import type { Plugin } from 'vite';
 
 export function filterSsrPlugins(): Plugin {
   return {
@@ -9,9 +9,9 @@ export function filterSsrPlugins(): Plugin {
     enforce: 'pre',
     generateBundle(_options, bundle) {
       // Filter out i18n plugins from the bundle
-      const filesToRemove: string[] = []
+      const filesToRemove: string[] = [];
       for (const fileName in bundle) {
-        const chunk = bundle[fileName]
+        const chunk = bundle[fileName];
         if (chunk && (chunk.type === 'chunk' || chunk.type === 'asset')) {
           // Check if this is an SSR plugin file
           if (
@@ -21,16 +21,16 @@ export function filterSsrPlugins(): Plugin {
             fileName.includes('route-locale-detect') ||
             fileName.includes('ssg-detect')
           ) {
-            filesToRemove.push(fileName)
-            console.warn(`[filter-ssr-plugins] Removed i18n plugin: ${fileName}`)
+            filesToRemove.push(fileName);
+            console.warn(`[filter-ssr-plugins] Removed i18n plugin: ${fileName}`);
           }
         }
       }
       // Remove files after iteration
       filesToRemove.forEach((fileName) => {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete bundle[fileName]
-      })
+        delete bundle[fileName];
+      });
     },
     resolveId(id) {
       // Prevent i18n plugins from being resolved (only for i18n plugins, not other virtual modules)
@@ -44,16 +44,16 @@ export function filterSsrPlugins(): Plugin {
         !id.startsWith('\0virtual:')
       ) {
         // Return a virtual empty module instead
-        return `\0filtered-ssr:${id}`
+        return `\0filtered-ssr:${id}`;
       }
-      return null
+      return null;
     },
     load(id) {
       // Return empty module for filtered SSR plugins
       if (id.startsWith('\0filtered-ssr:')) {
-        return 'export default {}'
+        return 'export default {}';
       }
-      return null
+      return null;
     },
-  }
+  };
 }

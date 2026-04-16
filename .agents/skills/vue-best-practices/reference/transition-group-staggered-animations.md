@@ -39,33 +39,33 @@ This pattern is particularly useful for enter animations when new items are adde
 
 <script setup>
 function onBeforeEnter(el) {
-  el.style.opacity = 0
-  el.style.transform = 'translateY(20px)'
+  el.style.opacity = 0;
+  el.style.transform = 'translateY(20px)';
 }
 
 function onEnter(el, done) {
-  const delay = el.dataset.index * 150 // 150ms between each item
+  const delay = el.dataset.index * 150; // 150ms between each item
 
   setTimeout(() => {
-    el.style.transition = 'all 0.4s ease-out'
-    el.style.opacity = 1
-    el.style.transform = 'translateY(0)'
+    el.style.transition = 'all 0.4s ease-out';
+    el.style.opacity = 1;
+    el.style.transform = 'translateY(0)';
 
     // Call done after transition completes
-    setTimeout(done, 400)
-  }, delay)
+    setTimeout(done, 400);
+  }, delay);
 }
 
 function onLeave(el, done) {
-  const delay = el.dataset.index * 100
+  const delay = el.dataset.index * 100;
 
   setTimeout(() => {
-    el.style.transition = 'all 0.3s ease-in'
-    el.style.opacity = 0
-    el.style.transform = 'translateY(-20px)'
+    el.style.transition = 'all 0.3s ease-in';
+    el.style.opacity = 0;
+    el.style.transform = 'translateY(-20px)';
 
-    setTimeout(done, 300)
-  }, delay)
+    setTimeout(done, 300);
+  }, delay);
 }
 </script>
 ```
@@ -88,11 +88,11 @@ function onLeave(el, done) {
 </template>
 
 <script setup>
-import gsap from 'gsap'
+import gsap from 'gsap';
 
 function onBeforeEnter(el) {
-  el.style.opacity = 0
-  el.style.height = 0
+  el.style.opacity = 0;
+  el.style.height = 0;
 }
 
 function onEnter(el, done) {
@@ -101,7 +101,7 @@ function onEnter(el, done) {
     height: '1.6em',
     delay: el.dataset.index * 0.15,
     onComplete: done,
-  })
+  });
 }
 
 function onLeave(el, done) {
@@ -110,7 +110,7 @@ function onLeave(el, done) {
     height: 0,
     delay: el.dataset.index * 0.15,
     onComplete: done,
-  })
+  });
 }
 </script>
 ```
@@ -139,19 +139,19 @@ When filtering a list, the index in `v-for` changes. Consider using a computed p
 
 ```vue
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
 const items = ref([
   { id: 1, msg: 'Bruce Lee', show: true },
   { id: 2, msg: 'Jackie Chan', show: true },
   { id: 3, msg: 'Chuck Norris', show: true },
-])
+]);
 
-const query = ref('')
+const query = ref('');
 
 const computedList = computed(() => {
-  return items.value.filter((item) => item.msg.toLowerCase().includes(query.value.toLowerCase()))
-})
+  return items.value.filter((item) => item.msg.toLowerCase().includes(query.value.toLowerCase()));
+});
 </script>
 ```
 
@@ -161,17 +161,17 @@ For more advanced effects, calculate delay from center:
 
 ```javascript
 function onEnter(el, done) {
-  const totalItems = document.querySelectorAll('[data-index]').length
-  const index = parseInt(el.dataset.index)
-  const center = Math.floor(totalItems / 2)
-  const distanceFromCenter = Math.abs(index - center)
+  const totalItems = document.querySelectorAll('[data-index]').length;
+  const index = parseInt(el.dataset.index);
+  const center = Math.floor(totalItems / 2);
+  const distanceFromCenter = Math.abs(index - center);
 
   gsap.to(el, {
     opacity: 1,
     scale: 1,
     delay: distanceFromCenter * 0.1, // Items closer to center animate first
     onComplete: done,
-  })
+  });
 }
 ```
 

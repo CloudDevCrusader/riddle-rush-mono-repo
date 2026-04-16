@@ -43,7 +43,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'vercel', // or 'netlify', 'cloudflare-pages', etc.
   },
-})
+});
 ```
 
 Or via environment variable:

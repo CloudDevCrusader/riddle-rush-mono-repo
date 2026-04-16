@@ -1,15 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { GameSession, Category, Player } from '@riddle-rush/types/game'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { GameSession, Category, Player } from '@riddle-rush/types/game';
 
-import { useSessionManager } from '~/composables/useSessionManager'
-import { generateUUID } from '~/utils/uuid'
+import { useSessionManager } from '~/composables/useSessionManager';
+import { generateUUID } from '~/utils/uuid';
 
 // Mock generateUUID before importing composable
 vi.mock('~/utils/uuid', () => ({
   generateUUID: vi.fn(() => 'mock-uuid-1234'),
-}))
+}));
 
-const mockGenerateUUID = vi.mocked(generateUUID)
+const mockGenerateUUID = vi.mocked(generateUUID);
 
 const mockCategory: Category = {
   id: 1,
@@ -17,7 +17,7 @@ const mockCategory: Category = {
   searchWord: 'animal',
   key: 'animals',
   searchProvider: 'offline',
-}
+};
 
 const mockPlayers: Player[] = [
   {
@@ -34,18 +34,18 @@ const mockPlayers: Player[] = [
     currentRoundScore: 0,
     hasSubmitted: false,
   },
-]
+];
 
 describe('useSessionManager', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockGenerateUUID.mockReturnValue('mock-uuid-1234')
-  })
+    vi.clearAllMocks();
+    mockGenerateUUID.mockReturnValue('mock-uuid-1234');
+  });
 
   describe('createSession', () => {
     it('should return GameSession with correct structure', () => {
-      const { createSession } = useSessionManager()
-      const session = createSession(mockPlayers, mockCategory, 'A')
+      const { createSession } = useSessionManager();
+      const session = createSession(mockPlayers, mockCategory, 'A');
 
       expect(session).toMatchObject({
         id: expect.any(String),
@@ -55,71 +55,71 @@ describe('useSessionManager', () => {
         letter: 'A',
         status: 'active',
         roundHistory: [],
-      })
-      expect(typeof session.startTime).toBe('number')
-    })
+      });
+      expect(typeof session.startTime).toBe('number');
+    });
 
     it('should generate unique session ID', () => {
-      const { createSession } = useSessionManager()
+      const { createSession } = useSessionManager();
 
-      mockGenerateUUID.mockReturnValueOnce('uuid-aaa').mockReturnValueOnce('uuid-bbb')
-      const session1 = createSession(mockPlayers, mockCategory, 'A')
-      const session2 = createSession(mockPlayers, mockCategory, 'B')
+      mockGenerateUUID.mockReturnValueOnce('uuid-aaa').mockReturnValueOnce('uuid-bbb');
+      const session1 = createSession(mockPlayers, mockCategory, 'A');
+      const session2 = createSession(mockPlayers, mockCategory, 'B');
 
-      expect(session1.id).toBe('uuid-aaa')
-      expect(session2.id).toBe('uuid-bbb')
-      expect(session1.id).not.toBe(session2.id)
-    })
+      expect(session1.id).toBe('uuid-aaa');
+      expect(session2.id).toBe('uuid-bbb');
+      expect(session1.id).not.toBe(session2.id);
+    });
 
     it('should include players, category and letter', () => {
-      const { createSession } = useSessionManager()
-      const session = createSession(mockPlayers, mockCategory, 'Z')
+      const { createSession } = useSessionManager();
+      const session = createSession(mockPlayers, mockCategory, 'Z');
 
-      expect(session.players).toEqual(mockPlayers)
-      expect(session.category.key).toBe('animals')
-      expect(session.category.letter).toBe('Z')
-      expect(session.letter).toBe('Z')
-    })
+      expect(session.players).toEqual(mockPlayers);
+      expect(session.category.key).toBe('animals');
+      expect(session.category.letter).toBe('Z');
+      expect(session.letter).toBe('Z');
+    });
 
     it('should merge letter into category', () => {
-      const { createSession } = useSessionManager()
-      const session = createSession(mockPlayers, mockCategory, 'M')
+      const { createSession } = useSessionManager();
+      const session = createSession(mockPlayers, mockCategory, 'M');
 
       expect(session.category).toMatchObject({
         ...mockCategory,
         letter: 'M',
-      })
-    })
+      });
+    });
 
     it('should include optional gameName when provided', () => {
-      const { createSession } = useSessionManager()
-      const session = createSession(mockPlayers, mockCategory, 'A', 'My Game')
+      const { createSession } = useSessionManager();
+      const session = createSession(mockPlayers, mockCategory, 'A', 'My Game');
 
-      expect(session.gameName).toBe('My Game')
-    })
+      expect(session.gameName).toBe('My Game');
+    });
 
     it('should have undefined gameName when not provided', () => {
-      const { createSession } = useSessionManager()
-      const session = createSession(mockPlayers, mockCategory, 'A')
+      const { createSession } = useSessionManager();
+      const session = createSession(mockPlayers, mockCategory, 'A');
 
-      expect(session.gameName).toBeUndefined()
-    })
+      expect(session.gameName).toBeUndefined();
+    });
 
     it('should have startTime as a number timestamp', () => {
-      const { createSession } = useSessionManager()
-      const before = Date.now()
-      const session = createSession(mockPlayers, mockCategory, 'A')
-      const after = Date.now()
+      const { createSession } = useSessionManager();
+      const before = Date.now();
+      const session = createSession(mockPlayers, mockCategory, 'A');
+      const after = Date.now();
 
-      expect(session.startTime).toBeGreaterThanOrEqual(before)
-      expect(session.startTime).toBeLessThanOrEqual(after)
-    })
-  })
+      expect(session.startTime).toBeGreaterThanOrEqual(before);
+      expect(session.startTime).toBeLessThanOrEqual(after);
+    });
+  });
 
   describe('createSinglePlayerSession', () => {
     it('should create legacy single-player session with expected shape', () => {
-      const { createSinglePlayerSession } = useSessionManager()
-      const session = createSinglePlayerSession(mockCategory, 'B')
+      const { createSinglePlayerSession } = useSessionManager();
+      const session = createSinglePlayerSession(mockCategory, 'B');
 
       expect(session).toMatchObject({
         id: expect.any(String),
@@ -132,90 +132,90 @@ describe('useSessionManager', () => {
         status: 'active',
         roundHistory: [],
         letter: 'B',
-      })
-      expect(session.category.letter).toBe('B')
-    })
-  })
+      });
+      expect(session.category.letter).toBe('B');
+    });
+  });
 
   describe('cloneSessionForHistory', () => {
     it('should return object identical to input', () => {
-      const { createSession, cloneSessionForHistory } = useSessionManager()
-      const original = createSession(mockPlayers, mockCategory, 'A', 'Test')
-      const clone = cloneSessionForHistory(original)
+      const { createSession, cloneSessionForHistory } = useSessionManager();
+      const original = createSession(mockPlayers, mockCategory, 'A', 'Test');
+      const clone = cloneSessionForHistory(original);
 
-      expect(clone).toEqual(original)
-    })
+      expect(clone).toEqual(original);
+    });
 
     it('should create a deep copy (mutations do not affect original)', () => {
-      const { createSession, cloneSessionForHistory } = useSessionManager()
-      const original = createSession(mockPlayers, mockCategory, 'A')
-      const clone = cloneSessionForHistory(original)
+      const { createSession, cloneSessionForHistory } = useSessionManager();
+      const original = createSession(mockPlayers, mockCategory, 'A');
+      const clone = cloneSessionForHistory(original);
 
       // Mutate clone
-      clone.letter = 'Z'
+      clone.letter = 'Z';
       clone.players.push({
         id: 'extra',
         name: 'Extra',
         totalScore: 99,
         currentRoundScore: 0,
         hasSubmitted: false,
-      })
+      });
 
       // Original should not be affected
-      expect(original.letter).toBe('A')
-      expect(original.players).toHaveLength(mockPlayers.length)
-    })
+      expect(original.letter).toBe('A');
+      expect(original.players).toHaveLength(mockPlayers.length);
+    });
 
     it('should preserve all properties including nested structures', () => {
-      const { createSession, cloneSessionForHistory } = useSessionManager()
-      const original = createSession(mockPlayers, mockCategory, 'A')
-      const clone = cloneSessionForHistory(original)
+      const { createSession, cloneSessionForHistory } = useSessionManager();
+      const original = createSession(mockPlayers, mockCategory, 'A');
+      const clone = cloneSessionForHistory(original);
 
-      expect(clone.id).toBe(original.id)
-      expect(clone.category).toEqual(original.category)
-      expect(clone.players).toEqual(original.players)
-      expect(clone.startTime).toBe(original.startTime)
-      expect(clone.status).toBe(original.status)
-      expect(clone.roundHistory).toEqual(original.roundHistory)
-    })
-  })
+      expect(clone.id).toBe(original.id);
+      expect(clone.category).toEqual(original.category);
+      expect(clone.players).toEqual(original.players);
+      expect(clone.startTime).toBe(original.startTime);
+      expect(clone.status).toBe(original.status);
+      expect(clone.roundHistory).toEqual(original.roundHistory);
+    });
+  });
 
   describe('isSessionActive', () => {
     it('should return true when session exists and status is active', () => {
-      const { createSession, isSessionActive } = useSessionManager()
-      const session = createSession(mockPlayers, mockCategory, 'A')
+      const { createSession, isSessionActive } = useSessionManager();
+      const session = createSession(mockPlayers, mockCategory, 'A');
 
-      expect(isSessionActive(session)).toBe(true)
-    })
+      expect(isSessionActive(session)).toBe(true);
+    });
 
     it('should return false when session is null', () => {
-      const { isSessionActive } = useSessionManager()
+      const { isSessionActive } = useSessionManager();
 
-      expect(isSessionActive(null)).toBe(false)
-    })
+      expect(isSessionActive(null)).toBe(false);
+    });
 
     it('should return false when session status is not active', () => {
-      const { createSession, isSessionActive } = useSessionManager()
-      const session = createSession(mockPlayers, mockCategory, 'A')
-      const completedSession: GameSession = { ...session, status: 'completed' }
-      const abandonedSession: GameSession = { ...session, status: 'abandoned' }
+      const { createSession, isSessionActive } = useSessionManager();
+      const session = createSession(mockPlayers, mockCategory, 'A');
+      const completedSession: GameSession = { ...session, status: 'completed' };
+      const abandonedSession: GameSession = { ...session, status: 'abandoned' };
 
-      expect(isSessionActive(completedSession)).toBe(false)
-      expect(isSessionActive(abandonedSession)).toBe(false)
-    })
-  })
+      expect(isSessionActive(completedSession)).toBe(false);
+      expect(isSessionActive(abandonedSession)).toBe(false);
+    });
+  });
 
   describe('getSessionDuration', () => {
     it('should return 0 when session is null', () => {
-      const { getSessionDuration } = useSessionManager()
+      const { getSessionDuration } = useSessionManager();
 
-      expect(getSessionDuration(null)).toBe(0)
-    })
+      expect(getSessionDuration(null)).toBe(0);
+    });
 
     it('should calculate correct duration when endTime is set', () => {
-      const { getSessionDuration } = useSessionManager()
-      const startTime = 1000000
-      const endTime = 1005000
+      const { getSessionDuration } = useSessionManager();
+      const startTime = 1000000;
+      const endTime = 1005000;
       const session: GameSession = {
         id: 'test',
         players: [],
@@ -227,14 +227,14 @@ describe('useSessionManager', () => {
         endTime,
         status: 'completed',
         roundHistory: [],
-      }
+      };
 
-      expect(getSessionDuration(session)).toBe(5000)
-    })
+      expect(getSessionDuration(session)).toBe(5000);
+    });
 
     it('should use Date.now() when endTime is undefined', () => {
-      const { getSessionDuration } = useSessionManager()
-      const startTime = Date.now() - 3000
+      const { getSessionDuration } = useSessionManager();
+      const startTime = Date.now() - 3000;
       const session: GameSession = {
         id: 'test',
         players: [],
@@ -245,18 +245,18 @@ describe('useSessionManager', () => {
         startTime,
         status: 'active',
         roundHistory: [],
-      }
+      };
 
-      const duration = getSessionDuration(session)
+      const duration = getSessionDuration(session);
       // Should be approximately 3000ms
-      expect(duration).toBeGreaterThanOrEqual(2900)
-      expect(duration).toBeLessThanOrEqual(3500)
-    })
+      expect(duration).toBeGreaterThanOrEqual(2900);
+      expect(duration).toBeLessThanOrEqual(3500);
+    });
 
     it('should return correct duration in milliseconds', () => {
-      const { getSessionDuration } = useSessionManager()
-      const startTime = 500
-      const endTime = 1500
+      const { getSessionDuration } = useSessionManager();
+      const startTime = 500;
+      const endTime = 1500;
       const session: GameSession = {
         id: 'test',
         players: [],
@@ -268,21 +268,21 @@ describe('useSessionManager', () => {
         endTime,
         status: 'completed',
         roundHistory: [],
-      }
+      };
 
-      expect(getSessionDuration(session)).toBe(1000)
-    })
-  })
+      expect(getSessionDuration(session)).toBe(1000);
+    });
+  });
 
   describe('return value', () => {
     it('should return all expected functions', () => {
-      const manager = useSessionManager()
+      const manager = useSessionManager();
 
-      expect(typeof manager.createSession).toBe('function')
-      expect(typeof manager.createSinglePlayerSession).toBe('function')
-      expect(typeof manager.cloneSessionForHistory).toBe('function')
-      expect(typeof manager.isSessionActive).toBe('function')
-      expect(typeof manager.getSessionDuration).toBe('function')
-    })
-  })
-})
+      expect(typeof manager.createSession).toBe('function');
+      expect(typeof manager.createSinglePlayerSession).toBe('function');
+      expect(typeof manager.cloneSessionForHistory).toBe('function');
+      expect(typeof manager.isSessionActive).toBe('function');
+      expect(typeof manager.getSessionDuration).toBe('function');
+    });
+  });
+});

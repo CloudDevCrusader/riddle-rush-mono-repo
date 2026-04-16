@@ -1,25 +1,25 @@
-import { defineConfig, devices } from '@playwright/test'
-import * as os from 'node:os'
+import { defineConfig, devices } from '@playwright/test';
+import * as os from 'node:os';
 
-const isCI = !!process.env.CI
+const isCI = !!process.env.CI;
 // Allow testing against deployed sites via BASE_URL env var
 const baseURL =
-  process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000'
+  process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000';
 const isDeployedTest =
   (baseURL.startsWith('http://') || baseURL.startsWith('https://')) &&
-  !baseURL.includes('localhost')
+  !baseURL.includes('localhost');
 
 // Adaptive worker configuration
 const getWorkerCount = () => {
   if (process.env.CI) {
-    return process.env.WORKERS ? Number.parseInt(process.env.WORKERS) : 4
+    return process.env.WORKERS ? Number.parseInt(process.env.WORKERS) : 4;
   }
-  const cpus = os.cpus().length
-  return Math.max(4, Math.min(Math.floor(cpus / 2), 8))
-}
+  const cpus = os.cpus().length;
+  return Math.max(4, Math.min(Math.floor(cpus / 2), 8));
+};
 
 // Mobile/tablet tests need longer timeouts
-const getMobileTimeout = () => (isDeployedTest ? 90000 : 60000)
+const getMobileTimeout = () => (isDeployedTest ? 90000 : 60000);
 
 // Test tags for grouping
 // Usage: test('my test @smoke @critical', ...)
@@ -30,7 +30,7 @@ const testTags = {
   slow: '@slow',
   mobile: '@mobile',
   tablet: '@tablet',
-}
+};
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -130,7 +130,7 @@ export default defineConfig({
     toMatchSnapshot: { threshold: 0.2 },
     toHaveScreenshot: { threshold: 0.2 },
   },
-})
+});
 
 // Export test tags for use in test files
-export { testTags }
+export { testTags };

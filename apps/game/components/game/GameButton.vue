@@ -13,14 +13,14 @@
 
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'warning' | 'danger'
-  size?: 'sm' | 'md' | 'lg'
-  type?: 'button' | 'submit' | 'reset'
-  disabled?: boolean
-  loading?: boolean
-  fullWidth?: boolean
+  variant?: 'primary' | 'secondary' | 'warning' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  loading?: boolean;
+  fullWidth?: boolean;
   /** Play UI click sound (Web Audio). Disable when the parent plays a custom sound for the same action. */
-  soundOnClick?: boolean
+  soundOnClick?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,13 +31,13 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   fullWidth: false,
   soundOnClick: true,
-})
+});
 
 const emit = defineEmits<{
-  click: [event: MouseEvent]
-}>()
+  click: [event: MouseEvent];
+}>();
 
-const audio = useAudio()
+const audio = useAudio();
 
 const buttonClasses = computed(() => [
   'game-button',
@@ -48,16 +48,16 @@ const buttonClasses = computed(() => [
     'game-button--loading': props.loading,
     'game-button--full-width': props.fullWidth,
   },
-])
+]);
 
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled && !props.loading) {
     if (props.soundOnClick) {
-      void audio.playClick()
+      void audio.playClick();
     }
-    emit('click', event)
+    emit('click', event);
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

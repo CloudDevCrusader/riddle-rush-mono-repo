@@ -31,10 +31,10 @@ Vue's compiler analyzes templates and generates optimized render functions with:
 
 ```vue
 <script setup>
-import { h, ref } from 'vue'
+import { h, ref } from 'vue';
 
-const count = ref(0)
-const items = ref(['a', 'b', 'c'])
+const count = ref(0);
+const items = ref(['a', 'b', 'c']);
 
 // BAD: Hand-written render function - no compile-time optimizations
 // Every render: all vnodes created anew, all nodes diffed
@@ -46,7 +46,7 @@ const render = () =>
       'ul',
       items.value.map((item) => h('li', { key: item }, item))
     ),
-  ])
+  ]);
 </script>
 ```
 
@@ -69,10 +69,10 @@ const render = () =>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const count = ref(0)
-const items = ref(['a', 'b', 'c'])
+const count = ref(0);
+const items = ref(['a', 'b', 'c']);
 </script>
 ```
 
@@ -87,13 +87,13 @@ Use render functions when:
 ```js
 // ACCEPTABLE: Dynamic component type based on data
 function render() {
-  return h(props.level > 2 ? 'h3' : 'h' + props.level, slots.default?.())
+  return h(props.level > 2 ? 'h3' : 'h' + props.level, slots.default?.());
 }
 
 // ACCEPTABLE: Complex library component with dynamic children manipulation
 function render() {
-  const children = slots.default?.() || []
-  return h('div', children.filter(shouldRender).map(wrapChild))
+  const children = slots.default?.() || [];
+  return h('div', children.filter(shouldRender).map(wrapChild));
 }
 ```
 
@@ -110,22 +110,22 @@ function render() {
 ## If You Must Use Render Functions
 
 ```js
-import { h, ref } from 'vue'
+import { h, ref } from 'vue';
 
 // Manually hoist static vnodes outside component
-const staticHeader = h('header', { class: 'static' }, 'Title')
+const staticHeader = h('header', { class: 'static' }, 'Title');
 
 export default {
   setup() {
-    const count = ref(0)
+    const count = ref(0);
 
     return () =>
       h('div', [
         staticHeader, // Reused, not recreated
         h('p', `Count: ${count.value}`),
-      ])
+      ]);
   },
-}
+};
 ```
 
 ## Reference

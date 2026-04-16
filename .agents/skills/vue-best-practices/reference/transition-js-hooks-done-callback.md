@@ -30,7 +30,7 @@ This is especially important when using animation libraries like GSAP, Anime.js,
 </template>
 
 <script setup>
-import gsap from 'gsap'
+import gsap from 'gsap';
 
 function onEnter(el) {
   // Animation starts but Vue doesn't wait for it!
@@ -38,7 +38,7 @@ function onEnter(el) {
     opacity: 0,
     y: 50,
     duration: 0.5,
-  })
+  });
   // Missing done() call - element appears with no animation
 }
 
@@ -47,7 +47,7 @@ function onLeave(el) {
     opacity: 0,
     y: -50,
     duration: 0.5,
-  })
+  });
   // Missing done() call - element removed immediately!
 }
 </script>
@@ -64,7 +64,7 @@ function onLeave(el) {
 </template>
 
 <script setup>
-import gsap from 'gsap'
+import gsap from 'gsap';
 
 function onEnter(el, done) {
   gsap.from(el, {
@@ -72,7 +72,7 @@ function onEnter(el, done) {
     y: 50,
     duration: 0.5,
     onComplete: done, // Tell Vue animation is complete
-  })
+  });
 }
 
 function onLeave(el, done) {
@@ -81,7 +81,7 @@ function onLeave(el, done) {
     y: -50,
     duration: 0.5,
     onComplete: done, // Element removed after animation
-  })
+  });
 }
 </script>
 ```
@@ -127,17 +127,17 @@ function onLeave(el, done) {
 </template>
 
 <script setup>
-import gsap from 'gsap'
-import { ref } from 'vue'
+import gsap from 'gsap';
+import { ref } from 'vue';
 
-const show = ref(false)
-let enterAnimation = null
-let leaveAnimation = null
+const show = ref(false);
+let enterAnimation = null;
+let leaveAnimation = null;
 
 function onBeforeEnter(el) {
   // Set initial state before animation
-  el.style.opacity = 0
-  el.style.transform = 'translateY(50px)'
+  el.style.opacity = 0;
+  el.style.transform = 'translateY(50px)';
 }
 
 function onEnter(el, done) {
@@ -148,19 +148,19 @@ function onEnter(el, done) {
     duration: 0.5,
     ease: 'power2.out',
     onComplete: done, // REQUIRED with :css="false"
-  })
+  });
 }
 
 function onAfterEnter(el) {
   // Cleanup after enter completes
-  enterAnimation = null
+  enterAnimation = null;
 }
 
 function onEnterCancelled() {
   // Handle interruption (e.g., user toggles quickly)
   if (enterAnimation) {
-    enterAnimation.kill()
-    enterAnimation = null
+    enterAnimation.kill();
+    enterAnimation = null;
   }
 }
 
@@ -175,17 +175,17 @@ function onLeave(el, done) {
     duration: 0.5,
     ease: 'power2.in',
     onComplete: done, // REQUIRED with :css="false"
-  })
+  });
 }
 
 function onAfterLeave(el) {
-  leaveAnimation = null
+  leaveAnimation = null;
 }
 
 function onLeaveCancelled() {
   if (leaveAnimation) {
-    leaveAnimation.kill()
-    leaveAnimation = null
+    leaveAnimation.kill();
+    leaveAnimation = null;
   }
 }
 </script>
@@ -205,9 +205,9 @@ function onEnter(el, done) {
       duration: 300,
       easing: 'ease-out',
     }
-  )
+  );
 
-  animation.onfinish = done // Call done when animation ends
+  animation.onfinish = done; // Call done when animation ends
 }
 
 function onLeave(el, done) {
@@ -220,9 +220,9 @@ function onLeave(el, done) {
       duration: 300,
       easing: 'ease-in',
     }
-  )
+  );
 
-  animation.onfinish = done
+  animation.onfinish = done;
 }
 </script>
 ```
@@ -232,8 +232,8 @@ function onLeave(el, done) {
 ```javascript
 // WRONG: Calling done() immediately instead of after animation
 function onEnter(el, done) {
-  gsap.from(el, { opacity: 0, duration: 0.5 })
-  done() // Called immediately - animation skipped!
+  gsap.from(el, { opacity: 0, duration: 0.5 });
+  done(); // Called immediately - animation skipped!
 }
 
 // WRONG: Forgetting done() parameter
@@ -242,7 +242,7 @@ function onEnter(el) {
   gsap.from(el, {
     opacity: 0,
     onComplete: done, // Error: done is not defined!
-  })
+  });
 }
 
 // CORRECT: Pass done to animation callback
@@ -251,7 +251,7 @@ function onEnter(el, done) {
     opacity: 0,
     duration: 0.5,
     onComplete: done, // Called after 0.5s
-  })
+  });
 }
 ```
 

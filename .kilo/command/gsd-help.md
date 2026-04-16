@@ -3,15 +3,17 @@ description: Show available GSD commands and usage guide
 tools:
   read: true
 ---
+
 <objective>
 Display the complete GSD command reference.
 
 Output ONLY the reference content below. Do NOT add:
+
 - Project-specific analysis
 - Git status or file context
 - Next-step suggestions
 - Any commentary beyond the reference
-</objective>
+  </objective>
 
 <execution_context>
 @/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-shit-done/workflows/help.md

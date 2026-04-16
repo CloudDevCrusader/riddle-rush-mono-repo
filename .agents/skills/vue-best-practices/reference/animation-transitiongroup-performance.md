@@ -43,15 +43,15 @@ Without TransitionGroup, DOM updates occur instantly. With it, there can be noti
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 const items = ref([
   /* many items */
-])
+]);
 
 // Operations like slice can cause visible lag
 function removeItems() {
-  items.value = items.value.slice(5) // May lag with TransitionGroup
+  items.value = items.value.slice(5); // May lag with TransitionGroup
 }
 </script>
 
@@ -77,14 +77,14 @@ function removeItems() {
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
 const items = ref([
   /* items */
-])
+]);
 
 // For large batch operations, consider disabling animations temporarily
-const isAnimating = ref(true)
+const isAnimating = ref(true);
 </script>
 
 <style>
@@ -141,16 +141,16 @@ const isAnimating = ref(true)
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick } from 'vue';
 
-const animationsEnabled = ref(true)
+const animationsEnabled = ref(true);
 
 async function bulkUpdate(newItems) {
   // Disable animations for bulk operations
-  animationsEnabled.value = false
-  items.value = newItems
-  await nextTick()
-  animationsEnabled.value = true
+  animationsEnabled.value = false;
+  items.value = newItems;
+  await nextTick();
+  animationsEnabled.value = true;
 }
 </script>
 ```
@@ -166,7 +166,7 @@ async function bulkUpdate(newItems) {
 </template>
 
 <script setup>
-import { RecycleScroller } from 'vue-virtual-scroller'
+import { RecycleScroller } from 'vue-virtual-scroller';
 </script>
 ```
 

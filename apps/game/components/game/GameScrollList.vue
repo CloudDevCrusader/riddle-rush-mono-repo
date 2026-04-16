@@ -13,19 +13,19 @@
 
 interface Props {
   /** Display rank indicators (crowns 1-3, numbered 4+) */
-  showRanks?: boolean
+  showRanks?: boolean;
   /** Maximum height before scrolling */
-  maxHeight?: string
+  maxHeight?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showRanks: false,
   maxHeight: '400px',
-})
+});
 
 const listStyles = computed(() => ({
   maxHeight: props.maxHeight,
-}))
+}));
 </script>
 
 <template>

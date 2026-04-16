@@ -1,7 +1,7 @@
 ---
 name: gsd-new-project
 description: Initialize a new project with deep context gathering and PROJECT.md
-argument-hint: "[--auto]"
+argument-hint: '[--auto]'
 allowed-tools: Read, Bash, Write, Task, AskUserQuestion
 ---
 
@@ -18,6 +18,7 @@ allowed-tools: Read, Bash, Write, Task, AskUserQuestion
 Initialize a new project through unified flow: questioning → research (optional) → requirements → roadmap.
 
 **Creates:**
+
 - `.planning/PROJECT.md` — project context
 - `.planning/config.json` — workflow preferences
 - `.planning/research/` — domain research (optional)

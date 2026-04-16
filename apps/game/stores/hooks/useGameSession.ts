@@ -1,10 +1,10 @@
-import { computed } from '#imports'
-import { useGameStore } from '~/stores/gameStore'
-import { usePlayerManager } from '~/composables/usePlayerManager'
+import { computed } from '#imports';
+import { useGameStore } from '~/stores/gameStore';
+import { usePlayerManager } from '~/composables/usePlayerManager';
 
 export function useGameSession() {
-  const playerManager = usePlayerManager()
-  const store = useGameStore()
+  const playerManager = usePlayerManager();
+  const store = useGameStore();
 
   return {
     // State
@@ -47,5 +47,5 @@ export function useGameSession() {
     generateLetter: store.generateLetter,
     setOnlineStatus: store.setOnlineStatus,
     setPendingPlayerNames: store.setPendingPlayerNames,
-  }
+  };
 }

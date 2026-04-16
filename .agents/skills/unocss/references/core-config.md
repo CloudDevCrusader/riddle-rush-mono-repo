@@ -22,7 +22,7 @@ import {
   presetWind3,
   transformerDirectives,
   transformerVariantGroup,
-} from 'unocss'
+} from 'unocss';
 
 export default defineConfig({
   shortcuts: [
@@ -45,7 +45,7 @@ export default defineConfig({
     }),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
-})
+});
 ```
 
 UnoCSS automatically looks for `uno.config.{js,ts,mjs,mts}` or `unocss.config.{js,ts,mjs,mts}` in the project root.
@@ -60,7 +60,7 @@ Define CSS utility rules. Later entries have higher priority.
 rules: [
   ['m-1', { margin: '0.25rem' }],
   [/^m-(\d+)$/, ([, d]) => ({ margin: `${d / 4}rem` })],
-]
+];
 ```
 
 ### shortcuts
@@ -94,7 +94,7 @@ theme: {
 Predefined configurations bundling rules, variants, and themes.
 
 ```ts
-presets: [presetWind3(), presetIcons()]
+presets: [presetWind3(), presetIcons()];
 ```
 
 ### transformers
@@ -102,7 +102,7 @@ presets: [presetWind3(), presetIcons()]
 Transform source code to support special syntax.
 
 ```ts
-transformers: [transformerDirectives(), transformerVariantGroup()]
+transformers: [transformerDirectives(), transformerVariantGroup()];
 ```
 
 ### variants
@@ -134,7 +134,7 @@ layers: {
 Utilities that are always included in output.
 
 ```ts
-safelist: ['p-1', 'p-2', 'p-3']
+safelist: ['p-1', 'p-2', 'p-3'];
 ```
 
 ### blocklist
@@ -142,7 +142,7 @@ safelist: ['p-1', 'p-2', 'p-3']
 Utilities that are always excluded.
 
 ```ts
-blocklist: ['p-1', /^p-[2-4]$/]
+blocklist: ['p-1', /^p-[2-4]$/];
 ```
 
 ### content
@@ -167,14 +167,14 @@ Variant separator characters. Default: `[':', '-']`
 Output UnoCSS layers as CSS Cascade Layers.
 
 ```ts
-outputToCssLayers: true
+outputToCssLayers: true;
 ```
 
 ## Specifying Config File Location
 
 ```ts
 // vite.config.ts
-import UnoCSS from 'unocss/vite'
+import UnoCSS from 'unocss/vite';
 
 export default defineConfig({
   plugins: [
@@ -182,7 +182,7 @@ export default defineConfig({
       configFile: '../my-uno.config.ts',
     }),
   ],
-})
+});
 ```
 
 <!--

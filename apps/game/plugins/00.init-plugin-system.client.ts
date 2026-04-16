@@ -19,4 +19,4 @@ export default defineNuxtPlugin({
     // By loading this plugin first, we ensure NuxtPluginIndicator is initialized
     // before any i18n plugins try to use it
   },
-})
+});

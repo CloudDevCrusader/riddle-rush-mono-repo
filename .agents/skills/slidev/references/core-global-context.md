@@ -78,51 +78,51 @@ import {
   useSlideContext,
   onSlideEnter,
   onSlideLeave,
-} from '@slidev/client'
+} from '@slidev/client';
 ```
 
 ### useNav
 
 ```ts
-const nav = useNav()
-nav.next()
-nav.go(5)
-console.log(nav.currentPage)
+const nav = useNav();
+nav.next();
+nav.go(5);
+console.log(nav.currentPage);
 ```
 
 ### useDarkMode
 
 ```ts
-const { isDark, toggle } = useDarkMode()
+const { isDark, toggle } = useDarkMode();
 ```
 
 ### useIsSlideActive
 
 ```ts
-const isActive = useIsSlideActive()
+const isActive = useIsSlideActive();
 // Returns ref<boolean>
 ```
 
 ### useSlideContext
 
 ```ts
-const { $page, $clicks, $frontmatter } = useSlideContext()
+const { $page, $clicks, $frontmatter } = useSlideContext();
 ```
 
 ## Lifecycle Hooks
 
 ```ts
-import { onSlideEnter, onSlideLeave } from '@slidev/client'
+import { onSlideEnter, onSlideLeave } from '@slidev/client';
 
 onSlideEnter(() => {
   // Slide became active
-  startAnimation()
-})
+  startAnimation();
+});
 
 onSlideLeave(() => {
   // Slide became inactive
-  cleanup()
-})
+  cleanup();
+});
 ```
 
 **Important:** Don't use `onMounted`/`onUnmounted` in slides - component instance persists. Use `onSlideEnter`/`onSlideLeave` instead.
@@ -144,5 +144,5 @@ onSlideLeave(() => {
 ## Type Imports
 
 ```ts
-import type { TocItem } from '@slidev/types'
+import type { TocItem } from '@slidev/types';
 ```

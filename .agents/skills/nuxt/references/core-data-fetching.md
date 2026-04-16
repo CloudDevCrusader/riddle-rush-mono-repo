@@ -19,7 +19,7 @@ Primary composable for fetching data in components:
 
 ```vue
 <script setup lang="ts">
-const { data, status, error, refresh, clear } = await useFetch('/api/posts')
+const { data, status, error, refresh, clear } = await useFetch('/api/posts');
 </script>
 
 <template>
@@ -57,17 +57,17 @@ const { data } = await useFetch('/api/posts', {
   immediate: false,
   // Default value
   default: () => [],
-})
+});
 ```
 
 ### Reactive Parameters
 
 ```vue
 <script setup lang="ts">
-const page = ref(1)
+const page = ref(1);
 const { data } = await useFetch('/api/posts', {
   query: { page }, // Automatically refetches when page changes
-})
+});
 </script>
 ```
 
@@ -75,8 +75,8 @@ const { data } = await useFetch('/api/posts', {
 
 ```vue
 <script setup lang="ts">
-const id = ref(1)
-const { data } = await useFetch(() => `/api/posts/${id.value}`)
+const id = ref(1);
+const { data } = await useFetch(() => `/api/posts/${id.value}`);
 // Refetches when id changes
 </script>
 ```
@@ -88,8 +88,8 @@ For wrapping any async function:
 ```vue
 <script setup lang="ts">
 const { data, error } = await useAsyncData('user', () => {
-  return myCustomFetch('/user/profile')
-})
+  return myCustomFetch('/user/profile');
+});
 </script>
 ```
 
@@ -98,9 +98,9 @@ const { data, error } = await useAsyncData('user', () => {
 ```vue
 <script setup lang="ts">
 const { data } = await useAsyncData('cart', async () => {
-  const [coupons, offers] = await Promise.all([$fetch('/api/coupons'), $fetch('/api/offers')])
-  return { coupons, offers }
-})
+  const [coupons, offers] = await Promise.all([$fetch('/api/coupons'), $fetch('/api/offers')]);
+  return { coupons, offers };
+});
 </script>
 ```
 
@@ -114,7 +114,7 @@ async function submitForm() {
   const result = await $fetch('/api/submit', {
     method: 'POST',
     body: { name: 'John' },
-  })
+  });
 }
 </script>
 ```
@@ -141,11 +141,11 @@ Don't block navigation:
 ```vue
 <script setup lang="ts">
 // Using lazy option
-const { data, status } = await useFetch('/api/posts', { lazy: true })
+const { data, status } = await useFetch('/api/posts', { lazy: true });
 
 // Or use lazy variants
-const { data, status } = await useLazyFetch('/api/posts')
-const { data, status } = await useLazyAsyncData('key', fetchFn)
+const { data, status } = await useLazyFetch('/api/posts');
+const { data, status } = await useLazyAsyncData('key', fetchFn);
 </script>
 ```
 
@@ -153,16 +153,16 @@ const { data, status } = await useLazyAsyncData('key', fetchFn)
 
 ```vue
 <script setup lang="ts">
-const category = ref('tech')
+const category = ref('tech');
 
 const { data, refresh } = await useFetch('/api/posts', {
   query: { category },
   // Auto-refresh when category changes
   watch: [category],
-})
+});
 
 // Manual refresh
-const refreshData = () => refresh()
+const refreshData = () => refresh();
 </script>
 ```
 
@@ -173,10 +173,10 @@ Data is cached by key. Share data across components:
 ```vue
 <script setup lang="ts">
 // In component A
-const { data } = await useFetch('/api/user', { key: 'current-user' })
+const { data } = await useFetch('/api/user', { key: 'current-user' });
 
 // In component B - uses cached data
-const { data } = useNuxtData('current-user')
+const { data } = useNuxtData('current-user');
 </script>
 ```
 
@@ -184,13 +184,13 @@ Refresh cached data globally:
 
 ```ts
 // Refresh specific key
-await refreshNuxtData('current-user')
+await refreshNuxtData('current-user');
 
 // Refresh all data
-await refreshNuxtData()
+await refreshNuxtData();
 
 // Clear cached data
-clearNuxtData('current-user')
+clearNuxtData('current-user');
 ```
 
 ## Interceptors
@@ -198,20 +198,20 @@ clearNuxtData('current-user')
 ```ts
 const { data } = await useFetch('/api/auth', {
   onRequest({ options }) {
-    options.headers.set('Authorization', `Bearer ${token}`)
+    options.headers.set('Authorization', `Bearer ${token}`);
   },
   onRequestError({ error }) {
-    console.error('Request failed:', error)
+    console.error('Request failed:', error);
   },
   onResponse({ response }) {
     // Process response
   },
   onResponseError({ response }) {
     if (response.status === 401) {
-      navigateTo('/login')
+      navigateTo('/login');
     }
   },
-})
+});
 ```
 
 ## Passing Headers (SSR)
@@ -220,8 +220,8 @@ const { data } = await useFetch('/api/auth', {
 
 ```vue
 <script setup lang="ts">
-const headers = useRequestHeaders(['cookie'])
-const data = await $fetch('/api/user', { headers })
+const headers = useRequestHeaders(['cookie']);
+const data = await $fetch('/api/user', { headers });
 </script>
 ```
 

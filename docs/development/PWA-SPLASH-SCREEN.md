@@ -123,8 +123,8 @@ pwa: {
 
 ```typescript
 // apps/game/app.vue
-const isE2E = process.env.NODE_ENV === 'test' || window.playwrightTest
-const showSplash = ref(!isE2E) // Disabled in E2E
+const isE2E = process.env.NODE_ENV === 'test' || window.playwrightTest;
+const showSplash = ref(!isE2E); // Disabled in E2E
 ```
 
 **Solution:** Splash is intentionally disabled during E2E tests for performance.
@@ -134,9 +134,9 @@ const showSplash = ref(!isE2E) // Disabled in E2E
 ```typescript
 // apps/game/components/SplashScreen.vue
 const baseUrl = computed(() => {
-  const url = config.public.baseUrl || ''
-  return url && !url.endsWith('/') ? `${url}/` : url
-})
+  const url = config.public.baseUrl || '';
+  return url && !url.endsWith('/') ? `${url}/` : url;
+});
 ```
 
 **Solution:** Ensure `BASE_URL` environment variable ends with `/` or is empty.
@@ -161,9 +161,9 @@ ls apps/game/public/assets/splash/
 ```javascript
 // In DevTools Console
 caches.keys().then((keys) => {
-  keys.forEach((key) => caches.delete(key))
-  window.location.reload(true)
-})
+  keys.forEach((key) => caches.delete(key));
+  window.location.reload(true);
+});
 ```
 
 ### Splash Screen Shows But Assets Don't Load
@@ -184,7 +184,7 @@ caches.keys().then((keys) => {
 
 ```javascript
 // In DevTools Console
-console.log(window.__NUXT__.config.public.baseUrl)
+console.log(window.__NUXT__.config.public.baseUrl);
 // Should be empty or have trailing slash
 ```
 
@@ -226,10 +226,10 @@ ls dist/assets/splash/
 ```typescript
 // apps/game/components/SplashScreen.vue
 const simulateLoading = () => {
-  const duration = 3000 // Change to desired duration (ms)
-  const intervalTime = 20
+  const duration = 3000; // Change to desired duration (ms)
+  const intervalTime = 20;
   // ...
-}
+};
 ```
 
 ### Disable Splash Screen
@@ -245,7 +245,7 @@ DISABLE_SPLASH=true pnpm run dev
 
 ```typescript
 // apps/game/app.vue
-const showSplash = ref(false) // Always disabled
+const showSplash = ref(false); // Always disabled
 ```
 
 ### Custom Loading Logic
@@ -255,14 +255,14 @@ Replace simulated loading with real progress:
 ```typescript
 const simulateLoading = () => {
   // Track actual resource loading
-  const resourceCount = performance.getEntriesByType('resource').length
-  progress.value = (resourceCount / expectedResources) * 100
+  const resourceCount = performance.getEntriesByType('resource').length;
+  progress.value = (resourceCount / expectedResources) * 100;
 
   if (progress.value >= 100) {
-    visible.value = false
-    emit('complete')
+    visible.value = false;
+    emit('complete');
   }
-}
+};
 ```
 
 ## Testing Splash Screen
@@ -344,7 +344,7 @@ useHead({
     { rel: 'preload', href: '/assets/splash/background.png', as: 'image' },
     { rel: 'preload', href: '/assets/splash/LOGO.png', as: 'image' },
   ],
-})
+});
 ```
 
 ### Lazy Load Non-Critical
@@ -354,11 +354,11 @@ Defer loading of main app until splash completes:
 ```typescript
 // apps/game/components/SplashScreen.vue
 const onSplashComplete = () => {
-  showSplash.value = false
+  showSplash.value = false;
   // Now safe to load heavy resources
-  gameStore.loadFromDB()
-  settingsStore.loadSettings()
-}
+  gameStore.loadFromDB();
+  settingsStore.loadSettings();
+};
 ```
 
 ## Best Practices

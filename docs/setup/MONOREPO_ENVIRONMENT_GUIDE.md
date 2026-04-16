@@ -134,16 +134,16 @@ DOCS_THEME=${DOCS_THEME:-default}
 
 ```javascript
 // Access workspace information
-const workspace = process.env.WORKSPACE_PACKAGE // "game", "docs", etc.
-const workspaceType = process.env.WORKSPACE_TYPE // "app", "package", etc.
+const workspace = process.env.WORKSPACE_PACKAGE; // "game", "docs", etc.
+const workspaceType = process.env.WORKSPACE_TYPE; // "app", "package", etc.
 
 // Access shared variables
-const nodeEnv = process.env.NODE_ENV
-const appVersion = process.env.APP_VERSION
+const nodeEnv = process.env.NODE_ENV;
+const appVersion = process.env.APP_VERSION;
 
 // Access workspace-specific variables
-const baseUrl = process.env.BASE_URL
-const gameDifficulty = process.env.GAME_DIFFICULTY
+const baseUrl = process.env.BASE_URL;
+const gameDifficulty = process.env.GAME_DIFFICULTY;
 ```
 
 **Nuxt runtimeConfig**:

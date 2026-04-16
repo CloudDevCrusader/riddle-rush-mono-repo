@@ -3,7 +3,6 @@ name: gsd-plant-seed
 description: Capture a forward-looking idea with trigger conditions — surfaces automatically at the right milestone
 ---
 
-
 <objective>
 Capture an idea that's too big for now but should surface automatically when the right
 milestone arrives. Seeds solve context rot: instead of a one-liner in Deferred that nobody

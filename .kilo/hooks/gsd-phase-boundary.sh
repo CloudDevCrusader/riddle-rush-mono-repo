@@ -8,10 +8,10 @@
 
 # Check opt-in config — exit silently if not enabled
 if [ -f .planning/config.json ]; then
-  ENABLED=$(node -e "try{const c=require('./.planning/config.json');process.stdout.write(c.hooks?.community===true?'1':'0')}catch{process.stdout.write('0')}" 2>/dev/null)
-  if [ "$ENABLED" != "1" ]; then exit 0; fi
+	ENABLED=$(node -e "try{const c=require('./.planning/config.json');process.stdout.write(c.hooks?.community===true?'1':'0')}catch{process.stdout.write('0')}" 2>/dev/null)
+	if [ "$ENABLED" != "1" ]; then exit 0; fi
 else
-  exit 0
+	exit 0
 fi
 
 INPUT=$(cat)
@@ -19,9 +19,9 @@ INPUT=$(cat)
 # Extract file_path from JSON using Node (handles escaping correctly)
 FILE=$(echo "$INPUT" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{process.stdout.write(JSON.parse(d).tool_input?.file_path||'')}catch{}})" 2>/dev/null)
 
-if [[ "$FILE" == *.planning/* ]] || [[ "$FILE" == .planning/* ]]; then
-  echo ".planning/ file modified: $FILE"
-  echo "Check: Should STATE.md be updated to reflect this change?"
+if [[ $FILE == *.planning/* ]] || [[ $FILE == .planning/* ]]; then
+	echo ".planning/ file modified: $FILE"
+	echo "Check: Should STATE.md be updated to reflect this change?"
 fi
 
 exit 0

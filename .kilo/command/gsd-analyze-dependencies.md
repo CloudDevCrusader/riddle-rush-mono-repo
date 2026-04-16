@@ -8,6 +8,7 @@ tools:
   grep: true
   question: true
 ---
+
 <objective>
 Analyze the phase dependency graph for the current milestone. For each phase pair, determine if there is a dependency relationship based on:
 - File overlap (phases that modify the same files must be ordered)

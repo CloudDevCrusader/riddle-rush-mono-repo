@@ -77,53 +77,53 @@
 </template>
 
 <script setup lang="ts">
-const { goBack, router } = usePageSetup()
-const { locale, setLocale, t } = useI18n()
-const { settingsStore } = useGameState()
-const route = useRoute()
+const { goBack, router } = usePageSetup();
+const { locale, setLocale, t } = useI18n();
+const { settingsStore } = useGameState();
+const route = useRoute();
 
 // Stage selection locally (does not apply until OK pressed)
-const selectedLocale = ref(locale.value)
+const selectedLocale = ref(locale.value);
 
 // Update the reactive selectedLocale when the actual locale changes
 watch(
   locale,
   (newLocale) => {
     if (newLocale && newLocale !== selectedLocale.value) {
-      selectedLocale.value = newLocale
+      selectedLocale.value = newLocale;
     }
   },
   { immediate: true }
-)
+);
 
-type LocaleCode = 'de' | 'en'
+type LocaleCode = 'de' | 'en';
 
 const selectLanguage = (lang: LocaleCode) => {
-  selectedLocale.value = lang
-}
+  selectedLocale.value = lang;
+};
 
 const confirmSelection = async () => {
-  const lang = selectedLocale.value as LocaleCode
+  const lang = selectedLocale.value as LocaleCode;
   try {
-    settingsStore.setLanguage(lang)
-    await setLocale(lang)
+    settingsStore.setLanguage(lang);
+    await setLocale(lang);
 
     if (typeof window === 'undefined') {
-      return
+      return;
     }
 
-    const query = { ...route.query, lang } as Record<string, string | string[] | undefined>
-    await router.push({ path: '/', query })
+    const query = { ...route.query, lang } as Record<string, string | string[] | undefined>;
+    await router.push({ path: '/', query });
   } catch (error) {
-    console.error('Failed to change language:', error)
-    await router.push({ path: '/', query: { lang } })
+    console.error('Failed to change language:', error);
+    await router.push({ path: '/', query: { lang } });
   }
-}
+};
 
 useLocalizedPageSeo({
   title: () => t('language.title'),
   description: () => t('language.description'),
-})
+});
 </script>
 
 <style scoped lang="scss">

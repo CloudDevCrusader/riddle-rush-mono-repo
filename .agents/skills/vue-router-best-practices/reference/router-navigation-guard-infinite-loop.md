@@ -23,19 +23,19 @@ tags: [vue3, vue-router, navigation-guards, redirect, debugging]
 // WRONG: Infinite loop - always redirects to login, even when on login!
 router.beforeEach((to, from) => {
   if (!isAuthenticated()) {
-    return '/login' // Redirects to /login, which triggers guard again...
+    return '/login'; // Redirects to /login, which triggers guard again...
   }
-})
+});
 
 // WRONG: Circular redirect between two routes
 router.beforeEach((to, from) => {
   if (to.path === '/dashboard' && !hasProfile()) {
-    return '/profile'
+    return '/profile';
   }
   if (to.path === '/profile' && !isVerified()) {
-    return '/dashboard' // Back to dashboard, which goes to profile...
+    return '/dashboard'; // Back to dashboard, which goes to profile...
   }
-})
+});
 ```
 
 **Error you'll see:**
@@ -50,18 +50,18 @@ router.beforeEach((to, from) => {
 // CORRECT: Don't redirect if already going to login
 router.beforeEach((to, from) => {
   if (!isAuthenticated() && to.path !== '/login') {
-    return '/login'
+    return '/login';
   }
-})
+});
 
 // CORRECT: Use route name for cleaner check
 router.beforeEach((to, from) => {
-  const publicPages = ['Login', 'Register', 'ForgotPassword']
+  const publicPages = ['Login', 'Register', 'ForgotPassword'];
 
   if (!isAuthenticated() && !publicPages.includes(to.name)) {
-    return { name: 'Login' }
+    return { name: 'Login' };
   }
-})
+});
 ```
 
 ## Solution 2: Use Route Meta Fields
@@ -87,15 +87,15 @@ const routes = [
     component: PublicPage,
     meta: { requiresAuth: false },
   },
-]
+];
 
 // Guard checks meta field
 router.beforeEach((to, from) => {
   // Only redirect if route requires auth
   if (to.meta.requiresAuth && !isAuthenticated()) {
-    return { name: 'Login', query: { redirect: to.fullPath } }
+    return { name: 'Login', query: { redirect: to.fullPath } };
   }
-})
+});
 ```
 
 ## Solution 3: Handle Redirect Chains Carefully
@@ -104,20 +104,20 @@ router.beforeEach((to, from) => {
 // CORRECT: Break potential circular redirects
 router.beforeEach((to, from) => {
   // Prevent redirect loops by tracking redirect depth
-  const redirectCount = to.query._redirectCount || 0
+  const redirectCount = to.query._redirectCount || 0;
 
   if (redirectCount > 3) {
-    console.error('Too many redirects, stopping at:', to.path)
-    return '/error' // Escape hatch
+    console.error('Too many redirects, stopping at:', to.path);
+    return '/error'; // Escape hatch
   }
 
   if (needsRedirect(to)) {
     return {
       path: getRedirectTarget(to),
       query: { ...to.query, _redirectCount: redirectCount + 1 },
-    }
+    };
   }
-})
+});
 ```
 
 ## Solution 4: Centralized Redirect Logic
@@ -125,26 +125,26 @@ router.beforeEach((to, from) => {
 ```javascript
 // guards/auth.js
 export function createAuthGuard(router) {
-  const publicRoutes = new Set(['Login', 'Register', 'ForgotPassword', 'ResetPassword'])
-  const guestOnlyRoutes = new Set(['Login', 'Register'])
+  const publicRoutes = new Set(['Login', 'Register', 'ForgotPassword', 'ResetPassword']);
+  const guestOnlyRoutes = new Set(['Login', 'Register']);
 
   router.beforeEach((to, from) => {
-    const isPublic = publicRoutes.has(to.name)
-    const isGuestOnly = guestOnlyRoutes.has(to.name)
-    const isLoggedIn = isAuthenticated()
+    const isPublic = publicRoutes.has(to.name);
+    const isGuestOnly = guestOnlyRoutes.has(to.name);
+    const isLoggedIn = isAuthenticated();
 
     // Not logged in, trying to access protected route
     if (!isLoggedIn && !isPublic) {
-      return { name: 'Login', query: { redirect: to.fullPath } }
+      return { name: 'Login', query: { redirect: to.fullPath } };
     }
 
     // Logged in, trying to access guest-only route (like login page)
     if (isLoggedIn && isGuestOnly) {
-      return { name: 'Dashboard' }
+      return { name: 'Dashboard' };
     }
 
     // All other cases: proceed
-  })
+  });
 }
 ```
 
@@ -153,17 +153,17 @@ export function createAuthGuard(router) {
 ```javascript
 // Add logging to understand the redirect chain
 router.beforeEach((to, from) => {
-  console.log(`Navigation: ${from.path} -> ${to.path}`)
-  console.log('Auth state:', isAuthenticated())
-  console.log('Route meta:', to.meta)
+  console.log(`Navigation: ${from.path} -> ${to.path}`);
+  console.log('Auth state:', isAuthenticated());
+  console.log('Route meta:', to.meta);
 
   // Your guard logic here
-})
+});
 
 // Or use afterEach for confirmed navigations
 router.afterEach((to, from) => {
-  console.log(`Navigated: ${from.path} -> ${to.path}`)
-})
+  console.log(`Navigated: ${from.path} -> ${to.path}`);
+});
 ```
 
 ## Common Redirect Loop Patterns

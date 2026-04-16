@@ -10,18 +10,18 @@ Fires when the element or any element containing it is removed.
 
 ```vue {13}
 <script setup lang="ts">
-import { onElementRemoval } from '@vueuse/core'
-import { shallowRef, useTemplateRef } from 'vue'
+import { onElementRemoval } from '@vueuse/core';
+import { shallowRef, useTemplateRef } from 'vue';
 
-const btnRef = useTemplateRef('btn')
-const btnState = shallowRef(true)
-const removedCount = shallowRef(0)
+const btnRef = useTemplateRef('btn');
+const btnState = shallowRef(true);
+const removedCount = shallowRef(0);
 
 function btnOnClick() {
-  btnState.value = !btnState.value
+  btnState.value = !btnState.value;
 }
 
-onElementRemoval(btnRef, () => ++removedCount.value)
+onElementRemoval(btnRef, () => ++removedCount.value);
 </script>
 
 <template>
@@ -47,5 +47,5 @@ export declare function onElementRemoval(
   target: MaybeElementRef,
   callback: (mutationRecords: MutationRecord[]) => void,
   options?: OnElementRemovalOptions
-): Fn
+): Fn;
 ```

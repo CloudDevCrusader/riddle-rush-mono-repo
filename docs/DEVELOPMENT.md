@@ -1284,24 +1284,24 @@ Use the `useAnalytics` composable in your components:
 
 ```vue
 <script setup lang="ts">
-const { trackEvent, trackGameEvent } = useAnalytics()
+const { trackEvent, trackGameEvent } = useAnalytics();
 
 // Track a custom event
 const handleButtonClick = () => {
   trackEvent('button_click', {
     button_name: 'start_game',
     location: 'homepage',
-  })
-}
+  });
+};
 
 // Track game-specific events
 const handleGameStart = (category: string) => {
-  trackGameEvent.start(category)
-}
+  trackGameEvent.start(category);
+};
 
 const handleCorrectAnswer = (category: string, itemName: string) => {
-  trackGameEvent.answerCorrect(category, itemName)
-}
+  trackGameEvent.answerCorrect(category, itemName);
+};
 </script>
 ```
 
@@ -1311,22 +1311,22 @@ The `trackGameEvent` helper provides pre-configured events:
 
 ```typescript
 // Game started
-trackGameEvent.start(category)
+trackGameEvent.start(category);
 
 // Correct answer
-trackGameEvent.answerCorrect(category, itemName)
+trackGameEvent.answerCorrect(category, itemName);
 
 // Incorrect answer
-trackGameEvent.answerIncorrect(category, itemName)
+trackGameEvent.answerIncorrect(category, itemName);
 
 // Game completed
-trackGameEvent.gameComplete(category, score, durationInSeconds)
+trackGameEvent.gameComplete(category, score, durationInSeconds);
 
 // Category selected
-trackGameEvent.categorySelect(category)
+trackGameEvent.categorySelect(category);
 
 // Item skipped
-trackGameEvent.skipItem(category, itemName)
+trackGameEvent.skipItem(category, itemName);
 ```
 
 ### Custom Events
@@ -1334,52 +1334,52 @@ trackGameEvent.skipItem(category, itemName)
 For tracking other events:
 
 ```typescript
-const { trackEvent } = useAnalytics()
+const { trackEvent } = useAnalytics();
 
 // Simple event
-trackEvent('share_clicked')
+trackEvent('share_clicked');
 
 // Event with parameters
 trackEvent('filter_applied', {
   filter_type: 'category',
   filter_value: 'sports',
-})
+});
 
 // User interaction
 trackEvent('settings_changed', {
   setting_name: 'theme',
   setting_value: 'dark',
-})
+});
 ```
 
 ### Example: Tracking in a Game Component
 
 ```vue
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
 
-const { trackGameEvent } = useAnalytics()
-const gameStore = useGameStore()
+const { trackGameEvent } = useAnalytics();
+const gameStore = useGameStore();
 
-const startTime = ref<number>(0)
+const startTime = ref<number>(0);
 
 onMounted(() => {
-  startTime.value = Date.now()
-  trackGameEvent.start(gameStore.currentCategory)
-})
+  startTime.value = Date.now();
+  trackGameEvent.start(gameStore.currentCategory);
+});
 
 const handleAnswer = (correct: boolean, itemName: string) => {
   if (correct) {
-    trackGameEvent.answerCorrect(gameStore.currentCategory, itemName)
+    trackGameEvent.answerCorrect(gameStore.currentCategory, itemName);
   } else {
-    trackGameEvent.answerIncorrect(gameStore.currentCategory, itemName)
+    trackGameEvent.answerIncorrect(gameStore.currentCategory, itemName);
   }
-}
+};
 
 const handleGameEnd = () => {
-  const duration = Math.floor((Date.now() - startTime.value) / 1000)
-  trackGameEvent.gameComplete(gameStore.currentCategory, gameStore.score, duration)
-}
+  const duration = Math.floor((Date.now() - startTime.value) / 1000);
+  trackGameEvent.gameComplete(gameStore.currentCategory, gameStore.score, duration);
+};
 </script>
 ```
 
@@ -1403,21 +1403,21 @@ Consider implementing cookie consent based on your region's requirements (GDPR, 
 
 ```vue
 <script setup lang="ts">
-const { gtag } = useGtag()
+const { gtag } = useGtag();
 
 const acceptCookies = () => {
   // Enable analytics
   gtag('consent', 'update', {
     analytics_storage: 'granted',
-  })
-}
+  });
+};
 
 const rejectCookies = () => {
   // Disable analytics
   gtag('consent', 'update', {
     analytics_storage: 'denied',
-  })
-}
+  });
+};
 </script>
 ```
 
@@ -1518,7 +1518,7 @@ app: {
         content:
           "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com;",
       },
-    ]
+    ];
   }
 }
 ```

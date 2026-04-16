@@ -83,28 +83,28 @@ components/
 ```vue
 <script setup lang="ts">
 // Source: Vue 3 official docs + focus-trap GitHub
-import { ref, watch } from 'vue'
-import { createFocusTrap } from 'focus-trap'
+import { ref, watch } from 'vue';
+import { createFocusTrap } from 'focus-trap';
 
 interface Props {
-  modelValue: boolean // v-model controlled visibility
-  variant?: 'default' | 'danger' // Blue or red header
+  modelValue: boolean; // v-model controlled visibility
+  variant?: 'default' | 'danger'; // Blue or red header
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-}>()
+  'update:modelValue': [value: boolean];
+}>();
 
-const modalRef = ref<HTMLElement>()
-let focusTrap: ReturnType<typeof createFocusTrap> | null = null
+const modalRef = ref<HTMLElement>();
+let focusTrap: ReturnType<typeof createFocusTrap> | null = null;
 
 const close = () => {
-  emit('update:modelValue', false)
-}
+  emit('update:modelValue', false);
+};
 
 // Setup focus trap when modal opens
 watch(
@@ -115,14 +115,14 @@ watch(
         initialFocus: false,
         escapeDeactivates: true,
         onDeactivate: close,
-      })
-      focusTrap.activate()
+      });
+      focusTrap.activate();
     } else if (focusTrap) {
-      focusTrap.deactivate()
-      focusTrap = null
+      focusTrap.deactivate();
+      focusTrap = null;
     }
   }
-)
+);
 </script>
 
 <template>
@@ -389,9 +389,9 @@ Problems that look simple but have existing solutions:
 ```typescript
 // ❌ Bad: No cleanup
 onMounted(() => {
-  focusTrap = createFocusTrap(modalRef.value)
-  focusTrap.activate()
-})
+  focusTrap = createFocusTrap(modalRef.value);
+  focusTrap.activate();
+});
 
 // ✅ Good: Cleanup on unmount and visibility change
 watch(
@@ -401,20 +401,20 @@ watch(
       focusTrap = createFocusTrap(modalRef.value, {
         escapeDeactivates: true,
         onDeactivate: close,
-      })
-      focusTrap.activate()
+      });
+      focusTrap.activate();
     } else if (focusTrap) {
-      focusTrap.deactivate()
-      focusTrap = null
+      focusTrap.deactivate();
+      focusTrap = null;
     }
   }
-)
+);
 
 onUnmounted(() => {
   if (focusTrap) {
-    focusTrap.deactivate()
+    focusTrap.deactivate();
   }
-})
+});
 ```
 
 ### Pitfall 2: Teleport Target Not Available
@@ -558,28 +558,28 @@ Verified patterns from official sources:
 ```vue
 <script setup lang="ts">
 // Source: Vue 3 Teleport docs + focus-trap GitHub + W3C ARIA patterns
-import { ref, watch, onUnmounted } from 'vue'
-import { createFocusTrap } from 'focus-trap'
+import { ref, watch, onUnmounted } from 'vue';
+import { createFocusTrap } from 'focus-trap';
 
 interface Props {
-  modelValue: boolean
-  variant?: 'default' | 'danger'
+  modelValue: boolean;
+  variant?: 'default' | 'danger';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-}>()
+  'update:modelValue': [value: boolean];
+}>();
 
-const modalRef = ref<HTMLElement>()
-let focusTrap: ReturnType<typeof createFocusTrap> | null = null
+const modalRef = ref<HTMLElement>();
+let focusTrap: ReturnType<typeof createFocusTrap> | null = null;
 
 const close = () => {
-  emit('update:modelValue', false)
-}
+  emit('update:modelValue', false);
+};
 
 watch(
   () => props.modelValue,
@@ -590,20 +590,20 @@ watch(
         escapeDeactivates: true,
         returnFocusOnDeactivate: true,
         onDeactivate: close,
-      })
-      focusTrap.activate()
+      });
+      focusTrap.activate();
     } else if (focusTrap) {
-      focusTrap.deactivate()
-      focusTrap = null
+      focusTrap.deactivate();
+      focusTrap = null;
     }
   }
-)
+);
 
 onUnmounted(() => {
   if (focusTrap) {
-    focusTrap.deactivate()
+    focusTrap.deactivate();
   }
-})
+});
 </script>
 
 <template>
@@ -678,12 +678,12 @@ onUnmounted(() => {
 <script setup lang="ts">
 // Source: Existing GameButton/GameDisplay patterns
 interface Props {
-  color?: 'white' | 'gold' | 'green' | 'blue' | 'orange'
+  color?: 'white' | 'gold' | 'green' | 'blue' | 'orange';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   color: 'white',
-})
+});
 </script>
 
 <template>
@@ -759,12 +759,12 @@ const props = withDefaults(defineProps<Props>(), {
 <script setup lang="ts">
 // Source: MDN overflow docs + existing component patterns
 interface Props {
-  showRanks?: boolean
+  showRanks?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showRanks: false,
-})
+});
 </script>
 
 <template>

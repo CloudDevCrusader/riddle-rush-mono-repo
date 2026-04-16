@@ -112,7 +112,7 @@ runtimeConfig: {
 ```typescript
 const {
   public: { cloudfrontDomain, websiteUrl },
-} = useRuntimeConfig()
+} = useRuntimeConfig();
 ```
 
 ### 5. Deploy with Terraform Outputs

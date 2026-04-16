@@ -30,19 +30,19 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '@riddle-rush/types/game'
+import type { Player } from '@riddle-rush/types/game';
 
 interface Props {
   /** Player object with score and name */
-  player: Player
+  player: Player;
   /** Optional label (e.g., "Player 1") */
-  label?: string
+  label?: string;
   /** Whether to show score indicator */
-  showIndicator?: boolean
+  showIndicator?: boolean;
   /** Whether to show the player's answer */
-  showAnswer?: boolean
+  showAnswer?: boolean;
   /** Flat layout + mockup colors for scoring on blue gradient cards */
-  embedded?: boolean
+  embedded?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -50,20 +50,20 @@ const props = withDefaults(defineProps<Props>(), {
   showIndicator: true,
   showAnswer: true,
   embedded: false,
-})
+});
 
 const indicatorVariant = computed(() => {
   return props.player.currentRoundScore > 0
     ? 'game-player-card__indicator--positive'
-    : 'game-player-card__indicator--negative'
-})
+    : 'game-player-card__indicator--negative';
+});
 
 const formatScore = (score: number): string => {
   if (score > 0) {
-    return `+${score}pts`
+    return `+${score}pts`;
   }
-  return `${score}pts`
-}
+  return `${score}pts`;
+};
 </script>
 
 <style scoped lang="scss">

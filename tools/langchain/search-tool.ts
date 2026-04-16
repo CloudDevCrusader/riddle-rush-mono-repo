@@ -1,6 +1,6 @@
-import { tool } from 'langchain'
-import { TavilySearch } from '@langchain/tavily'
-import { z } from 'zod'
+import { tool } from 'langchain';
+import { TavilySearch } from '@langchain/tavily';
+import { z } from 'zod';
 
 export const internetSearch = tool(
   async ({
@@ -19,8 +19,8 @@ export const internetSearch = tool(
       tavilyApiKey: process.env.TAVILY_API_KEY,
       includeRawContent,
       topic,
-    })
-    return await tavilySearch._call({ query })
+    });
+    return await tavilySearch._call({ query });
   },
   {
     name: 'internet_search',
@@ -39,5 +39,5 @@ export const internetSearch = tool(
         .default(false)
         .describe('Whether to include raw content'),
     }),
-  }
-)
+  },
+);

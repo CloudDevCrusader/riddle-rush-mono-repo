@@ -1,71 +1,55 @@
-import { ROUTES, getGameRoute, getResultsRoute } from '@riddle-rush/shared/routes'
+import { ROUTES, getGameRoute, getResultsRoute } from '@riddle-rush/shared/routes';
 
 /**
  * Navigation composable
- * Provides type-safe navigation helpers for common routes with loading indicators
+ * Type-safe helpers for common routes. Uses client-side router only (no full
+ * document reload). Avoids the global splash overlay here so route changes feel
+ * like SPA content swaps; use `useLoading` directly when a long operation needs it.
  */
 export function useNavigation() {
-  const router = useRouter()
-  const { showLoading, hideLoading, setProgress } = useLoading()
-
-  const navigateWithLoading = async (route: string, simulateLoading = false) => {
-    try {
-      showLoading()
-
-      // Simulate loading for better UX on fast transitions
-      if (simulateLoading) {
-        setProgress(30)
-        await new Promise((resolve) => setTimeout(resolve, 300))
-        setProgress(70)
-        await new Promise((resolve) => setTimeout(resolve, 200))
-
-        await router.push(route)
-
-        setProgress(100)
-        await new Promise((resolve) => setTimeout(resolve, 250))
-      } else {
-        await router.push(route)
-      }
-    } finally {
-      hideLoading()
-    }
-  }
+  const router = useRouter();
+  const logger = useLogger();
 
   /**
    * Serialize navigations so rapid taps don't interleave, and callers can
    * `await` until the route transition has finished (unlike a debounced
    * fire-and-forget).
    */
-  let navigationChain: Promise<void> = Promise.resolve()
+  let navigationChain: Promise<void> = Promise.resolve();
 
-  const queueNavigation = (route: string, simulateLoading = false): Promise<void> => {
+  const queueNavigation = (route: string): Promise<void> => {
     navigationChain = navigationChain
-      .then(() => navigateWithLoading(route, simulateLoading))
-      .catch(() => {})
-    return navigationChain
-  }
+      .then(() => {
+        logger.debug(`Navigating to: ${route}`);
+        router.push(route);
+      })
+      .catch((err) => {
+        logger.error(`Navigation to "${route}" failed`, err, { targetRoute: route });
+      });
+    return navigationChain;
+  };
 
   const goBack = () => {
     // Check if there's history to go back to
     if (window.history.length > 1) {
-      router.back()
+      router.back();
     } else {
       // Fallback to home if no history available
-      void queueNavigation(ROUTES.HOME, true)
+      void queueNavigation(ROUTES.HOME);
     }
-  }
+  };
 
   return {
-    goHome: () => queueNavigation(ROUTES.HOME, true),
-    goToPlayers: () => queueNavigation(ROUTES.PLAYERS, true),
-    goToRoundStart: () => queueNavigation(ROUTES.ROUND_START, true),
-    goToGame: (gameId?: string) => queueNavigation(gameId ? getGameRoute(gameId) : '/game', true),
+    goHome: () => queueNavigation(ROUTES.HOME),
+    goToPlayers: () => queueNavigation(ROUTES.PLAYERS),
+    goToRoundStart: () => queueNavigation(ROUTES.ROUND_START),
+    goToGame: (gameId?: string) => queueNavigation(gameId ? getGameRoute(gameId) : '/game'),
     goToResults: (gameId?: string) =>
-      queueNavigation(gameId ? getResultsRoute(gameId) : '/results', true),
-    goToLeaderboard: () => queueNavigation(ROUTES.LEADERBOARD, true),
-    goToSettings: () => queueNavigation(ROUTES.SETTINGS, true),
-    goToLanguage: () => queueNavigation(ROUTES.LANGUAGE, true),
-    goToCredits: () => queueNavigation(ROUTES.CREDITS, true),
+      queueNavigation(gameId ? getResultsRoute(gameId) : '/results'),
+    goToLeaderboard: () => queueNavigation(ROUTES.LEADERBOARD),
+    goToSettings: () => queueNavigation(ROUTES.SETTINGS),
+    goToLanguage: () => queueNavigation(ROUTES.LANGUAGE),
+    goToCredits: () => queueNavigation(ROUTES.CREDITS),
     goBack,
-  }
+  };
 }

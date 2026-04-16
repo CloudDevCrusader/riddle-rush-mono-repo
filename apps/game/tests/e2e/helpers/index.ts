@@ -18,7 +18,7 @@ export {
   waitForWebSocketConnection,
   waitForGameEvent,
   withRetry,
-} from './waits'
+} from './waits';
 
 // Asset and image loading verification
 export {
@@ -29,7 +29,7 @@ export {
   waitForCriticalAssets,
   retryFailedImages,
   getAssetDiagnostics,
-} from './assets'
+} from './assets';
 
 // Mobile device testing utilities
 export {
@@ -41,7 +41,7 @@ export {
   verifyNoMouseOnlyInteractions,
   getDeviceInfo,
   simulateTouchGesture,
-} from './mobile'
+} from './mobile';
 
 // WebSocket and realtime testing
 export {
@@ -56,7 +56,7 @@ export {
   sendGameMessage,
   disconnectWebSocket,
   getWebSocketState,
-} from './realtime'
+} from './realtime';
 
 // Diagnostics and debugging
 export {
@@ -67,10 +67,10 @@ export {
   generateDebugReport,
   logToArtifacts,
   diffGameStates,
-} from './diagnostics'
+} from './diagnostics';
 
 // Test data generation (existing)
-export { generatePlayerName, generateAnswer } from './faker'
+export { generatePlayerName, generateAnswer } from './faker';
 
 // Game flow helpers (shared across E2E specs)
 export {
@@ -84,8 +84,8 @@ export {
   setupMultiplayerGame,
   startGameWithDefaults,
   startGameAndGoToResults,
-} from './game-flow'
+} from './game-flow';
 
 // Types
-export type { GameMessage } from './realtime'
-export type { GameStateSnapshot, NetworkEntry, BrowserMetrics } from './diagnostics'
+export type { GameMessage } from './realtime';
+export type { GameStateSnapshot, NetworkEntry, BrowserMetrics } from './diagnostics';

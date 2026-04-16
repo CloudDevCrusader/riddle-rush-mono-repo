@@ -22,20 +22,20 @@ In templates, you can use modifiers like `@click.stop.prevent`. In render functi
 **Incorrect:**
 
 ```javascript
-import { h } from 'vue'
+import { h } from 'vue';
 
 export default {
   setup() {
     const handleClick = (e) => {
       // WRONG: Manual modifier implementation is error-prone
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
       // ... actual handler logic
-    }
+    };
 
-    return () => h('button', { onClick: handleClick }, 'Click')
+    return () => h('button', { onClick: handleClick }, 'Click');
   },
-}
+};
 ```
 
 ```javascript
@@ -43,21 +43,21 @@ export default {
 const handleDivClick = (e) => {
   // Intended: only trigger when clicking div itself, not children
   // This manual check is easy to get wrong
-  if (e.target !== e.currentTarget) return
+  if (e.target !== e.currentTarget) return;
   // ...
-}
+};
 ```
 
 **Correct:**
 
 ```javascript
-import { h, withModifiers } from 'vue'
+import { h, withModifiers } from 'vue';
 
 export default {
   setup() {
     const handleClick = () => {
-      console.log('clicked!')
-    }
+      console.log('clicked!');
+    };
 
     return () =>
       h(
@@ -67,9 +67,9 @@ export default {
           onClick: withModifiers(handleClick, ['stop', 'prevent']),
         },
         'Click'
-      )
+      );
   },
-}
+};
 ```
 
 ## CamelCase Modifiers (No Helper Needed)
@@ -77,11 +77,11 @@ export default {
 For `capture`, `once`, and `passive` modifiers, use camelCase concatenation:
 
 ```javascript
-import { h } from 'vue'
+import { h } from 'vue';
 
 export default {
   setup() {
-    const handler = () => console.log('event!')
+    const handler = () => console.log('event!');
 
     return () =>
       h('div', {
@@ -96,20 +96,20 @@ export default {
 
         // @mouseover.once.capture -> onMouseoverOnceCapture
         onMouseoverOnceCapture: handler,
-      })
+      });
   },
-}
+};
 ```
 
 ## withModifiers Examples
 
 ```javascript
-import { h, withModifiers } from 'vue'
+import { h, withModifiers } from 'vue';
 
 export default {
   setup() {
-    const handleClick = () => console.log('clicked')
-    const handleSubmit = () => console.log('submitted')
+    const handleClick = () => console.log('clicked');
+    const handleSubmit = () => console.log('submitted');
 
     return () =>
       h('div', [
@@ -150,9 +150,9 @@ export default {
           },
           'Link'
         ),
-      ])
+      ]);
   },
-}
+};
 ```
 
 ## Key Modifiers
@@ -160,12 +160,12 @@ export default {
 For keyboard events, use `withKeys` for key modifiers:
 
 ```javascript
-import { h, withKeys } from 'vue'
+import { h, withKeys } from 'vue';
 
 export default {
   setup() {
-    const handleEnter = () => console.log('Enter pressed')
-    const handleEscape = () => console.log('Escape pressed')
+    const handleEnter = () => console.log('Enter pressed');
+    const handleEscape = () => console.log('Escape pressed');
 
     return () =>
       h('input', {
@@ -174,19 +174,19 @@ export default {
 
         // Multiple keys
         onKeydown: withKeys(handleEscape, ['escape', 'esc']),
-      })
+      });
   },
-}
+};
 ```
 
 ## JSX Equivalent
 
 ```jsx
-import { withModifiers, withKeys } from 'vue'
+import { withModifiers, withKeys } from 'vue';
 
 export default {
   setup() {
-    const handleClick = () => console.log('clicked')
+    const handleClick = () => console.log('clicked');
 
     return () => (
       <div>
@@ -198,9 +198,9 @@ export default {
 
         <input onKeyup={withKeys(() => {}, ['enter'])} />
       </div>
-    )
+    );
   },
-}
+};
 ```
 
 ## Reference

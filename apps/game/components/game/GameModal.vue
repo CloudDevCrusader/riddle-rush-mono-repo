@@ -38,16 +38,16 @@
 </template>
 
 <script setup lang="ts">
-import { createFocusTrap, type FocusTrap } from 'focus-trap'
+import { createFocusTrap, type FocusTrap } from 'focus-trap';
 
-defineOptions({ inheritAttrs: false })
+defineOptions({ inheritAttrs: false });
 
 interface Props {
-  modelValue: boolean
-  variant?: 'default' | 'danger'
-  title?: string
-  closeOnBackdrop?: boolean
-  closeOnEscape?: boolean
+  modelValue: boolean;
+  variant?: 'default' | 'danger';
+  title?: string;
+  closeOnBackdrop?: boolean;
+  closeOnEscape?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,34 +55,34 @@ const props = withDefaults(defineProps<Props>(), {
   title: undefined,
   closeOnBackdrop: true,
   closeOnEscape: true,
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-}>()
+  'update:modelValue': [value: boolean];
+}>();
 
-const modalRef = ref<HTMLElement | null>(null)
-const overlayRef = ref<HTMLElement | null>(null)
-let focusTrap: FocusTrap | null = null
+const modalRef = ref<HTMLElement | null>(null);
+const overlayRef = ref<HTMLElement | null>(null);
+let focusTrap: FocusTrap | null = null;
 
-const modalClasses = computed(() => [`game-modal--${props.variant}`])
+const modalClasses = computed(() => [`game-modal--${props.variant}`]);
 
 const close = () => {
-  emit('update:modelValue', false)
-}
+  emit('update:modelValue', false);
+};
 
 const handleBackdropClick = () => {
   if (props.closeOnBackdrop) {
-    close()
+    close();
   }
-}
+};
 
 // Handle Escape key
 const handleEscape = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && props.modelValue && props.closeOnEscape) {
-    close()
+    close();
   }
-}
+};
 
 // Focus trap activation
 const activateFocusTrap = () => {
@@ -93,39 +93,39 @@ const activateFocusTrap = () => {
       allowOutsideClick: true,
       initialFocus: false, // Let content determine initial focus
       fallbackFocus: modalRef.value as HTMLElement,
-    })
-    focusTrap.activate()
+    });
+    focusTrap.activate();
   }
-}
+};
 
 // Focus trap deactivation
 const deactivateFocusTrap = () => {
   if (focusTrap) {
-    focusTrap.deactivate()
-    focusTrap = null
+    focusTrap.deactivate();
+    focusTrap = null;
   }
-}
+};
 
 onMounted(() => {
-  document.addEventListener('keydown', handleEscape)
-})
+  document.addEventListener('keydown', handleEscape);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleEscape)
-  deactivateFocusTrap()
-})
+  document.removeEventListener('keydown', handleEscape);
+  deactivateFocusTrap();
+});
 
 // Lock body scroll when modal is open
 watch(
   () => props.modelValue,
   (isOpen: boolean) => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = '';
     }
   }
-)
+);
 </script>
 
 <style scoped lang="scss">

@@ -1,8 +1,8 @@
-import { computed } from '#imports'
-import { useGameStore } from '~/stores/gameStore'
+import { computed } from '#imports';
+import { useGameStore } from '~/stores/gameStore';
 
 export function useCategories() {
-  const store = useGameStore()
+  const store = useGameStore();
 
   return {
     // State
@@ -23,5 +23,5 @@ export function useCategories() {
     getCategoryById: store.getCategoryById,
     getRandomCategory: store.getRandomCategory,
     categoryEmoji: store.categoryEmoji,
-  }
+  };
 }

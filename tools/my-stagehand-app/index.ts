@@ -1,41 +1,41 @@
 /* eslint-disable no-console */
-import 'dotenv/config'
-import { Stagehand } from '@browserbasehq/stagehand'
+import 'dotenv/config';
+import { Stagehand } from '@browserbasehq/stagehand';
 
 async function main() {
   const stagehand = new Stagehand({
     env: 'BROWSERBASE',
-  })
+  });
 
-  await stagehand.init()
+  await stagehand.init();
 
-  console.log('Stagehand Session Started')
-  console.log(`Watch live: https://browserbase.com/sessions/${stagehand.browserbaseSessionId}`)
+  console.log('Stagehand Session Started');
+  console.log(`Watch live: https://browserbase.com/sessions/${stagehand.browserbaseSessionId}`);
 
-  const page = stagehand.context.pages()[0]
+  const page = stagehand.context.pages()[0];
 
-  await page.goto('https://stagehand.dev')
+  await page.goto('https://stagehand.dev');
 
-  const extractResult = await stagehand.extract('Extract the value proposition from the page.')
-  console.log('Extract result:\n', extractResult)
+  const extractResult = await stagehand.extract('Extract the value proposition from the page.');
+  console.log('Extract result:\n', extractResult);
 
-  const actResult = await stagehand.act('Click the Evals button.')
-  console.log('Act result:\n', actResult)
+  const actResult = await stagehand.act('Click the Evals button.');
+  console.log('Act result:\n', actResult);
 
-  const observeResult = await stagehand.observe('What can I click on this page?')
-  console.log('Observe result:\n', observeResult)
+  const observeResult = await stagehand.observe('What can I click on this page?');
+  console.log('Observe result:\n', observeResult);
 
   const agent = stagehand.agent({
     systemPrompt: 'You are a helpful assistant that can control a web browser.',
-  })
+  });
 
-  const agentResult = await agent.execute('What is the most accurate model to use in Stagehand?')
-  console.log('Agent result:\n', agentResult)
+  const agentResult = await agent.execute('What is the most accurate model to use in Stagehand?');
+  console.log('Agent result:\n', agentResult);
 
-  await stagehand.close()
+  await stagehand.close();
 }
 
 main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
+  console.error(err);
+  process.exit(1);
+});

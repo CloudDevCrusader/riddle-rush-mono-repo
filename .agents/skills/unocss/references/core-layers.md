@@ -15,7 +15,7 @@ Set layer on rules:
 rules: [
   [/^m-(\d)$/, ([, d]) => ({ margin: `${d / 4}rem` }), { layer: 'utilities' }],
   ['btn', { padding: '4px' }], // default layer
-]
+];
 ```
 
 ### Layer Ordering
@@ -31,23 +31,23 @@ layers: {
 ### Import Layers Separately
 
 ```ts
-import 'uno:components.css'
-import 'uno.css'
-import './my-custom.css'
-import 'uno:utilities.css'
+import 'uno:components.css';
+import 'uno.css';
+import './my-custom.css';
+import 'uno:utilities.css';
 ```
 
 ### CSS Cascade Layers
 
 ```ts
-outputToCssLayers: true
+outputToCssLayers: true;
 
 // Or with custom names
 outputToCssLayers: {
   cssLayerName: (layer) => {
-    if (layer === 'default') return 'utilities'
-    if (layer === 'shortcuts') return 'utilities.shortcuts'
-  }
+    if (layer === 'default') return 'utilities';
+    if (layer === 'shortcuts') return 'utilities.shortcuts';
+  };
 }
 ```
 
@@ -76,7 +76,7 @@ preflights: [
       }
     `,
   },
-]
+];
 ```
 
 With layer:
@@ -87,7 +87,7 @@ preflights: [
     layer: 'base',
     getCSS: () => `html { font-family: system-ui; }`,
   },
-]
+];
 ```
 
 ## preset-wind4 Layers

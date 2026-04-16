@@ -42,7 +42,7 @@ Separate source files from project root:
 // .vitepress/config.ts
 export default {
   srcDir: './src', // Markdown files live in ./src/
-}
+};
 ```
 
 With `srcDir: 'src'`:
@@ -78,7 +78,7 @@ Remove `.html` extension from URLs (requires server support):
 ```ts
 export default {
   cleanUrls: true,
-}
+};
 ```
 
 **Server requirements:**
@@ -101,7 +101,7 @@ export default {
     // Dynamic parameters
     'packages/:pkg/src/:slug*': ':pkg/:slug*',
   },
-}
+};
 ```
 
 This maps `packages/pkg-a/src/intro.md` → `/pkg-a/intro.html`.
@@ -113,9 +113,9 @@ Rewrites can also be a function:
 ```ts
 export default {
   rewrites(id) {
-    return id.replace(/^packages\/([^/]+)\/src\//, '$1/')
+    return id.replace(/^packages\/([^/]+)\/src\//, '$1/');
   },
-}
+};
 ```
 
 ## Public Directory
@@ -142,14 +142,14 @@ For sub-path deployment (e.g., GitHub Pages):
 ```ts
 export default {
   base: '/repo-name/',
-}
+};
 ```
 
 All absolute paths are automatically prefixed with base. For dynamic paths in components, use `withBase`:
 
 ```vue
 <script setup>
-import { withBase } from 'vitepress'
+import { withBase } from 'vitepress';
 </script>
 
 <template>

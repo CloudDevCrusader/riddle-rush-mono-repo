@@ -37,7 +37,7 @@ export default defineConfig({
     /^@myorg\//, // Regex pattern (all @myorg/* packages)
     /^lodash/, // All lodash packages
   ],
-})
+});
 ```
 
 ### `noExternal`
@@ -51,7 +51,7 @@ export default defineConfig({
     'some-package', // Bundle this even if in dependencies
     'vendor-lib',
   ],
-})
+});
 ```
 
 ### `skipNodeModulesBundle`
@@ -62,7 +62,7 @@ Skip resolving and bundling ALL node_modules:
 export default defineConfig({
   entry: ['src/index.ts'],
   skipNodeModulesBundle: true,
-})
+});
 ```
 
 **Result:** No dependencies from node_modules are parsed or bundled.
@@ -81,7 +81,7 @@ export default defineConfig({
     /^react\//, // react/jsx-runtime, etc.
   ],
   dts: true,
-})
+});
 ```
 
 ### Utility Library with Shared Deps
@@ -93,7 +93,7 @@ export default defineConfig({
   // Bundle lodash utilities
   noExternal: ['lodash-es'],
   dts: true,
-})
+});
 ```
 
 ### Monorepo Package
@@ -106,7 +106,7 @@ export default defineConfig({
     /^@mycompany\//, // Don't bundle other workspace packages
   ],
   dts: true,
-})
+});
 ```
 
 ### CLI Tool (Bundle Everything)
@@ -119,7 +119,7 @@ export default defineConfig({
   // Bundle all dependencies for standalone CLI
   noExternal: [/.*/],
   shims: true,
-})
+});
 ```
 
 ### Library with Specific Externals
@@ -130,7 +130,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   external: ['vue', '@vue/runtime-core', '@vue/reactivity'],
   dts: true,
-})
+});
 ```
 
 ## Declaration Files
@@ -147,7 +147,7 @@ export default defineConfig({
   dts: {
     resolver: 'tsc', // Use TypeScript resolver instead of Oxc
   },
-})
+});
 ```
 
 **When to use `tsc` resolver:**
@@ -181,7 +181,7 @@ tsdown --no-external some-package
 // Don't bundle framework
 export default defineConfig({
   external: ['vue', 'react', 'solid-js', 'svelte'],
-})
+});
 ```
 
 ### Standalone App
@@ -191,7 +191,7 @@ export default defineConfig({
 export default defineConfig({
   noExternal: [/.*/],
   skipNodeModulesBundle: false,
-})
+});
 ```
 
 ### Shared Library
@@ -201,7 +201,7 @@ export default defineConfig({
 export default defineConfig({
   external: [/.*/], // External by default
   noExternal: ['tiny-utils'], // Except this one
-})
+});
 ```
 
 ### Monorepo Package
@@ -217,7 +217,7 @@ export default defineConfig({
   noExternal: [
     'lodash-es', // Bundle utility libraries
   ],
-})
+});
 ```
 
 ## Troubleshooting
@@ -239,7 +239,7 @@ Or explicitly externalize:
 ```ts
 export default defineConfig({
   external: ['should-be-external'],
-})
+});
 ```
 
 ### Missing Dependency at Runtime
@@ -259,7 +259,7 @@ Or bundle it:
 ```ts
 export default defineConfig({
   noExternal: ['needed-package'],
-})
+});
 ```
 
 ### Type Resolution Errors
@@ -271,7 +271,7 @@ export default defineConfig({
   dts: {
     resolver: 'tsc',
   },
-})
+});
 ```
 
 ## Summary

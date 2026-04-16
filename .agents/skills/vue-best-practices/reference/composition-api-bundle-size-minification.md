@@ -129,8 +129,8 @@ function doSomething() {
 
 ```javascript
 // vite.config.js - Only for projects using exclusively Composition API
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
@@ -138,7 +138,7 @@ export default defineConfig({
     // This drops Options API support from the bundle
     __VUE_OPTIONS_API__: false,
   },
-})
+});
 
 // WARNING: This will break any component (including from libraries)
 // that uses Options API. Only use if you're certain all components

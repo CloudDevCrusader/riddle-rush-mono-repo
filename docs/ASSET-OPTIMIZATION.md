@@ -385,7 +385,7 @@ export default defineNuxtConfig({
     preload: true,
     display: 'swap',
   },
-})
+});
 ```
 
 ---
@@ -415,7 +415,7 @@ useHead({
       type: 'image/webp',
     },
   ],
-})
+});
 </script>
 ```
 
@@ -447,11 +447,11 @@ For large images, show a low-quality placeholder:
 </template>
 
 <script setup lang="ts">
-const imageLoaded = ref(false)
+const imageLoaded = ref(false);
 defineProps<{
-  imageSrc: string
-  alt: string
-}>()
+  imageSrc: string;
+  alt: string;
+}>();
 </script>
 
 <style scoped>
@@ -486,40 +486,40 @@ Nuxt Image handles this automatically, but for custom scenarios:
 ```typescript
 // composables/useLazyLoad.ts
 export const useLazyLoad = (elementRef: Ref<HTMLElement | null>) => {
-  const isVisible = ref(false)
+  const isVisible = ref(false);
 
   onMounted(() => {
-    if (!elementRef.value) return
+    if (!elementRef.value) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          isVisible.value = true
-          observer.disconnect()
+          isVisible.value = true;
+          observer.disconnect();
         }
       },
       {
         rootMargin: '50px', // Load 50px before entering viewport
       }
-    )
+    );
 
-    observer.observe(elementRef.value)
+    observer.observe(elementRef.value);
 
     onUnmounted(() => {
-      observer.disconnect()
-    })
-  })
+      observer.disconnect();
+    });
+  });
 
-  return { isVisible }
-}
+  return { isVisible };
+};
 ```
 
 Usage:
 
 ```vue
 <script setup lang="ts">
-const imageRef = ref<HTMLElement | null>(null)
-const { isVisible } = useLazyLoad(imageRef)
+const imageRef = ref<HTMLElement | null>(null);
+const { isVisible } = useLazyLoad(imageRef);
 </script>
 
 <template>
@@ -611,7 +611,7 @@ echo "✅ All images within size budget"
 
 ```vue
 <script setup lang="ts">
-const { isMobile } = useDevice()
+const { isMobile } = useDevice();
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test'
+import { expect, type Page } from '@playwright/test';
 
 // ---------------------------------------------------------------------------
 // Browser-context window type extensions (used inside page.evaluate callbacks)
@@ -6,53 +6,53 @@ import { expect, type Page } from '@playwright/test'
 
 /** Window extended with Nuxt internal properties. */
 interface NuxtWindow extends Window {
-  __NUXT_DEVTOOLS__?: unknown
-  __NUXT__?: { config?: { devtools?: boolean } }
+  __NUXT_DEVTOOLS__?: unknown;
+  __NUXT__?: { config?: { devtools?: boolean } };
 }
 
 /** Player state as seen from the E2E browser context. */
 interface E2EPlayer {
-  id: string
-  hasSubmitted?: boolean
-  name?: string
+  id: string;
+  hasSubmitted?: boolean;
+  name?: string;
 }
 
 /** Game session state as seen from the E2E browser context. */
 interface E2EGameSession {
-  id?: string
-  currentPlayerIndex?: number
-  players?: E2EPlayer[]
-  category?: { name?: string; searchWord?: string }
-  letter?: string
-  currentRound?: number
-  status?: string
+  id?: string;
+  currentPlayerIndex?: number;
+  players?: E2EPlayer[];
+  category?: { name?: string; searchWord?: string };
+  letter?: string;
+  currentRound?: number;
+  status?: string;
 }
 
 /** Pinia game store shape as seen from the E2E browser context. */
 interface E2EPiniaGameStore {
-  currentSession?: E2EGameSession
-  pendingPlayerNames?: string[]
-  currentPlayerTurn?: { name?: string }
-  flowState?: string
-  loadFromDB?: () => Promise<void>
-  loadSessionById?: (sessionId: string) => Promise<void>
+  currentSession?: E2EGameSession;
+  pendingPlayerNames?: string[];
+  currentPlayerTurn?: { name?: string };
+  flowState?: string;
+  loadFromDB?: () => Promise<void>;
+  loadSessionById?: (sessionId: string) => Promise<void>;
   setupPlayers?: (
     playerNames: string[],
     gameName?: string,
     customLetter?: string,
     customCategory?: unknown
-  ) => Promise<{ id?: string } | null>
-  setPendingPlayerNames?: (playerNames: string[]) => void
-  transitionToRoundComplete?: () => void
-  clearSession?: () => void
+  ) => Promise<{ id?: string } | null>;
+  setPendingPlayerNames?: (playerNames: string[]) => void;
+  transitionToRoundComplete?: () => void;
+  clearSession?: () => void;
 }
 
 /** Window extended with Pinia stores exposed for E2E testing. */
 interface PiniaWindow extends Window {
   __pinia_stores__?: {
-    game?: E2EPiniaGameStore
-    settings?: { fortuneWheelAllowRedraw: boolean }
-  }
+    game?: E2EPiniaGameStore;
+    settings?: { fortuneWheelAllowRedraw: boolean };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -61,12 +61,12 @@ interface PiniaWindow extends Window {
  * Wait for the splash screen to finish animating away.
  */
 export async function waitForSplashComplete(page: Page): Promise<void> {
-  await page.waitForTimeout(1000)
-  const splashScreen = page.locator('[data-testid="splash-screen"]')
+  await page.waitForTimeout(1000);
+  const splashScreen = page.locator('[data-testid="splash-screen"]');
   await splashScreen.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
     // Splash might already be gone
-  })
-  await page.waitForTimeout(500) // Extra buffer for transitions
+  });
+  await page.waitForTimeout(500); // Extra buffer for transitions
 }
 
 /**
@@ -76,16 +76,16 @@ export async function hideDevtools(page: Page): Promise<void> {
   await page.addStyleTag({
     content:
       '#nuxt-devtools-container, nuxt-devtools-frame, #nuxt-devtools-container *, .nuxt-devtools-panel, .nuxt-devtools-toggle, [data-v-inspector], [data-inspector], [data-inspector] { display: none !important; pointer-events: none !important; opacity: 0 !important; visibility: hidden !important; z-index: -1 !important; position: static !important; }',
-  })
+  });
 
   // Also try to force devtools to be disabled
   await page.evaluate(() => {
-    const win = window as NuxtWindow
-    win.__NUXT_DEVTOOLS__ = null
-    win.__NUXT__ = win.__NUXT__ ?? {}
-    win.__NUXT__.config = win.__NUXT__.config ?? {}
-    win.__NUXT__.config.devtools = false
-  })
+    const win = window as NuxtWindow;
+    win.__NUXT_DEVTOOLS__ = null;
+    win.__NUXT__ = win.__NUXT__ ?? {};
+    win.__NUXT__.config = win.__NUXT__.config ?? {};
+    win.__NUXT__.config.devtools = false;
+  });
 }
 
 /**
@@ -94,28 +94,28 @@ export async function hideDevtools(page: Page): Promise<void> {
  */
 async function preparePageForE2E(page: Page): Promise<void> {
   await page.addInitScript(() => {
-    ;(window as Window & { playwrightTest?: boolean }).playwrightTest = true
-  })
+    (window as Window & { playwrightTest?: boolean }).playwrightTest = true;
+  });
 }
 
 /**
  * Ensure player names are non-empty and unique so setup cannot fail on duplicate validation.
  */
 function normalizePlayerNames(playerNames: string[]): string[] {
-  const seen = new Map<string, number>()
+  const seen = new Map<string, number>();
 
   return playerNames.map((name, index) => {
-    const baseName = name.trim() || `Player ${index + 1}`
-    const key = baseName.toLowerCase()
-    const count = seen.get(key) ?? 0
-    seen.set(key, count + 1)
+    const baseName = name.trim() || `Player ${index + 1}`;
+    const key = baseName.toLowerCase();
+    const count = seen.get(key) ?? 0;
+    seen.set(key, count + 1);
 
     if (count === 0) {
-      return baseName
+      return baseName;
     }
 
-    return `${baseName} ${count + 1}`
-  })
+    return `${baseName} ${count + 1}`;
+  });
 }
 
 /**
@@ -129,70 +129,70 @@ export async function submitPlayerAnswers(
   answers: string[] = []
 ): Promise<void> {
   if (count <= 0) {
-    return
+    return;
   }
 
-  const answerInput = page.locator('[data-testid="game-answer-input"]').first()
+  const answerInput = page.locator('[data-testid="game-answer-input"]').first();
   const submitBtn = page
     .locator('[data-testid="game-submit-button"], [data-testid="game-verbal-turn-done"]')
-    .first()
-  const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
+    .first();
+  const allSubmitted = page.locator('[data-testid="game-all-submitted"]');
 
   for (let i = 0; i < count; i++) {
-    await expect(submitBtn).toBeVisible({ timeout: 10000 })
+    await expect(submitBtn).toBeVisible({ timeout: 10000 });
 
     const beforeState = await page.evaluate(() => {
-      const store = (window as PiniaWindow).__pinia_stores__?.game
+      const store = (window as PiniaWindow).__pinia_stores__?.game;
 
-      const players = store?.currentSession?.players ?? []
+      const players = store?.currentSession?.players ?? [];
       return {
         currentPlayerIndex: store?.currentSession?.currentPlayerIndex ?? 0,
         submittedCount: players.filter((player) => Boolean(player.hasSubmitted)).length,
-      }
-    })
+      };
+    });
 
-    const answerInputVisible = await answerInput.isVisible()
-    const answer = answers[i]
+    const answerInputVisible = await answerInput.isVisible();
+    const answer = answers[i];
 
     if (answerInputVisible && answer !== undefined) {
-      await answerInput.fill(answer)
+      await answerInput.fill(answer);
     }
 
-    await submitBtn.click()
+    await submitBtn.click();
 
     if (i < count - 1) {
       await expect
         .poll(
           async () => {
             if (await allSubmitted.isVisible().catch(() => false)) {
-              return 'all-submitted'
+              return 'all-submitted';
             }
 
             const afterState = await page.evaluate(() => {
-              const store = (window as PiniaWindow).__pinia_stores__?.game
-              const players = store?.currentSession?.players ?? []
+              const store = (window as PiniaWindow).__pinia_stores__?.game;
+              const players = store?.currentSession?.players ?? [];
               return {
                 currentPlayerIndex: store?.currentSession?.currentPlayerIndex ?? 0,
                 submittedCount: players.filter((player) => Boolean(player.hasSubmitted)).length,
-              }
-            })
+              };
+            });
 
             if (
               afterState.currentPlayerIndex > beforeState.currentPlayerIndex ||
               afterState.submittedCount > beforeState.submittedCount
             ) {
-              return 'state-advanced'
+              return 'state-advanced';
             }
 
-            return 'waiting'
+            return 'waiting';
           },
           { timeout: 8000 }
         )
-        .not.toBe('waiting')
+        .not.toBe('waiting');
     }
   }
 
-  await expect(allSubmitted).toBeVisible({ timeout: 10000 })
+  await expect(allSubmitted).toBeVisible({ timeout: 10000 });
 }
 
 /**
@@ -203,88 +203,88 @@ export async function submitPlayerAnswers(
  * IndexedDB; we keep a single navigation retry for rare flakes.
  */
 export async function navigateToResults(page: Page): Promise<void> {
-  const nextBtn = page.locator('[data-testid="next-button"]')
-  await expect(nextBtn).toBeVisible({ timeout: 10000 })
+  const nextBtn = page.locator('[data-testid="next-button"]');
+  await expect(nextBtn).toBeVisible({ timeout: 10000 });
 
-  const gameMatch = page.url().match(/\/game\/([^/?#]+)/)
-  const gameId = gameMatch?.[1] ?? null
+  const gameMatch = page.url().match(/\/game\/([^/?#]+)/);
+  const gameId = gameMatch?.[1] ?? null;
 
   // If all players already submitted but flow has not advanced yet,
   // force the transition so NEXT can navigate deterministically.
   await page.evaluate(() => {
-    const store = (window as PiniaWindow).__pinia_stores__?.game
-    const players = store?.currentSession?.players ?? []
+    const store = (window as PiniaWindow).__pinia_stores__?.game;
+    const players = store?.currentSession?.players ?? [];
     const allSubmitted =
-      players.length > 0 && players.every((player) => Boolean(player.hasSubmitted))
+      players.length > 0 && players.every((player) => Boolean(player.hasSubmitted));
 
     if (allSubmitted && store?.flowState === 'in-round') {
-      store.transitionToRoundComplete?.()
+      store.transitionToRoundComplete?.();
     }
-  })
+  });
 
   // Try to click, and if devtools interferes, use evaluate as fallback
   try {
-    await nextBtn.click({ timeout: 2000 })
+    await nextBtn.click({ timeout: 2000 });
   } catch {
-    await nextBtn.dispatchEvent('click')
+    await nextBtn.dispatchEvent('click');
   }
 
   try {
-    await expect(page).toHaveURL(/\/results/, { timeout: 10000 })
+    await expect(page).toHaveURL(/\/results/, { timeout: 10000 });
   } catch {
     // Fallback for flaky mobile clicks/route transitions.
     if (gameId) {
-      await page.goto(`/results/${gameId}`, { timeout: 30000 })
+      await page.goto(`/results/${gameId}`, { timeout: 30000 });
     } else {
-      await page.goto('/results', { timeout: 30000 })
+      await page.goto('/results', { timeout: 30000 });
     }
-    await expect(page).toHaveURL(/\/results/, { timeout: 10000 })
+    await expect(page).toHaveURL(/\/results/, { timeout: 10000 });
   }
 
   // Avoid networkidle: Nuxt dev / HMR often keeps connections open so idle never settles.
   const resultsShell = page.locator(
     '[data-testid="results-session-loading"], [data-testid="results-header"]'
-  )
-  await expect(resultsShell.first()).toBeVisible({ timeout: 20000 })
+  );
+  await expect(resultsShell.first()).toBeVisible({ timeout: 20000 });
 
   // Resolve the game ID — the middleware should have loaded the session already,
   // but we still need to ensure the URL includes the ID for subsequent retries.
   const resolvedGameId = await page.evaluate(async (id) => {
-    const store = (window as PiniaWindow).__pinia_stores__?.game
-    if (!store) return id
+    const store = (window as PiniaWindow).__pinia_stores__?.game;
+    if (!store) return id;
 
     if (!store.currentSession || (id && store.currentSession.id !== id)) {
-      if (store.loadFromDB) await store.loadFromDB()
-      if (id && store.loadSessionById) await store.loadSessionById(id)
+      if (store.loadFromDB) await store.loadFromDB();
+      if (id && store.loadSessionById) await store.loadSessionById(id);
     }
 
-    return store.currentSession?.id ?? id
-  }, gameId)
+    return store.currentSession?.id ?? id;
+  }, gameId);
 
-  const effectiveGameId = resolvedGameId ?? gameId
+  const effectiveGameId = resolvedGameId ?? gameId;
 
   // Ensure we're on the canonical results URL with the game ID
   if (effectiveGameId && !page.url().includes(`/results/${effectiveGameId}`)) {
-    await page.goto(`/results/${effectiveGameId}`, { waitUntil: 'load', timeout: 30000 })
+    await page.goto(`/results/${effectiveGameId}`, { waitUntil: 'load', timeout: 30000 });
   }
 
   // Wait for hydrated scoring shell (not loading-only). Avoid `toBeHidden(loading)`:
   // during route opacity transitions Playwright can treat nodes as hidden prematurely.
-  const resultsMain = page.locator('[data-testid="results-header"]')
-  await expect(resultsMain).toBeVisible({ timeout: 20000 })
+  const resultsMain = page.locator('[data-testid="results-header"]');
+  await expect(resultsMain).toBeVisible({ timeout: 20000 });
 
-  const playerEntry = page.locator('[data-testid="results-player-entry-0"]')
+  const playerEntry = page.locator('[data-testid="results-player-entry-0"]');
 
   if (!(await playerEntry.isVisible().catch(() => false)) && effectiveGameId) {
-    await page.goto(`/results/${effectiveGameId}`, { waitUntil: 'load', timeout: 30000 })
-    await expect(resultsMain).toBeVisible({ timeout: 20000 })
+    await page.goto(`/results/${effectiveGameId}`, { waitUntil: 'load', timeout: 30000 });
+    await expect(resultsMain).toBeVisible({ timeout: 20000 });
   }
 
-  await expect(playerEntry).toBeVisible({ timeout: 15000 })
+  await expect(playerEntry).toBeVisible({ timeout: 15000 });
 
   await expect(page.locator('[data-testid="results-scores-container"]')).toBeVisible({
     timeout: 10000,
-  })
+  });
 }
 
 /**
@@ -292,32 +292,32 @@ export async function navigateToResults(page: Page): Promise<void> {
  */
 export async function assignScores(page: Page, scores: number[]): Promise<void> {
   for (let i = 0; i < scores.length; i++) {
-    const playerEntry = page.locator(`[data-testid="results-player-entry-${i}"]`)
-    const incrementBtn = playerEntry.locator('[data-testid="score-increment"]')
-    const scoreValue = page.locator(`[data-testid="scoring-page-score-value-${i}"]`)
-    const clickCount = Math.max(0, scores[i] ?? 0)
+    const playerEntry = page.locator(`[data-testid="results-player-entry-${i}"]`);
+    const incrementBtn = playerEntry.locator('[data-testid="score-increment"]');
+    const scoreValue = page.locator(`[data-testid="scoring-page-score-value-${i}"]`);
+    const clickCount = Math.max(0, scores[i] ?? 0);
 
-    await expect(playerEntry).toBeVisible({ timeout: 10000 })
-    await expect(incrementBtn).toBeVisible({ timeout: 10000 })
-    await expect(scoreValue).toBeVisible({ timeout: 10000 })
+    await expect(playerEntry).toBeVisible({ timeout: 10000 });
+    await expect(incrementBtn).toBeVisible({ timeout: 10000 });
+    await expect(scoreValue).toBeVisible({ timeout: 10000 });
 
-    let currentValue = Number.parseInt((await scoreValue.textContent()) ?? '0', 10)
+    let currentValue = Number.parseInt((await scoreValue.textContent()) ?? '0', 10);
     if (Number.isNaN(currentValue)) {
-      currentValue = 0
+      currentValue = 0;
     }
 
     for (let c = 0; c < clickCount; c++) {
-      await playerEntry.scrollIntoViewIfNeeded()
-      await incrementBtn.click({ timeout: 5000 })
+      await playerEntry.scrollIntoViewIfNeeded();
+      await incrementBtn.click({ timeout: 5000 });
 
-      const nextValue = currentValue + 1
+      const nextValue = currentValue + 1;
       await expect
         .poll(
           async () => Number.parseInt((await scoreValue.textContent().catch(() => '0')) ?? '0', 10),
           { timeout: 3000 }
         )
-        .toBe(nextValue)
-      currentValue = nextValue
+        .toBe(nextValue);
+      currentValue = nextValue;
     }
   }
 }
@@ -326,99 +326,99 @@ export async function assignScores(page: Page, scores: number[]): Promise<void> 
  * Confirm scores and wait until decision actions become available.
  */
 export async function confirmScoresAndWaitForModal(page: Page): Promise<void> {
-  const confirmBtn = page.locator('[data-testid="confirm-scores"]')
-  await expect(confirmBtn).toBeVisible({ timeout: 8000 })
+  const confirmBtn = page.locator('[data-testid="confirm-scores"]');
+  await expect(confirmBtn).toBeVisible({ timeout: 8000 });
   await expect
     .poll(async () => confirmBtn.isDisabled().catch(() => true), { timeout: 8000 })
-    .toBe(false)
+    .toBe(false);
 
   for (let attempt = 0; attempt < 4; attempt++) {
     try {
       await confirmBtn.evaluate((element) => {
-        ;(element as HTMLButtonElement).click()
-      })
-      break
+        (element as HTMLButtonElement).click();
+      });
+      break;
     } catch {
       if (attempt === 3) {
-        throw new Error('Failed to click confirm scores button')
+        throw new Error('Failed to click confirm scores button');
       }
-      await page.waitForTimeout(300)
+      await page.waitForTimeout(300);
     }
   }
 
-  const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
-  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
+  const nextRoundBtn = page.locator('[data-testid="next-round-button"]');
+  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]');
 
-  await expect(nextRoundBtn.or(leaderboardBtn).first()).toBeVisible({ timeout: 15000 })
+  await expect(nextRoundBtn.or(leaderboardBtn).first()).toBeVisible({ timeout: 15000 });
 }
 
 /**
  * Continue to the next round from the post-round decision modal.
  */
 export async function goToNextRound(page: Page): Promise<void> {
-  const nextRoundBtn = page.locator('[data-testid="next-round-button"]')
-  await expect(nextRoundBtn).toBeVisible({ timeout: 8000 })
-  await nextRoundBtn.click()
+  const nextRoundBtn = page.locator('[data-testid="next-round-button"]');
+  await expect(nextRoundBtn).toBeVisible({ timeout: 8000 });
+  await nextRoundBtn.click();
 
   // Round start may appear first (fortune wheel path) before game route.
-  await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 45000 }).toBe(true)
+  await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 45000 }).toBe(true);
 
   if (page.url().includes('/round-start')) {
-    await completeFortuneWheel(page)
+    await completeFortuneWheel(page);
   }
 
-  await expect(page).toHaveURL(/\/game/, { timeout: 35000 })
+  await expect(page).toHaveURL(/\/game/, { timeout: 35000 });
 }
 
 /**
  * Finish the game from the post-round decision modal.
  */
 export async function finishGame(page: Page): Promise<void> {
-  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]')
-  await expect(leaderboardBtn).toBeVisible({ timeout: 8000 })
-  await leaderboardBtn.click()
-  await expect(page).toHaveURL(/\/leaderboard/, { timeout: 10000 })
+  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]');
+  await expect(leaderboardBtn).toBeVisible({ timeout: 8000 });
+  await leaderboardBtn.click();
+  await expect(page).toHaveURL(/\/leaderboard/, { timeout: 10000 });
 }
 
 export async function completeFortuneWheel(page: Page): Promise<void> {
   if (/\/game/.test(page.url())) {
-    return
+    return;
   }
 
   // Use auto-advance mode: disable respin so the game starts automatically
   // after the wheel spin (720ms timer), avoiding the unreliable confirm button
   // interaction where the canvas absorbs pointer events.
   await page.evaluate(() => {
-    const settings = (window as PiniaWindow).__pinia_stores__?.settings
+    const settings = (window as PiniaWindow).__pinia_stores__?.settings;
     if (settings) {
-      settings.fortuneWheelAllowRedraw = false
+      settings.fortuneWheelAllowRedraw = false;
     }
-  })
+  });
 
-  const spinButton = page.locator('[data-testid="fortune-wheel-spin-button"]')
-  const selectedLetter = page.locator('[data-testid="fortune-wheel-selected-letter"]')
+  const spinButton = page.locator('[data-testid="fortune-wheel-spin-button"]');
+  const selectedLetter = page.locator('[data-testid="fortune-wheel-selected-letter"]');
 
-  await expect(spinButton).toBeVisible({ timeout: 15000 })
+  await expect(spinButton).toBeVisible({ timeout: 15000 });
   await expect
     .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
-    .toBe(false)
+    .toBe(false);
 
   // Retry click with force:true — the canvas element can absorb pointer events
   // on some viewports. Poll until a letter is selected to confirm the spin fired.
   await expect
     .poll(
       async () => {
-        if (/\/game/.test(page.url())) return true
-        await spinButton.click({ force: true }).catch(() => {})
-        const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? ''
-        return /^[A-Z]$/.test(letterText)
+        if (/\/game/.test(page.url())) return true;
+        await spinButton.click({ force: true }).catch(() => {});
+        const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? '';
+        return /^[A-Z]$/.test(letterText);
       },
       { timeout: 30000, intervals: [500, 1000, 2000, 3000, 5000] }
     )
-    .toBe(true)
+    .toBe(true);
 
   // With allowRedraw=false, auto-advance navigates to /game after ~720ms
-  await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
+  await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true);
 }
 
 /**
@@ -429,145 +429,147 @@ export async function setupMultiplayerGame(
   playerNames: string[],
   completeRoundStart = true
 ): Promise<void> {
-  await preparePageForE2E(page)
+  await preparePageForE2E(page);
 
-  const normalizedPlayerNames = normalizePlayerNames(playerNames)
+  const normalizedPlayerNames = normalizePlayerNames(playerNames);
 
-  await page.goto('/players', { timeout: 30000 })
-  await page.waitForLoadState('domcontentloaded')
+  await page.goto('/players', { timeout: 30000 });
+  await page.waitForLoadState('domcontentloaded');
 
   await page.evaluate(async () => {
     const clearStores = async () => {
       await new Promise<void>((resolve) => {
         try {
-          const request = indexedDB.open('riddle-rush-db', 3)
+          const request = indexedDB.open('riddle-rush-db', 3);
 
-          request.onerror = () => resolve()
+          request.onerror = () => resolve();
           request.onupgradeneeded = () => {
-            request.transaction?.abort()
-            resolve()
-          }
+            request.transaction?.abort();
+            resolve();
+          };
           request.onsuccess = () => {
-            const db = request.result
+            const db = request.result;
             const storeNames = ['gameSession', 'gameSessionsById', 'gameHistory'].filter((name) =>
               db.objectStoreNames.contains(name)
-            )
+            );
 
             if (storeNames.length === 0) {
-              db.close()
-              resolve()
-              return
+              db.close();
+              resolve();
+              return;
             }
 
-            const tx = db.transaction(storeNames, 'readwrite')
+            const tx = db.transaction(storeNames, 'readwrite');
             for (const store of storeNames) {
-              tx.objectStore(store).clear()
+              tx.objectStore(store).clear();
             }
             tx.oncomplete = () => {
-              db.close()
-              resolve()
-            }
+              db.close();
+              resolve();
+            };
             tx.onerror = () => {
-              db.close()
-              resolve()
-            }
-          }
+              db.close();
+              resolve();
+            };
+          };
         } catch {
-          resolve()
+          resolve();
         }
-      })
-    }
+      });
+    };
 
-    await clearStores()
-    ;(window as PiniaWindow).__pinia_stores__?.game?.clearSession?.()
+    await clearStores();
+    (window as PiniaWindow).__pinia_stores__?.game?.clearSession?.();
 
-    localStorage.clear()
-    sessionStorage.clear()
-  })
+    localStorage.clear();
+    sessionStorage.clear();
+  });
 
-  await page.reload({ waitUntil: 'networkidle' })
+  await page.reload({ waitUntil: 'networkidle' });
 
   // Use UI flow for deterministic behavior across browser projects.
-  await hideDevtools(page)
-  await waitForSplashComplete(page)
+  await hideDevtools(page);
+  await waitForSplashComplete(page);
 
-  const menuPlayBtn = page.locator('[data-testid="main-menu-play"]')
+  const menuPlayBtn = page.locator('[data-testid="main-menu-play"]');
   if (await menuPlayBtn.isVisible().catch(() => false)) {
-    await menuPlayBtn.click()
-    await expect(page).toHaveURL(/\/players/, { timeout: 10000 })
+    await menuPlayBtn.click();
+    await expect(page).toHaveURL(/\/players/, { timeout: 10000 });
   }
 
-  await expect(page.locator('[data-testid="players-start-button"]')).toBeVisible({ timeout: 15000 })
-  await page.waitForTimeout(500) // Small buffer for reactivity
+  await expect(page.locator('[data-testid="players-start-button"]')).toBeVisible({
+    timeout: 15000,
+  });
+  await page.waitForTimeout(500); // Small buffer for reactivity
 
-  const targetCount = normalizedPlayerNames.length
-  const decreaseBtn = page.locator('[data-testid="players-decrease-button"]')
-  const increaseBtn = page.locator('[data-testid="players-increase-button"]')
-  const playerInputLocator = page.locator('[data-testid^="players-name-input-"]')
-  let currentCount = await playerInputLocator.count()
+  const targetCount = normalizedPlayerNames.length;
+  const decreaseBtn = page.locator('[data-testid="players-decrease-button"]');
+  const increaseBtn = page.locator('[data-testid="players-increase-button"]');
+  const playerInputLocator = page.locator('[data-testid^="players-name-input-"]');
+  let currentCount = await playerInputLocator.count();
   while (currentCount > targetCount) {
-    await decreaseBtn.click()
+    await decreaseBtn.click();
     await expect
       .poll(async () => playerInputLocator.count(), { timeout: 5000 })
-      .toBeLessThan(currentCount)
-    currentCount = await playerInputLocator.count()
+      .toBeLessThan(currentCount);
+    currentCount = await playerInputLocator.count();
   }
   while (currentCount < targetCount) {
-    await increaseBtn.click()
+    await increaseBtn.click();
     await expect
       .poll(async () => playerInputLocator.count(), { timeout: 5000 })
-      .toBeGreaterThan(currentCount)
-    currentCount = await playerInputLocator.count()
+      .toBeGreaterThan(currentCount);
+    currentCount = await playerInputLocator.count();
   }
 
   for (let i = 0; i < normalizedPlayerNames.length; i++) {
-    const nameInput = page.locator(`[data-testid="players-name-input-${i}"]`)
-    await expect(nameInput).toBeVisible({ timeout: 5000 })
-    await nameInput.fill(normalizedPlayerNames[i] ?? '')
+    const nameInput = page.locator(`[data-testid="players-name-input-${i}"]`);
+    await expect(nameInput).toBeVisible({ timeout: 5000 });
+    await nameInput.fill(normalizedPlayerNames[i] ?? '');
   }
 
-  const startBtn = page.locator('[data-testid="players-start-button"]')
+  const startBtn = page.locator('[data-testid="players-start-button"]');
   for (let attempt = 0; attempt < 8; attempt++) {
     if (/\/(round-start|game)/.test(page.url())) {
-      break
+      break;
     }
 
     if (!(await startBtn.isVisible().catch(() => false))) {
-      await page.waitForTimeout(250)
-      continue
+      await page.waitForTimeout(250);
+      continue;
     }
 
     try {
-      await startBtn.click({ timeout: 2000 })
+      await startBtn.click({ timeout: 2000 });
     } catch {
       // Button can detach during route transition; retry loop handles this.
     }
-    await page.waitForTimeout(250)
+    await page.waitForTimeout(250);
   }
 
   try {
     // Round start may appear first (fortune wheel path) before game route.
-    await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 45000 }).toBe(true)
+    await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 45000 }).toBe(true);
   } catch {
     // Recovery for missed click/navigation: seed pending players and route directly.
     await page.evaluate((names) => {
-      ;(window as PiniaWindow).__pinia_stores__?.game?.setPendingPlayerNames?.(names)
-    }, normalizedPlayerNames)
+      (window as PiniaWindow).__pinia_stores__?.game?.setPendingPlayerNames?.(names);
+    }, normalizedPlayerNames);
 
-    await page.goto('/round-start', { timeout: 30000 })
-    await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 30000 }).toBe(true)
+    await page.goto('/round-start', { timeout: 30000 });
+    await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 30000 }).toBe(true);
   }
 
   if (completeRoundStart && page.url().includes('/round-start')) {
-    await completeFortuneWheel(page)
+    await completeFortuneWheel(page);
   }
 
   // Ensure we've reached /game unless caller explicitly needs to stay on /round-start.
   if (completeRoundStart) {
-    await expect.poll(() => /\/game/.test(page.url()), { timeout: 35000 }).toBe(true)
+    await expect.poll(() => /\/game/.test(page.url()), { timeout: 35000 }).toBe(true);
   } else {
-    await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 35000 }).toBe(true)
-    return
+    await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 35000 }).toBe(true);
+    return;
   }
 
   await expect
@@ -576,14 +578,14 @@ export async function setupMultiplayerGame(
         const visible = await page
           .locator('[data-testid="game-player-name"]')
           .isVisible()
-          .catch(() => false)
+          .catch(() => false);
         if (visible) {
-          return 'ok'
+          return 'ok';
         }
 
         const snapshot = await page.evaluate(() => {
-          const store = (window as PiniaWindow).__pinia_stores__?.game
-          const session = store?.currentSession
+          const store = (window as PiniaWindow).__pinia_stores__?.game;
+          const session = store?.currentSession;
 
           return {
             href: window.location.pathname,
@@ -598,21 +600,21 @@ export async function setupMultiplayerGame(
             pendingCount: store?.pendingPlayerNames?.length ?? 0,
             letter: session?.letter ?? null,
             category: session?.category?.searchWord ?? null,
-          }
-        })
+          };
+        });
 
-        return JSON.stringify(snapshot)
+        return JSON.stringify(snapshot);
       },
       { timeout: 30000 }
     )
-    .toBe('ok')
+    .toBe('ok');
 }
 
 /**
  * Start a game with the default players setup.
  */
 export async function startGameWithDefaults(page: Page): Promise<void> {
-  await setupMultiplayerGame(page, ['Player 1', 'Player 2'])
+  await setupMultiplayerGame(page, ['Player 1', 'Player 2']);
 }
 
 /**
@@ -621,15 +623,15 @@ export async function startGameWithDefaults(page: Page): Promise<void> {
  * Ensures at least one player turn is processed for edge cases (e.g. count <= 0).
  */
 export async function startGameAndGoToResults(page: Page, playerCount = 2): Promise<void> {
-  const normalizedPlayerCount = Math.max(2, Math.floor(playerCount))
+  const normalizedPlayerCount = Math.max(2, Math.floor(playerCount));
 
   if (normalizedPlayerCount === 2) {
-    await startGameWithDefaults(page)
+    await startGameWithDefaults(page);
   } else {
-    const players = Array.from({ length: normalizedPlayerCount }, (_, i) => `Player ${i + 1}`)
-    await setupMultiplayerGame(page, players)
+    const players = Array.from({ length: normalizedPlayerCount }, (_, i) => `Player ${i + 1}`);
+    await setupMultiplayerGame(page, players);
   }
 
-  await submitPlayerAnswers(page, normalizedPlayerCount)
-  await navigateToResults(page)
+  await submitPlayerAnswers(page, normalizedPlayerCount);
+  await navigateToResults(page);
 }

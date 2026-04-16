@@ -7,9 +7,9 @@
  * The game store delegates to these functions while still owning all reactive state.
  */
 
-import { useStatistics } from './useStatistics'
-import { useLogger } from './useLogger'
-import type { GameAttempt, GameSession } from '@riddle-rush/types/game'
+import { useStatistics } from './useStatistics';
+import { useLogger } from './useLogger';
+import type { GameAttempt, GameSession } from '@riddle-rush/types/game';
 
 /**
  * Composable providing game lifecycle utilities.
@@ -35,7 +35,7 @@ export function useGameLifecycle() {
       term,
       found,
       timestamp: Date.now(),
-    }
+    };
   }
 
   /**
@@ -57,7 +57,7 @@ export function useGameLifecycle() {
         answer: p.currentRoundAnswer || '',
         score: p.currentRoundScore,
       })),
-    }
+    };
   }
 
   /**
@@ -68,11 +68,11 @@ export function useGameLifecycle() {
    */
   async function updateStatisticsForSession(session: GameSession): Promise<void> {
     try {
-      const { updateStatistics } = useStatistics()
-      await updateStatistics(session)
+      const { updateStatistics } = useStatistics();
+      await updateStatistics(session);
     } catch (error) {
-      const logger = useLogger()
-      logger.error('Error updating statistics:', error)
+      const logger = useLogger();
+      logger.error('Error updating statistics:', error);
     }
   }
 
@@ -80,5 +80,5 @@ export function useGameLifecycle() {
     createAttempt,
     buildRoundResult,
     updateStatisticsForSession,
-  }
+  };
 }

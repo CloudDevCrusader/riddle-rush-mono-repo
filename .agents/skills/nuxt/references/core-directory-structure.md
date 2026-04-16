@@ -48,7 +48,7 @@ Contains all application code. Can also be at root level (without `app/` folder)
 // nuxt.config.ts - customize source directory
 export default defineNuxtConfig({
   srcDir: 'src/', // Change from 'app/' to 'src/'
-})
+});
 ```
 
 ### `app/components/`
@@ -99,7 +99,7 @@ Re-export nested composables:
 
 ```ts
 // composables/index.ts
-export { useHelper } from './nested/utils'
+export { useHelper } from './nested/utils';
 ```
 
 ### `app/pages/`
@@ -153,7 +153,7 @@ Use in pages:
 definePageMeta({
   layout: 'admin',
   // layout: false // Disable layout
-})
+});
 </script>
 ```
 

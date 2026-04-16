@@ -28,13 +28,13 @@ const routes = [
     beforeEnter: async (to, from) => {
       // This runs when entering from /products
       // But NOT when navigating from /orders/1 to /orders/2!
-      const order = await checkOrderAccess(to.params.id)
+      const order = await checkOrderAccess(to.params.id);
       if (!order.canView) {
-        return '/unauthorized'
+        return '/unauthorized';
       }
     },
   },
-]
+];
 ```
 
 **Scenario:**
@@ -58,17 +58,17 @@ const routes = [
 ```vue
 <!-- OrderDetail.vue -->
 <script setup>
-import { onBeforeRouteUpdate } from 'vue-router'
+import { onBeforeRouteUpdate } from 'vue-router';
 
 // Handle param changes within the same route
 onBeforeRouteUpdate(async (to, from) => {
   if (to.params.id !== from.params.id) {
-    const order = await checkOrderAccess(to.params.id)
+    const order = await checkOrderAccess(to.params.id);
     if (!order.canView) {
-      return '/unauthorized'
+      return '/unauthorized';
     }
   }
-})
+});
 </script>
 ```
 
@@ -80,12 +80,12 @@ router.beforeEach(async (to, from) => {
   // Handle all order access checks globally
   if (to.name === 'OrderDetail') {
     // This runs on EVERY navigation to this route, including param changes
-    const order = await checkOrderAccess(to.params.id)
+    const order = await checkOrderAccess(to.params.id);
     if (!order.canView) {
-      return '/unauthorized'
+      return '/unauthorized';
     }
   }
-})
+});
 ```
 
 ## Solution 3: Combine Both Guards
@@ -98,17 +98,17 @@ const routes = [
     component: OrderDetail,
     beforeEnter: (to) => validateOrderAccess(to.params.id),
   },
-]
+];
 
 // In component - For param changes within route
 // OrderDetail.vue
-onBeforeRouteUpdate((to) => validateOrderAccess(to.params.id))
+onBeforeRouteUpdate((to) => validateOrderAccess(to.params.id));
 
 // Shared validation function
 async function validateOrderAccess(orderId) {
-  const order = await checkOrderAccess(orderId)
+  const order = await checkOrderAccess(orderId);
   if (!order.canView) {
-    return '/unauthorized'
+    return '/unauthorized';
   }
 }
 ```
@@ -118,11 +118,11 @@ async function validateOrderAccess(orderId) {
 ```javascript
 // guards/orderGuards.js
 export const orderAccessGuard = async (to) => {
-  const order = await checkOrderAccess(to.params.id)
+  const order = await checkOrderAccess(to.params.id);
   if (!order.canView) {
-    return '/unauthorized'
+    return '/unauthorized';
   }
-}
+};
 
 // router.js
 const routes = [
@@ -131,7 +131,7 @@ const routes = [
     component: OrderDetail,
     beforeEnter: [orderAccessGuard], // Can add multiple guards
   },
-]
+];
 
 // Still need in-component guard for param changes!
 ```

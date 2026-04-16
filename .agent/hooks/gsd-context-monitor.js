@@ -22,10 +22,10 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const WARNING_THRESHOLD = 35;  // remaining_percentage <= 35%
+const WARNING_THRESHOLD = 35; // remaining_percentage <= 35%
 const CRITICAL_THRESHOLD = 25; // remaining_percentage <= 25%
-const STALE_SECONDS = 60;      // ignore metrics older than 60s
-const DEBOUNCE_CALLS = 5;      // min tool uses between warnings
+const STALE_SECONDS = 60; // ignore metrics older than 60s
+const DEBOUNCE_CALLS = 5; // min tool uses between warnings
 
 let input = '';
 // Timeout guard: if stdin doesn't close within 10s (e.g. pipe issues on
@@ -34,7 +34,7 @@ let input = '';
 // and reports "hook error". See #775, #1162.
 const stdinTimeout = setTimeout(() => process.exit(0), 10000);
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => input += chunk);
+process.stdin.on('data', (chunk) => (input += chunk));
 process.stdin.on('end', () => {
   clearTimeout(stdinTimeout);
   try {
@@ -78,7 +78,7 @@ process.stdin.on('end', () => {
     const now = Math.floor(Date.now() / 1000);
 
     // Ignore stale metrics
-    if (metrics.timestamp && (now - metrics.timestamp) > STALE_SECONDS) {
+    if (metrics.timestamp && now - metrics.timestamp > STALE_SECONDS) {
       process.exit(0);
     }
 
@@ -150,9 +150,9 @@ process.stdin.on('end', () => {
 
     const output = {
       hookSpecificOutput: {
-        hookEventName: process.env.GEMINI_API_KEY ? "AfterTool" : "PostToolUse",
-        additionalContext: message
-      }
+        hookEventName: process.env.GEMINI_API_KEY ? 'AfterTool' : 'PostToolUse',
+        additionalContext: message,
+      },
     };
 
     process.stdout.write(JSON.stringify(output));

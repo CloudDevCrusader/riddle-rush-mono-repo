@@ -1,6 +1,6 @@
 ---
 description: Capture a forward-looking idea with trigger conditions — surfaces automatically at the right milestone
-argument-hint: "[idea summary]"
+argument-hint: '[idea summary]'
 tools:
   read: true
   write: true

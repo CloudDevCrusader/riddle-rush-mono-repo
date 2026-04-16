@@ -13,18 +13,18 @@
  *   FIGMA_FILE_KEY      – Figma file key (from the URL)
  */
 
-import { writeFileSync } from 'node:fs'
-import { resolve, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { writeFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const OUTPUT_PATH = resolve(__dirname, '../apps/game/assets/css/figma-tokens.generated.css')
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const OUTPUT_PATH = resolve(__dirname, '../apps/game/assets/css/figma-tokens.generated.css');
 
 // ---------------------------------------------------------------------------
 // 1. Validate env
 // ---------------------------------------------------------------------------
 
-const { FIGMA_ACCESS_TOKEN, FIGMA_FILE_KEY } = process.env
+const { FIGMA_ACCESS_TOKEN, FIGMA_FILE_KEY } = process.env;
 
 if (!FIGMA_ACCESS_TOKEN || !FIGMA_FILE_KEY) {
   console.error(
@@ -33,30 +33,30 @@ if (!FIGMA_ACCESS_TOKEN || !FIGMA_FILE_KEY) {
       `  export FIGMA_ACCESS_TOKEN=figd_...\n` +
       `  export FIGMA_FILE_KEY=abc123XYZ\n` +
       `  pnpm run figma:sync-tokens`
-  )
-  process.exit(1)
+  );
+  process.exit(1);
 }
 
 // ---------------------------------------------------------------------------
 // 2. Fetch Figma variables
 // ---------------------------------------------------------------------------
 
-const API_URL = `https://api.figma.com/v1/files/${FIGMA_FILE_KEY}/variables/local`
+const API_URL = `https://api.figma.com/v1/files/${FIGMA_FILE_KEY}/variables/local`;
 
-console.log(`Fetching Figma variables from file ${FIGMA_FILE_KEY}...`)
+console.log(`Fetching Figma variables from file ${FIGMA_FILE_KEY}...`);
 
-let data
+let data;
 try {
   const res = await fetch(API_URL, {
     headers: { Authorization: `Bearer ${FIGMA_ACCESS_TOKEN}` },
-  })
+  });
   if (!res.ok) {
-    throw new Error(`Figma API responded with ${res.status} ${res.statusText}`)
+    throw new Error(`Figma API responded with ${res.status} ${res.statusText}`);
   }
-  data = await res.json()
+  data = await res.json();
 } catch (err) {
-  console.error(`Error: Failed to fetch Figma variables — ${err.message}`)
-  process.exit(1)
+  console.error(`Error: Failed to fetch Figma variables — ${err.message}`);
+  process.exit(1);
 }
 
 // ---------------------------------------------------------------------------
@@ -68,7 +68,7 @@ try {
  * a CSS custom property name like "--color-bg-blue-light".
  */
 function toCssPropertyName(figmaName) {
-  return `--${figmaName.replace(/\//g, '-').replace(/\s+/g, '-').toLowerCase()}`
+  return `--${figmaName.replace(/\//g, '-').replace(/\s+/g, '-').toLowerCase()}`;
 }
 
 /**
@@ -76,56 +76,56 @@ function toCssPropertyName(figmaName) {
  * a hex colour string or rgba() if alpha < 1.
  */
 function colorToCSS(color) {
-  const r = Math.round(color.r * 255)
-  const g = Math.round(color.g * 255)
-  const b = Math.round(color.b * 255)
-  const a = color.a ?? 1
+  const r = Math.round(color.r * 255);
+  const g = Math.round(color.g * 255);
+  const b = Math.round(color.b * 255);
+  const a = color.a ?? 1;
 
   if (a < 1) {
-    return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`
+    return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`;
   }
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
-const variables = data?.meta?.variables ?? {}
-const variableCollections = data?.meta?.variableCollections ?? {}
+const variables = data?.meta?.variables ?? {};
+const variableCollections = data?.meta?.variableCollections ?? {};
 
-const cssEntries = []
-let skipped = 0
+const cssEntries = [];
+let skipped = 0;
 
 for (const variable of Object.values(variables)) {
-  const { name, resolvedType, valuesByMode } = variable
+  const { name, resolvedType, valuesByMode } = variable;
 
   // Only process COLOR and FLOAT types
   if (resolvedType !== 'COLOR' && resolvedType !== 'FLOAT') {
-    skipped++
-    console.warn(`  Skipping "${name}" (unsupported type: ${resolvedType})`)
-    continue
+    skipped++;
+    console.warn(`  Skipping "${name}" (unsupported type: ${resolvedType})`);
+    continue;
   }
 
-  const cssName = toCssPropertyName(name)
+  const cssName = toCssPropertyName(name);
 
   // Get the value from the first mode (default mode)
-  const collection = variableCollections[variable.variableCollectionId]
-  const defaultModeId = collection?.defaultModeId ?? Object.keys(valuesByMode)[0]
-  const value = valuesByMode[defaultModeId]
+  const collection = variableCollections[variable.variableCollectionId];
+  const defaultModeId = collection?.defaultModeId ?? Object.keys(valuesByMode)[0];
+  const value = valuesByMode[defaultModeId];
 
   if (value == null) {
-    skipped++
-    console.warn(`  Skipping "${name}" (no value for default mode)`)
-    continue
+    skipped++;
+    console.warn(`  Skipping "${name}" (no value for default mode)`);
+    continue;
   }
 
-  let cssValue
+  let cssValue;
   if (resolvedType === 'COLOR') {
-    cssValue = colorToCSS(value)
+    cssValue = colorToCSS(value);
   } else if (resolvedType === 'FLOAT') {
     // FLOAT values could be spacing, font-size, etc.
     // Output raw numeric value; designers should use px or rem in Figma naming
-    cssValue = typeof value === 'number' ? `${value}px` : String(value)
+    cssValue = typeof value === 'number' ? `${value}px` : String(value);
   }
 
-  cssEntries.push({ name: cssName, value: cssValue, comment: name })
+  cssEntries.push({ name: cssName, value: cssValue, comment: name });
 }
 
 // ---------------------------------------------------------------------------
@@ -137,17 +137,17 @@ const lines = [
   '/* Run: pnpm run figma:sync-tokens */',
   ':root {',
   '  /* These override design-system.scss values via cascade */',
-]
+];
 
 for (const entry of cssEntries) {
-  lines.push(`  ${entry.name}: ${entry.value}; /* ${entry.comment} */`)
+  lines.push(`  ${entry.name}: ${entry.value}; /* ${entry.comment} */`);
 }
 
-lines.push('}', '')
+lines.push('}', '');
 
-writeFileSync(OUTPUT_PATH, lines.join('\n'), 'utf-8')
+writeFileSync(OUTPUT_PATH, lines.join('\n'), 'utf-8');
 
-console.log(`Synced ${cssEntries.length} tokens -> ${OUTPUT_PATH}`)
+console.log(`Synced ${cssEntries.length} tokens -> ${OUTPUT_PATH}`);
 if (skipped > 0) {
-  console.log(`Skipped ${skipped} unsupported variables (see warnings above)`)
+  console.log(`Skipped ${skipped} unsupported variables (see warnings above)`);
 }

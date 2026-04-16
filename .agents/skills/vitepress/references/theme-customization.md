@@ -13,10 +13,10 @@ Create `.vitepress/theme/index.ts` to extend the default theme:
 
 ```ts
 // .vitepress/theme/index.ts
-import DefaultTheme from 'vitepress/theme'
-import './custom.css'
+import DefaultTheme from 'vitepress/theme';
+import './custom.css';
 
-export default DefaultTheme
+export default DefaultTheme;
 ```
 
 ## CSS Variables
@@ -68,10 +68,10 @@ Remove Inter font and use your own:
 
 ```ts
 // .vitepress/theme/index.ts
-import DefaultTheme from 'vitepress/theme-without-fonts'
-import './fonts.css'
+import DefaultTheme from 'vitepress/theme-without-fonts';
+import './fonts.css';
 
-export default DefaultTheme
+export default DefaultTheme;
 ```
 
 ```css
@@ -93,17 +93,17 @@ Preload fonts in config:
 // .vitepress/config.ts
 export default {
   transformHead({ assets }) {
-    const fontFile = assets.find((file) => /myfont\.[\w-]+\.woff2/.test(file))
+    const fontFile = assets.find((file) => /myfont\.[\w-]+\.woff2/.test(file));
     if (fontFile) {
       return [
         [
           'link',
           { rel: 'preload', href: fontFile, as: 'font', type: 'font/woff2', crossorigin: '' },
         ],
-      ]
+      ];
     }
   },
-}
+};
 ```
 
 ## Global Components
@@ -112,15 +112,15 @@ Register components available in all markdown:
 
 ```ts
 // .vitepress/theme/index.ts
-import DefaultTheme from 'vitepress/theme'
-import MyComponent from './components/MyComponent.vue'
+import DefaultTheme from 'vitepress/theme';
+import MyComponent from './components/MyComponent.vue';
 
 export default {
   extends: DefaultTheme,
   enhanceApp({ app }) {
-    app.component('MyComponent', MyComponent)
+    app.component('MyComponent', MyComponent);
   },
-}
+};
 ```
 
 Use in markdown:
@@ -135,20 +135,20 @@ Inject content into specific locations:
 
 ```ts
 // .vitepress/theme/index.ts
-import DefaultTheme from 'vitepress/theme'
-import MyLayout from './MyLayout.vue'
+import DefaultTheme from 'vitepress/theme';
+import MyLayout from './MyLayout.vue';
 
 export default {
   extends: DefaultTheme,
   Layout: MyLayout,
-}
+};
 ```
 
 ```vue
 <!-- .vitepress/theme/MyLayout.vue -->
 <script setup>
-import DefaultTheme from 'vitepress/theme'
-const { Layout } = DefaultTheme
+import DefaultTheme from 'vitepress/theme';
+const { Layout } = DefaultTheme;
 </script>
 
 <template>
@@ -204,18 +204,18 @@ Alternative to template slots:
 
 ```ts
 // .vitepress/theme/index.ts
-import { h } from 'vue'
-import DefaultTheme from 'vitepress/theme'
-import MyComponent from './MyComponent.vue'
+import { h } from 'vue';
+import DefaultTheme from 'vitepress/theme';
+import MyComponent from './MyComponent.vue';
 
 export default {
   extends: DefaultTheme,
   Layout() {
     return h(DefaultTheme.Layout, null, {
       'aside-outline-before': () => h(MyComponent),
-    })
+    });
   },
-}
+};
 ```
 
 ## Override Internal Components
@@ -224,7 +224,7 @@ Replace default theme components with Vite aliases:
 
 ```ts
 // .vitepress/config.ts
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from 'node:url';
 
 export default {
   vite: {
@@ -239,7 +239,7 @@ export default {
       ],
     },
   },
-}
+};
 ```
 
 ## View Transitions
@@ -249,27 +249,27 @@ Custom dark mode toggle animation:
 ```vue
 <!-- .vitepress/theme/Layout.vue -->
 <script setup>
-import { useData } from 'vitepress'
-import DefaultTheme from 'vitepress/theme'
-import { nextTick, provide } from 'vue'
+import { useData } from 'vitepress';
+import DefaultTheme from 'vitepress/theme';
+import { nextTick, provide } from 'vue';
 
-const { isDark } = useData()
+const { isDark } = useData();
 
 provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
   if (!document.startViewTransition) {
-    isDark.value = !isDark.value
-    return
+    isDark.value = !isDark.value;
+    return;
   }
 
   const clipPath = [
     `circle(0px at ${x}px ${y}px)`,
     `circle(${Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))}px at ${x}px ${y}px)`,
-  ]
+  ];
 
   await document.startViewTransition(async () => {
-    isDark.value = !isDark.value
-    await nextTick()
-  }).ready
+    isDark.value = !isDark.value;
+    await nextTick();
+  }).ready;
 
   document.documentElement.animate(
     { clipPath: isDark.value ? clipPath.reverse() : clipPath },
@@ -278,8 +278,8 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
       easing: 'ease-in',
       pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`,
     }
-  )
-})
+  );
+});
 </script>
 
 <template>

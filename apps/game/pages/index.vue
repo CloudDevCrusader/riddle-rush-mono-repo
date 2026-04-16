@@ -105,50 +105,50 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } })
+definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } });
 
-const { router, toast, t } = usePageSetup()
-const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation()
-const { getAssetPath } = useAssets()
-const route = useRoute()
+const { router, toast, t } = usePageSetup();
+const { goToPlayers, goToSettings, goToCredits, goToLanguage } = useNavigation();
+const { getAssetPath } = useAssets();
+const route = useRoute();
 
-const showMenu = ref(false)
+const showMenu = ref(false);
 
 const toggleMenu = () => {
-  showMenu.value = !showMenu.value
-}
+  showMenu.value = !showMenu.value;
+};
 
 onMounted(() => {
   if (route.query.needsGame === 'true') {
-    toast.warning(t('game.no_active_session', 'Please start a game first'))
-    router.replace({ query: {} })
+    toast.warning(t('game.no_active_session', 'Please start a game first'));
+    router.replace({ query: {} });
   }
-})
+});
 
 const handlePlay = () => {
-  showMenu.value = false
-  goToPlayers()
-}
+  showMenu.value = false;
+  goToPlayers();
+};
 
 const wrappedGoToSettings = () => {
-  showMenu.value = false
-  goToSettings()
-}
+  showMenu.value = false;
+  goToSettings();
+};
 
 const wrappedGoToCredits = () => {
-  showMenu.value = false
-  goToCredits()
-}
+  showMenu.value = false;
+  goToCredits();
+};
 
 const wrappedGoToLanguage = () => {
-  showMenu.value = false
-  goToLanguage()
-}
+  showMenu.value = false;
+  goToLanguage();
+};
 
 useLocalizedPageSeo({
   title: () => t('home.page_title'),
   description: () => t('app.description'),
-})
+});
 </script>
 
 <style scoped>

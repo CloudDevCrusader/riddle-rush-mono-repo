@@ -159,7 +159,7 @@ A full-featured modal component with teleport, transitions, keyboard handling, a
 </template>
 
 <script setup lang="ts">
-const isOpen = ref(false)
+const isOpen = ref(false);
 </script>
 ```
 
@@ -211,7 +211,7 @@ Manages menu state with automatic cleanup on route changes.
 
 ```vue
 <script setup lang="ts">
-const menu = useMenu()
+const menu = useMenu();
 </script>
 
 <template>
@@ -238,14 +238,14 @@ Manages asset paths with baseURL prefix handling.
 
 ```typescript
 {
-  baseUrl: string
-  getAssetPath: (path: string) => string
-  getMenuAsset: (filename: string) => string
-  getGameAsset: (filename: string) => string
-  getSettingsAsset: (filename: string) => string
-  getIconAsset: (filename: string) => string
-  preloadImage: (src: string) => Promise<void>
-  preloadImages: (paths: string[]) => Promise<void>
+  baseUrl: string;
+  getAssetPath: (path: string) => string;
+  getMenuAsset: (filename: string) => string;
+  getGameAsset: (filename: string) => string;
+  getSettingsAsset: (filename: string) => string;
+  getIconAsset: (filename: string) => string;
+  preloadImage: (src: string) => Promise<void>;
+  preloadImages: (paths: string[]) => Promise<void>;
 }
 ```
 
@@ -253,15 +253,15 @@ Manages asset paths with baseURL prefix handling.
 
 ```vue
 <script setup lang="ts">
-const assets = useAssets()
+const assets = useAssets();
 
 // Preload critical images
 onMounted(async () => {
   await assets.preloadImages([
     assets.getMenuAsset('LOGO.png'),
     assets.getMenuAsset('BACKGROUND.png'),
-  ])
-})
+  ]);
+});
 </script>
 
 <template>
@@ -297,16 +297,16 @@ Manages modal state with data passing capabilities.
 
 ```vue
 <script setup lang="ts">
-const confirmModal = useModal()
+const confirmModal = useModal();
 
 function confirmDelete(item: Item) {
-  confirmModal.open(item)
+  confirmModal.open(item);
 }
 
 async function handleConfirm() {
-  const item = confirmModal.data.value
-  await deleteItem(item.id)
-  confirmModal.close()
+  const item = confirmModal.data.value;
+  await deleteItem(item.id);
+  confirmModal.close();
 }
 </script>
 
@@ -321,12 +321,12 @@ async function handleConfirm() {
 **Multi-Modal Management:**
 
 ```typescript
-const { modals, openModal, closeModal, closeAll } = useModals(['settings', 'confirm', 'help'])
+const { modals, openModal, closeModal, closeAll } = useModals(['settings', 'confirm', 'help']);
 
 // Usage
-openModal('settings', { userId: 123 })
-closeModal('confirm')
-closeAll()
+openModal('settings', { userId: 123 });
+closeModal('confirm');
+closeAll();
 ```
 
 ---
@@ -360,7 +360,7 @@ Comprehensive form handling with validation, submission, and error management.
 
 ```vue
 <script setup lang="ts">
-import { validationRules } from '~/composables/useForm'
+import { validationRules } from '~/composables/useForm';
 
 const form = useForm({
   name: {
@@ -375,13 +375,13 @@ const form = useForm({
     initialValue: '',
     rules: [validationRules.required(), validationRules.email()],
   },
-})
+});
 
 async function submit() {
   await form.handleSubmit(async (values) => {
-    await api.createUser(values)
-    toast.success('User created!')
-  })
+    await api.createUser(values);
+    toast.success('User created!');
+  });
 }
 </script>
 
@@ -417,7 +417,7 @@ async function submit() {
 const customRule: ValidationRule<string> = {
   validate: (value) => value.includes('@'),
   message: 'Must contain @ symbol',
-}
+};
 ```
 
 ---
@@ -502,20 +502,20 @@ GameService.getRandomCategories(
 ```vue
 <script setup lang="ts">
 // In a Pinia store or component
-const newPlayer = GameService.createPlayer('Alice', avatarUrl)
+const newPlayer = GameService.createPlayer('Alice', avatarUrl);
 
-const validation = GameService.validatePlayerName('Alice', existingPlayers)
+const validation = GameService.validatePlayerName('Alice', existingPlayers);
 if (!validation.valid) {
-  toast.error(validation.error)
+  toast.error(validation.error);
 }
 
-const allSubmitted = GameService.allPlayersSubmitted(players)
+const allSubmitted = GameService.allPlayersSubmitted(players);
 if (allSubmitted) {
-  proceedToNextRound()
+  proceedToNextRound();
 }
 
-const normalizedAnswer = GameService.normalizeAnswer(userInput)
-const isCorrect = GameService.areSimilarAnswers(normalizedAnswer, correctAnswer, 0.85)
+const normalizedAnswer = GameService.normalizeAnswer(userInput);
+const isCorrect = GameService.areSimilarAnswers(normalizedAnswer, correctAnswer, 0.85);
 </script>
 ```
 
@@ -577,17 +577,17 @@ StorageService.importData(data: Record<string, any>): boolean
 const saved = StorageService.setItem('user_prefs', {
   theme: 'dark',
   volume: 0.7,
-})
+});
 
 // Retrieve with default
-const prefs = StorageService.getItem('user_prefs', { theme: 'light', volume: 1.0 })
+const prefs = StorageService.getItem('user_prefs', { theme: 'light', volume: 1.0 });
 
 // Export all data
-const backup = StorageService.exportData()
-console.log('Storage size:', StorageService.getStorageSize(), 'bytes')
+const backup = StorageService.exportData();
+console.log('Storage size:', StorageService.getStorageSize(), 'bytes');
 
 // Import data
-StorageService.importData(backup)
+StorageService.importData(backup);
 ```
 
 **Features:**
@@ -617,14 +617,14 @@ async clearAll(): Promise<boolean>
 **Usage:**
 
 ```typescript
-const db = new IndexedDBService('riddle-rush-db', 1)
+const db = new IndexedDBService('riddle-rush-db', 1);
 
 if (IndexedDBService.isAvailable()) {
-  const size = await db.getSize()
-  console.log('Database size:', size, 'bytes')
+  const size = await db.getSize();
+  console.log('Database size:', size, 'bytes');
 
   // Clear all data
-  await db.clearAll()
+  await db.clearAll();
 }
 ```
 
@@ -644,13 +644,13 @@ Basic layout with optional background image support.
 <script setup lang="ts">
 definePageMeta({
   layout: 'default',
-})
+});
 
-const setBackground = inject<(src: string) => void>('setBackground')
+const setBackground = inject<(src: string) => void>('setBackground');
 
 onMounted(() => {
-  setBackground?.(`${baseUrl}assets/background.png`)
-})
+  setBackground?.(`${baseUrl}assets/background.png`);
+});
 </script>
 ```
 
@@ -666,20 +666,20 @@ Game pages layout with back button and centered container.
 <script setup lang="ts">
 definePageMeta({
   layout: 'game',
-})
+});
 
-const { baseUrl } = useRuntimeConfig().public
-const setBackground = inject<(src: string) => void>('setBackground')
-const setBackButton = inject<(config: any) => void>('setBackButton')
+const { baseUrl } = useRuntimeConfig().public;
+const setBackground = inject<(src: string) => void>('setBackground');
+const setBackButton = inject<(config: any) => void>('setBackButton');
 
 onMounted(() => {
-  setBackground?.(`${baseUrl}assets/players/BACKGROUND.png`)
+  setBackground?.(`${baseUrl}assets/players/BACKGROUND.png`);
   setBackButton?.({
     visible: true,
     image: `${baseUrl}assets/players/back.png`,
     onBack: () => navigateTo('/'),
-  })
-})
+  });
+});
 </script>
 
 <template>
@@ -706,15 +706,15 @@ Menu layout with menu toggle button and panel support.
 <script setup lang="ts">
 definePageMeta({
   layout: 'menu',
-})
+});
 
-const { baseUrl } = useRuntimeConfig().public
-const setBackground = inject<(src: string) => void>('setBackground')
-const menuState = inject<any>('menuState')
+const { baseUrl } = useRuntimeConfig().public;
+const setBackground = inject<(src: string) => void>('setBackground');
+const menuState = inject<any>('menuState');
 
 onMounted(() => {
-  setBackground?.(`${baseUrl}assets/main-menu/BACKGROUND.png`)
-})
+  setBackground?.(`${baseUrl}assets/main-menu/BACKGROUND.png`);
+});
 </script>
 
 <template>
@@ -777,9 +777,9 @@ Auto-imports are configured in `nuxt.config.ts`:
 ```vue
 <!-- Before refactoring -->
 <script setup lang="ts">
-import BaseButton from '~/components/Base/Button.vue'
-import { useForm } from '~/composables/useForm'
-import { GameService } from '~/services/GameService'
+import BaseButton from '~/components/Base/Button.vue';
+import { useForm } from '~/composables/useForm';
+import { GameService } from '~/services/GameService';
 
 // ...
 </script>
@@ -857,10 +857,10 @@ export const useGameStore = defineStore('game', {
     createPlayer(name: string) {
       // Validation logic duplicated
       if (!name || name.trim().length === 0) {
-        throw new Error('Name required')
+        throw new Error('Name required');
       }
       if (name.length > 20) {
-        throw new Error('Name too long')
+        throw new Error('Name too long');
       }
 
       // Player creation logic
@@ -869,12 +869,12 @@ export const useGameStore = defineStore('game', {
         name: name.trim(),
         totalScore: 0,
         // ...
-      }
+      };
 
-      this.currentSession?.players.push(player)
+      this.currentSession?.players.push(player);
     },
   },
-})
+});
 ```
 
 **After (in store):**
@@ -884,17 +884,17 @@ export const useGameStore = defineStore('game', {
   actions: {
     createPlayer(name: string) {
       // Use GameService for validation
-      const validation = GameService.validatePlayerName(name, this.currentSession?.players || [])
+      const validation = GameService.validatePlayerName(name, this.currentSession?.players || []);
       if (!validation.valid) {
-        throw new Error(validation.error)
+        throw new Error(validation.error);
       }
 
       // Use GameService for player creation
-      const player = GameService.createPlayer(name)
-      this.currentSession?.players.push(player)
+      const player = GameService.createPlayer(name);
+      this.currentSession?.players.push(player);
     },
   },
-})
+});
 ```
 
 **Benefits:**
@@ -911,31 +911,31 @@ export const useGameStore = defineStore('game', {
 
 ```vue
 <script setup lang="ts">
-const playerName = ref('')
-const nameError = ref('')
-const isSubmitting = ref(false)
+const playerName = ref('');
+const nameError = ref('');
+const isSubmitting = ref(false);
 
 function validateName() {
   if (!playerName.value.trim()) {
-    nameError.value = 'Name required'
-    return false
+    nameError.value = 'Name required';
+    return false;
   }
   if (playerName.value.length > 20) {
-    nameError.value = 'Name too long'
-    return false
+    nameError.value = 'Name too long';
+    return false;
   }
-  nameError.value = ''
-  return true
+  nameError.value = '';
+  return true;
 }
 
 async function submit() {
-  if (!validateName()) return
+  if (!validateName()) return;
 
-  isSubmitting.value = true
+  isSubmitting.value = true;
   try {
-    await createPlayer(playerName.value)
+    await createPlayer(playerName.value);
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
 }
 </script>
@@ -951,7 +951,7 @@ async function submit() {
 
 ```vue
 <script setup lang="ts">
-import { validationRules } from '~/composables/useForm'
+import { validationRules } from '~/composables/useForm';
 
 const form = useForm({
   playerName: {
@@ -961,12 +961,12 @@ const form = useForm({
       validationRules.maxLength(20, 'Name too long'),
     ],
   },
-})
+});
 
 async function submit() {
   await form.handleSubmit(async (values) => {
-    await createPlayer(values.playerName)
-  })
+    await createPlayer(values.playerName);
+  });
 }
 </script>
 
@@ -1034,20 +1034,20 @@ async function submit() {
 <script setup lang="ts">
 definePageMeta({
   layout: 'game',
-})
+});
 
-const { baseUrl } = useRuntimeConfig().public
-const setBackground = inject<(src: string) => void>('setBackground')
-const setBackButton = inject<(config: any) => void>('setBackButton')
+const { baseUrl } = useRuntimeConfig().public;
+const setBackground = inject<(src: string) => void>('setBackground');
+const setBackButton = inject<(config: any) => void>('setBackButton');
 
 onMounted(() => {
-  setBackground?.(`${baseUrl}assets/players/BACKGROUND.png`)
+  setBackground?.(`${baseUrl}assets/players/BACKGROUND.png`);
   setBackButton?.({
     visible: true,
     image: `${baseUrl}assets/players/back.png`,
     onBack: () => navigateTo('/'),
-  })
-})
+  });
+});
 </script>
 
 <template>
@@ -1116,17 +1116,17 @@ components/
 ```typescript
 // ✅ Good - prevents external mutations
 export function useCounter() {
-  const count = ref(0)
+  const count = ref(0);
   return {
     count: readonly(count),
     increment: () => count.value++,
-  }
+  };
 }
 
 // ❌ Bad - allows external mutations
 export function useCounter() {
-  const count = ref(0)
-  return { count }
+  const count = ref(0);
+  return { count };
 }
 ```
 
@@ -1146,7 +1146,7 @@ export function useModal() {
     toggle: () => {
       /* ... */
     },
-  }
+  };
 }
 
 // ❌ Bad - unclear API
@@ -1154,9 +1154,9 @@ export function useModal() {
   return {
     state: isOpen,
     set: (val: boolean) => {
-      isOpen.value = val
+      isOpen.value = val;
     },
-  }
+  };
 }
 ```
 
@@ -1165,13 +1165,13 @@ export function useModal() {
 ```typescript
 export function useEventListener(target: EventTarget, event: string, handler: Function) {
   onMounted(() => {
-    target.addEventListener(event, handler)
-  })
+    target.addEventListener(event, handler);
+  });
 
   // ✅ Good - cleanup on unmount
   onUnmounted(() => {
-    target.removeEventListener(event, handler)
-  })
+    target.removeEventListener(event, handler);
+  });
 }
 ```
 
@@ -1183,16 +1183,16 @@ export function useEventListener(target: EventTarget, event: string, handler: Fu
 // ✅ Good - pure function
 export class GameService {
   static calculateScore(base: number, bonus: number): number {
-    return base + bonus
+    return base + bonus;
   }
 }
 
 // ❌ Bad - side effects
 export class GameService {
-  static score = 0
+  static score = 0;
 
   static addScore(points: number) {
-    this.score += points // Mutates global state
+    this.score += points; // Mutates global state
   }
 }
 ```
@@ -1235,10 +1235,10 @@ static isValidPlayerName(name: string): boolean {
 
 ```typescript
 // ✅ Good
-const count = ref(0) // Inferred as Ref<number>
+const count = ref(0); // Inferred as Ref<number>
 
 // ❌ Unnecessary
-const count: Ref<number> = ref(0)
+const count: Ref<number> = ref(0);
 ```
 
 2. **Define Interfaces for Props:**
@@ -1246,17 +1246,17 @@ const count: Ref<number> = ref(0)
 ```typescript
 // ✅ Good
 interface Props {
-  title: string
-  count?: number
+  title: string;
+  count?: number;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 // ❌ Bad - runtime props
 const props = defineProps({
   title: String,
   count: Number,
-})
+});
 ```
 
 3. **Use Generics for Reusability:**
@@ -1282,23 +1282,23 @@ export class StorageService {
 1. **Test Services in Isolation:**
 
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { GameService } from '~/services/GameService'
+import { describe, it, expect } from 'vitest';
+import { GameService } from '~/services/GameService';
 
 describe('GameService', () => {
   it('validates player names correctly', () => {
-    const result = GameService.validatePlayerName('', [])
-    expect(result.valid).toBe(false)
-    expect(result.error).toBe('Player name cannot be empty')
-  })
-})
+    const result = GameService.validatePlayerName('', []);
+    expect(result.valid).toBe(false);
+    expect(result.error).toBe('Player name cannot be empty');
+  });
+});
 ```
 
 2. **Test Composables with Mounting:**
 
 ```typescript
-import { mount } from '@vue/test-utils'
-import { useForm } from '~/composables/useForm'
+import { mount } from '@vue/test-utils';
+import { useForm } from '~/composables/useForm';
 
 it('validates required fields', async () => {
   const wrapper = mount({
@@ -1310,11 +1310,11 @@ it('validates required fields', async () => {
             /* ... */
           ],
         },
-      })
+      });
     },
-  })
+  });
   // Test implementation
-})
+});
 ```
 
 ---

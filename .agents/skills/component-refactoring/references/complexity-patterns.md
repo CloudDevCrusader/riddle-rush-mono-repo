@@ -101,17 +101,17 @@ const handleSubmit = () => {
   if (isValid) {
     if (hasChanges) {
       if (isConnected) {
-        submitData()
+        submitData();
       } else {
-        showConnectionError()
+        showConnectionError();
       }
     } else {
-      showNoChangesMessage()
+      showNoChangesMessage();
     }
   } else {
-    showValidationError()
+    showValidationError();
   }
-}
+};
 ```
 
 **After** (complexity: ~4):
@@ -119,22 +119,22 @@ const handleSubmit = () => {
 ```typescript
 const handleSubmit = () => {
   if (!isValid) {
-    showValidationError()
-    return
+    showValidationError();
+    return;
   }
 
   if (!hasChanges) {
-    showNoChangesMessage()
-    return
+    showNoChangesMessage();
+    return;
   }
 
   if (!isConnected) {
-    showConnectionError()
-    return
+    showConnectionError();
+    return;
   }
 
-  submitData()
-}
+  submitData();
+};
 ```
 
 ## Pattern 3: Extract Complex Conditions
@@ -144,33 +144,33 @@ const handleSubmit = () => {
 ```typescript
 const canPublish = (() => {
   if (mode !== AppModeEnum.COMPLETION) {
-    if (!isAdvancedMode) return true
+    if (!isAdvancedMode) return true;
 
     if (modelModeType === ModelModeType.completion) {
-      if (!hasSetBlockStatus.history || !hasSetBlockStatus.query) return false
-      return true
+      if (!hasSetBlockStatus.history || !hasSetBlockStatus.query) return false;
+      return true;
     }
-    return true
+    return true;
   }
-  return !promptEmpty
-})()
+  return !promptEmpty;
+})();
 ```
 
 **After** (complexity: lower):
 
 ```typescript
 // Extract to named functions
-const canPublishInCompletionMode = () => !promptEmpty
+const canPublishInCompletionMode = () => !promptEmpty;
 
 const canPublishInChatMode = () => {
-  if (!isAdvancedMode) return true
-  if (modelModeType !== ModelModeType.completion) return true
-  return hasSetBlockStatus.history && hasSetBlockStatus.query
-}
+  if (!isAdvancedMode) return true;
+  if (modelModeType !== ModelModeType.completion) return true;
+  return hasSetBlockStatus.history && hasSetBlockStatus.query;
+};
 
 // Clean main logic
 const canPublish =
-  mode === AppModeEnum.COMPLETION ? canPublishInCompletionMode() : canPublishInChatMode()
+  mode === AppModeEnum.COMPLETION ? canPublishInCompletionMode() : canPublishInChatMode();
 ```
 
 ## Pattern 4: Replace Chained Ternaries
@@ -184,20 +184,20 @@ const statusText = serverActivated
     ? t('status.inactive')
     : appUnpublished
       ? t('status.unpublished')
-      : t('status.notConfigured')
+      : t('status.notConfigured');
 ```
 
 **After** (complexity: ~2):
 
 ```typescript
 const getStatusText = () => {
-  if (serverActivated) return t('status.running')
-  if (serverPublished) return t('status.inactive')
-  if (appUnpublished) return t('status.unpublished')
-  return t('status.notConfigured')
-}
+  if (serverActivated) return t('status.running');
+  if (serverPublished) return t('status.inactive');
+  if (appUnpublished) return t('status.unpublished');
+  return t('status.notConfigured');
+};
 
-const statusText = getStatusText()
+const statusText = getStatusText();
 ```
 
 Or use lookup:
@@ -208,16 +208,16 @@ const STATUS_TEXT_MAP = {
   inactive: 'status.inactive',
   unpublished: 'status.unpublished',
   notConfigured: 'status.notConfigured',
-} as const
+} as const;
 
 const getStatusKey = (): keyof typeof STATUS_TEXT_MAP => {
-  if (serverActivated) return 'running'
-  if (serverPublished) return 'inactive'
-  if (appUnpublished) return 'unpublished'
-  return 'notConfigured'
-}
+  if (serverActivated) return 'running';
+  if (serverPublished) return 'inactive';
+  if (appUnpublished) return 'unpublished';
+  return 'notConfigured';
+};
 
-const statusText = t(STATUS_TEXT_MAP[getStatusKey()])
+const statusText = t(STATUS_TEXT_MAP[getStatusKey()]);
 ```
 
 ## Pattern 5: Flatten Nested Loops
@@ -226,7 +226,7 @@ const statusText = t(STATUS_TEXT_MAP[getStatusKey()])
 
 ```typescript
 const processData = (items: Item[]) => {
-  const results: ProcessedItem[] = []
+  const results: ProcessedItem[] = [];
 
   for (const item of items) {
     if (item.isValid) {
@@ -238,7 +238,7 @@ const processData = (items: Item[]) => {
                 itemId: item.id,
                 childId: child.id,
                 propValue: prop.value,
-              })
+              });
             }
           }
         }
@@ -246,8 +246,8 @@ const processData = (items: Item[]) => {
     }
   }
 
-  return results
-}
+  return results;
+};
 ```
 
 **After** (complexity: lower):
@@ -269,8 +269,8 @@ const processData = (items: Item[]) => {
               propValue: prop.value,
             }))
         )
-    )
-}
+    );
+};
 ```
 
 ## Pattern 6: Extract Event Handler Logic
@@ -372,7 +372,7 @@ const toggleDisabled =
   missingStartNode ||
   triggerModeDisabled ||
   (isAdvancedApp && !currentWorkflow?.graph) ||
-  (isBasicApp && !basicAppConfig.updated_at)
+  (isBasicApp && !basicAppConfig.updated_at);
 ```
 
 **After** (complexity: ~3):
@@ -380,23 +380,23 @@ const toggleDisabled =
 ```typescript
 // Extract meaningful boolean functions
 const isAppReady = () => {
-  if (isAdvancedApp) return !!currentWorkflow?.graph
-  return !!basicAppConfig.updated_at
-}
+  if (isAdvancedApp) return !!currentWorkflow?.graph;
+  return !!basicAppConfig.updated_at;
+};
 
 const hasRequiredPermissions = () => {
-  return isCurrentWorkspaceEditor && !hasInsufficientPermissions
-}
+  return isCurrentWorkspaceEditor && !hasInsufficientPermissions;
+};
 
 const canToggle = () => {
-  if (!hasRequiredPermissions()) return false
-  if (!isAppReady()) return false
-  if (missingStartNode) return false
-  if (triggerModeDisabled) return false
-  return true
-}
+  if (!hasRequiredPermissions()) return false;
+  if (!isAppReady()) return false;
+  if (missingStartNode) return false;
+  if (triggerModeDisabled) return false;
+  return true;
+};
 
-const toggleDisabled = !canToggle()
+const toggleDisabled = !canToggle();
 ```
 
 ## Pattern 8: Simplify useMemo/useCallback Dependencies
@@ -405,8 +405,8 @@ const toggleDisabled = !canToggle()
 
 ```typescript
 const payload = useMemo(() => {
-  let parameters: Parameter[] = []
-  let outputParameters: OutputParameter[] = []
+  let parameters: Parameter[] = [];
+  let outputParameters: OutputParameter[] = [];
 
   if (!published) {
     parameters = (inputs || []).map((item) => ({
@@ -415,27 +415,27 @@ const payload = useMemo(() => {
       form: 'llm',
       required: item.required,
       type: item.type,
-    }))
+    }));
     outputParameters = (outputs || []).map((item) => ({
       name: item.variable,
       description: '',
       type: item.value_type,
-    }))
+    }));
   } else if (detail && detail.tool) {
     parameters = (inputs || []).map((item) => ({
       // Complex transformation...
-    }))
+    }));
     outputParameters = (outputs || []).map((item) => ({
       // Complex transformation...
-    }))
+    }));
   }
 
   return {
     icon: detail?.icon || icon,
     label: detail?.label || name,
     // ...more fields
-  }
-}, [detail, published, workflowAppId, icon, name, description, inputs, outputs])
+  };
+}, [detail, published, workflowAppId, icon, name, description, inputs, outputs]);
 ```
 
 **After** (complexity: separated concerns):
@@ -451,10 +451,10 @@ const useParameterTransform = (inputs: InputVar[], detail?: ToolDetail, publishe
         form: 'llm',
         required: item.required,
         type: item.type,
-      }))
+      }));
     }
 
-    if (!detail?.tool) return []
+    if (!detail?.tool) return [];
 
     return inputs.map((item) => ({
       name: item.variable,
@@ -463,13 +463,13 @@ const useParameterTransform = (inputs: InputVar[], detail?: ToolDetail, publishe
       description:
         detail.tool.parameters.find((p) => p.name === item.variable)?.llm_description || '',
       form: detail.tool.parameters.find((p) => p.name === item.variable)?.form || 'llm',
-    }))
-  }, [inputs, detail, published])
-}
+    }));
+  }, [inputs, detail, published]);
+};
 
 // Component uses hook
-const parameters = useParameterTransform(inputs, detail, published)
-const outputParameters = useOutputTransform(outputs, detail, published)
+const parameters = useParameterTransform(inputs, detail, published);
+const outputParameters = useOutputTransform(outputs, detail, published);
 
 const payload = useMemo(
   () => ({
@@ -480,7 +480,7 @@ const payload = useMemo(
     // ...
   }),
   [detail, icon, name, parameters, outputParameters]
-)
+);
 ```
 
 ## Target Metrics After Refactoring

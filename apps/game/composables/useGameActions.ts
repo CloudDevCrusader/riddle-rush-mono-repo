@@ -1,6 +1,6 @@
-import { useGameStore } from '~/stores/gameStore'
-import { useGameSession } from '../stores/hooks/useGameSession'
-import { useLogger } from './useLogger'
+import { useGameStore } from '~/stores/gameStore';
+import { useGameSession } from '../stores/hooks/useGameSession';
+import { useLogger } from './useLogger';
 
 /**
  * Composable for common game actions with error handling and user feedback.
@@ -10,84 +10,84 @@ import { useLogger } from './useLogger'
  * in `useGameState()` as reactive computed refs — use those instead.
  */
 export function useGameActions() {
-  const store = useGameStore()
-  const gameSession = useGameSession()
-  const playerActions = usePlayerActions()
-  const router = useRouter()
-  const toast = useToast()
-  const audio = useAudio()
-  const { t } = useI18n()
-  const logger = useLogger()
+  const store = useGameStore();
+  const gameSession = useGameSession();
+  const playerActions = usePlayerActions();
+  const router = useRouter();
+  const toast = useToast();
+  const audio = useAudio();
+  const { t } = useI18n();
+  const logger = useLogger();
 
   /** Read the authoritative flow state from the store's computed hook. */
   const getFlowState = (): 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed' =>
-    gameSession.flowState.value ?? 'setup'
+    gameSession.flowState.value ?? 'setup';
 
   /**
    * Start a new game session
    */
   const startNewGame = async () => {
     try {
-      await gameSession.startNewGame()
-      audio.playNewRound()
-      toast.success(t('game.new_round_started', 'New round started!'))
-      return true
+      await gameSession.startNewGame();
+      audio.playNewRound();
+      toast.success(t('game.new_round_started', 'New round started!'));
+      return true;
     } catch (error) {
-      logger.error('Error starting new game:', error)
-      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
-      return false
+      logger.error('Error starting new game:', error);
+      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'));
+      return false;
     }
-  }
+  };
 
   /**
    * Resume existing game or start new one
    */
   const resumeOrStartGame = async () => {
-    const hadSession = gameSession.hasActiveSession.value
+    const hadSession = gameSession.hasActiveSession.value;
 
     try {
-      await gameSession.resumeOrStartNewGame()
+      await gameSession.resumeOrStartNewGame();
 
       if (!hadSession) {
-        audio.playNewRound()
-        toast.info(t('game.welcome', 'Welcome! Guess a word from the category.'))
+        audio.playNewRound();
+        toast.info(t('game.welcome', 'Welcome! Guess a word from the category.'));
       } else {
-        toast.info(t('game.resumed', 'Game resumed!'))
+        toast.info(t('game.resumed', 'Game resumed!'));
       }
 
-      return true
+      return true;
     } catch (error) {
-      logger.error('Error resuming game:', error)
-      toast.error(t('game.error_resuming', 'Failed to load game. Starting fresh.'))
-      return false
+      logger.error('Error resuming game:', error);
+      toast.error(t('game.error_resuming', 'Failed to load game. Starting fresh.'));
+      return false;
     }
-  }
+  };
 
   /**
    * End current game session
    */
   const endGame = async () => {
     try {
-      await gameSession.endGame()
-      toast.success(t('game.game_ended', 'Game ended! Check your statistics.'))
-      await router.push('/')
-      return true
+      await gameSession.endGame();
+      toast.success(t('game.game_ended', 'Game ended! Check your statistics.'));
+      await router.push('/');
+      return true;
     } catch (error) {
-      logger.error('Error ending game:', error)
-      toast.error(t('game.error_ending', 'Failed to save game results'))
-      return false
+      logger.error('Error ending game:', error);
+      toast.error(t('game.error_ending', 'Failed to save game results'));
+      return false;
     }
-  }
+  };
 
   /**
    * Share game score using Web Share API
    */
   const shareScore = async (score?: number) => {
-    const finalScore = score ?? gameSession.currentSession.value?.score ?? 0
+    const finalScore = score ?? gameSession.currentSession.value?.score ?? 0;
 
     if (!navigator.share) {
-      toast.info(t('share.not_supported', 'Sharing is not supported on this device'))
-      return false
+      toast.info(t('share.not_supported', 'Sharing is not supported on this device'));
+      return false;
     }
 
     try {
@@ -95,18 +95,18 @@ export function useGameActions() {
         title: t('share.score_title'),
         text: t('share.score_text', { score: finalScore }),
         url: window.location.origin,
-      })
-      toast.success(t('share.success', 'Score shared successfully!'))
-      return true
+      });
+      toast.success(t('share.success', 'Score shared successfully!'));
+      return true;
     } catch (error) {
       // Don't show error for user cancellation
       if ((error as Error).name !== 'AbortError') {
-        logger.error('Error sharing:', error)
-        toast.error(t('share.error', 'Failed to share score'))
+        logger.error('Error sharing:', error);
+        toast.error(t('share.error', 'Failed to share score'));
       }
-      return false
+      return false;
     }
-  }
+  };
 
   /**
    * Setup multiplayer game with players
@@ -117,31 +117,31 @@ export function useGameActions() {
     customLetter?: string
   ) => {
     try {
-      await gameSession.setupPlayers(playerNames, gameName, customLetter)
-      toast.success(t('game.multiplayer_setup', [playerNames.length]))
-      return true
+      await gameSession.setupPlayers(playerNames, gameName, customLetter);
+      toast.success(t('game.multiplayer_setup', [playerNames.length]));
+      return true;
     } catch (error) {
-      logger.error('Error setting up multiplayer game:', error)
-      toast.error(t('game.error_multiplayer', 'Failed to setup multiplayer game'))
-      return false
+      logger.error('Error setting up multiplayer game:', error);
+      toast.error(t('game.error_multiplayer', 'Failed to setup multiplayer game'));
+      return false;
     }
-  }
+  };
 
   /**
    * Start next round in multiplayer mode
    */
   const startNextRound = async () => {
     try {
-      await playerActions.startNextRound()
-      audio.playNewRound()
-      toast.success(t('game.next_round', 'Next round started!'))
-      return true
+      await playerActions.startNextRound();
+      audio.playNewRound();
+      toast.success(t('game.next_round', 'Next round started!'));
+      return true;
     } catch (error) {
-      logger.error('Error starting next round:', error)
-      toast.error(t('game.error_next_round', 'Failed to start next round'))
-      return false
+      logger.error('Error starting next round:', error);
+      toast.error(t('game.error_next_round', 'Failed to start next round'));
+      return false;
     }
-  }
+  };
 
   /**
    * Start or resume a configured round context from round-start page selections.
@@ -152,27 +152,27 @@ export function useGameActions() {
     letter: string
   ) => {
     try {
-      const session = await gameSession.advanceToConfiguredRound(category, letter)
+      const session = await gameSession.advanceToConfiguredRound(category, letter);
       if (!session) {
-        toast.warning(t('players.need_players', 'Add at least one player to start'))
-        return null
+        toast.warning(t('players.need_players', 'Add at least one player to start'));
+        return null;
       }
 
-      audio.playNewRound()
-      return session
+      audio.playNewRound();
+      return session;
     } catch (error) {
-      logger.error('Error starting configured round:', error)
-      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))
-      return null
+      logger.error('Error starting configured round:', error);
+      toast.error(t('game.error_starting', 'Failed to start game. Please try again.'));
+      return null;
     }
-  }
+  };
 
   /**
    * Transition to round-complete state (used when all players submit)
    */
   const transitionToRoundComplete = () => {
-    store.transitionToRoundComplete()
-  }
+    store.transitionToRoundComplete();
+  };
 
   return {
     startNewGame,
@@ -183,5 +183,5 @@ export function useGameActions() {
     startNextRound,
     startConfiguredRound,
     transitionToRoundComplete,
-  }
+  };
 }

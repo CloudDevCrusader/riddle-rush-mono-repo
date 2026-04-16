@@ -1,23 +1,23 @@
-import { execFileSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
-import { homedir } from 'node:os'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { SevereServiceError } from 'webdriverio'
+import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { SevereServiceError } from 'webdriverio';
 
 function resolveAndroidSdkRoot(): string | undefined {
-  const fromEnv = process.env.ANDROID_HOME?.trim() || process.env.ANDROID_SDK_ROOT?.trim()
+  const fromEnv = process.env.ANDROID_HOME?.trim() || process.env.ANDROID_SDK_ROOT?.trim();
   if (fromEnv) {
-    return fromEnv
+    return fromEnv;
   }
-  const home = homedir()
-  const candidates = [join(home, 'Library/Android/sdk'), join(home, 'Android/Sdk')]
+  const home = homedir();
+  const candidates = [join(home, 'Library/Android/sdk'), join(home, 'Android/Sdk')];
   for (const root of candidates) {
     if (existsSync(join(root, 'platform-tools', 'adb'))) {
-      return root
+      return root;
     }
   }
-  return undefined
+  return undefined;
 }
 
 /**
@@ -26,12 +26,12 @@ function resolveAndroidSdkRoot(): string | undefined {
  */
 function ensureAndroidSdkEnv(): void {
   if (process.env.ANDROID_HOME?.trim() || process.env.ANDROID_SDK_ROOT?.trim()) {
-    return
+    return;
   }
-  const root = resolveAndroidSdkRoot()
+  const root = resolveAndroidSdkRoot();
   if (root) {
-    process.env.ANDROID_HOME = root
-    process.env.ANDROID_SDK_ROOT = root
+    process.env.ANDROID_HOME = root;
+    process.env.ANDROID_SDK_ROOT = root;
   }
 }
 
@@ -41,57 +41,57 @@ function ensureAndroidSdkEnv(): void {
  */
 function assertAndroidDeviceConnected(): void {
   if (process.env.APPIUM_SKIP_DEVICE_CHECK === '1') {
-    return
+    return;
   }
-  const root =
-    process.env.ANDROID_HOME?.trim() ||
-    process.env.ANDROID_SDK_ROOT?.trim() ||
-    resolveAndroidSdkRoot()
+  const root
+    = process.env.ANDROID_HOME?.trim()
+      || process.env.ANDROID_SDK_ROOT?.trim()
+      || resolveAndroidSdkRoot();
   if (!root) {
     throw new SevereServiceError(
-      'Android SDK not found. Set ANDROID_HOME or install the SDK (e.g. via Android Studio). ' +
-        'See https://developer.android.com/studio/command-line/variables'
-    )
+      'Android SDK not found. Set ANDROID_HOME or install the SDK (e.g. via Android Studio). '
+      + 'See https://developer.android.com/studio/command-line/variables',
+    );
   }
-  const adb = join(root, 'platform-tools', 'adb')
-  let out: string
+  const adb = join(root, 'platform-tools', 'adb');
+  let out: string;
   try {
-    out = execFileSync(adb, ['devices'], { encoding: 'utf8' })
+    out = execFileSync(adb, ['devices'], { encoding: 'utf8' });
   } catch {
     throw new SevereServiceError(
-      `Failed to run "${adb} devices". Check that Android SDK platform-tools is installed.`
-    )
+      `Failed to run "${adb} devices". Check that Android SDK platform-tools is installed.`,
+    );
   }
-  const hasDevice = out.split('\n').some((line) => /\tdevice\s*$/.test(line))
+  const hasDevice = out.split('\n').some(line => /\tdevice\s*$/.test(line));
   if (!hasDevice) {
     throw new SevereServiceError(
-      'No Android device or emulator in the "device" state. Start an emulator (Device Manager) ' +
-        'or connect a device with USB debugging, then check `adb devices`.'
-    )
+      'No Android device or emulator in the "device" state. Start an emulator (Device Manager) '
+      + 'or connect a device with USB debugging, then check `adb devices`.',
+    );
   }
 }
 
-ensureAndroidSdkEnv()
+ensureAndroidSdkEnv();
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const mobileRoot = join(__dirname, '../../..')
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const mobileRoot = join(__dirname, '../../..');
 /** Emulator / x86 AVDs need the universal flavor; `play` is ARM-only (real devices). */
 const defaultApk = join(
   mobileRoot,
-  'android/app/build/outputs/apk/universal/debug/app-universal-debug.apk'
-)
+  'android/app/build/outputs/apk/universal/debug/app-universal-debug.apk',
+);
 
 function assertApkExists(apkPath: string): void {
   if (existsSync(apkPath)) {
-    return
+    return;
   }
   throw new SevereServiceError(
-    `APK not found: ${apkPath}\n` +
-      'Build a universal debug APK for the emulator (x86/x86_64), then retry:\n' +
-      '  pnpm android:build:universal\n' +
-      '  — or —\n' +
+    `APK not found: ${apkPath}\n`
+    + 'Build a universal debug APK for the emulator (x86/x86_64), then retry:\n'
+    + '  pnpm android:build:universal\n'
+    + '  — or —\n' +
       '  ./scripts/mobile-build.sh android debug --universal'
-  )
+  );
 }
 
 function androidCapabilities(): Record<string, string | boolean | number> {
@@ -103,16 +103,16 @@ function androidCapabilities(): Record<string, string | boolean | number> {
     'appium:autoGrantPermissions': true,
     'appium:noReset': false,
     'appium:waitForIdleTimeout': 100,
-  }
-  const udid = process.env.APPIUM_UDID?.trim() || process.env.ANDROID_SERIAL?.trim()
+  };
+  const udid = process.env.APPIUM_UDID?.trim() || process.env.ANDROID_SERIAL?.trim();
   if (udid) {
-    cap['appium:udid'] = udid
+    cap['appium:udid'] = udid;
   }
-  const platformVersion = process.env.ANDROID_PLATFORM_VERSION?.trim()
+  const platformVersion = process.env.ANDROID_PLATFORM_VERSION?.trim();
   if (platformVersion) {
-    cap['appium:platformVersion'] = platformVersion
+    cap['appium:platformVersion'] = platformVersion;
   }
-  return cap
+  return cap;
 }
 
 export const config = {
@@ -124,8 +124,8 @@ export const config = {
   port: 4723,
 
   onPrepare: () => {
-    assertAndroidDeviceConnected()
-    assertApkExists(process.env.ANDROID_APP?.trim() || defaultApk)
+    assertAndroidDeviceConnected();
+    assertApkExists(process.env.ANDROID_APP?.trim() || defaultApk);
   },
 
   capabilities: [androidCapabilities()],
@@ -154,4 +154,4 @@ export const config = {
   autoCompileOpts: {
     autoCompile: true,
   },
-}
+};

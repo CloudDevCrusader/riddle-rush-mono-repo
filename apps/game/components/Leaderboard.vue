@@ -66,30 +66,30 @@
 </template>
 
 <script setup lang="ts">
-import type { LeaderboardEntry } from '@riddle-rush/types/game'
+import type { LeaderboardEntry } from '@riddle-rush/types/game';
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 defineProps<{
-  visible: boolean
-  entries: LeaderboardEntry[]
-}>()
+  visible: boolean;
+  entries: LeaderboardEntry[];
+}>();
 
 const emit = defineEmits<{
-  close: []
-  clear: []
-}>()
+  close: [];
+  clear: [];
+}>();
 
 const formatDuration = (ms: number): string => {
-  const seconds = Math.floor(ms / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
 
 const clearLeaderboard = () => {
-  emit('clear')
-}
+  emit('clear');
+};
 </script>
 
 <style scoped>

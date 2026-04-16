@@ -1,6 +1,6 @@
-import { defineProject } from 'vitest/config'
-import { fileURLToPath, URL } from 'node:url'
-import vue from '@vitejs/plugin-vue'
+import { defineProject } from 'vitest/config';
+import { fileURLToPath, URL } from 'node:url';
+import vue from '@vitejs/plugin-vue';
 
 export default [
   // Unit tests - run in happy-dom environment
@@ -22,4 +22,4 @@ export default [
       exclude: ['node_modules', '.nuxt', '.output', 'tests/e2e'],
     },
   }),
-]
+];

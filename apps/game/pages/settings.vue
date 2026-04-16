@@ -53,77 +53,77 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } })
+definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } });
 
-const { t, router } = usePageSetup()
-const settings = useSettings()
-const { isFortuneWheelEnabled } = useFeatureFlags()
+const { t, router } = usePageSetup();
+const settings = useSettings();
+const { isFortuneWheelEnabled } = useFeatureFlags();
 
-const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value)
+const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value);
 
 // Local refs for slider values
-const soundVolume = ref(settings.soundVolume.value)
-const musicVolume = ref(settings.musicVolume.value)
+const soundVolume = ref(settings.soundVolume.value);
+const musicVolume = ref(settings.musicVolume.value);
 
 // Preview sound throttling
-let lastSoundPreviewTime = 0
-const SOUND_PREVIEW_THROTTLE = 500 // ms
+let lastSoundPreviewTime = 0;
+const SOUND_PREVIEW_THROTTLE = 500; // ms
 
 // Handle sound volume change
 const handleSoundChange = (value: number) => {
-  settings.updateSetting('soundVolume', value)
-  settings.updateSetting('soundEnabled', value > 0)
+  settings.updateSetting('soundVolume', value);
+  settings.updateSetting('soundEnabled', value > 0);
 
   // Play preview sound (throttled)
-  const now = Date.now()
+  const now = Date.now();
   if (now - lastSoundPreviewTime > SOUND_PREVIEW_THROTTLE && value > 0) {
-    lastSoundPreviewTime = now
+    lastSoundPreviewTime = now;
     // Play preview sound via audio composable if available
     // For now, this is a placeholder for future audio implementation
   }
-}
+};
 
 // Handle music volume change
 const handleMusicChange = (value: number) => {
-  settings.updateSetting('musicVolume', value)
-  settings.updateSetting('musicEnabled', value > 0)
-}
+  settings.updateSetting('musicVolume', value);
+  settings.updateSetting('musicEnabled', value > 0);
+};
 
 // Navigate back
 const goBack = () => {
-  router.back()
-}
+  router.back();
+};
 
 // Handle OK button
 const handleOk = () => {
-  router.back()
-}
+  router.back();
+};
 
 // Handle escape key
 const handleEscape = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
-    goBack()
+    goBack();
   }
-}
+};
 
 // Load settings on mount
 onMounted(() => {
-  soundVolume.value = settings.soundVolume.value
-  musicVolume.value = settings.musicVolume.value
+  soundVolume.value = settings.soundVolume.value;
+  musicVolume.value = settings.musicVolume.value;
 
   // Add escape key listener
-  window.addEventListener('keydown', handleEscape)
-})
+  window.addEventListener('keydown', handleEscape);
+});
 
 // Cleanup on unmount
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleEscape)
-})
+  window.removeEventListener('keydown', handleEscape);
+});
 
 useLocalizedPageSeo({
   title: () => t('settings.title'),
   description: () => t('settings.meta_description'),
-})
+});
 </script>
 
 <style scoped lang="scss">

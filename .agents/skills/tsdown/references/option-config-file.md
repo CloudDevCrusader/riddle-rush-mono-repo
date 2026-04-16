@@ -26,14 +26,14 @@ tsdown looks for these files (in order):
 
 ```ts
 // tsdown.config.ts
-import { defineConfig } from 'tsdown'
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
   clean: true,
-})
+});
 ```
 
 ### JavaScript Config
@@ -44,7 +44,7 @@ export default {
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-}
+};
 ```
 
 ### JSON Config
@@ -91,7 +91,7 @@ export default defineConfig([
     globalName: 'MyLib',
     minify: true,
   },
-])
+]);
 ```
 
 Each configuration runs as a separate build.
@@ -102,7 +102,7 @@ Use a function for conditional config:
 
 ```ts
 export default defineConfig((options) => {
-  const isDev = options.watch
+  const isDev = options.watch;
 
   return {
     entry: ['src/index.ts'],
@@ -110,8 +110,8 @@ export default defineConfig((options) => {
     minify: !isDev,
     sourcemap: isDev,
     clean: !isDev,
-  }
-})
+  };
+});
 ```
 
 Available options:
@@ -191,7 +191,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 Each package directory matching the glob pattern will be built with the same configuration.
@@ -216,7 +216,7 @@ export default defineConfig([
     platform: 'browser',
     globalName: 'MyLib',
   },
-])
+]);
 ```
 
 ### Development vs Production
@@ -228,7 +228,7 @@ export default defineConfig((options) => ({
   minify: !options.watch,
   sourcemap: options.watch ? true : false,
   clean: !options.watch,
-}))
+}));
 ```
 
 ### Monorepo Root Config
@@ -242,7 +242,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   // Shared config for all packages
-})
+});
 ```
 
 ### Per-Package Override
@@ -253,7 +253,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'], // Override: only ESM
   platform: 'browser', // Override: browser only
-})
+});
 ```
 
 ## Config Precedence

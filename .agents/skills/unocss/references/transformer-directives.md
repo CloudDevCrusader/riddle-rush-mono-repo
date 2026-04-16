@@ -10,11 +10,11 @@ Enables `@apply`, `@screen`, `theme()`, and `icon()` directives in CSS.
 ## Installation
 
 ```ts
-import { defineConfig, transformerDirectives } from 'unocss'
+import { defineConfig, transformerDirectives } from 'unocss';
 
 export default defineConfig({
   transformers: [transformerDirectives()],
-})
+});
 ```
 
 ## @apply
@@ -50,7 +50,7 @@ Configure aliases:
 transformerDirectives({
   applyVariable: ['--at-apply', '--uno-apply', '--uno'],
   // or disable: applyVariable: false
-})
+});
 ```
 
 ## @screen

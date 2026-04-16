@@ -11,7 +11,7 @@ VitePress configuration is defined in `.vitepress/config.[js|ts|mjs|mts]`. Use `
 
 ```ts
 // .vitepress/config.ts
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   // Site metadata
@@ -26,7 +26,7 @@ export default defineConfig({
   themeConfig: {
     // See theme-config.md
   },
-})
+});
 ```
 
 ## Site Metadata
@@ -43,7 +43,7 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#5f67ee' }],
     ['script', { async: '', src: 'https://analytics.example.com/script.js' }],
   ],
-})
+});
 ```
 
 ## Build Options
@@ -72,7 +72,7 @@ export default defineConfig({
 
   // Get last updated timestamp from git
   lastUpdated: true,
-})
+});
 ```
 
 ## Route Rewrites
@@ -88,7 +88,7 @@ export default defineConfig({
     // Dynamic parameters
     'packages/:pkg/src/:slug*': ':pkg/:slug*',
   },
-})
+});
 ```
 
 ## Appearance (Dark Mode)
@@ -100,7 +100,7 @@ export default defineConfig({
   appearance: 'force-dark', // Always dark, no toggle
   appearance: 'force-auto', // Always follow system preference
   appearance: false, // Disable dark mode
-})
+});
 ```
 
 ## Vite & Vue Configuration
@@ -130,7 +130,7 @@ export default defineConfig({
       dangerLabel: 'DANGER',
     },
   },
-})
+});
 ```
 
 ## Build Hooks
@@ -139,20 +139,20 @@ export default defineConfig({
 export default defineConfig({
   // Transform page data
   transformPageData(pageData, { siteConfig }) {
-    pageData.frontmatter.head ??= []
-    pageData.frontmatter.head.push(['meta', { name: 'og:title', content: pageData.title }])
+    pageData.frontmatter.head ??= [];
+    pageData.frontmatter.head.push(['meta', { name: 'og:title', content: pageData.title }]);
   },
 
   // Transform head before generating each page
   async transformHead(context) {
-    return [['meta', { name: 'custom', content: context.page }]]
+    return [['meta', { name: 'custom', content: context.page }]];
   },
 
   // After build completes
   async buildEnd(siteConfig) {
     // Generate sitemap, RSS, etc.
   },
-})
+});
 ```
 
 ## Dynamic Config
@@ -161,15 +161,15 @@ For async configuration:
 
 ```ts
 export default async () => {
-  const data = await fetch('https://api.example.com/data').then((r) => r.json())
+  const data = await fetch('https://api.example.com/data').then((r) => r.json());
 
   return defineConfig({
     title: data.title,
     themeConfig: {
       sidebar: data.sidebar,
     },
-  })
-}
+  });
+};
 ```
 
 ## Key Points

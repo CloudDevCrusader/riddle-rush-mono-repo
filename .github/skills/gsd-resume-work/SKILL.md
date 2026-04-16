@@ -4,7 +4,6 @@ description: Resume work from previous session with full context restoration
 allowed-tools: Read, Bash, Write, AskUserQuestion, SlashCommand
 ---
 
-
 <objective>
 Restore complete project context and resume work seamlessly from previous session.
 

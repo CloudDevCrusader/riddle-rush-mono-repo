@@ -4,91 +4,91 @@
  */
 
 export interface ValidationRule<T = unknown> {
-  validate: (value: T) => boolean
-  message: string
+  validate: (value: T) => boolean;
+  message: string;
 }
 
 export interface FieldConfig<T = unknown> {
-  initialValue: T
-  rules?: ValidationRule<T>[]
+  initialValue: T;
+  rules?: ValidationRule<T>[];
 }
 
 export function useForm<T extends Record<string, unknown>>(fields: Record<keyof T, FieldConfig>) {
   // Form state with proper typing
-  const values = reactive({} as T)
-  const errors = reactive({} as Record<string, string | undefined>)
-  const touched = reactive({} as Record<string, boolean>)
-  const isSubmitting = ref(false)
+  const values = reactive({} as T);
+  const errors = reactive({} as Record<string, string | undefined>);
+  const touched = reactive({} as Record<string, boolean>);
+  const isSubmitting = ref(false);
 
   // Initialize values
   Object.keys(fields).forEach((key) => {
-    const fieldKey = key as keyof T
-    ;(values as Record<string, unknown>)[key] = fields[fieldKey].initialValue
-    ;(touched as Record<string, boolean>)[key] = false
-  })
+    const fieldKey = key as keyof T;
+    (values as Record<string, unknown>)[key] = fields[fieldKey].initialValue;
+    (touched as Record<string, boolean>)[key] = false;
+  });
 
   /**
    * Validate a single field
    */
   const validateField = (fieldName: keyof T): boolean => {
-    const field = fields[fieldName]
-    const value = (values as Record<string, unknown>)[fieldName as string]
+    const field = fields[fieldName];
+    const value = (values as Record<string, unknown>)[fieldName as string];
 
     if (!field.rules || field.rules.length === 0) {
-      return true
+      return true;
     }
 
     for (const rule of field.rules) {
       if (!rule.validate(value as never)) {
-        ;(errors as Record<string, string | undefined>)[fieldName as string] = rule.message
-        return false
+        (errors as Record<string, string | undefined>)[fieldName as string] = rule.message;
+        return false;
       }
     }
 
     // Clear error by setting to undefined
-    const errorsObj = errors as Record<string, string | undefined>
-    const key = fieldName as string
-    errorsObj[key] = undefined
-    return true
-  }
+    const errorsObj = errors as Record<string, string | undefined>;
+    const key = fieldName as string;
+    errorsObj[key] = undefined;
+    return true;
+  };
 
   /**
    * Validate all fields
    */
   const validateAll = (): boolean => {
-    let isValid = true
+    let isValid = true;
 
     Object.keys(fields).forEach((key) => {
-      const fieldKey = key as keyof T
+      const fieldKey = key as keyof T;
       if (!validateField(fieldKey)) {
-        isValid = false
+        isValid = false;
       }
-    })
+    });
 
-    return isValid
-  }
+    return isValid;
+  };
 
   /**
    * Handle field change
    */
   const handleChange = (fieldName: keyof T, value: unknown) => {
-    const key = fieldName as string
-    ;(values as Record<string, unknown>)[key] = value
-    ;(touched as Record<string, boolean>)[key] = true
+    const key = fieldName as string;
+    (values as Record<string, unknown>)[key] = value;
+    (touched as Record<string, boolean>)[key] = true;
 
     // Validate on change if already touched
     if ((touched as Record<string, boolean>)[key]) {
-      validateField(fieldName)
+      validateField(fieldName);
     }
-  }
+  };
 
   /**
    * Handle field blur
    */
   const handleBlur = (fieldName: keyof T) => {
-    ;(touched as Record<string, boolean>)[fieldName as string] = true
-    validateField(fieldName)
-  }
+    (touched as Record<string, boolean>)[fieldName as string] = true;
+    validateField(fieldName);
+  };
 
   /**
    * Submit form
@@ -96,62 +96,62 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
   const handleSubmit = async (onSubmit: (values: T) => Promise<void> | void): Promise<boolean> => {
     // Mark all fields as touched
     Object.keys(fields).forEach((key) => {
-      ;(touched as Record<string, boolean>)[key] = true
-    })
+      (touched as Record<string, boolean>)[key] = true;
+    });
 
     // Validate all fields
     if (!validateAll()) {
-      return false
+      return false;
     }
 
-    isSubmitting.value = true
+    isSubmitting.value = true;
 
     try {
-      await onSubmit(values as T)
-      return true
+      await onSubmit(values as T);
+      return true;
     } catch {
       // Form errors are handled by the caller
-      return false
+      return false;
     } finally {
-      isSubmitting.value = false
+      isSubmitting.value = false;
     }
-  }
+  };
 
   /**
    * Reset form to initial values
    */
   const reset = () => {
     Object.keys(fields).forEach((key) => {
-      const fieldKey = key as keyof T
-      const errorsRecord = errors as Record<string, string | undefined>
-      ;(values as Record<string, unknown>)[key] = fields[fieldKey].initialValue
-      ;(touched as Record<string, boolean>)[key] = false
-      errorsRecord[key] = undefined
-    })
-    isSubmitting.value = false
-  }
+      const fieldKey = key as keyof T;
+      const errorsRecord = errors as Record<string, string | undefined>;
+      (values as Record<string, unknown>)[key] = fields[fieldKey].initialValue;
+      (touched as Record<string, boolean>)[key] = false;
+      errorsRecord[key] = undefined;
+    });
+    isSubmitting.value = false;
+  };
 
   /**
    * Set field value programmatically
    */
   const setValue = (fieldName: keyof T, value: unknown) => {
-    ;(values as Record<string, unknown>)[fieldName as string] = value
-  }
+    (values as Record<string, unknown>)[fieldName as string] = value;
+  };
 
   /**
    * Set field error programmatically
    */
   const setError = (fieldName: keyof T, message: string) => {
-    ;(errors as Record<string, string | undefined>)[fieldName as string] = message
-  }
+    (errors as Record<string, string | undefined>)[fieldName as string] = message;
+  };
 
   // Computed properties
   const isValid = computed(() => {
     return Object.values(errors as Record<string, string | undefined>).every(
       (error) => error === undefined
-    )
-  })
-  const isDirty = computed(() => Object.values(touched).some(Boolean))
+    );
+  });
+  const isDirty = computed(() => Object.values(touched).some(Boolean));
 
   return {
     values: readonly(values),
@@ -168,7 +168,7 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
     reset,
     setValue,
     setError,
-  }
+  };
 }
 
 /**
@@ -177,9 +177,9 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
 export const validationRules = {
   required: <T>(message = 'This field is required'): ValidationRule<T> => ({
     validate: (value: T) => {
-      if (typeof value === 'string') return value.trim().length > 0
-      if (Array.isArray(value)) return value.length > 0
-      return value !== null && value !== undefined
+      if (typeof value === 'string') return value.trim().length > 0;
+      if (Array.isArray(value)) return value.length > 0;
+      return value !== null && value !== undefined;
     },
     message,
   }),
@@ -221,4 +221,4 @@ export const validationRules = {
     validate: (value: number) => value <= maxValue,
     message,
   }),
-}
+};

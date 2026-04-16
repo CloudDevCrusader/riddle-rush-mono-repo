@@ -38,44 +38,44 @@
  * Menu Layout
  * Layout for main menu pages with menu toggle button
  */
-const { getAssetPath } = useAssets()
+const { getAssetPath } = useAssets();
 
 // Layout state
-const backgroundImage = ref<string | null>(null)
-const menuButtonImage = ref<string>(getAssetPath('assets/main-menu/menu.png'))
-const showMenuButton = ref(true)
-const isMenuOpen = ref(false)
+const backgroundImage = ref<string | null>(null);
+const menuButtonImage = ref<string>(getAssetPath('assets/main-menu/menu.png'));
+const showMenuButton = ref(true);
+const isMenuOpen = ref(false);
 
 // Provide methods for pages to customize layout
 provide('setBackground', (src: string) => {
-  backgroundImage.value = src
-})
+  backgroundImage.value = src;
+});
 
 provide('setMenuButton', (config: { visible?: boolean; image?: string }) => {
-  if (config.visible !== undefined) showMenuButton.value = config.visible
-  if (config.image) menuButtonImage.value = config.image
-})
+  if (config.visible !== undefined) showMenuButton.value = config.visible;
+  if (config.image) menuButtonImage.value = config.image;
+});
 
 provide('menuState', {
   isOpen: readonly(isMenuOpen),
   open: () => {
-    isMenuOpen.value = true
+    isMenuOpen.value = true;
   },
   close: () => {
-    isMenuOpen.value = false
+    isMenuOpen.value = false;
   },
   toggle: () => {
-    isMenuOpen.value = !isMenuOpen.value
+    isMenuOpen.value = !isMenuOpen.value;
   },
-})
+});
 
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
+  isMenuOpen.value = !isMenuOpen.value;
+};
 
 const closeMenu = () => {
-  isMenuOpen.value = false
-}
+  isMenuOpen.value = false;
+};
 </script>
 
 <style scoped>

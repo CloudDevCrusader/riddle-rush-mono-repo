@@ -20,7 +20,7 @@ export default defineConfig({
     // Dynamic generation
     ...Array.from({ length: 4 }, (_, i) => `p-${i + 1}`),
   ],
-})
+});
 ```
 
 ### Function Form
@@ -30,10 +30,10 @@ safelist: [
   'p-1',
   () => ['m-1', 'm-2'],
   (context) => {
-    const colors = Object.keys(context.theme.colors || {})
-    return colors.map((c) => `bg-${c}-500`)
+    const colors = Object.keys(context.theme.colors || {});
+    return colors.map((c) => `bg-${c}-500`);
   },
-]
+];
 ```
 
 ### Common Use Cases
@@ -45,11 +45,11 @@ safelist: [
 
   // Component variants
   () => {
-    const variants = ['primary', 'danger']
-    const sizes = ['sm', 'md', 'lg']
-    return variants.flatMap((v) => sizes.map((s) => `btn-${v}-${s}`))
+    const variants = ['primary', 'danger'];
+    const sizes = ['sm', 'md', 'lg'];
+    return variants.flatMap((v) => sizes.map((s) => `btn-${v}-${s}`));
   },
-]
+];
 ```
 
 ## Blocklist
@@ -60,7 +60,7 @@ Utilities never generated:
 blocklist: [
   'p-1', // Exact match
   /^p-[2-4]$/, // Regex
-]
+];
 ```
 
 ### With Messages
@@ -69,7 +69,7 @@ blocklist: [
 blocklist: [
   ['bg-red-500', { message: 'Use bg-red-600 instead' }],
   [/^text-xs$/, { message: 'Use text-sm for accessibility' }],
-]
+];
 ```
 
 ## Safelist vs Blocklist
@@ -92,10 +92,10 @@ Prefer static mappings over safelist:
 const sizes = {
   sm: 'text-sm p-2',
   md: 'text-base p-4',
-}
+};
 
 // Avoid: Large safelist
-safelist: ['text-sm', 'text-base', 'p-2', 'p-4']
+safelist: ['text-sm', 'text-base', 'p-2', 'p-4'];
 ```
 
 <!--

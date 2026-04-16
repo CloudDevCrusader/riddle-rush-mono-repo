@@ -38,49 +38,49 @@
 </template>
 
 <script setup lang="ts">
-const { t } = usePageSetup()
-const { goHome } = useNavigation()
-const { gameStore } = useGameState()
+const { t } = usePageSetup();
+const { goHome } = useNavigation();
+const { gameStore } = useGameState();
 
 interface Props {
-  modelValue: boolean
+  modelValue: boolean;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  resume: []
-  restart: []
-  home: []
-}>()
+  'update:modelValue': [value: boolean];
+  resume: [];
+  restart: [];
+  home: [];
+}>();
 
 const isVisible = computed({
   get: () => props.modelValue,
   set: (value: boolean) => emit('update:modelValue', value),
-})
+});
 
 const handleResume = () => {
-  emit('resume')
-  isVisible.value = false
-}
+  emit('resume');
+  isVisible.value = false;
+};
 
 const handleRestart = async () => {
   if (gameStore.hasActiveSession) {
-    await gameStore.abandonGame()
+    await gameStore.abandonGame();
   }
-  emit('restart')
-  isVisible.value = false
-}
+  emit('restart');
+  isVisible.value = false;
+};
 
 const handleHome = async () => {
   if (gameStore.hasActiveSession) {
-    await gameStore.abandonGame()
+    await gameStore.abandonGame();
   }
-  emit('home')
-  isVisible.value = false
-  goHome()
-}
+  emit('home');
+  isVisible.value = false;
+  goHome();
+};
 </script>
 
 <style scoped lang="scss">

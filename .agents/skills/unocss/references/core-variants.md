@@ -105,7 +105,7 @@ rules: [
 ```ts
 presetWind3({
   dark: 'class',
-})
+});
 ```
 
 ```html
@@ -119,7 +119,7 @@ Generates: `.dark .dark\:bg-gray-800 { ... }`
 ```ts
 presetWind3({
   dark: 'media',
-})
+});
 ```
 
 Generates: `@media (prefers-color-scheme: dark) { ... }`
@@ -140,7 +140,7 @@ presetWind3({
     light: '.light-mode',
     dark: '.dark-mode',
   },
-})
+});
 ```
 
 ## CSS @layer Variant

@@ -1,21 +1,21 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export interface GameSettings {
-  maxPlayersPerGame: number
-  showLeaderboardAfterRound: boolean
-  leaderboardEnabled: boolean
-  debugMode: boolean
-  soundEnabled: boolean
-  soundVolume: number
-  musicEnabled: boolean
-  musicVolume: number
-  offlineMode: boolean
-  language: string
-  fortuneWheelEnabled: boolean
+  maxPlayersPerGame: number;
+  showLeaderboardAfterRound: boolean;
+  leaderboardEnabled: boolean;
+  debugMode: boolean;
+  soundEnabled: boolean;
+  soundVolume: number;
+  musicEnabled: boolean;
+  musicVolume: number;
+  offlineMode: boolean;
+  language: string;
+  fortuneWheelEnabled: boolean;
   /** When true, user can spin again and must tap OK. When false, advances to game automatically after spin. */
-  fortuneWheelAllowRedraw: boolean
-  answerInputEnabled: boolean
-  inputFieldEnabled: boolean
+  fortuneWheelAllowRedraw: boolean;
+  answerInputEnabled: boolean;
+  inputFieldEnabled: boolean;
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -33,7 +33,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   fortuneWheelAllowRedraw: true,
   answerInputEnabled: false,
   inputFieldEnabled: true,
-}
+};
 
 export const useSettingsStore = defineStore('settings', {
   state: (): GameSettings => ({
@@ -42,69 +42,69 @@ export const useSettingsStore = defineStore('settings', {
 
   getters: {
     isDebugMode(state): boolean {
-      return state.debugMode
+      return state.debugMode;
     },
     isLeaderboardEnabled(state): boolean {
-      return state.leaderboardEnabled
+      return state.leaderboardEnabled;
     },
     shouldShowLeaderboard(state): boolean {
-      return state.leaderboardEnabled && state.showLeaderboardAfterRound
+      return state.leaderboardEnabled && state.showLeaderboardAfterRound;
     },
     isFortuneWheelEnabled(state): boolean {
-      return state.fortuneWheelEnabled
+      return state.fortuneWheelEnabled;
     },
     isAnswerInputEnabled(state): boolean {
-      return state.answerInputEnabled
+      return state.answerInputEnabled;
     },
     isInputFieldEnabled(state): boolean {
-      return state.inputFieldEnabled
+      return state.inputFieldEnabled;
     },
   },
 
   actions: {
     updateSetting<K extends keyof GameSettings>(key: K, value: GameSettings[K]) {
       this.$patch((state) => {
-        state[key] = value
-      })
+        state[key] = value;
+      });
     },
     toggleDebugMode() {
-      this.debugMode = !this.debugMode
+      this.debugMode = !this.debugMode;
     },
     toggleLeaderboard() {
-      this.leaderboardEnabled = !this.leaderboardEnabled
+      this.leaderboardEnabled = !this.leaderboardEnabled;
     },
     toggleSound() {
-      this.soundEnabled = !this.soundEnabled
+      this.soundEnabled = !this.soundEnabled;
     },
     toggleFortuneWheel() {
-      this.fortuneWheelEnabled = !this.fortuneWheelEnabled
+      this.fortuneWheelEnabled = !this.fortuneWheelEnabled;
     },
     toggleFortuneWheelAllowRedraw() {
-      this.fortuneWheelAllowRedraw = !this.fortuneWheelAllowRedraw
+      this.fortuneWheelAllowRedraw = !this.fortuneWheelAllowRedraw;
     },
     toggleAnswerInput() {
-      this.answerInputEnabled = !this.answerInputEnabled
+      this.answerInputEnabled = !this.answerInputEnabled;
     },
     toggleInputField() {
-      this.inputFieldEnabled = !this.inputFieldEnabled
+      this.inputFieldEnabled = !this.inputFieldEnabled;
     },
     setOfflineMode(enabled: boolean) {
-      this.offlineMode = enabled
+      this.offlineMode = enabled;
     },
     resetToDefaults() {
-      this.$patch(DEFAULT_SETTINGS)
+      this.$patch(DEFAULT_SETTINGS);
     },
     setLanguage(lang: string) {
-      this.language = lang
+      this.language = lang;
     },
     getLanguage(): string {
-      return this.language
+      return this.language;
     },
     getState(): GameSettings {
-      return this.$state
+      return this.$state;
     },
   },
   persist: true,
-})
+});
 
-export const settingsStore = useSettingsStore
+export const settingsStore = useSettingsStore;

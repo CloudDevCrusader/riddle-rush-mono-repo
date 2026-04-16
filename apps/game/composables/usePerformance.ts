@@ -4,21 +4,21 @@
  */
 
 interface PerformanceMeasure {
-  name: string
-  duration: number
-  startTime: number
-  entryType: string
+  name: string;
+  duration: number;
+  startTime: number;
+  entryType: string;
 }
 
 interface PerformanceMetrics {
   [key: string]: {
-    count: number
-    total: number
-    average: number
-    min: number
-    max: number
-    last: number
-  }
+    count: number;
+    total: number;
+    average: number;
+    min: number;
+    max: number;
+    last: number;
+  };
 }
 
 export const usePerformance = () => {
@@ -30,62 +30,62 @@ export const usePerformance = () => {
           log: () => {},
           warn: () => {},
           debug: () => {},
-        }
-  const { log, warn, debug } = logger
-  const metrics = ref<PerformanceMetrics>({})
+        };
+  const { log, warn, debug } = logger;
+  const metrics = ref<PerformanceMetrics>({});
 
   // Check if Performance API is available
   const isSupported =
     typeof window !== 'undefined' &&
     'performance' in window &&
     'mark' in window.performance &&
-    'measure' in window.performance
+    'measure' in window.performance;
 
   /**
    * Start a performance measurement
    */
   const mark = (name: string): void => {
-    if (!isSupported) return
+    if (!isSupported) return;
 
     try {
-      performance.mark(`${name}-start`)
-      log(`Performance mark: ${name}-start`)
+      performance.mark(`${name}-start`);
+      log(`Performance mark: ${name}-start`);
     } catch (error) {
-      warn(`Failed to create performance mark: ${name}`, error)
+      warn(`Failed to create performance mark: ${name}`, error);
     }
-  }
+  };
 
   /**
    * End a performance measurement and calculate duration
    */
   const measure = (name: string): number | null => {
-    if (!isSupported) return null
+    if (!isSupported) return null;
 
     try {
-      const startMark = `${name}-start`
-      const endMark = `${name}-end`
+      const startMark = `${name}-start`;
+      const endMark = `${name}-end`;
 
-      performance.mark(endMark)
-      performance.measure(name, startMark, endMark)
+      performance.mark(endMark);
+      performance.measure(name, startMark, endMark);
 
-      const measure = performance.getEntriesByName(name, 'measure')[0] as PerformanceMeasure
-      const duration = measure?.duration || 0
+      const measure = performance.getEntriesByName(name, 'measure')[0] as PerformanceMeasure;
+      const duration = measure?.duration || 0;
 
       // Update metrics
-      updateMetrics(name, duration)
+      updateMetrics(name, duration);
 
       // Clean up marks and measures
-      performance.clearMarks(startMark)
-      performance.clearMarks(endMark)
-      performance.clearMeasures(name)
+      performance.clearMarks(startMark);
+      performance.clearMarks(endMark);
+      performance.clearMeasures(name);
 
-      log(`Performance measure: ${name} = ${duration.toFixed(2)}ms`)
-      return duration
+      log(`Performance measure: ${name} = ${duration.toFixed(2)}ms`);
+      return duration;
     } catch (error) {
-      warn(`Failed to measure performance: ${name}`, error)
-      return null
+      warn(`Failed to measure performance: ${name}`, error);
+      return null;
     }
-  }
+  };
 
   /**
    * Update performance metrics for a measurement
@@ -99,65 +99,65 @@ export const usePerformance = () => {
         min: Infinity,
         max: -Infinity,
         last: 0,
-      }
+      };
     }
 
-    const metric = metrics.value[name]
-    metric.count += 1
-    metric.total += duration
-    metric.average = metric.total / metric.count
-    metric.min = Math.min(metric.min, duration)
-    metric.max = Math.max(metric.max, duration)
-    metric.last = duration
-  }
+    const metric = metrics.value[name];
+    metric.count += 1;
+    metric.total += duration;
+    metric.average = metric.total / metric.count;
+    metric.min = Math.min(metric.min, duration);
+    metric.max = Math.max(metric.max, duration);
+    metric.last = duration;
+  };
 
   /**
    * Measure a function execution time
    */
   const measureFn = async <T>(name: string, fn: () => T | Promise<T>): Promise<T> => {
-    mark(name)
+    mark(name);
     try {
-      const result = await fn()
-      measure(name)
-      return result
+      const result = await fn();
+      measure(name);
+      return result;
     } catch (error) {
-      measure(name)
-      throw error
+      measure(name);
+      throw error;
     }
-  }
+  };
 
   /**
    * Get metrics for a specific measurement
    */
   const getMetrics = (name: string) => {
-    return metrics.value[name] || null
-  }
+    return metrics.value[name] || null;
+  };
 
   /**
    * Get all metrics
    */
   const getAllMetrics = () => {
-    return { ...metrics.value }
-  }
+    return { ...metrics.value };
+  };
 
   /**
    * Clear all metrics
    */
   const clearMetrics = () => {
-    metrics.value = {}
+    metrics.value = {};
     if (isSupported) {
-      performance.clearMarks()
-      performance.clearMeasures()
+      performance.clearMarks();
+      performance.clearMeasures();
     }
-  }
+  };
 
   /**
    * Get navigation timing metrics
    */
   const getNavigationTiming = () => {
-    if (!isSupported || !performance.timing) return null
+    if (!isSupported || !performance.timing) return null;
 
-    const timing = performance.timing
+    const timing = performance.timing;
     return {
       dns: timing.domainLookupEnd - timing.domainLookupStart,
       tcp: timing.connectEnd - timing.connectStart,
@@ -167,75 +167,75 @@ export const usePerformance = () => {
       domContentLoaded: timing.domContentLoadedEventEnd - timing.domContentLoadedEventStart,
       loadComplete: timing.loadEventEnd - timing.loadEventStart,
       totalTime: timing.loadEventEnd - timing.navigationStart,
-    }
-  }
+    };
+  };
 
   /**
    * Get resource timing metrics
    */
   const getResourceTiming = (resourceName?: string) => {
-    if (!isSupported) return []
+    if (!isSupported) return [];
 
     const resources = resourceName
       ? performance.getEntriesByName(resourceName, 'resource')
-      : performance.getEntriesByType('resource')
+      : performance.getEntriesByType('resource');
 
     return resources.map((resource) => {
-      const r = resource as PerformanceResourceTiming
+      const r = resource as PerformanceResourceTiming;
       return {
         name: r.name,
         duration: r.duration,
         size: r.transferSize || 0,
         type: r.initiatorType,
-      }
-    })
-  }
+      };
+    });
+  };
 
   /**
    * Log performance report to console
    */
   const logReport = () => {
-    if (process.env.NODE_ENV !== 'development') return
+    if (process.env.NODE_ENV !== 'development') return;
 
-    const allMetrics = getAllMetrics()
+    const allMetrics = getAllMetrics();
 
-    debug('Performance Report —')
-    ;(Object.entries(allMetrics) as [string, PerformanceMetrics[string]][]).forEach(
+    debug('Performance Report —');
+    (Object.entries(allMetrics) as [string, PerformanceMetrics[string]][]).forEach(
       ([name, metric]) => {
         debug(
           `${name}: count=${metric.count}, avg=${metric.average.toFixed(2)}ms, min=${metric.min.toFixed(2)}ms, max=${metric.max.toFixed(2)}ms, last=${metric.last.toFixed(2)}ms, total=${metric.total.toFixed(2)}ms`
-        )
+        );
       }
-    )
+    );
 
-    const navTiming = getNavigationTiming()
+    const navTiming = getNavigationTiming();
     if (navTiming) {
       debug(
         `Navigation Timing: DNS=${navTiming.dns.toFixed(2)}ms, TCP=${navTiming.tcp.toFixed(2)}ms, Request=${navTiming.request.toFixed(2)}ms, Response=${navTiming.response.toFixed(2)}ms, DOM=${navTiming.domProcessing.toFixed(2)}ms, DCL=${navTiming.domContentLoaded.toFixed(2)}ms, Total=${navTiming.totalTime.toFixed(2)}ms`
-      )
+      );
     }
-  }
+  };
 
   /**
    * Get memory usage (if available)
    */
   const getMemoryUsage = () => {
-    if (typeof window === 'undefined') return null
+    if (typeof window === 'undefined') return null;
 
     const memory = (
       performance as unknown as {
-        memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number }
+        memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number };
       }
-    ).memory
-    if (!memory) return null
+    ).memory;
+    if (!memory) return null;
 
     return {
       usedJSHeapSize: memory.usedJSHeapSize,
       totalJSHeapSize: memory.totalJSHeapSize,
       jsHeapSizeLimit: memory.jsHeapSizeLimit,
       usedPercentage: ((memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100).toFixed(2),
-    }
-  }
+    };
+  };
 
   return {
     mark,
@@ -249,5 +249,5 @@ export const usePerformance = () => {
     getMemoryUsage,
     logReport,
     isSupported,
-  }
-}
+  };
+};

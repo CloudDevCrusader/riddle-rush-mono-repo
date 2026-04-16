@@ -194,26 +194,26 @@ const Template = useMemo(() => {
 ```typescript
 // ❌ Before: API logic in component
 const MCPServiceCard = () => {
-  const [basicAppConfig, setBasicAppConfig] = useState({})
+  const [basicAppConfig, setBasicAppConfig] = useState({});
 
   useEffect(() => {
     if (isBasicApp && appId) {
-      ;(async () => {
-        const res = await fetchAppDetail({ url: '/apps', id: appId })
-        setBasicAppConfig(res?.model_config || {})
-      })()
+      (async () => {
+        const res = await fetchAppDetail({ url: '/apps', id: appId });
+        setBasicAppConfig(res?.model_config || {});
+      })();
     }
-  }, [appId, isBasicApp])
+  }, [appId, isBasicApp]);
 
   // More API-related logic...
-}
+};
 
 // ✅ After: Extract to data hook using React Query
 // use-app-config.ts
-import { useQuery } from '@tanstack/react-query'
-import { get } from '@/service/base'
+import { useQuery } from '@tanstack/react-query';
+import { get } from '@/service/base';
 
-const NAME_SPACE = 'appConfig'
+const NAME_SPACE = 'appConfig';
 
 export const useAppConfig = (appId: string, isBasicApp: boolean) => {
   return useQuery({
@@ -221,14 +221,14 @@ export const useAppConfig = (appId: string, isBasicApp: boolean) => {
     queryKey: [NAME_SPACE, 'detail', appId],
     queryFn: () => get<AppDetailResponse>(`/apps/${appId}`),
     select: (data) => data?.model_config || {},
-  })
-}
+  });
+};
 
 // Component becomes cleaner
 const MCPServiceCard = () => {
-  const { data: config, isLoading } = useAppConfig(appId, isBasicApp)
+  const { data: config, isLoading } = useAppConfig(appId, isBasicApp);
   // UI only
-}
+};
 ```
 
 **React Query Best Practices in Dify**:
@@ -254,30 +254,30 @@ const MCPServiceCard = () => {
 ```typescript
 // ❌ Before: Multiple modal states in component
 const AppInfo = () => {
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showDuplicateModal, setShowDuplicateModal] = useState(false)
-  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
-  const [showSwitchModal, setShowSwitchModal] = useState(false)
-  const [showImportDSLModal, setShowImportDSLModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showSwitchModal, setShowSwitchModal] = useState(false);
+  const [showImportDSLModal, setShowImportDSLModal] = useState(false);
   // 5+ more modal states...
-}
+};
 
 // ✅ After: Extract to modal management hook
-type ModalType = 'edit' | 'duplicate' | 'delete' | 'switch' | 'import' | null
+type ModalType = 'edit' | 'duplicate' | 'delete' | 'switch' | 'import' | null;
 
 const useAppInfoModals = () => {
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
-  const openModal = useCallback((type: ModalType) => setActiveModal(type), [])
-  const closeModal = useCallback(() => setActiveModal(null), [])
+  const openModal = useCallback((type: ModalType) => setActiveModal(type), []);
+  const closeModal = useCallback(() => setActiveModal(null), []);
 
   return {
     activeModal,
     openModal,
     closeModal,
     isOpen: (type: ModalType) => activeModal === type,
-  }
-}
+  };
+};
 ```
 
 ### Pattern 6: Extract Form Logic
@@ -451,17 +451,17 @@ pnpm analyze-component <path> --json
 
 ```typescript
 // ❌ Too many tiny hooks
-const useButtonText = () => useState('Click')
-const useButtonDisabled = () => useState(false)
-const useButtonLoading = () => useState(false)
+const useButtonText = () => useState('Click');
+const useButtonDisabled = () => useState(false);
+const useButtonLoading = () => useState(false);
 
 // ✅ Cohesive hook with related state
 const useButtonState = () => {
-  const [text, setText] = useState('Click')
-  const [disabled, setDisabled] = useState(false)
-  const [loading, setLoading] = useState(false)
-  return { text, setText, disabled, setDisabled, loading, setLoading }
-}
+  const [text, setText] = useState('Click');
+  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+  return { text, setText, disabled, setDisabled, loading, setLoading };
+};
 ```
 
 ### ❌ Breaking Existing Patterns

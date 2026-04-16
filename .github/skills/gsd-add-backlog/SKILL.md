@@ -1,10 +1,9 @@
 ---
 name: gsd-add-backlog
 description: Add an idea to the backlog parking lot (999.x numbering)
-argument-hint: "<description>"
+argument-hint: '<description>'
 allowed-tools: Read, Write, Bash
 ---
-
 
 <objective>
 Add a backlog item to the roadmap using 999.x numbering. Backlog items are
@@ -15,17 +14,21 @@ the normal phase sequence and accumulate context over time.
 <process>
 
 1. **Read ROADMAP.md** to find existing backlog entries:
+
    ```bash
    cat .planning/ROADMAP.md
    ```
 
 2. **Find next backlog number:**
+
    ```bash
    NEXT=$(node ".github/get-shit-done/bin/gsd-tools.cjs" phase next-decimal 999 --raw)
    ```
+
    If no 999.x phases exist, start at 999.1.
 
 3. **Create the phase directory:**
+
    ```bash
    SLUG=$(node ".github/get-shit-done/bin/gsd-tools.cjs" generate-slug "$ARGUMENTS" --raw)
    mkdir -p ".planning/phases/${NEXT}-${SLUG}"
@@ -44,15 +47,18 @@ the normal phase sequence and accumulate context over time.
    **Plans:** 0 plans
 
    Plans:
+
    - [ ] TBD (promote with /gsd-review-backlog when ready)
    ```
 
 5. **Commit:**
+
    ```bash
    node ".github/get-shit-done/bin/gsd-tools.cjs" commit "docs: add backlog item ${NEXT} — ${ARGUMENTS}" --files .planning/ROADMAP.md ".planning/phases/${NEXT}-${SLUG}/.gitkeep"
    ```
 
 6. **Report:**
+
    ```
    ## 📋 Backlog Item Added
 

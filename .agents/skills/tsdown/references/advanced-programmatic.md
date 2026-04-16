@@ -11,19 +11,19 @@ tsdown can be imported and used programmatically in your Node.js scripts, custom
 ### Simple Build
 
 ```ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
 await build({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-})
+});
 ```
 
 ### With Options
 
 ```ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
 await build({
   entry: ['src/index.ts'],
@@ -33,7 +33,7 @@ await build({
   minify: true,
   sourcemap: true,
   clean: true,
-})
+});
 ```
 
 ## API Reference
@@ -43,9 +43,9 @@ await build({
 Main function to run a build.
 
 ```ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
-await build(options)
+await build(options);
 ```
 
 **Parameters:**
@@ -65,7 +65,7 @@ await build(options)
 All config file options are available:
 
 ```ts
-import { build, defineConfig } from 'tsdown'
+import { build, defineConfig } from 'tsdown';
 
 const config = defineConfig({
   entry: ['src/index.ts'],
@@ -79,12 +79,12 @@ const config = defineConfig({
   ],
   hooks: {
     'build:done': async () => {
-      console.log('Build complete!')
+      console.log('Build complete!');
     },
   },
-})
+});
 
-await build(config)
+await build(config);
 ```
 
 See [Config Reference](option-config-file.md) for all options.
@@ -95,22 +95,22 @@ See [Config Reference](option-config-file.md) for all options.
 
 ```ts
 // scripts/build.ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
 async function main() {
-  console.log('Building library...')
+  console.log('Building library...');
 
   await build({
     entry: ['src/index.ts'],
     format: ['esm', 'cjs'],
     dts: true,
     clean: true,
-  })
+  });
 
-  console.log('Build complete!')
+  console.log('Build complete!');
 }
 
-main().catch(console.error)
+main().catch(console.error);
 ```
 
 Run with:
@@ -122,7 +122,7 @@ tsx scripts/build.ts
 ### Multiple Builds
 
 ```ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
 // Build main library
 await build({
@@ -130,7 +130,7 @@ await build({
   format: ['esm', 'cjs'],
   outDir: 'dist',
   dts: true,
-})
+});
 
 // Build CLI tool
 await build({
@@ -139,15 +139,15 @@ await build({
   outDir: 'dist/bin',
   platform: 'node',
   shims: true,
-})
+});
 ```
 
 ### Conditional Build
 
 ```ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === 'development';
 
 await build({
   entry: ['src/index.ts'],
@@ -155,64 +155,64 @@ await build({
   minify: !isDev,
   sourcemap: isDev,
   clean: !isDev,
-})
+});
 ```
 
 ### With Error Handling
 
 ```ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
 try {
   await build({
     entry: ['src/index.ts'],
     format: ['esm', 'cjs'],
     dts: true,
-  })
-  console.log('✅ Build successful')
+  });
+  console.log('✅ Build successful');
 } catch (error) {
-  console.error('❌ Build failed:', error)
-  process.exit(1)
+  console.error('❌ Build failed:', error);
+  process.exit(1);
 }
 ```
 
 ### Automated Workflow
 
 ```ts
-import { build } from 'tsdown'
-import { execSync } from 'child_process'
+import { build } from 'tsdown';
+import { execSync } from 'child_process';
 
 async function release() {
   // Clean
-  console.log('Cleaning...')
-  execSync('rm -rf dist')
+  console.log('Cleaning...');
+  execSync('rm -rf dist');
 
   // Build
-  console.log('Building...')
+  console.log('Building...');
   await build({
     entry: ['src/index.ts'],
     format: ['esm', 'cjs'],
     dts: true,
     minify: true,
-  })
+  });
 
   // Test
-  console.log('Testing...')
-  execSync('npm test')
+  console.log('Testing...');
+  execSync('npm test');
 
   // Publish
-  console.log('Publishing...')
-  execSync('npm publish')
+  console.log('Publishing...');
+  execSync('npm publish');
 }
 
-release().catch(console.error)
+release().catch(console.error);
 ```
 
 ### Build with Post-Processing
 
 ```ts
-import { build } from 'tsdown'
-import { copyFileSync } from 'fs'
+import { build } from 'tsdown';
+import { copyFileSync } from 'fs';
 
 await build({
   entry: ['src/index.ts'],
@@ -221,12 +221,12 @@ await build({
   hooks: {
     'build:done': async () => {
       // Copy additional files
-      copyFileSync('README.md', 'dist/README.md')
-      copyFileSync('LICENSE', 'dist/LICENSE')
-      console.log('Copied additional files')
+      copyFileSync('README.md', 'dist/README.md');
+      copyFileSync('LICENSE', 'dist/LICENSE');
+      console.log('Copied additional files');
     },
   },
-})
+});
 ```
 
 ## Watch Mode
@@ -235,12 +235,12 @@ Unfortunately, watch mode is not directly exposed in the programmatic API. Use t
 
 ```ts
 // Use CLI for watch mode
-import { spawn } from 'child_process'
+import { spawn } from 'child_process';
 
 spawn('tsdown', ['--watch'], {
   stdio: 'inherit',
   shell: true,
-})
+});
 ```
 
 ## Integration Examples
@@ -249,30 +249,30 @@ spawn('tsdown', ['--watch'], {
 
 ```ts
 // gulpfile.js
-import { build } from 'tsdown'
-import gulp from 'gulp'
+import { build } from 'tsdown';
+import gulp from 'gulp';
 
 gulp.task('build', async () => {
   await build({
     entry: ['src/index.ts'],
     format: ['esm', 'cjs'],
     dts: true,
-  })
-})
+  });
+});
 
 gulp.task('watch', () => {
-  return gulp.watch('src/**/*.ts', gulp.series('build'))
-})
+  return gulp.watch('src/**/*.ts', gulp.series('build'));
+});
 ```
 
 ### With Custom CLI
 
 ```ts
 // scripts/cli.ts
-import { build } from 'tsdown'
-import { Command } from 'commander'
+import { build } from 'tsdown';
+import { Command } from 'commander';
 
-const program = new Command()
+const program = new Command();
 
 program
   .command('build')
@@ -283,19 +283,19 @@ program
       format: ['esm', 'cjs'],
       minify: options.prod,
       sourcemap: !options.prod,
-    })
-  })
+    });
+  });
 
-program.parse()
+program.parse();
 ```
 
 ### With CI/CD
 
 ```ts
 // .github/scripts/build.ts
-import { build } from 'tsdown'
+import { build } from 'tsdown';
 
-const isCI = process.env.CI === 'true'
+const isCI = process.env.CI === 'true';
 
 await build({
   entry: ['src/index.ts'],
@@ -303,7 +303,7 @@ await build({
   dts: true,
   minify: isCI,
   clean: true,
-})
+});
 
 // Upload to artifact storage
 if (isCI) {
@@ -315,15 +315,15 @@ if (isCI) {
 
 ```ts
 // scripts/build.ts
-import { build, type UserConfig } from 'tsdown'
+import { build, type UserConfig } from 'tsdown';
 
 const config: UserConfig = {
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-}
+};
 
-await build(config)
+await build(config);
 ```
 
 ## Tips
@@ -350,7 +350,7 @@ pnpm add -D tsdown
 Import types:
 
 ```ts
-import type { UserConfig } from 'tsdown'
+import type { UserConfig } from 'tsdown';
 ```
 
 ### Build Fails Silently
@@ -359,10 +359,10 @@ Add error handling:
 
 ```ts
 try {
-  await build(config)
+  await build(config);
 } catch (error) {
-  console.error(error)
-  process.exit(1)
+  console.error(error);
+  process.exit(1);
 }
 ```
 
@@ -373,12 +373,12 @@ Check spelling and types:
 ```ts
 // ✅ Correct
 {
-  format: ['esm', 'cjs']
+  format: ['esm', 'cjs'];
 }
 
 // ❌ Wrong
 {
-  formats: ['esm', 'cjs']
+  formats: ['esm', 'cjs'];
 }
 ```
 

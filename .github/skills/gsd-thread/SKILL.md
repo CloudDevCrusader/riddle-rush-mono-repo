@@ -1,10 +1,9 @@
 ---
 name: gsd-thread
 description: Manage persistent context threads for cross-session work
-argument-hint: "[name | description]"
+argument-hint: '[name | description]'
 allowed-tools: Read, Write, Bash
 ---
-
 
 <objective>
 Create, list, or resume persistent context threads. Threads are lightweight
@@ -20,11 +19,13 @@ doesn't belong to any specific phase.
 **If no arguments or $ARGUMENTS is empty:**
 
 List all threads:
+
 ```bash
 ls .planning/threads/*.md 2>/dev/null
 ```
 
 For each thread, read the first few lines to show title and status:
+
 ```
 ## Active Threads
 
@@ -36,15 +37,18 @@ For each thread, read the first few lines to show title and status:
 ```
 
 If no threads exist, show:
+
 ```
 No threads found. Create one with: /gsd-thread <description>
 ```
+
 </mode_list>
 
 <mode_resume>
 **If $ARGUMENTS matches an existing thread name (file exists):**
 
 Resume the thread — load its context into the current session:
+
 ```bash
 cat ".planning/threads/${THREAD_NAME}.md"
 ```
@@ -59,16 +63,19 @@ Update the thread's status to `IN PROGRESS` if it was `OPEN`.
 Create a new thread:
 
 1. Generate slug from description:
+
    ```bash
    SLUG=$(node ".github/get-shit-done/bin/gsd-tools.cjs" generate-slug "$ARGUMENTS" --raw)
    ```
 
 2. Create the threads directory if needed:
+
    ```bash
    mkdir -p .planning/threads
    ```
 
 3. Write the thread file:
+
    ```bash
    cat > ".planning/threads/${SLUG}.md" << 'EOF'
    # Thread: {description}
@@ -98,11 +105,13 @@ Create a new thread:
    section.
 
 5. Commit:
+
    ```bash
    node ".github/get-shit-done/bin/gsd-tools.cjs" commit "docs: create thread — ${ARGUMENTS}" --files ".planning/threads/${SLUG}.md"
    ```
 
 6. Report:
+
    ```
    ## 🧵 Thread Created
 
@@ -111,7 +120,8 @@ Create a new thread:
 
    Resume anytime with: /gsd-thread {slug}
    ```
-</mode_create>
+
+   </mode_create>
 
 </process>
 

@@ -75,14 +75,14 @@ These errors don't affect your application functionality. Simply ignore them dur
 
 ```javascript
 // Add to your dev console snippets
-console.defaultError = console.error.bind(console)
-console.errors = []
+console.defaultError = console.error.bind(console);
+console.errors = [];
 console.error = function () {
-  console.defaultError.apply(console, arguments)
+  console.defaultError.apply(console, arguments);
   if (!arguments[0]?.message?.includes('chrome-extension://')) {
-    console.errors.push(Array.from(arguments))
+    console.errors.push(Array.from(arguments));
   }
-}
+};
 ```
 
 ### Option 4: Suppress in CI/CD

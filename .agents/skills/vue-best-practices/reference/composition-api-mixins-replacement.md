@@ -29,14 +29,14 @@ export const userMixin = {
     return {
       user: null,
       loading: false, // Conflict waiting to happen!
-    }
+    };
   },
   methods: {
     fetchUser() {
       /* ... */
     },
   },
-}
+};
 
 // authMixin.js
 export const authMixin = {
@@ -44,14 +44,14 @@ export const authMixin = {
     return {
       token: null,
       loading: false, // NAME CONFLICT with userMixin!
-    }
+    };
   },
   methods: {
     login() {
       /* ... */
     },
   },
-}
+};
 
 // Component using mixins - PROBLEMATIC
 export default {
@@ -59,15 +59,15 @@ export default {
 
   mounted() {
     // PROBLEM 1: Where does 'user' come from? Have to check mixins
-    console.log(this.user)
+    console.log(this.user);
 
     // PROBLEM 2: Which 'loading'? Last mixin wins, silently!
-    console.log(this.loading) // Is this user loading or auth loading?
+    console.log(this.loading); // Is this user loading or auth loading?
 
     // PROBLEM 3: Can't customize behavior per-component
-    this.fetchUser() // Always fetches the same way
+    this.fetchUser(); // Always fetches the same way
   },
-}
+};
 ```
 
 **Composables Solution:**
@@ -137,7 +137,7 @@ onMounted(() => {
 // BEFORE: Mixin with options
 export const formMixin = {
   data() {
-    return { errors: {}, submitting: false }
+    return { errors: {}, submitting: false };
   },
   methods: {
     validate() {
@@ -147,35 +147,35 @@ export const formMixin = {
       /* ... */
     },
   },
-}
+};
 
 // AFTER: Composable with flexibility
 export function useForm(initialValues, validationSchema) {
-  const values = ref({ ...initialValues })
-  const errors = ref({})
-  const submitting = ref(false)
-  const touched = ref({})
+  const values = ref({ ...initialValues });
+  const errors = ref({});
+  const submitting = ref(false);
+  const touched = ref({});
 
   function validate() {
-    errors.value = validationSchema.validate(values.value)
-    return Object.keys(errors.value).length === 0
+    errors.value = validationSchema.validate(values.value);
+    return Object.keys(errors.value).length === 0;
   }
 
   async function submit(onSubmit) {
-    if (!validate()) return
+    if (!validate()) return;
 
-    submitting.value = true
+    submitting.value = true;
     try {
-      await onSubmit(values.value)
+      await onSubmit(values.value);
     } finally {
-      submitting.value = false
+      submitting.value = false;
     }
   }
 
   function reset() {
-    values.value = { ...initialValues }
-    errors.value = {}
-    touched.value = {}
+    values.value = { ...initialValues };
+    errors.value = {};
+    touched.value = {};
   }
 
   return {
@@ -186,13 +186,13 @@ export function useForm(initialValues, validationSchema) {
     validate,
     submit,
     reset,
-  }
+  };
 }
 
 // Usage - now parameterizable and explicit
-const loginForm = useForm({ email: '', password: '' }, loginValidationSchema)
+const loginForm = useForm({ email: '', password: '' }, loginValidationSchema);
 
-const registerForm = useForm({ email: '', password: '', name: '' }, registerValidationSchema)
+const registerForm = useForm({ email: '', password: '', name: '' }, registerValidationSchema);
 ```
 
 ## Composition Over Mixins Benefits

@@ -18,7 +18,7 @@ Never construct Tailwind CSS class names dynamically using string concatenation 
 const props = defineProps({
   color: String, // 'red', 'blue', 'green'
   size: String, // 'sm', 'md', 'lg'
-})
+});
 </script>
 
 <template>
@@ -40,20 +40,20 @@ const props = defineProps({
 const props = defineProps({
   color: String,
   size: String,
-})
+});
 
 // Use a mapping object with complete class names
 const colorClasses = {
   red: 'bg-red-500',
   blue: 'bg-blue-500',
   green: 'bg-green-500',
-}
+};
 
 const sizeClasses = {
   sm: 'text-sm p-2',
   md: 'text-base p-4',
   lg: 'text-lg p-6',
-}
+};
 </script>
 
 <template>
@@ -68,7 +68,7 @@ const sizeClasses = {
 <script setup>
 const props = defineProps({
   variant: String, // 'primary', 'secondary', 'danger'
-})
+});
 </script>
 
 <template>
@@ -101,7 +101,7 @@ module.exports = {
       pattern: /bg-(red|blue|green)-(100|500|900)/,
     },
   ],
-}
+};
 ```
 
 ## Alternative: CSS Custom Properties
@@ -112,7 +112,7 @@ For truly dynamic values, use CSS custom properties:
 <script setup>
 const props = defineProps({
   customColor: String, // Any hex color
-})
+});
 </script>
 
 <template>

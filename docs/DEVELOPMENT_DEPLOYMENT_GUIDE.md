@@ -52,9 +52,9 @@ The Nuxt configuration (`apps/game/nuxt.config.ts`) automatically handles develo
 
 ```typescript
 // Disable minification for development and debug builds
-const isDev = process.env.NODE_ENV !== 'production'
-const isDebugBuild = process.env.DEBUG_BUILD === 'true'
-const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
+const isDev = process.env.NODE_ENV !== 'production';
+const isDebugBuild = process.env.DEBUG_BUILD === 'true';
+const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild';
 ```
 
 ### Development Features Enabled
@@ -149,7 +149,7 @@ You can check the runtime configuration by:
 
 ```javascript
 // In browser console
-console.log(window.__NUXT__?.config?.public?.environment)
+console.log(window.__NUXT__?.config?.public?.environment);
 ```
 
 This should show `development`.

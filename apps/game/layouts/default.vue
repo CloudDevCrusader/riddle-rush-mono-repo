@@ -29,10 +29,10 @@
  */
 
 // Accept background image from page
-const backgroundImage = ref<string | null>(null)
+const backgroundImage = ref<string | null>(null);
 
 // Provide method for pages to set background
 provide('setBackground', (src: string) => {
-  backgroundImage.value = src
-})
+  backgroundImage.value = src;
+});
 </script>

@@ -7,30 +7,30 @@
 
 // Simulate the getAssetPath function
 function getAssetPath(path, baseUrl = '') {
-  if (!path) return ''
+  if (!path) return '';
 
   // Handle absolute URLs
   if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path
+    return path;
   }
 
   // Remove 'assets/' prefix if present
-  const cleanPath = path.startsWith('assets/') ? path.substring(7) : path
+  const cleanPath = path.startsWith('assets/') ? path.substring(7) : path;
 
   // Handle local development (empty baseUrl or '/')
   if (!baseUrl || baseUrl === '/' || baseUrl === '') {
     // For local development, assets are in public folder
-    return `/${cleanPath}`
+    return `/${cleanPath}`;
   }
 
   // For production/deployment, use baseUrl
   // Ensure no double slashes
-  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
-  const normalizedPath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath
-  return `${normalizedBaseUrl}/${normalizedPath}`
+  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  const normalizedPath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath;
+  return `${normalizedBaseUrl}/${normalizedPath}`;
 }
 
-console.log('🧪 Testing Asset Path Helper Function\n')
+console.log('🧪 Testing Asset Path Helper Function\n');
 
 // Test cases
 const testCases = [
@@ -76,40 +76,40 @@ const testCases = [
     baseUrl: '/riddle-rush/',
     expected: '',
   },
-]
+];
 
-let passed = 0
-let failed = 0
+let passed = 0;
+let failed = 0;
 
 testCases.forEach((testCase, index) => {
-  const result = getAssetPath(testCase.path, testCase.baseUrl)
-  const success = result === testCase.expected
+  const result = getAssetPath(testCase.path, testCase.baseUrl);
+  const success = result === testCase.expected;
 
   if (success) {
-    console.log(`✅ Test ${index + 1}: ${testCase.name}`)
-    console.log(`   Input: "${testCase.path}" + "${testCase.baseUrl}"`)
-    console.log(`   Output: "${result}"`)
-    passed++
+    console.log(`✅ Test ${index + 1}: ${testCase.name}`);
+    console.log(`   Input: "${testCase.path}" + "${testCase.baseUrl}"`);
+    console.log(`   Output: "${result}"`);
+    passed++;
   } else {
-    console.log(`❌ Test ${index + 1}: ${testCase.name}`)
-    console.log(`   Input: "${testCase.path}" + "${testCase.baseUrl}"`)
-    console.log(`   Expected: "${testCase.expected}"`)
-    console.log(`   Got: "${result}"`)
-    failed++
+    console.log(`❌ Test ${index + 1}: ${testCase.name}`);
+    console.log(`   Input: "${testCase.path}" + "${testCase.baseUrl}"`);
+    console.log(`   Expected: "${testCase.expected}"`);
+    console.log(`   Got: "${result}"`);
+    failed++;
   }
-  console.log('')
-})
+  console.log('');
+});
 
-console.log(`📊 Results: ${passed} passed, ${failed} failed`)
+console.log(`📊 Results: ${passed} passed, ${failed} failed`);
 
 if (failed === 0) {
-  console.log('✅ All tests passed! Asset path helper is working correctly.')
+  console.log('✅ All tests passed! Asset path helper is working correctly.');
 } else {
-  console.log('❌ Some tests failed. Please review the asset path logic.')
+  console.log('❌ Some tests failed. Please review the asset path logic.');
 }
 
 // Show example usage for localhost
-console.log('\n💡 Example for localhost development:')
-console.log('   Input: getAssetPath("assets/main-menu/BACKGROUND.png", "")')
-console.log('   Output:', getAssetPath('assets/main-menu/BACKGROUND.png', ''))
-console.log('   This will correctly load: /main-menu/BACKGROUND.png')
+console.log('\n💡 Example for localhost development:');
+console.log('   Input: getAssetPath("assets/main-menu/BACKGROUND.png", "")');
+console.log('   Output:', getAssetPath('assets/main-menu/BACKGROUND.png', ''));
+console.log('   This will correctly load: /main-menu/BACKGROUND.png');

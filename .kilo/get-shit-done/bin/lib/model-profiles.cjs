@@ -10,15 +10,45 @@ const MODEL_PROFILES = {
   'gsd-planner': { quality: 'opus', balanced: 'opus', budget: 'sonnet', adaptive: 'opus' },
   'gsd-roadmapper': { quality: 'opus', balanced: 'sonnet', budget: 'sonnet', adaptive: 'sonnet' },
   'gsd-executor': { quality: 'opus', balanced: 'sonnet', budget: 'sonnet', adaptive: 'sonnet' },
-  'gsd-phase-researcher': { quality: 'opus', balanced: 'sonnet', budget: 'haiku', adaptive: 'sonnet' },
-  'gsd-project-researcher': { quality: 'opus', balanced: 'sonnet', budget: 'haiku', adaptive: 'sonnet' },
-  'gsd-research-synthesizer': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku', adaptive: 'haiku' },
+  'gsd-phase-researcher': {
+    quality: 'opus',
+    balanced: 'sonnet',
+    budget: 'haiku',
+    adaptive: 'sonnet',
+  },
+  'gsd-project-researcher': {
+    quality: 'opus',
+    balanced: 'sonnet',
+    budget: 'haiku',
+    adaptive: 'sonnet',
+  },
+  'gsd-research-synthesizer': {
+    quality: 'sonnet',
+    balanced: 'sonnet',
+    budget: 'haiku',
+    adaptive: 'haiku',
+  },
   'gsd-debugger': { quality: 'opus', balanced: 'sonnet', budget: 'sonnet', adaptive: 'opus' },
-  'gsd-codebase-mapper': { quality: 'sonnet', balanced: 'haiku', budget: 'haiku', adaptive: 'haiku' },
+  'gsd-codebase-mapper': {
+    quality: 'sonnet',
+    balanced: 'haiku',
+    budget: 'haiku',
+    adaptive: 'haiku',
+  },
   'gsd-verifier': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku', adaptive: 'sonnet' },
   'gsd-plan-checker': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku', adaptive: 'haiku' },
-  'gsd-integration-checker': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku', adaptive: 'haiku' },
-  'gsd-nyquist-auditor': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku', adaptive: 'haiku' },
+  'gsd-integration-checker': {
+    quality: 'sonnet',
+    balanced: 'sonnet',
+    budget: 'haiku',
+    adaptive: 'haiku',
+  },
+  'gsd-nyquist-auditor': {
+    quality: 'sonnet',
+    balanced: 'sonnet',
+    budget: 'haiku',
+    adaptive: 'haiku',
+  },
   'gsd-ui-researcher': { quality: 'opus', balanced: 'sonnet', budget: 'haiku', adaptive: 'sonnet' },
   'gsd-ui-checker': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku', adaptive: 'haiku' },
   'gsd-ui-auditor': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku', adaptive: 'haiku' },
@@ -34,10 +64,10 @@ const VALID_PROFILES = Object.keys(MODEL_PROFILES['gsd-planner']);
  * @returns {string} A formatted table string
  */
 function formatAgentToModelMapAsTable(agentToModelMap) {
-  const agentWidth = Math.max('Agent'.length, ...Object.keys(agentToModelMap).map((a) => a.length));
+  const agentWidth = Math.max('Agent'.length, ...Object.keys(agentToModelMap).map(a => a.length));
   const modelWidth = Math.max(
     'Model'.length,
-    ...Object.values(agentToModelMap).map((m) => m.length)
+    ...Object.values(agentToModelMap).map(m => m.length),
   );
   const sep = '─'.repeat(agentWidth + 2) + '┼' + '─'.repeat(modelWidth + 2);
   const header = ' ' + 'Agent'.padEnd(agentWidth) + ' │ ' + 'Model'.padEnd(modelWidth);

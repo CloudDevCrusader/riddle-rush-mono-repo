@@ -23,7 +23,7 @@ tsdown --sourcemap inline
 export default defineConfig({
   entry: ['src/index.ts'],
   sourcemap: true,
-})
+});
 ```
 
 ## Source Map Types
@@ -35,7 +35,7 @@ Generates separate `.map` files:
 ```ts
 export default defineConfig({
   sourcemap: true, // or 'external'
-})
+});
 ```
 
 **Output:**
@@ -56,7 +56,7 @@ Embeds source maps in the bundle:
 ```ts
 export default defineConfig({
   sourcemap: 'inline',
-})
+});
 ```
 
 **Output:**
@@ -80,7 +80,7 @@ Generates map files without reference comment:
 ```ts
 export default defineConfig({
   sourcemap: 'hidden',
-})
+});
 ```
 
 **Output:**
@@ -119,7 +119,7 @@ export default defineConfig((options) => ({
   entry: ['src/index.ts'],
   sourcemap: options.watch, // Only in dev
   minify: !options.watch,
-}))
+}));
 ```
 
 ### Production with External Maps
@@ -130,7 +130,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   sourcemap: true, // External maps
   minify: true,
-})
+});
 ```
 
 Deploy maps to separate error reporting service.
@@ -142,7 +142,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   sourcemap: 'inline',
-})
+});
 ```
 
 ### Per-Format Source Maps
@@ -158,7 +158,7 @@ export default defineConfig({
       sourcemap: 'inline', // Inline for browser
     },
   },
-})
+});
 ```
 
 ### TypeScript Library with Declaration Maps
@@ -171,7 +171,7 @@ export default defineConfig({
   dts: {
     sourcemap: true, // Enable declaration maps
   },
-})
+});
 ```
 
 **Output:**
@@ -233,7 +233,7 @@ tsdown --no-sourcemap
 export default defineConfig({
   sourcemap: true,
   minify: false,
-})
+});
 ```
 
 ### Production Build
@@ -242,7 +242,7 @@ export default defineConfig({
 export default defineConfig({
   sourcemap: 'external', // Upload to error service
   minify: true,
-})
+});
 ```
 
 ### Browser Library
@@ -253,7 +253,7 @@ export default defineConfig({
   platform: 'browser',
   sourcemap: 'inline', // Self-contained
   globalName: 'MyLib',
-})
+});
 ```
 
 ### Node.js CLI Tool
@@ -264,7 +264,7 @@ export default defineConfig({
   platform: 'node',
   sourcemap: true,
   shims: true,
-})
+});
 ```
 
 ## Troubleshooting
@@ -283,7 +283,7 @@ Use external source maps instead of inline:
 ```ts
 export default defineConfig({
   sourcemap: true, // Not 'inline'
-})
+});
 ```
 
 ### Source Not Found

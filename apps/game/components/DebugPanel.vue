@@ -108,45 +108,45 @@
 </template>
 
 <script setup lang="ts">
-import type { GameStatistics } from '@riddle-rush/types/game'
+import type { GameStatistics } from '@riddle-rush/types/game';
 
-const gameSession = useGameSession()
-const categories = useCategories()
-const settings = useSettings()
-const installPrompt = useInstallPrompt()
+const gameSession = useGameSession();
+const categories = useCategories();
+const settings = useSettings();
+const installPrompt = useInstallPrompt();
 
-const minimized = ref(false)
-const stats = ref<GameStatistics | null>(null)
-const swRegistered = ref(false)
+const minimized = ref(false);
+const stats = ref<GameStatistics | null>(null);
+const swRegistered = ref(false);
 
 const accuracy = computed(() => {
-  if (!stats.value || stats.value.totalAttempts === 0) return 0
-  return Math.round((stats.value.correctAttempts / stats.value.totalAttempts) * 100)
-})
+  if (!stats.value || stats.value.totalAttempts === 0) return 0;
+  return Math.round((stats.value.correctAttempts / stats.value.totalAttempts) * 100);
+});
 
 const checkServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
-    const registrations = await navigator.serviceWorker.getRegistrations()
-    swRegistered.value = registrations.length > 0
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    swRegistered.value = registrations.length > 0;
   }
-}
+};
 
 const refreshStats = async () => {
-  const { getStatistics } = useIndexedDB()
-  stats.value = await getStatistics()
-  await checkServiceWorker()
-}
+  const { getStatistics } = useIndexedDB();
+  stats.value = await getStatistics();
+  await checkServiceWorker();
+};
 
 const clearStorage = async () => {
   if (confirm('Clear all game data? This cannot be undone.')) {
-    localStorage.clear()
-    const dbs = await indexedDB.databases()
+    localStorage.clear();
+    const dbs = await indexedDB.databases();
     for (const db of dbs) {
-      if (db.name) indexedDB.deleteDatabase(db.name)
+      if (db.name) indexedDB.deleteDatabase(db.name);
     }
-    window.location.reload()
+    window.location.reload();
   }
-}
+};
 
 const exportDebugInfo = () => {
   const info = {
@@ -180,20 +180,20 @@ const exportDebugInfo = () => {
       online: gameSession.isOnline.value,
     },
     userAgent: navigator.userAgent,
-  }
+  };
 
-  const blob = new Blob([JSON.stringify(info, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `debug-${Date.now()}.json`
-  a.click()
-  URL.revokeObjectURL(url)
-}
+  const blob = new Blob([JSON.stringify(info, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `debug-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
 onMounted(() => {
-  refreshStats()
-})
+  refreshStats();
+});
 </script>
 
 <style scoped>

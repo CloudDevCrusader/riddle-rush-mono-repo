@@ -23,7 +23,7 @@ tags: [vue3, keepalive, cache, migration, vue2-to-vue3]
 
 ```javascript
 // Vue 2: Could destroy specific component instance
-this.$children[0].$destroy()
+this.$children[0].$destroy();
 ```
 
 ### Vue 3: No Equivalent API
@@ -41,17 +41,17 @@ Control cache membership via reactive props:
 
 ```vue
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
-const cachedViews = ref(['Dashboard', 'Settings', 'Profile'])
+const cachedViews = ref(['Dashboard', 'Settings', 'Profile']);
 
 function removeFromCache(viewName) {
-  cachedViews.value = cachedViews.value.filter((v) => v !== viewName)
+  cachedViews.value = cachedViews.value.filter((v) => v !== viewName);
 }
 
 function addToCache(viewName) {
   if (!cachedViews.value.includes(viewName)) {
-    cachedViews.value.push(viewName)
+    cachedViews.value.push(viewName);
   }
 }
 </script>
@@ -71,26 +71,26 @@ Change the key to force a fresh instance:
 
 ```vue
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive } from 'vue';
 
-const currentView = ref('Dashboard')
+const currentView = ref('Dashboard');
 const viewKeys = reactive({
   Dashboard: 0,
   Settings: 0,
   Profile: 0,
-})
+});
 
 function invalidateCache(viewName) {
-  viewKeys[viewName]++
+  viewKeys[viewName]++;
 }
 
 function switchView(viewName) {
-  currentView.value = viewName
+  currentView.value = viewName;
 }
 
 // Force fresh Dashboard on next visit
 function refreshDashboard() {
-  invalidateCache('Dashboard')
+  invalidateCache('Dashboard');
 }
 </script>
 
@@ -107,18 +107,18 @@ Wrap or unwrap based on cache need:
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const currentView = ref('Dashboard')
-const shouldCache = ref(true)
+const currentView = ref('Dashboard');
+const shouldCache = ref(true);
 
 function clearCacheAndSwitch(viewName) {
-  shouldCache.value = false
-  currentView.value = viewName
+  shouldCache.value = false;
+  currentView.value = viewName;
   // Re-enable caching after the switch
   nextTick(() => {
-    shouldCache.value = true
-  })
+    shouldCache.value = true;
+  });
 }
 </script>
 
@@ -147,11 +147,11 @@ Let LRU cache handle cleanup:
 
 ```vue
 <script setup>
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
-const route = useRoute()
-const cachedRoutes = ref(['Dashboard', 'Settings'])
+const route = useRoute();
+const cachedRoutes = ref(['Dashboard', 'Settings']);
 
 // Clear specific route from cache when navigating from certain paths
 watch(
@@ -159,13 +159,13 @@ watch(
   (newRoute, oldRoute) => {
     if (oldRoute === 'Login') {
       // User just logged in - clear and refresh Dashboard
-      cachedRoutes.value = cachedRoutes.value.filter((r) => r !== 'Dashboard')
+      cachedRoutes.value = cachedRoutes.value.filter((r) => r !== 'Dashboard');
       nextTick(() => {
-        cachedRoutes.value.push('Dashboard')
-      })
+        cachedRoutes.value.push('Dashboard');
+      });
     }
   }
-)
+);
 </script>
 
 <template>

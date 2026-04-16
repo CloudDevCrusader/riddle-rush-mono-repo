@@ -22,17 +22,17 @@ tags: [vue3, vue-router, lifecycle, params, reactivity]
 ```vue
 <!-- UserProfile.vue - Used for /users/:id -->
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
-const route = useRoute()
-const user = ref(null)
+const route = useRoute();
+const user = ref(null);
 
 // BUG: Only runs once when component first mounts!
 // Navigating from /users/1 to /users/2 does NOT trigger this
 onMounted(async () => {
-  user.value = await fetchUser(route.params.id)
-})
+  user.value = await fetchUser(route.params.id);
+});
 </script>
 
 <template>
@@ -53,23 +53,23 @@ onMounted(async () => {
 
 ```vue
 <script setup>
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
-const route = useRoute()
-const user = ref(null)
-const loading = ref(false)
+const route = useRoute();
+const user = ref(null);
+const loading = ref(false);
 
 // Watch for param changes - handles both initial load and navigation
 watch(
   () => route.params.id,
   async (newId) => {
-    loading.value = true
-    user.value = await fetchUser(newId)
-    loading.value = false
+    loading.value = true;
+    user.value = await fetchUser(newId);
+    loading.value = false;
   },
   { immediate: true } // Run immediately for initial load
-)
+);
 </script>
 ```
 
@@ -77,25 +77,25 @@ watch(
 
 ```vue
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { ref, onMounted } from 'vue';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 
-const route = useRoute()
-const user = ref(null)
+const route = useRoute();
+const user = ref(null);
 
 async function loadUser(id) {
-  user.value = await fetchUser(id)
+  user.value = await fetchUser(id);
 }
 
 // Initial load
-onMounted(() => loadUser(route.params.id))
+onMounted(() => loadUser(route.params.id));
 
 // Handle param changes within same route
 onBeforeRouteUpdate(async (to, from) => {
   if (to.params.id !== from.params.id) {
-    await loadUser(to.params.id)
+    await loadUser(to.params.id);
   }
-})
+});
 </script>
 ```
 
@@ -119,45 +119,45 @@ onBeforeRouteUpdate(async (to, from) => {
 
 ```javascript
 // composables/useRouteData.js
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 export function useRouteData(paramName, fetcher) {
-  const route = useRoute()
-  const data = ref(null)
-  const loading = ref(false)
-  const error = ref(null)
+  const route = useRoute();
+  const data = ref(null);
+  const loading = ref(false);
+  const error = ref(null);
 
   watch(
     () => route.params[paramName],
     async (id) => {
-      if (!id) return
+      if (!id) return;
 
-      loading.value = true
-      error.value = null
+      loading.value = true;
+      error.value = null;
 
       try {
-        data.value = await fetcher(id)
+        data.value = await fetcher(id);
       } catch (e) {
-        error.value = e
+        error.value = e;
       } finally {
-        loading.value = false
+        loading.value = false;
       }
     },
     { immediate: true }
-  )
+  );
 
-  return { data, loading, error }
+  return { data, loading, error };
 }
 ```
 
 ```vue
 <!-- Usage in component -->
 <script setup>
-import { useRouteData } from '@/composables/useRouteData'
-import { fetchUser } from '@/api/users'
+import { useRouteData } from '@/composables/useRouteData';
+import { fetchUser } from '@/api/users';
 
-const { data: user, loading, error } = useRouteData('id', fetchUser)
+const { data: user, loading, error } = useRouteData('id', fetchUser);
 </script>
 ```
 

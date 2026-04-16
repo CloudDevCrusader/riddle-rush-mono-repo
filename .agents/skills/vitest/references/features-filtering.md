@@ -62,17 +62,17 @@ Useful with lint-staged:
 // .lintstagedrc.js
 export default {
   '*.{ts,tsx}': 'vitest related --run',
-}
+};
 ```
 
 ## Focus Tests (.only)
 
 ```ts
-test.only('only this runs', () => {})
+test.only('only this runs', () => {});
 
 describe.only('only this suite', () => {
-  test('runs', () => {})
-})
+  test('runs', () => {});
+});
 ```
 
 In CI, `.only` throws error unless configured:
@@ -82,22 +82,22 @@ defineConfig({
   test: {
     allowOnly: true, // Allow .only in CI
   },
-})
+});
 ```
 
 ## Skip Tests
 
 ```ts
-test.skip('skipped', () => {})
+test.skip('skipped', () => {});
 
 // Conditional
-test.skipIf(process.env.CI)('not in CI', () => {})
-test.runIf(!process.env.CI)('local only', () => {})
+test.skipIf(process.env.CI)('not in CI', () => {});
+test.runIf(!process.env.CI)('local only', () => {});
 
 // Dynamic skip
 test('dynamic', ({ skip }) => {
-  skip(someCondition, 'reason')
-})
+  skip(someCondition, 'reason');
+});
 ```
 
 ## Tags
@@ -105,8 +105,8 @@ test('dynamic', ({ skip }) => {
 Filter by custom tags:
 
 ```ts
-test('database test', { tags: ['db'] }, () => {})
-test('slow test', { tags: ['slow', 'integration'] }, () => {})
+test('database test', { tags: ['db'] }, () => {});
+test('slow test', { tags: ['slow', 'integration'] }, () => {});
 ```
 
 Run tagged tests:
@@ -125,7 +125,7 @@ defineConfig({
     tags: ['db', 'slow', 'integration'],
     strictTags: true, // Fail on unknown tags
   },
-})
+});
 ```
 
 ## Include/Exclude Patterns
@@ -142,7 +142,7 @@ defineConfig({
     // Include source for in-source testing
     includeSource: ['src/**/*.ts'],
   },
-})
+});
 ```
 
 ## Watch Mode Filtering
@@ -166,11 +166,11 @@ vitest --project integration --project e2e
 ## Environment-based Filtering
 
 ```ts
-const isDev = process.env.NODE_ENV === 'development'
-const isCI = process.env.CI
+const isDev = process.env.NODE_ENV === 'development';
+const isCI = process.env.CI;
 
-describe.skipIf(isCI)('local only tests', () => {})
-describe.runIf(isDev)('dev tests', () => {})
+describe.skipIf(isCI)('local only tests', () => {});
+describe.runIf(isDev)('dev tests', () => {});
 ```
 
 ## Combining Filters

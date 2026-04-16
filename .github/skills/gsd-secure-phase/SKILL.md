@@ -1,7 +1,7 @@
 ---
 name: gsd-secure-phase
 description: Retroactively verify threat mitigations for a completed phase
-argument-hint: "[phase number]"
+argument-hint: '[phase number]'
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion
 ---
 

@@ -10,11 +10,11 @@ The minimal preset with only essential rules and variants. Good starting point f
 ## Installation
 
 ```ts
-import { defineConfig, presetMini } from 'unocss'
+import { defineConfig, presetMini } from 'unocss';
 
 export default defineConfig({
   presets: [presetMini()],
-})
+});
 ```
 
 ## What's Included
@@ -53,7 +53,7 @@ Same as preset-wind3:
 ```ts
 presetMini({
   dark: 'class', // or 'media'
-})
+});
 ```
 
 ```html
@@ -106,7 +106,7 @@ presetMini({
       },
     },
   },
-})
+});
 ```
 
 **Note:** `breakpoints` property is overridden, not merged.
@@ -129,7 +129,7 @@ presetMini({
 
   // Preflight generation: true | false | 'on-demand'
   preflight: true,
-})
+});
 ```
 
 ## Building on Mini
@@ -137,8 +137,8 @@ presetMini({
 Create custom preset extending mini:
 
 ```ts
-import { presetMini } from 'unocss'
-import type { Preset } from 'unocss'
+import { presetMini } from 'unocss';
+import type { Preset } from 'unocss';
 
 export const myPreset: Preset = {
   name: 'my-preset',
@@ -150,7 +150,7 @@ export const myPreset: Preset = {
   shortcuts: {
     btn: 'px-4 py-2 rounded bg-blue-500 text-white',
   },
-}
+};
 ```
 
 <!--

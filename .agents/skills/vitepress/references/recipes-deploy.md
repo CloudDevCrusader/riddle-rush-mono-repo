@@ -27,7 +27,7 @@ For sub-path deployment (e.g., `https://user.github.io/repo/`):
 // .vitepress/config.ts
 export default {
   base: '/repo/',
-}
+};
 ```
 
 ## GitHub Pages

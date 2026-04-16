@@ -5,10 +5,10 @@
  * Get stage-specific Nuxt configuration
  */
 export function getStageConfig() {
-  const stage = process.env.STAGE || process.env.VERCEL_ENV || 'development'
-  const isProduction = stage === 'production'
-  const isDevelopment = stage === 'development'
-  const isPreview = stage === 'preview'
+  const stage = process.env.STAGE || process.env.VERCEL_ENV || 'development';
+  const isProduction = stage === 'production';
+  const isDevelopment = stage === 'development';
+  const isPreview = stage === 'preview';
 
   // Determine base URL based on stage
   const baseUrl =
@@ -17,7 +17,7 @@ export function getStageConfig() {
       ? 'https://riddle-rush.vercel.app'
       : isPreview && process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : 'http://localhost:3000')
+        : 'http://localhost:3000');
 
   return {
     // Runtime config that can be overridden by environment variables
@@ -81,20 +81,20 @@ export function getStageConfig() {
 
     // Telemetry based on stage
     telemetry: isProduction ? false : true,
-  }
+  };
 }
 
 /**
  * Helper to log current stage configuration
  */
 export function logStageInfo() {
-  const stage = process.env.STAGE || 'development'
-  const vercelEnv = process.env.VERCEL_ENV
-  const nodeEnv = process.env.NODE_ENV
+  const stage = process.env.STAGE || 'development';
+  const vercelEnv = process.env.VERCEL_ENV;
+  const nodeEnv = process.env.NODE_ENV;
 
-  console.log('🚀 Stage Configuration:')
-  console.log(`  STAGE: ${stage}`)
-  console.log(`  NODE_ENV: ${nodeEnv}`)
-  console.log(`  VERCEL_ENV: ${vercelEnv || 'not set'}`)
-  console.log(`  Build Mode: ${stage === 'production' ? 'Optimized' : 'Debug'}`)
+  console.log('🚀 Stage Configuration:');
+  console.log(`  STAGE: ${stage}`);
+  console.log(`  NODE_ENV: ${nodeEnv}`);
+  console.log(`  VERCEL_ENV: ${vercelEnv || 'not set'}`);
+  console.log(`  Build Mode: ${stage === 'production' ? 'Optimized' : 'Debug'}`);
 }

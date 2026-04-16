@@ -15,7 +15,7 @@ Specify language after opening backticks:
 ```js
 export default {
   name: 'MyComponent',
-}
+};
 ```
 ````
 
@@ -62,9 +62,9 @@ export default {
   data() {
     return {
       msg: 'Highlighted!', // [!code highlight]
-    }
+    };
   },
-}
+};
 ```
 ````
 
@@ -78,9 +78,9 @@ export default {
   data() {
     return {
       msg: 'Focused!', // [!code focus]
-    }
+    };
   },
-}
+};
 ```
 ````
 
@@ -118,9 +118,9 @@ export default {
     return {
       msg: 'Error', // [!code error]
       msg: 'Warning', // [!code warning]
-    }
+    };
   },
-}
+};
 ```
 ````
 
@@ -134,7 +134,7 @@ export default {
   markdown: {
     lineNumbers: true,
   },
-}
+};
 ```
 
 Per-block override:
@@ -171,13 +171,13 @@ Tabbed code blocks:
 ```js [JavaScript]
 export default {
   /* ... */
-}
+};
 ```
 
 ```ts [TypeScript]
 export default defineConfig({
   /* ... */
-})
+});
 ```
 
 :::
@@ -226,7 +226,7 @@ Add filename labels to code blocks:
 
 ````md
 ```js [vite.config.js]
-export default defineConfig({})
+export default defineConfig({});
 ```
 ````
 

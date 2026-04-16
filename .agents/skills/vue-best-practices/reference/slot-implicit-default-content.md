@@ -20,7 +20,7 @@ tags: [vue3, slots, named-slots, default-slot, implicit-behavior]
 
 ```vue
 <script setup>
-import BaseLayout from './BaseLayout.vue'
+import BaseLayout from './BaseLayout.vue';
 </script>
 
 <template>

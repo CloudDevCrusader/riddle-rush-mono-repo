@@ -52,13 +52,13 @@ When using `:style` bindings in Vue, prefer camelCase property names over kebab-
 
 ```vue
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
   width: Number,
   height: Number,
   isVisible: Boolean,
-})
+});
 
 // camelCase throughout
 const containerStyle = computed(() => ({
@@ -66,7 +66,7 @@ const containerStyle = computed(() => ({
   height: `${props.height}px`,
   opacity: props.isVisible ? 1 : 0,
   transition: 'opacity 0.3s ease',
-}))
+}));
 </script>
 
 <template>
@@ -105,12 +105,12 @@ Use array syntax to merge multiple style objects:
 const baseStyles = {
   padding: '10px',
   borderRadius: '4px',
-}
+};
 
 const themeStyles = computed(() => ({
   backgroundColor: isDark.value ? '#333' : '#fff',
   color: isDark.value ? '#fff' : '#333',
-}))
+}));
 </script>
 
 <template>

@@ -13,24 +13,24 @@
 
 interface Props {
   /** Visual size variant */
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   /** Enable glow effect */
-  glow?: boolean
+  glow?: boolean;
   /** HTML tag for semantic flexibility */
-  tag?: 'span' | 'div' | 'p' | 'h1' | 'h2' | 'h3'
+  tag?: 'span' | 'div' | 'p' | 'h1' | 'h2' | 'h3';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   size: 'md',
   glow: true,
   tag: 'span',
-})
+});
 
 const displayClasses = computed(() => [
   'game-display',
   `game-display--${props.size}`,
   props.glow && 'game-display--glow',
-])
+]);
 </script>
 
 <template>

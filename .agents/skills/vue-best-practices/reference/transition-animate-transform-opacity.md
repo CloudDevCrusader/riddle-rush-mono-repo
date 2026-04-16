@@ -143,32 +143,32 @@ If you absolutely need to animate height (e.g., accordion), consider these alter
 <script setup>
 // Option 2: JavaScript hooks for precise height animation
 function onEnter(el, done) {
-  el.style.height = '0'
-  el.style.overflow = 'hidden'
+  el.style.height = '0';
+  el.style.overflow = 'hidden';
   // Force reflow
-  el.offsetHeight
-  el.style.transition = 'height 0.3s ease'
-  el.style.height = el.scrollHeight + 'px'
+  el.offsetHeight;
+  el.style.transition = 'height 0.3s ease';
+  el.style.height = el.scrollHeight + 'px';
 
   el.addEventListener(
     'transitionend',
     () => {
-      el.style.height = ''
-      el.style.overflow = ''
-      done()
+      el.style.height = '';
+      el.style.overflow = '';
+      done();
     },
     { once: true }
-  )
+  );
 }
 
 function onLeave(el, done) {
-  el.style.height = el.scrollHeight + 'px'
-  el.style.overflow = 'hidden'
-  el.offsetHeight
-  el.style.transition = 'height 0.3s ease'
-  el.style.height = '0'
+  el.style.height = el.scrollHeight + 'px';
+  el.style.overflow = 'hidden';
+  el.offsetHeight;
+  el.style.transition = 'height 0.3s ease';
+  el.style.height = '0';
 
-  el.addEventListener('transitionend', done, { once: true })
+  el.addEventListener('transitionend', done, { once: true });
 }
 </script>
 

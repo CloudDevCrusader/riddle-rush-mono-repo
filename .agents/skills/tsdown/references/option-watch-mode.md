@@ -30,7 +30,7 @@ tsdown --watch ./src/index.ts
 export default defineConfig({
   entry: ['src/index.ts'],
   watch: true,
-})
+});
 ```
 
 ## Watch Options
@@ -49,7 +49,7 @@ export default defineConfig({
   watch: {
     exclude: ['test/**', '**/*.test.ts'],
   },
-})
+});
 ```
 
 ### On Success Command
@@ -66,7 +66,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   watch: true,
   onSuccess: 'node dist/index.mjs',
-})
+});
 ```
 
 ## Watch Behavior
@@ -103,7 +103,7 @@ export default defineConfig((options) => ({
   watch: options.watch,
   sourcemap: options.watch,
   minify: !options.watch,
-}))
+}));
 ```
 
 ### With Post-Build Script
@@ -113,7 +113,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   watch: true,
   onSuccess: 'npm run test',
-})
+});
 ```
 
 ### Multiple Entry Points
@@ -126,7 +126,7 @@ export default defineConfig({
   },
   watch: true,
   clean: false, // Don't clean on each rebuild
-})
+});
 ```
 
 ### Test Runner Integration
@@ -149,7 +149,7 @@ export default defineConfig({
   watch: {
     exclude: ['**/test/**', '**/*.spec.ts'],
   },
-})
+});
 ```
 
 ## Advanced Configuration
@@ -164,14 +164,14 @@ export default defineConfig({
     exclude: ['**/*.test.ts', '**/fixtures/**'],
     skipWrite: false,
   },
-})
+});
 ```
 
 ### Conditional Watch
 
 ```ts
 export default defineConfig((options) => {
-  const isDev = options.watch
+  const isDev = options.watch;
 
   return {
     entry: ['src/index.ts'],
@@ -179,8 +179,8 @@ export default defineConfig((options) => {
     dts: !isDev, // Skip DTS in watch mode
     sourcemap: isDev,
     clean: !isDev,
-  }
-})
+  };
+});
 ```
 
 ## CLI Examples
@@ -234,7 +234,7 @@ export default defineConfig({
   watch: {
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/*.test.ts'],
   },
-})
+});
 ```
 
 ### Slow Rebuilds

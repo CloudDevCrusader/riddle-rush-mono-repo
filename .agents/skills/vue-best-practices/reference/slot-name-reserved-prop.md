@@ -51,8 +51,8 @@ tags: [vue3, slots, scoped-slots, reserved-props, naming]
 </template>
 
 <script setup>
-const slotLabel = 'header'
-const title = 'Welcome'
+const slotLabel = 'header';
+const title = 'Welcome';
 </script>
 ```
 
@@ -88,8 +88,8 @@ const title = 'Welcome'
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const activeTab = ref(1)
+import { ref } from 'vue';
+const activeTab = ref(1);
 </script>
 ```
 

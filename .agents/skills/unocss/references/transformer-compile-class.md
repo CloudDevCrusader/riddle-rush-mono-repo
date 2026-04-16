@@ -10,11 +10,11 @@ Compiles multiple utility classes into a single hashed class for smaller HTML.
 ## Installation
 
 ```ts
-import { defineConfig, transformerCompileClass } from 'unocss'
+import { defineConfig, transformerCompileClass } from 'unocss';
 
 export default defineConfig({
   transformers: [transformerCompileClass()],
-})
+});
 ```
 
 ## Usage
@@ -121,7 +121,7 @@ export default defineConfig({
     transformerDirectives(), // Then directives
     transformerCompileClass(), // Compile last
   ],
-})
+});
 ```
 
 <!--

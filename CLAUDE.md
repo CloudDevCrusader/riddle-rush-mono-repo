@@ -403,7 +403,7 @@ The app uses a **phased game design system** with dedicated component categories
 Core game types: `GameSession`, `GameAttempt`, `Category`, etc. Imported as:
 
 ```ts
-import type { GameSession } from '@riddle-rush/types'
+import type { GameSession } from '@riddle-rush/types';
 ```
 
 #### `packages/shared` (`@riddle-rush/shared`)

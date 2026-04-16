@@ -12,10 +12,10 @@ Reactive [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipbo
 
 ```vue
 <script setup lang="ts">
-import { useClipboard } from '@vueuse/core'
+import { useClipboard } from '@vueuse/core';
 
-const source = ref('Hello')
-const { text, copy, copied, isSupported } = useClipboard({ source })
+const source = ref('Hello');
+const { text, copy, copied, isSupported } = useClipboard({ source });
 </script>
 
 <template>
@@ -56,29 +56,29 @@ export interface UseClipboardOptions<Source> extends ConfigurableNavigator {
    *
    * @default false
    */
-  read?: boolean
+  read?: boolean;
   /**
    * Copy source
    */
-  source?: Source
+  source?: Source;
   /**
    * Milliseconds to reset state of `copied` ref
    *
    * @default 1500
    */
-  copiedDuring?: number
+  copiedDuring?: number;
   /**
    * Whether fallback to document.execCommand('copy') if clipboard is undefined.
    *
    * @default false
    */
-  legacy?: boolean
+  legacy?: boolean;
 }
 export interface UseClipboardReturn<Optional> {
-  isSupported: ComputedRef<boolean>
-  text: Readonly<ShallowRef<string>>
-  copied: Readonly<ShallowRef<boolean>>
-  copy: Optional extends true ? (text?: string) => Promise<void> : (text: string) => Promise<void>
+  isSupported: ComputedRef<boolean>;
+  text: Readonly<ShallowRef<string>>;
+  copied: Readonly<ShallowRef<boolean>>;
+  copy: Optional extends true ? (text?: string) => Promise<void> : (text: string) => Promise<void>;
 }
 /**
  * Reactive Clipboard API.
@@ -90,8 +90,8 @@ export interface UseClipboardReturn<Optional> {
  */
 export declare function useClipboard(
   options?: UseClipboardOptions<undefined>
-): UseClipboardReturn<false>
+): UseClipboardReturn<false>;
 export declare function useClipboard(
   options: UseClipboardOptions<MaybeRefOrGetter<string>>
-): UseClipboardReturn<true>
+): UseClipboardReturn<true>;
 ```

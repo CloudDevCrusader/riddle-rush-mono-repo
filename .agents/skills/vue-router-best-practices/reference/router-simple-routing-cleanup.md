@@ -21,27 +21,27 @@ tags: [vue3, routing, events, memory-leak, cleanup]
 
 ```vue
 <script setup>
-import { ref, computed } from 'vue'
-import Home from './Home.vue'
-import About from './About.vue'
+import { ref, computed } from 'vue';
+import Home from './Home.vue';
+import About from './About.vue';
 
 const routes = {
   '/': Home,
   '/about': About,
-}
+};
 
-const currentPath = ref(window.location.hash)
+const currentPath = ref(window.location.hash);
 
 // BUG: Event listener is never removed!
 // Each time this component mounts, a NEW listener is added
 // After mounting 5 times, you have 5 listeners running
 window.addEventListener('hashchange', () => {
-  currentPath.value = window.location.hash
-})
+  currentPath.value = window.location.hash;
+});
 
 const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || '/']
-})
+  return routes[currentPath.value.slice(1) || '/'];
+});
 </script>
 ```
 
@@ -57,34 +57,34 @@ const currentView = computed(() => {
 
 ```vue
 <script setup>
-import { ref, computed, onUnmounted } from 'vue'
-import Home from './Home.vue'
-import About from './About.vue'
-import NotFound from './NotFound.vue'
+import { ref, computed, onUnmounted } from 'vue';
+import Home from './Home.vue';
+import About from './About.vue';
+import NotFound from './NotFound.vue';
 
 const routes = {
   '/': Home,
   '/about': About,
-}
+};
 
-const currentPath = ref(window.location.hash)
+const currentPath = ref(window.location.hash);
 
 // Store handler reference for cleanup
 function handleHashChange() {
-  currentPath.value = window.location.hash
+  currentPath.value = window.location.hash;
 }
 
 // Add listener
-window.addEventListener('hashchange', handleHashChange)
+window.addEventListener('hashchange', handleHashChange);
 
 // CRITICAL: Remove listener on unmount
 onUnmounted(() => {
-  window.removeEventListener('hashchange', handleHashChange)
-})
+  window.removeEventListener('hashchange', handleHashChange);
+});
 
 const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || '/'] || NotFound
-})
+  return routes[currentPath.value.slice(1) || '/'] || NotFound;
+});
 </script>
 ```
 
@@ -92,41 +92,41 @@ const currentView = computed(() => {
 
 ```vue
 <script>
-import Home from './Home.vue'
-import About from './About.vue'
-import NotFound from './NotFound.vue'
+import Home from './Home.vue';
+import About from './About.vue';
+import NotFound from './NotFound.vue';
 
 const routes = {
   '/': Home,
   '/about': About,
-}
+};
 
 export default {
   data() {
     return {
       currentPath: window.location.hash,
-    }
+    };
   },
 
   computed: {
     currentView() {
-      return routes[this.currentPath.slice(1) || '/'] || NotFound
+      return routes[this.currentPath.slice(1) || '/'] || NotFound;
     },
   },
 
   mounted() {
     // Store bound handler for cleanup
     this.hashHandler = () => {
-      this.currentPath = window.location.hash
-    }
-    window.addEventListener('hashchange', this.hashHandler)
+      this.currentPath = window.location.hash;
+    };
+    window.addEventListener('hashchange', this.hashHandler);
   },
 
   beforeUnmount() {
     // Clean up
-    window.removeEventListener('hashchange', this.hashHandler)
+    window.removeEventListener('hashchange', this.hashHandler);
   },
-}
+};
 </script>
 ```
 
@@ -134,47 +134,47 @@ export default {
 
 ```javascript
 // composables/useHashRouter.js
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted } from 'vue';
 
 export function useHashRouter(routes, notFoundComponent = null) {
-  const currentPath = ref(window.location.hash)
+  const currentPath = ref(window.location.hash);
 
   function handleHashChange() {
-    currentPath.value = window.location.hash
+    currentPath.value = window.location.hash;
   }
 
   // Setup
-  window.addEventListener('hashchange', handleHashChange)
+  window.addEventListener('hashchange', handleHashChange);
 
   // Cleanup - handled automatically when component unmounts
   onUnmounted(() => {
-    window.removeEventListener('hashchange', handleHashChange)
-  })
+    window.removeEventListener('hashchange', handleHashChange);
+  });
 
   const currentView = computed(() => {
-    const path = currentPath.value.slice(1) || '/'
-    return routes[path] || notFoundComponent
-  })
+    const path = currentPath.value.slice(1) || '/';
+    return routes[path] || notFoundComponent;
+  });
 
   function navigate(path) {
-    window.location.hash = path
+    window.location.hash = path;
   }
 
   return {
     currentPath,
     currentView,
     navigate,
-  }
+  };
 }
 ```
 
 ```vue
 <!-- Usage -->
 <script setup>
-import { useHashRouter } from '@/composables/useHashRouter'
-import Home from './Home.vue'
-import About from './About.vue'
-import NotFound from './NotFound.vue'
+import { useHashRouter } from '@/composables/useHashRouter';
+import Home from './Home.vue';
+import About from './About.vue';
+import NotFound from './NotFound.vue';
 
 const { currentView } = useHashRouter(
   {
@@ -182,7 +182,7 @@ const { currentView } = useHashRouter(
     '/about': About,
   },
   NotFound
-)
+);
 </script>
 
 <template>

@@ -15,7 +15,7 @@ Server renders HTML, then hydrates on client:
 // nuxt.config.ts - this is the default
 export default defineNuxtConfig({
   ssr: true,
-})
+});
 ```
 
 **Benefits:**
@@ -39,7 +39,7 @@ Render entirely in the browser:
 // nuxt.config.ts
 export default defineNuxtConfig({
   ssr: false,
-})
+});
 ```
 
 **Benefits:**
@@ -112,7 +112,7 @@ export default defineNuxtConfig({
     // Server-rendered (default)
     '/api/**': { cors: true },
   },
-})
+});
 ```
 
 ### Route Rules Reference
@@ -136,7 +136,7 @@ Define per-page:
 <script setup lang="ts">
 defineRouteRules({
   prerender: true,
-})
+});
 </script>
 ```
 
@@ -153,7 +153,7 @@ export default defineNuxtConfig({
     '/about': { prerender: true },
     '/posts/*': { prerender: true },
   },
-})
+});
 ```
 
 Or use `nuxt generate`:
@@ -170,20 +170,20 @@ export default defineNuxtConfig({
   hooks: {
     'prerender:routes'({ routes }) {
       // Add dynamic routes
-      const posts = await fetchPostSlugs()
+      const posts = await fetchPostSlugs();
       for (const slug of posts) {
-        routes.add(`/posts/${slug}`)
+        routes.add(`/posts/${slug}`);
       }
     },
   },
-})
+});
 ```
 
 Or in pages:
 
 ```ts
 // server/api/posts.ts or a plugin
-prerenderRoutes(['/posts/1', '/posts/2', '/posts/3'])
+prerenderRoutes(['/posts/1', '/posts/2', '/posts/3']);
 ```
 
 ## Edge-Side Rendering
@@ -196,7 +196,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'cloudflare-pages', // or 'vercel-edge', 'netlify-edge'
   },
-})
+});
 ```
 
 Supported platforms:
@@ -213,12 +213,12 @@ Use `import.meta.server` and `import.meta.client`:
 <script setup>
 if (import.meta.server) {
   // Server-only code
-  console.log('Running on server')
+  console.log('Running on server');
 }
 
 if (import.meta.client) {
   // Client-only code
-  console.log('Running in browser')
+  console.log('Running in browser');
 }
 </script>
 ```

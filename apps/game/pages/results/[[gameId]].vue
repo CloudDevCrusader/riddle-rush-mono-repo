@@ -195,47 +195,47 @@
 </template>
 
 <script setup lang="ts">
-import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
-import type { Player } from '@riddle-rush/types/game'
-import orderBy from 'lodash-es/orderBy'
+import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants';
+import type { Player } from '@riddle-rush/types/game';
+import orderBy from 'lodash-es/orderBy';
 
-const { t } = usePageSetup()
+const { t } = usePageSetup();
 const { gameStore, players, leaderboard, currentRound, flowState, canConfirmRoundScores } =
-  useGameState()
-const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation()
-const { playClick, playScoreIncrease } = useAudio()
-const { isAnswerInputEnabled } = useFeatureFlags()
-const route = useRoute()
-const logger = useLogger()
+  useGameState();
+const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation();
+const { playClick, playScoreIncrease } = useAudio();
+const { isAnswerInputEnabled } = useFeatureFlags();
+const route = useRoute();
+const logger = useLogger();
 
 // Pending scores for each player (local state before confirming)
-const pendingScores = reactive(new Map<string, number>())
+const pendingScores = reactive(new Map<string, number>());
 
 const syncPendingScores = (nextPlayers: Player[]) => {
-  pendingScores.clear()
+  pendingScores.clear();
   for (const player of nextPlayers) {
-    pendingScores.set(player.id, player.currentRoundScore ?? 0)
+    pendingScores.set(player.id, player.currentRoundScore ?? 0);
   }
-}
+};
 
 /** Total score if pending round points were applied now (matches assignPlayerScore deltas). */
 const projectedTotalScore = (player: Player) =>
-  player.totalScore - player.currentRoundScore + (pendingScores.get(player.id) ?? 0)
+  player.totalScore - player.currentRoundScore + (pendingScores.get(player.id) ?? 0);
 
-const gameId = computed(() => route.params.gameId as string | undefined)
+const gameId = computed(() => route.params.gameId as string | undefined);
 
-const isConfirming = ref(false)
+const isConfirming = ref(false);
 
 /** False until session is loaded from DB for this route (avoids empty v-for flash on cold navigation). */
-const sessionViewReady = ref(false)
+const sessionViewReady = ref(false);
 
 // Post-confirm overlay/modal state
-const showLeaderboard = ref(false)
-const showDecisionModal = ref(false)
-let dismissTimer: ReturnType<typeof setTimeout> | null = null
-const hasConfirmedRound = ref(false)
+const showLeaderboard = ref(false);
+const showDecisionModal = ref(false);
+let dismissTimer: ReturnType<typeof setTimeout> | null = null;
+const hasConfirmedRound = ref(false);
 
-const isDecisionFlow = computed(() => flowState.value === 'decision')
+const isDecisionFlow = computed(() => flowState.value === 'decision');
 
 // Projected ranks use same total as on-card display (totalScore includes currentRoundScore until adjusted)
 const projectedRanks = computed(() => {
@@ -246,145 +246,149 @@ const projectedRanks = computed(() => {
     })),
     ['projected'],
     ['desc']
-  )
+  );
 
-  const ranks = new Map<string, number>()
-  ranked.forEach((p, i) => ranks.set(p.id, i + 1))
-  return ranks
-})
+  const ranks = new Map<string, number>();
+  ranked.forEach((p, i) => ranks.set(p.id, i + 1));
+  return ranks;
+});
 
 const incrementScore = (playerId: string) => {
-  const current = pendingScores.get(playerId) ?? 0
-  pendingScores.set(playerId, current + SCORE_INCREMENT)
-  void playClick()
-}
+  const current = pendingScores.get(playerId) ?? 0;
+  pendingScores.set(playerId, current + SCORE_INCREMENT);
+  void playClick();
+};
 
 const decrementScore = (playerId: string) => {
-  const current = pendingScores.get(playerId) ?? 0
+  const current = pendingScores.get(playerId) ?? 0;
   // Allow negative adjustments to reflect point deductions
-  pendingScores.set(playerId, current - SCORE_INCREMENT)
-  void playClick()
-}
+  pendingScores.set(playerId, current - SCORE_INCREMENT);
+  void playClick();
+};
 
 const handleLeaderboardDismiss = () => {
   if (dismissTimer) {
-    clearTimeout(dismissTimer)
-    dismissTimer = null
+    clearTimeout(dismissTimer);
+    dismissTimer = null;
   }
-  showLeaderboard.value = false
-  showDecisionModal.value = true
-}
+  showLeaderboard.value = false;
+  showDecisionModal.value = true;
+};
 
 const handleConfirmScores = async () => {
-  if (isConfirming.value) return
+  if (isConfirming.value) return;
 
   // Use unified flow state for validation
-  const flow = flowState.value
+  const flow = flowState.value;
   if (flow !== 'round-complete' || isDecisionFlow.value || hasConfirmedRound.value) {
     // If not in correct flow state, show decision modal directly
-    showDecisionModal.value = true
-    return
+    showDecisionModal.value = true;
+    return;
   }
 
-  isConfirming.value = true
+  isConfirming.value = true;
   try {
     // Assign scores for all players
     for (const [playerId, score] of pendingScores) {
-      await gameStore.assignPlayerScore(playerId, score)
+      await gameStore.assignPlayerScore(playerId, score);
     }
 
     // Complete the round (records round history and transitions to decision)
-    await gameStore.completeRound()
-    hasConfirmedRound.value = true
+    await gameStore.completeRound();
+    hasConfirmedRound.value = true;
 
-    void playScoreIncrease()
+    void playScoreIncrease();
 
     // Show leaderboard overlay (auto-dismisses after timeout)
-    showLeaderboard.value = true
-    dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS)
+    showLeaderboard.value = true;
+    dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS);
   } catch (error) {
     // Score saving failed — allow the user to retry
-    logger.error('Failed to confirm scores:', error)
+    logger.error('Failed to confirm scores:', error);
   } finally {
-    isConfirming.value = false
+    isConfirming.value = false;
   }
-}
+};
 
 const handleNextRound = async () => {
-  showDecisionModal.value = false
-  await goToRoundStart()
-}
+  showDecisionModal.value = false;
+  await goToRoundStart();
+};
 
 const handleNewGame = async () => {
-  showDecisionModal.value = false
-  await gameStore.completeGame()
-  await goToPlayers()
-}
+  showDecisionModal.value = false;
+  await gameStore.completeGame();
+  await goToPlayers();
+};
 
 const handleFinishGame = async () => {
-  showDecisionModal.value = false
-  await gameStore.completeGame()
-  await goToLeaderboard()
-}
+  showDecisionModal.value = false;
+  await gameStore.completeGame();
+  await goToLeaderboard();
+};
 
 watch(
   players,
   (nextPlayers: Player[]) => {
-    syncPendingScores(nextPlayers)
+    syncPendingScores(nextPlayers);
   },
   { immediate: true }
-)
+);
 
 watch(flowState, (newFlow: string, oldFlow: string) => {
   // When flow transitions to decision, ensure modal appears
   if (newFlow === 'decision' && oldFlow !== 'decision') {
-    hasConfirmedRound.value = true
-    showDecisionModal.value = true
+    hasConfirmedRound.value = true;
+    showDecisionModal.value = true;
     if (dismissTimer) {
-      clearTimeout(dismissTimer)
-      dismissTimer = null
+      clearTimeout(dismissTimer);
+      dismissTimer = null;
     }
-    showLeaderboard.value = false
+    showLeaderboard.value = false;
   }
-})
+});
 
 onMounted(async () => {
-  sessionViewReady.value = false
-  const id = gameId.value
-  if (id && gameStore.currentSession.value?.id !== id) {
-    try {
-      await gameStore.loadSessionById(id)
-    } catch {
-      await gameStore.loadFromDB()
+  const id = gameId.value;
+  const sessionMatchesRoute = Boolean(id && gameStore.currentSession.value?.id === id);
+
+  if (!sessionMatchesRoute) {
+    sessionViewReady.value = false;
+    if (id && gameStore.currentSession.value?.id !== id) {
+      try {
+        await gameStore.loadSessionById(id);
+      } catch {
+        await gameStore.loadFromDB();
+      }
+    } else if (!gameStore.currentSession.value) {
+      await gameStore.loadFromDB();
     }
-  } else if (!gameStore.currentSession.value) {
-    await gameStore.loadFromDB()
   }
 
-  sessionViewReady.value = true
+  sessionViewReady.value = true;
 
   // Check flow state and initialize accordingly
   if (flowState.value === 'decision') {
-    hasConfirmedRound.value = true
-    showDecisionModal.value = true
+    hasConfirmedRound.value = true;
+    showDecisionModal.value = true;
   }
-})
+});
 
 onUnmounted(() => {
   if (dismissTimer) {
-    clearTimeout(dismissTimer)
-    dismissTimer = null
+    clearTimeout(dismissTimer);
+    dismissTimer = null;
   }
-})
+});
 
 const pageTitle = computed(
   () => `${t('scoring.title', 'Scoring')} · ${t('game.round')} ${currentRound.value || 1}`
-)
+);
 
 useLocalizedPageSeo({
   title: () => pageTitle.value,
   description: () => t('scoring.description'),
-})
+});
 </script>
 
 <style scoped lang="scss">

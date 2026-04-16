@@ -25,11 +25,11 @@ Without `getSSRProps`, the server-rendered HTML won't include the directive's ef
 // WRONG: No SSR handling - directive effects missing on server
 const vTooltip = {
   mounted(el, binding) {
-    el.setAttribute('data-tooltip', binding.value)
-    el.setAttribute('aria-label', binding.value)
-    el.classList.add('has-tooltip')
+    el.setAttribute('data-tooltip', binding.value);
+    el.setAttribute('aria-label', binding.value);
+    el.classList.add('has-tooltip');
   },
-}
+};
 ```
 
 Server renders:
@@ -53,9 +53,9 @@ Client after hydration:
 const vTooltip = {
   // Client-side implementation
   mounted(el, binding) {
-    el.setAttribute('data-tooltip', binding.value)
-    el.setAttribute('aria-label', binding.value)
-    el.classList.add('has-tooltip')
+    el.setAttribute('data-tooltip', binding.value);
+    el.setAttribute('aria-label', binding.value);
+    el.classList.add('has-tooltip');
   },
 
   // SSR implementation - returns attributes to render
@@ -64,9 +64,9 @@ const vTooltip = {
       'data-tooltip': binding.value,
       'aria-label': binding.value,
       class: 'has-tooltip',
-    }
+    };
   },
-}
+};
 ```
 
 Server now renders:
@@ -83,18 +83,18 @@ export const vFocus = {
   // Client: Actually focus the element
   mounted(el, binding) {
     if (binding.value !== false) {
-      el.focus()
+      el.focus();
     }
   },
 
   // SSR: Add autofocus attribute so browser focuses on load
   getSSRProps(binding) {
     if (binding.value !== false) {
-      return { autofocus: true }
+      return { autofocus: true };
     }
-    return {}
+    return {};
   },
-}
+};
 ```
 
 ```vue
@@ -103,7 +103,7 @@ export const vFocus = {
 </template>
 
 <script setup>
-import { vFocus } from '@/directives/vFocus'
+import { vFocus } from '@/directives/vFocus';
 </script>
 ```
 
@@ -113,16 +113,16 @@ import { vFocus } from '@/directives/vFocus'
 // CORRECT: Generate consistent IDs
 const vId = {
   mounted(el, binding) {
-    el.id = binding.value || `el-${binding.instance?.$.uid}`
+    el.id = binding.value || `el-${binding.instance?.$.uid}`;
   },
 
   getSSRProps(binding, vnode) {
     // Use the same ID generation logic
     return {
       id: binding.value || `el-${vnode.component?.uid || 'ssr'}`,
-    }
+    };
   },
-}
+};
 ```
 
 ## Handling Complex Directives
@@ -134,11 +134,11 @@ For directives that do more than set attributes, consider:
 const vDraggable = {
   mounted(el, binding) {
     // Complex client-side logic
-    initDragAndDrop(el, binding.value)
+    initDragAndDrop(el, binding.value);
   },
 
   unmounted(el) {
-    destroyDragAndDrop(el)
+    destroyDragAndDrop(el);
   },
 
   // SSR: Just mark element as draggable for styling/semantics
@@ -147,9 +147,9 @@ const vDraggable = {
       draggable: 'true',
       'data-draggable': '',
       role: 'listitem',
-    }
+    };
   },
-}
+};
 ```
 
 ## Directives That Cannot Have SSR Equivalents
@@ -161,15 +161,15 @@ Some directives have no meaningful server-side representation:
 const vMousePosition = {
   mounted(el, binding) {
     el.addEventListener('mousemove', (e) => {
-      binding.value?.(e.clientX, e.clientY)
-    })
+      binding.value?.(e.clientX, e.clientY);
+    });
   },
 
   // Nothing meaningful to render on server
   getSSRProps() {
-    return {} // Empty object - no attributes
+    return {}; // Empty object - no attributes
   },
-}
+};
 ```
 
 ## Nuxt.js Directive Registration
@@ -179,33 +179,33 @@ const vMousePosition = {
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.directive('tooltip', {
     mounted(el, binding) {
-      el.setAttribute('data-tooltip', binding.value)
+      el.setAttribute('data-tooltip', binding.value);
     },
     getSSRProps(binding) {
-      return { 'data-tooltip': binding.value }
+      return { 'data-tooltip': binding.value };
     },
-  })
-})
+  });
+});
 ```
 
 ## Testing SSR Directives
 
 ```javascript
-import { renderToString } from 'vue/server-renderer'
-import { createSSRApp, h } from 'vue'
-import { vTooltip } from './directives/vTooltip'
+import { renderToString } from 'vue/server-renderer';
+import { createSSRApp, h } from 'vue';
+import { vTooltip } from './directives/vTooltip';
 
 test('vTooltip renders attributes during SSR', async () => {
   const app = createSSRApp({
     directives: { tooltip: vTooltip },
     template: '<button v-tooltip="\'Help text\'">Click</button>',
-  })
+  });
 
-  const html = await renderToString(app)
+  const html = await renderToString(app);
 
-  expect(html).toContain('data-tooltip="Help text"')
-  expect(html).toContain('aria-label="Help text"')
-})
+  expect(html).toContain('data-tooltip="Help text"');
+  expect(html).toContain('aria-label="Help text"');
+});
 ```
 
 ## Reference

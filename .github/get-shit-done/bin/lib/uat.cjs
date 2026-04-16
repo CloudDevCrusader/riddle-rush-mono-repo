@@ -21,9 +21,10 @@ function cmdAuditUat(cwd, raw) {
   const results = [];
 
   // Scan all phase directories
-  const dirs = fs.readdirSync(phasesDir, { withFileTypes: true })
-    .filter(e => e.isDirectory())
-    .map(e => e.name)
+  const dirs = fs
+    .readdirSync(phasesDir, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name)
     .filter(isDirInMilestone)
     .sort();
 
@@ -34,7 +35,7 @@ function cmdAuditUat(cwd, raw) {
     const files = fs.readdirSync(phaseDir);
 
     // Process UAT files
-    for (const file of files.filter(f => f.includes('-UAT') && f.endsWith('.md'))) {
+    for (const file of files.filter((f) => f.includes('-UAT') && f.endsWith('.md'))) {
       const content = fs.readFileSync(path.join(phaseDir, file), 'utf-8');
       const items = parseUatItems(content);
       if (items.length > 0) {
@@ -44,14 +45,14 @@ function cmdAuditUat(cwd, raw) {
           file,
           file_path: toPosixPath(path.relative(cwd, path.join(phaseDir, file))),
           type: 'uat',
-          status: (extractFrontmatter(content).status || 'unknown'),
+          status: extractFrontmatter(content).status || 'unknown',
           items,
         });
       }
     }
 
     // Process VERIFICATION files
-    for (const file of files.filter(f => f.includes('-VERIFICATION') && f.endsWith('.md'))) {
+    for (const file of files.filter((f) => f.includes('-VERIFICATION') && f.endsWith('.md'))) {
       const content = fs.readFileSync(path.join(phaseDir, file), 'utf-8');
       const status = extractFrontmatter(content).status || 'unknown';
       if (status === 'human_needed' || status === 'gaps_found') {
@@ -110,16 +111,22 @@ function cmdRenderCheckpoint(cwd, options = {}, raw) {
   }
 
   const checkpoint = buildCheckpoint(currentTest);
-  output({
-    file_path: toPosixPath(path.relative(cwd, resolvedPath)),
-    test_number: currentTest.number,
-    test_name: currentTest.name,
-    checkpoint,
-  }, raw, checkpoint);
+  output(
+    {
+      file_path: toPosixPath(path.relative(cwd, resolvedPath)),
+      test_number: currentTest.number,
+      test_name: currentTest.name,
+      checkpoint,
+    },
+    raw,
+    checkpoint
+  );
 }
 
 function parseCurrentTest(content) {
-  const currentTestMatch = content.match(/##\s*Current Test\s*(?:\n<!--[\s\S]*?-->)?\n([\s\S]*?)(?=\n##\s|$)/i);
+  const currentTestMatch = content.match(
+    /##\s*Current Test\s*(?:\n<!--[\s\S]*?-->)?\n([\s\S]*?)(?=\n##\s|$)/i
+  );
   if (!currentTestMatch) {
     error('UAT file is missing a Current Test section');
   }
@@ -135,8 +142,9 @@ function parseCurrentTest(content) {
 
   const numberMatch = section.match(/^number:\s*(\d+)\s*$/m);
   const nameMatch = section.match(/^name:\s*(.+)\s*$/m);
-  const expectedBlockMatch = section.match(/^expected:\s*\|\n([\s\S]*?)(?=^\w[\w-]*:\s)/m)
-    || section.match(/^expected:\s*\|\n([\s\S]+)/m);
+  const expectedBlockMatch =
+    section.match(/^expected:\s*\|\n([\s\S]*?)(?=^\w[\w-]*:\s)/m) ||
+    section.match(/^expected:\s*\|\n([\s\S]+)/m);
   const expectedInlineMatch = section.match(/^expected:\s*(.+)\s*$/m);
 
   if (!numberMatch || !nameMatch || (!expectedBlockMatch && !expectedInlineMatch)) {
@@ -147,7 +155,7 @@ function parseCurrentTest(content) {
   if (expectedBlockMatch) {
     expected = expectedBlockMatch[1]
       .split('\n')
-      .map(line => line.replace(/^ {2}/, ''))
+      .map((line) => line.replace(/^ {2}/, ''))
       .join('\n')
       .trim();
   } else {
@@ -173,7 +181,7 @@ function buildCheckpoint(currentTest) {
     currentTest.expected,
     '',
     '──────────────────────────────────────────────────────────────',
-    'Type `pass` or describe what\'s wrong.',
+    "Type `pass` or describe what's wrong.",
     '──────────────────────────────────────────────────────────────',
   ].join('\n');
 }
@@ -181,7 +189,8 @@ function buildCheckpoint(currentTest) {
 function parseUatItems(content) {
   const items = [];
   // Match test blocks: ### N. Name\nexpected: ...\nresult: ...\n
-  const testPattern = /###\s*(\d+)\.\s*([^\n]+)\nexpected:\s*([^\n]+)\nresult:\s*(\w+)(?:\n(?:reported|reason|blocked_by):\s*[^\n]*)?/g;
+  const testPattern =
+    /###\s*(\d+)\.\s*([^\n]+)\nexpected:\s*([^\n]+)\nresult:\s*(\w+)(?:\n(?:reported|reason|blocked_by):\s*[^\n]*)?/g;
   let match;
   while ((match = testPattern.exec(content)) !== null) {
     const [, num, name, expected, result] = match;

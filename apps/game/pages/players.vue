@@ -99,91 +99,91 @@
 </template>
 
 <script setup lang="ts">
-import uniq from 'lodash-es/uniq'
+import uniq from 'lodash-es/uniq';
 
-definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
+definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } });
 
-const { t, goHome, toast } = usePageSetup()
-const { goToRoundStart } = useNavigation()
-const { gameStore } = useGameState()
-const runtimeConfig = useRuntimeConfig()
+const { t, goHome, toast } = usePageSetup();
+const { goToRoundStart } = useNavigation();
+const { gameStore } = useGameState();
+const runtimeConfig = useRuntimeConfig();
 
-const minPlayers = runtimeConfig.public.minPlayers as number
-const playerCount = ref(runtimeConfig.public.defaultPlayers as number)
-const playerNames = ref<string[]>([])
-const maxPlayers = computed(() => runtimeConfig.public.maxPlayers as number)
-const isLegacyStyle = computed(() => runtimeConfig.public?.playersMockupStyle === 'legacy')
+const minPlayers = runtimeConfig.public.minPlayers as number;
+const playerCount = ref(runtimeConfig.public.defaultPlayers as number);
+const playerNames = ref<string[]>([]);
+const maxPlayers = computed(() => runtimeConfig.public.maxPlayers as number);
+const isLegacyStyle = computed(() => runtimeConfig.public?.playersMockupStyle === 'legacy');
 
-const clampPlayerCount = (value: number) => Math.min(maxPlayers.value, Math.max(minPlayers, value))
+const clampPlayerCount = (value: number) => Math.min(maxPlayers.value, Math.max(minPlayers, value));
 
 const syncPlayerList = (targetCount?: number) => {
-  const nextCount = clampPlayerCount(targetCount ?? playerCount.value)
-  const next = playerNames.value.slice(0, nextCount)
+  const nextCount = clampPlayerCount(targetCount ?? playerCount.value);
+  const next = playerNames.value.slice(0, nextCount);
 
   while (next.length < nextCount) {
-    next.push('')
+    next.push('');
   }
 
-  playerCount.value = nextCount
-  playerNames.value = next
-}
+  playerCount.value = nextCount;
+  playerNames.value = next;
+};
 
 const changePlayerCount = (delta: number) => {
-  const nextCount = clampPlayerCount(playerCount.value + delta)
+  const nextCount = clampPlayerCount(playerCount.value + delta);
 
   if (nextCount === playerCount.value) {
     if (delta > 0) {
-      toast.info(t('players.max_players', [maxPlayers.value]))
+      toast.info(t('players.max_players', [maxPlayers.value]));
     }
-    return
+    return;
   }
 
-  syncPlayerList(nextCount)
-}
+  syncPlayerList(nextCount);
+};
 
 const placeholderForIndex = (index: number) =>
-  (t('players.placeholder', { number: index + 1 }) as string) || `Player ${index + 1}`
+  (t('players.placeholder', { number: index + 1 }) as string) || `Player ${index + 1}`;
 
 const startGame = () => {
   if (playerCount.value < minPlayers) {
-    toast.warning(t('players.need_players'))
-    return
+    toast.warning(t('players.need_players'));
+    return;
   }
 
   const names = playerNames.value.slice(0, playerCount.value).map((name: string, index: number) => {
-    const trimmed = name.trim()
-    return trimmed || placeholderForIndex(index)
-  })
+    const trimmed = name.trim();
+    return trimmed || placeholderForIndex(index);
+  });
 
   if (!names.length) {
-    toast.warning(t('players.need_players'))
-    return
+    toast.warning(t('players.need_players'));
+    return;
   }
 
-  const lowerCaseNames = names.map((name: string) => name.toLowerCase())
-  const hasDuplicateNames = uniq(lowerCaseNames).length !== lowerCaseNames.length
+  const lowerCaseNames = names.map((name: string) => name.toLowerCase());
+  const hasDuplicateNames = uniq(lowerCaseNames).length !== lowerCaseNames.length;
 
   if (hasDuplicateNames) {
-    toast.warning(t('players.duplicate_name'))
-    return
+    toast.warning(t('players.duplicate_name'));
+    return;
   }
 
-  gameStore.setPendingPlayerNames(names)
-  toast.success(t('players.ready', { 0: names.length }))
-  void goToRoundStart()
-}
+  gameStore.setPendingPlayerNames(names);
+  toast.success(t('players.ready', { 0: names.length }));
+  void goToRoundStart();
+};
 
 const { pageElement } = usePageSwipe({
   onSwipeRight: () => goHome(),
   threshold: 80,
-})
+});
 
 useLocalizedPageSeo({
   title: () => t('players.title'),
   description: () => t('players.description'),
-})
+});
 
-syncPlayerList(playerCount.value)
+syncPlayerList(playerCount.value);
 </script>
 
 <style scoped lang="scss">

@@ -31,16 +31,16 @@ tags: [vue3, teleport, component-hierarchy, props, events]
 </template>
 
 <script setup>
-import { provide, ref } from 'vue'
+import { provide, ref } from 'vue';
 
-const parentMessage = ref('Hello from parent')
+const parentMessage = ref('Hello from parent');
 
 // Provide still works across teleport
-provide('theme', 'dark')
+provide('theme', 'dark');
 
 function handleUpdate(value) {
   // Events bubble up through logical hierarchy, not DOM
-  console.log('Received from teleported child:', value)
+  console.log('Received from teleported child:', value);
 }
 </script>
 ```
@@ -56,16 +56,16 @@ function handleUpdate(value) {
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject } from 'vue';
 
 // Props work normally
-defineProps(['message'])
+defineProps(['message']);
 
 // Inject works across teleport boundary
-const theme = inject('theme')
+const theme = inject('theme');
 
 // Emit works normally
-defineEmits(['update'])
+defineEmits(['update']);
 </script>
 ```
 
@@ -101,15 +101,15 @@ defineEmits(['update'])
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive } from 'vue';
 
-defineProps(['visible'])
-const emit = defineEmits(['close', 'submit'])
+defineProps(['visible']);
+const emit = defineEmits(['close', 'submit']);
 
-const formData = reactive({})
+const formData = reactive({});
 
 function handleSubmit() {
-  emit('submit', formData)
+  emit('submit', formData);
 }
 </script>
 ```
@@ -129,13 +129,13 @@ function handleSubmit() {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const showModal = ref(false)
+const showModal = ref(false);
 
 function handleFormSubmit(data) {
-  console.log('Form submitted:', data)
-  showModal.value = false
+  console.log('Form submitted:', data);
+  showModal.value = false;
 }
 </script>
 ```

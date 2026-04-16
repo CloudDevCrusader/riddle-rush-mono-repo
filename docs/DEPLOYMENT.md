@@ -1460,13 +1460,13 @@ After deployment:
 Place unit tests in `tests/unit/` with the naming pattern `*.spec.ts` or `*.test.ts`:
 
 ```typescript
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'vitest';
 
 describe('MyComponent', () => {
   it('should work correctly', () => {
-    expect(true).toBe(true)
-  })
-})
+    expect(true).toBe(true);
+  });
+});
 ```
 
 ### E2E Tests
@@ -1474,12 +1474,12 @@ describe('MyComponent', () => {
 Place e2e tests in `tests/e2e/` with the naming pattern `*.spec.ts`:
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
 test('should load homepage', async ({ page }) => {
-  await page.goto('/')
-  await expect(page).toHaveTitle(/Guess Game/)
-})
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Guess Game/);
+});
 ```
 
 ## Troubleshooting

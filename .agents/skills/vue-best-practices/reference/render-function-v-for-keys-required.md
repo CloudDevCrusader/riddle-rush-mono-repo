@@ -22,23 +22,23 @@ When rendering lists in render functions using `.map()`, always include a unique
 **Incorrect:**
 
 ```javascript
-import { h } from 'vue'
+import { h } from 'vue';
 
 export default {
   setup() {
     const items = ref([
       { id: 1, name: 'Apple' },
       { id: 2, name: 'Banana' },
-    ])
+    ]);
 
     return () =>
       h(
         'ul',
         // WRONG: No keys - causes inefficient patching
         items.value.map((item) => h('li', item.name))
-      )
+      );
   },
-}
+};
 ```
 
 ```jsx
@@ -64,23 +64,23 @@ export default {
 **Correct:**
 
 ```javascript
-import { h } from 'vue'
+import { h } from 'vue';
 
 export default {
   setup() {
     const items = ref([
       { id: 1, name: 'Apple' },
       { id: 2, name: 'Banana' },
-    ])
+    ]);
 
     return () =>
       h(
         'ul',
         // CORRECT: Unique id as key
         items.value.map((item) => h('li', { key: item.id }, item.name))
-      )
+      );
   },
-}
+};
 ```
 
 ```jsx
@@ -90,7 +90,7 @@ export default {
     const todos = ref([
       { id: 'a1', text: 'Learn Vue' },
       { id: 'b2', text: 'Build app' },
-    ])
+    ]);
 
     return () => (
       <ul>
@@ -101,17 +101,17 @@ export default {
           />
         ))}
       </ul>
-    )
+    );
   },
-}
+};
 ```
 
 ```javascript
-import { h } from 'vue'
+import { h } from 'vue';
 
 export default {
   setup() {
-    const users = ref([])
+    const users = ref([]);
 
     return () =>
       h('div', [
@@ -126,9 +126,9 @@ export default {
             ])
           )
         ),
-      ])
+      ]);
   },
-}
+};
 ```
 
 ## When Index Keys Are Acceptable
@@ -141,13 +141,13 @@ Using array indices as keys is acceptable ONLY when:
 
 ```javascript
 // Index is OK here: static list that never changes
-const staticLabels = ['Name', 'Email', 'Phone']
+const staticLabels = ['Name', 'Email', 'Phone'];
 
 return () =>
   h(
     'tr',
     staticLabels.map((label, index) => h('th', { key: index }, label))
-  )
+  );
 ```
 
 ## Why Keys Matter

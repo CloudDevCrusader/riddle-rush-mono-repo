@@ -14,14 +14,14 @@
 
 interface Props {
   /** Text color variant with 3D depth effect */
-  color?: 'white' | 'gold' | 'green' | 'blue' | 'orange'
+  color?: 'white' | 'gold' | 'green' | 'blue' | 'orange';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   color: 'white',
-})
+});
 
-const headerClasses = computed(() => ['game-header', `game-header--${props.color}`])
+const headerClasses = computed(() => ['game-header', `game-header--${props.color}`]);
 </script>
 
 <template>

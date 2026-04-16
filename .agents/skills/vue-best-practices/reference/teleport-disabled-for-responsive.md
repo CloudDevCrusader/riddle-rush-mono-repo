@@ -30,22 +30,22 @@ tags: [vue3, teleport, responsive, mobile]
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue';
 
-const isMobile = ref(false)
+const isMobile = ref(false);
 
 function checkMobile() {
-  isMobile.value = window.innerWidth < 768
+  isMobile.value = window.innerWidth < 768;
 }
 
 onMounted(() => {
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-})
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkMobile)
-})
+  window.removeEventListener('resize', checkMobile);
+});
 </script>
 ```
 
@@ -69,11 +69,11 @@ onUnmounted(() => {
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useMediaQuery } from '@vueuse/core'
+import { ref } from 'vue';
+import { useMediaQuery } from '@vueuse/core';
 
-const open = ref(false)
-const isMobile = useMediaQuery('(max-width: 768px)')
+const open = ref(false);
+const isMobile = useMediaQuery('(max-width: 768px)');
 </script>
 
 <style scoped>
@@ -159,11 +159,11 @@ const isMobile = useMediaQuery('(max-width: 768px)')
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useMediaQuery } from '@vueuse/core'
+import { ref } from 'vue';
+import { useMediaQuery } from '@vueuse/core';
 
-const sidebarOpen = ref(false)
-const isMobile = useMediaQuery('(max-width: 1024px)')
+const sidebarOpen = ref(false);
+const isMobile = useMediaQuery('(max-width: 1024px)');
 </script>
 
 <style>
@@ -199,19 +199,19 @@ Use `@vueuse/core` for reactive media queries:
 
 ```vue
 <script setup>
-import { useMediaQuery, useBreakpoints } from '@vueuse/core'
+import { useMediaQuery, useBreakpoints } from '@vueuse/core';
 
 // Simple media query
-const isMobile = useMediaQuery('(max-width: 768px)')
+const isMobile = useMediaQuery('(max-width: 768px)');
 
 // Or use breakpoints
 const breakpoints = useBreakpoints({
   mobile: 0,
   tablet: 768,
   desktop: 1024,
-})
+});
 
-const isMobileOrTablet = breakpoints.smaller('desktop')
+const isMobileOrTablet = breakpoints.smaller('desktop');
 </script>
 
 <template>

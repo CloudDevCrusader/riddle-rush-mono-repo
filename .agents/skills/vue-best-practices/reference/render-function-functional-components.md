@@ -22,28 +22,28 @@ Functional components in Vue 3 are defined as plain functions that receive `prop
 **Basic Functional Component:**
 
 ```javascript
-import { h } from 'vue'
+import { h } from 'vue';
 
 // Simple functional component
 function MyButton(props, { slots }) {
-  return h('button', { class: 'btn' }, slots.default?.())
+  return h('button', { class: 'btn' }, slots.default?.());
 }
 
 // With props definition
-MyButton.props = ['disabled', 'variant']
+MyButton.props = ['disabled', 'variant'];
 
-export default MyButton
+export default MyButton;
 ```
 
 **With TypeScript:**
 
 ```typescript
-import { h } from 'vue'
-import type { FunctionalComponent } from 'vue'
+import { h } from 'vue';
+import type { FunctionalComponent } from 'vue';
 
 interface Props {
-  message: string
-  type?: 'info' | 'warning' | 'error'
+  message: string;
+  type?: 'info' | 'warning' | 'error';
 }
 
 const Alert: FunctionalComponent<Props> = (props, { slots }) => {
@@ -53,30 +53,30 @@ const Alert: FunctionalComponent<Props> = (props, { slots }) => {
       class: ['alert', `alert-${props.type || 'info'}`],
     },
     [h('span', props.message), slots.default?.()]
-  )
-}
+  );
+};
 
 Alert.props = {
   message: { type: String, required: true },
   type: String,
-}
+};
 
-export default Alert
+export default Alert;
 ```
 
 **With Emits:**
 
 ```typescript
-import { h } from 'vue'
-import type { FunctionalComponent } from 'vue'
+import { h } from 'vue';
+import type { FunctionalComponent } from 'vue';
 
 interface Props {
-  value: string
+  value: string;
 }
 
 interface Emits {
-  (e: 'update', value: string): void
-  (e: 'clear'): void
+  (e: 'update', value: string): void;
+  (e: 'clear'): void;
 }
 
 const SearchInput: FunctionalComponent<Props, Emits> = (props, { emit }) => {
@@ -86,27 +86,27 @@ const SearchInput: FunctionalComponent<Props, Emits> = (props, { emit }) => {
       onInput: (e: Event) => emit('update', (e.target as HTMLInputElement).value),
     }),
     h('button', { onClick: () => emit('clear') }, 'Clear'),
-  ])
-}
+  ]);
+};
 
-SearchInput.props = ['value']
-SearchInput.emits = ['update', 'clear']
+SearchInput.props = ['value'];
+SearchInput.emits = ['update', 'clear'];
 
-export default SearchInput
+export default SearchInput;
 ```
 
 **Disabling Attribute Inheritance:**
 
 ```javascript
-import { h } from 'vue'
+import { h } from 'vue';
 
 function CustomInput(props, { attrs }) {
-  return h('div', { class: 'input-wrapper' }, [h('input', { ...attrs, class: 'custom-input' })])
+  return h('div', { class: 'input-wrapper' }, [h('input', { ...attrs, class: 'custom-input' })]);
 }
 
-CustomInput.inheritAttrs = false
+CustomInput.inheritAttrs = false;
 
-export default CustomInput
+export default CustomInput;
 ```
 
 ## When to Use Functional Components
@@ -129,9 +129,9 @@ function Icon(props) {
       height: props.size || 24,
     },
     [h('use', { href: `#icon-${props.name}` })]
-  )
+  );
 }
-Icon.props = ['name', 'size']
+Icon.props = ['name', 'size'];
 
 // Badge component - good use case
 function Badge(props, { slots }) {
@@ -141,9 +141,9 @@ function Badge(props, { slots }) {
       class: ['badge', `badge-${props.variant || 'default'}`],
     },
     slots.default?.()
-  )
+  );
 }
-Badge.props = ['variant']
+Badge.props = ['variant'];
 ```
 
 **Not recommended for:**
@@ -158,18 +158,18 @@ Badge.props = ['variant']
 ```javascript
 // Functional - no reactivity, no lifecycle
 function StaticLabel(props) {
-  return h('span', { class: 'label' }, props.text)
+  return h('span', { class: 'label' }, props.text);
 }
-StaticLabel.props = ['text']
+StaticLabel.props = ['text'];
 
 // Stateful - when you need state or lifecycle
 export default {
   setup(props) {
-    const count = ref(0)
+    const count = ref(0);
 
     onMounted(() => {
-      console.log('Mounted!')
-    })
+      console.log('Mounted!');
+    });
 
     return () =>
       h(
@@ -178,9 +178,9 @@ export default {
           onClick: () => count.value++,
         },
         count.value
-      )
+      );
   },
-}
+};
 ```
 
 ## Reference

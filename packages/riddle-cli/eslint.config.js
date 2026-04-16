@@ -1,7 +1,7 @@
-import globals from 'globals'
-import json from '@eslint/json'
-import markdown from '@eslint/markdown'
-import tseslint from 'typescript-eslint'
+import globals from 'globals';
+import json from '@eslint/json';
+import markdown from '@eslint/markdown';
+import tseslint from 'typescript-eslint';
 
 export default [
   {
@@ -29,4 +29,4 @@ export default [
     plugins: { markdown },
     language: 'markdown/commonmark',
   },
-]
+];

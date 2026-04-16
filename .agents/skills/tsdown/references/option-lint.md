@@ -28,7 +28,7 @@ Checks that `package.json` fields (`exports`, `main`, `module`, `types`) match y
 ```ts
 export default defineConfig({
   publint: true,
-})
+});
 ```
 
 ### Configuration
@@ -38,7 +38,7 @@ export default defineConfig({
   publint: {
     level: 'error', // 'warning' | 'error' | 'suggestion'
   },
-})
+});
 ```
 
 ### CLI
@@ -56,7 +56,7 @@ Verifies TypeScript declarations are correct across different module resolution 
 ```ts
 export default defineConfig({
   attw: true,
-})
+});
 ```
 
 ### Configuration
@@ -68,7 +68,7 @@ export default defineConfig({
     level: 'error', // 'warn' | 'error'
     ignoreRules: ['false-cjs', 'cjs-resolves-to-esm'],
   },
-})
+});
 ```
 
 ### Profiles
@@ -116,7 +116,7 @@ export default defineConfig({
     profile: 'node16',
     level: 'error',
   },
-})
+});
 ```
 
 Both tools require a `package.json` in your project directory.

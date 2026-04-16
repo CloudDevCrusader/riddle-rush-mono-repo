@@ -61,39 +61,39 @@
 </template>
 
 <script setup lang="ts">
-const { getAssetPath } = useAssets()
+const { getAssetPath } = useAssets();
 
-const visible = ref(true)
-const progress = ref(0)
+const visible = ref(true);
+const progress = ref(0);
 
 const emit = defineEmits<{
-  complete: []
-}>()
+  complete: [];
+}>();
 
 const simulateLoading = () => {
-  const duration = 2500 // 2.5 seconds
-  const intervalTime = 20 // Update every 20ms
-  const steps = duration / intervalTime
-  const increment = 100 / steps
+  const duration = 2500; // 2.5 seconds
+  const intervalTime = 20; // Update every 20ms
+  const steps = duration / intervalTime;
+  const increment = 100 / steps;
 
   const interval = setInterval(() => {
-    progress.value = Math.min(progress.value + increment, 100)
+    progress.value = Math.min(progress.value + increment, 100);
 
     if (progress.value >= 100) {
-      clearInterval(interval)
+      clearInterval(interval);
       setTimeout(() => {
-        visible.value = false
+        visible.value = false;
         setTimeout(() => {
-          emit('complete')
-        }, 500) // Wait for fade out animation
-      }, 300) // Show 100% briefly
+          emit('complete');
+        }, 500); // Wait for fade out animation
+      }, 300); // Show 100% briefly
     }
-  }, intervalTime)
-}
+  }, intervalTime);
+};
 
 onMounted(() => {
-  simulateLoading()
-})
+  simulateLoading();
+});
 </script>
 
 <style scoped>

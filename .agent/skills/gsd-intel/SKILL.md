@@ -3,7 +3,6 @@ name: gsd-intel
 description: Query, inspect, or refresh codebase intelligence files in .planning/intel/
 ---
 
-
 **STOP -- DO NOT READ THIS FILE. You are already reading it. This prompt was injected into your context by Claude Code's command system. Using the Read tool on this file wastes tokens. Begin executing Step 0 immediately.**
 
 ## Step 0 -- Banner
@@ -46,13 +45,13 @@ Then run /gsd-intel refresh to build the initial index.
 
 Parse `$ARGUMENTS` to determine the operation mode:
 
-| Argument | Action |
-|----------|--------|
-| `query <term>` | Run inline query (Step 2a) |
-| `status` | Run inline status check (Step 2b) |
-| `diff` | Run inline diff check (Step 2c) |
-| `refresh` | Spawn intel-updater agent (Step 3) |
-| No argument or unknown | Show usage message |
+| Argument               | Action                             |
+| ---------------------- | ---------------------------------- |
+| `query <term>`         | Run inline query (Step 2a)         |
+| `status`               | Run inline status check (Step 2b)  |
+| `diff`                 | Run inline diff check (Step 2c)    |
+| `refresh`              | Spawn intel-updater agent (Step 3) |
+| No argument or unknown | Show usage message                 |
 
 **Usage message** (shown when no argument or unrecognized argument):
 
@@ -77,6 +76,7 @@ node .agent/get-shit-done/bin/gsd-tools.cjs intel query <term>
 ```
 
 Parse the JSON output and display results:
+
 - If the output contains `"disabled": true`, display the disabled message from Step 1 and **STOP**
 - If no matches found, display: `No intel matches for '<term>'. Try /gsd-intel refresh to build the index.`
 - Otherwise, display matching entries grouped by intel file
@@ -92,6 +92,7 @@ node .agent/get-shit-done/bin/gsd-tools.cjs intel status
 ```
 
 Parse the JSON output and display each intel file with:
+
 - File name
 - Last `updated_at` timestamp
 - STALE or FRESH status (stale if older than 24 hours or missing)
@@ -107,6 +108,7 @@ node .agent/get-shit-done/bin/gsd-tools.cjs intel diff
 ```
 
 Parse the JSON output and display:
+
 - Added entries since last snapshot
 - Removed entries since last snapshot
 - Changed entries since last snapshot
@@ -161,6 +163,7 @@ node .agent/get-shit-done/bin/gsd-tools.cjs intel status
 ```
 
 Display a summary showing:
+
 - Which intel files were written or updated
 - Last update timestamps
 - Overall health of the intel index

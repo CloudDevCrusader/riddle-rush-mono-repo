@@ -53,7 +53,8 @@ function ensureStoreDir(dir) {
  * @returns {string}
  */
 function contentHash(learning, sourceProject) {
-  return crypto.createHash('sha256')
+  return crypto
+    .createHash('sha256')
     .update(learning + '\n' + sourceProject)
     .digest('hex');
 }
@@ -106,7 +107,7 @@ function learningsWrite(entry, opts) {
   const hash = contentHash(entry.learning, entry.source_project);
 
   // Check for duplicate by scanning existing files
-  const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json'));
   for (const file of files) {
     const existing = readLearningFile(path.join(dir, file));
     if (existing && existing.content_hash === hash) {
@@ -156,7 +157,7 @@ function learningsList(opts) {
   const dir = getStoreDir(opts);
   if (!fs.existsSync(dir)) return [];
 
-  const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json'));
   const results = [];
   for (const file of files) {
     const record = readLearningFile(path.join(dir, file));
@@ -180,7 +181,7 @@ function learningsList(opts) {
 function learningsQuery(query, opts) {
   const all = learningsList(opts);
   if (query && query.tag) {
-    return all.filter(r => r.tags && r.tags.includes(query.tag));
+    return all.filter((r) => r.tags && r.tags.includes(query.tag));
   }
   return all;
 }
@@ -226,7 +227,8 @@ function learningsCopyFromProject(planningDir, opts) {
   }
 
   const content = fs.readFileSync(learningsPath, 'utf-8');
-  const sourceProject = (opts && opts.sourceProject) || path.basename(path.resolve(planningDir, '..'));
+  const sourceProject =
+    (opts && opts.sourceProject) || path.basename(path.resolve(planningDir, '..'));
 
   // Parse markdown: split on ## headings
   const sections = content.split(/^## /m).slice(1); // skip preamble before first ##
@@ -240,14 +242,20 @@ function learningsCopyFromProject(planningDir, opts) {
     if (!body) continue;
 
     // Extract tags from title (simple: use words as tags)
-    const tags = title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    const tags = title
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length > 2);
 
-    const result = learningsWrite({
-      source_project: sourceProject,
-      learning: body,
-      context: title,
-      tags,
-    }, opts);
+    const result = learningsWrite(
+      {
+        source_project: sourceProject,
+        learning: body,
+        context: title,
+        tags,
+      },
+      opts
+    );
 
     if (result.created) {
       created++;
@@ -279,7 +287,7 @@ function learningsPrune(olderThan, opts) {
 
   if (!fs.existsSync(dir)) return { removed: 0, kept: 0 };
 
-  const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json'));
   let removed = 0;
   let kept = 0;
 

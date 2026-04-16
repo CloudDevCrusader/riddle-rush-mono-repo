@@ -24,14 +24,14 @@ tags: [vue3, typescript, props, withDefaults, mutable-types]
 ```vue
 <script setup lang="ts">
 interface Props {
-  items?: string[]
-  config?: { theme: string }
+  items?: string[];
+  config?: { theme: string };
 }
 
 const props = withDefaults(defineProps<Props>(), {
   items: ['default'], // WRONG! All instances share this array
   config: { theme: 'light' }, // WRONG! All instances share this object
-})
+});
 </script>
 ```
 
@@ -46,7 +46,7 @@ When you have multiple instances of this component:
 
 <script setup>
 // If comp1 modifies its items, comp2's items change too!
-comp1.value.items.push('new item') // comp2 also has 'new item' now
+comp1.value.items.push('new item'); // comp2 also has 'new item' now
 </script>
 ```
 
@@ -57,16 +57,16 @@ comp1.value.items.push('new item') // comp2 also has 'new item' now
 ```vue
 <script setup lang="ts">
 interface Props {
-  items?: string[]
-  config?: { theme: string }
-  nested?: { data: { values: number[] } }
+  items?: string[];
+  config?: { theme: string };
+  nested?: { data: { values: number[] } };
 }
 
 const props = withDefaults(defineProps<Props>(), {
   items: () => ['default'], // Factory function!
   config: () => ({ theme: 'light' }), // Factory function!
   nested: () => ({ data: { values: [] } }), // Factory function!
-})
+});
 </script>
 ```
 
@@ -89,21 +89,21 @@ const props = withDefaults(defineProps<Props>(), {
 ```vue
 <script setup lang="ts">
 interface User {
-  id: string
-  name: string
+  id: string;
+  name: string;
 }
 
 interface Props {
   // Primitives - no factory needed
-  title?: string
-  count?: number
-  disabled?: boolean
+  title?: string;
+  count?: number;
+  disabled?: boolean;
 
   // Mutable types - factory required
-  items?: string[]
-  users?: User[]
-  metadata?: Record<string, unknown>
-  selectedIds?: Set<string>
+  items?: string[];
+  users?: User[];
+  metadata?: Record<string, unknown>;
+  selectedIds?: Set<string>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -117,7 +117,7 @@ const props = withDefaults(defineProps<Props>(), {
   users: () => [],
   metadata: () => ({}),
   selectedIds: () => new Set(),
-})
+});
 </script>
 ```
 
@@ -128,15 +128,15 @@ Vue 3.5 introduces reactive props destructure, which handles this automatically:
 ```vue
 <script setup lang="ts">
 interface Props {
-  items?: string[]
-  config?: { theme: string }
+  items?: string[];
+  config?: { theme: string };
 }
 
 // Vue 3.5+ - defaults work correctly without explicit factory functions
 const {
   items = ['default'], // Each instance gets its own array
   config = { theme: 'light' }, // Each instance gets its own object
-} = defineProps<Props>()
+} = defineProps<Props>();
 </script>
 ```
 
@@ -150,13 +150,13 @@ This bug often appears in list/table components:
 <!-- ListItem.vue - BUGGY -->
 <script setup lang="ts">
 interface Props {
-  selectedRows?: number[]
+  selectedRows?: number[];
 }
 
 // All ListItems share the same selectedRows array!
 const props = withDefaults(defineProps<Props>(), {
   selectedRows: [], // BUG: Missing factory function
-})
+});
 </script>
 ```
 
@@ -167,7 +167,7 @@ Users report: "Selecting a row in one table selects it in all tables!"
 ```typescript
 const props = withDefaults(defineProps<Props>(), {
   selectedRows: () => [], // Now each instance has its own array
-})
+});
 ```
 
 ## Reference

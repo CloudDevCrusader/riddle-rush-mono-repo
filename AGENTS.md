@@ -396,16 +396,16 @@ scripts/        # Deployment and utility scripts
 
 ```typescript
 // Shared types
-import type { GameSession, Player } from '@riddle-rush/types'
+import type { GameSession, Player } from '@riddle-rush/types';
 
 // Shared utilities
-import { SCORE_PER_CORRECT_ANSWER, MAX_PLAYERS } from '@riddle-rush/shared'
+import { SCORE_PER_CORRECT_ANSWER, MAX_PLAYERS } from '@riddle-rush/shared';
 
 // Shared config
-import { viteConfig } from '@riddle-rush/config/vite'
+import { viteConfig } from '@riddle-rush/config/vite';
 
 // Internal workspace packages
-import { useIndexedDB } from '~/composables/useIndexedDB' // Auto-imported
+import { useIndexedDB } from '~/composables/useIndexedDB'; // Auto-imported
 ```
 
 ### Vue/Nuxt Code Style
@@ -415,14 +415,14 @@ import { useIndexedDB } from '~/composables/useIndexedDB' // Auto-imported
 // Use Composition API with <script setup>
 // Composables are auto-imported (no need to import)
 
-const { t } = useI18n()
-const { $logger } = useNuxtApp()
+const { t } = useI18n();
+const { $logger } = useNuxtApp();
 
 // Use Pinia stores for state management
-const gameStore = useGameStore()
+const gameStore = useGameStore();
 
 // Auto-import components from components/
-const GameButton = defineAsyncComponent(() => import('~/components/game/GameButton.vue'))
+const GameButton = defineAsyncComponent(() => import('~/components/game/GameButton.vue'));
 </script>
 
 <template>
@@ -447,19 +447,19 @@ const GameButton = defineAsyncComponent(() => import('~/components/game/GameButt
 
 // Use interfaces for object shapes, types for unions/intersections
 interface Player {
-  id: string
-  name: string
-  score: number
+  id: string;
+  name: string;
+  score: number;
 }
 
-type GameStatus = 'active' | 'completed' | 'error'
+type GameStatus = 'active' | 'completed' | 'error';
 
 // Export types from packages/types
-export type { GameSession } from '@riddle-rush/types'
+export type { GameSession } from '@riddle-rush/types';
 
 // Use workspace packages for shared code
-import { myUtil } from '@riddle-rush/shared'
-import type { MyType } from '@riddle-rush/types'
+import { myUtil } from '@riddle-rush/shared';
+import type { MyType } from '@riddle-rush/types';
 ```
 
 ### File Organization
@@ -491,8 +491,8 @@ apps/game/
 ### Pinia Store Pattern
 
 ```typescript
-import { defineStore } from 'pinia'
-import type { GameState } from '@riddle-rush/types/game'
+import { defineStore } from 'pinia';
+import type { GameState } from '@riddle-rush/types/game';
 
 export const useGameStore = defineStore('game', {
   state: (): GameState => ({
@@ -512,10 +512,10 @@ export const useGameStore = defineStore('game', {
 
     // Must save to IndexedDB after mutations
     async saveToDB() {
-      await useIndexedDB().saveGameSession(this.currentSession!)
+      await useIndexedDB().saveGameSession(this.currentSession!);
     },
   },
-})
+});
 ```
 
 ### Component Pattern
@@ -524,21 +524,21 @@ export const useGameStore = defineStore('game', {
 <script setup lang="ts">
 // Use defineProps with TypeScript interfaces
 interface Props {
-  title: string
-  count?: number
+  title: string;
+  count?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   count: 0,
-})
+});
 
 // Use defineEmits for events
 interface Emits {
-  (e: 'update', value: string): void
-  (e: 'submit'): void
+  (e: 'update', value: string): void;
+  (e: 'submit'): void;
 }
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 </script>
 
 <template>
@@ -558,30 +558,30 @@ const emit = defineEmits<Emits>()
 **Key Patterns:**
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useGameStore } from '~/stores/game'
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { setActivePinia, createPinia } from 'pinia';
+import { useGameStore } from '~/stores/game';
 
 describe('useGameStore', () => {
   beforeEach(() => {
     // Initialize Pinia before each test
-    setActivePinia(createPinia())
+    setActivePinia(createPinia());
     // Reset store
-    const store = useGameStore()
-    store.$reset()
-  })
+    const store = useGameStore();
+    store.$reset();
+  });
 
   it('should have correct initial state', () => {
-    const store = useGameStore()
-    expect(store.currentSession).toBeNull()
-  })
+    const store = useGameStore();
+    expect(store.currentSession).toBeNull();
+  });
 
   it('should load categories', async () => {
-    const store = useGameStore()
-    await store.loadCategories()
-    expect(store.categories.length).toBeGreaterThan(0)
-  })
-})
+    const store = useGameStore();
+    await store.loadCategories();
+    expect(store.categories.length).toBeGreaterThan(0);
+  });
+});
 ```
 
 **Coverage Thresholds:** 80% (lines, functions, branches, statements)
@@ -593,19 +593,19 @@ describe('useGameStore', () => {
 **Key Patterns:**
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
 test('should complete a game round', async ({ page }) => {
-  await page.goto('/')
-  await page.click('[data-testid="start-game-btn"]')
+  await page.goto('/');
+  await page.click('[data-testid="start-game-btn"]');
 
   // Use data-testid for language-agnostic testing
-  await expect(page.locator('[data-testid="category-display"]')).toBeVisible()
-  await page.fill('[data-testid="answer-input"]', 'Test Answer')
-  await page.click('[data-testid="submit-btn"]')
+  await expect(page.locator('[data-testid="category-display"]')).toBeVisible();
+  await page.fill('[data-testid="answer-input"]', 'Test Answer');
+  await page.click('[data-testid="submit-btn"]');
 
-  await expect(page.locator('[data-testid="score-display"]')).toBeVisible()
-})
+  await expect(page.locator('[data-testid="score-display"]')).toBeVisible();
+});
 ```
 
 **Test Projects:**
@@ -877,13 +877,13 @@ export const useGameStore = defineStore('game', {
     async startNewSession(category: Category) {
       this.currentSession = {
         /* ... */
-      }
+      };
 
       // IMPORTANT: Must save to IndexedDB
-      await useIndexedDB().saveGameSession(this.currentSession!)
+      await useIndexedDB().saveGameSession(this.currentSession!);
     },
   },
-})
+});
 ```
 
 ### Client-Only Code
@@ -892,16 +892,16 @@ Code using `window`, `localStorage`, IndexedDB must be wrapped in `onMounted` or
 
 ```typescript
 // Wrong - throws error on server
-const windowWidth = window.innerWidth
+const windowWidth = window.innerWidth;
 
 // Correct
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue';
 
-const windowWidth = ref(0)
+const windowWidth = ref(0);
 
 onMounted(() => {
-  windowWidth.value = window.innerWidth
-})
+  windowWidth.value = window.innerWidth;
+});
 ```
 
 ### Base URL Configuration
@@ -910,13 +910,13 @@ Always use `useRuntimeConfig().public.baseUrl` — never hardcode URLs:
 
 ```typescript
 // Wrong
-const url = 'https://riddlerush.de'
+const url = 'https://riddlerush.de';
 
 // Correct
 const {
   public: { baseUrl },
-} = useRuntimeConfig()
-const url = `${baseUrl}/game`
+} = useRuntimeConfig();
+const url = `${baseUrl}/game`;
 ```
 
 ### Monorepo Package Imports
@@ -1023,8 +1023,8 @@ Located in `tools/ai-agents/python/`:
 **Solution:** Ensure you're using workspace package imports:
 
 ```typescript
-import { foo } from '@riddle-rush/shared'
-import type { Bar } from '@riddle-rush/types'
+import { foo } from '@riddle-rush/shared';
+import type { Bar } from '@riddle-rush/types';
 ```
 
 Don't use relative paths for shared code.
@@ -1050,11 +1050,11 @@ pnpm run build
 **Solution:** Initialize Pinia in test setup:
 
 ```typescript
-import { setActivePinia, createPinia } from 'pinia'
+import { setActivePinia, createPinia } from 'pinia';
 
 beforeEach(() => {
-  setActivePinia(createPinia())
-})
+  setActivePinia(createPinia());
+});
 ```
 
 ### Issue: TypeScript errors in stores but not in components
@@ -1088,11 +1088,11 @@ pnpm install
 **Solution:** Use `onMounted` or `onClientOnly` for client-side code:
 
 ```typescript
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
 onMounted(() => {
   // Client-side code here
-})
+});
 ```
 
 ### Issue: Build taking too long
@@ -1127,8 +1127,8 @@ Or modify Playwright config to use a custom base URL.
 // In browser console
 if ('caches' in window) {
   caches.keys().then((names) => {
-    names.forEach((name) => caches.delete(name))
-  })
+    names.forEach((name) => caches.delete(name));
+  });
 }
 ```
 

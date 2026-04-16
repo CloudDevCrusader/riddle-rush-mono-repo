@@ -12,17 +12,17 @@
 
 interface Props {
   /** Current value (0-100) */
-  modelValue: number
+  modelValue: number;
   /** Minimum value (default: 0) */
-  min?: number
+  min?: number;
   /** Maximum value (default: 100) */
-  max?: number
+  max?: number;
   /** Icon to display (emoji) */
-  icon?: string
+  icon?: string;
   /** Icon to display when muted/value is 0 (emoji) */
-  mutedIcon?: string
+  mutedIcon?: string;
   /** Optional label text */
-  label?: string
+  label?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,129 +31,129 @@ const props = withDefaults(defineProps<Props>(), {
   icon: '',
   mutedIcon: '',
   label: '',
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number]
-  change: [value: number]
-}>()
+  'update:modelValue': [value: number];
+  change: [value: number];
+}>();
 
 // Refs
-const trackRef = ref<HTMLElement | null>(null)
-const isDragging = ref(false)
+const trackRef = ref<HTMLElement | null>(null);
+const isDragging = ref(false);
 
 // Computed values
 const displayIcon = computed(() => {
   if (props.modelValue === 0 && props.mutedIcon) {
-    return props.mutedIcon
+    return props.mutedIcon;
   }
-  return props.icon
-})
+  return props.icon;
+});
 
 const percentage = computed(() => {
-  const range = props.max - props.min
-  if (range === 0) return 0
-  return ((props.modelValue - props.min) / range) * 100
-})
+  const range = props.max - props.min;
+  if (range === 0) return 0;
+  return ((props.modelValue - props.min) / range) * 100;
+});
 
 const fillStyle = computed(() => ({
   width: `${percentage.value}%`,
-}))
+}));
 
 const thumbStyle = computed(() => ({
   left: `${percentage.value}%`,
-}))
+}));
 
 // Methods
 const calculateValueFromPosition = (clientX: number): number => {
-  if (!trackRef.value) return props.modelValue
+  if (!trackRef.value) return props.modelValue;
 
-  const rect = trackRef.value.getBoundingClientRect()
-  const relativeX = clientX - rect.left
-  const percentage = Math.max(0, Math.min(1, relativeX / rect.width))
-  const range = props.max - props.min
-  const newValue = Math.round(props.min + percentage * range)
+  const rect = trackRef.value.getBoundingClientRect();
+  const relativeX = clientX - rect.left;
+  const percentage = Math.max(0, Math.min(1, relativeX / rect.width));
+  const range = props.max - props.min;
+  const newValue = Math.round(props.min + percentage * range);
 
-  return newValue
-}
+  return newValue;
+};
 
 const handleTrackClick = (event: MouseEvent) => {
-  const newValue = calculateValueFromPosition(event.clientX)
-  emit('update:modelValue', newValue)
-  emit('change', newValue)
-}
+  const newValue = calculateValueFromPosition(event.clientX);
+  emit('update:modelValue', newValue);
+  emit('change', newValue);
+};
 
 const handleDrag = (event: MouseEvent | TouchEvent) => {
-  if (!isDragging.value) return
+  if (!isDragging.value) return;
 
-  let clientX: number
+  let clientX: number;
   if ('touches' in event) {
-    const touch = event.touches[0]
-    if (!touch) return
-    clientX = touch.clientX
+    const touch = event.touches[0];
+    if (!touch) return;
+    clientX = touch.clientX;
   } else {
-    clientX = event.clientX
+    clientX = event.clientX;
   }
-  const newValue = calculateValueFromPosition(clientX)
-  emit('update:modelValue', newValue)
-}
+  const newValue = calculateValueFromPosition(clientX);
+  emit('update:modelValue', newValue);
+};
 
 const startDrag = (event: MouseEvent | TouchEvent) => {
-  event.preventDefault()
-  isDragging.value = true
+  event.preventDefault();
+  isDragging.value = true;
 
   // Initial position update
-  let clientX: number
+  let clientX: number;
   if ('touches' in event) {
-    const touch = event.touches[0]
-    if (!touch) return
-    clientX = touch.clientX
+    const touch = event.touches[0];
+    if (!touch) return;
+    clientX = touch.clientX;
   } else {
-    clientX = event.clientX
+    clientX = event.clientX;
   }
-  const newValue = calculateValueFromPosition(clientX)
-  emit('update:modelValue', newValue)
+  const newValue = calculateValueFromPosition(clientX);
+  emit('update:modelValue', newValue);
 
   // Add listeners
-  document.addEventListener('mousemove', handleDrag)
-  document.addEventListener('mouseup', endDrag)
-  document.addEventListener('touchmove', handleDrag)
-  document.addEventListener('touchend', endDrag)
-}
+  document.addEventListener('mousemove', handleDrag);
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchmove', handleDrag);
+  document.addEventListener('touchend', endDrag);
+};
 
 const endDrag = () => {
   if (isDragging.value) {
-    isDragging.value = false
-    emit('change', props.modelValue)
+    isDragging.value = false;
+    emit('change', props.modelValue);
   }
 
   // Remove listeners
-  document.removeEventListener('mousemove', handleDrag)
-  document.removeEventListener('mouseup', endDrag)
-  document.removeEventListener('touchmove', handleDrag)
-  document.removeEventListener('touchend', endDrag)
-}
+  document.removeEventListener('mousemove', handleDrag);
+  document.removeEventListener('mouseup', endDrag);
+  document.removeEventListener('touchmove', handleDrag);
+  document.removeEventListener('touchend', endDrag);
+};
 
 // Handle native input for accessibility
 const handleInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const newValue = Number(target.value)
-  emit('update:modelValue', newValue)
-}
+  const target = event.target as HTMLInputElement;
+  const newValue = Number(target.value);
+  emit('update:modelValue', newValue);
+};
 
 const handleInputChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const newValue = Number(target.value)
-  emit('change', newValue)
-}
+  const target = event.target as HTMLInputElement;
+  const newValue = Number(target.value);
+  emit('change', newValue);
+};
 
 // Cleanup on unmount
 onUnmounted(() => {
-  document.removeEventListener('mousemove', handleDrag)
-  document.removeEventListener('mouseup', endDrag)
-  document.removeEventListener('touchmove', handleDrag)
-  document.removeEventListener('touchend', endDrag)
-})
+  document.removeEventListener('mousemove', handleDrag);
+  document.removeEventListener('mouseup', endDrag);
+  document.removeEventListener('touchmove', handleDrag);
+  document.removeEventListener('touchend', endDrag);
+});
 </script>
 
 <template>

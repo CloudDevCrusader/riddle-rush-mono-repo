@@ -30,29 +30,29 @@ const emit = defineEmits({
   // Validate that email is present
   submit: (payload) => {
     if (!payload || !payload.email) {
-      console.warn('Submit event requires an email field')
-      return false
+      console.warn('Submit event requires an email field');
+      return false;
     }
     if (!payload.email.includes('@')) {
-      console.warn('Submit event requires a valid email')
-      return false
+      console.warn('Submit event requires a valid email');
+      return false;
     }
-    return true
+    return true;
   },
 
   // Validate ID is a number
   select: (id) => {
     if (typeof id !== 'number') {
-      console.warn('Select event requires a numeric ID')
-      return false
+      console.warn('Select event requires a numeric ID');
+      return false;
     }
-    return true
+    return true;
   },
-})
+});
 
 function handleSubmit(formData) {
   // If validation fails, Vue logs warning but event still emits
-  emit('submit', formData)
+  emit('submit', formData);
 }
 </script>
 ```
@@ -64,14 +64,14 @@ function handleSubmit(formData) {
 const emit = defineEmits({
   submit: (data) => {
     if (!data?.email) {
-      return false // Validation fails
+      return false; // Validation fails
     }
-    return true
+    return true;
   },
-})
+});
 
 function badSubmit() {
-  emit('submit', {}) // Missing email
+  emit('submit', {}); // Missing email
   // Console: [Vue warn]: Invalid event arguments: event validation failed for event "submit"
   // Event STILL fires - validation is advisory only
 }
@@ -113,19 +113,19 @@ For compile-time validation, prefer TypeScript types over runtime validators:
 ```vue
 <script setup lang="ts">
 interface SubmitPayload {
-  email: string
-  password: string
-  rememberMe?: boolean
+  email: string;
+  password: string;
+  rememberMe?: boolean;
 }
 
 const emit = defineEmits<{
-  submit: [payload: SubmitPayload]
-  cancel: []
-  'page-change': [page: number]
-}>()
+  submit: [payload: SubmitPayload];
+  cancel: [];
+  'page-change': [page: number];
+}>();
 
 // TypeScript catches errors at compile time
-emit('submit', { email: 'test@test.com' })
+emit('submit', { email: 'test@test.com' });
 // Error: Property 'password' is missing
 </script>
 ```
@@ -150,8 +150,8 @@ Use object syntax validation when:
 ```vue
 <script setup lang="ts">
 interface FormData {
-  email: string
-  age: number
+  email: string;
+  age: number;
 }
 
 // TypeScript handles type structure
@@ -159,16 +159,16 @@ interface FormData {
 const emit = defineEmits({
   submit: (data: FormData) => {
     if (data.age < 0 || data.age > 150) {
-      console.warn('Age must be between 0 and 150')
-      return false
+      console.warn('Age must be between 0 and 150');
+      return false;
     }
     if (!data.email.includes('@')) {
-      console.warn('Invalid email format')
-      return false
+      console.warn('Invalid email format');
+      return false;
     }
-    return true
+    return true;
   },
-})
+});
 </script>
 ```
 

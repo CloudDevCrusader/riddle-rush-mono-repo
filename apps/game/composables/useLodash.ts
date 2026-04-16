@@ -5,81 +5,81 @@
  * Uses dynamic imports for better performance and smaller initial bundle.
  */
 
-import clone from 'lodash-es/clone'
-import isEmpty from 'lodash-es/isEmpty'
-import sample from 'lodash-es/sample'
-import sampleSize from 'lodash-es/sampleSize'
-import shuffle from 'lodash-es/shuffle'
+import clone from 'lodash-es/clone';
+import isEmpty from 'lodash-es/isEmpty';
+import sample from 'lodash-es/sample';
+import sampleSize from 'lodash-es/sampleSize';
+import shuffle from 'lodash-es/shuffle';
 
 export const useLodash = () => {
   return {
     // Debounce & Throttle - Lazy loaded for performance
     get debounce() {
-      return import('lodash-es/debounce').then((module) => module.default)
+      return import('lodash-es/debounce').then((module) => module.default);
     },
     get throttle() {
-      return import('lodash-es/throttle').then((module) => module.default)
+      return import('lodash-es/throttle').then((module) => module.default);
     },
 
     // Array utilities - Lazy loaded for performance
     get shuffle() {
-      return import('lodash-es/shuffle').then((module) => module.default)
+      return import('lodash-es/shuffle').then((module) => module.default);
     },
     get sample() {
-      return import('lodash-es/sample').then((module) => module.default)
+      return import('lodash-es/sample').then((module) => module.default);
     },
     get sampleSize() {
-      return import('lodash-es/sampleSize').then((module) => module.default)
+      return import('lodash-es/sampleSize').then((module) => module.default);
     },
     get uniq() {
-      return import('lodash-es/uniq').then((module) => module.default)
+      return import('lodash-es/uniq').then((module) => module.default);
     },
     get uniqBy() {
-      return import('lodash-es/uniqBy').then((module) => module.default)
+      return import('lodash-es/uniqBy').then((module) => module.default);
     },
     get groupBy() {
-      return import('lodash-es/groupBy').then((module) => module.default)
+      return import('lodash-es/groupBy').then((module) => module.default);
     },
     get orderBy() {
-      return import('lodash-es/orderBy').then((module) => module.default)
+      return import('lodash-es/orderBy').then((module) => module.default);
     },
     get chunk() {
-      return import('lodash-es/chunk').then((module) => module.default)
+      return import('lodash-es/chunk').then((module) => module.default);
     },
     get flatten() {
-      return import('lodash-es/flatten').then((module) => module.default)
+      return import('lodash-es/flatten').then((module) => module.default);
     },
 
     // Object utilities - Lazy loaded for performance
     get cloneDeep() {
-      return import('lodash-es/cloneDeep').then((module) => module.default)
+      return import('lodash-es/cloneDeep').then((module) => module.default);
     },
     get isEqual() {
-      return import('lodash-es/isEqual').then((module) => module.default)
+      return import('lodash-es/isEqual').then((module) => module.default);
     },
     get isEmpty() {
-      return import('lodash-es/isEmpty').then((module) => module.default)
+      return import('lodash-es/isEmpty').then((module) => module.default);
     },
     get get() {
-      return import('lodash-es/get').then((module) => module.default)
+      return import('lodash-es/get').then((module) => module.default);
     },
     get set() {
-      return import('lodash-es/set').then((module) => module.default)
+      return import('lodash-es/set').then((module) => module.default);
     },
     get has() {
-      return import('lodash-es/has').then((module) => module.default)
+      return import('lodash-es/has').then((module) => module.default);
     },
     get omit() {
-      return import('lodash-es/omit').then((module) => module.default)
+      return import('lodash-es/omit').then((module) => module.default);
     },
     get pick() {
-      return import('lodash-es/pick').then((module) => module.default)
+      return import('lodash-es/pick').then((module) => module.default);
     },
-  }
-}
+  };
+};
 
 // Type-safe helpers
-export type { DebouncedFunc } from 'lodash-es'
+export type { DebouncedFunc } from 'lodash-es';
 
 /**
  * Synchronous lodash-es re-exports for hot paths (tree-shaken per import).
@@ -91,4 +91,4 @@ export const useLodashSync = () => ({
   shuffle,
   sample,
   sampleSize,
-})
+});

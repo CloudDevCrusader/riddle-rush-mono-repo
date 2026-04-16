@@ -24,15 +24,15 @@ tags: [vue3, events, emit, naming-convention, templates]
 ```vue
 <!-- ChildComponent.vue -->
 <script setup>
-const emit = defineEmits(['updateValue', 'itemSelected', 'formSubmit'])
+const emit = defineEmits(['updateValue', 'itemSelected', 'formSubmit']);
 
 function handleChange(value) {
   // Emit in camelCase (JavaScript convention)
-  emit('updateValue', value)
+  emit('updateValue', value);
 }
 
 function selectItem(item) {
-  emit('itemSelected', item)
+  emit('itemSelected', item);
 }
 </script>
 ```
@@ -73,34 +73,34 @@ This auto-conversion **only works in template syntax** (`@event-name`). It does 
 
 ```ts
 // In render functions, use camelCase with 'on' prefix
-import { h } from 'vue'
+import { h } from 'vue';
 
 // CORRECT - camelCase event name with 'on' prefix
 h(ChildComponent, {
   onUpdateValue: (value) => handleUpdate(value),
   onItemSelected: (item) => handleSelect(item),
-})
+});
 
 // WRONG - kebab-case does NOT work in render functions
 h(ChildComponent, {
   'onUpdate-value': (value) => handleUpdate(value), // Won't work!
   'on-update-value': (value) => handleUpdate(value), // Won't work!
-})
+});
 ```
 
 ```ts
 // Programmatic listeners also require camelCase
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
 
-const childRef = ref<ComponentPublicInstance | null>(null)
+const childRef = ref<ComponentPublicInstance | null>(null);
 
 onMounted(() => {
   // CORRECT - camelCase
-  childRef.value?.$on?.('updateValue', handler)
+  childRef.value?.$on?.('updateValue', handler);
 
   // WRONG - kebab-case won't match
-  childRef.value?.$on?.('update-value', handler) // Won't work!
-})
+  childRef.value?.$on?.('update-value', handler); // Won't work!
+});
 ```
 
 **Summary:**
@@ -123,10 +123,10 @@ When using TypeScript, define emits in camelCase:
 ```vue
 <script setup lang="ts">
 const emit = defineEmits<{
-  updateValue: [value: string] // camelCase
-  itemSelected: [item: Item] // camelCase
-  'update:modelValue': [value: string] // Special v-model syntax (with colon)
-}>()
+  updateValue: [value: string]; // camelCase
+  itemSelected: [item: Item]; // camelCase
+  'update:modelValue': [value: string]; // Special v-model syntax (with colon)
+}>();
 </script>
 ```
 
@@ -137,10 +137,10 @@ For v-model, the `update:` prefix uses a colon, not kebab-case:
 ```vue
 <script setup>
 // Correct: colon separator for v-model updates
-const emit = defineEmits(['update:modelValue', 'update:firstName'])
+const emit = defineEmits(['update:modelValue', 'update:firstName']);
 
 function updateValue(newValue) {
-  emit('update:modelValue', newValue)
+  emit('update:modelValue', newValue);
 }
 </script>
 ```

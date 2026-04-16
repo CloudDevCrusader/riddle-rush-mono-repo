@@ -53,10 +53,10 @@ pnpm add -D rollup-plugin-visualizer
 
 ```typescript
 // packages/config/vite/index.ts
-import { visualizer } from 'rollup-plugin-visualizer'
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export const getBuildPlugins = ({ isDev }: { isDev: boolean }) => {
-  const plugins = []
+  const plugins = [];
 
   // Add bundle analyzer in production mode when ANALYZE is set
   if (!isDev && process.env.ANALYZE) {
@@ -68,11 +68,11 @@ export const getBuildPlugins = ({ isDev }: { isDev: boolean }) => {
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
       })
-    )
+    );
   }
 
-  return plugins
-}
+  return plugins;
+};
 ```
 
 ### 3. Run Analysis
@@ -149,23 +149,23 @@ vite: {
 manualChunks: (id) => {
   // NEW: Split pages into separate chunks
   if (id.includes('/pages/')) {
-    const match = id.match(/\/pages\/([^/]+)\.vue/)
+    const match = id.match(/\/pages\/([^/]+)\.vue/);
     if (match) {
-      const pageName = match[1]
+      const pageName = match[1];
       // Group similar pages
       if (['index', 'credits', 'settings'].includes(pageName)) {
-        return 'pages-menu' // Frequently accessed together
+        return 'pages-menu'; // Frequently accessed together
       }
       if (['game', 'round-start', 'results'].includes(pageName)) {
-        return 'pages-game' // Game flow pages
+        return 'pages-game'; // Game flow pages
       }
-      return `page-${pageName}` // Others get individual chunks
+      return `page-${pageName}`; // Others get individual chunks
     }
   }
 
   // Existing vendor splitting (keep as-is)
   // ...
-}
+};
 ```
 
 **Benefits:**
@@ -180,9 +180,9 @@ manualChunks: (id) => {
 
 ```typescript
 // In component file
-const HeavyChart = defineAsyncComponent(() => import('./components/HeavyChart.vue'))
+const HeavyChart = defineAsyncComponent(() => import('./components/HeavyChart.vue'));
 
-const DebugPanel = defineAsyncComponent(() => import('./components/DebugPanel.vue'))
+const DebugPanel = defineAsyncComponent(() => import('./components/DebugPanel.vue'));
 ```
 
 **Already implemented for modals:**
@@ -208,17 +208,17 @@ const DebugPanel = defineAsyncComponent(() => import('./components/DebugPanel.vu
 if (id.includes('node_modules')) {
   // Motion library (if large)
   if (id.includes('@vueuse/motion')) {
-    return 'vendor-motion'
+    return 'vendor-motion';
   }
 
   // Color mode (rarely changes)
   if (id.includes('@nuxtjs/color-mode')) {
-    return 'vendor-color-mode'
+    return 'vendor-color-mode';
   }
 
   // Device detection (small, but separate for better caching)
   if (id.includes('@nuxtjs/device')) {
-    return 'vendor-device'
+    return 'vendor-device';
   }
 
   // Existing splits...
@@ -271,19 +271,19 @@ grep -r "from 'lodash-es" apps/game/
 
 ```typescript
 // ❌ BAD: Imports entire library
-import _ from 'lodash-es'
-const result = _.debounce(fn, 100)
+import _ from 'lodash-es';
+const result = _.debounce(fn, 100);
 
 // ✅ GOOD: Tree-shakable
-import { debounce } from 'lodash-es'
-const result = debounce(fn, 100)
+import { debounce } from 'lodash-es';
+const result = debounce(fn, 100);
 ```
 
 **Current usage:**
 
 ```typescript
 // apps/game/composables/useLodash.ts
-export { debounce, throttle, cloneDeep, merge } from 'lodash-es'
+export { debounce, throttle, cloneDeep, merge } from 'lodash-es';
 ```
 
 **Status:** ✅ Already optimized with named exports!
@@ -300,11 +300,11 @@ grep -r "from '@vueuse/core'" apps/game/ | sort | uniq
 
 ```typescript
 // ❌ Less optimal
-import { useWindowSize, useEventListener } from '@vueuse/core'
+import { useWindowSize, useEventListener } from '@vueuse/core';
 
 // ✅ Better (more explicit for bundler)
-import { useWindowSize } from '@vueuse/core/useWindowSize'
-import { useEventListener } from '@vueuse/core/useEventListener'
+import { useWindowSize } from '@vueuse/core/useWindowSize';
+import { useEventListener } from '@vueuse/core/useEventListener';
 ```
 
 **Note:** Modern bundlers handle both well, but explicit imports help with analysis.
@@ -343,7 +343,7 @@ npx depcheck apps/game
 // nuxt.config.ts
 export default defineNuxtConfig({
   // Nuxt 4 has improved caching by default
-})
+});
 ```
 
 **Verify cache is working:**
@@ -431,45 +431,45 @@ Create `apps/game/performance-budget.json`:
 
 ```typescript
 // scripts/check-bundle-size.ts
-import { readFileSync } from 'fs'
-import { glob } from 'glob'
+import { readFileSync } from 'fs';
+import { glob } from 'glob';
 
-const MAX_JS_SIZE = 100 * 1024 // 100KB gzipped
-const MAX_CSS_SIZE = 30 * 1024 // 30KB gzipped
+const MAX_JS_SIZE = 100 * 1024; // 100KB gzipped
+const MAX_CSS_SIZE = 30 * 1024; // 30KB gzipped
 
-const distPath = 'apps/game/.output/public/_nuxt'
+const distPath = 'apps/game/.output/public/_nuxt';
 
 // Check JS bundles
-const jsFiles = glob.sync(`${distPath}/*.js`)
-let totalJsSize = 0
+const jsFiles = glob.sync(`${distPath}/*.js`);
+let totalJsSize = 0;
 
 for (const file of jsFiles) {
-  const size = readFileSync(file).length
-  totalJsSize += size
+  const size = readFileSync(file).length;
+  totalJsSize += size;
 
   if (size > MAX_JS_SIZE) {
-    console.error(`❌ JS file too large: ${file} (${(size / 1024).toFixed(2)}KB)`)
-    process.exit(1)
+    console.error(`❌ JS file too large: ${file} (${(size / 1024).toFixed(2)}KB)`);
+    process.exit(1);
   }
 }
 
-console.log(`✅ Total JS size: ${(totalJsSize / 1024).toFixed(2)}KB`)
+console.log(`✅ Total JS size: ${(totalJsSize / 1024).toFixed(2)}KB`);
 
 // Check CSS bundles
-const cssFiles = glob.sync(`${distPath}/*.css`)
-let totalCssSize = 0
+const cssFiles = glob.sync(`${distPath}/*.css`);
+let totalCssSize = 0;
 
 for (const file of cssFiles) {
-  const size = readFileSync(file).length
-  totalCssSize += size
+  const size = readFileSync(file).length;
+  totalCssSize += size;
 
   if (size > MAX_CSS_SIZE) {
-    console.error(`❌ CSS file too large: ${file} (${(size / 1024).toFixed(2)}KB)`)
-    process.exit(1)
+    console.error(`❌ CSS file too large: ${file} (${(size / 1024).toFixed(2)}KB)`);
+    process.exit(1);
   }
 }
 
-console.log(`✅ Total CSS size: ${(totalCssSize / 1024).toFixed(2)}KB`)
+console.log(`✅ Total CSS size: ${(totalCssSize / 1024).toFixed(2)}KB`);
 ```
 
 **Add to package.json:**
@@ -529,7 +529,7 @@ export default defineNuxtConfig({
       transformer: 'lightningcss',
     },
   },
-})
+});
 ```
 
 **Benefits:**
@@ -552,7 +552,7 @@ export default defineNuxtConfig({
     // Inline CSS for critical pages
     inlineSSRStyles: (id) => !id.includes('components'),
   },
-})
+});
 ```
 
 ### 3. Prerender Static Pages
@@ -567,7 +567,7 @@ export default defineNuxtConfig({
       routes: ['/credits', '/language'],
     },
   },
-})
+});
 ```
 
 **Benefits:**
@@ -628,22 +628,22 @@ echo "Bundle sizes tracked: JS=${JS_SIZE}B, CSS=${CSS_SIZE}B"
 
 ```javascript
 // scripts/bundle-alert.mjs
-import { readFileSync } from 'fs'
+import { readFileSync } from 'fs';
 
-const MAX_INCREASE = 0.1 // 10%
+const MAX_INCREASE = 0.1; // 10%
 
-const current = getCurrentBundleSize()
-const baseline = getBaselineBundleSize()
+const current = getCurrentBundleSize();
+const baseline = getBaselineBundleSize();
 
-const increase = (current - baseline) / baseline
+const increase = (current - baseline) / baseline;
 
 if (increase > MAX_INCREASE) {
-  console.error(`❌ Bundle size increased by ${(increase * 100).toFixed(1)}%!`)
-  console.error(`Baseline: ${baseline}, Current: ${current}`)
-  process.exit(1)
+  console.error(`❌ Bundle size increased by ${(increase * 100).toFixed(1)}%!`);
+  console.error(`Baseline: ${baseline}, Current: ${current}`);
+  process.exit(1);
 }
 
-console.log(`✅ Bundle size within acceptable range (${(increase * 100).toFixed(1)}% change)`)
+console.log(`✅ Bundle size within acceptable range (${(increase * 100).toFixed(1)}% change)`);
 ```
 
 ---

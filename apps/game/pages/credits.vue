@@ -68,15 +68,15 @@
 </template>
 
 <script setup lang="ts">
-const { goBack } = usePageSetup()
-const runtimeConfig = useRuntimeConfig()
-const appVersion = runtimeConfig.public.appVersion
-const { t } = useI18n()
+const { goBack } = usePageSetup();
+const runtimeConfig = useRuntimeConfig();
+const appVersion = runtimeConfig.public.appVersion;
+const { t } = useI18n();
 
 useLocalizedPageSeo({
   title: () => t('credits.title'),
   description: () => t('credits.description'),
-})
+});
 </script>
 
 <style scoped>

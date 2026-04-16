@@ -6,10 +6,10 @@
  * The game store delegates to these functions while still owning all reactive state.
  */
 
-import { useLogger } from './useLogger'
-import { useCategoryEmoji } from './useCategoryEmoji'
-import { useLodashSync } from './useLodash'
-import type { Category } from '@riddle-rush/types/game'
+import { useLogger } from './useLogger';
+import { useCategoryEmoji } from './useCategoryEmoji';
+import { useLodashSync } from './useLodash';
+import type { Category } from '@riddle-rush/types/game';
 
 /**
  * Composable providing category management utilities.
@@ -37,59 +37,59 @@ export function useCategoryManager() {
    */
   async function fetchCategories(
     state: {
-      categories: Category[]
-      categoriesLoaded: boolean
-      categoriesLoading: boolean
-      categoryLoadError: string | null
+      categories: Category[];
+      categoriesLoaded: boolean;
+      categoriesLoading: boolean;
+      categoryLoadError: string | null;
     },
     force = false
   ): Promise<Category[]> {
     // Return cached categories if already loaded
     if (state.categoriesLoaded && !force) {
-      return state.categories
+      return state.categories;
     }
 
     // Wait if already loading (race condition guard)
     if (state.categoriesLoading) {
-      const maxAttempts = 100
+      const maxAttempts = 100;
       for (let i = 0; i < maxAttempts; i++) {
-        await new Promise((resolve) => setTimeout(resolve, 100))
+        await new Promise((resolve) => setTimeout(resolve, 100));
         if (!state.categoriesLoading) {
-          return state.categories
+          return state.categories;
         }
       }
-      throw new Error('Category loading timeout')
+      throw new Error('Category loading timeout');
     }
 
-    state.categoriesLoading = true
+    state.categoriesLoading = true;
 
     try {
-      const categories = await $fetch<Category[]>('/data/categories.json')
+      const categories = await $fetch<Category[]>('/data/categories.json');
 
       if (!categories || categories.length === 0) {
-        throw new Error('No categories found in data file')
+        throw new Error('No categories found in data file');
       }
 
-      state.categories = categories
-      state.categoriesLoaded = true
-      state.categoryLoadError = null
+      state.categories = categories;
+      state.categoriesLoaded = true;
+      state.categoryLoadError = null;
 
-      return categories
+      return categories;
     } catch (error) {
-      const logger = useLogger()
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load categories'
-      state.categoryLoadError = errorMessage
-      logger.error('Error fetching categories:', error)
+      const logger = useLogger();
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load categories';
+      state.categoryLoadError = errorMessage;
+      logger.error('Error fetching categories:', error);
 
       // Don't throw if we have cached categories
       if (state.categories.length > 0) {
-        logger.warn('Using cached categories due to fetch error')
-        return state.categories
+        logger.warn('Using cached categories due to fetch error');
+        return state.categories;
       }
 
-      throw new Error(errorMessage)
+      throw new Error(errorMessage);
     } finally {
-      state.categoriesLoading = false
+      state.categoriesLoading = false;
     }
   }
 
@@ -105,12 +105,12 @@ export function useCategoryManager() {
     state: { displayedCategoryCount: number; categories: Category[] },
     step = 9
   ): void {
-    if (state.displayedCategoryCount >= state.categories.length) return
+    if (state.displayedCategoryCount >= state.categories.length) return;
 
     state.displayedCategoryCount = Math.min(
       state.displayedCategoryCount + step,
       state.categories.length
-    )
+    );
   }
 
   /**
@@ -125,7 +125,7 @@ export function useCategoryManager() {
     state: { displayedCategoryCount: number; categories: Category[] },
     count = 9
   ): void {
-    state.displayedCategoryCount = Math.min(count, state.categories.length || count)
+    state.displayedCategoryCount = Math.min(count, state.categories.length || count);
   }
 
   /**
@@ -136,7 +136,7 @@ export function useCategoryManager() {
    * @returns The matching category, or null if not found
    */
   function getCategoryById(categories: Category[], categoryId: number): Category | null {
-    return categories.find((category: Category) => category.id === categoryId) ?? null
+    return categories.find((category: Category) => category.id === categoryId) ?? null;
   }
 
   /**
@@ -147,11 +147,11 @@ export function useCategoryManager() {
    * @returns A randomly selected category, or null if the array is empty
    */
   function getRandomCategory(categories: Category[]): Category | null {
-    if (!categories.length) return null
+    if (!categories.length) return null;
 
-    const { shuffle } = useLodashSync()
-    const shuffled = shuffle(categories)
-    return shuffled[0] ?? null
+    const { shuffle } = useLodashSync();
+    const shuffled = shuffle(categories);
+    return shuffled[0] ?? null;
   }
 
   /**
@@ -162,8 +162,8 @@ export function useCategoryManager() {
    * @returns The matching emoji, or the default 🎯
    */
   function getCategoryEmoji(name?: string | null): string {
-    const { resolve } = useCategoryEmoji()
-    return resolve(name)
+    const { resolve } = useCategoryEmoji();
+    return resolve(name);
   }
 
   return {
@@ -173,5 +173,5 @@ export function useCategoryManager() {
     getCategoryById,
     getRandomCategory,
     getCategoryEmoji,
-  }
+  };
 }

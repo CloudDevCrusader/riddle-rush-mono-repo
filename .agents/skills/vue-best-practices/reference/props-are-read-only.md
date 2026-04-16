@@ -30,11 +30,11 @@ This is especially dangerous with object/array props because JavaScript passes t
 <script setup>
 const props = defineProps({
   count: Number,
-})
+});
 
 // WRONG: Vue will warn about mutating props
 function increment() {
-  props.count++ // Mutation attempt - this WILL fail
+  props.count++; // Mutation attempt - this WILL fail
 }
 </script>
 ```
@@ -46,15 +46,15 @@ function increment() {
 const props = defineProps({
   user: Object,
   items: Array,
-})
+});
 
 // WRONG: No warning, but breaks data flow!
 function updateUser() {
-  props.user.name = 'New Name' // Mutates parent's object
+  props.user.name = 'New Name'; // Mutates parent's object
 }
 
 function addItem() {
-  props.items.push({ id: 1 }) // Mutates parent's array
+  props.items.push({ id: 1 }); // Mutates parent's array
 }
 </script>
 ```
@@ -78,16 +78,16 @@ Let the parent handle all data changes.
 const props = defineProps({
   count: Number,
   user: Object,
-})
+});
 
-const emit = defineEmits(['update:count', 'update-user'])
+const emit = defineEmits(['update:count', 'update-user']);
 
 function increment() {
-  emit('update:count', props.count + 1)
+  emit('update:count', props.count + 1);
 }
 
 function updateName(newName) {
-  emit('update-user', { ...props.user, name: newName })
+  emit('update-user', { ...props.user, name: newName });
 }
 </script>
 ```
@@ -112,34 +112,34 @@ When the component needs to work with a modified version of prop data.
 
 ```vue
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   initialValue: String,
   user: Object,
-})
+});
 
 // Local copy for editing
-const localValue = ref(props.initialValue)
+const localValue = ref(props.initialValue);
 
 // Deep copy for objects
-const localUser = ref({ ...props.user })
+const localUser = ref({ ...props.user });
 
 // Sync when parent changes the prop
 watch(
   () => props.initialValue,
   (newVal) => {
-    localValue.value = newVal
+    localValue.value = newVal;
   }
-)
+);
 
 watch(
   () => props.user,
   (newUser) => {
-    localUser.value = { ...newUser }
+    localUser.value = { ...newUser };
   },
   { deep: true }
-)
+);
 </script>
 
 <template>
@@ -156,18 +156,18 @@ When you need a derived/transformed version of the prop.
 
 ```vue
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
   text: String,
   items: Array,
-})
+});
 
 // Derived value - doesn't mutate prop
-const uppercaseText = computed(() => props.text.toUpperCase())
+const uppercaseText = computed(() => props.text.toUpperCase());
 
 // Filtered view - doesn't mutate prop
-const activeItems = computed(() => props.items.filter((item) => item.active))
+const activeItems = computed(() => props.items.filter((item) => item.active));
 </script>
 ```
 
@@ -182,9 +182,9 @@ For form-like components that need two-way binding.
 <script setup>
 const props = defineProps({
   modelValue: String,
-})
+});
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue']);
 </script>
 
 <template>
@@ -204,10 +204,10 @@ const emit = defineEmits(['update:modelValue'])
 
 ```vue
 <script setup>
-const props = defineProps({ config: Object })
+const props = defineProps({ config: Object });
 
 // This "works" but is an anti-pattern!
-props.config.theme = 'dark' // No Vue warning, but still wrong
+props.config.theme = 'dark'; // No Vue warning, but still wrong
 </script>
 ```
 

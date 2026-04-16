@@ -34,10 +34,11 @@ Before reviewing, discover project context:
 **Project instructions:** Read `./AGENTS.md` if it exists in the working directory. Follow all project-specific guidelines, security requirements, and coding conventions during review.
 
 **Project skills:** Check `.kilo/skills/` or `.kilo/skills/` directory if either exists:
+
 1. List available skills (subdirectories)
 2. Read `SKILL.md` for each skill (lightweight index ~130 lines)
 3. Load specific `rules/*.md` files as needed during review
-4. 
+4.
 5. Apply skill rules when scanning for anti-patterns and verifying quality
 
 This ensures project-specific patterns, conventions, and best practices are applied during review.
@@ -64,6 +65,7 @@ This ensures project-specific patterns, conventions, and best practices are appl
 **quick** — Pattern-matching only. Use grep/regex to scan for common anti-patterns without reading full file contents. Target: under 2 minutes.
 
 Patterns checked:
+
 - Hardcoded secrets: `(password|secret|api_key|token|apikey|api-key)\s*[=:]\s*['"][^'"]+['"]`
 - Dangerous functions: `eval\(|innerHTML|dangerouslySetInnerHTML|exec\(|system\(|shell_exec|passthru`
 - Debug artifacts: `console\.log|debugger;|TODO|FIXME|XXX|HACK`
@@ -73,6 +75,7 @@ Patterns checked:
 **standard** (default) — Read each changed file. Check for bugs, security issues, and quality problems in context. Cross-reference imports and exports. Target: 5-15 minutes.
 
 Language-aware checks:
+
 - **JavaScript/TypeScript**: Unchecked `.length`, missing `await`, unhandled promise rejection, type assertions (`as any`), `==` vs `===`, null coalescing issues
 - **Python**: Bare `except:`, mutable default arguments, f-string injection, `eval()` usage, missing `with` for file operations
 - **Go**: Unchecked error returns, goroutine leaks, context not passed, `defer` in loops, race conditions
@@ -82,6 +85,7 @@ Language-aware checks:
 **deep** — All of standard, plus cross-file analysis. Trace function call chains across imports. Target: 15-30 minutes.
 
 Additional checks:
+
 - Trace function call chains across module boundaries
 - Check type consistency at API boundaries (TS interfaces, API contracts)
 - Verify error propagation (thrown errors caught by callers)
@@ -96,6 +100,7 @@ Additional checks:
 **1. Read mandatory files:** Load all files from `<files_to_read>` block if present.
 
 **2. Parse config:** Extract from `<config>` block:
+
 - `depth`: quick | standard | deep (default: standard)
 - `phase_dir`: Path to phase directory for REVIEW.md output
 - `review_path`: Full path for REVIEW.md output (e.g., `.planning/phases/02-code-review-command/02-REVIEW.md`). If absent, derived from phase_dir.
@@ -107,6 +112,7 @@ Additional checks:
 **3. Determine changed files:**
 
 **Primary: Parse `files` from config block.** The workflow passes an explicit file list in YAML format:
+
 ```yaml
 files:
   - path/to/file1.ext
@@ -120,12 +126,14 @@ Parse each `- path` line under `files:` into the REVIEW_FILES array. If `files` 
 This fallback runs ONLY when invoked directly without workflow context. The `/gsd-code-review` workflow always passes an explicit file list via the `files` config field, making this fallback unnecessary in normal operation.
 
 If `files` is absent or empty, compute DIFF_BASE:
+
 1. If `diff_base` is provided in config, use it
 2. Otherwise, **fail closed** with error: "Cannot determine review scope. Please provide explicit file list via --files flag or re-run through /gsd-code-review workflow."
 
 Do NOT invent a heuristic (e.g., HEAD~5) — silent mis-scoping is worse than failing loudly.
 
 If DIFF_BASE is set, run:
+
 ```bash
 git diff --name-only ${DIFF_BASE}..HEAD -- . ':!.planning/' ':!ROADMAP.md' ':!STATE.md' ':!*-SUMMARY.md' ':!*-VERIFICATION.md' ':!*-PLAN.md' ':!package-lock.json' ':!yarn.lock' ':!Gemfile.lock' ':!poetry.lock'
 ```
@@ -143,6 +151,7 @@ git diff --name-only ${DIFF_BASE}..HEAD -- . ':!.planning/' ':!ROADMAP.md' ':!ST
 NOTE: Do NOT exclude all `.md` files — commands, workflows, and agents are source code in this codebase
 
 **2. Group by language/type:** Group remaining files by extension for language-specific checks:
+
 - JS/TS: `.js`, `.jsx`, `.ts`, `.tsx`
 - Python: `.py`
 - Go: `.go`
@@ -151,6 +160,7 @@ NOTE: Do NOT exclude all `.md` files — commands, workflows, and agents are sou
 - Other: Review generically
 
 **3. Exit early if empty:** If no source files remain after filtering, create REVIEW.md with:
+
 ```yaml
 status: skipped
 findings:
@@ -159,6 +169,7 @@ findings:
   info: 0
   total: 0
 ```
+
 Body: "No source files to review after filtering. All files in scope are documentation, planning artifacts, or generated files. Use `status: skipped` (not `clean`) because no actual review was performed."
 
 NOTE: `status: clean` means "reviewed and found no issues." `status: skipped` means "no reviewable files — review was not performed." This distinction matters for downstream consumers.
@@ -169,6 +180,7 @@ Branch on depth level:
 
 **For depth=quick:**
 Run grep patterns (from `<depth_levels>` quick section) against all files:
+
 ```bash
 # Hardcoded secrets
 grep -n -E "(password|secret|api_key|token|apikey|api-key)\s*[=:]\s*['\"]\w+['\"]" file
@@ -187,6 +199,7 @@ Record findings with severity: secrets/dangerous=Critical, debug=Info, empty cat
 
 **For depth=standard:**
 For each file:
+
 1. Read full content
 2. Apply language-specific checks (from `<depth_levels>` standard section)
 3. Check for common patterns:
@@ -200,6 +213,7 @@ Record findings with file path, line number, description
 
 **For depth=deep:**
 All of standard, plus:
+
 1. **Build import graph:** Parse imports/exports across all reviewed files
 2. **Trace call chains:** For each public function, trace callers across modules
 3. **Check type consistency:** Verify types match at module boundaries (for TS)
@@ -213,6 +227,7 @@ Record cross-file issues with all affected file paths
 For each finding, assign severity:
 
 **Critical** — Security vulnerabilities, data loss risks, crashes, authentication bypasses:
+
 - SQL injection, command injection, path traversal
 - Hardcoded secrets in production code
 - Null pointer dereferences that crash
@@ -221,6 +236,7 @@ For each finding, assign severity:
 - Buffer overflows
 
 **Warning** — Logic errors, unhandled edge cases, missing error handling, code smells that could cause bugs:
+
 - Unchecked array access (`.length` or index without validation)
 - Missing error handling in async/await
 - Off-by-one errors in loops
@@ -229,6 +245,7 @@ For each finding, assign severity:
 - Dead code paths that indicate logic errors
 
 **Info** — Style issues, naming improvements, dead code, unused imports, suggestions:
+
 - Unused imports/variables
 - Poor naming (single-letter variables except loop counters)
 - Commented-out code
@@ -237,16 +254,18 @@ For each finding, assign severity:
 - Code duplication
 
 **Each finding MUST include:**
+
 - `file`: Full path to file
 - `line`: Line number or range (e.g., "42" or "42-45")
 - `issue`: Clear description of the problem
 - `fix`: Concrete fix suggestion (code snippet when possible)
-</step>
+  </step>
 
 <step name="write_review">
 **1. Create REVIEW.md** at `review_path` (if provided) or `{phase_dir}/{phase}-REVIEW.md`
 
 **2. YAML frontmatter:**
+
 ```yaml
 ---
 phase: XX-name
@@ -269,7 +288,7 @@ The `files_reviewed_list` field is REQUIRED — it preserves the exact file scop
 
 **3. Body structure:**
 
-```markdown
+````markdown
 # Phase {X}: Code Review Report
 
 **Reviewed:** {timestamp}
@@ -294,9 +313,11 @@ The `files_reviewed_list` field is REQUIRED — it preserves the exact file scop
 **File:** `path/to/file.ext:42`
 **Issue:** {Clear description}
 **Fix:**
+
 ```language
 {Concrete code snippet showing the fix}
 ```
+````
 
 ## Warnings
 
@@ -323,6 +344,7 @@ The `files_reviewed_list` field is REQUIRED — it preserves the exact file scop
 _Reviewed: {timestamp}_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: {depth}_
+
 ```
 
 **4. Return to orchestrator:** DO NOT commit. Orchestrator handles commit.
@@ -365,3 +387,4 @@ _Depth: {depth}_
   - deep: Cross-file analysis including import graph and call chains
 
 </success_criteria>
+```

@@ -6,9 +6,9 @@
  * The game store delegates to these functions while still owning all reactive state.
  */
 
-import { useIndexedDB } from './useIndexedDB'
-import { useLogger } from './useLogger'
-import type { GameSession } from '@riddle-rush/types/game'
+import { useIndexedDB } from './useIndexedDB';
+import { useLogger } from './useLogger';
+import type { GameSession } from '@riddle-rush/types/game';
 
 /**
  * Composable providing persistence utilities for game data.
@@ -28,12 +28,12 @@ export function usePersistence() {
    */
   async function loadSessionFromDB(): Promise<GameSession | null> {
     try {
-      const { getGameSession } = useIndexedDB()
-      return await getGameSession()
+      const { getGameSession } = useIndexedDB();
+      return await getGameSession();
     } catch (error) {
-      const logger = useLogger()
-      logger.error('Error loading session from IndexedDB:', error)
-      return null
+      const logger = useLogger();
+      logger.error('Error loading session from IndexedDB:', error);
+      return null;
     }
   }
 
@@ -44,12 +44,12 @@ export function usePersistence() {
    */
   async function loadHistoryFromDB(): Promise<GameSession[] | null> {
     try {
-      const { getGameHistory } = useIndexedDB()
-      return await getGameHistory()
+      const { getGameHistory } = useIndexedDB();
+      return await getGameHistory();
     } catch (error) {
-      const logger = useLogger()
-      logger.error('Error loading history from IndexedDB:', error)
-      return null
+      const logger = useLogger();
+      logger.error('Error loading history from IndexedDB:', error);
+      return null;
     }
   }
 
@@ -61,11 +61,11 @@ export function usePersistence() {
    */
   async function saveSessionToDB(session: GameSession): Promise<void> {
     try {
-      const { saveGameSession } = useIndexedDB()
-      await saveGameSession(session)
+      const { saveGameSession } = useIndexedDB();
+      await saveGameSession(session);
     } catch (error) {
-      const logger = useLogger()
-      logger.error('Error saving session to IndexedDB:', error)
+      const logger = useLogger();
+      logger.error('Error saving session to IndexedDB:', error);
       // Don't throw - allow game to continue even if save fails
     }
   }
@@ -78,11 +78,11 @@ export function usePersistence() {
    */
   async function saveHistoryToDB(history: GameSession[]): Promise<void> {
     try {
-      const { saveGameHistory } = useIndexedDB()
-      await saveGameHistory(history)
+      const { saveGameHistory } = useIndexedDB();
+      await saveGameHistory(history);
     } catch (error) {
-      const logger = useLogger()
-      logger.error('Error saving history to IndexedDB:', error)
+      const logger = useLogger();
+      logger.error('Error saving history to IndexedDB:', error);
       // Don't throw - allow game to continue even if save fails
     }
   }
@@ -96,19 +96,19 @@ export function usePersistence() {
    * @throws Error if session not found or database error occurs
    */
   async function loadSessionById(sessionId: string): Promise<GameSession> {
-    let session: GameSession | null
+    let session: GameSession | null;
     try {
-      const { getGameSessionById } = useIndexedDB()
-      session = await getGameSessionById(sessionId)
+      const { getGameSessionById } = useIndexedDB();
+      session = await getGameSessionById(sessionId);
     } catch (error) {
-      const logger = useLogger()
-      logger.error('Error loading game session by ID:', error)
-      throw new Error(`Database error loading session ${sessionId}`)
+      const logger = useLogger();
+      logger.error('Error loading game session by ID:', error);
+      throw new Error(`Database error loading session ${sessionId}`);
     }
     if (!session) {
-      throw new Error(`Game session with ID ${sessionId} not found`)
+      throw new Error(`Game session with ID ${sessionId} not found`);
     }
-    return session
+    return session;
   }
 
   return {
@@ -117,5 +117,5 @@ export function usePersistence() {
     saveSessionToDB,
     saveHistoryToDB,
     loadSessionById,
-  }
+  };
 }

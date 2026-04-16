@@ -38,10 +38,10 @@ Choose your architecture based on your content's nature and page load requiremen
 // Users see blank page until JS loads and executes
 
 // main.js
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
 
-createApp(App).mount('#app') // Nothing visible until this runs
+createApp(App).mount('#app'); // Nothing visible until this runs
 
 // index.html - Users see empty #app until JS executes
 // <div id="app"></div>
@@ -80,7 +80,7 @@ export default defineNuxtConfig({
 
 <script setup>
 // Data fetched at build time (SSG) or request time (SSR)
-const { data: features } = await useFetch('/api/features')
+const { data: features } = await useFetch('/api/features');
 </script>
 ```
 
@@ -103,23 +103,23 @@ export default defineNuxtConfig({
     // API routes - server-side
     '/api/**': { cors: true },
   },
-})
+});
 ```
 
 ## Manual SSR with Vue (without Nuxt)
 
 ```javascript
 // server.js - Express with Vue SSR
-import express from 'express'
-import { createSSRApp } from 'vue'
-import { renderToString } from 'vue/server-renderer'
-import App from './App.vue'
+import express from 'express';
+import { createSSRApp } from 'vue';
+import { renderToString } from 'vue/server-renderer';
+import App from './App.vue';
 
-const app = express()
+const app = express();
 
 app.get('*', async (req, res) => {
-  const vueApp = createSSRApp(App)
-  const html = await renderToString(vueApp)
+  const vueApp = createSSRApp(App);
+  const html = await renderToString(vueApp);
 
   res.send(`
     <!DOCTYPE html>
@@ -130,8 +130,8 @@ app.get('*', async (req, res) => {
         <script type="module" src="/client.js"></script>
       </body>
     </html>
-  `)
-})
+  `);
+});
 ```
 
 ## Performance Impact
@@ -154,8 +154,8 @@ app.get('*', async (req, res) => {
 
 ```javascript
 // vite.config.js - Using vite-ssg for SSG
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
@@ -163,7 +163,7 @@ export default defineConfig({
     script: 'async',
     formatting: 'minify',
   },
-})
+});
 ```
 
 ## Reference

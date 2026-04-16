@@ -10,11 +10,11 @@ The Tailwind CSS / Windi CSS compatible preset. Most commonly used preset for Un
 ## Installation
 
 ```ts
-import { defineConfig, presetWind3 } from 'unocss'
+import { defineConfig, presetWind3 } from 'unocss';
 
 export default defineConfig({
   presets: [presetWind3()],
-})
+});
 ```
 
 **Note:** `@unocss/preset-uno` and `@unocss/preset-wind` are deprecated and renamed to `@unocss/preset-wind3`.
@@ -42,7 +42,7 @@ Generates: `.dark .dark\:bg-gray-800 { ... }`
 ```ts
 presetWind3({
   dark: 'media',
-})
+});
 ```
 
 Generates: `@media (prefers-color-scheme: dark) { ... }`
@@ -76,7 +76,7 @@ presetWind3({
 
   // Mark all utilities as !important
   important: false, // boolean | string (selector)
-})
+});
 ```
 
 ### Important Option
@@ -86,7 +86,7 @@ Make all utilities `!important`:
 ```ts
 presetWind3({
   important: true,
-})
+});
 ```
 
 Or scope with selector to increase specificity without `!important`:
@@ -94,7 +94,7 @@ Or scope with selector to increase specificity without `!important`:
 ```ts
 presetWind3({
   important: '#app',
-})
+});
 ```
 
 Output: `#app :is(.dark .dark\:bg-blue) { ... }`

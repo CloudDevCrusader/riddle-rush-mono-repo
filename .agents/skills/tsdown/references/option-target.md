@@ -32,7 +32,7 @@ Set to `false` to preserve modern syntax:
 ```ts
 export default defineConfig({
   target: false,
-})
+});
 ```
 
 **Result:**
@@ -68,7 +68,7 @@ tsdown --no-target
 export default defineConfig({
   entry: ['src/index.ts'],
   target: 'es2020',
-})
+});
 ```
 
 ### Multiple Targets
@@ -77,7 +77,7 @@ export default defineConfig({
 export default defineConfig({
   entry: ['src/index.ts'],
   target: ['chrome100', 'safari15', 'node18'],
-})
+});
 ```
 
 ## Supported Targets
@@ -103,7 +103,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   target: ['chrome100', 'safari15', 'firefox100'],
-})
+});
 ```
 
 ### Node.js Library
@@ -113,7 +113,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   target: 'node18',
-})
+});
 ```
 
 ### Legacy Support
@@ -123,7 +123,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   target: 'es2015', // Maximum compatibility
-})
+});
 ```
 
 ### Per-Format Targets
@@ -139,7 +139,7 @@ export default defineConfig({
       target: 'node16',
     },
   },
-})
+});
 ```
 
 ## Decorators
@@ -171,7 +171,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   target: 'es2020', // Wide compatibility
-})
+});
 ```
 
 ### Modern-Only Library
@@ -181,7 +181,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   target: false, // No transformations
-})
+});
 ```
 
 ### Browser Component
@@ -192,7 +192,7 @@ export default defineConfig({
   format: ['esm'],
   target: ['chrome100', 'safari15', 'firefox100'],
   platform: 'browser',
-})
+});
 ```
 
 ## Tips

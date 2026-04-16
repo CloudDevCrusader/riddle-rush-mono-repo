@@ -4,17 +4,17 @@
  * Converts repository MCP configs to Vibe-compatible format
  */
 
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Read all MCP configurations
-const mcpConfig = JSON.parse(fs.readFileSync('.mcp.json', 'utf8'))
-const fastmcpConfig = JSON.parse(fs.readFileSync('fastmcp.json', 'utf8'))
-const cursorMcpConfig = JSON.parse(fs.readFileSync('.cursor/mcp.json', 'utf8'))
+const mcpConfig = JSON.parse(fs.readFileSync('.mcp.json', 'utf8'));
+const fastmcpConfig = JSON.parse(fs.readFileSync('fastmcp.json', 'utf8'));
+const cursorMcpConfig = JSON.parse(fs.readFileSync('.cursor/mcp.json', 'utf8'));
 
 // Convert to Vibe format
 const vibeConfig = {
@@ -26,7 +26,7 @@ const vibeConfig = {
     description: 'MCP configurations for Riddle Rush monorepo',
   },
   mcpServers: {},
-}
+};
 
 // Merge all servers with Vibe-specific formatting
 Object.assign(
@@ -34,10 +34,10 @@ Object.assign(
   convertToVibeFormat(mcpConfig.mcpServers, 'primary'),
   convertToVibeFormat(fastmcpConfig.mcpServers, 'fastmcp'),
   convertToVibeFormat(cursorMcpConfig.mcpServers, 'cursor')
-)
+);
 
 function convertToVibeFormat(servers, source) {
-  const result = {}
+  const result = {};
 
   for (const [name, config] of Object.entries(servers)) {
     result[`${source}-${name}`] = {
@@ -62,27 +62,27 @@ function convertToVibeFormat(servers, source) {
         url: `https://riddle-rush.com/docs/mcp/${name}`,
         category: getVibeCategory(name),
       },
-    }
+    };
   }
 
-  return result
+  return result;
 }
 
 function getVibeCategory(name) {
-  if (name.includes('nuxt') || name.includes('ui')) return 'frontend-framework'
-  if (name.includes('playwright') || name.includes('browser')) return 'testing-automation'
-  if (name.includes('git') || name.includes('gitlab')) return 'version-control'
-  if (name.includes('aws') || name.includes('docker')) return 'cloud-infrastructure'
-  if (name.includes('filesystem')) return 'file-operations'
-  return 'general-utilities'
+  if (name.includes('nuxt') || name.includes('ui')) return 'frontend-framework';
+  if (name.includes('playwright') || name.includes('browser')) return 'testing-automation';
+  if (name.includes('git') || name.includes('gitlab')) return 'version-control';
+  if (name.includes('aws') || name.includes('docker')) return 'cloud-infrastructure';
+  if (name.includes('filesystem')) return 'file-operations';
+  return 'general-utilities';
 }
 
 // Write Vibe configuration
-const outputPath = path.join(path.dirname(__dirname), 'vibe-mcp-config.json')
-fs.writeFileSync(outputPath, JSON.stringify(vibeConfig, null, 2))
+const outputPath = path.join(path.dirname(__dirname), 'vibe-mcp-config.json');
+fs.writeFileSync(outputPath, JSON.stringify(vibeConfig, null, 2));
 
-console.log(`✅ Mistral Vibe MCP configuration exported to: ${outputPath}`)
-console.log(`Total servers: ${Object.keys(vibeConfig.mcpServers).length}`)
+console.log(`✅ Mistral Vibe MCP configuration exported to: ${outputPath}`);
+console.log(`Total servers: ${Object.keys(vibeConfig.mcpServers).length}`);
 
 // Generate summary
 const summary = {
@@ -94,20 +94,20 @@ const summary = {
     version: vibeConfig.version,
     platform: vibeConfig.platform,
   },
-}
+};
 
 for (const server of Object.values(vibeConfig.mcpServers)) {
-  const category = server.documentation.category
-  summary.categories[category] = (summary.categories[category] || 0) + 1
+  const category = server.documentation.category;
+  summary.categories[category] = (summary.categories[category] || 0) + 1;
 }
 
-console.log('\n📊 Summary:')
-console.log(JSON.stringify(summary, null, 2))
+console.log('\n📊 Summary:');
+console.log(JSON.stringify(summary, null, 2));
 
 // Create README for Vibe integration
 const serverList = Object.keys(vibeConfig.mcpServers)
   .map((name) => `- **${name}**: ${vibeConfig.mcpServers[name].description}`)
-  .join('\n')
+  .join('\n');
 
 const readmeContent = `# Mistral Vibe MCP Configuration for Riddle Rush
 
@@ -155,7 +155,7 @@ ${serverList}
 - All servers are prefixed with their source (primary/fastmcp/cursor)
 - Priority is set based on source (primary=100, others=50)
 - Environment variables are preserved from original configs
-`
+`;
 
-fs.writeFileSync(path.join(path.dirname(__dirname), 'vibe-mcp-config/README.md'), readmeContent)
-console.log(`✅ Vibe README created`)
+fs.writeFileSync(path.join(path.dirname(__dirname), 'vibe-mcp-config/README.md'), readmeContent);
+console.log(`✅ Vibe README created`);

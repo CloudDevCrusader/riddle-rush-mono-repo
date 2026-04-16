@@ -24,7 +24,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   exports: true,
-})
+});
 ```
 
 ## What Gets Generated
@@ -39,7 +39,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   exports: true,
-})
+});
 ```
 
 **Generated in package.json:**
@@ -72,7 +72,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   exports: true,
-})
+});
 ```
 
 **Generated in package.json:**
@@ -108,7 +108,7 @@ export default defineConfig({
   exports: {
     all: true,
   },
-})
+});
 ```
 
 **Result:** All `.mjs`, `.cjs`, and `.d.ts` files will be added to exports.
@@ -126,7 +126,7 @@ export default defineConfig({
   exports: {
     devExports: true,
   },
-})
+});
 ```
 
 **Generated:**
@@ -158,7 +158,7 @@ export default defineConfig({
   exports: {
     devExports: 'development',
   },
-})
+});
 ```
 
 **Generated:**
@@ -196,15 +196,15 @@ export default defineConfig({
   exports: {
     customExports(pkg, context) {
       // Add custom export
-      pkg['./foo'] = './dist/foo.js'
+      pkg['./foo'] = './dist/foo.js';
 
       // Add package.json export
-      pkg['./package.json'] = './package.json'
+      pkg['./package.json'] = './package.json';
 
-      return pkg
+      return pkg;
     },
   },
-})
+});
 ```
 
 ## Common Patterns
@@ -218,7 +218,7 @@ export default defineConfig({
   dts: true,
   exports: true,
   clean: true,
-})
+});
 ```
 
 ### Multiple Exports with Dev Mode
@@ -236,7 +236,7 @@ export default defineConfig({
     all: false, // Only entries
     devExports: 'development',
   },
-})
+});
 ```
 
 ### Monorepo Package
@@ -248,7 +248,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   exports: true, // Generate for each package
-})
+});
 ```
 
 ## Validation
@@ -267,7 +267,7 @@ Or in config:
 export default defineConfig({
   exports: true,
   publint: true, // Validate exports
-})
+});
 ```
 
 ## Tips

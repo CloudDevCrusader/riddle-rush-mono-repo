@@ -23,43 +23,43 @@ However, this should be a transitional pattern. For new code, pick one API style
 **Using Composition API in Options API Component:**
 
 ```javascript
-import { ref, computed, onMounted } from 'vue'
-import { useExternalLibrary } from 'some-composition-library'
+import { ref, computed, onMounted } from 'vue';
+import { useExternalLibrary } from 'some-composition-library';
 
 export default {
   // Options API parts
   data() {
     return {
       legacyData: 'from options api',
-    }
+    };
   },
 
   computed: {
     legacyComputed() {
       // Can access both Options API data AND setup() returned values
-      return this.legacyData + ' - ' + this.newFeatureData
+      return this.legacyData + ' - ' + this.newFeatureData;
     },
   },
 
   methods: {
     legacyMethod() {
       // Can call methods from both APIs
-      this.composableMethod()
+      this.composableMethod();
     },
   },
 
   // Composition API via setup()
   setup() {
     // Use composition library that doesn't have Options API equivalent
-    const { data: libraryData, doSomething } = useExternalLibrary()
+    const { data: libraryData, doSomething } = useExternalLibrary();
 
     // Create new reactive state with Composition API
-    const newFeatureData = ref('from composition api')
+    const newFeatureData = ref('from composition api');
 
-    const newComputed = computed(() => newFeatureData.value.toUpperCase())
+    const newComputed = computed(() => newFeatureData.value.toUpperCase());
 
     function composableMethod() {
-      newFeatureData.value = 'updated'
+      newFeatureData.value = 'updated';
     }
 
     // IMPORTANT: Return values to make them available to Options API
@@ -69,9 +69,9 @@ export default {
       newFeatureData,
       newComputed,
       composableMethod,
-    }
+    };
   },
-}
+};
 ```
 
 **Common Migration Pattern:**
@@ -147,17 +147,17 @@ onMounted(() => fetchUsers())
 ```javascript
 export default {
   data() {
-    return { optionsData: 'hello' }
+    return { optionsData: 'hello' };
   },
 
   setup(props, context) {
     // WRONG: 'this' is NOT available in setup()
-    console.log(this.optionsData) // undefined!
+    console.log(this.optionsData); // undefined!
 
     // CORRECT: Access props and context via parameters
-    console.log(props.someProp)
-    console.log(context.attrs)
-    console.log(context.emit)
+    console.log(props.someProp);
+    console.log(context.attrs);
+    console.log(context.emit);
 
     // To access Options API data from setup,
     // you generally can't - they're in separate scopes
@@ -165,9 +165,9 @@ export default {
 
     return {
       /* ... */
-    }
+    };
   },
-}
+};
 ```
 
 ## When to Use This Pattern

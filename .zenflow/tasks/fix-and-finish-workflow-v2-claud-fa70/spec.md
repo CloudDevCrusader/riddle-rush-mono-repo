@@ -76,102 +76,102 @@ results/[[gameId]].vue page loads
 1. **Add local score tracking state:**
 
    ```ts
-   const pendingScores = reactive(new Map<string, number>())
+   const pendingScores = reactive(new Map<string, number>());
 
    // Initialize all players to 0 on mount
    onMounted(() => {
      for (const player of gameStore.players) {
-       pendingScores.set(player.id, 0)
+       pendingScores.set(player.id, 0);
      }
-   })
+   });
    ```
 
 2. **Add score adjustment functions:**
 
    ```ts
-   import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
+   import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants';
 
    const incrementScore = (playerId: string) => {
-     const current = pendingScores.get(playerId) ?? 0
-     pendingScores.set(playerId, current + SCORE_INCREMENT)
-   }
+     const current = pendingScores.get(playerId) ?? 0;
+     pendingScores.set(playerId, current + SCORE_INCREMENT);
+   };
 
    const decrementScore = (playerId: string) => {
-     const current = pendingScores.get(playerId) ?? 0
+     const current = pendingScores.get(playerId) ?? 0;
      if (current >= SCORE_INCREMENT) {
-       pendingScores.set(playerId, current - SCORE_INCREMENT)
+       pendingScores.set(playerId, current - SCORE_INCREMENT);
      }
-   }
+   };
    ```
 
 3. **Add workflow phase state:**
 
    ```ts
-   const showLeaderboard = ref(false)
-   const showDecisionModal = ref(false)
-   const isConfirming = ref(false)
+   const showLeaderboard = ref(false);
+   const showDecisionModal = ref(false);
+   const isConfirming = ref(false);
    ```
 
 4. **Add score confirmation handler:**
 
    ```ts
    const handleConfirmScores = async () => {
-     if (isConfirming.value) return
-     isConfirming.value = true
+     if (isConfirming.value) return;
+     isConfirming.value = true;
 
      try {
        // Assign scores to each player
        for (const [playerId, score] of pendingScores) {
-         await gameStore.assignPlayerScore(playerId, score)
+         await gameStore.assignPlayerScore(playerId, score);
        }
        // Record round in history
-       await gameStore.completeRound()
+       await gameStore.completeRound();
        // Show leaderboard overlay
-       showLeaderboard.value = true
+       showLeaderboard.value = true;
      } catch (error) {
-       const logger = useLogger()
-       logger.error('Error confirming scores:', error)
-       toast.error(t('results.error_saving'))
-       isConfirming.value = false
+       const logger = useLogger();
+       logger.error('Error confirming scores:', error);
+       toast.error(t('results.error_saving'));
+       isConfirming.value = false;
      }
-   }
+   };
    ```
 
 5. **Add leaderboard dismiss handler (auto-dismiss + manual):**
 
    ```ts
-   let dismissTimer: ReturnType<typeof setTimeout> | null = null
+   let dismissTimer: ReturnType<typeof setTimeout> | null = null;
 
    const handleLeaderboardDismiss = () => {
-     if (dismissTimer) clearTimeout(dismissTimer)
-     showLeaderboard.value = false
-     showDecisionModal.value = true
-   }
+     if (dismissTimer) clearTimeout(dismissTimer);
+     showLeaderboard.value = false;
+     showDecisionModal.value = true;
+   };
 
    watch(showLeaderboard, (visible) => {
      if (visible) {
-       dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS)
+       dismissTimer = setTimeout(handleLeaderboardDismiss, RESULTS_DISPLAY_DURATION_MS);
      }
-   })
+   });
 
    onUnmounted(() => {
-     if (dismissTimer) clearTimeout(dismissTimer)
-   })
+     if (dismissTimer) clearTimeout(dismissTimer);
+   });
    ```
 
 6. **Add decision modal handlers:**
 
    ```ts
    const handleNextRound = async () => {
-     showDecisionModal.value = false
-     await goToRoundStart()
-   }
+     showDecisionModal.value = false;
+     await goToRoundStart();
+   };
 
    const handleFinishGame = async () => {
-     showDecisionModal.value = false
-     await gameStore.completeGame()
-     await goToLeaderboard()
-   }
+     showDecisionModal.value = false;
+     await gameStore.completeGame();
+     await goToLeaderboard();
+   };
    ```
 
 7. **Template changes:**
@@ -287,14 +287,14 @@ results/[[gameId]].vue page loads
 ```ts
 // Current (buggy):
 if (points !== player.currentRoundScore) {
-  player.totalScore += points
+  player.totalScore += points;
 }
-player.currentRoundScore = points
+player.currentRoundScore = points;
 
 // Fixed:
-const delta = points - player.currentRoundScore
-player.totalScore += delta
-player.currentRoundScore = points
+const delta = points - player.currentRoundScore;
+player.totalScore += delta;
+player.currentRoundScore = points;
 ```
 
 This correctly handles:
@@ -317,23 +317,23 @@ This correctly handles:
 ```ts
 // Current:
 const handleYes = async () => {
-  audio.playClick()
+  audio.playClick();
   if (gameStore.hasActiveSession) {
-    await gameStore.abandonGame()
+    await gameStore.abandonGame();
   }
-  emit('confirm')
-  isVisible.value = false
-  goHome() // ← REMOVE THIS LINE
-}
+  emit('confirm');
+  isVisible.value = false;
+  goHome(); // ← REMOVE THIS LINE
+};
 ```
 
 The parent `game/[[gameId]].vue` already handles this:
 
 ```ts
 const handleQuitConfirmed = () => {
-  showQuitModal.value = false
-  goHome() // ← This is the correct single navigation
-}
+  showQuitModal.value = false;
+  goHome(); // ← This is the correct single navigation
+};
 ```
 
 ---
@@ -424,12 +424,12 @@ The results page uses **local reactive state** (not store state) to manage the w
 
 ```ts
 // Score entry
-const pendingScores = reactive(new Map<string, number>())
+const pendingScores = reactive(new Map<string, number>());
 
 // Workflow phase flags
-const showLeaderboard = ref(false)
-const showDecisionModal = ref(false)
-const isConfirming = ref(false)
+const showLeaderboard = ref(false);
+const showDecisionModal = ref(false);
+const isConfirming = ref(false);
 ```
 
 This keeps the page self-contained — the store is only written to when the user confirms.

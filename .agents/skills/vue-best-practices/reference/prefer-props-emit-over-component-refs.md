@@ -25,28 +25,28 @@ Component refs should be reserved for imperative actions (focus, scroll, animati
 ```vue
 <!-- ParentComponent.vue -->
 <script setup>
-import { ref, onMounted } from 'vue'
-import UserForm from './UserForm.vue'
+import { ref, onMounted } from 'vue';
+import UserForm from './UserForm.vue';
 
-const formRef = ref(null)
+const formRef = ref(null);
 
 // WRONG: Reaching into child's internals
 function submitForm() {
   // Tight coupling - parent knows child's internal structure
   if (formRef.value.isValid) {
-    const data = formRef.value.formData
-    formRef.value.setSubmitting(true)
+    const data = formRef.value.formData;
+    formRef.value.setSubmitting(true);
     api.submit(data).then(() => {
-      formRef.value.setSubmitting(false)
-      formRef.value.reset()
-    })
+      formRef.value.setSubmitting(false);
+      formRef.value.reset();
+    });
   }
 }
 
 // WRONG: Parent managing child's state
 function prefillForm(userData) {
-  formRef.value.formData.name = userData.name
-  formRef.value.formData.email = userData.email
+  formRef.value.formData.name = userData.name;
+  formRef.value.formData.email = userData.email;
 }
 </script>
 
@@ -59,19 +59,19 @@ function prefillForm(userData) {
 ```vue
 <!-- UserForm.vue - exposing too much -->
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive } from 'vue';
 
-const formData = reactive({ name: '', email: '' })
-const isValid = ref(false)
-const isSubmitting = ref(false)
+const formData = reactive({ name: '', email: '' });
+const isValid = ref(false);
+const isSubmitting = ref(false);
 
 function setSubmitting(value) {
-  isSubmitting.value = value
+  isSubmitting.value = value;
 }
 
 function reset() {
-  formData.name = ''
-  formData.email = ''
+  formData.name = '';
+  formData.email = '';
 }
 
 // WRONG: Exposing internal state details
@@ -81,7 +81,7 @@ defineExpose({
   isSubmitting,
   setSubmitting,
   reset,
-})
+});
 </script>
 ```
 
@@ -90,22 +90,22 @@ defineExpose({
 ```vue
 <!-- ParentComponent.vue -->
 <script setup>
-import { ref } from 'vue'
-import UserForm from './UserForm.vue'
+import { ref } from 'vue';
+import UserForm from './UserForm.vue';
 
-const initialData = ref({ name: '', email: '' })
-const isSubmitting = ref(false)
+const initialData = ref({ name: '', email: '' });
+const isSubmitting = ref(false);
 
 // CORRECT: Child communicates via events
 function handleSubmit(formData) {
-  isSubmitting.value = true
+  isSubmitting.value = true;
   api.submit(formData).finally(() => {
-    isSubmitting.value = false
-  })
+    isSubmitting.value = false;
+  });
 }
 
 function handleValidChange(isValid) {
-  console.log('Form validity:', isValid)
+  console.log('Form validity:', isValid);
 }
 </script>
 
@@ -123,28 +123,28 @@ function handleValidChange(isValid) {
 ```vue
 <!-- UserForm.vue - clean props/emit interface -->
 <script setup>
-import { reactive, computed, watch } from 'vue'
+import { reactive, computed, watch } from 'vue';
 
 const props = defineProps({
   initialData: { type: Object, default: () => ({}) },
   submitting: { type: Boolean, default: false },
-})
+});
 
-const emit = defineEmits(['submit', 'valid-change'])
+const emit = defineEmits(['submit', 'valid-change']);
 
-const formData = reactive({ ...props.initialData })
+const formData = reactive({ ...props.initialData });
 
 const isValid = computed(() => {
-  return formData.name.length > 0 && formData.email.includes('@')
-})
+  return formData.name.length > 0 && formData.email.includes('@');
+});
 
 watch(isValid, (valid) => {
-  emit('valid-change', valid)
-})
+  emit('valid-change', valid);
+});
 
 function handleSubmit() {
   if (isValid.value) {
-    emit('submit', { ...formData })
+    emit('submit', { ...formData });
   }
 }
 </script>
@@ -165,14 +165,14 @@ function handleSubmit() {
 ```vue
 <!-- CORRECT: Refs for imperative DOM operations -->
 <script setup>
-import { ref } from 'vue'
-import CustomInput from './CustomInput.vue'
+import { ref } from 'vue';
+import CustomInput from './CustomInput.vue';
 
-const inputRef = ref(null)
+const inputRef = ref(null);
 
 // Imperative focus action - good use of refs
 function focusInput() {
-  inputRef.value?.focus()
+  inputRef.value?.focus();
 }
 </script>
 
@@ -185,16 +185,16 @@ function focusInput() {
 ```vue
 <!-- CustomInput.vue - minimal imperative API -->
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const inputEl = ref(null)
+const inputEl = ref(null);
 
 // Only expose imperative methods
 defineExpose({
   focus: () => inputEl.value?.focus(),
   blur: () => inputEl.value?.blur(),
   select: () => inputEl.value?.select(),
-})
+});
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 ---
 description: Request cross-AI peer review of phase plans from external AI CLIs
-argument-hint: "--phase N [--gemini] [--claude] [--codex] [--opencode] [--all]"
+argument-hint: '--phase N [--gemini] [--claude] [--codex] [--opencode] [--all]'
 tools:
   read: true
   write: true
@@ -25,12 +25,13 @@ planning via /gsd-plan-phase --reviews.
 Phase number: extracted from $ARGUMENTS (required)
 
 **Flags:**
+
 - `--gemini` — Include Gemini CLI review
 - `--claude` — Include the agent CLI review (uses separate session)
 - `--codex` — Include Codex CLI review
 - `--opencode` — Include OpenCode review (uses model from user's OpenCode config)
 - `--all` — Include all available CLIs
-</context>
+  </context>
 
 <process>
 Execute the review workflow from @/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-shit-done/workflows/review.md end-to-end.

@@ -1,7 +1,7 @@
-import type { I18nOptions } from 'vue-i18n'
+import type { I18nOptions } from 'vue-i18n';
 
-import de from './locales/de.json'
-import en from './locales/en.json'
+import de from './locales/de.json';
+import en from './locales/en.json';
 
 export default {
   legacy: false,
@@ -11,4 +11,4 @@ export default {
     en,
     de,
   },
-} satisfies I18nOptions
+} satisfies I18nOptions;

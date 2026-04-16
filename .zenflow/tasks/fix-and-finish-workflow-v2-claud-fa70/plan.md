@@ -61,9 +61,9 @@ Plan created below — the Implementation step has been replaced with 5 concrete
 1. **`apps/game/stores/game.ts`** (line ~458–477) — Fix `assignPlayerScore()` delta calculation bug
    - Replace the `if (points !== player.currentRoundScore)` guard with a proper delta:
      ```ts
-     const delta = points - player.currentRoundScore
-     player.totalScore += delta
-     player.currentRoundScore = points
+     const delta = points - player.currentRoundScore;
+     player.totalScore += delta;
+     player.currentRoundScore = points;
      ```
    - This ensures idempotent score assignment (calling it multiple times with the same value is safe)
 

@@ -3,7 +3,7 @@
  * Provides utilities for testing and demonstrating session validation scenarios
  */
 
-import type { GameSession } from '@riddle-rush/types/game'
+import type { GameSession } from '@riddle-rush/types/game';
 
 /**
  * Creates a mock corrupted session for testing validation
@@ -26,7 +26,7 @@ export function createCorruptedSession(): Partial<GameSession> {
     currentRound: 1,
     currentPlayerIndex: 0,
     roundHistory: [],
-  }
+  };
 }
 
 /**
@@ -34,7 +34,7 @@ export function createCorruptedSession(): Partial<GameSession> {
  * Law of Parse Don't Validate: Creates known expired state for testing
  */
 export function createExpiredSession(): GameSession {
-  const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000
+  const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
 
   return {
     id: 'expired-session-test',
@@ -60,7 +60,7 @@ export function createExpiredSession(): GameSession {
     currentRound: 1,
     currentPlayerIndex: 0,
     roundHistory: [],
-  }
+  };
 }
 
 /**
@@ -92,7 +92,7 @@ export function createMismatchedSession(actualId: string, _expectedId: string): 
     currentRound: 1,
     currentPlayerIndex: 0,
     roundHistory: [],
-  }
+  };
 }
 
 /**
@@ -131,7 +131,7 @@ export function createValidSession(sessionId: string = 'valid-session-test'): Ga
     currentRound: 1,
     currentPlayerIndex: 0,
     roundHistory: [],
-  }
+  };
 }
 
 /**
@@ -193,7 +193,7 @@ export function createCompletedSession(): GameSession {
         ],
       },
     ],
-  }
+  };
 }
 
 export const SessionTestScenarios = {
@@ -203,6 +203,6 @@ export const SessionTestScenarios = {
   MISMATCHED_ID: 'mismatch',
   COMPLETED: 'completed',
   NO_SESSION: 'none',
-} as const
+} as const;
 
-export type SessionTestScenario = (typeof SessionTestScenarios)[keyof typeof SessionTestScenarios]
+export type SessionTestScenario = (typeof SessionTestScenarios)[keyof typeof SessionTestScenarios];

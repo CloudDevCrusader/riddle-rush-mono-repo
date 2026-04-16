@@ -73,7 +73,7 @@ Standard Markdown with Shiki highlighting:
 
 ```````md
 ```ts
-const hello = 'world'
+const hello = 'world';
 ```
 
 ``````text

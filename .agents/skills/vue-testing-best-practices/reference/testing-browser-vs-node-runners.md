@@ -39,16 +39,16 @@ export default defineConfig({
   test: {
     environment: 'happy-dom', // or 'jsdom'
   },
-})
+});
 ```
 
 ```javascript
 // Fast but limited - fine for most tests
 test('button emits click event', async () => {
-  const wrapper = mount(Button)
-  await wrapper.trigger('click')
-  expect(wrapper.emitted('click')).toBeTruthy()
-})
+  const wrapper = mount(Button);
+  await wrapper.trigger('click');
+  expect(wrapper.emitted('click')).toBeTruthy();
+});
 ```
 
 ### Vitest Browser Mode
@@ -71,7 +71,7 @@ npm install -D @vitest/browser playwright
 
 ```javascript
 // vitest.config.js
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -81,33 +81,33 @@ export default defineConfig({
       provider: 'playwright',
     },
   },
-})
+});
 ```
 
 ```javascript
 // Button.browser.test.js
-import { render } from 'vitest-browser-vue'
-import Button from './Button.vue'
+import { render } from 'vitest-browser-vue';
+import Button from './Button.vue';
 
 test('has correct hover styling', async () => {
-  const { getByRole } = render(Button, { props: { label: 'Click me' } })
+  const { getByRole } = render(Button, { props: { label: 'Click me' } });
 
-  const button = getByRole('button')
+  const button = getByRole('button');
 
   // Check initial style
   await expect.element(button).toHaveStyle({
     backgroundColor: 'rgb(59, 130, 246)', // blue
-  })
-})
+  });
+});
 
 test('maintains focus after click', async () => {
-  const { getByRole } = render(Button)
+  const { getByRole } = render(Button);
 
-  const button = getByRole('button')
-  await button.click()
+  const button = getByRole('button');
+  await button.click();
 
-  await expect.element(button).toHaveFocus()
-})
+  await expect.element(button).toHaveFocus();
+});
 ```
 
 ## Examples: What Each Runner Can/Cannot Test
@@ -117,18 +117,18 @@ test('maintains focus after click', async () => {
 ```javascript
 // Node runner: CANNOT verify actual CSS
 test('danger button has red background', () => {
-  const wrapper = mount(Button, { props: { variant: 'danger' } })
+  const wrapper = mount(Button, { props: { variant: 'danger' } });
   // This only checks class exists, not actual color
-  expect(wrapper.classes()).toContain('bg-red-500')
-})
+  expect(wrapper.classes()).toContain('bg-red-500');
+});
 
 // Vitest Browser Mode: CAN verify computed styles
 test('danger button renders red', async () => {
-  const { getByRole } = render(Button, { props: { variant: 'danger' } })
+  const { getByRole } = render(Button, { props: { variant: 'danger' } });
   await expect.element(getByRole('button')).toHaveStyle({
     backgroundColor: 'rgb(239, 68, 68)',
-  })
-})
+  });
+});
 ```
 
 ### Computed CSS Styles - Browser Required
@@ -136,21 +136,21 @@ test('danger button renders red', async () => {
 ```javascript
 // Node runner: CANNOT get real computed styles
 test('button has correct padding', () => {
-  const wrapper = mount(Button)
+  const wrapper = mount(Button);
   // getComputedStyle returns empty/default values in jsdom
-  const style = window.getComputedStyle(wrapper.element)
+  const style = window.getComputedStyle(wrapper.element);
   // style.padding will be empty string, not actual computed value
-})
+});
 
 // Vitest Browser Mode: Real computed styles
 test('button has correct padding', async () => {
-  const { getByRole } = render(Button)
-  const button = getByRole('button')
+  const { getByRole } = render(Button);
+  const button = getByRole('button');
 
   await expect.element(button).toHaveStyle({
     padding: '12px 24px',
-  })
-})
+  });
+});
 ```
 
 ### Native Events - Browser Required
@@ -158,24 +158,24 @@ test('button has correct padding', async () => {
 ```javascript
 // Node runner: Synthetic events only
 test('handles drag and drop', async () => {
-  const wrapper = mount(DraggableList)
+  const wrapper = mount(DraggableList);
   // trigger('dragstart') is synthetic - may not work as expected
-  await wrapper.find('.item').trigger('dragstart')
-})
+  await wrapper.find('.item').trigger('dragstart');
+});
 
 // Vitest Browser Mode: Real native events via userEvent
-import { userEvent } from '@vitest/browser/context'
+import { userEvent } from '@vitest/browser/context';
 
 test('reorders items on drag', async () => {
-  const { getByTestId } = render(DraggableList)
+  const { getByTestId } = render(DraggableList);
 
-  const item = getByTestId('item-1')
-  const target = getByTestId('item-3')
+  const item = getByTestId('item-1');
+  const target = getByTestId('item-3');
 
-  await userEvent.dragAndDrop(item, target)
+  await userEvent.dragAndDrop(item, target);
 
   // Assert reordering
-})
+});
 ```
 
 ## Recommended Testing Strategy
@@ -191,7 +191,7 @@ export default defineConfig({
     // Browser tests in separate directory
     include: ['src/**/*.test.{js,ts}'],
   },
-})
+});
 
 // Run browser tests separately
 // npx vitest --browser.enabled
