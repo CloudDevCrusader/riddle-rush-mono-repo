@@ -25,6 +25,8 @@ export default createConfigForNuxt({
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/brace-style': ['error', '1tbs'],
+      // Prettier `semi: true` formats TS interface members with `;` — delimiter rule fights --fix + format
+      '@stylistic/member-delimiter-style': 'off',
     },
   })
   .append({
