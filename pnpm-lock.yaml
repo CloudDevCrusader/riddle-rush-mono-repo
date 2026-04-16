@@ -435,7 +435,7 @@ importers:
   packages/riddle-cli:
     dependencies:
       '@oclif/core':
-        specifier: ^4.10.3
+        specifier: ^4.10.5
         version: 4.10.5
       '@oclif/plugin-help':
         specifier: ^6.2.44
@@ -22596,7 +22596,7 @@ snapshots:
       semver: 7.7.4
       string-width: 4.2.3
       supports-color: 8.1.1
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.16
       widest-line: 3.1.0
       wordwrap: 1.0.0
       wrap-ansi: 7.0.0

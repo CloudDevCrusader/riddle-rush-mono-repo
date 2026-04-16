@@ -26,6 +26,27 @@ const resolvedBaseUrl = (() => {
   return baseUrl ? withTrailingSlash(baseUrl) : '/'
 })()
 
+/** Prefer `NUXT_PUBLIC_*` (Nuxt convention); legacy unprefixed names still accepted. */
+const nuxtPublic = {
+  gitlabFeatureFlagsUrl:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL || process.env.GITLAB_FEATURE_FLAGS_URL || '',
+  gitlabFeatureFlagsToken:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN ||
+    process.env.GITLAB_FEATURE_FLAGS_TOKEN ||
+    '',
+  gtagId:
+    process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID ||
+    process.env.GOOGLE_ANALYTICS_ID ||
+    process.env.GTAG_ID ||
+    '',
+  cloudWatchEndpoint:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_ENDPOINT || process.env.CLOUDWATCH_ENDPOINT || '',
+  cloudWatchApiKey:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_API_KEY || process.env.CLOUDWATCH_API_KEY || '',
+  debugErrorSync:
+    process.env.NUXT_PUBLIC_DEBUG_ERROR_SYNC === 'true' || process.env.DEBUG_ERROR_SYNC === 'true',
+}
+
 // Helper function to filter out problematic i18n plugins
 function filterProblematicPlugins(app: NuxtAppSchema) {
   if (app.plugins && Array.isArray(app.plugins)) {
