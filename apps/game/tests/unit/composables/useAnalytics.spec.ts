@@ -32,10 +32,23 @@ vi.mock('../../../composables/useAnalytics', () => ({
   useAnalytics: () => {
     const nuxtApp = (globalThis as Record<string, unknown>).useNuxtApp as () => {
       $gtag: (...args: unknown[]) => void
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     }
     const config = (
       (globalThis as Record<string, unknown>).useRuntimeConfig as () => {
         public: { environment: string; gtagId: string | undefined }
+=======
+=======
+>>>>>>> Stashed changes
+    };
+    const config = (
+      (globalThis as Record<string, unknown>).useRuntimeConfig as () => {
+        public: { environment: string, gtagId: string | undefined }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
       }
     )()
 

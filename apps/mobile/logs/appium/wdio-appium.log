@@ -1,0 +1,890 @@
+[38;5;86m[HTTP][0m [37m-->[39m [37mPOST[39m [37m/session[39m [90m{"capabilities":{"alwaysMatch":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"Android Emulator","appium:app":"/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk","appium:autoGrantPermissions":true,"appium:noReset":false,"appium:waitForIdleTimeout":100},"firstMatch":[{}]}}[39m
+[38;5;48m[AppiumDriver@16ed][0m Calling AppiumDriver.createSession() with args: [{"alwaysMatch":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"Android Emulator","appium:app":"/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk","appium:autoGrantPermissions":true,"appium:noReset":false,"appium:waitForIdleTimeout":100},"firstMatch":[{}]},{"alwaysMatch":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"Android Emulator","appium:app":"/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk","appium:autoGrantPermissions":true,"appium:noReset":false,"appium:waitForIdleTimeout":100},"firstMatch":[{}]},{"alwaysMatch":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"Android Emulator","appium:app":"/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk"...
+[38;5;48m[AppiumDriver@16ed][0m Event 'newSessionRequested' logged at 1775947431780 (00:43:51 GMT+0200 (Central European Summer Time))
+[38;5;112m[Appium][0m Attempting to find matching driver for automationName 'UiAutomator2' and platformName 'Android'
+[38;5;112m[Appium][0m The 'uiautomator2' driver was installed and matched caps.
+[38;5;112m[Appium][0m Will require it at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/node_modules/appium-uiautomator2-driver
+[38;5;112m[Appium][0m Requiring driver at /Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/node_modules/appium-uiautomator2-driver/build/lib/index.js
+[38;5;48m[AppiumDriver@16ed][0m Appium v3.3.0 creating new AndroidUiautomator2Driver (v7.1.2) session
+[38;5;48m[AppiumDriver@16ed][0m Checking BaseDriver versions for Appium and AndroidUiautomator2Driver
+[38;5;48m[AppiumDriver@16ed][0m Appium's BaseDriver version is 10.3.0
+[38;5;48m[AppiumDriver@16ed][0m AndroidUiautomator2Driver's BaseDriver version is 10.3.0
+[38;5;48m[AppiumDriver@16ed][0m Explicitly enabling insecure features for this session as per the server configuration:
+[38;5;48m[AppiumDriver@16ed][0m     uiautomator2:chromedriver_autodownload
+[38;5;-51m[AndroidUiautomator2Driver@c8c4][0m 
+[38;5;-51m[AndroidUiautomator2Driver@c8c4][0m Creating session with W3C capabilities: {
+  "alwaysMatch": {
+    "platformName": "Android",
+    "appium:automationName": "UiAutomator2",
+    "appium:deviceName": "Android Emulator",
+    "appium:app": "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk",
+    "appium:autoGrantPermissions": true,
+    "appium:noReset": false,
+    "appium:waitForIdleTimeout": 100
+  },
+  "firstMatch": [
+    {}
+  ]
+}
+[38;5;-51m[AndroidUiautomator2Driver@c8c4][0m The following provided capabilities were not recognized by this driver:
+[38;5;-51m[AndroidUiautomator2Driver@c8c4][0m   waitForIdleTimeout
+[38;5;54m[9664b210][0m[38;5;-51m[AndroidUiautomator2Driver@c8c4][0m Session created with session id: 9664b210-b225-40b7-b51b-b24f399dbc40
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Found 2 'build-tools' folders under '/Users/markuswagner/Library/Android/sdk' (newest first):
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m     /Users/markuswagner/Library/Android/sdk/build-tools/36.1.0
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m     /Users/markuswagner/Library/Android/sdk/build-tools/35.0.0
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Using 'adb' from '/Users/markuswagner/Library/Android/sdk/platform-tools/adb'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 start-server'
+[38;5;54m[9664b210][0m[38;5;-51m[AndroidUiautomator2Driver@c8c4][0m Retrieving device list
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Trying to find connected Android devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;54m[9664b210][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;112m[Appium][0m Received SIGTERM - shutting down
+[38;5;48m[AppiumDriver@16ed][0m There are no active sessions for cleanup
+[38;5;86m[HTTP][0m Closing Appium HTTP server
+[38;5;86m[HTTP][0m Appium HTTP server has been successfully closed after 20ms
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         [38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Getting connected devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m No connected devices have been detected
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Could not find online devices
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Reconnecting adb (target offline)
+[38;5;70m[1d1157d3][0m[38;5;229m[ADB][0m Running '/Users/markuswagner/Library/Android/sdk/platform-tools/adb -P 5037 reconnect offline'
+[38;5;70m[1d1157d3][0m[38;5;-21m[AndroidUiautomator2Driver@8642][0m Deleting UiAutomator2 session
+[38;5;70m[1d1157d3][0m[38;5;142m[AppiumDriver@dad1][0m Event 'newSessionStarted' logged at 1775947450531 (00:44:10 GMT+0200 (Central European Summer Time))
+[38;5;70m[1d1157d3][0m[38;5;142m[AppiumDriver@dad1][0m Encountered internal error running command: Error: Could not find a connected Android device in 20000ms
+    at ADB.getDevicesWithRetry (/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/appium-adb@14.3.2/node_modules/appium-adb/build/lib/tools/system-calls.js:360:19)
+    at async AndroidUiautomator2Driver.getDeviceInfoFromCaps (/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/appium-android-driver@13.1.2_appium@3.3.0_bufferutil@4.1.0_utf-8-validate@5.0.10__bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/appium-android-driver/build/lib/commands/device/common.js:76:25)
+    at async AndroidUiautomator2Driver.createSession (/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/appium-uiautomator2-driver@7.1.2_appium@3.3.0_bufferutil@4.1.0_utf-8-validate@5.0.10__b_53cfde570403ad09d2619f3431919faa/node_modules/appium-uiautomator2-driver/build/lib/driver.js:211:38)
+    at async AppiumDriver.createSession (/Users/markuswagner/projects/riddle-rush-mono-repo/node_modules/.pnpm/appium@3.3.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/appium/build/lib/appium.js:324:43)
+[38;5;70m[1d1157d3][0m[38;5;86m[HTTP][0m [37m<-- POST /session [39m[31m500[39m [90m20034 ms - 1706[39m

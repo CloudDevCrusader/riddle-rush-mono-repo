@@ -9,43 +9,71 @@
       <div class="player-leaderboard-panel">
         <header class="leaderboard-header">
           <h2>
-            <span v-if="props.isGameCompleted"
-              >🏆 {{ t('leaderboard.winner_title', 'Final Standings') }}</span
-            >
+            <span v-if="props.isGameCompleted">🏆 {{ t('leaderboard.winner_title', 'Final Standings') }}</span>
             <span v-else>📊 {{ t('leaderboard.current_standings', 'Current Standings') }}</span>
           </h2>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
+=======
+=======
+>>>>>>> Stashed changes
+          <button
+            class="close-btn tap-highlight"
+            @click="emitClose"
+          >
+            ✕
+          </button>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         </header>
 
         <div class="leaderboard-content">
-          <div v-if="props.players.length === 0" class="empty-state">
+          <div
+            v-if="props.players.length === 0"
+            class="empty-state"
+          >
             <span class="empty-icon">🎮</span>
             <p>{{ t('leaderboard.no_players', 'No players yet') }}</p>
           </div>
 
-          <div v-else class="players-list">
+          <div
+            v-else
+            class="players-list"
+          >
             <div
               v-for="(player, index) in props.players"
               :key="player.id"
               class="player-row"
               :class="{
-                winner: player.isWinner,
+                'winner': player.isWinner,
                 'top-three': Number(index) < 3,
                 [`rank-${Number(index) + 1}`]: Number(index) < 3,
               }"
             >
               <div class="rank">
-                <span v-if="player.isWinner" class="crown">👑</span>
+                <span
+                  v-if="player.isWinner"
+                  class="crown"
+                >👑</span>
                 <span v-else-if="index === 0">🥇</span>
                 <span v-else-if="index === 1">🥈</span>
                 <span v-else-if="index === 2">🥉</span>
-                <span v-else class="rank-number">{{ Number(index) + 1 }}</span>
+                <span
+                  v-else
+                  class="rank-number"
+                >{{ Number(index) + 1 }}</span>
               </div>
 
               <div class="player-info">
                 <div class="player-name">
                   {{ player.name }}
-                  <span v-if="player.isWinner" class="winner-badge">{{ winnerBadgeLabel }}</span>
+                  <span
+                    v-if="player.isWinner"
+                    class="winner-badge"
+                  >{{ winnerBadgeLabel }}</span>
                 </div>
                 <div class="player-meta">
                   {{ roundLabel }} {{ props.currentRound }}
@@ -70,6 +98,8 @@
         </div>
 
         <footer class="leaderboard-footer">
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           <button v-if="!props.isGameCompleted" class="btn btn-primary" @click="$emit('continue')">
             {{ t('common.continue', 'Continue') }}
           </button>
@@ -77,6 +107,45 @@
             {{ t('common.finish', 'Finish Game') }}
           </button>
           <button class="btn btn-outline" @click="$emit('close')">
+=======
+          <button
+            v-if="!props.isGameCompleted"
+            class="btn btn-primary"
+            @click="emitContinue"
+          >
+            {{ t('common.continue', 'Continue') }}
+          </button>
+          <button
+            v-else
+            class="btn btn-primary"
+            @click="emitFinish"
+          >
+            {{ t('common.finish', 'Finish Game') }}
+          </button>
+=======
+          <button
+            v-if="!props.isGameCompleted"
+            class="btn btn-primary"
+            @click="emitContinue"
+          >
+            {{ t('common.continue', 'Continue') }}
+          </button>
+          <button
+            v-else
+            class="btn btn-primary"
+            @click="emitFinish"
+          >
+            {{ t('common.finish', 'Finish Game') }}
+          </button>
+>>>>>>> Stashed changes
+          <button
+            class="btn btn-outline"
+            @click="emitClose"
+          >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
             {{ t('common.close', 'Close') }}
           </button>
         </footer>
@@ -95,12 +164,25 @@ const props = defineProps<{
   players: PlayerWithRank[]
   isGameCompleted: boolean
   currentRound: number
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 }>()
 
 const winnerBadgeLabel = computed(() => t('leaderboard.winner_badge', 'Winner!'))
 const roundLabel = computed(() => t('game.round', 'Round'))
 const roundScoreLabel = computed(() => t('leaderboard.points_this_round', 'pts this round'))
 const pointsLabel = computed(() => t('scoring.points', 'pts'))
+=======
+=======
+>>>>>>> Stashed changes
+}>();
+
+const emit = defineEmits<{
+  close: []
+  continue: []
+  finish: []
+}>();
+>>>>>>> Stashed changes
 
 defineEmits<{
   close: []

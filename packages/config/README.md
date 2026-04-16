@@ -5,8 +5,6 @@ Shared configuration package for the Riddle Rush monorepo.
 ## Contents
 
 - **Vite Configuration** - Shared Vite config utilities, plugins, and build settings
-- **ESLint Configuration** - Shared linting rules and configuration
-- **Prettier Configuration** - Shared formatting rules
 - **Build Utilities** - Shared build helper functions
 
 ## Usage
@@ -34,23 +32,6 @@ export default defineNuxtConfig({
   },
 })
 ```
-
-### ESLint Configuration
-
-```javascript
-// apps/game/eslint.config.mjs
-import { defineConfig } from '@nuxt/eslint'
-import sharedConfig from '@riddle-rush/config/eslint'
-
-export default defineConfig({
-  ...sharedConfig,
-  // App-specific overrides
-})
-```
-
-### Prettier Configuration
-
-The shared Prettier config is automatically used when Prettier is run from the root.
 
 ### Available Functions
 

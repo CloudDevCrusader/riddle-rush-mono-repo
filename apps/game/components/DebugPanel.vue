@@ -1,14 +1,23 @@
 <template>
   <Transition name="debug">
-    <div v-if="settings.isDebugMode.value" class="debug-panel">
+    <div
+      v-if="settings.isDebugMode.value"
+      class="debug-panel"
+    >
       <header class="debug-header">
         <span>🔧 Debug Mode</span>
-        <button class="minimize-btn" @click="minimized = !minimized">
+        <button
+          class="minimize-btn"
+          @click="minimized = !minimized"
+        >
           {{ minimized ? '▲' : '▼' }}
         </button>
       </header>
 
-      <div v-if="!minimized" class="debug-content">
+      <div
+        v-if="!minimized"
+        class="debug-content"
+      >
         <section class="debug-section">
           <h4>Game State</h4>
           <div class="stat-row">
@@ -69,15 +78,24 @@
             <span>History Games:</span>
             <span>{{ gameSession.history.value.length }}</span>
           </div>
-          <div v-if="stats" class="stat-row">
+          <div
+            v-if="stats"
+            class="stat-row"
+          >
             <span>Total Score:</span>
             <span>{{ stats.totalScore }}</span>
           </div>
-          <div v-if="stats" class="stat-row">
+          <div
+            v-if="stats"
+            class="stat-row"
+          >
             <span>Best Score:</span>
             <span>{{ stats.bestScore }}</span>
           </div>
-          <div v-if="stats" class="stat-row">
+          <div
+            v-if="stats"
+            class="stat-row"
+          >
             <span>Accuracy:</span>
             <span>{{ accuracy }}%</span>
           </div>
@@ -98,9 +116,24 @@
         </section>
 
         <div class="debug-actions">
-          <button class="action-btn" @click="refreshStats">↻ Refresh</button>
-          <button class="action-btn" @click="clearStorage">🗑️ Clear Data</button>
-          <button class="action-btn" @click="exportDebugInfo">📋 Export</button>
+          <button
+            class="action-btn"
+            @click="refreshStats"
+          >
+            ↻ Refresh
+          </button>
+          <button
+            class="action-btn"
+            @click="clearStorage"
+          >
+            🗑️ Clear Data
+          </button>
+          <button
+            class="action-btn"
+            @click="exportDebugInfo"
+          >
+            📋 Export
+          </button>
         </div>
       </div>
     </div>

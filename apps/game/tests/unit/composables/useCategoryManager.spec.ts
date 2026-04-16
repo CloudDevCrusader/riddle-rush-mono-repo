@@ -208,9 +208,15 @@ describe('useCategoryManager', () => {
 
       const result = manager.getRandomCategory(categories)
 
+<<<<<<< Updated upstream
       expect(result).not.toBeNull()
       expect(categories.some((c) => c.id === result!.id)).toBe(true)
     })
+=======
+      expect(result).not.toBeNull();
+      expect(categories.some(c => c.id === result!.id)).toBe(true);
+    });
+>>>>>>> Stashed changes
 
     it('returns null for empty categories array', () => {
       const result = manager.getRandomCategory([])
@@ -255,7 +261,173 @@ describe('useCategoryManager', () => {
     it('returns default emoji for unknown category names', () => {
       const result = manager.getCategoryEmoji('UnknownCategory')
 
+<<<<<<< Updated upstream
       expect(result).toBe('🎯')
     })
   })
 })
+=======
+      expect(result).toBe('🎯');
+    });
+  });
+
+  // ──────────────────────────────────────────
+  // fetchCategories
+  // ──────────────────────────────────────────
+  describe('fetchCategories', () => {
+    function createFetchState(
+      overrides: Partial<{
+        categories: Category[]
+        categoriesLoaded: boolean
+        categoriesLoading: boolean
+        categoryLoadError: string | null
+      }> = {},
+    ) {
+      return {
+        categories: [] as Category[],
+        categoriesLoaded: false,
+        categoriesLoading: false,
+        categoryLoadError: null,
+        ...overrides,
+      };
+    }
+
+    beforeEach(() => {
+      mock$fetch.mockReset();
+    });
+
+    it('returns cached categories when already loaded and force is false', async () => {
+      const cached = [createCategory({ id: 1 }), createCategory({ id: 2 })];
+      const state = createFetchState({ categories: cached, categoriesLoaded: true });
+
+      const result = await manager.fetchCategories(state);
+
+      expect(result).toBe(cached);
+      expect(mock$fetch).not.toHaveBeenCalled();
+    });
+
+    it('bypasses cache when force is true', async () => {
+      const cached = [createCategory({ id: 1 })];
+      const fresh = [createCategory({ id: 10 }), createCategory({ id: 20 })];
+      mock$fetch.mockResolvedValue(fresh);
+
+      const state = createFetchState({ categories: cached, categoriesLoaded: true });
+      const result = await manager.fetchCategories(state, true);
+
+      expect(mock$fetch).toHaveBeenCalledWith('/data/categories.json');
+      expect(result).toBe(fresh);
+      expect(state.categories).toBe(fresh);
+    });
+
+    it('fetches and stores categories on first load', async () => {
+      const fetched = [createCategory({ id: 1 }), createCategory({ id: 2 })];
+      mock$fetch.mockResolvedValue(fetched);
+
+      const state = createFetchState();
+      const result = await manager.fetchCategories(state);
+
+      expect(state.categories).toBe(fetched);
+      expect(state.categoriesLoaded).toBe(true);
+      expect(state.categoryLoadError).toBeNull();
+      expect(state.categoriesLoading).toBe(false);
+      expect(result).toEqual(fetched);
+    });
+
+    it('throws when fetched categories array is empty', async () => {
+      mock$fetch.mockResolvedValue([]);
+
+      const state = createFetchState();
+
+      await expect(manager.fetchCategories(state)).rejects.toThrow(
+        'No categories found in data file',
+      );
+      expect(state.categoriesLoading).toBe(false);
+    });
+
+    it('throws when fetched categories is null', async () => {
+      mock$fetch.mockResolvedValue(null);
+
+      const state = createFetchState();
+
+      await expect(manager.fetchCategories(state)).rejects.toThrow(
+        'No categories found in data file',
+      );
+    });
+
+    it('returns cached categories on fetch error when cache exists', async () => {
+      const cached = [createCategory({ id: 99 })];
+      mock$fetch.mockRejectedValue(new Error('Network error'));
+
+      const state = createFetchState({ categories: cached });
+      const result = await manager.fetchCategories(state);
+
+      expect(result).toBe(cached);
+      expect(state.categoryLoadError).toBe('Network error');
+      expect(state.categoriesLoading).toBe(false);
+    });
+
+    it('re-throws on fetch error when no cached categories exist', async () => {
+      mock$fetch.mockRejectedValue(new Error('Network error'));
+
+      const state = createFetchState();
+
+      await expect(manager.fetchCategories(state)).rejects.toThrow('Network error');
+      expect(state.categoryLoadError).toBe('Network error');
+      expect(state.categoriesLoading).toBe(false);
+    });
+
+    it('uses generic message for non-Error thrown values', async () => {
+      mock$fetch.mockRejectedValue('string failure');
+
+      const state = createFetchState();
+
+      await expect(manager.fetchCategories(state)).rejects.toThrow('Failed to load categories');
+      expect(state.categoryLoadError).toBe('Failed to load categories');
+    });
+
+    it('waits for concurrent loading to finish and returns result', async () => {
+      const loaded = [createCategory({ id: 5 })];
+
+      // Simulate another caller already loading — will "finish" after 200ms
+      const state = createFetchState({ categoriesLoading: true });
+
+      // After a short delay, simulate the other loader completing
+      setTimeout(() => {
+        state.categoriesLoading = false;
+        state.categories = loaded;
+      }, 150);
+
+      const result = await manager.fetchCategories(state);
+
+      expect(result).toBe(loaded);
+      // $fetch should NOT have been called — we piggy-backed on the other loader
+      expect(mock$fetch).not.toHaveBeenCalled();
+    });
+
+    it('throws timeout when concurrent loading never finishes', async () => {
+      // categoriesLoading stays true forever → 100 attempts × 100ms → timeout
+      const state = createFetchState({ categoriesLoading: true });
+
+      await expect(manager.fetchCategories(state)).rejects.toThrow('Category loading timeout');
+    }, 15_000);
+
+    it('resets categoriesLoading in finally block on success', async () => {
+      mock$fetch.mockResolvedValue([createCategory({ id: 1 })]);
+
+      const state = createFetchState();
+      await manager.fetchCategories(state);
+
+      expect(state.categoriesLoading).toBe(false);
+    });
+
+    it('resets categoriesLoading in finally block on error', async () => {
+      mock$fetch.mockRejectedValue(new Error('fail'));
+
+      const state = createFetchState();
+      await manager.fetchCategories(state).catch(() => {});
+
+      expect(state.categoriesLoading).toBe(false);
+    });
+  });
+});
+>>>>>>> Stashed changes

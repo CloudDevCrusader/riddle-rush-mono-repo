@@ -39,6 +39,8 @@ export function getEnvironmentConfig(): EnvironmentConfig {
   const isPreview = stage === 'preview'
 
   // Get base URL from environment or use defaults
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   const baseUrl =
     process.env.NUXT_PUBLIC_SITE_URL ||
     (isProduction
@@ -46,6 +48,20 @@ export function getEnvironmentConfig(): EnvironmentConfig {
       : isPreview
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000')
+=======
+=======
+>>>>>>> Stashed changes
+  const baseUrl
+    = process.env.NUXT_PUBLIC_SITE_URL
+      || (isProduction
+        ? 'https://riddle-rush.vercel.app'
+        : isPreview
+          ? `https://${process.env.VERCEL_URL}`
+          : 'http://localhost:3000');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
   return {
     stage,

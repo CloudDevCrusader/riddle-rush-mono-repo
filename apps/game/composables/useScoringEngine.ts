@@ -70,10 +70,23 @@ export function useScoringEngine() {
   function determineWinners(players: Player[]): Player[] {
     if (players.length === 0) return []
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const maxScore = Math.max(...players.map((p) => p.totalScore))
     if (maxScore <= 0) return []
 
     return players.filter((p) => p.totalScore === maxScore)
+=======
+=======
+>>>>>>> Stashed changes
+    const maxScore = Math.max(...players.map(p => p.totalScore));
+    if (maxScore <= 0) return [];
+
+    return players.filter(p => p.totalScore === maxScore);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
   }
 
   return {

@@ -35,8 +35,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: number]
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   change: [value: number]
 }>()
+=======
+=======
+>>>>>>> Stashed changes
+  'change': [value: number]
+}>();
+>>>>>>> Stashed changes
 
 // Refs
 const trackRef = ref<HTMLElement | null>(null)
@@ -159,7 +167,10 @@ onUnmounted(() => {
 <template>
   <div class="game-slider">
     <!-- Icon -->
-    <div v-if="icon" class="game-slider__icon">
+    <div
+      v-if="icon"
+      class="game-slider__icon"
+    >
       {{ displayIcon }}
     </div>
 
@@ -174,7 +185,10 @@ onUnmounted(() => {
       <!-- Track background -->
       <div class="game-slider__track">
         <!-- Fill (green portion) -->
-        <div class="game-slider__fill" :style="fillStyle" />
+        <div
+          class="game-slider__fill"
+          :style="fillStyle"
+        />
       </div>
 
       <!-- Thumb (draggable peg) -->
@@ -194,11 +208,14 @@ onUnmounted(() => {
         :aria-label="label || 'Volume slider'"
         @input="handleInput"
         @change="handleInputChange"
-      />
+      >
     </div>
 
     <!-- Optional label -->
-    <span v-if="label" class="game-slider__label">{{ label }}</span>
+    <span
+      v-if="label"
+      class="game-slider__label"
+    >{{ label }}</span>
   </div>
 </template>
 

@@ -1,3 +1,5 @@
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { fileURLToPath } from 'node:url'
 import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants'
 import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform'
@@ -5,6 +7,16 @@ import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite'
 import { filterSsrPlugins } from './utils/filter-ssr-plugins'
 import { withTrailingSlash } from 'ufo'
 import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema'
+=======
+=======
+>>>>>>> Stashed changes
+import { MIN_PLAYERS, MAX_PLAYERS, DEFAULT_PLAYERS } from '@riddle-rush/shared/constants';
+import { getTerraformOutputsFromEnv } from '../../nuxt.config.terraform';
+import { getBuildPlugins, getDevPlugins } from '@riddle-rush/config/vite';
+import { filterSsrPlugins } from './utils/filter-ssr-plugins';
+import { withTrailingSlash } from 'ufo';
+import type { NuxtApp as NuxtAppSchema, NuxtPlugin } from '@nuxt/schema';
+>>>>>>> Stashed changes
 
 // Disable minification for development and debug builds
 // Use DEBUG_BUILD=true to generate unminified production builds for debugging
@@ -18,13 +30,53 @@ const isLocalhostBuild = [
   process.env.NUXT_HOST,
 ]
   .filter(Boolean)
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'))
+=======
+  .some(value => value?.includes('localhost') || value?.includes('127.0.0.1'));
+>>>>>>> Stashed changes
+=======
+  .some(value => value?.includes('localhost') || value?.includes('127.0.0.1'));
+>>>>>>> Stashed changes
 
 const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
 const resolvedBaseUrl = (() => {
   const baseUrl = process.env.BASE_URL || process.env.NUXT_PUBLIC_BASE_URL || ''
   return baseUrl ? withTrailingSlash(baseUrl) : '/'
 })()
+
+/** Prefer `NUXT_PUBLIC_*` (Nuxt convention); legacy unprefixed names still accepted. */
+const nuxtPublic = {
+  gitlabFeatureFlagsUrl:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL || process.env.GITLAB_FEATURE_FLAGS_URL || '',
+  gitlabFeatureFlagsToken:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN || process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
+  gtagId:
+    process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID || process.env.GOOGLE_ANALYTICS_ID || '',
+  cloudWatchEndpoint:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_ENDPOINT || process.env.CLOUDWATCH_ENDPOINT || '',
+  cloudWatchApiKey:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_API_KEY || process.env.CLOUDWATCH_API_KEY || '',
+  debugErrorSync:
+    process.env.NUXT_PUBLIC_DEBUG_ERROR_SYNC === 'true' || process.env.DEBUG_ERROR_SYNC === 'true',
+};
+
+/** Prefer `NUXT_PUBLIC_*` (Nuxt convention); legacy unprefixed names still accepted. */
+const nuxtPublic = {
+  gitlabFeatureFlagsUrl:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL || process.env.GITLAB_FEATURE_FLAGS_URL || '',
+  gitlabFeatureFlagsToken:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN || process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
+  gtagId:
+    process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID || process.env.GOOGLE_ANALYTICS_ID || '',
+  cloudWatchEndpoint:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_ENDPOINT || process.env.CLOUDWATCH_ENDPOINT || '',
+  cloudWatchApiKey:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_API_KEY || process.env.CLOUDWATCH_API_KEY || '',
+  debugErrorSync:
+    process.env.NUXT_PUBLIC_DEBUG_ERROR_SYNC === 'true' || process.env.DEBUG_ERROR_SYNC === 'true',
+};
 
 // Helper function to filter out problematic i18n plugins
 function filterProblematicPlugins(app: NuxtAppSchema) {
@@ -35,6 +87,8 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
       if (src && typeof src === 'string') {
         // Remove SSR-only plugins that cause "Cannot access 'NuxtPluginIndicator' before initialization"
         // NOTE: Do NOT filter the preload plugin — it's required to load locale messages
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         const isProblematicPlugin =
           src.includes('switch-locale-path-ssr') ||
           src.includes('i18n-ssr') ||
@@ -43,6 +97,21 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
           src.includes('ssg-detect') ||
           src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr') ||
           src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect')
+=======
+=======
+>>>>>>> Stashed changes
+        const isProblematicPlugin
+          = src.includes('switch-locale-path-ssr')
+            || src.includes('i18n-ssr')
+            || src.includes('locale-detector-ssr')
+            || src.includes('route-locale-detect')
+            || src.includes('ssg-detect')
+            || src.includes('@nuxtjs/i18n/runtime/plugins/switch-locale-path-ssr')
+            || src.includes('@nuxtjs/i18n/runtime/plugins/route-locale-detect');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
         if (isProblematicPlugin) {
           // Only log in development to avoid cluttering production logs
@@ -57,8 +126,16 @@ function filterProblematicPlugins(app: NuxtAppSchema) {
     // Only log in development
     if (process.env.NODE_ENV === 'development' && app.plugins.length < originalLength) {
       console.log(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         `[nuxt.config] Filtered ${originalLength - app.plugins.length} problematic plugin(s)`
       )
+=======
+=======
+>>>>>>> Stashed changes
+        `[nuxt.config] Filtered ${originalLength - app.plugins.length} problematic plugin(s)`,
+      );
+>>>>>>> Stashed changes
     }
   }
 }
@@ -103,9 +180,6 @@ export default defineNuxtConfig({
       enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     },
   },
-  hints: {
-    devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
-  },
 
   app: {
     head: {
@@ -141,6 +215,8 @@ export default defineNuxtConfig({
       environment: process.env.NODE_ENV || 'development',
       appVersion: process.env.npm_package_version || '1.0.0',
       // CloudWatch configuration - env vars override Terraform
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
       cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
       debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
@@ -148,6 +224,22 @@ export default defineNuxtConfig({
       gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
       gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
       gtagId: process.env.GTAG_ID || '',
+=======
+=======
+>>>>>>> Stashed changes
+      cloudWatchEndpoint: nuxtPublic.cloudWatchEndpoint,
+      cloudWatchApiKey: nuxtPublic.cloudWatchApiKey,
+      debugErrorSync: nuxtPublic.debugErrorSync,
+      /** Dev-only: full URL for debug-button-align ingest; when empty, no requests are sent */
+      debugButtonAlignIngestUrl: process.env.NUXT_PUBLIC_DEBUG_BUTTON_ALIGN_INGEST_URL || '',
+      gitlabFeatureFlagsUrl: nuxtPublic.gitlabFeatureFlagsUrl,
+      gitlabFeatureFlagsToken: nuxtPublic.gitlabFeatureFlagsToken,
+      /** GA4 measurement ID — prefer `NUXT_PUBLIC_GOOGLE_ANALYTICS_ID`; `GOOGLE_ANALYTICS_ID` still works. */
+      gtagId: nuxtPublic.gtagId,
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
       // Feature-flag contract: runtime config can only force-disable answer input.
       // Precedence in useFeatureFlags.ts is: runtime force-disable -> GitLab -> local settings -> default.
       featureAnswerInput: process.env.NUXT_PUBLIC_FEATURE_ANSWER_INPUT !== 'false',
@@ -277,8 +369,16 @@ export default defineNuxtConfig({
               console.warn('Circular dependency detected:', warning.message)
               console.warn(
                 'Check this before deploying, might fail after build',
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 JSON.stringify(warning, null, 2)
               )
+=======
+=======
+>>>>>>> Stashed changes
+                JSON.stringify(warning, null, 2),
+              );
+>>>>>>> Stashed changes
             }
             return
           }
@@ -332,6 +432,12 @@ export default defineNuxtConfig({
   // Font optimization
   fontMetrics: {
     fonts: ['Inter', 'system-ui'],
+  },
+  hints: {
+    devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+  },
+  hints: {
+    devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
   },
 
   i18n: {
@@ -492,7 +598,7 @@ export default defineNuxtConfig({
           opacity: 1,
         },
       },
-      fade: {
+      'fade': {
         initial: {
           opacity: 0,
         },
@@ -596,15 +702,15 @@ export default defineNuxtConfig({
             crossOriginEmbedderPolicy:
               process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
             contentSecurityPolicy: {
-              'base-uri': ["'self'"],
-              'font-src': ["'self'", 'https:', 'data:'],
-              'form-action': ["'self'"],
-              'frame-ancestors': ["'self'"],
-              'img-src': ["'self'", 'data:', 'blob:'],
-              'object-src': ["'none'"],
-              'script-src-attr': ["'none'"],
-              'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
+              'base-uri': ['\'self\''],
+              'font-src': ['\'self\'', 'https:', 'data:'],
+              'form-action': ['\'self\''],
+              'frame-ancestors': ['\'self\''],
+              'img-src': ['\'self\'', 'data:', 'blob:'],
+              'object-src': ['\'none\''],
+              'script-src-attr': ['\'none\''],
+              'style-src': ['\'self\'', 'https:', '\'unsafe-inline\''],
+              'script-src': ['\'self\'', 'https:', '\'unsafe-inline\'', '\'unsafe-eval\''],
               'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
             },
           },

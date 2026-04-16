@@ -4,7 +4,10 @@
       <!-- Header -->
       <GameHeader color="gold">
         <template #left>
-          <button class="game-back-btn tap-highlight no-select" @click="goBack">
+          <button
+            class="game-back-btn tap-highlight no-select"
+            @click="goBack"
+          >
             <span class="back-btn__arrow">&#8592;</span>
           </button>
         </template>
@@ -15,21 +18,65 @@
       <GamePanel class="settings-panel">
         <!-- Sound slider -->
         <div class="slider-row">
-          <GameSlider v-model="soundVolume" icon="🔊" muted-icon="🔇" @change="handleSoundChange" />
+          <GameSlider
+            v-model="soundVolume"
+            icon="🔊"
+            muted-icon="🔇"
+            @change="handleSoundChange"
+          />
           <span class="slider-label">{{ t('settings.sound') }}</span>
         </div>
 
         <!-- Music slider -->
         <div class="slider-row">
-          <GameSlider v-model="musicVolume" icon="🎵" muted-icon="🔇" @change="handleMusicChange" />
+          <GameSlider
+            v-model="musicVolume"
+            icon="🎵"
+            muted-icon="🔇"
+            @change="handleMusicChange"
+          />
           <span class="slider-label">{{ t('settings.music') }}</span>
         </div>
+<<<<<<< Updated upstream
+=======
+
+        <div
+          v-if="isFortuneWheelEnabled"
+          class="fortune-wheel-setting"
+        >
+          <button
+            type="button"
+            class="fortune-wheel-toggle tap-highlight"
+            :aria-pressed="fortuneWheelAllowRedraw"
+            :aria-label="t('settings.fortune_wheel_redraw')"
+            @click="settings.toggleFortuneWheelAllowRedraw()"
+          >
+            <span
+              class="fortune-wheel-toggle__track"
+              :class="{ 'is-on': fortuneWheelAllowRedraw }"
+            >
+              <span class="fortune-wheel-toggle__thumb" />
+            </span>
+            <span class="fortune-wheel-toggle__label">{{
+              t('settings.fortune_wheel_redraw')
+            }}</span>
+          </button>
+          <p class="fortune-wheel-setting__hint">{{ t('settings.fortune_wheel_redraw_hint') }}</p>
+        </div>
+>>>>>>> Stashed changes
       </GamePanel>
 
       <!-- OK Button -->
-      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk">{{
-        t('common.ok')
-      }}</GameButton>
+      <GameButton
+        variant="primary"
+        size="lg"
+        class="ok-btn"
+        @click="handleOk"
+      >
+        {{
+          t('common.ok')
+        }}
+      </GameButton>
     </div>
   </GameBackground>
 </template>

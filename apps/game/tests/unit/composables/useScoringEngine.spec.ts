@@ -17,8 +17,18 @@ function createPlayer(overrides: Partial<Player> = {}): Player {
 }
 
 describe('useScoringEngine', () => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   const { calculateAttemptScore, getRankSuffix, getScoreDisplay, determineWinners } =
     useScoringEngine()
+=======
+  const { calculateAttemptScore, getRankSuffix, getScoreDisplay, determineWinners }
+    = useScoringEngine();
+>>>>>>> Stashed changes
+=======
+  const { calculateAttemptScore, getRankSuffix, getScoreDisplay, determineWinners }
+    = useScoringEngine();
+>>>>>>> Stashed changes
 
   // ──────────────────────────────────────────
   // calculateAttemptScore
@@ -141,11 +151,19 @@ describe('useScoringEngine', () => {
 
       const winners = determineWinners(players)
 
+<<<<<<< Updated upstream
       expect(winners).toHaveLength(2)
       const names = winners.map((w) => w.name)
       expect(names).toContain('Alice')
       expect(names).toContain('Bob')
     })
+=======
+      expect(winners).toHaveLength(2);
+      const names = winners.map(w => w.name);
+      expect(names).toContain('Alice');
+      expect(names).toContain('Bob');
+    });
+>>>>>>> Stashed changes
 
     it('returns empty array for empty players array', () => {
       const winners = determineWinners([])

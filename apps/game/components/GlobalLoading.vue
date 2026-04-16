@@ -1,6 +1,9 @@
 <template>
   <transition name="fade-out">
-    <div v-if="isLoading" class="global-loading-overlay">
+    <div
+      v-if="isLoading"
+      class="global-loading-overlay"
+    >
       <!-- Background Image -->
       <img
         :src="getAssetPath('assets/splash/background.png')"
@@ -8,7 +11,7 @@
         class="splash-bg"
         width="1920"
         height="1080"
-      />
+      >
 
       <div class="loading-container">
         <!-- Logo with Fade In Animation -->
@@ -19,18 +22,21 @@
             class="logo-image"
             width="512"
             height="512"
-          />
+          >
         </div>
 
         <!-- Loading Bar Container with Slide Up Animation -->
-        <div v-if="showProgress" class="loading-bar-container animate-slide-up">
+        <div
+          v-if="showProgress"
+          class="loading-bar-container animate-slide-up"
+        >
           <img
             :src="getAssetPath('assets/splash/LOADING_.png')"
             alt="Loading"
             class="loading-text"
             width="256"
             height="64"
-          />
+          >
           <div class="loading-bar-wrapper">
             <img
               :src="getAssetPath('assets/splash/loading-down.png')"
@@ -38,7 +44,7 @@
               class="loading-bar-bg-img"
               width="512"
               height="64"
-            />
+            >
             <div class="loading-bar-track">
               <img
                 :src="getAssetPath('assets/splash/loading-top.png')"
@@ -47,7 +53,7 @@
                 class="loading-bar-fill-img"
                 width="512"
                 height="64"
-              />
+              >
             </div>
           </div>
           <div class="loading-percentage">{{ Math.round(progress) }}%</div>

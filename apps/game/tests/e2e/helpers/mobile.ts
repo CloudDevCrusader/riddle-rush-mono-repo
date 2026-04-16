@@ -17,13 +17,13 @@ const NETWORK_PRESETS = {
     uploadThroughput: (3 * 1024 * 1024) / 8,
     latency: 20,
   },
-  offline: {
+  'offline': {
     offline: true,
     downloadThroughput: 0,
     uploadThroughput: 0,
     latency: 0,
   },
-  online: {
+  'online': {
     offline: false,
     downloadThroughput: -1, // No throttling
     uploadThroughput: -1,
@@ -62,6 +62,8 @@ export async function waitForMobileTouchReady(page: Page, timeout: number = 1000
   await page.waitForFunction(
     () => {
       // Check if touch events are supported
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       const touchSupported =
         'ontouchstart' in window ||
         navigator.maxTouchPoints > 0 ||
@@ -74,22 +76,70 @@ export async function waitForMobileTouchReady(page: Page, timeout: number = 1000
       // Check for any pending animations
       const noAnimations =
         document.getAnimations?.().filter((a) => a.playState === 'running').length === 0
+=======
+      const touchSupported
+        = 'ontouchstart' in window
+          || navigator.maxTouchPoints > 0
+          || (navigator as any).msMaxTouchPoints > 0;
+=======
+      const touchSupported
+        = 'ontouchstart' in window
+          || navigator.maxTouchPoints > 0
+          || (navigator as any).msMaxTouchPoints > 0;
+
+      // Check if document is interactive
+      const isInteractive
+        = document.readyState === 'interactive' || document.readyState === 'complete';
+
+      // Check for any pending animations
+      const noAnimations
+        = document.getAnimations?.().filter(a => a.playState === 'running').length === 0;
+>>>>>>> Stashed changes
+
+      // Check if document is interactive
+      const isInteractive
+        = document.readyState === 'interactive' || document.readyState === 'complete';
+
+      // Check for any pending animations
+      const noAnimations
+        = document.getAnimations?.().filter(a => a.playState === 'running').length === 0;
+>>>>>>> Stashed changes
 
       return isInteractive && (touchSupported || noAnimations)
     },
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     { timeout }
   )
+=======
+=======
+>>>>>>> Stashed changes
+    { timeout },
+  );
+>>>>>>> Stashed changes
 
   // iOS Safari specific: wait for touch-action CSS to be applied
   await page.waitForFunction(
     () => {
       const interactiveElements = document.querySelectorAll(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         'button, a, input, [role="button"], [tabindex]'
       )
       return interactiveElements.length === 0 || interactiveElements.length > 0
     },
     { timeout }
   )
+=======
+=======
+>>>>>>> Stashed changes
+        'button, a, input, [role="button"], [tabindex]',
+      );
+      return interactiveElements.length === 0 || interactiveElements.length > 0;
+    },
+    { timeout },
+  );
+>>>>>>> Stashed changes
 
   // Small delay for iOS Safari quirks with touch event registration
   await page.waitForTimeout(100)
@@ -102,7 +152,7 @@ export async function waitForMobileTouchReady(page: Page, timeout: number = 1000
  */
 export async function simulateMobileNetwork(
   page: Page,
-  type: 'slow-3g' | '4g' | 'offline' | 'online'
+  type: 'slow-3g' | '4g' | 'offline' | 'online',
 ): Promise<void> {
   const preset = NETWORK_PRESETS[type]
 
@@ -138,8 +188,16 @@ export async function simulateMobileNetwork(
     // CDP might not be available in all browsers (e.g., WebKit)
     console.warn(`[Mobile] Network simulation not supported: ${(error as Error).message}`)
     throw new Error(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       `Network simulation requires Chromium-based browser. Error: ${(error as Error).message}`
     )
+=======
+=======
+>>>>>>> Stashed changes
+      `Network simulation requires Chromium-based browser. Error: ${(error as Error).message}`,
+    );
+>>>>>>> Stashed changes
   }
 }
 
@@ -153,10 +211,20 @@ export async function verifyResponsiveLayout(
     mobile: number
     tablet: number
     desktop: number
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   }
 ): Promise<{ viewport: string; issues: string[] }> {
   const issues: string[] = []
   const currentViewport = page.viewportSize()
+=======
+=======
+>>>>>>> Stashed changes
+  },
+): Promise<{ viewport: string, issues: string[] }> {
+  const issues: string[] = [];
+  const currentViewport = page.viewportSize();
+>>>>>>> Stashed changes
 
   if (!currentViewport) {
     return { viewport: 'unknown', issues: ['Unable to determine viewport size'] }
@@ -227,10 +295,23 @@ export async function verifyResponsiveLayout(
       const width = Number.parseInt(styles.width, 10)
 
       if (width > vw && styles.position !== 'fixed' && styles.position !== 'absolute') {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         const selector =
           el.id ||
           (el.className && typeof el.className === 'string' ? el.className.split(' ')[0] : '') ||
           el.tagName.toLowerCase()
+=======
+=======
+>>>>>>> Stashed changes
+        const selector
+          = el.id
+            || (el.className && typeof el.className === 'string' ? el.className.split(' ')[0] : '')
+            || el.tagName.toLowerCase();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         if (selector && !issues.includes(selector)) {
           issues.push(selector)
         }
@@ -263,8 +344,16 @@ export async function verifyResponsiveLayout(
 
     if (smallTextElements > 0) {
       issues.push(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         `${smallTextElements} text elements have font-size < 12px (may be hard to read on mobile)`
       )
+=======
+=======
+>>>>>>> Stashed changes
+        `${smallTextElements} text elements have font-size < 12px (may be hard to read on mobile)`,
+      );
+>>>>>>> Stashed changes
     }
   }
 
@@ -284,11 +373,27 @@ export async function verifyTouchTargets(
   minSize: number = DEFAULT_MIN_TOUCH_SIZE,
   options: {
     includeTextInputs?: boolean
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   } = {}
 ): Promise<{
   valid: number
   tooSmall: { selector: string; width: number; height: number }[]
   ignored: { selector: string; width: number; height: number; reason: string }[]
+=======
+  } = {},
+): Promise<{
+  valid: number
+  tooSmall: { selector: string, width: number, height: number }[]
+  ignored: { selector: string, width: number, height: number, reason: string }[]
+>>>>>>> Stashed changes
+=======
+  } = {},
+): Promise<{
+  valid: number
+  tooSmall: { selector: string, width: number, height: number }[]
+  ignored: { selector: string, width: number, height: number, reason: string }[]
+>>>>>>> Stashed changes
 }> {
   const { includeTextInputs = false } = options
 
@@ -325,20 +430,48 @@ export async function verifyTouchTargets(
           'input[type="password"]',
           'input[type="number"]',
           'input[type="tel"]',
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           'input[type="url"]'
         )
       }
 
       const textInputSelector =
         'input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="tel"], input[type="url"]'
+=======
+          'input[type="url"]',
+        );
+      }
+
+      const textInputSelector
+        = 'input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="tel"], input[type="url"]';
+>>>>>>> Stashed changes
+=======
+          'input[type="url"]',
+        );
+      }
+
+      const textInputSelector
+        = 'input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="tel"], input[type="url"]';
+>>>>>>> Stashed changes
 
       // Selectors for interactive elements
       const selectorText = interactiveSelectors.join(', ')
 
+<<<<<<< Updated upstream
       const elements = document.querySelectorAll(selectorText)
       let validCount = 0
       const tooSmall: { selector: string; width: number; height: number }[] = []
       const ignored: { selector: string; width: number; height: number; reason: string }[] = []
+=======
+      const elements = document.querySelectorAll(selectorText);
+      let validCount = 0;
+      const tooSmall: { selector: string, width: number, height: number }[] = [];
+      const ignored: { selector: string, width: number, height: number, reason: string }[] = [];
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       elements.forEach((el) => {
         const rect = el.getBoundingClientRect()
@@ -348,10 +481,10 @@ export async function verifyTouchTargets(
 
         // Skip elements not in viewport
         if (
-          rect.bottom < 0 ||
-          rect.top > window.innerHeight ||
-          rect.right < 0 ||
-          rect.left > window.innerWidth
+          rect.bottom < 0
+          || rect.top > window.innerHeight
+          || rect.right < 0
+          || rect.left > window.innerWidth
         ) {
           return
         }
@@ -359,11 +492,25 @@ export async function verifyTouchTargets(
         const width = Math.round(rect.width)
         const height = Math.round(rect.height)
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         const isTextInput =
           !includeSmallTextInputs &&
           el instanceof HTMLInputElement &&
           el.matches(textInputSelector) &&
           !(el.type === 'button' || el.type === 'submit' || el.type === 'reset')
+=======
+=======
+>>>>>>> Stashed changes
+        const isTextInput
+          = !includeSmallTextInputs
+            && el instanceof HTMLInputElement
+            && el.matches(textInputSelector)
+            && !(el.type === 'button' || el.type === 'submit' || el.type === 'reset');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
         if (width >= minTouchSize && height >= minTouchSize) {
           validCount++
@@ -408,8 +555,16 @@ export async function verifyTouchTargets(
 
       return { valid: validCount, tooSmall, ignored }
     },
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     { minTouchSize: minSize, includeSmallTextInputs: includeTextInputs }
   )
+=======
+=======
+>>>>>>> Stashed changes
+    { minTouchSize: minSize, includeSmallTextInputs: includeTextInputs },
+  );
+>>>>>>> Stashed changes
 
   console.log('[Mobile] Touch target verification:', {
     valid: result.valid,
@@ -444,9 +599,9 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
           for (const rule of rules) {
             if (rule instanceof CSSStyleRule) {
               if (
-                rule.selectorText?.includes(':hover') &&
-                !rule.selectorText?.includes(':focus') &&
-                !rule.selectorText?.includes(':active')
+                rule.selectorText?.includes(':hover')
+                && !rule.selectorText?.includes(':focus')
+                && !rule.selectorText?.includes(':active')
               ) {
                 // Extract base selector
                 const baseSelector = rule.selectorText.replace(/:hover/g, '').trim()
@@ -472,16 +627,31 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
           // Check if this element or children change visibility on hover
           const styles = window.getComputedStyle(el)
           if (
-            styles.display !== 'none' &&
-            styles.visibility !== 'hidden' &&
-            el.getAttribute('aria-haspopup')
+            styles.display !== 'none'
+            && styles.visibility !== 'hidden'
+            && el.getAttribute('aria-haspopup')
           ) {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
             const id =
               el.id ||
               (el.className && typeof el.className === 'string'
                 ? el.className.split(' ')[0]
                 : '') ||
               el.tagName.toLowerCase()
+=======
+=======
+>>>>>>> Stashed changes
+            const id
+              = el.id
+                || (el.className && typeof el.className === 'string'
+                  ? el.className.split(' ')[0]
+                  : '')
+                || el.tagName.toLowerCase();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
             if (!hoverOnly.includes(id)) {
               hoverOnly.push(id)
             }
@@ -495,6 +665,8 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
     // Check for contextmenu-only handlers
     const allElements = document.querySelectorAll('*')
     allElements.forEach((el) => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       const hasContextMenu =
         el.hasAttribute('oncontextmenu') || (el as any)._contextMenuHandler !== undefined
 
@@ -510,6 +682,39 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
             el.id ||
             (el.className && typeof el.className === 'string' ? el.className.split(' ')[0] : '') ||
             el.tagName.toLowerCase()
+=======
+      const hasContextMenu
+        = el.hasAttribute('oncontextmenu') || (el as any)._contextMenuHandler !== undefined;
+
+      // Check if element has right-click but no alternative
+      if (hasContextMenu) {
+        const hasAlternative
+          = el.hasAttribute('onclick')
+            || el.hasAttribute('onkeydown')
+            || el.hasAttribute('aria-haspopup');
+
+        if (!hasAlternative) {
+=======
+      const hasContextMenu
+        = el.hasAttribute('oncontextmenu') || (el as any)._contextMenuHandler !== undefined;
+
+      // Check if element has right-click but no alternative
+      if (hasContextMenu) {
+        const hasAlternative
+          = el.hasAttribute('onclick')
+            || el.hasAttribute('onkeydown')
+            || el.hasAttribute('aria-haspopup');
+
+        if (!hasAlternative) {
+>>>>>>> Stashed changes
+          const selector
+            = el.id
+              || (el.className && typeof el.className === 'string' ? el.className.split(' ')[0] : '')
+              || el.tagName.toLowerCase();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
           if (!rightClickOnly.includes(selector)) {
             rightClickOnly.push(selector)
           }
@@ -534,7 +739,15 @@ export async function verifyNoMouseOnlyInteractions(page: Page): Promise<{
 export function getDeviceInfo(context: BrowserContext): {
   isMobile: boolean
   hasTouch: boolean
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   viewport: { width: number; height: number }
+=======
+  viewport: { width: number, height: number }
+>>>>>>> Stashed changes
+=======
+  viewport: { width: number, height: number }
+>>>>>>> Stashed changes
   userAgent: string
 } {
   const pages = context.pages()
@@ -571,7 +784,7 @@ export function getDeviceInfo(context: BrowserContext): {
 export async function simulateTouchGesture(
   page: Page,
   gesture: 'tap' | 'swipe-left' | 'swipe-right' | 'pinch',
-  selector: string
+  selector: string,
 ): Promise<void> {
   const element = await page.waitForSelector(selector, { timeout: 5000 })
 
@@ -643,6 +856,8 @@ export async function simulateTouchGesture(
             element.dispatchEvent(touchEnd)
           }
         },
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         { startX, startY: centerY, endX, endY: centerY }
       )
 
@@ -650,6 +865,21 @@ export async function simulateTouchGesture(
         `[Mobile] Swipe left gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`
       )
       break
+=======
+        { startX, startY: centerY, endX, endY: centerY },
+      );
+
+      console.log(
+=======
+        { startX, startY: centerY, endX, endY: centerY },
+      );
+
+      console.log(
+>>>>>>> Stashed changes
+        `[Mobile] Swipe left gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`,
+      );
+      break;
+>>>>>>> Stashed changes
     }
 
     case 'swipe-right': {
@@ -698,6 +928,8 @@ export async function simulateTouchGesture(
             element.dispatchEvent(touchEnd)
           }
         },
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         { startX, startY: centerY, endX, endY: centerY }
       )
 
@@ -705,6 +937,21 @@ export async function simulateTouchGesture(
         `[Mobile] Swipe right gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`
       )
       break
+=======
+        { startX, startY: centerY, endX, endY: centerY },
+      );
+
+      console.log(
+=======
+        { startX, startY: centerY, endX, endY: centerY },
+      );
+
+      console.log(
+>>>>>>> Stashed changes
+        `[Mobile] Swipe right gesture from (${startX}, ${centerY}) to (${endX}, ${centerY})`,
+      );
+      break;
+>>>>>>> Stashed changes
     }
 
     case 'pinch': {
@@ -777,8 +1024,16 @@ export async function simulateTouchGesture(
             target.dispatchEvent(touchEnd)
           }
         },
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         { centerX, centerY, boxWidth: box.width, boxHeight: box.height }
       )
+=======
+=======
+>>>>>>> Stashed changes
+        { centerX, centerY, boxWidth: box.width, boxHeight: box.height },
+      );
+>>>>>>> Stashed changes
 
       console.log(`[Mobile] Pinch gesture at (${centerX}, ${centerY})`)
       break

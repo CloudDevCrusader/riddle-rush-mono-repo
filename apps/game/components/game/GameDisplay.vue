@@ -34,7 +34,10 @@ const displayClasses = computed(() => [
 </script>
 
 <template>
-  <component :is="tag" :class="displayClasses">
+  <component
+    :is="tag"
+    :class="displayClasses"
+  >
     <slot />
   </component>
 </template>

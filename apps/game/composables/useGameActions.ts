@@ -19,10 +19,16 @@ export function useGameActions() {
   const { t } = useI18n()
   const logger = useLogger()
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   /** Read the authoritative flow state from the store's computed hook. */
   const getFlowState = (): 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed' =>
     gameSession.flowState.value ?? 'setup'
 
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
   /**
    * Start a new game session
    */
@@ -114,7 +120,7 @@ export function useGameActions() {
   const setupMultiplayerGame = async (
     playerNames: string[],
     gameName?: string,
-    customLetter?: string
+    customLetter?: string,
   ) => {
     try {
       await gameSession.setupPlayers(playerNames, gameName, customLetter)
@@ -149,7 +155,7 @@ export function useGameActions() {
    */
   const startConfiguredRound = async (
     category: import('@riddle-rush/types/game').Category,
-    letter: string
+    letter: string,
   ) => {
     try {
       const session = await gameSession.advanceToConfiguredRound(category, letter)

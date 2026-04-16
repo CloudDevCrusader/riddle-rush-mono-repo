@@ -5,8 +5,8 @@
 
 export const useLogger = () => {
   // Import runtime config dynamically to avoid issues in test environment
-  const runtimeConfig =
-    typeof useRuntimeConfig !== 'undefined'
+  const runtimeConfig
+    = typeof useRuntimeConfig !== 'undefined'
       ? useRuntimeConfig()
       : {
           public: {
@@ -17,8 +17,8 @@ export const useLogger = () => {
         }
 
   // Import error sync dynamically
-  const { syncErrorLog } =
-    typeof useErrorSync !== 'undefined'
+  const { syncErrorLog }
+    = typeof useErrorSync !== 'undefined'
       ? useErrorSync()
       : {
           syncErrorLog: async () => {},

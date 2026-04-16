@@ -109,16 +109,33 @@ describe('useLocalStorage', () => {
 
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'test-key',
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         JSON.stringify({ count: 10 })
       )
     })
+=======
+=======
+>>>>>>> Stashed changes
+        JSON.stringify({ count: 10 }),
+      );
+    });
+>>>>>>> Stashed changes
 
     it('should stringify objects', () => {
       const { set } = useLocalStorage('test-key', { name: '', age: 0 })
       set({ name: 'Alice', age: 30 })
 
+<<<<<<< Updated upstream
       expect(localStorageMock.setItem).toHaveBeenCalledWith('test-key', '{"name":"Alice","age":30}')
     })
+=======
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        'test-key',
+        '{"name":"Alice","age":30}',
+      );
+    });
+>>>>>>> Stashed changes
 
     it('should handle string values', () => {
       const { set } = useLocalStorage('test-key', '')

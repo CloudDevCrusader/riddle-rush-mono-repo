@@ -22,7 +22,15 @@ interface E2EGameSession {
   id?: string
   currentPlayerIndex?: number
   players?: E2EPlayer[]
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   category?: { name?: string; searchWord?: string }
+=======
+  category?: { name?: string, searchWord?: string }
+>>>>>>> Stashed changes
+=======
+  category?: { name?: string, searchWord?: string }
+>>>>>>> Stashed changes
   letter?: string
   currentRound?: number
   status?: string
@@ -40,7 +48,15 @@ interface E2EPiniaGameStore {
     playerNames: string[],
     gameName?: string,
     customLetter?: string,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     customCategory?: unknown
+=======
+    customCategory?: unknown,
+>>>>>>> Stashed changes
+=======
+    customCategory?: unknown,
+>>>>>>> Stashed changes
   ) => Promise<{ id?: string } | null>
   setPendingPlayerNames?: (playerNames: string[]) => void
   transitionToRoundComplete?: () => void
@@ -51,6 +67,14 @@ interface E2EPiniaGameStore {
 interface PiniaWindow extends Window {
   __pinia_stores__?: {
     game?: E2EPiniaGameStore
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+    settings?: { fortuneWheelAllowRedraw: boolean }
+>>>>>>> Stashed changes
+=======
+    settings?: { fortuneWheelAllowRedraw: boolean }
+>>>>>>> Stashed changes
   }
 }
 
@@ -125,7 +149,7 @@ function normalizePlayerNames(playerNames: string[]): string[] {
 export async function submitPlayerAnswers(
   page: Page,
   count: number,
-  answers: string[] = []
+  answers: string[] = [],
 ): Promise<void> {
   if (count <= 0) {
     return
@@ -146,9 +170,18 @@ export async function submitPlayerAnswers(
       const players = store?.currentSession?.players ?? []
       return {
         currentPlayerIndex: store?.currentSession?.currentPlayerIndex ?? 0,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         submittedCount: players.filter((player) => Boolean(player.hasSubmitted)).length,
       }
     })
+=======
+=======
+>>>>>>> Stashed changes
+        submittedCount: players.filter(player => Boolean(player.hasSubmitted)).length,
+      };
+    });
+>>>>>>> Stashed changes
 
     const answerInputVisible = await answerInput.isVisible()
     const answer = answers[i]
@@ -172,20 +205,29 @@ export async function submitPlayerAnswers(
               const players = store?.currentSession?.players ?? []
               return {
                 currentPlayerIndex: store?.currentSession?.currentPlayerIndex ?? 0,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 submittedCount: players.filter((player) => Boolean(player.hasSubmitted)).length,
               }
             })
+=======
+=======
+>>>>>>> Stashed changes
+                submittedCount: players.filter(player => Boolean(player.hasSubmitted)).length,
+              };
+            });
+>>>>>>> Stashed changes
 
             if (
-              afterState.currentPlayerIndex > beforeState.currentPlayerIndex ||
-              afterState.submittedCount > beforeState.submittedCount
+              afterState.currentPlayerIndex > beforeState.currentPlayerIndex
+              || afterState.submittedCount > beforeState.submittedCount
             ) {
               return 'state-advanced'
             }
 
             return 'waiting'
           },
-          { timeout: 8000 }
+          { timeout: 8000 },
         )
         .not.toBe('waiting')
     }
@@ -207,10 +249,20 @@ export async function navigateToResults(page: Page): Promise<void> {
   // If all players already submitted but flow has not advanced yet,
   // force the transition so NEXT can navigate deterministically.
   await page.evaluate(() => {
+<<<<<<< Updated upstream
     const store = (window as PiniaWindow).__pinia_stores__?.game
     const players = store?.currentSession?.players ?? []
     const allSubmitted =
       players.length > 0 && players.every((player) => Boolean(player.hasSubmitted))
+=======
+    const store = (window as PiniaWindow).__pinia_stores__?.game;
+    const players = store?.currentSession?.players ?? [];
+    const allSubmitted
+      = players.length > 0 && players.every(player => Boolean(player.hasSubmitted));
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
     if (allSubmitted && store?.flowState === 'in-round') {
       store.transitionToRoundComplete?.()
@@ -236,7 +288,15 @@ export async function navigateToResults(page: Page): Promise<void> {
     await expect(page).toHaveURL(/\/results/, { timeout: 10000 })
   }
 
+<<<<<<< Updated upstream
   await page.waitForLoadState('networkidle')
+=======
+  // Avoid networkidle: Nuxt dev / HMR often keeps connections open so idle never settles.
+  const resultsShell = page.locator(
+    '[data-testid="results-session-loading"], [data-testid="results-header"]',
+  );
+  await expect(resultsShell.first()).toBeVisible({ timeout: 20000 });
+>>>>>>> Stashed changes
 
   const resolvedGameId = await page.evaluate(async (id) => {
     const store = (window as PiniaWindow).__pinia_stores__?.game
@@ -293,7 +353,7 @@ export async function assignScores(page: Page, scores: number[]): Promise<void> 
       await expect
         .poll(
           async () => Number.parseInt((await scoreValue.textContent().catch(() => '0')) ?? '0', 10),
-          { timeout: 3000 }
+          { timeout: 3000 },
         )
         .toBe(nextValue)
       currentValue = nextValue
@@ -374,8 +434,19 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
   await expect
     .poll(
       async () => {
+<<<<<<< Updated upstream
         if (/\/game/.test(page.url())) return 'game'
         if (!/\/round-start/.test(page.url())) return 'other-route'
+=======
+        if (/\/game/.test(page.url())) return true;
+        await spinButton.click({ force: true }).catch(() => {});
+        const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? '';
+        return /^[A-Z]$/.test(letterText);
+      },
+      { timeout: 30000, intervals: [500, 1000, 2000, 3000, 5000] },
+    )
+    .toBe(true);
+>>>>>>> Stashed changes
 
         if (await loadingState.isVisible().catch(() => false)) return 'loading'
         if (await wheelContainer.isVisible().catch(() => false)) return 'wheel'
@@ -449,7 +520,7 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
 export async function setupMultiplayerGame(
   page: Page,
   playerNames: string[],
-  completeRoundStart = true
+  completeRoundStart = true,
 ): Promise<void> {
   await preparePageForE2E(page)
 
@@ -470,10 +541,20 @@ export async function setupMultiplayerGame(
             resolve()
           }
           request.onsuccess = () => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
             const db = request.result
             const storeNames = ['gameSession', 'gameSessionsById', 'gameHistory'].filter((name) =>
               db.objectStoreNames.contains(name)
             )
+=======
+=======
+>>>>>>> Stashed changes
+            const db = request.result;
+            const storeNames = ['gameSession', 'gameSessionsById', 'gameHistory'].filter(name =>
+              db.objectStoreNames.contains(name),
+            );
+>>>>>>> Stashed changes
 
             if (storeNames.length === 0) {
               db.close()
@@ -614,7 +695,7 @@ export async function setupMultiplayerGame(
             currentPlayerIndex: session?.currentPlayerIndex ?? null,
             allSubmitted:
               (session?.players?.length ?? 0) > 0
-                ? (session?.players?.every((player) => Boolean(player.hasSubmitted)) ?? false)
+                ? (session?.players?.every(player => Boolean(player.hasSubmitted)) ?? false)
                 : false,
             currentPlayerTurnName: store?.currentPlayerTurn?.name ?? null,
             pendingCount: store?.pendingPlayerNames?.length ?? 0,
@@ -625,7 +706,7 @@ export async function setupMultiplayerGame(
 
         return JSON.stringify(snapshot)
       },
-      { timeout: 30000 }
+      { timeout: 30000 },
     )
     .toBe('ok')
 }

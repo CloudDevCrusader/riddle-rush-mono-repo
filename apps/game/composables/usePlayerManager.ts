@@ -46,7 +46,15 @@ export function usePlayerManager() {
    * @returns The index of the player, or -1 if not found
    */
   function findPlayerIndex(players: Player[], playerId: string): number {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     return players.findIndex((p) => p.id === playerId)
+=======
+    return players.findIndex(p => p.id === playerId);
+>>>>>>> Stashed changes
+=======
+    return players.findIndex(p => p.id === playerId);
+>>>>>>> Stashed changes
   }
 
   /**
@@ -57,7 +65,15 @@ export function usePlayerManager() {
    * @returns The matching Player, or null if not found
    */
   function getPlayerById(players: Player[], playerId: string): Player | null {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     return players.find((p) => p.id === playerId) ?? null
+=======
+    return players.find(p => p.id === playerId) ?? null;
+>>>>>>> Stashed changes
+=======
+    return players.find(p => p.id === playerId) ?? null;
+>>>>>>> Stashed changes
   }
 
   /**
@@ -183,8 +199,16 @@ export function usePlayerManager() {
    * @returns True if all players have submitted, false if array is empty or any haven't
    */
   function allPlayersSubmitted(players: Player[]): boolean {
+<<<<<<< Updated upstream
     if (players.length === 0) return false
     return players.every((p) => p.hasSubmitted)
+=======
+    if (players.length === 0) return false;
+    return players.every(p => p.hasSubmitted);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
   }
 
   return {

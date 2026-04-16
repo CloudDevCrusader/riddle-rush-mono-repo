@@ -7,19 +7,33 @@
       aria-label="Close history"
       @click.self="$emit('close')"
     >
-      <div class="game-history-panel" @click.stop>
+      <div
+        class="game-history-panel"
+        @click.stop
+      >
         <header class="history-header">
           <h2>📜 {{ t('history.title', 'Game History') }}</h2>
-          <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
+          <button
+            class="close-btn tap-highlight"
+            @click="$emit('close')"
+          >
+            ✕
+          </button>
         </header>
 
         <div class="history-content">
-          <div v-if="games.length === 0" class="empty-state">
+          <div
+            v-if="games.length === 0"
+            class="empty-state"
+          >
             <span class="empty-icon">🎮</span>
             <p>{{ t('history.no_games', 'No games played yet') }}</p>
           </div>
 
-          <div v-else class="games-list">
+          <div
+            v-else
+            class="games-list"
+          >
             <div
               v-for="game in sortedGames"
               :key="game.id"
@@ -28,9 +42,18 @@
             >
               <div class="game-header-row">
                 <div class="game-title">
-                  <span v-if="game.status === 'completed'" class="status-icon">🏆</span>
-                  <span v-else-if="game.status === 'abandoned'" class="status-icon">⏸️</span>
-                  <span v-else class="status-icon">✓</span>
+                  <span
+                    v-if="game.status === 'completed'"
+                    class="status-icon"
+                  >🏆</span>
+                  <span
+                    v-else-if="game.status === 'abandoned'"
+                    class="status-icon"
+                  >⏸️</span>
+                  <span
+                    v-else
+                    class="status-icon"
+                  >✓</span>
                   {{ game.gameName || t('history.game', 'Game') }}
                 </div>
                 <div class="game-date">
@@ -49,14 +72,20 @@
                   <span class="info-label">{{ t('history.letter', 'Letter') }}:</span>
                   <span class="info-value">{{ game.letter.toUpperCase() }}</span>
                 </div>
-                <div v-if="game.players && game.players.length > 0" class="info-row">
+                <div
+                  v-if="game.players && game.players.length > 0"
+                  class="info-row"
+                >
                   <span class="info-label">{{ t('history.rounds', 'Rounds') }}:</span>
                   <span class="info-value">{{ game.currentRound }}</span>
                 </div>
               </div>
 
               <!-- Multi-player scores -->
-              <div v-if="game.players && game.players.length > 0" class="players-scores">
+              <div
+                v-if="game.players && game.players.length > 0"
+                class="players-scores"
+              >
                 <div
                   v-for="(player, index) in getSortedPlayers(game)"
                   :key="player.id"
@@ -72,19 +101,23 @@
               </div>
 
               <!-- Single-player score -->
-              <div v-else-if="game.score !== undefined" class="single-score">
+              <div
+                v-else-if="game.score !== undefined"
+                class="single-score"
+              >
                 <span class="score-label">{{ t('history.score', 'Score') }}:</span>
                 <span class="score-value">{{ game.score }} pts</span>
-                <span class="attempts-info"
-                  >({{ game.attempts?.length || 0 }} {{ t('history.attempts', 'attempts') }})</span
-                >
+                <span class="attempts-info">({{ game.attempts?.length || 0 }} {{ t('history.attempts', 'attempts') }})</span>
               </div>
             </div>
           </div>
         </div>
 
         <footer class="history-footer">
-          <button class="btn btn-primary" @click="$emit('close')">
+          <button
+            class="btn btn-primary"
+            @click="$emit('close')"
+          >
             {{ t('common.close', 'Close') }}
           </button>
         </footer>
@@ -101,17 +134,30 @@ const { t } = useI18n()
 const props = defineProps<{
   visible: boolean
   games: GameSession[]
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 }>()
 
 defineEmits<{
   close: []
 }>()
+=======
+=======
+>>>>>>> Stashed changes
+}>();
+
+defineEmits<{
+  close: []
+}>();
+>>>>>>> Stashed changes
 
 // Memoized sorted games - only recalculate when games array changes
 const sortedGames = computed(() => {
   const games = props.games || []
   if (games.length === 0) return []
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   // Use stable sort for better performance
   return [...games].sort((a, b) => {
     const timeA = a.endTime || a.startTime
@@ -119,6 +165,12 @@ const sortedGames = computed(() => {
     return timeB - timeA // Most recent first
   })
 })
+=======
+=======
+>>>>>>> Stashed changes
+  return orderBy(games, [g => g.endTime || g.startTime], ['desc']);
+});
+>>>>>>> Stashed changes
 
 const formatDate = (timestamp: number) => {
   const date = new Date(timestamp)

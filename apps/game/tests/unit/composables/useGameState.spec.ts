@@ -16,11 +16,11 @@ const mockGameSessionState = reactive({
   flowState: 'setup' as 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed',
   isCurrentRoundCompleted: false,
   postRoundDecisionPending: false,
-  players: [] as Array<{ name: string; totalScore: number; hasSubmitted: boolean }>,
+  players: [] as Array<{ name: string, totalScore: number, hasSubmitted: boolean }>,
   currentPlayerTurn: null as { name: string } | null,
   allPlayersSubmitted: false,
   isGameCompleted: false,
-  leaderboard: [] as Array<{ name: string; totalScore: number; rank: number }>,
+  leaderboard: [] as Array<{ name: string, totalScore: number, rank: number }>,
   hasActiveSession: false,
   gameStatus: 'active' as string,
 })
@@ -316,10 +316,20 @@ describe('useGameState', () => {
           'leaderboard',
           'hasActiveSession',
           'gameStatus',
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         ])
       )
     })
   })
+=======
+=======
+>>>>>>> Stashed changes
+        ]),
+      );
+    });
+  });
+>>>>>>> Stashed changes
 
   // ──────────────────────────────────────────
   // Reactivity

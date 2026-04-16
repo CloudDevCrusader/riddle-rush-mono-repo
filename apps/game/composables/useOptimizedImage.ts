@@ -30,7 +30,15 @@ export const useOptimizedImage = () => {
       width?: number
       height?: number
       preset?: 'background' | 'thumbnail' | 'avatar' | 'icon' | 'hero'
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     } = {}
+=======
+    } = {},
+>>>>>>> Stashed changes
+=======
+    } = {},
+>>>>>>> Stashed changes
   ): string => {
     // Remove leading slash if present
     const cleanSrc = src.startsWith('/') ? src.slice(1) : src
@@ -46,10 +54,18 @@ export const useOptimizedImage = () => {
    */
   const getResponsiveImageSrcs = (
     src: string,
-    sizes: { width: number; breakpoint?: string }[]
+    sizes: { width: number, breakpoint?: string }[],
   ): string[] => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     return sizes.map((size) => getOptimizedImageSrc(src, { width: size.width }))
   }
+=======
+=======
+>>>>>>> Stashed changes
+    return sizes.map(size => getOptimizedImageSrc(src, { width: size.width }));
+  };
+>>>>>>> Stashed changes
 
   /**
    * Check if WebP is supported by the browser (cached)
@@ -109,6 +125,7 @@ export const useOptimizedImage = () => {
     return Promise.all(
       imageUrls.map((url) => {
         return new Promise<void>((resolve) => {
+<<<<<<< Updated upstream
           const img = new Image()
           img.src = url
           img.onload = () => resolve()
@@ -117,6 +134,16 @@ export const useOptimizedImage = () => {
       })
     ).then(() => {})
   }
+=======
+          const img = new Image();
+          img.src = url;
+          img.onload = () => resolve();
+          img.onerror = () => resolve(); // Don't fail on error, just continue
+        });
+      }),
+    ).then(() => {});
+  };
+>>>>>>> Stashed changes
 
   /**
    * Get optimized image with lazy loading attributes

@@ -28,9 +28,15 @@
           </button>
 
           <!-- Header -->
-          <div v-if="title || $slots.header" class="modal-header">
+          <div
+            v-if="title || $slots.header"
+            class="modal-header"
+          >
             <slot name="header">
-              <h2 id="modal-title" class="modal-title">
+              <h2
+                id="modal-title"
+                class="modal-title"
+              >
                 {{ title }}
               </h2>
             </slot>
@@ -42,7 +48,10 @@
           </div>
 
           <!-- Footer -->
-          <div v-if="$slots.footer" class="modal-footer">
+          <div
+            v-if="$slots.footer"
+            class="modal-footer"
+          >
             <slot name="footer" />
           </div>
         </div>
@@ -71,8 +80,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   close: []
 }>()
+=======
+=======
+>>>>>>> Stashed changes
+  'close': []
+}>();
+>>>>>>> Stashed changes
 
 const modalClasses = computed(() => [`modal-container--${props.size}`])
 
@@ -113,8 +130,16 @@ watch(
     } else {
       document.body.style.overflow = ''
     }
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   }
 )
+=======
+=======
+>>>>>>> Stashed changes
+  },
+);
+>>>>>>> Stashed changes
 </script>
 
 <style scoped>

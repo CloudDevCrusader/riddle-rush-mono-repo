@@ -1,6 +1,9 @@
 <template>
   <GameBackground>
-    <div class="leaderboard-page" data-testid="leaderboard-container">
+    <div
+      class="leaderboard-page"
+      data-testid="leaderboard-container"
+    >
       <!-- Header -->
       <GameHeader variant="gold">
         {{ t('leaderboard.title', 'Leaderboard') }}
@@ -14,7 +17,10 @@
       </GamePanel>
 
       <!-- Ranked player list -->
-      <GameScrollList :show-ranks="true" max-height="500px">
+      <GameScrollList
+        :show-ranks="true"
+        max-height="500px"
+      >
         <div
           v-for="(entry, index) in leaderboard"
           :key="entry.id"
@@ -24,10 +30,17 @@
           class="leaderboard-row"
           :data-testid="`leaderboard-entry-${index}`"
         >
-          <span class="leaderboard-row__name" :data-testid="`leaderboard-player-name-${index}`">{{
+          <span
+            class="leaderboard-row__name"
+            :data-testid="`leaderboard-player-name-${index}`"
+          >{{
             entry.name
           }}</span>
-          <GameDisplay size="md" :glow="false" :data-testid="`leaderboard-player-score-${index}`">
+          <GameDisplay
+            size="md"
+            :glow="false"
+            :data-testid="`leaderboard-player-score-${index}`"
+          >
             {{ entry.totalScore }}
           </GameDisplay>
         </div>

@@ -1,14 +1,33 @@
 <template>
+<<<<<<< Updated upstream:apps/game/components/ConnectionStatus.vue
   <div class="connection-status">
+=======
+  <div
+    class="connection-status"
+    data-testid="offline-indicator"
+  >
+>>>>>>> Stashed changes:apps/game/components/NetworkStatusIndicator.vue
     <div
       class="status-indicator"
       :class="connectionStatus"
       :style="{ backgroundColor: statusColor }"
       :title="statusText"
     >
+<<<<<<< Updated upstream:apps/game/components/ConnectionStatus.vue
       <div class="pulse" v-if="connectionStatus === 'online'" />
     </div>
     <span class="status-text" v-if="showText">{{ statusText }}</span>
+=======
+      <div
+        v-if="connectionStatus === 'online'"
+        class="pulse"
+      />
+    </div>
+    <span
+      v-if="showText"
+      class="status-text"
+    >{{ statusText }}</span>
+>>>>>>> Stashed changes:apps/game/components/NetworkStatusIndicator.vue
   </div>
 </template>
 
@@ -19,11 +38,16 @@ import { useI18n } from 'vue-i18n'
 
 defineProps<{
   showText?: boolean
+<<<<<<< Updated upstream:apps/game/components/ConnectionStatus.vue
 }>()
+=======
+}>();
+>>>>>>> Stashed changes:apps/game/components/NetworkStatusIndicator.vue
 
 const { connectionStatus, statusColor } = useWebSocket()
 const { t } = useI18n()
 
+<<<<<<< Updated upstream:apps/game/components/ConnectionStatus.vue
 const statusText = computed(() => {
   switch (connectionStatus.value) {
     case 'online':
@@ -36,6 +60,32 @@ const statusText = computed(() => {
       return t('connection.offline')
   }
 })
+=======
+const online = ref(true);
+
+const syncOnline = () => {
+  online.value = typeof navigator !== 'undefined' && navigator.onLine;
+};
+
+onMounted(() => {
+  syncOnline();
+  window.addEventListener('online', syncOnline);
+  window.addEventListener('offline', syncOnline);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('online', syncOnline);
+  window.removeEventListener('offline', syncOnline);
+});
+
+const connectionStatus = computed(() => (online.value ? 'online' : 'offline'));
+
+const statusColor = computed(() => (online.value ? '#10b981' : '#6b7280'));
+
+const statusText = computed(() =>
+  online.value ? t('connection.online') : t('connection.offline'),
+);
+>>>>>>> Stashed changes:apps/game/components/NetworkStatusIndicator.vue
 </script>
 
 <style scoped>

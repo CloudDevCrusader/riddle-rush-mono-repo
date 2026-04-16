@@ -55,9 +55,18 @@ describe('usePerformance', () => {
 
     if (isSupported) {
       const testFn = async () => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         await new Promise((resolve) => setTimeout(resolve, 10))
         return 'result'
       }
+=======
+=======
+>>>>>>> Stashed changes
+        await new Promise(resolve => setTimeout(resolve, 10));
+        return 'result';
+      };
+>>>>>>> Stashed changes
 
       const result = await measureFn('fn-test', testFn)
       expect(result).toBe('result')

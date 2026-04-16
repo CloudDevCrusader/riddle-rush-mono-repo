@@ -1,7 +1,22 @@
 <template>
   <div class="menu-layout">
     <!-- Background Image -->
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
+=======
+=======
+>>>>>>> Stashed changes
+    <img
+      v-if="backgroundImage"
+      :src="backgroundImage"
+      alt="Background"
+      class="page-bg-cover"
+    >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
     <!-- Main Content Container -->
     <div class="container">
@@ -9,13 +24,34 @@
     </div>
 
     <!-- Menu Toggle Button (bottom right) -->
+<<<<<<< Updated upstream
     <button v-if="showMenuButton" class="menu-icon-btn tap-highlight no-select" @click="toggleMenu">
       <img :src="menuButtonImage" alt="Menu" class="menu-icon" />
+=======
+    <button
+      v-if="showMenuButton"
+      class="tap-highlight no-select absolute right-md bottom-lg z-10 cursor-pointer border-none bg-transparent p-0 transition-transform active:scale-95 sm:right-xl sm:bottom-xl"
+      type="button"
+      @click="toggleMenu"
+    >
+      <img
+        :src="menuButtonImage"
+        alt="Menu"
+        class="h-auto w-[clamp(3.125rem,6vw,4.375rem)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] max-sm:w-[3.125rem]"
+      >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     </button>
 
     <!-- Menu Panel Slot -->
     <transition name="menu-fade">
-      <slot v-if="isMenuOpen" name="menu" :close-menu="closeMenu" />
+      <slot
+        v-if="isMenuOpen"
+        name="menu"
+        :close-menu="closeMenu"
+      />
     </transition>
 
     <div class="footer">
@@ -48,10 +84,20 @@ provide('setBackground', (src: string) => {
   backgroundImage.value = src
 })
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 provide('setMenuButton', (config: { visible?: boolean; image?: string }) => {
   if (config.visible !== undefined) showMenuButton.value = config.visible
   if (config.image) menuButtonImage.value = config.image
 })
+=======
+=======
+>>>>>>> Stashed changes
+provide('setMenuButton', (config: { visible?: boolean, image?: string }) => {
+  if (config.visible !== undefined) showMenuButton.value = config.visible;
+  if (config.image) menuButtonImage.value = config.image;
+});
+>>>>>>> Stashed changes
 
 provide('menuState', {
   isOpen: readonly(isMenuOpen),

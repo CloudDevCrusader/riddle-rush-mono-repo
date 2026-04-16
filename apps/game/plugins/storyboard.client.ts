@@ -107,10 +107,18 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Find workflow state by path
    */
   const findStateByPath = (
-    path: string
+    path: string,
   ): (typeof WORKFLOW_STATES)[keyof typeof WORKFLOW_STATES] | null => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     return Object.values(WORKFLOW_STATES).find((state) => state.path === path) || null
   }
+=======
+=======
+>>>>>>> Stashed changes
+    return Object.values(WORKFLOW_STATES).find(state => state.path === path) || null;
+  };
+>>>>>>> Stashed changes
 
   /**
    * Record a state transition
@@ -120,7 +128,15 @@ export default defineNuxtPlugin((nuxtApp) => {
       return
     }
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const workflowState = Object.values(WORKFLOW_STATES).find((s) => s.id === stateId)
+=======
+    const workflowState = Object.values(WORKFLOW_STATES).find(s => s.id === stateId);
+>>>>>>> Stashed changes
+=======
+    const workflowState = Object.values(WORKFLOW_STATES).find(s => s.id === stateId);
+>>>>>>> Stashed changes
     if (!workflowState) {
       return
     }
@@ -202,9 +218,18 @@ export default defineNuxtPlugin((nuxtApp) => {
    * Get flow completion percentage
    */
   const getFlowCompletion = (): number => {
+<<<<<<< Updated upstream
     const gameFlow = getGameFlowPath()
     const visitedStates = new Set(flow.value.history.map((s: StoryboardState) => s.id))
     const completedStates = gameFlow.filter((stateId) => visitedStates.has(stateId))
+=======
+    const gameFlow = getGameFlowPath();
+    const visitedStates = new Set(flow.value.history.map((s: StoryboardState) => s.id));
+    const completedStates = gameFlow.filter(stateId => visitedStates.has(stateId));
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
     return Math.round((completedStates.length / gameFlow.length) * 100)
   }

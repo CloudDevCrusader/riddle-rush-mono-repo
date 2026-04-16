@@ -220,10 +220,19 @@ test.describe('Language Switching Behavior', () => {
     await page.goto('/', { waitUntil: 'networkidle' })
     await hideDevtools(page)
 
+<<<<<<< Updated upstream
     await page.locator('[data-testid="main-menu-menu"]').click()
     await expect(page.locator('[data-testid="main-menu-language"]')).toContainText(/sprache/i)
     await expect(page.locator('[data-testid="main-menu-settings"]')).toContainText(/einstellungen/i)
   })
+=======
+    await page.locator('[data-testid="main-menu-menu"]').click();
+    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText(/sprache/i);
+    await expect(page.locator('[data-testid="main-menu-settings"]')).toContainText(
+      /einstellungen/i,
+    );
+  });
+>>>>>>> Stashed changes
 
   test('respects ?lang query and preserves it when selecting a different locale', async ({
     page,

@@ -3,11 +3,25 @@ import * as os from 'node:os'
 
 const isCI = !!process.env.CI
 // Allow testing against deployed sites via BASE_URL env var
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 const baseURL =
   process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000'
 const isDeployedTest =
   (baseURL.startsWith('http://') || baseURL.startsWith('https://')) &&
   !baseURL.includes('localhost')
+=======
+=======
+>>>>>>> Stashed changes
+const baseURL
+  = process.env.BASE_URL || process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000';
+const isDeployedTest
+  = (baseURL.startsWith('http://') || baseURL.startsWith('https://'))
+    && !baseURL.includes('localhost');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
 // Adaptive worker configuration
 const getWorkerCount = () => {

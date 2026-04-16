@@ -22,8 +22,16 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (typeof navigator === 'undefined') return null
 
     const candidates = [...(navigator.languages ?? []), navigator.language].filter(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       (locale): locale is string => Boolean(locale)
     )
+=======
+=======
+>>>>>>> Stashed changes
+      (locale): locale is string => Boolean(locale),
+    );
+>>>>>>> Stashed changes
 
     for (const locale of candidates) {
       const normalized = locale.toLowerCase().split('-')[0] as LocaleCode
@@ -75,9 +83,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (routeLocale) {
     setInitialLocale(routeLocale, { fromRoute: true })
   } else if (
-    hasStoredSettings &&
-    storedLanguage &&
-    supportedLocales.has(storedLanguage as LocaleCode)
+    hasStoredSettings
+    && storedLanguage
+    && supportedLocales.has(storedLanguage as LocaleCode)
   ) {
     setInitialLocale(storedLanguage as LocaleCode)
   } else {
@@ -95,9 +103,18 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (!skipLocalePersistence) {
         settingsStore.setLanguage(newLocale as string)
       }
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       skipLocalePersistence = false
     }
   )
+=======
+=======
+>>>>>>> Stashed changes
+      skipLocalePersistence = false;
+    },
+  );
+>>>>>>> Stashed changes
 
   // Keep locale in sync when query lang changes after app boot.
   watch(
@@ -110,10 +127,17 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (!normalized || !supportedLocales.has(normalized)) return
       if (normalized === i18nGlobal.locale.value) return
 
+<<<<<<< Updated upstream
       skipLocalePersistence = true
       i18nGlobal.locale.value = normalized
     }
   )
+=======
+      skipLocalePersistence = true;
+      i18nGlobal.locale.value = normalized;
+    },
+  );
+>>>>>>> Stashed changes
 
   return {}
 })

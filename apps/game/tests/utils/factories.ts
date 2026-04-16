@@ -99,6 +99,8 @@ export const createCategory = (overrides: Partial<Category> = {}): Category => {
       additionalData = { examples: [faker.person.jobTitle(), faker.person.jobTitle()] }
       break
     case 'Plant':
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       name =
         overrides.name ??
         faker.helpers.arrayElement(['Rose', 'Tulip', 'Oak', 'Pine', 'Palm', 'Cactus'])
@@ -128,6 +130,40 @@ export const createCategory = (overrides: Partial<Category> = {}): Category => {
       name = overrides.name ?? template ?? 'default'
       searchWord = overrides.searchWord ?? template?.replace(/\s+/g, '_').toLowerCase() ?? 'default'
       additionalData = {}
+=======
+=======
+>>>>>>> Stashed changes
+      name
+        = overrides.name
+          ?? faker.helpers.arrayElement(['Rose', 'Tulip', 'Oak', 'Pine', 'Palm', 'Cactus']);
+      searchWord = 'plants';
+      additionalData = { examples: ['Rose', 'Tulip', 'Oak'] };
+      break;
+    case 'Food':
+      name
+        = overrides.name ?? faker.helpers.arrayElement(['Pizza', 'Burger', 'Pasta', 'Sushi', 'Taco']);
+      searchWord = 'food';
+      additionalData = { examples: ['Pizza', 'Burger', 'Pasta'] };
+      break;
+    case 'Drink':
+      name
+        = overrides.name ?? faker.helpers.arrayElement(['Water', 'Coffee', 'Tea', 'Juice', 'Soda']);
+      searchWord = 'drink';
+      additionalData = { examples: ['Water', 'Coffee', 'Tea'] };
+      break;
+    case 'Sport':
+      name
+        = overrides.name
+          ?? faker.helpers.arrayElement(['Soccer', 'Basketball', 'Tennis', 'Swimming', 'Running']);
+      searchWord = 'sport';
+      additionalData = { examples: ['Soccer', 'Basketball', 'Tennis'] };
+      break;
+    default:
+      name = overrides.name ?? template ?? 'default';
+      searchWord
+        = overrides.searchWord ?? template?.replace(/\s+/g, '_').toLowerCase() ?? 'default';
+      additionalData = {};
+>>>>>>> Stashed changes
   }
 
   return {
@@ -143,7 +179,7 @@ export const createCategory = (overrides: Partial<Category> = {}): Category => {
 
 export const createCategoryList = (
   count: number,
-  overrides: Array<Partial<Category> | undefined> = []
+  overrides: Array<Partial<Category> | undefined> = [],
 ): Category[] =>
   Array.from({ length: count }, (_, index) => {
     const override = overrides[index] ?? {}
@@ -157,10 +193,23 @@ export const createGameAttempt = (overrides: Partial<GameAttempt> = {}): GameAtt
 })
 
 export const createGameSession = (overrides: Partial<GameSession> = {}): GameSession => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   const attempts =
     overrides.attempts ?? Array.from({ length: randomInt(1, 5) }, () => createGameAttempt())
   const category = overrides.category ?? createCategory()
   const score = overrides.score ?? attempts.filter((attempt) => attempt.found).length * 10
+=======
+=======
+>>>>>>> Stashed changes
+  const attempts
+    = overrides.attempts ?? Array.from({ length: randomInt(1, 5) }, () => createGameAttempt());
+  const category = overrides.category ?? createCategory();
+  const score = overrides.score ?? attempts.filter(attempt => attempt.found).length * 10;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
   return {
     id: overrides.id ?? faker.string.uuid(),
@@ -196,8 +245,8 @@ export const createGameStatistics = (overrides: Partial<GameStatistics> = {}): G
     lastPlayed: overrides.lastPlayed ?? Date.now(),
     bestScore: overrides.bestScore ?? randomInt(0, 200),
     averageScore:
-      overrides.averageScore ??
-      (totalGames === 0 ? 0 : Math.round((correctAttempts * 10) / totalGames)),
+      overrides.averageScore
+      ?? (totalGames === 0 ? 0 : Math.round((correctAttempts * 10) / totalGames)),
     streakCurrent: overrides.streakCurrent ?? randomInt(0, 5),
     streakBest: overrides.streakBest ?? randomInt(0, 10),
   }

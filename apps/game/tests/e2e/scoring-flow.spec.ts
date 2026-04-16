@@ -11,8 +11,16 @@ test.describe('scoring results flow', () => {
       const incrementBtn = page.locator('[data-testid="score-increment"]').first()
       await incrementBtn.click()
       await expect(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         page.locator('[data-testid^="scoring-page-score-value-"]').first()
       ).toContainText('1')
+=======
+=======
+>>>>>>> Stashed changes
+        page.locator('[data-testid^="scoring-page-score-value-"]').first(),
+      ).toContainText('1');
+>>>>>>> Stashed changes
 
       // Confirm scores
       const confirmBtn = page.locator('[data-testid="confirm-scores"]')

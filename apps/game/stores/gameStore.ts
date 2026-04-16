@@ -28,6 +28,8 @@ import type {
 export type GameFlowState = 'setup' | 'in-round' | 'round-complete' | 'decision' | 'completed'
 
 // Round action that may trigger state transitions
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 export type RoundAction =
   | {
       type: 'setup'
@@ -35,8 +37,22 @@ export type RoundAction =
     }
   | { type: 'submit-answer'; payload: { playerId: string; answer: string } }
   | { type: 'assign-score'; payload: { playerId: string; points: number } }
+=======
+=======
+>>>>>>> Stashed changes
+export type RoundAction
+  = | {
+    type: 'setup'
+    payload: { players: string[], category?: Category, letter?: string, gameName?: string }
+  }
+  | { type: 'submit-answer', payload: { playerId: string, answer?: string } }
+  | { type: 'assign-score', payload: { playerId: string, points: number } }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
   | { type: 'complete-round' }
-  | { type: 'next-round'; payload: { category?: Category; letter?: string } }
+  | { type: 'next-round', payload: { category?: Category, letter?: string } }
   | { type: 'complete-game' }
   | { type: 'reset-submissions' }
 
@@ -158,8 +174,16 @@ export const useGameStore = defineStore('game', {
       const playerManager = usePlayerManager()
       return playerManager.getCurrentPlayerTurn(
         state.currentSession?.players ?? [],
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         state.currentSession?.currentPlayerIndex ?? 0
       )
+=======
+=======
+>>>>>>> Stashed changes
+        state.currentSession?.currentPlayerIndex ?? 0,
+      );
+>>>>>>> Stashed changes
     },
     leaderboard(state): PlayerWithRank[] {
       const playerManager = usePlayerManager()
@@ -364,7 +388,7 @@ export const useGameStore = defineStore('game', {
       playerNames: string[],
       gameName?: string,
       customLetter?: string,
-      customCategory?: Category
+      customCategory?: Category,
     ) {
       const categoryManager = useCategoryManager()
       const sessionManager = useSessionManager()
@@ -409,8 +433,16 @@ export const useGameStore = defineStore('game', {
       if (session.players.length > 1) {
         session.currentPlayerIndex = playerManager.advancePlayerIndex(
           session.currentPlayerIndex,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           session.players.length
         )
+=======
+=======
+>>>>>>> Stashed changes
+          session.players.length,
+        );
+>>>>>>> Stashed changes
       }
 
       // Check if all players submitted and transition to round-complete
@@ -546,11 +578,19 @@ export const useGameStore = defineStore('game', {
       return session
     },
     async advanceToConfiguredRound(category: Category, letter: string) {
+<<<<<<< Updated upstream
       const session = this.currentSession
       const inMemoryPendingPlayers = this.pendingPlayerNames
       const restoredPendingPlayers =
         inMemoryPendingPlayers.length > 0 ? inMemoryPendingPlayers : loadPendingPlayerNames()
       const hasPendingPlayers = restoredPendingPlayers.length > 0
+=======
+      const session = this.currentSession;
+      const inMemoryPendingPlayers = this.pendingPlayerNames;
+      const restoredPendingPlayers
+        = inMemoryPendingPlayers.length > 0 ? inMemoryPendingPlayers : loadPendingPlayerNames();
+      const hasPendingPlayers = restoredPendingPlayers.length > 0;
+>>>>>>> Stashed changes
 
       if (!session || hasPendingPlayers) {
         // If no session and no pending players, fallback to a single player game

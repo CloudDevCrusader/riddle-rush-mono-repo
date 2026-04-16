@@ -61,8 +61,16 @@ export const useLoadingStore = defineStore('loading', {
         if (this.isLoading) {
           if (import.meta.dev) {
             console.warn(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
               `[loadingStore] Safety timeout: loading stuck for ${LOADING_SAFETY_TIMEOUT_MS}ms, force-hiding (count was ${this.loadingCount})`
             )
+=======
+=======
+>>>>>>> Stashed changes
+              `[loadingStore] Safety timeout: loading stuck for ${LOADING_SAFETY_TIMEOUT_MS}ms, force-hiding (count was ${this.loadingCount})`,
+            );
+>>>>>>> Stashed changes
           }
           this.forceHide()
         }

@@ -7,6 +7,8 @@ const isMuted = ref(false)
 export function useAudio() {
   const initAudioContext = () => {
     if (!audioContext) {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       const AudioContextClass =
         (typeof window !== 'undefined'
           ? (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext ||
@@ -16,6 +18,22 @@ export function useAudio() {
         (globalThis as unknown as { webkitAudioContext?: typeof AudioContext })
           .webkitAudioContext ||
         null
+=======
+=======
+>>>>>>> Stashed changes
+      const AudioContextClass
+        = (typeof window !== 'undefined'
+          ? (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext
+          || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+          : null)
+        || (globalThis as unknown as { AudioContext?: typeof AudioContext }).AudioContext
+        || (globalThis as unknown as { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext
+          || null;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
       try {
         audioContext = AudioContextClass ? new AudioContextClass() : null
       } catch {
@@ -40,7 +58,7 @@ export function useAudio() {
     frequency: number,
     duration: number,
     type: OscillatorType = 'sine',
-    volume: number = 0.3
+    volume: number = 0.3,
   ) => {
     const ctx = initAudioContext()
     if (!ctx) throw new TypeError('AudioContext unavailable')

@@ -5,6 +5,8 @@
         {{ t('scoring.title', 'Scoring') }}
       </GameHeader>
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       <div class="scoring-page__list" data-testid="results-scores-container">
         <div
           v-for="(player, index) in players"
@@ -14,6 +16,39 @@
           :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: Number(index) * 50 } }"
           class="scoring-page__player-entry"
           :data-testid="`results-player-entry-${index}`"
+=======
+=======
+>>>>>>> Stashed changes
+    <div
+      v-else
+      class="scoring-page"
+      data-testid="results-header"
+    >
+      <h1 class="scoring-page__sr-only">{{ t('scoring.title', 'Scoring') }}</h1>
+
+      <p
+        v-if="!isAnswerInputEnabled"
+        class="scoring-page__verbal-hint"
+        data-testid="scoring-verbal-hint"
+      >
+        {{ t('scoring.verbal_hint') }}
+      </p>
+
+      <div
+        v-if="players.length === 0"
+        class="scoring-page__column"
+        data-testid="results-empty-state"
+      >
+        <p class="scoring-page__empty-text">
+          {{ t('game.no_active_session', 'No active game session.') }}
+        </p>
+        <GameButton
+          variant="primary"
+          size="lg"
+          full-width
+          data-testid="results-go-players"
+          @click="goToPlayers"
+>>>>>>> Stashed changes
         >
           <div class="scoring-page__player-header">
             <span class="scoring-page__rank" :data-testid="`predicted-rank-${index}`">
@@ -31,20 +66,72 @@
             </span>
           </div>
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> Stashed changes
+      <div
+        v-else
+        class="scoring-page__column"
+      >
+        <div
+          class="scoring-page__list"
+          data-testid="results-scores-container"
+        >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
           <div
             class="scoring-page__score-controls"
             :data-testid="`results-score-controls-${index}`"
           >
+<<<<<<< Updated upstream
             <GameButton
               variant="danger"
               size="sm"
               :disabled="(pendingScores.get(player.id) ?? 0) <= 0"
               data-testid="score-decrement"
               @click="decrementScore(player.id)"
+=======
+            <div class="scoring-page__player-header">
+              <span
+                class="scoring-page__rank"
+                :data-testid="`predicted-rank-${index}`"
+              >
+                #{{ projectedRanks.get(player.id) ?? Number(index) + 1 }}
+              </span>
+              <div class="scoring-page__player-main">
+                <GamePlayerCard
+                  :player="player"
+                  :label="`${t('scoring.player', 'Player')} ${Number(index) + 1}`"
+                  :show-indicator="false"
+                  :show-answer="isAnswerInputEnabled"
+                  embedded
+                  class="scoring-page__player-card-inner"
+                />
+                <p
+                  class="scoring-page__base-score"
+                  data-testid="base-score"
+                >
+                  <span class="scoring-page__base-score-label">{{
+                    t('scoring.base_score', 'Score')
+                  }}</span>
+                  <span class="scoring-page__base-score-value">{{ projectedTotalScore(player) }} {{ t('scoring.points', 'pts') }}</span>
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="scoring-page__score-controls"
+              :data-testid="`results-score-controls-${index}`"
+>>>>>>> Stashed changes
             >
               −
             </GameButton>
 
+<<<<<<< Updated upstream
             <GameDisplay
               size="sm"
               :glow="false"
@@ -53,6 +140,23 @@
             >
               {{ pendingScores.get(player.id) ?? 0 }}
             </GameDisplay>
+=======
+              <div
+                class="scoring-page__round-score"
+                aria-live="polite"
+                :aria-label="t('scoring.round_points', 'This round')"
+              >
+                <span class="scoring-page__round-score-value">
+                  <span
+                    class="scoring-page__round-score-num"
+                    :data-testid="`scoring-page-score-value-${index}`"
+                  >{{ pendingScores.get(player.id) ?? 0 }}</span>
+                  <span class="scoring-page__round-score-unit">{{
+                    t('scoring.points', 'pts')
+                  }}</span>
+                </span>
+              </div>
+>>>>>>> Stashed changes
 
             <GameButton
               variant="primary"
@@ -99,11 +203,14 @@
       :close-on-escape="false"
     >
       <div class="decision-content">
-        <p class="decision-content__text" data-testid="results-post-round-prompt">
+        <p
+          class="decision-content__text"
+          data-testid="results-post-round-prompt"
+        >
           {{
             t(
               'scoring.post_round_prompt',
-              'Do you want to play another round, or go to the leaderboard?'
+              'Do you want to play another round, or go to the leaderboard?',
             )
           }}
         </p>
@@ -145,6 +252,8 @@
 import { SCORE_INCREMENT, RESULTS_DISPLAY_DURATION_MS } from '@riddle-rush/shared/constants'
 import type { Player } from '@riddle-rush/types/game'
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 const { t } = usePageSetup()
 const { gameStore, players, leaderboard, currentRound, flowState, canConfirmRoundScores } =
   useGameState()
@@ -153,6 +262,18 @@ const { playClick, playScoreIncrease } = useAudio()
 const { isAnswerInputEnabled } = useFeatureFlags()
 const route = useRoute()
 const logger = useLogger()
+=======
+=======
+>>>>>>> Stashed changes
+const { t } = usePageSetup();
+const { gameStore, players, leaderboard, currentRound, flowState }
+  = useGameState();
+const { goToRoundStart, goToLeaderboard, goToPlayers } = useNavigation();
+const { playClick, playScoreIncrease } = useAudio();
+const { isAnswerInputEnabled } = useFeatureFlags();
+const route = useRoute();
+const logger = useLogger();
+>>>>>>> Stashed changes
 
 // Pending scores for each player (local state before confirming)
 const pendingScores = reactive(new Map<string, number>())
@@ -178,12 +299,23 @@ const isDecisionFlow = computed(() => flowState.value === 'decision')
 
 // Projected ranks based on totalScore + pending scores
 const projectedRanks = computed(() => {
+<<<<<<< Updated upstream
   const ranked = [...players.value]
     .map((p) => ({
       id: p.id,
       projected: p.totalScore + (pendingScores.get(p.id) ?? 0),
     }))
     .sort((a, b) => b.projected - a.projected)
+=======
+  const ranked = orderBy(
+    players.value.map(p => ({
+      id: p.id,
+      projected: projectedTotalScore(p),
+    })),
+    ['projected'],
+    ['desc'],
+  );
+>>>>>>> Stashed changes
 
   const ranks = new Map<string, number>()
   ranked.forEach((p, i) => ranks.set(p.id, i + 1))
@@ -269,8 +401,16 @@ watch(
   (nextPlayers: Player[]) => {
     syncPendingScores(nextPlayers)
   },
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   { immediate: true }
 )
+=======
+=======
+>>>>>>> Stashed changes
+  { immediate: true },
+);
+>>>>>>> Stashed changes
 
 watch(flowState, (newFlow: string, oldFlow: string) => {
   // When flow transitions to decision, ensure modal appears
@@ -310,8 +450,16 @@ onUnmounted(() => {
 })
 
 const pageTitle = computed(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   () => `${t('scoring.title', 'Scoring')} · ${t('game.round')} ${currentRound.value || 1}`
 )
+=======
+=======
+>>>>>>> Stashed changes
+  () => `${t('scoring.title', 'Scoring')} · ${t('game.round')} ${currentRound.value || 1}`,
+);
+>>>>>>> Stashed changes
 
 useHead({
   title: pageTitle,

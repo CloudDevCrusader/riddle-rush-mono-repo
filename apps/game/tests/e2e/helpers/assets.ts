@@ -9,9 +9,18 @@ const DEFAULT_RETRY_DELAY = 100
  */
 export async function verifyImagesLoaded(
   page: Page,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<{ loaded: number; failed: string[] }> {
   const startTime = Date.now()
+=======
+=======
+>>>>>>> Stashed changes
+  timeout: number = DEFAULT_TIMEOUT,
+): Promise<{ loaded: number, failed: string[] }> {
+  const startTime = Date.now();
+>>>>>>> Stashed changes
 
   while (Date.now() - startTime < timeout) {
     const result = await page.evaluate(() => {
@@ -34,8 +43,16 @@ export async function verifyImagesLoaded(
       }
 
       const pending = images.filter(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         (img) => !img.complete && img.src && img.loading !== 'lazy'
       ).length
+=======
+=======
+>>>>>>> Stashed changes
+        img => !img.complete && img.src && img.loading !== 'lazy',
+      ).length;
+>>>>>>> Stashed changes
 
       return { loaded: loaded.length, failed, pending }
     })
@@ -49,11 +66,27 @@ export async function verifyImagesLoaded(
 
   // Timeout reached, return current state
   return page.evaluate(() => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const images = Array.from(document.images)
     const loaded = images.filter((img) => img.complete && img.naturalWidth > 0)
     const failed = images
       .filter((img) => img.complete && img.naturalWidth === 0)
       .map((img) => img.src || img.dataset.src || 'unknown')
+=======
+    const images = Array.from(document.images);
+    const loaded = images.filter(img => img.complete && img.naturalWidth > 0);
+    const failed = images
+      .filter(img => img.complete && img.naturalWidth === 0)
+      .map(img => img.src || img.dataset.src || 'unknown');
+>>>>>>> Stashed changes
+=======
+    const images = Array.from(document.images);
+    const loaded = images.filter(img => img.complete && img.naturalWidth > 0);
+    const failed = images
+      .filter(img => img.complete && img.naturalWidth === 0)
+      .map(img => img.src || img.dataset.src || 'unknown');
+>>>>>>> Stashed changes
 
     return { loaded: loaded.length, failed }
   })
@@ -65,7 +98,7 @@ export async function verifyImagesLoaded(
 export async function waitForImageLoaded(
   page: Page,
   src: string,
-  timeout: number = DEFAULT_TIMEOUT
+  timeout: number = DEFAULT_TIMEOUT,
 ): Promise<boolean> {
   const startTime = Date.now()
 
@@ -73,8 +106,16 @@ export async function waitForImageLoaded(
     const isLoaded = await page.evaluate((imgSrc) => {
       const images = Array.from(document.images)
       const img = images.find(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         (i) => i.src === imgSrc || i.src.endsWith(imgSrc) || i.dataset.src === imgSrc
       )
+=======
+=======
+>>>>>>> Stashed changes
+        i => i.src === imgSrc || i.src.endsWith(imgSrc) || i.dataset.src === imgSrc,
+      );
+>>>>>>> Stashed changes
 
       if (!img) {
         return null // Image not found in DOM
@@ -113,7 +154,7 @@ export async function waitForImageLoaded(
 export async function verifyFontLoaded(
   page: Page,
   fontFamily: string,
-  timeout: number = DEFAULT_TIMEOUT
+  timeout: number = DEFAULT_TIMEOUT,
 ): Promise<boolean> {
   const startTime = Date.now()
 
@@ -157,8 +198,18 @@ export async function verifyFontLoaded(
  * Get loading performance metrics using Resource Timing API
  */
 export async function getLoadingMetrics(page: Page): Promise<{
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   images: { src: string; duration: number; status: 'loaded' | 'failed' }[]
   fonts: { family: string; loaded: boolean }[]
+=======
+  images: { src: string, duration: number, status: 'loaded' | 'failed' }[]
+  fonts: { family: string, loaded: boolean }[]
+>>>>>>> Stashed changes
+=======
+  images: { src: string, duration: number, status: 'loaded' | 'failed' }[]
+  fonts: { family: string, loaded: boolean }[]
+>>>>>>> Stashed changes
   totalLoadTime: number
 }> {
   return page.evaluate(() => {
@@ -168,6 +219,8 @@ export async function getLoadingMetrics(page: Page): Promise<{
     const imageEntries = resourceEntries.filter((entry) => {
       const url = entry.name.toLowerCase()
       return (
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         url.endsWith('.png') ||
         url.endsWith('.jpg') ||
         url.endsWith('.jpeg') ||
@@ -177,6 +230,19 @@ export async function getLoadingMetrics(page: Page): Promise<{
         entry.initiatorType === 'img'
       )
     })
+=======
+=======
+>>>>>>> Stashed changes
+        url.endsWith('.png')
+        || url.endsWith('.jpg')
+        || url.endsWith('.jpeg')
+        || url.endsWith('.gif')
+        || url.endsWith('.webp')
+        || url.endsWith('.svg')
+        || entry.initiatorType === 'img'
+      );
+    });
+>>>>>>> Stashed changes
 
     // Check actual DOM images for load status
     const domImages = Array.from(document.images)
@@ -188,14 +254,22 @@ export async function getLoadingMetrics(page: Page): Promise<{
       }
     }
 
-    const images = imageEntries.map((entry) => ({
+    const images = imageEntries.map(entry => ({
       src: entry.name,
       duration: Math.round(entry.responseEnd - entry.startTime),
       status: imageStatusMap.get(entry.name) || ('loaded' as const),
     }))
 
     // Get font metrics
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const fonts: { family: string; loaded: boolean }[] = []
+=======
+    const fonts: { family: string, loaded: boolean }[] = [];
+>>>>>>> Stashed changes
+=======
+    const fonts: { family: string, loaded: boolean }[] = [];
+>>>>>>> Stashed changes
 
     if (document.fonts) {
       const seenFamilies = new Set<string>()
@@ -214,8 +288,16 @@ export async function getLoadingMetrics(page: Page): Promise<{
 
     // Calculate total load time
     const navigationEntry = performance.getEntriesByType(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       'navigation'
     )[0] as PerformanceNavigationTiming
+=======
+=======
+>>>>>>> Stashed changes
+      'navigation',
+    )[0] as PerformanceNavigationTiming;
+>>>>>>> Stashed changes
     const totalLoadTime = navigationEntry
       ? Math.round(navigationEntry.loadEventEnd - navigationEntry.startTime)
       : 0
@@ -233,11 +315,22 @@ export async function waitForCriticalAssets(
     timeout?: number
     retries?: number
     retryDelay?: number
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   }
 ): Promise<{ success: boolean; failures: string[] }> {
   const timeout = options?.timeout ?? DEFAULT_TIMEOUT
   const retries = options?.retries ?? DEFAULT_RETRIES
   const baseDelay = options?.retryDelay ?? DEFAULT_RETRY_DELAY
+=======
+=======
+>>>>>>> Stashed changes
+  },
+): Promise<{ success: boolean, failures: string[] }> {
+  const timeout = options?.timeout ?? DEFAULT_TIMEOUT;
+  const retries = options?.retries ?? DEFAULT_RETRIES;
+  const baseDelay = options?.retryDelay ?? DEFAULT_RETRY_DELAY;
+>>>>>>> Stashed changes
 
   const failures: string[] = []
   let attempt = 0
@@ -258,7 +351,7 @@ export async function waitForCriticalAssets(
       const win = window as unknown as Record<string, unknown>
       if (!win.__assetLoadTracker) {
         const tracker = {
-          images: new Map<string, { startTime: number; loaded: boolean }>(),
+          images: new Map<string, { startTime: number, loaded: boolean }>(),
           errors: [] as string[],
         }
 
@@ -269,8 +362,8 @@ export async function waitForCriticalAssets(
               if (entry.entryType === 'resource') {
                 const resourceEntry = entry as PerformanceResourceTiming
                 if (
-                  resourceEntry.initiatorType === 'img' ||
-                  resourceEntry.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)
+                  resourceEntry.initiatorType === 'img'
+                  || resourceEntry.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)
                 ) {
                   tracker.images.set(resourceEntry.name, {
                     startTime: resourceEntry.startTime,
@@ -294,6 +387,8 @@ export async function waitForCriticalAssets(
           (event) => {
             const target = event.target as HTMLElement
             if (target?.tagName === 'IMG') {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
               const src =
                 (target as HTMLImageElement).src ||
                 (target as HTMLImageElement).dataset.src ||
@@ -303,6 +398,26 @@ export async function waitForCriticalAssets(
           },
           true
         )
+=======
+              const src
+                = (target as HTMLImageElement).src
+                  || (target as HTMLImageElement).dataset.src
+                  || 'unknown';
+              tracker.errors.push(src);
+            }
+          },
+=======
+              const src
+                = (target as HTMLImageElement).src
+                  || (target as HTMLImageElement).dataset.src
+                  || 'unknown';
+              tracker.errors.push(src);
+            }
+          },
+>>>>>>> Stashed changes
+          true,
+        );
+>>>>>>> Stashed changes
 
         win.__assetLoadTracker = tracker
       }
@@ -315,18 +430,34 @@ export async function waitForCriticalAssets(
     const commonFonts = ['Game Font', 'Arial', 'sans-serif']
     const fontResults = await Promise.all(
       commonFonts.map(async (font) => {
+<<<<<<< Updated upstream
         const loaded = await verifyFontLoaded(page, font, 2000)
         return { font, loaded }
       })
     )
+=======
+        const loaded = await verifyFontLoaded(page, font, 2000);
+        return { font, loaded };
+      }),
+    );
+>>>>>>> Stashed changes
 
     // Collect failures
     const currentFailures = [
       ...imageResult.failed,
       ...fontResults
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .filter((f) => !f.loaded && f.font !== 'Arial' && f.font !== 'sans-serif')
         .map((f) => `font:${f.font}`),
     ]
+=======
+=======
+>>>>>>> Stashed changes
+        .filter(f => !f.loaded && f.font !== 'Arial' && f.font !== 'sans-serif')
+        .map(f => `font:${f.font}`),
+    ];
+>>>>>>> Stashed changes
 
     if (currentFailures.length === 0) {
       logDiagnostics(page, 'success', [])
@@ -358,7 +489,7 @@ export async function waitForCriticalAssets(
  */
 export async function retryFailedImages(
   page: Page,
-  maxRetries: number = DEFAULT_RETRIES
+  maxRetries: number = DEFAULT_RETRIES,
 ): Promise<string[]> {
   let attempt = 0
   let failedImages: string[] = []
@@ -401,9 +532,18 @@ export async function retryFailedImages(
     failedImages = await page.evaluate(() => {
       const images = Array.from(document.images)
       return images
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         .filter((img) => img.complete && img.naturalWidth === 0 && img.src)
         .map((img) => img.src)
     })
+=======
+=======
+>>>>>>> Stashed changes
+        .filter(img => img.complete && img.naturalWidth === 0 && img.src)
+        .map(img => img.src);
+    });
+>>>>>>> Stashed changes
 
     if (failedImages.length === 0) {
       return []
@@ -429,17 +569,25 @@ async function logDiagnostics(page: Page, status: string, failures: string[]): P
     failures,
     metrics: {
       totalImages: metrics.images.length,
-      loadedImages: metrics.images.filter((i) => i.status === 'loaded').length,
-      failedImages: metrics.images.filter((i) => i.status === 'failed').length,
+      loadedImages: metrics.images.filter(i => i.status === 'loaded').length,
+      failedImages: metrics.images.filter(i => i.status === 'failed').length,
       totalFonts: metrics.fonts.length,
-      loadedFonts: metrics.fonts.filter((f) => f.loaded).length,
+      loadedFonts: metrics.fonts.filter(f => f.loaded).length,
       totalLoadTime: metrics.totalLoadTime,
     },
     slowestImages: metrics.images
       .sort((a, b) => b.duration - a.duration)
       .slice(0, 5)
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       .map((i) => ({ src: i.src.split('/').pop(), duration: `${i.duration}ms` })),
   }
+=======
+=======
+>>>>>>> Stashed changes
+      .map(i => ({ src: i.src.split('/').pop(), duration: `${i.duration}ms` })),
+  };
+>>>>>>> Stashed changes
 
   if (status === 'failure') {
     console.error('[Assets] Diagnostics:', JSON.stringify(diagnostics, null, 2))
@@ -459,18 +607,42 @@ export async function getAssetDiagnostics(page: Page): Promise<{
     loaded: number
     failed: number
     pending: number
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     details: { src: string; status: string; naturalWidth: number }[]
+=======
+    details: { src: string, status: string, naturalWidth: number }[]
+>>>>>>> Stashed changes
+=======
+    details: { src: string, status: string, naturalWidth: number }[]
+>>>>>>> Stashed changes
   }
   fonts: {
     total: number
     loaded: number
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     details: { family: string; status: string }[]
+=======
+    details: { family: string, status: string }[]
+>>>>>>> Stashed changes
+=======
+    details: { family: string, status: string }[]
+>>>>>>> Stashed changes
   }
   resourceTiming: {
     imageCount: number
     fontCount: number
     avgImageLoadTime: number
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     slowestResource: { name: string; duration: number } | null
+=======
+    slowestResource: { name: string, duration: number } | null
+>>>>>>> Stashed changes
+=======
+    slowestResource: { name: string, duration: number } | null
+>>>>>>> Stashed changes
   }
   errors: string[]
 }> {
@@ -494,6 +666,8 @@ export async function getAssetDiagnostics(page: Page): Promise<{
       }
     })
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const loadedImages = imageDetails.filter((i) => i.status === 'loaded').length
     const failedImages = imageDetails.filter((i) => i.status === 'failed').length
     const pendingImages = imageDetails.filter(
@@ -502,6 +676,24 @@ export async function getAssetDiagnostics(page: Page): Promise<{
 
     // Font diagnostics
     const fontDetails: { family: string; status: string }[] = []
+=======
+    const loadedImages = imageDetails.filter(i => i.status === 'loaded').length;
+    const failedImages = imageDetails.filter(i => i.status === 'failed').length;
+    const pendingImages = imageDetails.filter(
+=======
+    const loadedImages = imageDetails.filter(i => i.status === 'loaded').length;
+    const failedImages = imageDetails.filter(i => i.status === 'failed').length;
+    const pendingImages = imageDetails.filter(
+>>>>>>> Stashed changes
+      i => i.status === 'pending' || i.status === 'lazy',
+    ).length;
+
+    // Font diagnostics
+    const fontDetails: { family: string, status: string }[] = [];
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     if (document.fonts) {
       const seenFamilies = new Set<string>()
       document.fonts.forEach((fontFace: FontFace) => {
@@ -513,30 +705,74 @@ export async function getAssetDiagnostics(page: Page): Promise<{
       })
     }
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const loadedFonts = fontDetails.filter((f) => f.status === 'loaded').length
+=======
+    const loadedFonts = fontDetails.filter(f => f.status === 'loaded').length;
+>>>>>>> Stashed changes
+=======
+    const loadedFonts = fontDetails.filter(f => f.status === 'loaded').length;
+>>>>>>> Stashed changes
 
     // Resource timing diagnostics
     const resourceEntries = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
 
     const imageResources = resourceEntries.filter(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       (e) => e.initiatorType === 'img' || e.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)
     )
 
     const fontResources = resourceEntries.filter(
       (e) => e.initiatorType === 'css' || e.name.match(/\.(woff2?|ttf|otf|eot)$/i)
     )
+=======
+      e => e.initiatorType === 'img' || e.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i),
+    );
 
-    const avgImageLoadTime =
-      imageResources.length > 0
+    const fontResources = resourceEntries.filter(
+      e => e.initiatorType === 'css' || e.name.match(/\.(woff2?|ttf|otf|eot)$/i),
+    );
+>>>>>>> Stashed changes
+
+    const avgImageLoadTime
+      = imageResources.length > 0
         ? Math.round(
-            imageResources.reduce((sum, e) => sum + (e.responseEnd - e.startTime), 0) /
-              imageResources.length
+            imageResources.reduce((sum, e) => sum + (e.responseEnd - e.startTime), 0)
+            / imageResources.length,
           )
         : 0
 
+<<<<<<< Updated upstream
     const allResources = [...imageResources, ...fontResources]
     const slowestResource =
       allResources.length > 0
+=======
+    const allResources = [...imageResources, ...fontResources];
+    const slowestResource
+      = allResources.length > 0
+>>>>>>> Stashed changes
+=======
+      e => e.initiatorType === 'img' || e.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i),
+    );
+
+    const fontResources = resourceEntries.filter(
+      e => e.initiatorType === 'css' || e.name.match(/\.(woff2?|ttf|otf|eot)$/i),
+    );
+
+    const avgImageLoadTime
+      = imageResources.length > 0
+        ? Math.round(
+            imageResources.reduce((sum, e) => sum + (e.responseEnd - e.startTime), 0)
+            / imageResources.length,
+          )
+        : 0;
+
+    const allResources = [...imageResources, ...fontResources];
+    const slowestResource
+      = allResources.length > 0
+>>>>>>> Stashed changes
         ? allResources.reduce((slowest, current) => {
             const currentDuration = current.responseEnd - current.startTime
             const slowestDuration = slowest.responseEnd - slowest.startTime

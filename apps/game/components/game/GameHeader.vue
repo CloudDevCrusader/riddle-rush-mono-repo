@@ -27,7 +27,10 @@ const headerClasses = computed(() => ['game-header', `game-header--${props.color
 <template>
   <header :class="headerClasses">
     <!-- Left slot: Optional back button or left content -->
-    <div v-if="$slots.left" class="game-header__left">
+    <div
+      v-if="$slots.left"
+      class="game-header__left"
+    >
       <slot name="left" />
     </div>
 
@@ -37,7 +40,10 @@ const headerClasses = computed(() => ['game-header', `game-header--${props.color
     </h1>
 
     <!-- Right slot: Optional right content (counter, icon, etc.) -->
-    <div v-if="$slots.right" class="game-header__right">
+    <div
+      v-if="$slots.right"
+      class="game-header__right"
+    >
       <slot name="right" />
     </div>
   </header>

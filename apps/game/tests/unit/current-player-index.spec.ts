@@ -160,8 +160,16 @@ describe('currentPlayerIndex - Index-based Player Turn Tracking', () => {
       const getTurn = () =>
         playerManager.getCurrentPlayerTurn(
           gameStore.currentSession?.players ?? [],
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           gameStore.currentSession?.currentPlayerIndex ?? 0
         )
+=======
+=======
+>>>>>>> Stashed changes
+          gameStore.currentSession?.currentPlayerIndex ?? 0,
+        );
+>>>>>>> Stashed changes
 
       // Index 0 -> Alice
       expect(getTurn()?.name).toBe('Alice')

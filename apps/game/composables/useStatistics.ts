@@ -2,8 +2,18 @@ import type { GameSession, GameStatistics, LeaderboardEntry } from '@riddle-rush
 import { useIndexedDB } from './useIndexedDB'
 
 export function useStatistics() {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   const { getStatistics, saveStatistics, initializeStatistics, saveLeaderboardEntry } =
     useIndexedDB()
+=======
+  const { getStatistics, saveStatistics, initializeStatistics, saveLeaderboardEntry }
+    = useIndexedDB();
+>>>>>>> Stashed changes
+=======
+  const { getStatistics, saveStatistics, initializeStatistics, saveLeaderboardEntry }
+    = useIndexedDB();
+>>>>>>> Stashed changes
 
   const updateStatistics = async (session: GameSession) => {
     if (!session.endTime) return
@@ -100,7 +110,14 @@ export function useStatistics() {
       emoji: string
       description: string
       unlocked: boolean
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     }> = []
+=======
+=======
+>>>>>>> Stashed changes
+    }> = [];
+>>>>>>> Stashed changes
 
     // Funny badges
     badges.push({

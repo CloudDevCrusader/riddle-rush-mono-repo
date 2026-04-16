@@ -347,24 +347,48 @@ describe('useStatistics', () => {
           createTestSession({
             id: `sess-${i}`,
             attempts: [{ term: 'Word', found: true, timestamp: Date.now() }],
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           })
         )
+=======
+=======
+>>>>>>> Stashed changes
+          }),
+        );
+>>>>>>> Stashed changes
       }
       // Break the streak
       await statistics.updateStatistics(
         createTestSession({
           id: 'sess-break',
           attempts: [{ term: 'Wrong', found: false, timestamp: Date.now() }],
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         })
       )
+=======
+=======
+>>>>>>> Stashed changes
+        }),
+      );
+>>>>>>> Stashed changes
       // Start a 2-game streak
       for (let i = 5; i <= 6; i++) {
         await statistics.updateStatistics(
           createTestSession({
             id: `sess-${i}`,
             attempts: [{ term: 'Word', found: true, timestamp: Date.now() }],
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           })
         )
+=======
+=======
+>>>>>>> Stashed changes
+          }),
+        );
+>>>>>>> Stashed changes
       }
 
       const stats = await statistics.getStats()
@@ -471,8 +495,16 @@ describe('useStatistics', () => {
     it('should unlock first-steps badge after 1 game', async () => {
       await statistics.updateStatistics(createTestSession({ score: 10 }))
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const firstSteps = badges.find((b) => b.id === 'first-steps')
+=======
+      const badges = await statistics.getBadges();
+      const firstSteps = badges.find(b => b.id === 'first-steps');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(firstSteps!.unlocked).toBe(true)
     })
@@ -480,8 +512,16 @@ describe('useStatistics', () => {
     it('should not unlock persistent badge with fewer than 10 games', async () => {
       await statistics.updateStatistics(createTestSession({ score: 10 }))
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const persistent = badges.find((b) => b.id === 'persistent')
+=======
+      const badges = await statistics.getBadges();
+      const persistent = badges.find(b => b.id === 'persistent');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(persistent!.unlocked).toBe(false)
     })
@@ -491,8 +531,16 @@ describe('useStatistics', () => {
         await statistics.updateStatistics(createTestSession({ id: `sess-${i}`, score: 10 }))
       }
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const persistent = badges.find((b) => b.id === 'persistent')
+=======
+      const badges = await statistics.getBadges();
+      const persistent = badges.find(b => b.id === 'persistent');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(persistent!.unlocked).toBe(true)
     })
@@ -505,8 +553,16 @@ describe('useStatistics', () => {
       })
       await indexedDB.saveStatistics(stats)
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const oops = badges.find((b) => b.id === 'oops-champion')
+=======
+      const badges = await statistics.getBadges();
+      const oops = badges.find(b => b.id === 'oops-champion');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(oops!.unlocked).toBe(true)
     })
@@ -519,8 +575,16 @@ describe('useStatistics', () => {
       })
       await indexedDB.saveStatistics(stats)
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const sharpshooter = badges.find((b) => b.id === 'sharpshooter')
+=======
+      const badges = await statistics.getBadges();
+      const sharpshooter = badges.find(b => b.id === 'sharpshooter');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(sharpshooter!.unlocked).toBe(true)
     })
@@ -529,8 +593,16 @@ describe('useStatistics', () => {
       const stats = createTestStats({ streakBest: 5 })
       await indexedDB.saveStatistics(stats)
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const streakMaster = badges.find((b) => b.id === 'streak-master')
+=======
+      const badges = await statistics.getBadges();
+      const streakMaster = badges.find(b => b.id === 'streak-master');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(streakMaster!.unlocked).toBe(true)
     })
@@ -539,8 +611,16 @@ describe('useStatistics', () => {
       const stats = createTestStats({ bestScore: 100 })
       await indexedDB.saveStatistics(stats)
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const highRoller = badges.find((b) => b.id === 'high-roller')
+=======
+      const badges = await statistics.getBadges();
+      const highRoller = badges.find(b => b.id === 'high-roller');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(highRoller!.unlocked).toBe(true)
     })
@@ -551,8 +631,16 @@ describe('useStatistics', () => {
       })
       await indexedDB.saveStatistics(stats)
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const variety = badges.find((b) => b.id === 'variety-lover')
+=======
+      const badges = await statistics.getBadges();
+      const variety = badges.find(b => b.id === 'variety-lover');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(variety!.unlocked).toBe(true)
     })
@@ -561,8 +649,16 @@ describe('useStatistics', () => {
       const stats = createTestStats({ totalPlayTime: 3600000 }) // 1 hour
       await indexedDB.saveStatistics(stats)
 
+<<<<<<< Updated upstream
       const badges = await statistics.getBadges()
       const marathon = badges.find((b) => b.id === 'marathon-runner')
+=======
+      const badges = await statistics.getBadges();
+      const marathon = badges.find(b => b.id === 'marathon-runner');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
       expect(marathon!.unlocked).toBe(true)
     })
@@ -572,9 +668,21 @@ describe('useStatistics', () => {
 
       // night-owl and early-bird depend on current time, so exclude them
       const timeIndependentBadges = badges.filter(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         (b) => b.id !== 'night-owl' && b.id !== 'early-bird'
       )
       const unlockedTimeIndependent = timeIndependentBadges.filter((b) => b.unlocked)
+=======
+        b => b.id !== 'night-owl' && b.id !== 'early-bird',
+      );
+      const unlockedTimeIndependent = timeIndependentBadges.filter(b => b.unlocked);
+>>>>>>> Stashed changes
+=======
+        b => b.id !== 'night-owl' && b.id !== 'early-bird',
+      );
+      const unlockedTimeIndependent = timeIndependentBadges.filter(b => b.unlocked);
+>>>>>>> Stashed changes
 
       expect(unlockedTimeIndependent).toHaveLength(0)
     })

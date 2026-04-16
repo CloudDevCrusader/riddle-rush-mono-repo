@@ -80,8 +80,24 @@ describe('useAssets', () => {
 
       const result = assets.getAssetPath('/folder/subfolder/image.png')
 
+<<<<<<< Updated upstream
       expect(result).toBe('/test-base/folder/subfolder/image.png')
     })
+=======
+      expect(result).toBe('/test-base/folder/subfolder/image.png');
+    });
+
+    it('should prefix canonical assets path for relative and slash-prefixed paths', () => {
+      const assets = useAssets();
+
+      expect(assets.getAssetPath('assets/splash/logo.png')).toBe(
+        '/test-base/assets/splash/logo.png',
+      );
+      expect(assets.getAssetPath('/assets/splash/logo.png')).toBe(
+        '/test-base/assets/splash/logo.png',
+      );
+    });
+>>>>>>> Stashed changes
 
     it('should handle empty string', () => {
       const assets = useAssets()
@@ -197,7 +213,15 @@ describe('useAssets', () => {
       const promise = assets.preloadImages(paths)
 
       // Simulate all images loading
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       mockImages.forEach((img) => img.onload?.())
+=======
+      mockImages.forEach(img => img.onload?.());
+>>>>>>> Stashed changes
+=======
+      mockImages.forEach(img => img.onload?.());
+>>>>>>> Stashed changes
 
       await expect(promise).resolves.toBeUndefined()
       expect(mockImages).toHaveLength(3)

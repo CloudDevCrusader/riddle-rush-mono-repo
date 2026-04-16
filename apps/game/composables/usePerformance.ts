@@ -23,8 +23,8 @@ interface PerformanceMetrics {
 
 export const usePerformance = () => {
   // Make logger optional for testing
-  const logger =
-    typeof useLogger !== 'undefined'
+  const logger
+    = typeof useLogger !== 'undefined'
       ? useLogger()
       : {
           log: () => {},
@@ -34,11 +34,25 @@ export const usePerformance = () => {
   const metrics = ref<PerformanceMetrics>({})
 
   // Check if Performance API is available
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   const isSupported =
     typeof window !== 'undefined' &&
     'performance' in window &&
     'mark' in window.performance &&
     'measure' in window.performance
+=======
+=======
+>>>>>>> Stashed changes
+  const isSupported
+    = typeof window !== 'undefined'
+      && 'performance' in window
+      && 'mark' in window.performance
+      && 'measure' in window.performance;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
   /**
    * Start a performance measurement
@@ -201,17 +215,37 @@ export const usePerformance = () => {
     console.group('Performance Report')
     ;(Object.entries(allMetrics) as [string, PerformanceMetrics[string]][]).forEach(
       ([name, metric]) => {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         console.log(
           `${name}: count=${metric.count}, avg=${metric.average.toFixed(2)}ms, min=${metric.min.toFixed(2)}ms, max=${metric.max.toFixed(2)}ms, last=${metric.last.toFixed(2)}ms, total=${metric.total.toFixed(2)}ms`
         )
       }
     )
+=======
+=======
+>>>>>>> Stashed changes
+        debug(
+          `${name}: count=${metric.count}, avg=${metric.average.toFixed(2)}ms, min=${metric.min.toFixed(2)}ms, max=${metric.max.toFixed(2)}ms, last=${metric.last.toFixed(2)}ms, total=${metric.total.toFixed(2)}ms`,
+        );
+      },
+    );
+>>>>>>> Stashed changes
 
     const navTiming = getNavigationTiming()
     if (navTiming) {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       console.log(
         `Navigation Timing: DNS=${navTiming.dns.toFixed(2)}ms, TCP=${navTiming.tcp.toFixed(2)}ms, Request=${navTiming.request.toFixed(2)}ms, Response=${navTiming.response.toFixed(2)}ms, DOM=${navTiming.domProcessing.toFixed(2)}ms, DCL=${navTiming.domContentLoaded.toFixed(2)}ms, Total=${navTiming.totalTime.toFixed(2)}ms`
       )
+=======
+=======
+>>>>>>> Stashed changes
+      debug(
+        `Navigation Timing: DNS=${navTiming.dns.toFixed(2)}ms, TCP=${navTiming.tcp.toFixed(2)}ms, Request=${navTiming.request.toFixed(2)}ms, Response=${navTiming.response.toFixed(2)}ms, DOM=${navTiming.domProcessing.toFixed(2)}ms, DCL=${navTiming.domContentLoaded.toFixed(2)}ms, Total=${navTiming.totalTime.toFixed(2)}ms`,
+      );
+>>>>>>> Stashed changes
     }
 
     console.groupEnd()
@@ -225,7 +259,15 @@ export const usePerformance = () => {
 
     const memory = (
       performance as unknown as {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number }
+=======
+        memory?: { usedJSHeapSize: number, totalJSHeapSize: number, jsHeapSizeLimit: number }
+>>>>>>> Stashed changes
+=======
+        memory?: { usedJSHeapSize: number, totalJSHeapSize: number, jsHeapSizeLimit: number }
+>>>>>>> Stashed changes
       }
     ).memory
     if (!memory) return null

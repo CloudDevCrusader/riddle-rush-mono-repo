@@ -11,23 +11,23 @@ export default defineConfig({
   theme: {
     // Map spacing utilities to design-system.scss tokens
     spacing: {
-      xs: 'var(--spacing-xs)',
-      sm: 'var(--spacing-sm)',
-      md: 'var(--spacing-md)',
-      lg: 'var(--spacing-lg)',
-      xl: 'var(--spacing-xl)',
+      'xs': 'var(--spacing-xs)',
+      'sm': 'var(--spacing-sm)',
+      'md': 'var(--spacing-md)',
+      'lg': 'var(--spacing-lg)',
+      'xl': 'var(--spacing-xl)',
       '2xl': 'var(--spacing-2xl)',
       '3xl': 'var(--spacing-3xl)',
     },
 
     // Map border radius to design tokens
     borderRadius: {
-      sm: 'var(--radius-sm)',
-      md: 'var(--radius-md)',
-      lg: 'var(--radius-lg)',
-      xl: 'var(--radius-xl)',
+      'sm': 'var(--radius-sm)',
+      'md': 'var(--radius-md)',
+      'lg': 'var(--radius-lg)',
+      'xl': 'var(--radius-xl)',
       '2xl': 'var(--radius-2xl)',
-      full: 'var(--radius-full)',
+      'full': 'var(--radius-full)',
     },
 
     // Map colors to design tokens

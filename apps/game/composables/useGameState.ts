@@ -21,8 +21,15 @@ export function useGameState() {
   }
 
   // Maintain backward compatibility by also exposing gameStore alias
+<<<<<<< Updated upstream
   const gameStore = gameState
   const settingsStore = settingsHook
+=======
+  const gameStore = gameState;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
   // Convenience: destructured common computed refs
   const currentCategory = gameSession.currentCategory

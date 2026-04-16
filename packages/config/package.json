@@ -15,8 +15,7 @@
   "exports": {
     ".": "./index.ts",
     "./vite": "./vite.config.ts",
-    "./build-utils": "./scripts/build-utils.ts",
-    "./eslint": "./eslint.config.mjs"
+    "./build-utils": "./scripts/build-utils.ts"
   },
   "main": "./index.ts",
   "peerDependencies": {

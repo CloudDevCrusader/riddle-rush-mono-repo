@@ -20,8 +20,14 @@
           :aria-labelledby="title ? 'game-modal-title' : undefined"
         >
           <!-- Optional Header -->
-          <div v-if="title" class="game-modal-header">
-            <h2 id="game-modal-title" class="game-modal-title">
+          <div
+            v-if="title"
+            class="game-modal-header"
+          >
+            <h2
+              id="game-modal-title"
+              class="game-modal-title"
+            >
               {{ title }}
             </h2>
           </div>
@@ -56,7 +62,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 }>()
+=======
+=======
+>>>>>>> Stashed changes
+}>();
+>>>>>>> Stashed changes
 
 const modalRef = ref<HTMLElement | null>(null)
 const overlayRef = ref<HTMLElement | null>(null)
@@ -121,8 +134,16 @@ watch(
     } else {
       document.body.style.overflow = ''
     }
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   }
 )
+=======
+=======
+>>>>>>> Stashed changes
+  },
+);
+>>>>>>> Stashed changes
 </script>
 
 <style scoped lang="scss">

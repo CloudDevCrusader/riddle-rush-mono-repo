@@ -1,7 +1,23 @@
 <template>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   <div class="game-player-card">
+=======
+=======
+>>>>>>> Stashed changes
+  <div
+    class="game-player-card"
+    :class="{ 'game-player-card--embedded': embedded }"
+  >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     <div class="game-player-card__info">
-      <div v-if="label" class="game-player-card__label">
+      <div
+        v-if="label"
+        class="game-player-card__label"
+      >
         {{ label }}
       </div>
       <div class="game-player-card__name">
@@ -37,6 +53,16 @@ interface Props {
   showIndicator?: boolean
   /** Whether to show the player's answer */
   showAnswer?: boolean
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+  /** Flat layout + mockup colors for scoring on blue gradient cards */
+  embedded?: boolean
+>>>>>>> Stashed changes
+=======
+  /** Flat layout + mockup colors for scoring on blue gradient cards */
+  embedded?: boolean
+>>>>>>> Stashed changes
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -10,10 +10,16 @@
       <p class="quit-message">{{ t('game.quitConfirmation') }}</p>
 
       <div class="quit-actions">
-        <GameButton variant="danger" @click="handleNo">
+        <GameButton
+          variant="danger"
+          @click="handleNo"
+        >
           {{ t('common.no') }}
         </GameButton>
-        <GameButton variant="primary" @click="handleYes">
+        <GameButton
+          variant="primary"
+          @click="handleYes"
+        >
           {{ t('common.yes') }}
         </GameButton>
       </div>
@@ -34,9 +40,18 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   confirm: []
   cancel: []
 }>()
+=======
+=======
+>>>>>>> Stashed changes
+  'confirm': []
+  'cancel': []
+}>();
+>>>>>>> Stashed changes
 
 const isVisible = computed({
   get: () => props.modelValue,

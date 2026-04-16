@@ -37,9 +37,18 @@ test.describe('Credits Page', () => {
 
     // Check for all three credit sections (use exact pattern to avoid matching heading elements)
     const creditSections = page.locator(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       '[data-testid="credits-section-0"], [data-testid="credits-section-1"], [data-testid="credits-section-2"]'
     )
     await expect(creditSections).toHaveCount(3)
+=======
+=======
+>>>>>>> Stashed changes
+      '[data-testid="credits-section-0"], [data-testid="credits-section-1"], [data-testid="credits-section-2"]',
+    );
+    await expect(creditSections).toHaveCount(3);
+>>>>>>> Stashed changes
 
     // Check for Game Design section heading (use testid, text may be translated)
     const gameDesignHeading = page.locator('[data-testid="credits-section-heading-0"]')

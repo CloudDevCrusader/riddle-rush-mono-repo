@@ -18,11 +18,14 @@
           loading="eager"
           width="32"
           height="32"
-        />
+        >
       </button>
 
       <!-- Round Indicator -->
-      <div class="round-indicator" data-testid="game-round-indicator">
+      <div
+        class="round-indicator"
+        data-testid="game-round-indicator"
+      >
         <span class="round-text">{{ t('game.round') }} {{ formattedRound }}</span>
       </div>
 
@@ -43,14 +46,26 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <rect x="6" y="4" width="4" height="16" />
-          <rect x="14" y="4" width="4" height="16" />
+          <rect
+            x="6"
+            y="4"
+            width="4"
+            height="16"
+          />
+          <rect
+            x="14"
+            y="4"
+            width="4"
+            height="16"
+          />
         </svg>
       </button>
     </header>
 
     <!-- Main Game Area -->
     <div class="game-container">
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       <!-- Category Panel -->
       <div class="category-panel" data-testid="game-category-info">
         <img
@@ -68,6 +83,54 @@
               ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
               : t('common.loading')
           }}
+=======
+=======
+>>>>>>> Stashed changes
+      <Transition
+        name="round-reveal"
+        appear
+      >
+        <div
+          v-if="currentCategory"
+          :key="roundRevealKey"
+          class="round-reveal-stack"
+        >
+          <!-- Category Panel -->
+          <div
+            class="category-panel"
+            data-testid="game-category-info"
+          >
+            <img
+              :src="getAssetPath('assets/alphabets/category.png')"
+              :alt="t('common.category')"
+              class="category-label-image"
+              loading="lazy"
+              width="200"
+              height="50"
+            >
+            <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
+            <div class="category-name">
+              <span
+                class="category-name__emoji"
+                data-testid="game-category-emoji"
+                aria-hidden="true"
+              >{{ currentCategoryEmoji }}</span>
+              <span class="category-name__text">{{
+                t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Large Letter Display -->
+          <div
+            class="letter-display"
+            data-testid="game-letter-info"
+          >
+            <span class="letter-value">
+              {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
+            </span>
+          </div>
+>>>>>>> Stashed changes
         </div>
       </div>
 
@@ -83,11 +146,32 @@
         v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
         class="answer-input-section"
       >
-        <div class="player-turn-indicator" data-testid="game-player-turn">
+        <div
+          class="player-turn-indicator"
+          data-testid="game-player-turn"
+        >
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
-          <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
+          <span
+            class="turn-name"
+            data-testid="game-player-name"
+          >{{ currentPlayerTurn.name }}</span>
         </div>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
+=======
+=======
+>>>>>>> Stashed changes
+        <!-- verbal-mode-hint removed — instructions now live on the results page -->
+        <form
+          v-if="isAnswerInputEnabled"
+          class="answer-form"
+          @submit.prevent="submitAnswer"
+        >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
           <input
             v-if="isAnswerInputEnabled"
             v-model="playerAnswer"
@@ -102,7 +186,7 @@
             enterkeyhint="done"
             @input="sanitizeInput"
             @keyup.enter="submitAnswer"
-          />
+          >
           <button
             type="submit"
             class="submit-answer-btn"
@@ -112,7 +196,20 @@
             {{ isAnswerInputEnabled ? t('game.submit', 'Submit') : t('common.confirm') }}
           </button>
         </form>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <div v-else class="skip-actions">
+=======
+=======
+>>>>>>> Stashed changes
+        <div
+          v-else
+          class="verbal-turn-actions"
+        >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
           <button
             class="skip-player-btn"
             data-testid="game-skip-button"
@@ -162,7 +259,7 @@
           :alt="t('common.next')"
           class="next-icon"
           loading="lazy"
-        />
+        >
         <span class="next-text">{{ t('common.next') }}</span>
       </button>
     </div>
@@ -179,17 +276,24 @@ const {
   currentCategory,
   currentLetter,
   currentRound,
-  canProceedToResults,
   flowState,
   players,
   currentPlayerTurn,
   allPlayersSubmitted,
   hasActiveSession,
+<<<<<<< Updated upstream
 } = useGameState()
 const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
 const gameActions = useGameActions()
 const route = useRoute()
+=======
+} = useGameState();
+const { isAnswerInputEnabled } = useFeatureFlags();
+const logger = useLogger();
+const audio = useAudio();
+const route = useRoute();
+>>>>>>> Stashed changes
 
 // Handle game ID from route parameter
 const gameId = computed(() => route.params.gameId as string | undefined)
@@ -213,9 +317,24 @@ watch(isAnswerInputEnabled, (enabled: boolean) => {
 })
 
 const formattedRound = computed(() => {
+<<<<<<< Updated upstream
   const round = currentRound.value || 1
   return round.toString().padStart(2, '0')
 })
+=======
+  const round = currentRound.value || 1;
+  return round.toString().padStart(2, '0');
+});
+
+const roundRevealKey = computed(
+  () =>
+    `${currentCategory.value?.id ?? '0'}-${(currentLetter.value ?? '').toString().toUpperCase()}`,
+);
+
+const currentCategoryEmoji = computed(() =>
+  currentCategory.value ? gameStore.categoryEmoji(currentCategory.value.name) : '',
+);
+>>>>>>> Stashed changes
 
 const goHome = () => {
   navigateToHome()
@@ -267,7 +386,13 @@ const submitAnswer = async () => {
 
     // If all players submitted, show message
     if (allPlayersSubmitted.value) {
+<<<<<<< Updated upstream
       toast.info(t('game.all_submitted', 'All players have submitted!'))
+=======
+      toast.info(
+        isAnswerInputEnabled.value ? t('game.all_submitted') : t('game.all_submitted_verbal'),
+      );
+>>>>>>> Stashed changes
     }
   } catch (error) {
     logger.error('Error submitting answer:', error)
@@ -284,10 +409,10 @@ const handleNext = async () => {
   const hasMultiplayerPlayers = players.value.length > 0
 
   if (
-    hasMultiplayerPlayers &&
-    !allPlayersSubmitted.value &&
-    flow !== 'round-complete' &&
-    flow !== 'decision'
+    hasMultiplayerPlayers
+    && !allPlayersSubmitted.value
+    && flow !== 'round-complete'
+    && flow !== 'decision'
   ) {
     toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
     return
@@ -339,7 +464,15 @@ onMounted(async () => {
           if (loadedSession) {
             break
           }
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           await new Promise((resolve) => setTimeout(resolve, 150))
+=======
+          await new Promise(resolve => setTimeout(resolve, 150));
+>>>>>>> Stashed changes
+=======
+          await new Promise(resolve => setTimeout(resolve, 150));
+>>>>>>> Stashed changes
         }
       }
 
@@ -380,8 +513,16 @@ onUnmounted(() => {
 })
 
 const pageTitle = computed(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   () => `${t('game.page_title')} · ${t('game.round')} ${formattedRound.value}`
 )
+=======
+=======
+>>>>>>> Stashed changes
+  () => `${t('game.page_title')} · ${t('game.round')} ${formattedRound.value}`,
+);
+>>>>>>> Stashed changes
 
 useHead({
   title: pageTitle,

@@ -65,18 +65,41 @@ test.describe('Offline Functionality', () => {
     const offlineIndicatorByText = page.getByText(/offline/i)
 
     // If any offline indicator exists, check it's visible
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const count =
       (await offlineIndicatorByTestId.count()) +
       (await offlineIndicatorByClass.count()) +
       (await offlineIndicatorByText.count())
+=======
+=======
+>>>>>>> Stashed changes
+    const count
+      = (await offlineIndicatorByTestId.count())
+        + (await offlineIndicatorByClass.count())
+        + (await offlineIndicatorByText.count());
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
     if (count > 0) {
-      const firstVisible =
-        (await offlineIndicatorByTestId.count()) > 0
+      const firstVisible
+        = (await offlineIndicatorByTestId.count()) > 0
           ? offlineIndicatorByTestId.first()
           : (await offlineIndicatorByClass.count()) > 0
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
             ? offlineIndicatorByClass.first()
             : offlineIndicatorByText.first()
+=======
+              ? offlineIndicatorByClass.first()
+              : offlineIndicatorByText.first();
+>>>>>>> Stashed changes
+=======
+              ? offlineIndicatorByClass.first()
+              : offlineIndicatorByText.first();
+>>>>>>> Stashed changes
 
       await expect(firstVisible).toBeVisible({ timeout: 2000 })
     }

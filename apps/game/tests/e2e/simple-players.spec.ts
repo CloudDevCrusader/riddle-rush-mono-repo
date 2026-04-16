@@ -37,7 +37,15 @@ test.describe('simple players page test', () => {
     })
 
     // Check if there are any errors
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const errors = consoleLogs.filter((log) => log.includes('error') || log.includes('Error'))
+=======
+    const errors = consoleLogs.filter(log => log.includes('error') || log.includes('Error'));
+>>>>>>> Stashed changes
+=======
+    const errors = consoleLogs.filter(log => log.includes('error') || log.includes('Error'));
+>>>>>>> Stashed changes
     if (errors.length > 0) {
       console.log('Errors found:', errors)
     }

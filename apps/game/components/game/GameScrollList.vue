@@ -29,7 +29,12 @@ const listStyles = computed(() => ({
 </script>
 
 <template>
-  <div class="game-scroll-list" :style="listStyles" tabindex="0" role="list">
+  <div
+    class="game-scroll-list"
+    :style="listStyles"
+    tabindex="0"
+    role="list"
+  >
     <div
       v-for="(_, index) in $slots.default?.()"
       :key="index"
@@ -37,7 +42,10 @@ const listStyles = computed(() => ({
       role="listitem"
     >
       <!-- Rank indicator (crowns 1-3, numbers 4+) -->
-      <div v-if="showRanks" class="game-scroll-list__rank">
+      <div
+        v-if="showRanks"
+        class="game-scroll-list__rank"
+      >
         <!-- Crown for ranks 1-3 -->
         <svg
           v-if="index === 0"
@@ -45,7 +53,10 @@ const listStyles = computed(() => ({
           viewBox="0 0 24 24"
           aria-label="1st place"
         >
-          <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 4h14v2H5v-2z" fill="currentColor" />
+          <path
+            d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 4h14v2H5v-2z"
+            fill="currentColor"
+          />
         </svg>
 
         <svg
@@ -54,7 +65,10 @@ const listStyles = computed(() => ({
           viewBox="0 0 24 24"
           aria-label="2nd place"
         >
-          <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 4h14v2H5v-2z" fill="currentColor" />
+          <path
+            d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 4h14v2H5v-2z"
+            fill="currentColor"
+          />
         </svg>
 
         <svg
@@ -63,11 +77,17 @@ const listStyles = computed(() => ({
           viewBox="0 0 24 24"
           aria-label="3rd place"
         >
-          <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 4h14v2H5v-2z" fill="currentColor" />
+          <path
+            d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 4h14v2H5v-2z"
+            fill="currentColor"
+          />
         </svg>
 
         <!-- Numbered badge for ranks 4+ -->
-        <div v-else class="game-scroll-list__badge">
+        <div
+          v-else
+          class="game-scroll-list__badge"
+        >
           {{ Number(index) + 1 }}
         </div>
       </div>

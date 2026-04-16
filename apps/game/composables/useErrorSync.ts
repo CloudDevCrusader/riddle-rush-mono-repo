@@ -19,16 +19,20 @@ interface ErrorLog {
 
 export const useErrorSync = () => {
   // Import runtime config dynamically to avoid issues in test environment
-  const runtimeConfig =
-    typeof useRuntimeConfig !== 'undefined'
+  const runtimeConfig
+    = typeof useRuntimeConfig !== 'undefined'
       ? useRuntimeConfig()
       : {
           public: {
             environment: process.env.NODE_ENV || 'development',
             appVersion: process.env.APP_VERSION || '1.0.0',
-            cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
-            cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
-            debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
+            cloudWatchEndpoint:
+              process.env.NUXT_PUBLIC_CLOUDWATCH_ENDPOINT || process.env.CLOUDWATCH_ENDPOINT || '',
+            cloudWatchApiKey:
+              process.env.NUXT_PUBLIC_CLOUDWATCH_API_KEY || process.env.CLOUDWATCH_API_KEY || '',
+            debugErrorSync:
+              process.env.NUXT_PUBLIC_DEBUG_ERROR_SYNC === 'true'
+              || process.env.DEBUG_ERROR_SYNC === 'true',
           },
         }
 
@@ -41,7 +45,7 @@ export const useErrorSync = () => {
     level: 'error' | 'warning' | 'info',
     message: string,
     error?: unknown,
-    context: Record<string, unknown> = {}
+    context: Record<string, unknown> = {},
   ) => {
     try {
       // Only sync in production or if explicitly enabled

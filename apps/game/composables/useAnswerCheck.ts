@@ -24,22 +24,30 @@ export function useAnswerCheck() {
   async function searchPetScan(category: string): Promise<string[]> {
     try {
       const params = new URLSearchParams({
-        max_sitelink_count: PETSCAN_MAX_SITELINK_COUNT,
-        categories: category,
-        project: PETSCAN_PROJECT,
-        language: PETSCAN_LANGUAGE,
-        cb_labels_yes_l: '1',
+        'max_sitelink_count': PETSCAN_MAX_SITELINK_COUNT,
+        'categories': category,
+        'project': PETSCAN_PROJECT,
+        'language': PETSCAN_LANGUAGE,
+        'cb_labels_yes_l': '1',
         'edits[flagged]': 'both',
         'edits[bots]': 'both',
-        search_max_results: PETSCAN_MAX_RESULTS,
-        cb_labels_any_l: '1',
-        cb_labels_no_l: '1',
-        format: 'json',
-        interface_language: PETSCAN_LANGUAGE,
+        'search_max_results': PETSCAN_MAX_RESULTS,
+        'cb_labels_any_l': '1',
+        'cb_labels_no_l': '1',
+        'format': 'json',
+        'interface_language': PETSCAN_LANGUAGE,
         'edits[anons]': 'both',
         'ns[0]': '1',
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         doit: '',
       })
+=======
+=======
+>>>>>>> Stashed changes
+        'doit': '',
+      });
+>>>>>>> Stashed changes
 
       const url = `https://petscan.wmflabs.org/?${params.toString()}`
 
@@ -49,8 +57,16 @@ export function useAnswerCheck() {
       }
       const data = (await res.json()) as {
         '*'?: Array<{ a?: { '*'?: Array<{ title: string }> } }>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       }
       const results = data?.['*']?.[0]?.['a']?.['*']
+=======
+=======
+>>>>>>> Stashed changes
+      };
+      const results = data?.['*']?.[0]?.['a']?.['*'];
+>>>>>>> Stashed changes
 
       if (!results) {
         return []
@@ -88,7 +104,7 @@ export function useAnswerCheck() {
     list: string[],
     letter: string,
     term: string,
-    categoryItem: Category
+    categoryItem: Category,
   ): PetScanResult {
     let items = list
 
@@ -97,6 +113,8 @@ export function useAnswerCheck() {
       const additionalItems = Array.isArray(categoryItem.additionalData)
         ? categoryItem.additionalData
         : Object.values(categoryItem.additionalData).filter(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
             (v): v is string => typeof v === 'string'
           )
       items = [...items, ...additionalItems]
@@ -109,6 +127,22 @@ export function useAnswerCheck() {
     const other = results
       .filter((res) => res.toLowerCase() !== normalizedTerm)
       .slice(0, MAX_SUGGESTIONS)
+=======
+=======
+>>>>>>> Stashed changes
+            (v): v is string => typeof v === 'string',
+          );
+      items = [...items, ...additionalItems];
+    }
+
+    const results = items.filter(e => e.toUpperCase().startsWith(letter.toUpperCase()));
+
+    const normalizedTerm = term.trim().toLowerCase();
+    const found = results.some(res => res.toLowerCase() === normalizedTerm);
+    const other = results
+      .filter(res => res.toLowerCase() !== normalizedTerm)
+      .slice(0, MAX_SUGGESTIONS);
+>>>>>>> Stashed changes
 
     return { found, other }
   }
@@ -130,10 +164,18 @@ export function useAnswerCheck() {
   async function checkAnswer(
     searchWord: string,
     letter: string,
-    term: string
+    term: string,
   ): Promise<CheckAnswerResponse> {
+<<<<<<< Updated upstream
     const categories = await getCategories()
     const currentCategory = categories.find((e) => e.searchWord === searchWord)
+=======
+    const categories = await getCategories();
+    const currentCategory = categories.find(e => e.searchWord === searchWord);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
     if (!currentCategory) {
       throw new Error(`Category not found: ${searchWord}`)

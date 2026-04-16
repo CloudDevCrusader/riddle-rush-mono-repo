@@ -61,16 +61,39 @@ useHead({
 </script>
 
 <template>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   <button class="splash-page" type="button" aria-label="Skip splash screen" @click="handleSkip">
+=======
+=======
+>>>>>>> Stashed changes
+  <button
+    class="splash-page"
+    type="button"
+    :aria-label="t('splash.skip_aria')"
+    @click="handleSkip"
+  >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     <GameBackground />
 
     <div class="splash-container">
-      <GameHeader color="gold" class="splash-title">{{ t('app.title') }}</GameHeader>
+      <GameHeader
+        color="gold"
+        class="splash-title"
+      >
+        {{ t('app.title') }}
+      </GameHeader>
 
       <div class="splash-loading">
         <div class="loading-bar">
           <div class="loading-bar__track">
-            <div class="loading-bar__fill" :style="{ width: `${progress}%` }" />
+            <div
+              class="loading-bar__fill"
+              :style="{ width: `${progress}%` }"
+            />
           </div>
         </div>
         <p class="loading-text">{{ t('common.loading') }}</p>

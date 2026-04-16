@@ -39,9 +39,18 @@ describe('usePageSwipe', () => {
         expect.objectContaining({
           threshold: 50,
           onSwipeEnd: expect.any(Function),
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         })
       )
     })
+=======
+=======
+>>>>>>> Stashed changes
+        }),
+      );
+    });
+>>>>>>> Stashed changes
 
     it('should use custom threshold when provided', () => {
       usePageSwipe({ threshold: 100 })
@@ -50,9 +59,18 @@ describe('usePageSwipe', () => {
         expect.any(Object),
         expect.objectContaining({
           threshold: 100,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         })
       )
     })
+=======
+=======
+>>>>>>> Stashed changes
+        }),
+      );
+    });
+>>>>>>> Stashed changes
 
     it('should initialize without callbacks', () => {
       const result = usePageSwipe()

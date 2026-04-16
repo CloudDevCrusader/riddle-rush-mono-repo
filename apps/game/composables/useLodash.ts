@@ -9,14 +9,30 @@ export const useLodash = () => {
   return {
     // Debounce & Throttle - Lazy loaded for performance
     get debounce() {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       return import('lodash-es/debounce').then((module) => module.default)
     },
     get throttle() {
       return import('lodash-es/throttle').then((module) => module.default)
+=======
+      return import('lodash-es/debounce').then(module => module.default);
+    },
+    get throttle() {
+      return import('lodash-es/throttle').then(module => module.default);
+>>>>>>> Stashed changes
+=======
+      return import('lodash-es/debounce').then(module => module.default);
+    },
+    get throttle() {
+      return import('lodash-es/throttle').then(module => module.default);
+>>>>>>> Stashed changes
     },
 
     // Array utilities - Lazy loaded for performance
     get shuffle() {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       return import('lodash-es/shuffle').then((module) => module.default)
     },
     get sample() {
@@ -42,10 +58,66 @@ export const useLodash = () => {
     },
     get flatten() {
       return import('lodash-es/flatten').then((module) => module.default)
+=======
+      return import('lodash-es/shuffle').then(module => module.default);
+    },
+    get sample() {
+      return import('lodash-es/sample').then(module => module.default);
+    },
+    get sampleSize() {
+      return import('lodash-es/sampleSize').then(module => module.default);
+    },
+    get uniq() {
+      return import('lodash-es/uniq').then(module => module.default);
+    },
+    get uniqBy() {
+      return import('lodash-es/uniqBy').then(module => module.default);
+    },
+    get groupBy() {
+      return import('lodash-es/groupBy').then(module => module.default);
+    },
+    get orderBy() {
+      return import('lodash-es/orderBy').then(module => module.default);
+    },
+    get chunk() {
+      return import('lodash-es/chunk').then(module => module.default);
+    },
+    get flatten() {
+      return import('lodash-es/flatten').then(module => module.default);
+>>>>>>> Stashed changes
+=======
+      return import('lodash-es/shuffle').then(module => module.default);
+    },
+    get sample() {
+      return import('lodash-es/sample').then(module => module.default);
+    },
+    get sampleSize() {
+      return import('lodash-es/sampleSize').then(module => module.default);
+    },
+    get uniq() {
+      return import('lodash-es/uniq').then(module => module.default);
+    },
+    get uniqBy() {
+      return import('lodash-es/uniqBy').then(module => module.default);
+    },
+    get groupBy() {
+      return import('lodash-es/groupBy').then(module => module.default);
+    },
+    get orderBy() {
+      return import('lodash-es/orderBy').then(module => module.default);
+    },
+    get chunk() {
+      return import('lodash-es/chunk').then(module => module.default);
+    },
+    get flatten() {
+      return import('lodash-es/flatten').then(module => module.default);
+>>>>>>> Stashed changes
     },
 
     // Object utilities - Lazy loaded for performance
     get cloneDeep() {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       return import('lodash-es/cloneDeep').then((module) => module.default)
     },
     get isEqual() {
@@ -68,6 +140,54 @@ export const useLodash = () => {
     },
     get pick() {
       return import('lodash-es/pick').then((module) => module.default)
+=======
+      return import('lodash-es/cloneDeep').then(module => module.default);
+=======
+      return import('lodash-es/cloneDeep').then(module => module.default);
+    },
+    get isEqual() {
+      return import('lodash-es/isEqual').then(module => module.default);
+    },
+    get isEmpty() {
+      return import('lodash-es/isEmpty').then(module => module.default);
+    },
+    get get() {
+      return import('lodash-es/get').then(module => module.default);
+    },
+    get set() {
+      return import('lodash-es/set').then(module => module.default);
+    },
+    get has() {
+      return import('lodash-es/has').then(module => module.default);
+    },
+    get omit() {
+      return import('lodash-es/omit').then(module => module.default);
+    },
+    get pick() {
+      return import('lodash-es/pick').then(module => module.default);
+>>>>>>> Stashed changes
+    },
+    get isEqual() {
+      return import('lodash-es/isEqual').then(module => module.default);
+    },
+    get isEmpty() {
+      return import('lodash-es/isEmpty').then(module => module.default);
+    },
+    get get() {
+      return import('lodash-es/get').then(module => module.default);
+    },
+    get set() {
+      return import('lodash-es/set').then(module => module.default);
+    },
+    get has() {
+      return import('lodash-es/has').then(module => module.default);
+    },
+    get omit() {
+      return import('lodash-es/omit').then(module => module.default);
+    },
+    get pick() {
+      return import('lodash-es/pick').then(module => module.default);
+>>>>>>> Stashed changes
     },
   }
 }

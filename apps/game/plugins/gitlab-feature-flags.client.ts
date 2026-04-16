@@ -5,7 +5,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
   const logger = useLogger()
 
-  // GitLab Feature Flags uses the Unleash protocol
+  // GitLab Feature Flags uses the Unleash protocol (configure via
+  // `NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL` / `NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN`).
   // URL format: https://gitlab.com/api/v4/feature_flags/unleash/:project_id
   const gitlabConfig = {
     url: config.public.gitlabFeatureFlagsUrl || '',
@@ -18,10 +19,20 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Only initialize if both URL and token are configured
   if (!gitlabConfig.url || !gitlabConfig.clientKey) {
     logger.info(
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       '[Feature Flags] GitLab Feature Flags not configured — falling back to runtimeConfig/local settings only.'
     )
     nuxtApp.provide('featureFlags', null)
     return
+=======
+=======
+>>>>>>> Stashed changes
+      '[Feature Flags] GitLab Feature Flags not configured — falling back to runtimeConfig/local settings only.',
+    );
+    nuxtApp.provide('featureFlags', null);
+    return;
+>>>>>>> Stashed changes
   }
 
   try {
