@@ -117,7 +117,7 @@ describe('useSessionManager', () => {
   })
 
   describe('createSinglePlayerSession', () => {
-    it('should return GameSession with required properties', () => {
+    it('should create legacy single-player session with expected shape', () => {
       const { createSinglePlayerSession } = useSessionManager()
       const session = createSinglePlayerSession(mockCategory, 'B')
 
@@ -131,36 +131,9 @@ describe('useSessionManager', () => {
         attempts: [],
         status: 'active',
         roundHistory: [],
+        letter: 'B',
       })
-    })
-
-    it('should have userId: default-user', () => {
-      const { createSinglePlayerSession } = useSessionManager()
-      const session = createSinglePlayerSession(mockCategory, 'B')
-
-      expect(session.userId).toBe('default-user')
-    })
-
-    it('should have empty players array', () => {
-      const { createSinglePlayerSession } = useSessionManager()
-      const session = createSinglePlayerSession(mockCategory, 'B')
-
-      expect(session.players).toEqual([])
-    })
-
-    it('should have currentRound: 0 for single-player', () => {
-      const { createSinglePlayerSession } = useSessionManager()
-      const session = createSinglePlayerSession(mockCategory, 'B')
-
-      expect(session.currentRound).toBe(0)
-    })
-
-    it('should have score: 0 and attempts: [] as single-player legacy fields', () => {
-      const { createSinglePlayerSession } = useSessionManager()
-      const session = createSinglePlayerSession(mockCategory, 'B')
-
-      expect(session.score).toBe(0)
-      expect(session.attempts).toEqual([])
+      expect(session.category.letter).toBe('B')
     })
   })
 

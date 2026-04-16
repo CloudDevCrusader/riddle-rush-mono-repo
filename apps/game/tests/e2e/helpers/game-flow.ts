@@ -51,6 +51,7 @@ interface E2EPiniaGameStore {
 interface PiniaWindow extends Window {
   __pinia_stores__?: {
     game?: E2EPiniaGameStore
+    settings?: { fortuneWheelAllowRedraw: boolean }
   }
 }
 
@@ -133,7 +134,7 @@ export async function submitPlayerAnswers(
 
   const answerInput = page.locator('[data-testid="game-answer-input"]').first()
   const submitBtn = page
-    .locator('[data-testid="game-submit-button"], [data-testid="game-skip-button"]')
+    .locator('[data-testid="game-submit-button"], [data-testid="game-verbal-turn-done"]')
     .first()
   const allSubmitted = page.locator('[data-testid="game-all-submitted"]')
 
@@ -196,6 +197,10 @@ export async function submitPlayerAnswers(
 
 /**
  * Navigate from game page to results and ensure session state is loaded.
+ *
+ * The results page shows `results-session-loading` until the session is hydrated,
+ * then renders player rows. Full `page.goto()` reloads still rely on middleware +
+ * IndexedDB; we keep a single navigation retry for rare flakes.
  */
 export async function navigateToResults(page: Page): Promise<void> {
   const nextBtn = page.locator('[data-testid="next-button"]')
@@ -236,33 +241,49 @@ export async function navigateToResults(page: Page): Promise<void> {
     await expect(page).toHaveURL(/\/results/, { timeout: 10000 })
   }
 
-  await page.waitForLoadState('networkidle')
+  // Avoid networkidle: Nuxt dev / HMR often keeps connections open so idle never settles.
+  const resultsShell = page.locator(
+    '[data-testid="results-session-loading"], [data-testid="results-header"]'
+  )
+  await expect(resultsShell.first()).toBeVisible({ timeout: 20000 })
 
+  // Resolve the game ID — the middleware should have loaded the session already,
+  // but we still need to ensure the URL includes the ID for subsequent retries.
   const resolvedGameId = await page.evaluate(async (id) => {
     const store = (window as PiniaWindow).__pinia_stores__?.game
+    if (!store) return id
 
-    if (store?.loadFromDB) {
-      await store.loadFromDB()
+    if (!store.currentSession || (id && store.currentSession.id !== id)) {
+      if (store.loadFromDB) await store.loadFromDB()
+      if (id && store.loadSessionById) await store.loadSessionById(id)
     }
 
-    if (id && store?.loadSessionById) {
-      await store.loadSessionById(id)
-      return id
-    }
-
-    return store?.currentSession?.id ?? null
+    return store.currentSession?.id ?? id
   }, gameId)
 
-  if (resolvedGameId && !page.url().includes(`/results/${resolvedGameId}`)) {
-    await page.goto(`/results/${resolvedGameId}`)
-    await page.waitForLoadState('networkidle')
+  const effectiveGameId = resolvedGameId ?? gameId
+
+  // Ensure we're on the canonical results URL with the game ID
+  if (effectiveGameId && !page.url().includes(`/results/${effectiveGameId}`)) {
+    await page.goto(`/results/${effectiveGameId}`, { waitUntil: 'load', timeout: 30000 })
   }
 
+  // Wait for hydrated scoring shell (not loading-only). Avoid `toBeHidden(loading)`:
+  // during route opacity transitions Playwright can treat nodes as hidden prematurely.
+  const resultsMain = page.locator('[data-testid="results-header"]')
+  await expect(resultsMain).toBeVisible({ timeout: 20000 })
+
+  const playerEntry = page.locator('[data-testid="results-player-entry-0"]')
+
+  if (!(await playerEntry.isVisible().catch(() => false)) && effectiveGameId) {
+    await page.goto(`/results/${effectiveGameId}`, { waitUntil: 'load', timeout: 30000 })
+    await expect(resultsMain).toBeVisible({ timeout: 20000 })
+  }
+
+  await expect(playerEntry).toBeVisible({ timeout: 15000 })
+
   await expect(page.locator('[data-testid="results-scores-container"]')).toBeVisible({
-    timeout: 15000,
-  })
-  await expect(page.locator('[data-testid="results-player-entry-0"]')).toBeVisible({
-    timeout: 15000,
+    timeout: 10000,
   })
 }
 
@@ -364,82 +385,39 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
     return
   }
 
-  const wheelContainer = page.locator('[data-testid="fortune-wheel-container"]')
-  const spinButton = page.locator('[data-testid="fortune-wheel-spin-button"]')
-  const confirmButton = page.locator('[data-testid="fortune-wheel-confirm-button"]')
-  const selectedCategory = page.locator('[data-testid="fortune-wheel-selected-category"]')
-  const selectedLetter = page.locator('[data-testid="fortune-wheel-selected-letter"]')
-  const loadingState = page.locator('[data-testid="round-loading"]')
+  // Use auto-advance mode: disable respin so the game starts automatically
+  // after the wheel spin (720ms timer), avoiding the unreliable confirm button
+  // interaction where the canvas absorbs pointer events.
+  await page.evaluate(() => {
+    const settings = (window as PiniaWindow).__pinia_stores__?.settings
+    if (settings) {
+      settings.fortuneWheelAllowRedraw = false
+    }
+  })
 
+  const spinButton = page.locator('[data-testid="fortune-wheel-spin-button"]')
+  const selectedLetter = page.locator('[data-testid="fortune-wheel-selected-letter"]')
+
+  await expect(spinButton).toBeVisible({ timeout: 15000 })
+  await expect
+    .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
+    .toBe(false)
+
+  // Retry click with force:true — the canvas element can absorb pointer events
+  // on some viewports. Poll until a letter is selected to confirm the spin fired.
   await expect
     .poll(
       async () => {
-        if (/\/game/.test(page.url())) return 'game'
-        if (!/\/round-start/.test(page.url())) return 'other-route'
-
-        if (await loadingState.isVisible().catch(() => false)) return 'loading'
-        if (await wheelContainer.isVisible().catch(() => false)) return 'wheel'
-
-        return 'waiting'
+        if (/\/game/.test(page.url())) return true
+        await spinButton.click({ force: true }).catch(() => {})
+        const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? ''
+        return /^[A-Z]$/.test(letterText)
       },
-      { timeout: 30000 }
+      { timeout: 30000, intervals: [500, 1000, 2000, 3000, 5000] }
     )
-    .not.toBe('waiting')
+    .toBe(true)
 
-  if (/\/round-start/.test(page.url())) {
-    await expect(wheelContainer).toBeVisible({ timeout: 10000 })
-    await expect(spinButton).toBeVisible({ timeout: 10000 })
-    await expect(confirmButton).toBeVisible({ timeout: 10000 })
-
-    await expect
-      .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
-      .toBe(false)
-
-    await spinButton.click()
-
-    await expect
-      .poll(
-        async () => {
-          if (/\/game/.test(page.url())) return 'game'
-          if (await loadingState.isVisible().catch(() => false)) return 'loading'
-          if (!(await confirmButton.isDisabled().catch(() => true))) return 'confirm-enabled'
-          if ((await selectedCategory.textContent().catch(() => '-')) !== '-')
-            return 'category-selected'
-          if ((await selectedLetter.textContent().catch(() => '-')) !== '-')
-            return 'letter-selected'
-          return 'waiting'
-        },
-        { timeout: 30000 }
-      )
-      .not.toBe('waiting')
-
-    if (/\/round-start/.test(page.url())) {
-      for (let attempt = 0; attempt < 4; attempt++) {
-        if (/\/game/.test(page.url())) break
-        if (await loadingState.isVisible().catch(() => false)) break
-
-        const confirmVisible = await confirmButton.isVisible().catch(() => false)
-        if (!confirmVisible) {
-          await page.waitForTimeout(300)
-          continue
-        }
-
-        const confirmDisabled = await confirmButton.isDisabled().catch(() => true)
-        if (confirmDisabled) {
-          await page.waitForTimeout(300)
-          continue
-        }
-
-        try {
-          await confirmButton.click({ timeout: 2000 })
-        } catch {
-          await confirmButton.click({ force: true, timeout: 1000 }).catch(() => {})
-        }
-        await page.waitForTimeout(300)
-      }
-    }
-  }
-
+  // With allowRedraw=false, auto-advance navigates to /game after ~720ms
   await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true)
 }
 

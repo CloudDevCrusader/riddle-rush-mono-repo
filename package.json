@@ -1,31 +1,31 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.4.3",
+  "version": "1.5.1",
   "devDependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.87",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.110",
     "@changesets/cli": "^2.30.0",
-    "@composio/claude-agent-sdk": "^0.6.7",
-    "@composio/core": "^0.6.7",
+    "@composio/claude-agent-sdk": "^0.6.10",
+    "@composio/core": "^0.6.10",
     "@pnpm/filter-workspace-packages": "^1000.1.6",
-    "@trigger.dev/sdk": "^4.4.0",
+    "@trigger.dev/sdk": "^4.4.4",
     "@types/node": "^25.6.0",
-    "@vitest/coverage-v8": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.4",
     "eslint": "^10.2.0",
     "husky": "^9.1.7",
     "jest": "^30.3.0",
     "knip": "^5.88.1",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.2",
-    "stylelint": "^17.6.0",
+    "prettier": "^3.8.3",
+    "stylelint": "^17.8.0",
     "stylelint-config-prettier-scss": "^1.0.0",
     "stylelint-config-recommended-vue": "^1.6.1",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "syncpack": "^14.3.0",
-    "turbo": "^2.8.21",
+    "turbo": "^2.9.6",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   },
   "engines": {
     "node": ">=20.0.0",
@@ -35,7 +35,9 @@
   "private": true,
   "scripts": {
     "android:build": "./scripts/mobile-build.sh android",
+    "android:build:universal": "./scripts/mobile-build.sh android debug --universal",
     "android:build:release": "./scripts/mobile-build.sh android release",
+    "android:build:release:universal": "./scripts/mobile-build.sh android release --aab --universal",
     "android:open": "cd apps/mobile && pnpm android:open",
     "android:run": "./scripts/mobile-run.sh android",
     "android:sync": "cd apps/game && pnpm generate && cd ../mobile && pnpm android:sync",
@@ -96,6 +98,9 @@
     "test:e2e": "turbo run test:e2e --filter=@riddle-rush/game",
     "test:e2e:ui": "turbo run test:e2e --filter=@riddle-rush/game --ui web",
     "test:e2e:docker": "./scripts/e2e-docker.sh",
+    "test:e2e:appium:android": "pnpm --filter @riddle-rush/mobile test:e2e:appium:android",
+    "test:e2e:appium:android:full": "pnpm android:build:universal && pnpm test:e2e:appium:android",
+    "test:e2e:appium:ios": "pnpm --filter @riddle-rush/mobile test:e2e:appium:ios",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
     "knip": "knip --reporter compact",
@@ -178,12 +183,27 @@
       "serialize-javascript@<=7.0.2": "^7.0.3"
     },
     "onlyBuiltDependencies": [
+      "appium",
+      "appium-ios-tuntap",
       "better-sqlite3",
       "core-js-pure",
-      "electron",
+      "edgedriver",
       "esbuild",
+      "geckodriver",
       "protobufjs",
       "yarn"
+    ],
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher",
+      "cwebp-bin",
+      "gifsicle",
+      "jpegtran-bin",
+      "mozjpeg",
+      "optipng-bin",
+      "pngquant-bin",
+      "sharp",
+      "unrs-resolver",
+      "vue-demi"
     ]
   },
   "type": "module",
@@ -198,11 +218,11 @@
   },
   "dependencies": {
     "@e2b/code-interpreter": "^2.4.0",
-    "@langchain/openai": "^1.3.1",
-    "@voltagent/core": "^2.6.13",
+    "@langchain/openai": "^1.4.4",
+    "@voltagent/core": "^2.7.0",
     "@voltagent/mcp-server": "^2.0.2",
-    "ai": "^6.0.141",
-    "langchain": "^1.2.36",
+    "ai": "^6.0.162",
+    "langchain": "^1.3.3",
     "zod": "^4.3.6"
   }
 }

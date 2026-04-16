@@ -1,7 +1,5 @@
 import { Command } from '@oclif/core'
 
-import { execSync } from 'node:child_process'
-
 export default class AgentMcpHealth extends Command {
   static override description = 'Check MCP server health and status'
 
@@ -56,3 +54,5 @@ export default class AgentMcpHealth extends Command {
     }
   }
 }
+
+import { execSync } from 'node:child_process'

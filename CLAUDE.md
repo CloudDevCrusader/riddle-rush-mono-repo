@@ -358,7 +358,7 @@ The app uses a **phased game design system** with dedicated component categories
 
 #### Other Components
 
-`DebugPanel.vue` (Ctrl+Shift+D), `FortuneWheel.vue`, `Spinner.vue`, `Toast.vue`, `PauseModal.vue`, `QuitModal.vue`, `SplashScreen.vue`, `ConnectionStatus.vue`, `GameHistory.vue`, `Leaderboard.vue`, `PlayerLeaderboard.vue`, `PageTransition.vue`, `SettingsModal.vue`, `GlobalLoading.vue`, `StoryboardDevOverlay.vue`
+`DebugPanel.vue` (Ctrl+Shift+D), `FortuneWheel.vue`, `Spinner.vue`, `Toast.vue`, `PauseModal.vue`, `QuitModal.vue`, `SplashScreen.vue`, `NetworkStatusIndicator.vue`, `GameHistory.vue`, `Leaderboard.vue`, `PlayerLeaderboard.vue`, `PageTransition.vue`, `SettingsModal.vue`, `GlobalLoading.vue`, `StoryboardDevOverlay.vue`
 
 ### Composables
 
@@ -382,7 +382,6 @@ The app uses a **phased game design system** with dedicated component categories
 | `useOptimizedImage()`  | Image optimization helpers                            |
 | `useLodash()`          | Tree-shaken Lodash utilities                          |
 | `useFeatureFlags()`    | Unleash feature flag client                           |
-| `useWebSocket()`       | Socket.io WebSocket integration                       |
 | `usePerformance()`     | Performance monitoring                                |
 | `useLocalStorage()`    | LocalStorage wrapper                                  |
 | `usePageSwipe()`       | Swipe gesture handling                                |

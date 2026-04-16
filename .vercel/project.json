@@ -1,5 +1,13 @@
 {
   "projectId": "prj_X2pRHTzsoZe2ANPrnBuetBaFFggU",
   "orgId": "team_eQj5qdeVCVpD1xLz3Urrs5Dq",
-  "projectName": "riddle-rush-mono-repo"
+  "projectName": "riddle-rush-mono-repo",
+  "settings": {
+    "createdAt": 1768624802230,
+    "framework": "nuxtjs",
+    "devCommand": "pnpm run dev",
+    "installCommand": "pnpm install",
+    "buildCommand": "pnpm run generate",
+    "nodeVersion": "24.x"
+  }
 }

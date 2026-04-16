@@ -3,6 +3,17 @@
     "Tabby MCP": {
       "type": "streamable_http",
       "url": "http://localhost:3001/mcp"
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"],
+      "description": "Chrome DevTools integration for web debugging"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "args_after": ["/Users/markuswagner/projects/riddle-rush-mono-repo"],
+      "description": "Safe filesystem operations within project directory"
     }
   }
 }

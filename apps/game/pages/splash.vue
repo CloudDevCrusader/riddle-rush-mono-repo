@@ -49,19 +49,15 @@ onBeforeUnmount(() => {
   if (skipTimeout) clearTimeout(skipTimeout)
 })
 
-useHead({
-  title: t('app.title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('app.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('app.title'),
+  description: () => t('app.description'),
+  noindex: true,
 })
 </script>
 
 <template>
-  <button class="splash-page" type="button" aria-label="Skip splash screen" @click="handleSkip">
+  <button class="splash-page" type="button" :aria-label="t('splash.skip_aria')" @click="handleSkip">
     <GameBackground />
 
     <div class="splash-container">

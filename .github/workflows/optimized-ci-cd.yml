@@ -50,7 +50,7 @@ env:
   VERCEL_ORG_ID: '${{ secrets.VERCEL_ORG_ID }}'
   VERCEL_PROJECT_ID: '${{ secrets.VERCEL_PROJECT_ID }}'
   NODE_VERSION: '20'
-  PNPM_VERSION: '10.30.3'
+  PNPM_VERSION: '10.33.0'
   CACHE_VERSION: 'v1'
   # GitHub environment names
   PRODUCTION_ENVIRONMENT: 'production'

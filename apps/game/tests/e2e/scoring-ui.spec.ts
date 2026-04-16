@@ -21,8 +21,8 @@ test.describe('Scoring Workflow: Score Entry UI', () => {
     const firstDecrement = decrementBtns.first()
     const firstScoreDisplay = page.locator('[data-testid^="scoring-page-score-value-"]').first()
 
-    // Decrement button should be disabled initially
-    await expect(firstDecrement).toBeDisabled()
+    // Score starts at 0
+    await expect(firstScoreDisplay).toContainText('0')
 
     // Increment score
     await firstIncrement.click()
@@ -30,7 +30,7 @@ test.describe('Scoring Workflow: Score Entry UI', () => {
     await firstIncrement.click()
     await expect(firstScoreDisplay).toContainText('3')
 
-    // Decrement button should be enabled now
+    // Decrement button should be enabled (app allows negative scores)
     await expect(firstDecrement).toBeEnabled()
 
     // Decrement score

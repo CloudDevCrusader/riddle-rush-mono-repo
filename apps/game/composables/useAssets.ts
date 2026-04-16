@@ -24,10 +24,10 @@ export function useAssets() {
   }
 
   /**
-   * Get game asset path
+   * Get splash asset path
    */
-  const getGameAsset = (filename: string): string => {
-    return getAssetPath(`assets/game/${filename}`)
+  const getSplashAsset = (filename: string): string => {
+    return getAssetPath(`assets/splash/${filename}`)
   }
 
   /**
@@ -38,10 +38,17 @@ export function useAssets() {
   }
 
   /**
-   * Get icon asset path
+   * Get alphabet asset path
    */
-  const getIconAsset = (filename: string): string => {
-    return getAssetPath(`assets/icons/${filename}`)
+  const getAlphabetAsset = (filename: string): string => {
+    return getAssetPath(`assets/alphabets/${filename}`)
+  }
+
+  /**
+   * Get players asset path
+   */
+  const getPlayersAsset = (filename: string): string => {
+    return getAssetPath(`assets/players/${filename}`)
   }
 
   /**
@@ -82,9 +89,10 @@ export function useAssets() {
     baseUrl,
     getAssetPath,
     getMenuAsset,
-    getGameAsset,
+    getSplashAsset,
     getSettingsAsset,
-    getIconAsset,
+    getAlphabetAsset,
+    getPlayersAsset,
     preloadImage,
     preloadImages,
   }

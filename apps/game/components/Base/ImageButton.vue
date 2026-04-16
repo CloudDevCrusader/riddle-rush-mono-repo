@@ -5,24 +5,13 @@
     :disabled="disabled"
     @click="handleClick"
   >
-    <NuxtImg
-      :src="imageSrc"
-      :alt="alt"
-      class="btn-image"
-      loading="lazy"
-      format="webp"
-      quality="85"
-      preset="thumbnail"
-    />
-    <NuxtImg
+    <img :src="imageSrc" :alt="alt" class="btn-image" loading="lazy" />
+    <img
       v-if="hoverImageSrc"
       :src="hoverImageSrc"
       :alt="`${alt} hover`"
       class="btn-image-hover"
       loading="lazy"
-      format="webp"
-      quality="85"
-      preset="thumbnail"
     />
   </button>
 </template>

@@ -59,42 +59,70 @@ describe('Settings Store', () => {
       const store = settingsStore
       expect(store.fortuneWheelEnabled).toBe(true)
     })
+
+    it('allows fortune wheel redraw (confirm step) by default', () => {
+      const store = settingsStore
+      expect(store.fortuneWheelAllowRedraw).toBe(true)
+    })
   })
 
   describe('Getters', () => {
     it('isDebugMode returns debugMode state', () => {
-      expect(settingsStore.debugMode).toBe(false)
+      expect(settingsStore.isDebugMode).toBe(false)
       settingsStore.updateSetting('debugMode', true)
-      expect(settingsStore.debugMode).toBe(true)
+      expect(settingsStore.isDebugMode).toBe(true)
     })
 
     it('isLeaderboardEnabled returns leaderboardEnabled state', () => {
-      expect(settingsStore.leaderboardEnabled).toBe(true)
+      expect(settingsStore.isLeaderboardEnabled).toBe(true)
       settingsStore.updateSetting('leaderboardEnabled', false)
-      expect(settingsStore.leaderboardEnabled).toBe(false)
+      expect(settingsStore.isLeaderboardEnabled).toBe(false)
     })
 
-    it('shouldShowLeaderboard requires both flags', () => {
-      const initialShouldShow =
-        settingsStore.leaderboardEnabled && settingsStore.showLeaderboardAfterRound
-      expect(initialShouldShow).toBe(true)
+    it('shouldShowLeaderboard returns true when both flags enabled', () => {
+      expect(settingsStore.shouldShowLeaderboard).toBe(true)
+    })
 
+    it('shouldShowLeaderboard returns false when leaderboard disabled', () => {
       settingsStore.updateSetting('leaderboardEnabled', false)
-      const shouldShowAfterDisable =
-        settingsStore.leaderboardEnabled && settingsStore.showLeaderboardAfterRound
-      expect(shouldShowAfterDisable).toBe(false)
+      expect(settingsStore.shouldShowLeaderboard).toBe(false)
+    })
 
-      settingsStore.updateSetting('leaderboardEnabled', true)
+    it('shouldShowLeaderboard returns false when showAfterRound disabled', () => {
       settingsStore.updateSetting('showLeaderboardAfterRound', false)
-      const shouldShowAfterToggle =
-        settingsStore.leaderboardEnabled && settingsStore.showLeaderboardAfterRound
-      expect(shouldShowAfterToggle).toBe(false)
+      expect(settingsStore.shouldShowLeaderboard).toBe(false)
+    })
+
+    it('shouldShowLeaderboard returns false when both disabled', () => {
+      settingsStore.updateSetting('leaderboardEnabled', false)
+      settingsStore.updateSetting('showLeaderboardAfterRound', false)
+      expect(settingsStore.shouldShowLeaderboard).toBe(false)
     })
 
     it('isFortuneWheelEnabled returns fortuneWheelEnabled state', () => {
-      expect(settingsStore.fortuneWheelEnabled).toBe(true)
+      expect(settingsStore.isFortuneWheelEnabled).toBe(true)
       settingsStore.updateSetting('fortuneWheelEnabled', false)
-      expect(settingsStore.fortuneWheelEnabled).toBe(false)
+      expect(settingsStore.isFortuneWheelEnabled).toBe(false)
+    })
+
+    it('isAnswerInputEnabled returns answerInputEnabled state', () => {
+      expect(settingsStore.isAnswerInputEnabled).toBe(false)
+      settingsStore.updateSetting('answerInputEnabled', true)
+      expect(settingsStore.isAnswerInputEnabled).toBe(true)
+    })
+
+    it('isInputFieldEnabled returns inputFieldEnabled state', () => {
+      expect(settingsStore.isInputFieldEnabled).toBe(true)
+      settingsStore.updateSetting('inputFieldEnabled', false)
+      expect(settingsStore.isInputFieldEnabled).toBe(false)
+    })
+
+    it('toggleFortuneWheelAllowRedraw flips redraw flag', () => {
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(true)
+      settingsStore.toggleFortuneWheelAllowRedraw()
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(false)
+      settingsStore.toggleFortuneWheelAllowRedraw()
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(true)
     })
   })
 
@@ -154,6 +182,46 @@ describe('Settings Store', () => {
       expect(settingsStore.answerInputEnabled).toBe(true)
       settingsStore.toggleAnswerInput()
       expect(settingsStore.answerInputEnabled).toBe(false)
+    })
+
+    it('toggleInputField flips state', () => {
+      expect(settingsStore.inputFieldEnabled).toBe(true)
+      settingsStore.toggleInputField()
+      expect(settingsStore.inputFieldEnabled).toBe(false)
+      settingsStore.toggleInputField()
+      expect(settingsStore.inputFieldEnabled).toBe(true)
+    })
+  })
+
+  describe('Language Actions', () => {
+    it('setLanguage updates language', () => {
+      expect(settingsStore.language).toBe('de')
+      settingsStore.setLanguage('en')
+      expect(settingsStore.language).toBe('en')
+    })
+
+    it('getLanguage returns current language', () => {
+      expect(settingsStore.getLanguage()).toBe('de')
+      settingsStore.setLanguage('en')
+      expect(settingsStore.getLanguage()).toBe('en')
+    })
+  })
+
+  describe('State Access', () => {
+    it('getState returns full state object', () => {
+      const state = settingsStore.getState()
+      expect(state).toHaveProperty('maxPlayersPerGame', 4)
+      expect(state).toHaveProperty('soundEnabled', true)
+      expect(state).toHaveProperty('language', 'de')
+      expect(state).toHaveProperty('fortuneWheelEnabled', true)
+    })
+
+    it('getState reflects mutations', () => {
+      settingsStore.updateSetting('debugMode', true)
+      settingsStore.setLanguage('en')
+      const state = settingsStore.getState()
+      expect(state.debugMode).toBe(true)
+      expect(state.language).toBe('en')
     })
   })
 

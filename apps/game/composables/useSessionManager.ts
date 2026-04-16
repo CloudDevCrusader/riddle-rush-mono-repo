@@ -7,6 +7,7 @@
  */
 
 import type { GameSession, Category, Player } from '@riddle-rush/types/game'
+import cloneDeep from 'lodash-es/cloneDeep'
 import { generateUUID } from '~/utils/uuid'
 
 /**
@@ -76,13 +77,12 @@ export function useSessionManager() {
 
   /**
    * Deep clone a session for storing in history.
-   * Uses JSON serialization for a complete deep copy.
    *
    * @param session - The session to clone
    * @returns A deep-cloned copy of the session
    */
   function cloneSessionForHistory(session: GameSession): GameSession {
-    return JSON.parse(JSON.stringify(session)) as GameSession
+    return cloneDeep(session)
   }
 
   /**

@@ -1,6 +1,4 @@
 import { ROUTES, getGameRoute, getResultsRoute } from '@riddle-rush/shared/routes'
-import { useLodash } from './useLodash'
-import type { DebouncedFunc } from './useLodash'
 
 /**
  * Navigation composable
@@ -9,10 +7,6 @@ import type { DebouncedFunc } from './useLodash'
 export function useNavigation() {
   const router = useRouter()
   const { showLoading, hideLoading, setProgress } = useLoading()
-  const { debounce } = useLodash()
-  let debouncedNavigate: DebouncedFunc<(route: string, simulateLoading?: boolean) => void> | null =
-    null
-  let debounceInit: Promise<void> | null = null
 
   const navigateWithLoading = async (route: string, simulateLoading = false) => {
     try {
@@ -37,34 +31,18 @@ export function useNavigation() {
     }
   }
 
-  const initDebouncedNavigate = async () => {
-    if (debouncedNavigate) return
-    if (!debounceInit) {
-      debounceInit = debounce.then((debounceFunc) => {
-        debouncedNavigate = debounceFunc(
-          (route: string, simulateLoading = false) => {
-            void navigateWithLoading(route, simulateLoading)
-          },
-          200,
-          { leading: true, trailing: false }
-        )
-      })
-    }
-    await debounceInit
-  }
+  /**
+   * Serialize navigations so rapid taps don't interleave, and callers can
+   * `await` until the route transition has finished (unlike a debounced
+   * fire-and-forget).
+   */
+  let navigationChain: Promise<void> = Promise.resolve()
 
-  const queueNavigation = async (route: string, simulateLoading = false) => {
-    try {
-      await initDebouncedNavigate()
-      if (debouncedNavigate) {
-        debouncedNavigate(route, simulateLoading)
-        return
-      }
-    } catch {
-      // Fall back to direct navigation when debounce is unavailable.
-    }
-
-    await navigateWithLoading(route, simulateLoading)
+  const queueNavigation = (route: string, simulateLoading = false): Promise<void> => {
+    navigationChain = navigationChain
+      .then(() => navigateWithLoading(route, simulateLoading))
+      .catch(() => {})
+    return navigationChain
   }
 
   const goBack = () => {

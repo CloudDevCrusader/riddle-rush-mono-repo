@@ -476,6 +476,14 @@ describe('useAudio', () => {
       expect(mockAudioContext.createOscillator).toHaveBeenCalled()
     })
 
+    it('playTada should play fanfare notes', async () => {
+      const audio = useAudio()
+      await audio.playTada()
+      vi.advanceTimersByTime(400)
+
+      expect(mockAudioContext.createOscillator).toHaveBeenCalled()
+    })
+
     it('all exposed functions should be callable', () => {
       const audio = useAudio()
 
@@ -486,6 +494,7 @@ describe('useAudio', () => {
       expect(typeof audio.playRoundComplete).toBe('function')
       expect(typeof audio.playButtonHover).toBe('function')
       expect(typeof audio.playScoreIncrease).toBe('function')
+      expect(typeof audio.playTada).toBe('function')
     })
   })
 
@@ -593,6 +602,101 @@ describe('useAudio', () => {
 
       // Should not throw even if settings retrieval fails
       await expect(audio.playClick()).rejects.toThrow('DB Error')
+    })
+  })
+
+  describe('null AudioContext early returns', () => {
+    // These tests cover the `if (!ctx) return` branches in playSuccess,
+    // playScoreIncrease, and playTada — the three functions that silently
+    // return instead of throwing when AudioContext is unavailable.
+
+    async function setupNullAudioContext() {
+      // Install a constructor that always returns null
+      vi.stubGlobal(
+        'AudioContext',
+        vi.fn(() => null)
+      )
+
+      vi.resetModules()
+      installUseIndexedDBMock()
+      mockGetSettings.mockResolvedValue({ enabledCategories: [], soundEnabled: true })
+      const mod = await import('../../../composables/useAudio')
+      return mod.useAudio()
+    }
+
+    it('playSuccess returns silently when AudioContext is null', async () => {
+      const audio = await setupNullAudioContext()
+
+      // playSuccess has `if (!ctx) return` — should not throw
+      await expect(audio.playSuccess()).resolves.toBeUndefined()
+      vi.runAllTimers()
+    })
+
+    it('playScoreIncrease returns silently when AudioContext is null', async () => {
+      const audio = await setupNullAudioContext()
+
+      await expect(audio.playScoreIncrease()).resolves.toBeUndefined()
+      vi.runAllTimers()
+    })
+
+    it('playTada returns silently when AudioContext is null', async () => {
+      const audio = await setupNullAudioContext()
+
+      await expect(audio.playTada()).resolves.toBeUndefined()
+      vi.runAllTimers()
+    })
+  })
+
+  describe('initAudioContext constructor fallback', () => {
+    it('should fall back to calling AudioContext as function when constructor throws', async () => {
+      const ctxInstance = createMockAudioContext()
+
+      // Create a Proxy that throws on `new` but returns a valid context when called
+      const fakeFn = vi.fn(() => ctxInstance)
+      const throwingCtor = new Proxy(fakeFn, {
+        construct() {
+          throw new Error('not a constructor')
+        },
+      })
+
+      vi.stubGlobal('AudioContext', throwingCtor)
+
+      vi.resetModules()
+      installUseIndexedDBMock()
+      mockGetSettings.mockResolvedValue({ enabledCategories: [], soundEnabled: true })
+      const mod = await import('../../../composables/useAudio')
+      const audio = mod.useAudio()
+
+      // Should succeed via function-call fallback
+      await audio.playButtonHover()
+      vi.runAllTimers()
+
+      expect(fakeFn).toHaveBeenCalled()
+      expect(ctxInstance.createOscillator).toHaveBeenCalled()
+    })
+
+    it('should set audioContext to null when both constructor and function call throw', async () => {
+      // Both `new AudioContextClass()` and `AudioContextClass()` throw
+      const alwaysThrows = new Proxy(vi.fn(), {
+        construct() {
+          throw new Error('not a constructor')
+        },
+        apply() {
+          throw new Error('not a function either')
+        },
+      })
+
+      vi.stubGlobal('AudioContext', alwaysThrows)
+
+      vi.resetModules()
+      installUseIndexedDBMock()
+      mockGetSettings.mockResolvedValue({ enabledCategories: [], soundEnabled: true })
+      const mod = await import('../../../composables/useAudio')
+      const audio = mod.useAudio()
+
+      // playClick throws TypeError when ctx is null
+      await expect(audio.playClick()).rejects.toThrow()
+      vi.runAllTimers()
     })
   })
 })

@@ -59,7 +59,7 @@ export default class AgentMcpConfig extends Command {
         )
         validConfigs++
       } else {
-        this.log('✗ Claude Desktop config has no MCP servers defined')
+        this.log(`✗ Claude Desktop config has no MCP servers defined`)
       }
     } catch {
       this.log('✗ Claude Desktop config not found or invalid')

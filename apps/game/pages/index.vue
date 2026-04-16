@@ -1,21 +1,28 @@
 <template>
-  <div class="menu-page">
+  <div class="relative min-h-dvh min-h-screen overflow-hidden">
     <GameBackground>
-      <!-- Main Container -->
-      <div class="container">
+      <!-- Main Container: mobile-first spacing → roomier on sm+ -->
+      <div
+        class="relative z-1 box-border flex min-h-dvh min-h-screen w-full max-w-full flex-col items-center justify-center gap-lg px-md py-xl sm:gap-xl sm:px-lg sm:py-2xl md:gap-2xl md:px-xl md:py-3xl lg:gap-3xl"
+      >
         <!-- Logo -->
-        <div class="logo-container">
+        <div class="flex items-center justify-center">
           <img
-            :src="getAssetPath('assets/splash/LOGO.png')"
+            :src="getAssetPath('assets/splash/logo.png')"
             :alt="t('app.title')"
-            class="logo-image"
+            class="h-auto max-w-full w-[clamp(12.5rem,40vw,25rem)] drop-shadow-[0_8px_16px_rgba(0,0,0,0.4)] max-[480px]:w-[min(15.625rem,60vw)] max-[360px]:w-[min(12.5rem,85vw)] max-[320px]:w-[min(12.5rem,70vw)]"
             width="512"
             height="512"
+            decoding="async"
+            fetchpriority="high"
           />
         </div>
 
         <!-- Menu Buttons -->
-        <div v-show="!showMenu" class="menu-buttons">
+        <div
+          v-show="!showMenu"
+          class="menu-shelf flex flex-col items-stretch gap-sm sm:gap-md md:gap-md"
+        >
           <GameButton
             v-motion
             :initial="{ opacity: 0, y: 30 }"
@@ -56,7 +63,7 @@
             v-motion
             :initial="{ opacity: 0, y: 30 }"
             :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 240 } }"
-            variant="warning"
+            variant="danger"
             size="lg"
             full-width
             data-testid="main-menu-credits"
@@ -68,7 +75,10 @@
 
         <!-- Menu Panel (when toggled) -->
         <transition name="menu-fade">
-          <div v-if="showMenu" class="menu-panel">
+          <div
+            v-if="showMenu"
+            class="menu-shelf flex flex-col gap-md rounded-xl border-4 border-[#ffaa00] bg-white/95 p-lg shadow-[0_12px_0_rgba(0,0,0,0.2)] shadow-xl sm:p-xl md:p-2xl"
+          >
             <GameButton
               variant="secondary"
               size="md"
@@ -135,73 +145,68 @@ const wrappedGoToLanguage = () => {
   goToLanguage()
 }
 
-useHead({
-  title: t('home.page_title'),
-  meta: [
-    {
-      name: 'description',
-      content: t('app.description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => t('home.page_title'),
+  description: () => t('app.description'),
 })
 </script>
 
 <style scoped>
-.menu-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  position: relative;
-  overflow: hidden;
-}
-
-.container {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-xl);
-  gap: var(--spacing-3xl);
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-image {
-  width: clamp(200px, 40vw, 400px);
-  height: auto;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
-}
-
-.menu-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-md);
+/* Shared width for main menu + submenu — fluid max-width across breakpoints */
+.menu-shelf {
   width: 100%;
-  max-width: 400px;
+  max-width: min(400px, 100%);
+  box-sizing: border-box;
+  min-width: 0;
 }
 
-.menu-panel {
-  background: rgba(255, 255, 255, 0.95);
-  border: 4px solid #ffaa00;
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
+@media (max-width: 480px) {
+  .menu-shelf {
+    max-width: min(350px, 100%);
+  }
+}
+
+@media (max-width: 360px) {
+  .menu-shelf {
+    max-width: min(300px, 100%);
+  }
+}
+
+@media (max-width: 320px) {
+  .menu-shelf {
+    max-width: 100%;
+  }
+}
+
+/* Figma main-menu pills: thick golden-brown rim, full pill radius, embossed white caps */
+.menu-shelf :deep(.game-button.game-button--lg) {
+  border-radius: var(--radius-full);
+  border: 4px solid var(--color-border-gold-darker);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: var(--font-weight-black);
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 0.55),
+    0 2px 4px rgb(0 0 0 / 0.35);
   box-shadow:
-    0 12px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-xl);
-  min-width: 250px;
-  max-width: 400px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
+    inset 0 3px 0 rgb(255 255 255 / 0.78),
+    inset 0 -2px 6px rgb(0 0 0 / 0.14),
+    0 10px 0 var(--shadow-color),
+    0 16px 28px rgb(0 0 0 / 0.2);
+}
+
+.menu-shelf :deep(.game-button.game-button--lg:active:not(:disabled)) {
+  box-shadow:
+    inset 0 2px 0 rgb(255 255 255 / 0.65),
+    inset 0 -2px 6px rgb(0 0 0 / 0.12),
+    0 6px 0 var(--shadow-color),
+    0 12px 28px rgb(0 0 0 / 0.18);
+}
+
+/* CREDITS: red-orange stack (distinct from golden OPTIONS) */
+.menu-shelf :deep(.game-button.game-button--danger.game-button--lg) {
+  background: linear-gradient(180deg, #ff9a62 0%, #e85d22 100%);
+  --shadow-color: #a84a18;
 }
 
 .menu-fade-enter-active,
@@ -212,82 +217,5 @@ useHead({
 .menu-fade-enter-from,
 .menu-fade-leave-to {
   opacity: 0;
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: var(--spacing-2xl) var(--spacing-xl);
-    gap: var(--spacing-2xl);
-  }
-
-  .menu-buttons {
-    width: calc(100% - 2rem);
-    max-width: 400px;
-    gap: var(--spacing-sm);
-  }
-
-  .menu-panel {
-    width: 100%;
-    max-width: 350px;
-    padding: var(--spacing-xl);
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-xl) var(--spacing-lg);
-    gap: var(--spacing-xl);
-  }
-
-  .logo-image {
-    width: min(250px, 60vw);
-  }
-
-  .menu-buttons {
-    width: calc(100% - 2rem);
-    max-width: 350px;
-    gap: var(--spacing-sm);
-  }
-
-  .menu-panel {
-    width: calc(100% - var(--spacing-sm) * 2);
-    max-width: 280px;
-    padding: var(--spacing-lg);
-    min-width: auto;
-  }
-}
-
-/* Pixel 7 / Pixel 7 Pro (412px - 480px width) */
-@media (min-width: 390px) and (max-width: 480px) {
-  .container {
-    padding: var(--spacing-2xl) var(--spacing-xl);
-    gap: var(--spacing-2xl);
-  }
-
-  .menu-buttons {
-    width: calc(100% - 3rem);
-    max-width: 360px;
-    gap: var(--spacing-md);
-  }
-}
-
-/* Ultra-small phones (<360px, e.g. iPhone SE 1st gen, Galaxy S3) */
-@media (max-width: 360px) {
-  .container {
-    padding: var(--spacing-lg) var(--spacing-md);
-    gap: var(--spacing-lg);
-  }
-
-  .menu-buttons {
-    width: calc(100% - 1rem);
-    max-width: 300px;
-    gap: var(--spacing-xs);
-  }
-
-  .menu-panel {
-    width: calc(100% - var(--spacing-xs) * 2);
-    max-width: 260px;
-    padding: var(--spacing-md);
-  }
 }
 </style>

@@ -1,9 +1,26 @@
 /**
  * Error Synchronization Utility
  * Syncs error logs to CloudWatch and other services
+ *
+ * Note: Avoid useLogger() here — useLogger.error() calls syncErrorLog, which would
+ * recurse. Use guarded console.* only for pipeline bootstrap failures.
  */
 
 import { openDB } from 'idb'
+
+const ERROR_LOGS_DB_NAME = 'ErrorLogs'
+/** Bumped so DBs missing `errors` (or stuck partial upgrades) recreate the store */
+const ERROR_LOGS_DB_VERSION = 3
+
+async function openErrorLogsDb() {
+  return openDB(ERROR_LOGS_DB_NAME, ERROR_LOGS_DB_VERSION, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains('errors')) {
+        db.createObjectStore('errors', { keyPath: 'timestamp' })
+      }
+    },
+  })
+}
 
 interface ErrorLog {
   level: 'error' | 'warning' | 'info'
@@ -111,13 +128,7 @@ export const useErrorSync = () => {
    */
   const storeErrorLocally = async (errorLog: ErrorLog) => {
     try {
-      const db = await openDB('ErrorLogs', 1, {
-        upgrade(db) {
-          if (!db.objectStoreNames.contains('errors')) {
-            db.createObjectStore('errors', { keyPath: 'timestamp' })
-          }
-        },
-      })
+      const db = await openErrorLogsDb()
 
       const tx = db.transaction('errors', 'readwrite')
       const store = tx.store
@@ -150,7 +161,7 @@ export const useErrorSync = () => {
 
       // Try IndexedDB first
       try {
-        const db = await openDB('ErrorLogs', 1)
+        const db = await openErrorLogsDb()
         const tx = db.transaction('errors', 'readwrite')
         const store = tx.store
         const allErrors = await store.getAll()

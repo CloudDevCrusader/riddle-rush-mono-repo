@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { GameSession } from '@riddle-rush/types/game'
+import { gameSessionTestFixture } from '@riddle-rush/types/schemas'
 
 import { usePersistence } from '~/composables/usePersistence'
 
@@ -33,7 +34,7 @@ vi.mock('~/composables/useLogger', () => ({
   })),
 }))
 
-const mockSession: GameSession = {
+const mockSession: GameSession = gameSessionTestFixture({
   id: 'session-123',
   players: [
     {
@@ -58,7 +59,7 @@ const mockSession: GameSession = {
   startTime: 1000000,
   status: 'active',
   roundHistory: [],
-}
+})
 
 const mockHistory: GameSession[] = [
   { ...mockSession, id: 'hist-1', status: 'completed' },

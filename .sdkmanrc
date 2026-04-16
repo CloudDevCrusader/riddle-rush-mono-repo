@@ -1,3 +1,2 @@
-# Enable auto-env through the sdkman_auto_env config
-# Add key=value pairs of SDKs to use below
+# Enable auto-env: sdk config auto_env=true
 java=21.0.10-amzn

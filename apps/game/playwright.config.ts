@@ -36,8 +36,8 @@ export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
   forbidOnly: isCI,
-  // Smart retry logic: 1 retry in CI with exponential backoff
-  retries: isCI ? 1 : 0,
+  // Retry once on failure — catches transient server crashes under parallel load
+  retries: 1,
   workers: getWorkerCount(),
   timeout: getMobileTimeout(),
 

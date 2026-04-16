@@ -1,5 +1,30 @@
 apply plugin: 'com.android.application'
 
+// Keep Android version aligned with monorepo root (semantic version + monotonic versionCode).
+def readRootPackageVersion = {
+    def f = file('../../../../package.json')
+    if (!f.exists()) {
+        return [name: '1.0.0', code: 1]
+    }
+    try {
+        def json = new groovy.json.JsonSlurper().parse(f)
+        def raw = json.version?.toString() ?: '1.0.0'
+        def core = raw.replaceAll(/[^0-9.].*$/, '')
+        def parts = core.tokenize('.').collect { (it ?: '0').toInteger() }
+        while (parts.size() < 3) {
+            parts.add(0)
+        }
+        def major = parts[0]
+        def minor = parts[1]
+        def patch = parts[2]
+        def code = major * 10_000 + minor * 100 + patch
+        return [name: core, code: code]
+    } catch (Exception ignored) {
+        return [name: '1.0.0', code: 1]
+    }
+}
+def rootVer = readRootPackageVersion()
+
 android {
     namespace = "com.riddlerush.game"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +32,8 @@ android {
         applicationId "com.riddlerush.game"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode rootVer.code
+        versionName rootVer.name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,11 +41,30 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // play = ARM-only (smaller; typical phones / Play). universal = all ABIs (x86 emulators, sideload).
+    flavorDimensions "abi"
+    productFlavors {
+        play {
+            dimension "abi"
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
+            }
+        }
+        universal {
+            dimension "abi"
+        }
+    }
     buildTypes {
         release {
+            // Capacitor + WebView rely on reflection; R8/ProGuard need curated rules before enabling.
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 

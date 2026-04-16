@@ -29,8 +29,9 @@ export const usePerformance = () => {
       : {
           log: () => {},
           warn: () => {},
+          debug: () => {},
         }
-  const { log, warn } = logger
+  const { log, warn, debug } = logger
   const metrics = ref<PerformanceMetrics>({})
 
   // Check if Performance API is available
@@ -198,10 +199,10 @@ export const usePerformance = () => {
 
     const allMetrics = getAllMetrics()
 
-    console.group('Performance Report')
+    debug('Performance Report —')
     ;(Object.entries(allMetrics) as [string, PerformanceMetrics[string]][]).forEach(
       ([name, metric]) => {
-        console.log(
+        debug(
           `${name}: count=${metric.count}, avg=${metric.average.toFixed(2)}ms, min=${metric.min.toFixed(2)}ms, max=${metric.max.toFixed(2)}ms, last=${metric.last.toFixed(2)}ms, total=${metric.total.toFixed(2)}ms`
         )
       }
@@ -209,12 +210,10 @@ export const usePerformance = () => {
 
     const navTiming = getNavigationTiming()
     if (navTiming) {
-      console.log(
+      debug(
         `Navigation Timing: DNS=${navTiming.dns.toFixed(2)}ms, TCP=${navTiming.tcp.toFixed(2)}ms, Request=${navTiming.request.toFixed(2)}ms, Response=${navTiming.response.toFixed(2)}ms, DOM=${navTiming.domProcessing.toFixed(2)}ms, DCL=${navTiming.domContentLoaded.toFixed(2)}ms, Total=${navTiming.totalTime.toFixed(2)}ms`
       )
     }
-
-    console.groupEnd()
   }
 
   /**

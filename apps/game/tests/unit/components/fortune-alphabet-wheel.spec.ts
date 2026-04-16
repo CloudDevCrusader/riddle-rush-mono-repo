@@ -1,7 +1,13 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
+import { ref } from 'vue'
 import { mount } from '@vue/test-utils'
 import FortuneAlphabetWheel from '../../../components/game/FortuneAlphabetWheel.vue'
 import type { Category } from '@riddle-rush/types/game'
+
+const mockFortuneWheelAllowRedraw = ref(true)
+vi.stubGlobal('useSettings', () => ({
+  fortuneWheelAllowRedraw: mockFortuneWheelAllowRedraw,
+}))
 
 vi.mock('vue-fortune-wheel', () => ({
   default: {
@@ -22,7 +28,11 @@ const categories: Category[] = [
   },
 ]
 
-const createWrapper = (props: { categories: Category[]; letters?: string[] }) =>
+const createWrapper = (props: {
+  categories: Category[]
+  letters?: string[]
+  embedCategoryRow?: boolean
+}) =>
   mount(FortuneAlphabetWheel, {
     props,
     global: {
@@ -39,6 +49,14 @@ const createWrapper = (props: { categories: Category[]; letters?: string[] }) =>
   })
 
 describe('FortuneAlphabetWheel', () => {
+  beforeEach(() => {
+    mockFortuneWheelAllowRedraw.value = true
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('renders required fortune wheel test ids', () => {
     const wrapper = createWrapper({ categories })
 
@@ -47,6 +65,21 @@ describe('FortuneAlphabetWheel', () => {
     expect(wrapper.find('[data-testid="fortune-wheel-selected-category"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="fortune-wheel-selected-letter"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="fortune-wheel-confirm-button"]').exists()).toBe(true)
+  })
+
+  it('omits category row and emits category-display when embedCategoryRow is false', () => {
+    const wrapper = createWrapper({ categories, embedCategoryRow: false })
+
+    expect(wrapper.find('[data-testid="fortune-wheel-selected-category"]').exists()).toBe(false)
+
+    const ev = wrapper.emitted('category-display')
+    expect(ev?.length).toBeGreaterThan(0)
+    expect(ev?.[0]?.[0]).toMatchObject({
+      label: '-',
+      categoryId: null,
+      isSpinning: false,
+      landedPulse: false,
+    })
   })
 
   it('does not emit selection-ready for invalid segment payload', async () => {
@@ -66,6 +99,27 @@ describe('FortuneAlphabetWheel', () => {
     await wrapper.findComponent({ name: 'FortuneWheel' }).vm.$emit('rotateStart', () => {})
     await wrapper.findComponent({ name: 'FortuneWheel' }).vm.$emit('rotateEnd', { id: 1 })
     await wrapper.find('[data-testid="fortune-wheel-confirm-button"]').trigger('click')
+
+    const emitted = wrapper.emitted('selection-ready')
+    expect(emitted).toHaveLength(1)
+    expect(emitted?.[0]?.[0]).toEqual({ categoryId: 1, letter: 'Q' })
+
+    randomSpy.mockRestore()
+  })
+
+  it('auto-emits selection-ready when confirm step is disabled', async () => {
+    vi.useFakeTimers()
+    mockFortuneWheelAllowRedraw.value = false
+    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0)
+    const wrapper = createWrapper({ categories, letters: ['q'] })
+
+    expect(wrapper.find('[data-testid="fortune-wheel-confirm-button"]').exists()).toBe(false)
+
+    await wrapper.find('[data-testid="fortune-wheel-spin-button"]').trigger('click')
+    await wrapper.findComponent({ name: 'FortuneWheel' }).vm.$emit('rotateStart', () => {})
+    await wrapper.findComponent({ name: 'FortuneWheel' }).vm.$emit('rotateEnd', { id: 1 })
+
+    await vi.advanceTimersByTimeAsync(800)
 
     const emitted = wrapper.emitted('selection-ready')
     expect(emitted).toHaveLength(1)

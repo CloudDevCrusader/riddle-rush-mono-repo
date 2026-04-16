@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { completeFortuneWheel, hideDevtools } from './helpers/game-flow'
+import { completeFortuneWheel, hideDevtools, waitForSplashComplete } from './helpers/game-flow'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -40,7 +40,9 @@ async function startFromPlayers(page: import('@playwright/test').Page) {
 test.describe('Translation Checks', () => {
   test('should not show raw translation keys on home page', async ({ page }) => {
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
+    await hideDevtools(page)
+    await waitForSplashComplete(page)
     // Wait for splash screen to finish and actual page content to render
     await expect(page.locator('[data-testid="main-menu-play"]')).toBeVisible({ timeout: 15000 })
 
@@ -57,9 +59,12 @@ test.describe('Translation Checks', () => {
   })
 
   test('should show category in English and not as a key', async ({ page }) => {
+    test.setTimeout(120000)
     // 1. Switch to English via language page
     await page.goto('/language')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
+    await hideDevtools(page)
+    await waitForSplashComplete(page)
     // Wait for splash screen to finish and language page to render
     await expect(page.locator('[data-testid="language-ok-button"]')).toBeVisible({ timeout: 15000 })
 
@@ -67,15 +72,16 @@ test.describe('Translation Checks', () => {
     // Clicking OK triggers window.location.reload() — use proven waitForNavigation pattern
     const okButton = page.locator('[data-testid="language-ok-button"]')
     await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), okButton.click()])
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // 2. Go to Home with ?lang=en to reliably activate English locale
     //    (route query has highest priority in i18n.client.ts locale resolution)
     await page.goto('/?lang=en').catch(async () => {
       await page.goto('/')
     })
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
     await hideDevtools(page)
+    await waitForSplashComplete(page)
     const playBtn = page.locator('[data-testid="main-menu-play"]')
     await expect(playBtn).toBeVisible({ timeout: 15000 })
     await playBtn.click()

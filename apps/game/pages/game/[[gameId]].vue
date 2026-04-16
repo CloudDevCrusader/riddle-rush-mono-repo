@@ -12,7 +12,7 @@
         @click="handleBack"
       >
         <img
-          :src="`${baseUrl}assets/alphabets/back.png`"
+          :src="getAssetPath('assets/alphabets/back.png')"
           :alt="t('common.back')"
           class="back-icon"
           loading="eager"
@@ -51,32 +51,40 @@
 
     <!-- Main Game Area -->
     <div class="game-container">
-      <!-- Category Panel -->
-      <div class="category-panel" data-testid="game-category-info">
-        <img
-          :src="`${baseUrl}assets/alphabets/CATEGORY.png`"
-          :alt="t('common.category')"
-          class="category-label-image"
-          loading="lazy"
-          width="200"
-          height="50"
-        />
-        <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
-        <div class="category-name">
-          {{
-            currentCategory
-              ? t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
-              : t('common.loading')
-          }}
-        </div>
-      </div>
+      <Transition name="round-reveal" appear mode="out-in">
+        <div v-if="currentCategory" :key="roundRevealKey" class="round-reveal-stack">
+          <!-- Category Panel -->
+          <div class="category-panel" data-testid="game-category-info">
+            <img
+              :src="getAssetPath('assets/alphabets/category.png')"
+              :alt="t('common.category')"
+              class="category-label-image"
+              loading="lazy"
+              width="200"
+              height="50"
+            />
+            <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
+            <div class="category-name">
+              <span
+                class="category-name__emoji"
+                data-testid="game-category-emoji"
+                aria-hidden="true"
+                >{{ currentCategoryEmoji }}</span
+              >
+              <span class="category-name__text">{{
+                t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
+              }}</span>
+            </div>
+          </div>
 
-      <!-- Large Letter Display -->
-      <div class="letter-display" data-testid="game-letter-info">
-        <span class="letter-value">
-          {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
-        </span>
-      </div>
+          <!-- Large Letter Display -->
+          <div class="letter-display" data-testid="game-letter-info">
+            <span class="letter-value">
+              {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
+            </span>
+          </div>
+        </div>
+      </Transition>
 
       <!-- Player Turn Section (for multiplayer) -->
       <div
@@ -87,6 +95,7 @@
           <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
           <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
         </div>
+        <!-- verbal-mode-hint removed — instructions now live on the results page -->
         <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
           <input
             v-if="isAnswerInputEnabled"
@@ -107,19 +116,20 @@
             type="submit"
             class="submit-answer-btn"
             data-testid="game-submit-button"
-            :disabled="false"
+            :disabled="isSubmitting"
           >
             {{ isAnswerInputEnabled ? t('game.submit', 'Submit') : t('common.confirm') }}
           </button>
         </form>
-        <div v-else class="skip-actions">
+        <div v-else class="verbal-turn-actions">
           <button
-            class="skip-player-btn"
-            data-testid="game-skip-button"
-            :disabled="false"
+            type="button"
+            class="verbal-turn-done-btn"
+            data-testid="game-verbal-turn-done"
+            :disabled="isSubmitting"
             @click="submitAnswer"
           >
-            {{ t('game.skip', 'Skip') }}
+            {{ t('game.verbal_turn_done') }}
           </button>
         </div>
       </div>
@@ -130,7 +140,9 @@
         class="all-submitted-message"
         data-testid="game-all-submitted"
       >
-        <p>{{ t('game.all_submitted', 'All players have submitted!') }}</p>
+        <p>
+          {{ isAnswerInputEnabled ? t('game.all_submitted') : t('game.all_submitted_verbal') }}
+        </p>
       </div>
     </div>
 
@@ -158,7 +170,7 @@
         @click="handleNext"
       >
         <img
-          :src="`${baseUrl}assets/alphabets/next.png`"
+          :src="getAssetPath('assets/alphabets/next.png')"
           :alt="t('common.next')"
           class="next-icon"
           loading="lazy"
@@ -172,7 +184,8 @@
 <script setup lang="ts">
 definePageMeta({ pageTransition: { name: 'slide-left', mode: 'out-in' } })
 
-const { baseUrl, toast, t, goHome: navigateToHome } = usePageSetup()
+const { toast, t, goHome: navigateToHome } = usePageSetup()
+const { getAssetPath } = useAssets()
 const { goToResults, goToPlayers, goToRoundStart } = useNavigation()
 const {
   gameStore,
@@ -189,6 +202,7 @@ const {
 const { isAnswerInputEnabled } = useFeatureFlags()
 const logger = useLogger()
 const gameActions = useGameActions()
+const audio = useAudio()
 const route = useRoute()
 
 // Handle game ID from route parameter
@@ -216,6 +230,15 @@ const formattedRound = computed(() => {
   const round = currentRound.value || 1
   return round.toString().padStart(2, '0')
 })
+
+const roundRevealKey = computed(
+  () =>
+    `${currentCategory.value?.id ?? '0'}-${(currentLetter.value ?? '').toString().toUpperCase()}`
+)
+
+const currentCategoryEmoji = computed(() =>
+  currentCategory.value ? gameStore.categoryEmoji(currentCategory.value.name) : ''
+)
 
 const goHome = () => {
   navigateToHome()
@@ -253,21 +276,27 @@ const submitAnswer = async () => {
 
   isSubmitting.value = true
   try {
-    // Allow empty answers (player can skip their turn)
+    // Typed mode: empty = skipped turn. Verbal mode: answer is always spoken — nothing is typed.
     const answer = playerAnswer.value.trim() || ''
     await gameStore.submitPlayerAnswer(player.id, answer)
 
     if (answer) {
+      void audio.playTada()
       toast.success(t('game.answer_submitted', [player.name]))
-    } else {
+    } else if (isAnswerInputEnabled.value) {
+      void audio.playClick()
       toast.info(t('game.answer_skipped', [player.name]))
+    } else {
+      void audio.playClick()
+      toast.success(t('game.verbal_turn_recorded', [player.name]))
     }
 
     playerAnswer.value = ''
 
-    // If all players submitted, show message
     if (allPlayersSubmitted.value) {
-      toast.info(t('game.all_submitted', 'All players have submitted!'))
+      toast.info(
+        isAnswerInputEnabled.value ? t('game.all_submitted') : t('game.all_submitted_verbal')
+      )
     }
   } catch (error) {
     logger.error('Error submitting answer:', error)
@@ -289,6 +318,7 @@ const handleNext = async () => {
     flow !== 'round-complete' &&
     flow !== 'decision'
   ) {
+    void audio.playClick()
     toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'))
     return
   }
@@ -298,6 +328,8 @@ const handleNext = async () => {
     // Transition to round-complete state to trigger results flow
     gameStore.transitionToRoundComplete()
   }
+
+  void audio.playClick()
 
   // Navigate to results with game ID
   const currentGameId = gameStore.currentSession.value?.id ?? gameId.value
@@ -383,14 +415,9 @@ const pageTitle = computed(
   () => `${t('game.page_title')} · ${t('game.round')} ${formattedRound.value}`
 )
 
-useHead({
-  title: pageTitle,
-  meta: [
-    {
-      name: 'description',
-      content: t('game.meta_description'),
-    },
-  ],
+useLocalizedPageSeo({
+  title: () => pageTitle.value,
+  description: () => t('game.meta_description'),
 })
 </script>
 
@@ -412,7 +439,7 @@ useHead({
   right: 0;
   bottom: 0;
   /* Background image optimized via Nuxt Image in template */
-  /* background-image: url('/assets/alphabets/BACKGROUND.png'); */
+  /* background-image: url('/assets/alphabets/background.png'); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -523,10 +550,43 @@ useHead({
   min-height: 0; /* Allow flex shrinking */
 }
 
+.round-reveal-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  gap: var(--spacing-xl);
+}
+
+.round-reveal-enter-active {
+  transition:
+    opacity 0.48s ease,
+    transform 0.52s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.round-reveal-leave-active {
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+
+.round-reveal-enter-from {
+  opacity: 0;
+  transform: translateY(-18px) scale(0.93);
+}
+
+.round-reveal-leave-to {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+}
+
 /* Category Panel - Two-part design matching mockup */
 .category-panel {
   width: 100%;
   max-width: 600px;
+  padding: var(--spacing-md) var(--spacing-lg);
   border: 5px solid #e89520;
   border-radius: var(--radius-xl);
   box-shadow:
@@ -590,10 +650,27 @@ useHead({
 .category-name {
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  text-align: center;
+}
+
+.category-name__emoji {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.category-name__text {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 6vw, 3.5rem);
   font-weight: var(--font-weight-black);
-  /* Gold 3D text effect */
   color: #d4a017;
   text-shadow:
     -2px -2px 0 #8b6914,
@@ -602,8 +679,6 @@ useHead({
     2px 2px 0 #8b6914,
     0 4px 0 #7a5c12,
     0 6px 8px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  padding: var(--spacing-lg) var(--spacing-xl);
   letter-spacing: 3px;
 }
 
@@ -612,6 +687,7 @@ useHead({
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
   width: 100%;
   max-width: 500px;
   position: relative;
@@ -686,7 +762,8 @@ useHead({
   font-family: var(--font-display);
   font-size: clamp(0.9rem, 2vw, 1.2rem);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-dark);
+  /* Light panel: use text token that is not inverted by dark-mode :root overrides */
+  color: var(--color-text-dark);
   display: block;
   margin-bottom: var(--spacing-sm);
 }
@@ -714,7 +791,7 @@ useHead({
   border: 3px solid var(--color-primary);
   border-radius: var(--radius-md);
   background: var(--color-white);
-  color: var(--color-dark);
+  color: var(--color-text-dark);
   text-align: center;
   transition:
     transform var(--transition-base),
@@ -759,12 +836,23 @@ useHead({
   cursor: not-allowed;
 }
 
-.skip-actions {
+.verbal-mode-hint {
+  margin: 0 0 var(--spacing-md);
+  padding: 0 var(--spacing-sm);
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-dark);
+  text-align: center;
+  line-height: 1.35;
+}
+
+.verbal-turn-actions {
   display: flex;
   justify-content: center;
 }
 
-.skip-player-btn {
+.verbal-turn-done-btn {
   padding: 0.75rem 2rem;
   border-radius: 8px;
   background-color: #ff9800;
@@ -776,11 +864,11 @@ useHead({
   transition: background-color 0.2s;
 }
 
-.skip-player-btn:hover {
+.verbal-turn-done-btn:hover {
   background-color: #f57c00;
 }
 
-.skip-player-btn:disabled {
+.verbal-turn-done-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -913,8 +1001,16 @@ useHead({
   }
 
   .category-name {
-    font-size: clamp(1.8rem, 5vw, 2.5rem);
     padding: var(--spacing-md) var(--spacing-lg);
+    gap: var(--spacing-xs);
+  }
+
+  .category-name__emoji {
+    font-size: clamp(1.6rem, 5vw, 2.5rem);
+  }
+
+  .category-name__text {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
   }
 
   .letter-display {
@@ -976,8 +1072,16 @@ useHead({
   }
 
   .category-name {
-    font-size: clamp(1.5rem, 4vw, 2rem);
     padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-xs);
+  }
+
+  .category-name__emoji {
+    font-size: clamp(1.35rem, 4vw, 1.85rem);
+  }
+
+  .category-name__text {
+    font-size: clamp(1.5rem, 4vw, 2rem);
   }
 
   .letter-value {

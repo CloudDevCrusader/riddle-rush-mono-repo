@@ -92,6 +92,7 @@
   },
   "game": {
     "all_submitted": "All players have submitted!",
+    "all_submitted_verbal": "Everyone has had their turn. Tap Next, then award points on the scoring screen.",
     "answer_skipped": "{0} skipped their turn",
     "answer_submitted": "Answer submitted for {0}",
     "attempts": "Attempts",
@@ -108,6 +109,7 @@
     "error_next_round": "Failed to start next round",
     "error_resuming": "Failed to load game. Starting fresh.",
     "error_starting": "Failed to start game. Please try again.",
+    "fortune_wheel_spin": "SPIN",
     "error_submitting": "Failed to submit answer",
     "game_ended": "Game ended! Check your statistics.",
     "go_to_scoring": "Go to Scoring",
@@ -132,8 +134,11 @@
     "round_start_description": "Spinning for category and letter",
     "round_start_title": "Round Start",
     "score": "Score",
-    "skip": "Skip",
+    "skip": "Next",
     "starts_with": "Starts with",
+    "verbal_mode_hint": "Say your answer out loud — nothing is typed here. On the scoring screen, use + and − so points show who was right or wrong.",
+    "verbal_turn_done": "Done — next player",
+    "verbal_turn_recorded": "{0} is done. Correct or wrong gets decided when you score this round.",
     "submit": "Submit",
     "tap_to_spin": "Tap to spin",
     "title": "Play",
@@ -216,12 +221,13 @@
     "error": "Connection Error",
     "offline": "Offline"
   },
-  "websocket": {
-    "reconnect_failed": "Failed to reconnect",
-    "connection_failed": "Connection failed",
-    "not_connected": "Not connected"
+  "seo": {
+    "json_ld_description": "Multiplayer word guessing party game with Wikipedia categories. Play in the browser or install as a PWA, online or offline.",
+    "keywords": "word game, party game, guessing game, multiplayer, offline game, PWA, family game, Riddle Rush, Wikipedia categories",
+    "site_name": "Riddle Rush"
   },
   "settings": {
+    "meta_description": "Audio, theme, language, and gameplay preferences for Riddle Rush.",
     "dark_mode": "Dark Mode",
     "debug": "Debug Mode",
     "language": "Language",
@@ -237,9 +243,14 @@
     "sound": "Sound",
     "sound_disabled": "Sound disabled",
     "sound_enabled": "Sound enabled",
+    "fortune_wheel_redraw": "Confirm wheel result",
+    "fortune_wheel_redraw_hint": "When off, the game starts automatically after the spin. When on, tap OK and you can spin again for a new letter.",
     "system_default": "System Default",
     "theme": "Theme",
     "title": "Settings"
+  },
+  "splash": {
+    "skip_aria": "Skip splash screen"
   },
   "pause": {
     "home": "Home",
@@ -287,6 +298,7 @@
   "scoring": {
     "base_score": "Score",
     "confirm_scores": "Confirm Scores",
+    "verbal_hint": "Answers were spoken during the round — use + for a correct answer and − if it was wrong. The round points here are what counts.",
     "description": "View round scoring results",
     "error_saving": "Failed to save scores. Please try again.",
     "finish_game": "Finish Game",
@@ -297,6 +309,7 @@
     "player": "Player",
     "points": "pts",
     "post_round_prompt": "What would you like to do next?",
+    "round_points": "This round",
     "round_complete": "Round Complete!",
     "title": "Scoring"
   },

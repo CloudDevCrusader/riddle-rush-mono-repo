@@ -80,6 +80,17 @@ export default defineConfig({
     },
   },
 
+  shortcuts: {
+    /** Full-viewport background image under content (game + default layouts) */
+    'page-bg-cover':
+      'pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover select-none',
+    /** Root shell: no horizontal scroll on narrow devices (safe-area on default layout via template) */
+    'layout-viewport':
+      'relative box-border flex max-w-[100vw] min-h-dvh min-h-screen w-full flex-col overflow-x-hidden',
+    /** Primary column that grows to fill remaining viewport height */
+    'layout-main-col': 'flex min-h-0 min-w-0 w-full flex-1 flex-col',
+  },
+
   // Safelist classes that may be used dynamically
   safelist: [
     'flex',
@@ -97,6 +108,9 @@ export default defineConfig({
     'text-btn-green-light',
     'bg-btn-green-light',
     'border-border-gold',
+    'layout-viewport',
+    'layout-main-col',
+    'page-bg-cover',
   ],
 
   // Content paths for scanning

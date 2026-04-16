@@ -1,7 +1,7 @@
 ---
 name: gsd:pr-branch
 description: Create a clean PR branch by filtering out .planning/ commits — ready for code review
-argument-hint: '[target branch, default: main]'
+argument-hint: "[target branch, default: main]"
 allowed-tools:
   - Bash
   - Read

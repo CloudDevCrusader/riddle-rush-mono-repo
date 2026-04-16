@@ -92,6 +92,7 @@
   },
   "game": {
     "all_submitted": "Alle Spieler haben geantwortet!",
+    "all_submitted_verbal": "Alle waren dran. Tippe auf Weiter und vergib die Punkte auf der Auswertungsseite.",
     "answer_skipped": "{0} hat seinen Zug übersprungen",
     "answer_submitted": "Antwort eingereicht für {0}",
     "attempts": "Versuche",
@@ -108,6 +109,7 @@
     "error_next_round": "Fehler beim Starten der nächsten Runde",
     "error_resuming": "Fehler beim Laden des Spiels. Starte neu.",
     "error_starting": "Fehler beim Starten des Spiels. Bitte versuche es erneut.",
+    "fortune_wheel_spin": "DREHEN",
     "error_submitting": "Fehler beim Einreichen der Antwort",
     "game_ended": "Spiel beendet! Sieh dir deine Statistiken an.",
     "go_to_scoring": "Zur Auswertung",
@@ -132,8 +134,11 @@
     "round_start_description": "Dreht für Kategorie und Buchstabe",
     "round_start_title": "Rundenstart",
     "score": "Punkte",
-    "skip": "Überspringen",
+    "skip": "Nächster",
     "starts_with": "Beginnt mit",
+    "verbal_mode_hint": "Sag deine Antwort laut — hier wird nichts eingegeben. Auf der Auswertungsseite vergibt ihr mit + und − die Punkte für richtig oder falsch.",
+    "verbal_turn_done": "Fertig — nächster Spieler",
+    "verbal_turn_recorded": "{0} ist fertig. Richtig oder falsch entscheidet ihr bei der Punktevergabe.",
     "submit": "Senden",
     "tap_to_spin": "Tippen zum Drehen",
     "title": "Spielen",
@@ -216,12 +221,13 @@
     "error": "Verbindungsfehler",
     "offline": "Offline"
   },
-  "websocket": {
-    "reconnect_failed": "Verbindung konnte nicht wiederhergestellt werden",
-    "connection_failed": "Verbindung fehlgeschlagen",
-    "not_connected": "Nicht verbunden"
+  "seo": {
+    "json_ld_description": "Mehrspieler-Wortratespiel mit Wikipedia-Kategorien. Im Browser spielen oder als PWA installieren, online oder offline.",
+    "keywords": "Wortspiel, Partyspiel, Ratespiel, Mehrspieler, Offline-Spiel, PWA, Familienspiel, Riddle Rush, Wikipedia-Kategorien",
+    "site_name": "Riddle Rush"
   },
   "settings": {
+    "meta_description": "Ton, Design, Sprache und Spieloptionen für Riddle Rush.",
     "dark_mode": "Dunkelmodus",
     "debug": "Debug-Modus",
     "language": "Sprache",
@@ -237,9 +243,14 @@
     "sound": "Sound",
     "sound_disabled": "Sound deaktiviert",
     "sound_enabled": "Sound aktiviert",
+    "fortune_wheel_redraw": "Glücksrad bestätigen",
+    "fortune_wheel_redraw_hint": "Aus: Nach dem Drehen startet das Spiel automatisch. An: Mit OK bestätigen und mit Drehen neu würfeln.",
     "system_default": "Systemstandard",
     "theme": "Design",
     "title": "Einstellungen"
+  },
+  "splash": {
+    "skip_aria": "Startbildschirm überspringen"
   },
   "pause": {
     "home": "Startseite",
@@ -287,6 +298,7 @@
   "scoring": {
     "base_score": "Punktestand",
     "confirm_scores": "Punkte bestätigen",
+    "verbal_hint": "Die Antworten wurden in der Runde gesagt: + für richtig, − für falsch. Diese Punkte zählen.",
     "description": "Rundenergebnisse ansehen",
     "error_saving": "Fehler beim Speichern der Punkte. Bitte erneut versuchen.",
     "finish_game": "Spiel beenden",
@@ -297,6 +309,7 @@
     "player": "Spieler",
     "points": "Pkt",
     "post_round_prompt": "Wie wollt ihr weitermachen?",
+    "round_points": "Diese Runde",
     "round_complete": "Runde abgeschlossen!",
     "title": "Punktevergabe"
   },

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { usePerformance } from '../../composables/usePerformance'
 
 describe('usePerformance', () => {
@@ -125,6 +125,93 @@ describe('usePerformance', () => {
       expect(metrics?.count).toBe(3)
       expect(metrics?.min).toBeLessThanOrEqual(metrics?.max || 0)
       expect(metrics?.average).toBeGreaterThanOrEqual(0)
+    }
+  })
+
+  it('should return null for non-existent metrics', () => {
+    const { getMetrics } = usePerformance()
+    expect(getMetrics('does-not-exist')).toBeNull()
+  })
+
+  it('getNavigationTiming returns timing data or null', () => {
+    const { getNavigationTiming } = usePerformance()
+    const timing = getNavigationTiming()
+    // happy-dom may or may not have performance.timing
+    if (timing) {
+      expect(timing).toHaveProperty('dns')
+      expect(timing).toHaveProperty('tcp')
+      expect(timing).toHaveProperty('totalTime')
+    } else {
+      expect(timing).toBeNull()
+    }
+  })
+
+  it('getResourceTiming returns array', () => {
+    const { getResourceTiming, isSupported } = usePerformance()
+    if (isSupported) {
+      const resources = getResourceTiming()
+      expect(Array.isArray(resources)).toBe(true)
+    }
+  })
+
+  it('getResourceTiming filters by name', () => {
+    const { getResourceTiming, isSupported } = usePerformance()
+    if (isSupported) {
+      const resources = getResourceTiming('nonexistent-resource')
+      expect(resources).toEqual([])
+    }
+  })
+
+  it('getMemoryUsage returns object or null', () => {
+    const { getMemoryUsage } = usePerformance()
+    const memory = getMemoryUsage()
+    // Chrome has performance.memory, happy-dom may not
+    if (memory) {
+      expect(memory).toHaveProperty('usedJSHeapSize')
+      expect(memory).toHaveProperty('usedPercentage')
+    } else {
+      expect(memory).toBeNull()
+    }
+  })
+
+  it('logReport does not throw in non-development', () => {
+    const { logReport } = usePerformance()
+    expect(() => logReport()).not.toThrow()
+  })
+
+  it('logReport with metrics does not throw', () => {
+    const { mark, measure, logReport, isSupported } = usePerformance()
+    if (isSupported) {
+      mark('report-test')
+      measure('report-test')
+    }
+    expect(() => logReport()).not.toThrow()
+  })
+
+  it('mark handles errors gracefully', () => {
+    const { isSupported } = usePerformance()
+    if (isSupported) {
+      // Spy on performance.mark to force error
+      const spy = vi.spyOn(performance, 'mark').mockImplementationOnce(() => {
+        throw new Error('mark error')
+      })
+      const { mark } = usePerformance()
+      expect(() => mark('error-mark')).not.toThrow()
+      spy.mockRestore()
+    }
+  })
+
+  it('measure handles errors gracefully', () => {
+    const { isSupported } = usePerformance()
+    if (isSupported) {
+      const spy = vi.spyOn(performance, 'measure').mockImplementationOnce(() => {
+        throw new Error('measure error')
+      })
+      const { mark, measure } = usePerformance()
+      mark('error-measure')
+      const result = measure('error-measure')
+      expect(result).toBeNull()
+      spy.mockRestore()
     }
   })
 })

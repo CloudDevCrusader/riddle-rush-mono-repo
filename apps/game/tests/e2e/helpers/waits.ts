@@ -620,48 +620,22 @@ export async function getRoundState(
 }
 
 /**
- * Wait for WebSocket connection to be established
+ * Wait until the client app shell is ready (Nuxt root mounted).
+ * Legacy name kept for helpers that ran when Socket.IO / connection UI was still used.
  */
 export async function waitForWebSocketConnection(
   page: Page,
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
-
-  console.log('[waitForWebSocketConnection] Waiting for WebSocket connection...')
+  console.log('[waitForWebSocketConnection] Waiting for app shell...')
 
   try {
-    await page.waitForFunction(
-      () => {
-        const w = window as unknown as {
-          $socket?: { connected?: boolean; readyState?: number }
-          __socket__?: { connected?: boolean; readyState?: number }
-          io?: { connected?: boolean }
-        }
-
-        // Check for global socket instance
-        const socket = w.$socket || w.__socket__
-        if (socket && (socket.connected || socket.readyState === 1)) {
-          return true
-        }
-
-        // Check for socket.io
-        const io = w.io
-        if (io && io.connected) {
-          return true
-        }
-
-        return false
-      },
-      { timeout, polling: POLL_INTERVAL }
-    )
-
-    console.log(`[waitForWebSocketConnection] Connected in ${Date.now() - startTime}ms`)
+    await page.locator('#__nuxt').waitFor({ state: 'attached', timeout })
+    console.log(`[waitForWebSocketConnection] Ready in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForWebSocketConnection:timeout')
-    throw new Error(
-      `Timeout waiting for WebSocket connection after ${timeout}ms. ${(error as Error).message}`
-    )
+    throw new Error(`Timeout waiting for app shell after ${timeout}ms. ${(error as Error).message}`)
   }
 }
 

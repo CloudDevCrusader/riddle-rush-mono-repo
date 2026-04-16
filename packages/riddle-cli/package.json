@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/cli",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Riddle Rush CLI - Agent workflow and project management",
   "keywords": [
     "oclif",
@@ -22,7 +22,7 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@oclif/core": "^4.10.5",
+    "@oclif/core": "^4.13.10",
     "@oclif/plugin-help": "^6.2.44"
   },
   "devDependencies": {
@@ -31,7 +31,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^25.6.0",
     "eslint": "^10.2.0",
-    "globals": "^17.4.0",
+    "globals": "^17.5.0",
     "mocha": "^11.7.5",
     "oclif": "^4.22.79",
     "shx": "^0.4.0",
@@ -60,5 +60,5 @@
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
   },
-  "packageManager": "pnpm@10.30.3"
+  "packageManager": "pnpm@10.33.0"
 }

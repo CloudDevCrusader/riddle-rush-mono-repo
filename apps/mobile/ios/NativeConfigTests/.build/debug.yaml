@@ -1,0 +1,90 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "NativeConfigTests-arm64-apple-macosx-debug.module": ["<NativeConfigTests-arm64-apple-macosx-debug.module>"]
+  "NativeConfigTestsPackageTests-arm64-apple-macosx-debug.module": ["<NativeConfigTestsPackageTests-arm64-apple-macosx-debug.module>"]
+  "NativeConfigTestsPackageTests-arm64-apple-macosx-debug.test": ["<NativeConfigTestsPackageTests-arm64-apple-macosx-debug.test>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": []
+  "test": ["<NativeConfigTests-arm64-apple-macosx-debug.module>","<NativeConfigTestsPackageTests-arm64-apple-macosx-debug.test>"]
+default: "main"
+nodes:
+  "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/Tests/NativeConfigTests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/Tests/NativeConfigTests/CapacitorConfigTests.swift"]
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/sources"]
+    description: "Write auxiliary file /Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/sources"
+
+  "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.derived/runner.swift"]
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/sources"]
+    description: "Write auxiliary file /Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/sources"
+
+  "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.derived/runner.swift":
+    tool: test-entry-point-tool
+    inputs: []
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.derived/runner.swift"]
+
+  "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.swift.o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/runner.swift.o"]
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.product/Objects.LinkFileList"
+
+  "/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<NativeConfigTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.swift.o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTests.swiftmodule"]
+    outputs: ["<NativeConfigTests-arm64-apple-macosx-debug.module>"]
+
+  "<NativeConfigTestsPackageTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/runner.swift.o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTestsPackageTests.swiftmodule"]
+    outputs: ["<NativeConfigTestsPackageTests-arm64-apple-macosx-debug.module>"]
+
+  "<NativeConfigTestsPackageTests-arm64-apple-macosx-debug.test>":
+    tool: phony
+    inputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.xctest/Contents/MacOS/NativeConfigTestsPackageTests"]
+    outputs: ["<NativeConfigTestsPackageTests-arm64-apple-macosx-debug.test>"]
+
+  "C.NativeConfigTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/Tests/NativeConfigTests/CapacitorConfigTests.swift","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/sources"]
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.swift.o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTests.swiftmodule"]
+    description: "Compiling Swift Module 'NativeConfigTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","NativeConfigTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTests.swiftmodule","-output-file-map","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/sources","-I","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","5","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","nativeconfigtests"]
+
+  "C.NativeConfigTestsPackageTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.derived/runner.swift","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTests.swiftmodule","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/sources"]
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/runner.swift.o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTestsPackageTests.swiftmodule"]
+    description: "Compiling Swift Module 'NativeConfigTestsPackageTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","NativeConfigTestsPackageTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTestsPackageTests.swiftmodule","-output-file-map","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/sources","-I","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx13.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/include/NativeConfigTestsPackageTests-Swift.h","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","nativeconfigtests"]
+
+  "C.NativeConfigTestsPackageTests-arm64-apple-macosx-debug.test":
+    tool: shell
+    inputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTests.build/CapacitorConfigTests.swift.o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.build/runner.swift.o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.product/Objects.LinkFileList"]
+    outputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.xctest/Contents/MacOS/NativeConfigTestsPackageTests"]
+    description: "Linking ./.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.xctest/Contents/MacOS/NativeConfigTestsPackageTests"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-L","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug","-o","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.xctest/Contents/MacOS/NativeConfigTestsPackageTests","-module-name","NativeConfigTestsPackageTests","-Xlinker","-no_warn_duplicate_libraries","-Xlinker","-bundle","-Xlinker","-rpath","-Xlinker","@loader_path/../../../","@/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/NativeConfigTestsPackageTests.product/Objects.LinkFileList","-Xlinker","-rpath","-Xlinker","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-6.2/macosx","-target","arm64-apple-macosx14.0","-Xlinker","-add_ast_path","-Xlinker","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTests.swiftmodule","-Xlinker","-add_ast_path","-Xlinker","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/.build/arm64-apple-macosx/debug/Modules/NativeConfigTestsPackageTests.swiftmodule","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/Tests/NativeConfigTests/","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/Package.swift","/Users/markuswagner/projects/riddle-rush-mono-repo/apps/mobile/ios/NativeConfigTests/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

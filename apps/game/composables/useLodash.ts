@@ -5,6 +5,12 @@
  * Uses dynamic imports for better performance and smaller initial bundle.
  */
 
+import clone from 'lodash-es/clone'
+import isEmpty from 'lodash-es/isEmpty'
+import sample from 'lodash-es/sample'
+import sampleSize from 'lodash-es/sampleSize'
+import shuffle from 'lodash-es/shuffle'
+
 export const useLodash = () => {
   return {
     // Debounce & Throttle - Lazy loaded for performance
@@ -75,58 +81,14 @@ export const useLodash = () => {
 // Type-safe helpers
 export type { DebouncedFunc } from 'lodash-es'
 
-// Synchronous version for immediate use (smaller functions only)
-export const useLodashSync = () => {
-  return {
-    // Small utility functions that are safe to load synchronously
-    isEmpty: (value: unknown) => {
-      if (value == null) return true
-      if (Array.isArray(value) || typeof value === 'string') return value.length === 0
-      if (typeof value === 'object') return Object.keys(value).length === 0
-      return false
-    },
-
-    // Lightweight clone for simple objects
-    clone: <T>(value: T): T => {
-      if (Array.isArray(value)) return [...value] as T
-      if (typeof value === 'object' && value !== null) return { ...value }
-      return value
-    },
-
-    // Lightweight shuffle implementation for small arrays
-    shuffle: <T>(array: T[]): T[] => {
-      if (!Array.isArray(array)) return []
-      const result = [...array]
-      for (let i = result.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        const temp = result[i] as T
-        result[i] = result[j] as T
-        result[j] = temp as T
-      }
-      return result
-    },
-
-    // Lightweight sample implementation
-    sample: <T>(array: T[]): T => {
-      if (!Array.isArray(array) || array.length === 0)
-        throw new Error('Cannot sample from empty array')
-      return array[Math.floor(Math.random() * array.length)] as T
-    },
-
-    // Lightweight sampleSize implementation
-    sampleSize: <T>(array: T[], size: number = 1): T[] => {
-      if (!Array.isArray(array) || array.length === 0) return []
-      const result: T[] = []
-      const copy = [...array]
-      const take = Math.min(size, copy.length)
-
-      for (let i = 0; i < take; i++) {
-        const randomIndex = Math.floor(Math.random() * copy.length)
-        result.push(copy[randomIndex] as T)
-        copy.splice(randomIndex, 1)
-      }
-
-      return result
-    },
-  }
-}
+/**
+ * Synchronous lodash-es re-exports for hot paths (tree-shaken per import).
+ * Prefer this over reimplementing the same helpers in-app.
+ */
+export const useLodashSync = () => ({
+  isEmpty,
+  clone,
+  shuffle,
+  sample,
+  sampleSize,
+})
