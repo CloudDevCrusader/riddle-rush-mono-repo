@@ -6,10 +6,7 @@
     :aria-busy="loading"
     @click="handleClick"
   >
-    <span
-      v-if="loading"
-      class="game-button__spinner"
-    />
+    <span v-if="loading" class="game-button__spinner" />
     <slot v-else />
   </button>
 </template>
@@ -22,16 +19,6 @@ interface Props {
   disabled?: boolean
   loading?: boolean
   fullWidth?: boolean
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-  /** Play UI click sound (Web Audio). Disable when the parent plays a custom sound for the same action. */
-  soundOnClick?: boolean
->>>>>>> Stashed changes
-=======
-  /** Play UI click sound (Web Audio). Disable when the parent plays a custom sound for the same action. */
-  soundOnClick?: boolean
->>>>>>> Stashed changes
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,16 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   click: [event: MouseEvent]
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }>()
-=======
-=======
->>>>>>> Stashed changes
-}>();
-
-const audio = useAudio();
->>>>>>> Stashed changes
 
 const buttonClasses = computed(() => [
   'game-button',

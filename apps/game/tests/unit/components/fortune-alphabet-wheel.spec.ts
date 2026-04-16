@@ -22,15 +22,7 @@ const categories: Category[] = [
   },
 ]
 
-<<<<<<< Updated upstream
 const createWrapper = (props: { categories: Category[]; letters?: string[] }) =>
-=======
-const createWrapper = (props: {
-  categories: Category[]
-  letters?: string[]
-  embedCategoryRow?: boolean
-}) =>
->>>>>>> Stashed changes
   mount(FortuneAlphabetWheel, {
     props,
     global: {

@@ -50,18 +50,9 @@ const getLeaderboard = () => {
   const playerManager = usePlayerManager()
   return playerManager.buildLeaderboard(
     getPlayers(),
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     (getSession()?.status ?? 'active') === 'completed'
   )
 }
-=======
-=======
->>>>>>> Stashed changes
-    (getSession()?.status ?? 'active') === 'completed',
-  );
-};
->>>>>>> Stashed changes
 
 describe('Game Store', () => {
   let mockCategories: Category[]
@@ -242,17 +233,10 @@ describe('Game Store', () => {
     })
 
     it('selects a random category', async () => {
-<<<<<<< Updated upstream
       const session = await gameStore.startNewGame()
       expect(session?.category).toBeDefined()
       expect(mockCategories.some((cat) => cat.id === session?.category.id)).toBe(true)
     })
-=======
-      const session = await gameStore.startNewGame();
-      expect(session?.category).toBeDefined();
-      expect(mockCategories.some(cat => cat.id === session?.category.id)).toBe(true);
-    });
->>>>>>> Stashed changes
 
     it('hasActiveSession becomes true', async () => {
       await gameStore.startNewGame()
@@ -441,21 +425,12 @@ describe('Game Store', () => {
     })
 
     it('uses random category', async () => {
-<<<<<<< Updated upstream
       await gameStore.fetchCategories()
       const session = await gameStore.resumeOrStartNewGame()
       expect(session?.category).toBeDefined()
       expect(mockCategories.some((cat) => cat.id === session?.category.id)).toBe(true)
     })
   })
-=======
-      await gameStore.fetchCategories();
-      const session = await gameStore.resumeOrStartNewGame();
-      expect(session?.category).toBeDefined();
-      expect(mockCategories.some(cat => cat.id === session?.category.id)).toBe(true);
-    });
-  });
->>>>>>> Stashed changes
 
   describe('Multi-Player Mode', () => {
     describe('Setup Players', () => {
@@ -958,20 +933,10 @@ describe('Game Store', () => {
         expect(sessionState?.roundHistory.length).toBe(1)
 
         // isCurrentRoundCompleted = roundHistory.length >= currentRound = 1 >= 1 = true
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         const isCompleted =
           (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0)
         expect(isCompleted).toBe(true)
       })
-=======
-=======
->>>>>>> Stashed changes
-        const isCompleted
-          = (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0);
-        expect(isCompleted).toBe(true);
-      });
->>>>>>> Stashed changes
 
       it('round is NOT completed after startNextRound', async () => {
         const session = await gameStore.setupPlayers(['Alice', 'Bob'])
@@ -991,20 +956,10 @@ describe('Game Store', () => {
         expect(sessionState?.roundHistory.length).toBe(1)
 
         // isCurrentRoundCompleted = roundHistory.length >= currentRound = 1 >= 2 = false
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         const isCompleted =
           (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0)
         expect(isCompleted).toBe(false)
       })
-=======
-=======
->>>>>>> Stashed changes
-        const isCompleted
-          = (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0);
-        expect(isCompleted).toBe(false);
-      });
->>>>>>> Stashed changes
 
       it('round IS completed after second round completeRound', async () => {
         const session = await gameStore.setupPlayers(['Alice', 'Bob'])
@@ -1030,22 +985,11 @@ describe('Game Store', () => {
         expect(sessionState?.roundHistory.length).toBe(2)
 
         // isCurrentRoundCompleted = roundHistory.length >= currentRound = 2 >= 2 = true
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         const isCompleted =
           (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0)
         expect(isCompleted).toBe(true)
       })
     })
-=======
-=======
->>>>>>> Stashed changes
-        const isCompleted
-          = (sessionState?.roundHistory.length ?? 0) >= (sessionState?.currentRound ?? 0);
-        expect(isCompleted).toBe(true);
-      });
-    });
->>>>>>> Stashed changes
 
     describe('Round number display scenarios', () => {
       it('should show round 1 on initial setup (no session)', () => {
@@ -1141,22 +1085,11 @@ describe('Game Store', () => {
         }
 
         // The round-start page logic for next round
-<<<<<<< Updated upstream
         const hasSession = !!gameStore.currentSession
         const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0
         const currentSession = gameStore.currentSession!
         const isCurrentRoundCompleted =
           currentSession.roundHistory.length >= currentSession.currentRound
-=======
-        const hasSession = !!gameStore.currentSession;
-        const hasPendingPlayers = gameStore.pendingPlayerNames.length > 0;
-        const currentSession = gameStore.currentSession!;
-        const isCurrentRoundCompleted
-          = currentSession.roundHistory.length >= currentSession.currentRound;
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
         expect(hasSession).toBe(true)
         expect(hasPendingPlayers).toBe(false)
@@ -1319,20 +1252,10 @@ describe('Game Store', () => {
       expect(updated?.currentPlayerIndex).toBe(0)
       expect(
         updated?.players.every(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           (p: import('@riddle-rush/types/game').Player) => p.hasSubmitted === false
         )
       ).toBe(true)
     })
-=======
-=======
->>>>>>> Stashed changes
-          (p: import('@riddle-rush/types/game').Player) => p.hasSubmitted === false,
-        ),
-      ).toBe(true);
-    });
->>>>>>> Stashed changes
 
     it('submitPlayerAnswer ignores out-of-turn submissions', async () => {
       const session = await gameStore.setupPlayers(['Alice', 'Bob'])

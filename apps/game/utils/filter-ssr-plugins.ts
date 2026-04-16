@@ -15,11 +15,11 @@ export function filterSsrPlugins(): Plugin {
         if (chunk && (chunk.type === 'chunk' || chunk.type === 'asset')) {
           // Check if this is an SSR plugin file
           if (
-            fileName.includes('switch-locale-path-ssr')
-            || fileName.includes('i18n-ssr')
-            || fileName.includes('locale-detector-ssr')
-            || fileName.includes('route-locale-detect')
-            || fileName.includes('ssg-detect')
+            fileName.includes('switch-locale-path-ssr') ||
+            fileName.includes('i18n-ssr') ||
+            fileName.includes('locale-detector-ssr') ||
+            fileName.includes('route-locale-detect') ||
+            fileName.includes('ssg-detect')
           ) {
             filesToRemove.push(fileName)
             console.warn(`[filter-ssr-plugins] Removed i18n plugin: ${fileName}`)
@@ -35,13 +35,13 @@ export function filterSsrPlugins(): Plugin {
     resolveId(id) {
       // Prevent i18n plugins from being resolved (only for i18n plugins, not other virtual modules)
       if (
-        (id.includes('switch-locale-path-ssr')
-          || id.includes('i18n-ssr')
-          || id.includes('locale-detector-ssr')
-          || id.includes('route-locale-detect')
-          || id.includes('ssg-detect'))
-        && !id.startsWith('virtual:')
-        && !id.startsWith('\0virtual:')
+        (id.includes('switch-locale-path-ssr') ||
+          id.includes('i18n-ssr') ||
+          id.includes('locale-detector-ssr') ||
+          id.includes('route-locale-detect') ||
+          id.includes('ssg-detect')) &&
+        !id.startsWith('virtual:') &&
+        !id.startsWith('\0virtual:')
       ) {
         // Return a virtual empty module instead
         return `\0filtered-ssr:${id}`

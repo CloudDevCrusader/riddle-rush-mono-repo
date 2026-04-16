@@ -12,17 +12,7 @@ export interface GameSettings {
   offlineMode: boolean
   language: string
   fortuneWheelEnabled: boolean
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   websocketEnabled: boolean
-=======
-  /** When true, user can spin again and must tap OK. When false, advances to game automatically after spin. */
-  fortuneWheelAllowRedraw: boolean
->>>>>>> Stashed changes
-=======
-  /** When true, user can spin again and must tap OK. When false, advances to game automatically after spin. */
-  fortuneWheelAllowRedraw: boolean
->>>>>>> Stashed changes
   answerInputEnabled: boolean
   inputFieldEnabled: boolean
 }

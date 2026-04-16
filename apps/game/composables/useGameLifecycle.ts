@@ -51,7 +51,7 @@ export function useGameLifecycle() {
       category: session.category.name,
       letter: session.letter,
       timestamp: Date.now(),
-      playerResults: session.players.map(p => ({
+      playerResults: session.players.map((p) => ({
         playerId: p.id,
         playerName: p.name,
         answer: p.currentRoundAnswer || '',

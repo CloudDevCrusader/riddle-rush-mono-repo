@@ -7,10 +7,7 @@
       aria-label="Close settings"
       @click="handleOverlayClick"
     >
-      <div
-        class="settings-card"
-        @click.stop
-      >
+      <div class="settings-card" @click.stop>
         <!-- Background Image -->
         <img
           :src="`${baseUrl}assets/settings/BACKGROUND.png`"
@@ -18,31 +15,11 @@
           class="settings-bg"
           width="600"
           height="800"
-        >
+        />
 
         <!-- Back Button -->
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         <button class="back-btn tap-highlight no-select" type="button" @click="closeModal">
           <img :src="`${baseUrl}assets/settings/back.png`" alt="Back" width="60" height="60" />
-=======
-=======
->>>>>>> Stashed changes
-        <button
-          class="back-btn tap-highlight no-select"
-          type="button"
-          @click="closeModal"
-        >
-          <img
-            :src="getAssetPath('assets/settings/back.png')"
-            alt="Back"
-            width="60"
-            height="60"
-          >
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         </button>
 
         <!-- Title -->
@@ -53,7 +30,7 @@
             class="title-image"
             width="300"
             height="100"
-          >
+          />
         </div>
 
         <!-- Settings Panel -->
@@ -67,7 +44,7 @@
                 class="control-icon"
                 width="50"
                 height="50"
-              >
+              />
             </div>
             <div class="control-content">
               <div class="control-label">{{ t('settings.sound') }}</div>
@@ -80,16 +57,10 @@
                   class="volume-slider"
                   inputmode="numeric"
                   @input="updateSoundVolume"
-                >
+                />
                 <div class="slider-track">
-                  <div
-                    class="slider-fill"
-                    :style="{ width: `${soundVolume}%` }"
-                  />
-                  <div
-                    class="slider-thumb"
-                    :style="{ left: `${soundVolume}%` }"
-                  />
+                  <div class="slider-fill" :style="{ width: `${soundVolume}%` }" />
+                  <div class="slider-thumb" :style="{ left: `${soundVolume}%` }" />
                 </div>
               </div>
             </div>
@@ -104,7 +75,7 @@
                 class="control-icon"
                 width="50"
                 height="50"
-              >
+              />
             </div>
             <div class="control-content">
               <div class="control-label">{{ t('settings.music') }}</div>
@@ -117,77 +88,19 @@
                   class="volume-slider"
                   inputmode="numeric"
                   @input="updateMusicVolume"
-                >
+                />
                 <div class="slider-track">
-                  <div
-                    class="slider-fill"
-                    :style="{ width: `${musicVolume}%` }"
-                  />
-                  <div
-                    class="slider-thumb"
-                    :style="{ left: `${musicVolume}%` }"
-                  />
+                  <div class="slider-fill" :style="{ width: `${musicVolume}%` }" />
+                  <div class="slider-thumb" :style="{ left: `${musicVolume}%` }" />
                 </div>
               </div>
             </div>
           </div>
-<<<<<<< Updated upstream
         </div>
 
         <!-- OK Button -->
         <button class="ok-btn tap-highlight no-select" type="button" @click="closeModal">
           <img :src="`${baseUrl}assets/settings/OK.png`" alt="OK" width="200" height="80" />
-=======
-
-          <!-- Fortune wheel: confirm vs auto-start (below sound / music) -->
-          <div
-            v-if="isFortuneWheelEnabled"
-            class="control-item control-item--fortune-redraw"
-          >
-            <div
-              class="control-icon-wrapper"
-              aria-hidden="true"
-            >
-              <span class="control-icon-emoji">{{ wheelOptionEmoji }}</span>
-            </div>
-            <div class="control-content">
-              <div class="control-label">{{ t('settings.fortune_wheel_redraw') }}</div>
-              <button
-                type="button"
-                class="fortune-redraw-toggle tap-highlight no-select"
-                :aria-pressed="fortuneWheelAllowRedraw"
-                :aria-label="t('settings.fortune_wheel_redraw')"
-                @click="settings.toggleFortuneWheelAllowRedraw()"
-              >
-                <span
-                  class="fortune-redraw-toggle__track"
-                  :class="{ 'is-on': fortuneWheelAllowRedraw }"
-                >
-                  <span class="fortune-redraw-toggle__thumb" />
-                </span>
-              </button>
-              <p class="fortune-redraw-hint">{{ t('settings.fortune_wheel_redraw_hint') }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- OK Button -->
-        <button
-          class="ok-btn tap-highlight no-select"
-          type="button"
-          @click="closeModal"
-        >
-          <img
-            :src="getAssetPath('assets/settings/ok.png')"
-            alt="OK"
-            loading="lazy"
-            width="200"
-            height="80"
-          >
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         </button>
       </div>
     </button>
@@ -199,22 +112,11 @@ import { useI18n } from 'vue-i18n'
 
 defineProps<{
   modelValue: boolean
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
-=======
-=======
->>>>>>> Stashed changes
-}>();
-
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-}>();
->>>>>>> Stashed changes
 
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl

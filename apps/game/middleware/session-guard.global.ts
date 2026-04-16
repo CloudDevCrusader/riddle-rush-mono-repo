@@ -1,16 +1,8 @@
 import { useGameStore } from '~/stores/gameStore'
 import { useLoadingStore } from '~/stores/loadingStore'
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 const getRouteGameId = (to: { params?: Record<string, unknown>; path: string }) => {
   const fromParam = to.params?.gameId
-=======
-=======
->>>>>>> Stashed changes
-const getRouteGameId = (to: { params?: Record<string, unknown>, path: string }) => {
-  const fromParam = to.params?.gameId;
->>>>>>> Stashed changes
   if (typeof fromParam === 'string' && fromParam.length > 0) {
     return fromParam
   }

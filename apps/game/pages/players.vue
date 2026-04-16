@@ -1,10 +1,6 @@
 <template>
   <GameBackground>
-    <div
-      ref="pageElement"
-      class="players-page"
-      :class="{ 'players-page--legacy': isLegacyStyle }"
-    >
+    <div ref="pageElement" class="players-page" :class="{ 'players-page--legacy': isLegacyStyle }">
       <GamePanel class="players-panel">
         <GameHeader color="gold">
           <template #left>
@@ -22,11 +18,7 @@
         </GameHeader>
 
         <div class="players-body">
-          <div
-            class="stepper"
-            role="group"
-            :aria-label="t('players.count_label')"
-          >
+          <div class="stepper" role="group" :aria-label="t('players.count_label')">
             <div class="stepper__pill">
               <button
                 class="stepper__button stepper__button--minus"
@@ -38,19 +30,10 @@
               >
                 –
               </button>
-              <div
-                class="stepper__count"
-                aria-live="polite"
-              >
+              <div class="stepper__count" aria-live="polite">
                 <span class="stepper__label">{{ t('players.count_label') }}:</span>
-                <Transition
-                  name="count-pop"
-                  mode="out-in"
-                >
-                  <span
-                    :key="playerCount"
-                    class="stepper__number"
-                  >{{ playerCount }}</span>
+                <Transition name="count-pop" mode="out-in">
+                  <span :key="playerCount" class="stepper__number">{{ playerCount }}</span>
                 </Transition>
                 <span class="stepper__separator">/ {{ maxPlayers }}</span>
               </div>
@@ -67,10 +50,7 @@
             </div>
           </div>
 
-          <GameScrollList
-            class="players-list"
-            max-height="420px"
-          >
+          <GameScrollList class="players-list" max-height="420px">
             <div
               v-for="(_, index) in playerCount"
               :key="`player-${index}`"
@@ -83,10 +63,7 @@
               }"
               class="player-row"
             >
-              <label
-                class="player-row__label"
-                :for="`player-${index}`"
-              >
+              <label class="player-row__label" :for="`player-${index}`">
                 {{ placeholderForIndex(index) }}
               </label>
               <input
@@ -99,7 +76,7 @@
                 maxlength="20"
                 autocomplete="off"
                 inputmode="search"
-              >
+              />
             </div>
           </GameScrollList>
 

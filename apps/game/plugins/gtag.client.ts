@@ -2,7 +2,7 @@
  * Google Analytics 4 Plugin
  *
  * Simple GA4 integration without external dependencies.
- * Only loads in production when `gtagId` is set (`NUXT_PUBLIC_GOOGLE_ANALYTICS_ID` → `runtimeConfig.public.gtagId`).
+ * Only loads in production when GTAG_ID is configured.
  */
 
 export default defineNuxtPlugin({
@@ -11,18 +11,9 @@ export default defineNuxtPlugin({
     const config = useRuntimeConfig()
     const router = nuxtApp.$router as ReturnType<typeof useRouter>
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     // Only enable in production with valid GTAG_ID
     const gtagId = config.public.gtagId || ''
     const isProduction = config.public.environment === 'production'
-=======
-=======
->>>>>>> Stashed changes
-    // Only enable in production with a configured measurement ID
-    const gtagId = config.public.gtagId || '';
-    const isProduction = config.public.environment === 'production';
->>>>>>> Stashed changes
 
     if (!isProduction || !gtagId || typeof window === 'undefined') {
       return

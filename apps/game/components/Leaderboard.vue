@@ -7,33 +7,19 @@
       aria-label="Close leaderboard"
       @click.self="$emit('close')"
     >
-      <div
-        class="leaderboard-panel"
-        @click.stop
-      >
+      <div class="leaderboard-panel" @click.stop>
         <header class="leaderboard-header">
           <h2>{{ t('leaderboard.title') }}</h2>
-          <button
-            class="close-btn tap-highlight"
-            @click="$emit('close')"
-          >
-            ✕
-          </button>
+          <button class="close-btn tap-highlight" @click="$emit('close')">✕</button>
         </header>
 
         <div class="leaderboard-content">
-          <div
-            v-if="entries.length === 0"
-            class="empty-state"
-          >
+          <div v-if="entries.length === 0" class="empty-state">
             <span class="empty-icon">🏆</span>
             <p>{{ t('leaderboard.empty') }}</p>
           </div>
 
-          <div
-            v-else
-            class="entries-list"
-          >
+          <div v-else class="entries-list">
             <div
               v-for="(entry, index) in entries"
               :key="entry.sessionId"
@@ -47,18 +33,17 @@
                 <span v-if="index === 0">🥇</span>
                 <span v-else-if="index === 1">🥈</span>
                 <span v-else-if="index === 2">🥉</span>
-                <span
-                  v-else
-                  class="rank-number"
-                >{{ Number(index) + 1 }}</span>
+                <span v-else class="rank-number">{{ Number(index) + 1 }}</span>
               </div>
               <div class="entry-info">
                 <span class="category">{{
                   t(`categories.${entry.categoryKey}`, entry.category)
                 }}</span>
-                <span class="meta">{{ formatDuration(entry.duration) }} · {{ entry.correctAttempts }}/{{
-                  entry.attempts
-                }}</span>
+                <span class="meta"
+                  >{{ formatDuration(entry.duration) }} · {{ entry.correctAttempts }}/{{
+                    entry.attempts
+                  }}</span
+                >
               </div>
               <div class="score">
                 {{ entry.score }}
@@ -68,17 +53,10 @@
         </div>
 
         <footer class="leaderboard-footer">
-          <button
-            class="btn btn-outline"
-            @click="$emit('close')"
-          >
+          <button class="btn btn-outline" @click="$emit('close')">
             {{ t('common.close') }}
           </button>
-          <button
-            v-if="entries.length > 0"
-            class="btn btn-secondary"
-            @click="clearLeaderboard"
-          >
+          <button v-if="entries.length > 0" class="btn btn-secondary" @click="clearLeaderboard">
             {{ t('leaderboard.clear') }}
           </button>
         </footer>
@@ -95,26 +73,12 @@ const { t } = useI18n()
 defineProps<{
   visible: boolean
   entries: LeaderboardEntry[]
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }>()
-=======
-=======
->>>>>>> Stashed changes
-}>();
->>>>>>> Stashed changes
 
 const emit = defineEmits<{
   close: []
   clear: []
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }>()
-=======
-=======
->>>>>>> Stashed changes
-}>();
->>>>>>> Stashed changes
 
 const formatDuration = (ms: number): string => {
   const seconds = Math.floor(ms / 1000)

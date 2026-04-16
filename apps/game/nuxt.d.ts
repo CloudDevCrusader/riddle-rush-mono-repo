@@ -1,25 +1,7 @@
-import type { DevWindowPerformanceTools } from './types/performance';
-import type { ModuleOptions as NuxtSecurityModuleOptions } from 'nuxt-security';
-
-declare global {
-  interface Window {
-    /** Dev-only: set by `plugins/performance.client.ts` when `import.meta.dev`. */
-    __performance__?: DevWindowPerformanceTools
-  }
-}
-
-export {};
-
 // Augment NuxtConfig so that the `security` key from nuxt-security is accepted
 // by defineNuxtConfig(). The module only augments NuxtOptions (resolved config),
 // not NuxtConfig (input config), so TypeScript rejects the property otherwise.
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 import type { ModuleOptions as NuxtSecurityModuleOptions } from 'nuxt-security'
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 declare module 'nuxt/schema' {
   interface NuxtConfig {

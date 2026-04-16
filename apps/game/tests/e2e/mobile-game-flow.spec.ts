@@ -32,15 +32,9 @@ test.describe('@mobile Mobile Game Flow', () => {
       desktop: 1024,
     })
 
-<<<<<<< Updated upstream
     expect(result.viewport).toBe('mobile')
     expect(result.issues.filter((i) => i.toLowerCase().includes('overflow'))).toHaveLength(0)
   })
-=======
-    expect(result.viewport).toBe('mobile');
-    expect(result.issues.filter(i => i.toLowerCase().includes('overflow'))).toHaveLength(0);
-  });
->>>>>>> Stashed changes
 
   test('mobile responsive layout on players page', async ({ page }) => {
     await page.goto('/players')
@@ -54,16 +48,8 @@ test.describe('@mobile Mobile Game Flow', () => {
 
     expect(result.viewport).toBe('mobile')
     // Layout should have no overflow on mobile
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     expect(result.issues.filter((i) => i.toLowerCase().includes('overflow'))).toHaveLength(0)
   })
-=======
-=======
->>>>>>> Stashed changes
-    expect(result.issues.filter(i => i.toLowerCase().includes('overflow'))).toHaveLength(0);
-  });
->>>>>>> Stashed changes
 
   test('mobile responsive layout on game page', async ({ page }) => {
     await startGameWithDefaults(page)
@@ -74,31 +60,15 @@ test.describe('@mobile Mobile Game Flow', () => {
       desktop: 1024,
     })
 
-<<<<<<< Updated upstream
     expect(result.viewport).toBe('mobile')
     expect(result.issues.filter((i) => i.toLowerCase().includes('overflow'))).toHaveLength(0)
-=======
-    expect(result.viewport).toBe('mobile');
-    expect(result.issues.filter(i => i.toLowerCase().includes('overflow'))).toHaveLength(0);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     // Key game elements must be visible on mobile
     await expect(page.locator('[data-testid="game-player-name"]')).toBeVisible()
     await expect(
-<<<<<<< Updated upstream
       page.locator('[data-testid="game-submit-button"], [data-testid="game-skip-button"]').first()
     ).toBeVisible()
   })
-=======
-      page
-        .locator('[data-testid="game-submit-button"], [data-testid="game-verbal-turn-done"]')
-        .first(),
-    ).toBeVisible();
-  });
->>>>>>> Stashed changes
 
   test('mobile responsive layout on results page', async ({ page }) => {
     await startGameWithDefaults(page)
@@ -111,16 +81,8 @@ test.describe('@mobile Mobile Game Flow', () => {
       desktop: 1024,
     })
 
-<<<<<<< Updated upstream
     expect(result.viewport).toBe('mobile')
     expect(result.issues.filter((i) => i.toLowerCase().includes('overflow'))).toHaveLength(0)
-=======
-    expect(result.viewport).toBe('mobile');
-    expect(result.issues.filter(i => i.toLowerCase().includes('overflow'))).toHaveLength(0);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     await expect(page.locator('[data-testid="results-scores-container"]')).toBeVisible()
   })
@@ -140,18 +102,9 @@ test.describe('@mobile Mobile Game Flow', () => {
     expect(result.valid).toBeGreaterThan(0)
     expect(
       result.tooSmall,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Interactive controls below 44x44px: ${JSON.stringify(result.tooSmall)}`
     ).toHaveLength(0)
   })
-=======
-=======
->>>>>>> Stashed changes
-      `Interactive controls below 44x44px: ${JSON.stringify(result.tooSmall)}`,
-    ).toHaveLength(0);
-  });
->>>>>>> Stashed changes
 
   test('tap interaction navigates from main menu to players page', async ({ page }) => {
     await page.goto('/')
@@ -178,18 +131,9 @@ test.describe('@mobile Mobile Game Flow', () => {
     expect(result.valid).toBeGreaterThan(0)
     expect(
       result.tooSmall,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Interactive controls below 44x44px on main menu: ${JSON.stringify(result.tooSmall)}`
     ).toHaveLength(0)
   })
-=======
-=======
->>>>>>> Stashed changes
-      `Interactive controls below 44x44px on main menu: ${JSON.stringify(result.tooSmall)}`,
-    ).toHaveLength(0);
-  });
->>>>>>> Stashed changes
 
   // ── Complete game flows ──────────────────────────────────────────────────
 
@@ -290,15 +234,9 @@ test.describe('@tablet Tablet Game Flow', () => {
       desktop: 1024,
     })
 
-<<<<<<< Updated upstream
     expect(result.viewport).toBe('tablet')
     expect(result.issues.filter((i) => i.toLowerCase().includes('overflow'))).toHaveLength(0)
   })
-=======
-    expect(result.viewport).toBe('tablet');
-    expect(result.issues.filter(i => i.toLowerCase().includes('overflow'))).toHaveLength(0);
-  });
->>>>>>> Stashed changes
 
   test('tablet responsive layout on players page', async ({ page }) => {
     await page.goto('/players')
@@ -310,15 +248,9 @@ test.describe('@tablet Tablet Game Flow', () => {
       desktop: 1024,
     })
 
-<<<<<<< Updated upstream
     expect(result.viewport).toBe('tablet')
     expect(result.issues.filter((i) => i.toLowerCase().includes('overflow'))).toHaveLength(0)
   })
-=======
-    expect(result.viewport).toBe('tablet');
-    expect(result.issues.filter(i => i.toLowerCase().includes('overflow'))).toHaveLength(0);
-  });
->>>>>>> Stashed changes
 
   test('touch targets work correctly on tablet (players page)', async ({ page }) => {
     await page.goto('/players')
@@ -332,18 +264,9 @@ test.describe('@tablet Tablet Game Flow', () => {
     expect(result.valid).toBeGreaterThan(0)
     expect(
       result.tooSmall,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Interactive controls below 44x44px on tablet: ${JSON.stringify(result.tooSmall)}`
     ).toHaveLength(0)
   })
-=======
-=======
->>>>>>> Stashed changes
-      `Interactive controls below 44x44px on tablet: ${JSON.stringify(result.tooSmall)}`,
-    ).toHaveLength(0);
-  });
->>>>>>> Stashed changes
 
   test('complete game flow works on tablet viewport', async ({ page }) => {
     // Start game and verify tablet layout

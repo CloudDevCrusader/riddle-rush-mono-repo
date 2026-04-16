@@ -91,16 +91,8 @@ vi.stubGlobal('useAudio', () => ({
 }))
 
 const mockT = vi.fn((key: string, fallback?: string | Record<string, unknown>) =>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   typeof fallback === 'string' ? fallback : key
 )
-=======
-=======
->>>>>>> Stashed changes
-  typeof fallback === 'string' ? fallback : key,
-);
->>>>>>> Stashed changes
 
 vi.stubGlobal('useI18n', () => ({ t: mockT }))
 
@@ -280,20 +272,10 @@ describe('useGameActions', () => {
       expect(shareFn).toHaveBeenCalledWith(
         expect.objectContaining({
           url: expect.any(String),
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         })
       )
       expect(mockToastSuccess).toHaveBeenCalledOnce()
     })
-=======
-=======
->>>>>>> Stashed changes
-        }),
-      );
-      expect(mockToastSuccess).toHaveBeenCalledOnce();
-    });
->>>>>>> Stashed changes
 
     it('should share with provided score when argument given', async () => {
       const shareFn = vi.fn().mockResolvedValue(undefined)
@@ -379,22 +361,11 @@ describe('useGameActions', () => {
       expect(result).toBe(false)
       expect(mockLoggerError).toHaveBeenCalledWith(
         'Error setting up multiplayer game:',
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         expect.any(Error)
       )
       expect(mockToastError).toHaveBeenCalledOnce()
     })
   })
-=======
-=======
->>>>>>> Stashed changes
-        expect.any(Error),
-      );
-      expect(mockToastError).toHaveBeenCalledOnce();
-    });
-  });
->>>>>>> Stashed changes
 
   // ──────────────────────────────────────────
   // startNextRound

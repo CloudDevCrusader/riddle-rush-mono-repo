@@ -110,8 +110,6 @@ test.describe('Translation Checks', () => {
     const translatedCategories = [
       ...Object.values(enLocale.categories),
       ...Object.values(deLocale.categories),
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     ].map((c) => (c as string).toLowerCase())
     const found = translatedCategories.some(
       (cat) => categoryName.toLowerCase().includes(cat) || cat.includes(categoryName.toLowerCase())
@@ -121,21 +119,3 @@ test.describe('Translation Checks', () => {
     )
   })
 })
-=======
-    ].map(c => (c as string).toLowerCase());
-    const found = translatedCategories.some(
-      cat => categoryName.toLowerCase().includes(cat) || cat.includes(categoryName.toLowerCase()),
-    );
-    expect(found, `Category name "${categoryName}" should match one translated category name`).toBe(
-=======
-    ].map(c => (c as string).toLowerCase());
-    const found = translatedCategories.some(
-      cat => categoryName.toLowerCase().includes(cat) || cat.includes(categoryName.toLowerCase()),
-    );
-    expect(found, `Category name "${categoryName}" should match one translated category name`).toBe(
->>>>>>> Stashed changes
-      true,
-    );
-  });
-});
->>>>>>> Stashed changes

@@ -42,7 +42,7 @@ export function useCategoryManager() {
       categoriesLoading: boolean
       categoryLoadError: string | null
     },
-    force = false,
+    force = false
   ): Promise<Category[]> {
     // Return cached categories if already loaded
     if (state.categoriesLoaded && !force) {
@@ -53,15 +53,7 @@ export function useCategoryManager() {
     if (state.categoriesLoading) {
       const maxAttempts = 100
       for (let i = 0; i < maxAttempts; i++) {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         await new Promise((resolve) => setTimeout(resolve, 100))
-=======
-        await new Promise(resolve => setTimeout(resolve, 100));
->>>>>>> Stashed changes
-=======
-        await new Promise(resolve => setTimeout(resolve, 100));
->>>>>>> Stashed changes
         if (!state.categoriesLoading) {
           return state.categories
         }
@@ -110,23 +102,15 @@ export function useCategoryManager() {
    * @param step - Number of additional categories to display (default: 9)
    */
   function loadMoreCategories(
-    state: { displayedCategoryCount: number, categories: Category[] },
-    step = 9,
+    state: { displayedCategoryCount: number; categories: Category[] },
+    step = 9
   ): void {
     if (state.displayedCategoryCount >= state.categories.length) return
 
     state.displayedCategoryCount = Math.min(
       state.displayedCategoryCount + step,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       state.categories.length
     )
-=======
-=======
->>>>>>> Stashed changes
-      state.categories.length,
-    );
->>>>>>> Stashed changes
   }
 
   /**
@@ -138,8 +122,8 @@ export function useCategoryManager() {
    * @param count - Target count to reset to (default: 9)
    */
   function resetDisplayedCategories(
-    state: { displayedCategoryCount: number, categories: Category[] },
-    count = 9,
+    state: { displayedCategoryCount: number; categories: Category[] },
+    count = 9
   ): void {
     state.displayedCategoryCount = Math.min(count, state.categories.length || count)
   }

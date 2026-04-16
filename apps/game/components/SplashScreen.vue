@@ -1,20 +1,6 @@
 <template>
   <transition name="fade-out">
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     <div v-if="visible" class="splash-screen">
-=======
-=======
->>>>>>> Stashed changes
-    <div
-      v-if="visible"
-      class="splash-screen"
-      data-testid="splash-screen"
-    >
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
       <!-- Background Image -->
       <img
         :src="getAssetPath('assets/splash/background.png')"
@@ -22,7 +8,7 @@
         class="splash-bg"
         width="1920"
         height="1080"
-      >
+      />
 
       <!-- Logo -->
       <div class="logo-container animate-fade-in">
@@ -32,7 +18,7 @@
           class="logo-image"
           width="512"
           height="512"
-        >
+        />
       </div>
 
       <!-- Loading Bar -->
@@ -43,7 +29,7 @@
           class="loading-text"
           width="256"
           height="64"
-        >
+        />
         <div class="loading-bar-wrapper">
           <img
             :src="getAssetPath('assets/splash/loading-down.png')"
@@ -51,7 +37,7 @@
             class="loading-bar-bg-img"
             width="512"
             height="64"
-          >
+          />
           <div class="loading-bar-track">
             <img
               :src="getAssetPath('assets/splash/loading-top.png')"
@@ -60,7 +46,7 @@
               width="512"
               height="64"
               :style="{ clipPath: `inset(0 ${100 - progress}% 0 0)` }"
-            >
+            />
           </div>
         </div>
         <div class="loading-percentage">{{ Math.round(progress) }}%</div>
@@ -77,14 +63,7 @@ const progress = ref(0)
 
 const emit = defineEmits<{
   complete: []
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }>()
-=======
-=======
->>>>>>> Stashed changes
-}>();
->>>>>>> Stashed changes
 
 const simulateLoading = () => {
   const duration = 2500 // 2.5 seconds

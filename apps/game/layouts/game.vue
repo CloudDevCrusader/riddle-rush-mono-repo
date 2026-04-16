@@ -1,39 +1,11 @@
 <template>
   <div class="game-layout">
     <!-- Background Image -->
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     <img v-if="backgroundImage" :src="backgroundImage" alt="Background" class="page-bg" />
 
     <!-- Back Button -->
     <button v-if="showBackButton" class="back-btn tap-highlight no-select" @click="handleBack">
       <img :src="backButtonImage" alt="Back" />
-=======
-=======
->>>>>>> Stashed changes
-    <img
-      v-if="backgroundImage"
-      :src="backgroundImage"
-      alt="Background"
-      class="page-bg-cover"
-    >
-
-    <!-- Back Button -->
-    <button
-      v-if="showBackButton"
-      class="tap-highlight no-select absolute left-md top-lg z-10 cursor-pointer border-none bg-transparent p-0 transition-transform active:scale-95 active:opacity-70 sm:left-xl sm:top-xl"
-      type="button"
-      @click="handleBack"
-    >
-      <img
-        :src="backButtonImage"
-        alt="Back"
-        class="h-auto w-[clamp(2.5rem,5vw,3.75rem)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] max-sm:w-10"
-      >
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     </button>
 
     <!-- Main Content Container -->
@@ -72,22 +44,11 @@ provide('setBackground', (src: string) => {
   backgroundImage.value = src
 })
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 provide('setBackButton', (config: { visible?: boolean; image?: string; onBack?: () => void }) => {
   if (config.visible !== undefined) showBackButton.value = config.visible
   if (config.image) backButtonImage.value = config.image
   if (config.onBack) onBackCallback.value = config.onBack
 })
-=======
-=======
->>>>>>> Stashed changes
-provide('setBackButton', (config: { visible?: boolean, image?: string, onBack?: () => void }) => {
-  if (config.visible !== undefined) showBackButton.value = config.visible;
-  if (config.image) backButtonImage.value = config.image;
-  if (config.onBack) onBackCallback.value = config.onBack;
-});
->>>>>>> Stashed changes
 
 // Handle back button click
 const handleBack = () => {

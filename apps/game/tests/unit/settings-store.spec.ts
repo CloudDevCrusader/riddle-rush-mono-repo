@@ -7,14 +7,7 @@ const localStorageMock = globalThis.localStorage as Storage & {
   setItem: ReturnType<typeof vi.fn>
   removeItem: ReturnType<typeof vi.fn>
   clear: ReturnType<typeof vi.fn>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }
-=======
-=======
->>>>>>> Stashed changes
-};
->>>>>>> Stashed changes
 
 let settingsStore: ReturnType<typeof useSettingsStore>
 

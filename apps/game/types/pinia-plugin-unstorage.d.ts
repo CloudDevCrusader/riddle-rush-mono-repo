@@ -5,8 +5,6 @@ declare module 'pinia' {
     persist?:
       | boolean
       | {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           storage?: string
           paths?: string[]
           serializer?: {
@@ -14,19 +12,5 @@ declare module 'pinia' {
             deserialize: (value: string) => any
           }
         }
-=======
-=======
->>>>>>> Stashed changes
-        storage?: string
-        paths?: string[]
-        serializer?: {
-          serialize: (value: any) => string
-          deserialize: (value: string) => any
-        }
-      }
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   }
 }

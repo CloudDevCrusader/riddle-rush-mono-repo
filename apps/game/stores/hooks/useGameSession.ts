@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 import { computed } from '#imports'
 import { useGameStore } from '~/stores/gameStore'
 import { usePlayerManager } from '~/composables/usePlayerManager'
@@ -7,15 +5,6 @@ import { usePlayerManager } from '~/composables/usePlayerManager'
 export function useGameSession() {
   const playerManager = usePlayerManager()
   const store = useGameStore()
-=======
-=======
->>>>>>> Stashed changes
-import { computed } from '#imports';
-import { useGameStore } from '~/stores/gameStore';
-
-export function useGameSession() {
-  const store = useGameStore();
->>>>>>> Stashed changes
 
   return {
     // State

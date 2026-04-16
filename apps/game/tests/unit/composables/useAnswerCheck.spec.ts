@@ -335,18 +335,9 @@ describe('useAnswerCheck', () => {
       const { checkAnswer } = useAnswerCheck()
 
       await expect(checkAnswer('unknown_category', 'A', 'Apple')).rejects.toThrow(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         'Category not found: unknown_category'
       )
     })
-=======
-=======
->>>>>>> Stashed changes
-        'Category not found: unknown_category',
-      );
-    });
->>>>>>> Stashed changes
 
     it('should throw error for unsupported search provider', async () => {
       fetchMock.mockResolvedValue([
@@ -356,20 +347,10 @@ describe('useAnswerCheck', () => {
       const { checkAnswer } = useAnswerCheck()
 
       await expect(checkAnswer('wiki_cat', 'A', 'Apple')).rejects.toThrow(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         'Wikipedia search provider not yet implemented'
       )
     })
   })
-=======
-=======
->>>>>>> Stashed changes
-        'Wikipedia search provider not yet implemented',
-      );
-    });
-  });
->>>>>>> Stashed changes
 
   describe('Category caching (getCategories)', () => {
     const categories = createCategoryList(3, [
@@ -424,22 +405,11 @@ describe('useAnswerCheck', () => {
 
       // Categories should be fetched twice (cache expired)
       const categoryCalls = fetchMock.mock.calls.filter(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         (call) => call[0] === '/data/categories.json'
       )
       expect(categoryCalls).toHaveLength(2)
     })
   })
-=======
-=======
->>>>>>> Stashed changes
-        call => call[0] === '/data/categories.json',
-      );
-      expect(categoryCalls).toHaveLength(2);
-    });
-  });
->>>>>>> Stashed changes
 
   describe('generateResult - additionalData merging', () => {
     it('should merge additionalData with PetScan results', async () => {

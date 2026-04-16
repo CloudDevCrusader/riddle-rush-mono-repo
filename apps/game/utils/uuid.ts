@@ -26,24 +26,10 @@ export function generateUUID(): string {
 
   // Set version (4) and variant (10xx) bits per RFC 4122
   // Uint8Array(16) is guaranteed to have indices 0-15
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   bytes[6] = (bytes[6]! & 0x0f) | 0x40
   bytes[8] = (bytes[8]! & 0x3f) | 0x80
 
   const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
-=======
-  bytes[6] = (bytes[6]! & 0x0F) | 0x40;
-  bytes[8] = (bytes[8]! & 0x3F) | 0x80;
-=======
-  bytes[6] = (bytes[6]! & 0x0F) | 0x40;
-  bytes[8] = (bytes[8]! & 0x3F) | 0x80;
-
-  const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
->>>>>>> Stashed changes
-
-  const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
->>>>>>> Stashed changes
 
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
 }

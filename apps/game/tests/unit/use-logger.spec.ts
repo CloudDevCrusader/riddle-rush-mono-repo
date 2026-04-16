@@ -101,18 +101,9 @@ describe('useLogger', () => {
           appVersion: '1.0.0-test',
           userId: '123',
           action: 'submit',
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         })
       )
     })
-=======
-=======
->>>>>>> Stashed changes
-        }),
-      );
-    });
->>>>>>> Stashed changes
 
     it('should sync errors', () => {
       const logger = useLogger()
@@ -127,18 +118,9 @@ describe('useLogger', () => {
         expect.objectContaining({
           timestamp: expect.any(String),
           environment: 'test',
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         })
       )
     })
-=======
-=======
->>>>>>> Stashed changes
-        }),
-      );
-    });
->>>>>>> Stashed changes
 
     it('should handle errors without error object', () => {
       const logger = useLogger()
@@ -150,18 +132,9 @@ describe('useLogger', () => {
         undefined,
         expect.objectContaining({
           timestamp: expect.any(String),
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         })
       )
     })
-=======
-=======
->>>>>>> Stashed changes
-        }),
-      );
-    });
->>>>>>> Stashed changes
 
     it('should include window location and user agent', () => {
       const logger = useLogger()
@@ -174,20 +147,10 @@ describe('useLogger', () => {
         expect.objectContaining({
           url: expect.any(String),
           userAgent: expect.any(String),
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         })
       )
     })
   })
-=======
-=======
->>>>>>> Stashed changes
-        }),
-      );
-    });
-  });
->>>>>>> Stashed changes
 
   describe('debug', () => {
     it('should log debug messages in development', () => {

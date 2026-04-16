@@ -148,20 +148,10 @@ export function useForm<T extends Record<string, unknown>>(fields: Record<keyof 
   // Computed properties
   const isValid = computed(() => {
     return Object.values(errors as Record<string, string | undefined>).every(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       (error) => error === undefined
     )
   })
   const isDirty = computed(() => Object.values(touched).some(Boolean))
-=======
-=======
->>>>>>> Stashed changes
-      error => error === undefined,
-    );
-  });
-  const isDirty = computed(() => Object.values(touched).some(Boolean));
->>>>>>> Stashed changes
 
   return {
     values: readonly(values),
@@ -196,7 +186,7 @@ export const validationRules = {
 
   minLength: (
     length: number,
-    message = `Must be at least ${length} characters`,
+    message = `Must be at least ${length} characters`
   ): ValidationRule<string> => ({
     validate: (value: string) => value.length >= length,
     message,
@@ -204,7 +194,7 @@ export const validationRules = {
 
   maxLength: (
     length: number,
-    message = `Must be at most ${length} characters`,
+    message = `Must be at most ${length} characters`
   ): ValidationRule<string> => ({
     validate: (value: string) => value.length <= length,
     message,

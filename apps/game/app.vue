@@ -1,20 +1,8 @@
 <template>
-  <div
-    id="app"
-    class="app-container"
-  >
-    <Transition
-      name="splash-fade"
-      mode="out-in"
-    >
-      <SplashScreen
-        v-if="showSplash"
-        @complete="onSplashComplete"
-      />
-      <div
-        v-else
-        class="main-content"
-      >
+  <div id="app" class="app-container">
+    <Transition name="splash-fade" mode="out-in">
+      <SplashScreen v-if="showSplash" @complete="onSplashComplete" />
+      <div v-else class="main-content">
         <NuxtLayout>
           <NuxtPage />
         </NuxtLayout>
@@ -30,7 +18,6 @@
 <script setup lang="ts">
 import type { BeforeInstallPromptEvent } from '@riddle-rush/types/game'
 
-<<<<<<< Updated upstream
 const gameSession = useGameSession()
 const installPrompt = useInstallPrompt()
 const settings = useSettings()
@@ -42,63 +29,6 @@ const isE2E =
   (typeof window !== 'undefined' &&
     (window as Window & { playwrightTest?: boolean }).playwrightTest)
 const showSplash = ref(!isE2E)
-=======
-const gameSession = useGameSession();
-const installPrompt = useInstallPrompt();
-const settings = useSettings();
-const { setLocale, t } = useI18n();
-
-useDocumentLang();
-
-const jsonLdPayload = computed(() =>
-  JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    'name': t('seo.site_name'),
-    'description': t('seo.json_ld_description'),
-    'applicationCategory': 'GameApplication',
-    'operatingSystem': 'Web',
-    'browserRequirements': 'Requires JavaScript. Progressive Web App.',
-    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR' },
-    'inLanguage': ['de-DE', 'en-US'],
-  }),
-);
-
-useHead(() => ({
-  script: [
-    {
-      key: 'jsonld-webapp',
-      type: 'application/ld+json',
-      innerHTML: jsonLdPayload.value,
-    },
-  ],
-}));
-
-// Disable splash screen in E2E tests
-const playwrightE2EWindow = () =>
-  typeof window !== 'undefined'
-  && Boolean((window as Window & { playwrightTest?: boolean }).playwrightTest);
-
-const isE2E = process.env.NODE_ENV === 'test' || playwrightE2EWindow();
-
-/** Ref + onBeforeMount so transition turns off if the flag appears after first setup tick. */
-/** No `mode: out-in` — that clears the whole page between routes and feels like a reload. */
-const nuxtRouteTransition = shallowRef<false | { name: string }>(
-  isE2E
-    ? false
-    : {
-        name: 'page-opacity',
-      },
-);
-
-onBeforeMount(() => {
-  if (process.env.NODE_ENV === 'test' || playwrightE2EWindow()) {
-    nuxtRouteTransition.value = false;
-  }
-});
-
-const showSplash = ref(!isE2E);
->>>>>>> Stashed changes
 
 const onSplashComplete = () => {
   showSplash.value = false

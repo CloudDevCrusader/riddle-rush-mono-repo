@@ -8,39 +8,18 @@ import { describe, it, expect } from 'vitest'
 interface PlayerForRank {
   id: string
   totalScore: number
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-  /** Included in totalScore until pending replaces it (see assignPlayerScore). */
-  currentRoundScore?: number
->>>>>>> Stashed changes
-=======
-  /** Included in totalScore until pending replaces it (see assignPlayerScore). */
-  currentRoundScore?: number
->>>>>>> Stashed changes
 }
 
 function computeProjectedRanks(
   players: PlayerForRank[],
-  pendingScores: Map<string, number>,
+  pendingScores: Map<string, number>
 ): Map<string, number> {
-<<<<<<< Updated upstream
   const ranked = [...players]
     .map((p) => ({
       id: p.id,
       projected: p.totalScore + (pendingScores.get(p.id) ?? 0),
     }))
     .sort((a, b) => b.projected - a.projected)
-=======
-  const ranked = orderBy(
-    players.map(p => ({
-      id: p.id,
-      projected: p.totalScore - (p.currentRoundScore ?? 0) + (pendingScores.get(p.id) ?? 0),
-    })),
-    ['projected'],
-    ['desc'],
-  );
->>>>>>> Stashed changes
 
   const ranks = new Map<string, number>()
   ranked.forEach((p, i) => ranks.set(p.id, i + 1))

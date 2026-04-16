@@ -8,14 +8,7 @@ type PiniaStoresWindow = Window & {
     settings: ReturnType<typeof useSettingsStore>
     loading: ReturnType<typeof useLoadingStore>
   }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }
-=======
-=======
->>>>>>> Stashed changes
-};
->>>>>>> Stashed changes
 
 export default defineNuxtPlugin(() => {
   if (import.meta.client) {

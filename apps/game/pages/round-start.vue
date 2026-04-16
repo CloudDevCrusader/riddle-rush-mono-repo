@@ -8,7 +8,6 @@
       quality="80"
       preset="background"
       loading="eager"
-<<<<<<< Updated upstream
       preload
     />
 
@@ -24,97 +23,8 @@
         :categories="allCategories"
         @selection-ready="onSelectionReady"
       />
-=======
-      fetchpriority="high"
-      width="1920"
-      height="1080"
-    >
 
-    <header class="round-start-header">
-      <button
-        type="button"
-        class="game-back-btn game-back-btn--red tap-highlight no-select"
-        data-testid="round-start-back-button"
-        :disabled="startingGame"
-        :aria-label="t('common.back')"
-        @click="handleRoundStartBack"
-      >
-        <img
-          :src="getAssetPath('assets/alphabets/back.png')"
-          :alt="t('common.back')"
-          class="round-start-back-icon"
-          loading="eager"
-          width="32"
-          height="32"
-        >
-      </button>
-    </header>
-
-    <div class="container">
-      <div
-        v-if="isFortuneWheelEnabled && !startingGame"
-        class="round-start-wheel-block"
-      >
-        <GameHeader
-          color="gold"
-          class="round-start-headline"
-          data-testid="round-start-headline"
-        >
-          {{ t('game.round_start_title') }}
-        </GameHeader>
-        <div
-          v-if="showRoundStartCategoryLine"
-          class="round-start-category-selection"
-          data-testid="round-start-category-row"
-        >
-          <div class="round-start-selection-row">
-            <span class="round-start-selection-row__label">{{ t('common.category', 'Category') }}:</span>
-            <div
-              class="round-start-category-strip"
-              :class="{
-                'round-start-category-strip--spinning': fortuneCategoryDisplay?.isSpinning,
-                'round-start-category-strip--settled': categoryStripSettled,
-                'round-start-category-strip--placeholder': categoryStripPlaceholder,
-                'round-start-category-strip--land-pulse': fortuneCategoryDisplay?.landedPulse,
-              }"
-              role="group"
-              :aria-label="t('common.category', 'Category')"
-            >
-              <div
-                v-for="slot in categoryStripSlots"
-                :key="slot.offset"
-                class="round-start-strip-cell"
-                :data-offset="slot.offset"
-                :class="{ 'round-start-strip-cell--center': slot.offset === 0 }"
-              >
-                <span
-                  class="round-start-strip-cell__emoji"
-                  aria-hidden="true"
-                >{{
-                  slot.emoji
-                }}</span>
-                <span
-                  class="round-start-strip-cell__text"
-                  :data-testid="slot.offset === 0 ? 'fortune-wheel-selected-category' : undefined"
-                >{{ slot.label }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <FortuneAlphabetWheel
-          :categories="allCategories"
-          :embed-category-row="false"
-          @category-display="onFortuneCategoryDisplay"
-          @selection-ready="onSelectionReady"
-        />
-      </div>
->>>>>>> Stashed changes
-
-      <div
-        v-if="startingGame"
-        class="loading-container"
-        data-testid="round-loading"
-      >
+      <div v-if="startingGame" class="loading-container" data-testid="round-loading">
         <Spinner />
         <p class="loading-text">
           {{ t('home.starting_game', 'Starting game...') }}
@@ -139,83 +49,12 @@ const startingGame = ref(false)
 
 const allCategories = ref<Category[]>([])
 
-<<<<<<< Updated upstream
 const currentRoundNumber = computed(() => {
   const session = gameStore.currentSession.value
   if (!session) return 1
   const isCurrentRoundCompleted = session.roundHistory.length >= session.currentRound
   return isCurrentRoundCompleted ? session.currentRound + 1 : session.currentRound
 })
-=======
-function handleRoundStartBack() {
-  if (startingGame.value) return;
-  void goToPlayers();
-}
-
-function onFortuneCategoryDisplay(payload: FortuneWheelCategoryDisplay) {
-  fortuneCategoryDisplay.value = payload;
-}
-
-const showRoundStartCategoryLine = computed(
-  () => isFortuneWheelEnabled.value && !startingGame.value && allCategories.value.length > 0,
-);
-
-/** No pick yet (or idle) — centre shows * / -, side slots hidden. */
-const categoryStripPlaceholder = computed(() => {
-  const d = fortuneCategoryDisplay.value;
-  if (!d) return true;
-  return !d.isSpinning && d.categoryId == null;
-});
-
-/** Side neighbours visible while spinning; after stop only the centre remains. */
-const categoryStripSettled = computed(() => {
-  const d = fortuneCategoryDisplay.value;
-  return !!(d && !d.isSpinning && d.categoryId != null);
-});
-
-const STRIP_OFFSETS = [-2, -1, 0, 1, 2] as const;
-
-function categoryIndexAtOffset(centerIdx: number, offset: number, n: number): number {
-  if (n <= 0) return 0;
-  return (centerIdx + offset + n * 100) % n;
-}
-
-const centerCategoryIndex = computed(() => {
-  const d = fortuneCategoryDisplay.value;
-  const id = d?.categoryId;
-  if (id == null) return 0;
-  const list = allCategories.value;
-  const idx = list.findIndex(c => c.id === id);
-  return idx >= 0 ? idx : 0;
-});
-
-const categoryStripSlots = computed(() => {
-  const list = allCategories.value;
-  const n = list.length;
-  const d = fortuneCategoryDisplay.value;
-  const placeholder = !d || (!d.isSpinning && d.categoryId == null);
-
-  if (placeholder) {
-    return STRIP_OFFSETS.map(offset => ({
-      offset,
-      category: null as Category | null,
-      label: offset === 0 ? FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_LABEL : '\u00A0',
-      emoji: offset === 0 ? FORTUNE_WHEEL_CATEGORY_PLACEHOLDER_EMOJI : '',
-    }));
-  }
-
-  const ci = centerCategoryIndex.value;
-  return STRIP_OFFSETS.map((offset) => {
-    const cat = n ? list[categoryIndexAtOffset(ci, offset, n)]! : null;
-    return {
-      offset,
-      category: cat,
-      label: cat ? t(`categories.${cat.searchWord}`, cat.name) : '—',
-      emoji: gameStore.categoryEmoji(cat?.name ?? null),
-    };
-  });
-});
->>>>>>> Stashed changes
 
 async function startGame(category: Category, letter: string) {
   await gameStore.fetchCategories()
@@ -258,16 +97,8 @@ async function onSelectionReady(selection: FortuneWheelSelection) {
   if (startingGame.value) return
 
   const selectedCategory = allCategories.value.find(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     (category) => category.id === selection.categoryId
   )
-=======
-=======
->>>>>>> Stashed changes
-    category => category.id === selection.categoryId,
-  );
->>>>>>> Stashed changes
 
   if (!selectedCategory) {
     toast.error(t('game.error_starting', 'Failed to start game. Please try again.'))

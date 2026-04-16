@@ -11,8 +11,6 @@ export function getStageConfig() {
   const isPreview = stage === 'preview'
 
   // Determine base URL based on stage
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   const baseUrl =
     process.env.NUXT_PUBLIC_SITE_URL ||
     (isProduction
@@ -20,20 +18,6 @@ export function getStageConfig() {
       : isPreview && process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000')
-=======
-=======
->>>>>>> Stashed changes
-  const baseUrl
-    = process.env.NUXT_PUBLIC_SITE_URL
-      || (isProduction
-        ? 'https://riddle-rush.vercel.app'
-        : isPreview && process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'http://localhost:3000');
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   return {
     // Runtime config that can be overridden by environment variables
@@ -49,8 +33,7 @@ export function getStageConfig() {
         enableDebugPanel: !isProduction || process.env.ENABLE_DEBUG_PANEL === 'true',
         enablePwa: isProduction || process.env.ENABLE_PWA === 'true',
         // Analytics
-        googleAnalyticsId:
-          process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID || process.env.GOOGLE_ANALYTICS_ID || '',
+        googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID || '',
       },
     },
 
@@ -59,7 +42,7 @@ export function getStageConfig() {
       head: {
         title: isProduction ? 'Riddle Rush' : `Riddle Rush (${stage})`,
         htmlAttrs: {
-          'lang': 'en',
+          lang: 'en',
           'data-stage': stage,
         },
       },

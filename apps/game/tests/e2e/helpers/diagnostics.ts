@@ -25,15 +25,7 @@ export interface BrowserMetrics {
   cls: number | null
   fid: number | null
   ttfb: number | null
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   memory?: { usedJSHeapSize: number; totalJSHeapSize: number }
-=======
-  memory?: { usedJSHeapSize: number, totalJSHeapSize: number }
->>>>>>> Stashed changes
-=======
-  memory?: { usedJSHeapSize: number, totalJSHeapSize: number }
->>>>>>> Stashed changes
 }
 
 interface ConsoleCapture {
@@ -73,15 +65,7 @@ export async function captureGameState(page: Page): Promise<GameStateSnapshot> {
     // Access Pinia stores from window (exposed by pinia.client.ts for testing)
     const piniaStores = (
       window as unknown as {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         __pinia_stores__?: { game?: unknown; settings?: unknown }
-=======
-        __pinia_stores__?: { game?: unknown, settings?: unknown }
->>>>>>> Stashed changes
-=======
-        __pinia_stores__?: { game?: unknown, settings?: unknown }
->>>>>>> Stashed changes
       }
     ).__pinia_stores__
     let gameStore: unknown = null
@@ -101,23 +85,10 @@ export async function captureGameState(page: Page): Promise<GameStateSnapshot> {
           }
         }
       }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     ).__app__
     const route =
       app?.config?.globalProperties?.$router?.currentRoute?.value?.fullPath ??
       window.location.pathname
-=======
-=======
->>>>>>> Stashed changes
-    ).__app__;
-    const route
-      = app?.config?.globalProperties?.$router?.currentRoute?.value?.fullPath
-        ?? window.location.pathname;
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     // Capture storage
     const localStorage: Record<string, string> = {}
@@ -179,18 +150,9 @@ export async function captureNetworkTimeline(page: Page): Promise<NetworkCapture
     const duration = startTime ? Date.now() - startTime : 0
 
     // Determine response size from headers
-<<<<<<< Updated upstream
     const headers = response.headers()
     const contentLength = headers['content-length']
     const size = contentLength ? parseInt(contentLength, 10) : 0
-=======
-    const headers = response.headers();
-    const contentLength = headers['content-length'];
-    const size = contentLength ? Number.parseInt(contentLength, 10) : 0;
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     // Determine resource type from content-type header
     const contentType = headers['content-type'] ?? ''
@@ -246,16 +208,8 @@ export async function captureBrowserMetrics(page: Page): Promise<BrowserMetrics>
     }
 
     // Get paint timing entries for FCP
-<<<<<<< Updated upstream
     const paintEntries = performance.getEntriesByType('paint')
     const fcpEntry = paintEntries.find((entry) => entry.name === 'first-contentful-paint')
-=======
-    const paintEntries = performance.getEntriesByType('paint');
-    const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     if (fcpEntry) {
       result.fcp = fcpEntry.startTime
     }
@@ -278,16 +232,8 @@ export async function captureBrowserMetrics(page: Page): Promise<BrowserMetrics>
     const layoutShiftEntries = performance.getEntriesByType('layout-shift') as (PerformanceEntry & {
       hadRecentInput?: boolean
       value?: number
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     })[]
     let clsValue = 0
-=======
-=======
->>>>>>> Stashed changes
-    })[];
-    let clsValue = 0;
->>>>>>> Stashed changes
     for (const entry of layoutShiftEntries) {
       if (!entry.hadRecentInput && entry.value) {
         clsValue += entry.value
@@ -297,16 +243,8 @@ export async function captureBrowserMetrics(page: Page): Promise<BrowserMetrics>
 
     // Get memory info if available (Chrome only)
     const perfWithMemory = performance as Performance & {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       memory?: { usedJSHeapSize: number; totalJSHeapSize: number }
     }
-=======
-=======
->>>>>>> Stashed changes
-      memory?: { usedJSHeapSize: number, totalJSHeapSize: number }
-    };
->>>>>>> Stashed changes
     if (perfWithMemory.memory) {
       result.memory = {
         usedJSHeapSize: perfWithMemory.memory.usedJSHeapSize,
@@ -321,16 +259,8 @@ export async function captureBrowserMetrics(page: Page): Promise<BrowserMetrics>
   const fidValue = await page.evaluate(() => {
     const fidEntries = performance.getEntriesByType('first-input') as (PerformanceEntry & {
       processingStart?: number
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     })[]
     const fidEntry = fidEntries[0]
-=======
-=======
->>>>>>> Stashed changes
-    })[];
-    const fidEntry = fidEntries[0];
->>>>>>> Stashed changes
     if (fidEntry && fidEntry.processingStart !== undefined) {
       return fidEntry.processingStart - fidEntry.startTime
     }
@@ -349,8 +279,6 @@ export async function captureConsoleLogs(page: Page): Promise<ConsoleCapture> {
   const logs: string[] = []
   let isCapturing = false
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   const onConsole = (msg: { type: () => string; text: () => string }) => {
     if (!isCapturing) return
     const type = msg.type()
@@ -358,17 +286,6 @@ export async function captureConsoleLogs(page: Page): Promise<ConsoleCapture> {
     const timestamp = new Date().toISOString()
     logs.push(`[${timestamp}] [${type.toUpperCase()}] ${text}`)
   }
-=======
-=======
->>>>>>> Stashed changes
-  const onConsole = (msg: { type: () => string, text: () => string }) => {
-    if (!isCapturing) return;
-    const type = msg.type();
-    const text = msg.text();
-    const timestamp = new Date().toISOString();
-    logs.push(`[${timestamp}] [${type.toUpperCase()}] ${text}`);
-  };
->>>>>>> Stashed changes
 
   return {
     start: () => {
@@ -391,7 +308,7 @@ export async function captureConsoleLogs(page: Page): Promise<ConsoleCapture> {
 export async function logToArtifacts(
   testInfo: TestInfo,
   name: string,
-  data: unknown,
+  data: unknown
 ): Promise<void> {
   const jsonContent = JSON.stringify(data, null, 2)
 
@@ -407,7 +324,7 @@ export async function logToArtifacts(
 export async function generateDebugReport(
   page: Page,
   testInfo: TestInfo,
-  error?: Error,
+  error?: Error
 ): Promise<DebugReport> {
   // Capture game state
   let gameState: GameStateSnapshot

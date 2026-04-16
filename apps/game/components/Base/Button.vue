@@ -1,14 +1,6 @@
 <template>
-  <button
-    :class="buttonClasses"
-    :type="type"
-    :disabled="disabled || loading"
-    @click="handleClick"
-  >
-    <span
-      v-if="loading"
-      class="button-spinner"
-    />
+  <button :class="buttonClasses" :type="type" :disabled="disabled || loading" @click="handleClick">
+    <span v-if="loading" class="button-spinner" />
     <slot v-else />
   </button>
 </template>
@@ -34,14 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   click: [event: MouseEvent]
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }>()
-=======
-=======
->>>>>>> Stashed changes
-}>();
->>>>>>> Stashed changes
 
 const buttonClasses = computed(() => [
   'base-button',

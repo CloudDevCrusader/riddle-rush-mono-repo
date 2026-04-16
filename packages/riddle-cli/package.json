@@ -22,32 +22,21 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     "@oclif/core": "^4.10.3",
     "@oclif/plugin-help": "^6.2.40"
-=======
-=======
->>>>>>> Stashed changes
-    "@oclif/core": "^4.10.5",
-    "@oclif/plugin-help": "^6.2.44"
->>>>>>> Stashed changes
   },
   "devDependencies": {
+    "@eslint/json": "^1.2.0",
+    "@eslint/markdown": "^7.5.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^25.6.0",
     "eslint": "^10.2.0",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     "globals": "^17.4.0",
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     "mocha": "^11.7.5",
     "oclif": "^4.22.79",
     "shx": "^0.4.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -63,8 +52,8 @@
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "pnpm run lint",
     "prepack": "oclif manifest && oclif readme",

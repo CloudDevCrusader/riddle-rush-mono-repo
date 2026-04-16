@@ -21,18 +21,9 @@ describe('useLodash', { timeout: 60_000 }, () => {
 
       expect(fn).not.toHaveBeenCalled()
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       await new Promise((resolve) => setTimeout(resolve, 150))
       expect(fn).toHaveBeenCalledTimes(1)
     })
-=======
-=======
->>>>>>> Stashed changes
-      await new Promise(resolve => setTimeout(resolve, 150));
-      expect(fn).toHaveBeenCalledTimes(1);
-    });
->>>>>>> Stashed changes
 
     it('should throttle function calls', async () => {
       const fn = vi.fn()
@@ -45,16 +36,8 @@ describe('useLodash', { timeout: 60_000 }, () => {
 
       expect(fn).toHaveBeenCalledTimes(1)
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       await new Promise((resolve) => setTimeout(resolve, 150))
       throttled()
-=======
-=======
->>>>>>> Stashed changes
-      await new Promise(resolve => setTimeout(resolve, 150));
-      throttled();
->>>>>>> Stashed changes
       // Throttle may call on trailing edge, so we accept 2 or 3 calls
       expect(fn.mock.calls.length).toBeGreaterThanOrEqual(2)
       expect(fn.mock.calls.length).toBeLessThanOrEqual(3)
@@ -572,18 +555,9 @@ describe('useLodash', { timeout: 60_000 }, () => {
       expect(uniquePlayers).toHaveLength(2)
 
       // Pick only relevant fields
-<<<<<<< Updated upstream
       const pickModule = await lodash.pick
       const simplified = answers.map((a) => pickModule(a, ['answer', 'points']))
       expect(simplified[0]).toEqual({ answer: 'Apple', points: 10 })
     })
   })
 })
-=======
-      const pickModule = await lodash.pick;
-      const simplified = answers.map(a => pickModule(a, ['answer', 'points']));
-      expect(simplified[0]).toEqual({ answer: 'Apple', points: 10 });
-    });
-  });
-});
->>>>>>> Stashed changes

@@ -97,16 +97,8 @@ describe('usePersistence', () => {
 
       await loadSessionFromDB()
 
-<<<<<<< Updated upstream
       expect(mockLoggerError).toHaveBeenCalledWith('Error loading session from IndexedDB:', dbError)
     })
-=======
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error loading session from IndexedDB:',
-        dbError,
-      );
-    });
->>>>>>> Stashed changes
 
     it('should return null (not throw) when IndexedDB fails', async () => {
       mockGetGameSession.mockRejectedValueOnce(new Error('Fatal error'))
@@ -144,16 +136,8 @@ describe('usePersistence', () => {
 
       await loadHistoryFromDB()
 
-<<<<<<< Updated upstream
       expect(mockLoggerError).toHaveBeenCalledWith('Error loading history from IndexedDB:', dbError)
     })
-=======
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Error loading history from IndexedDB:',
-        dbError,
-      );
-    });
->>>>>>> Stashed changes
 
     it('should return null (not throw) when IndexedDB fails', async () => {
       mockGetGameHistory.mockRejectedValueOnce(new Error('Fatal error'))
@@ -260,36 +244,18 @@ describe('usePersistence', () => {
       const { loadSessionById } = usePersistence()
 
       await expect(loadSessionById('missing-id')).rejects.toThrow(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         'Game session with ID missing-id not found'
       )
     })
-=======
-=======
->>>>>>> Stashed changes
-        'Game session with ID missing-id not found',
-      );
-    });
->>>>>>> Stashed changes
 
     it('should throw error when IndexedDB lookup fails', async () => {
       mockGetGameSessionById.mockRejectedValueOnce(new Error('DB error'))
       const { loadSessionById } = usePersistence()
 
       await expect(loadSessionById('session-123')).rejects.toThrow(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         'Database error loading session session-123'
       )
     })
-=======
-=======
->>>>>>> Stashed changes
-        'Database error loading session session-123',
-      );
-    });
->>>>>>> Stashed changes
 
     it('should log error when load by ID fails', async () => {
       mockGetGameSessionById.mockRejectedValueOnce(new Error('Lookup error'))
@@ -303,18 +269,9 @@ describe('usePersistence', () => {
 
       expect(mockLoggerError).toHaveBeenCalledWith(
         'Error loading game session by ID:',
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         expect.any(Error)
       )
     })
-=======
-=======
->>>>>>> Stashed changes
-        expect.any(Error),
-      );
-    });
->>>>>>> Stashed changes
 
     it('should not log error when session not found (only logs on DB errors)', async () => {
       mockGetGameSessionById.mockResolvedValueOnce(null)

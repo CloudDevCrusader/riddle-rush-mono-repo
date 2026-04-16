@@ -24,18 +24,9 @@ export default class Stats extends Command {
     this.log('║                                                                        ║')
     this.log(`║  Total Agents Detected ............ ${agents.installed}/9                       ║`)
     this.log(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `║  Configured Agents ................ ${configs.configured}/9                       ║`
     )
     this.log('║                                                                        ║')
-=======
-=======
->>>>>>> Stashed changes
-      `║  Configured Agents ................ ${configs.configured}/9                       ║`,
-    );
-    this.log('║                                                                        ║');
->>>>>>> Stashed changes
 
     // Agent status
     this.log('╠════════════════════════════════════════════════════════════════════════╣')
@@ -70,16 +61,8 @@ export default class Stats extends Command {
       const installedPadded = installed.padEnd(11)
       const configuredPadded = configured.padEnd(11)
       this.log(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         `║ ${namePadded} │ ${installedPadded} │ ${configuredPadded} │ ${apiStatus.padEnd(20)} ║`
       )
-=======
-=======
->>>>>>> Stashed changes
-        `║ ${namePadded} │ ${installedPadded} │ ${configuredPadded} │ ${apiStatus.padEnd(20)} ║`,
-      );
->>>>>>> Stashed changes
     }
 
     // Git status
@@ -101,35 +84,19 @@ export default class Stats extends Command {
     this.log('')
   }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   private detectAgents(): { installed: number; details: Record<string, boolean> } {
     const details: Record<string, boolean> = {}
-=======
-=======
->>>>>>> Stashed changes
-  private detectAgents(): { installed: number, details: Record<string, boolean> } {
-    const details: Record<string, boolean> = {};
->>>>>>> Stashed changes
     const commands = {
       'claude-code': 'claude',
-      'codex': 'codex',
-      'copilot': 'gh',
+      codex: 'codex',
+      copilot: 'gh',
       'cursor-agent': '',
-      'fastmcp': '',
+      fastmcp: '',
       'gemini-cli': 'gemini',
-      'kilocode': 'kilocode',
+      kilocode: 'kilocode',
       'mistral-vibe': 'mistral',
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       opencode: 'opencode',
     }
-=======
-=======
->>>>>>> Stashed changes
-      'opencode': 'opencode',
-    };
->>>>>>> Stashed changes
 
     for (const [agent, cmd] of Object.entries(commands)) {
       if (agent === 'cursor-agent') {
@@ -145,8 +112,6 @@ export default class Stats extends Command {
     return { details, installed }
   }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   private checkConfigs(): { configured: number; details: Record<string, boolean> } {
     const details: Record<string, boolean> = {}
     const home = homedir()
@@ -162,25 +127,6 @@ export default class Stats extends Command {
     details['cursor-agent'] = existsSync(join(process.cwd(), '.cursor/mcp.json'))
     details.codex = false
     details['mistral-vibe'] = false
-=======
-=======
->>>>>>> Stashed changes
-  private checkConfigs(): { configured: number, details: Record<string, boolean> } {
-    const details: Record<string, boolean> = {};
-    const home = homedir();
-
-    details.opencode = existsSync(join(home, '.config/opencode/perplexity.json'));
-    details.kilocode = existsSync(join(home, '.config/kilocode/perplexity.json'));
-    details['claude-code'] = existsSync(join(home, '.config/claude'));
-    details.copilot = this.checkCommand('gh auth status');
-    details.fastmcp = existsSync(join(home, '.config/claude/fastmcp.json'));
-    details['gemini-cli']
-      = existsSync(join(home, '.config/gemini-cli/mcp.json'))
-        || existsSync(join(home, '.config/gemini/mcp.json'));
-    details['cursor-agent'] = existsSync(join(process.cwd(), '.cursor/mcp.json'));
-    details.codex = false;
-    details['mistral-vibe'] = false;
->>>>>>> Stashed changes
 
     const configured = Object.values(details).filter(Boolean).length
     return { configured, details }
@@ -201,27 +147,15 @@ export default class Stats extends Command {
     ]
 
     for (const key of apiKeys) {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       keys[key] =
         Boolean(process.env[key]) ||
         (existsSync(secretsFile) && this.fileContains(secretsFile, key))
-=======
-      keys[key]
-        = Boolean(process.env[key])
-          || (existsSync(secretsFile) && this.fileContains(secretsFile, key));
->>>>>>> Stashed changes
-=======
-      keys[key]
-        = Boolean(process.env[key])
-          || (existsSync(secretsFile) && this.fileContains(secretsFile, key));
->>>>>>> Stashed changes
     }
 
     return keys
   }
 
-  private getGitStatus(): { branch: string, uncommitted: number, unpushed: number } {
+  private getGitStatus(): { branch: string; uncommitted: number; unpushed: number } {
     try {
       const branch = execSync('git branch --show-current', { encoding: 'utf8' }).trim()
       const uncommitted = execSync('git status --porcelain', { encoding: 'utf8' })

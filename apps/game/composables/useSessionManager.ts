@@ -34,7 +34,7 @@ export function useSessionManager() {
     players: Player[],
     category: Category,
     letter: string,
-    gameName?: string,
+    gameName?: string
   ): GameSession {
     return {
       id: generateUUID(),

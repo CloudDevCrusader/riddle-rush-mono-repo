@@ -1,8 +1,8 @@
-import type { Plugin } from 'vite';
-import { resolve } from 'node:path';
-import { createRequire } from 'node:module';
+import type { Plugin } from 'vite'
+import { resolve } from 'node:path'
+import { createRequire } from 'node:module'
 
-const require = createRequire(import.meta.url);
+const require = createRequire(import.meta.url)
 
 /**
  * Shared Vite configuration utilities for the monorepo
@@ -22,39 +22,39 @@ export function getWorkspaceAliases(workspaceRoot: string = process.cwd()) {
     '@riddle-rush/shared': resolve(workspaceRoot, 'packages/shared/src'),
     '@riddle-rush/types': resolve(workspaceRoot, 'packages/types/src'),
     '@riddle-rush/config': resolve(workspaceRoot, 'packages/config'),
-  };
+  }
 }
 
 /**
  * Shared Vite plugins for development
  */
 export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
-  const plugins: Plugin[] = [];
+  const plugins: Plugin[] = []
 
   // Only include dev plugins in development
   if (options.isDev !== false) {
     try {
       // Vite plugin for inspecting the transformation pipeline
-      const { default: inspect } = require('vite-plugin-inspect');
+      const { default: inspect } = require('vite-plugin-inspect')
       plugins.push(
         inspect({
           enabled: true,
           build: false,
-        }),
-      );
+        })
+      )
     } catch {
       // Plugin not installed, skip
     }
 
     try {
       // Vue DevTools for better debugging
-      const { VueDevTools } = require('vite-plugin-vue-devtools');
+      const { VueDevTools } = require('vite-plugin-vue-devtools')
       plugins.push(
         VueDevTools({
           enabled: true,
           componentInspector: true,
-        }),
-      );
+        })
+      )
     } catch {
       // Plugin not installed, skip
     }
@@ -64,32 +64,32 @@ export function getDevPlugins(options: ViteConfigOptions = {}): Plugin[] {
     try {
       // Visualize bundle size
 
-      const { visualizer } = require('rollup-plugin-visualizer');
+      const { visualizer } = require('rollup-plugin-visualizer')
       plugins.push(
         visualizer({
           filename: '.vite/stats.html',
           open: false,
           gzipSize: true,
           brotliSize: true,
-        }),
-      );
+        })
+      )
     } catch {
       // Plugin not installed, skip
     }
   }
 
-  return plugins;
+  return plugins
 }
 
 /**
  * Shared Vite plugins for production builds
  */
 export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
-  const plugins: Plugin[] = [];
+  const plugins: Plugin[] = []
 
   try {
     // Visualize bundle size in production
-    const { visualizer } = require('rollup-plugin-visualizer');
+    const { visualizer } = require('rollup-plugin-visualizer')
     plugins.push(
       visualizer({
         filename: '.vite/stats.html',
@@ -97,30 +97,30 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
         gzipSize: true,
         brotliSize: true,
         template: 'treemap', // or 'sunburst', 'network'
-      }),
-    );
+      })
+    )
   } catch {
     // Plugin not installed, skip
   }
 
   try {
     // Add compression plugin for better PWA performance
-    const viteCompression = require('vite-plugin-compression').default;
+    const viteCompression = require('vite-plugin-compression').default
     plugins.push(
       viteCompression({
         algorithm: 'brotliCompress',
         ext: '.br',
         threshold: 10240, // Only compress files larger than 10KB
         deleteOriginFile: false,
-      }),
-    );
+      })
+    )
   } catch {
     // Plugin not installed, skip
   }
 
   try {
     // Add image optimization using modern Sharp-based plugin
-    const { imagemin } = require('@vheemstra/vite-plugin-imagemin');
+    const { imagemin } = require('@vheemstra/vite-plugin-imagemin')
     plugins.push(
       imagemin({
         // PNG optimization - high quality compression
@@ -152,12 +152,12 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
             },
           ],
         },
-      }),
-    );
+      })
+    )
   } catch {
     // Fallback to old plugin if new one not available
     try {
-      const viteImagemin = require('vite-plugin-imagemin').default;
+      const viteImagemin = require('vite-plugin-imagemin').default
       plugins.push(
         viteImagemin({
           gifsicle: {
@@ -185,14 +185,14 @@ export function getBuildPlugins(_options: ViteConfigOptions = {}): Plugin[] {
               },
             ],
           },
-        }),
-      );
+        })
+      )
     } catch {
       // Plugin not installed, skip
     }
   }
 
-  return plugins;
+  return plugins
 }
 
 /**
@@ -202,7 +202,7 @@ export function getOptimizeDeps() {
   return {
     include: ['pinia', '@vueuse/core', '@vueuse/nuxt', 'idb'],
     exclude: ['@nuxt/test-utils'],
-  };
+  }
 }
 
 /**
@@ -249,7 +249,7 @@ export function getBuildConfig() {
       assetFileNames: 'assets/[name]-[hash].[ext]',
       entryFileNames: 'assets/[name]-[hash].js',
     },
-  };
+  }
 }
 
 /**
@@ -258,4 +258,4 @@ export function getBuildConfig() {
  */
 export default {
   // Empty config - this file is used for utility functions, not as an actual Vite config
-};
+}

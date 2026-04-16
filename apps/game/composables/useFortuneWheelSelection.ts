@@ -28,32 +28,14 @@ function mapCategoriesToSegments(
 }
 
 function validateSelection(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   segment: Partial<FortuneWheelSegment> | null | undefined,
   categories: Category[]
-=======
-  segment: { categoryId?: number, letter?: string } | null | undefined,
-  categories: Category[],
->>>>>>> Stashed changes
-=======
-  segment: { categoryId?: number, letter?: string } | null | undefined,
-  categories: Category[],
->>>>>>> Stashed changes
 ): FortuneWheelSelection | null {
   if (!segment || typeof segment.categoryId !== 'number' || typeof segment.letter !== 'string') {
     return null
   }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   const trustedCategory = categories.find((category) => category.id === segment.categoryId)
-=======
-  const trustedCategory = categories.find(category => category.id === segment.categoryId);
->>>>>>> Stashed changes
-=======
-  const trustedCategory = categories.find(category => category.id === segment.categoryId);
->>>>>>> Stashed changes
   if (!trustedCategory) {
     return null
   }

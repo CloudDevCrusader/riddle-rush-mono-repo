@@ -253,16 +253,8 @@ describe('useIndexedDB', () => {
 
     it('should respect the limit parameter', async () => {
       const sessions = Array.from({ length: 10 }, (_, i) =>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         createTestSession({ id: `sess-${i}`, startTime: i * 1000 })
       )
-=======
-=======
->>>>>>> Stashed changes
-        createTestSession({ id: `sess-${i}`, startTime: i * 1000 }),
-      );
->>>>>>> Stashed changes
 
       await db.saveGameHistory(sessions)
       const retrieved = await db.getGameHistory(3)
@@ -273,16 +265,8 @@ describe('useIndexedDB', () => {
     it('should default limit to 50', async () => {
       // Create 5 sessions and verify they're all returned with default limit
       const sessions = Array.from({ length: 5 }, (_, i) =>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         createTestSession({ id: `sess-${i}`, startTime: i * 1000 })
       )
-=======
-=======
->>>>>>> Stashed changes
-        createTestSession({ id: `sess-${i}`, startTime: i * 1000 }),
-      );
->>>>>>> Stashed changes
 
       await db.saveGameHistory(sessions)
       const retrieved = await db.getGameHistory()
@@ -358,20 +342,10 @@ describe('useIndexedDB', () => {
           averageScore: 36,
           streakCurrent: 3,
           streakBest: 7,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         })
       )
     })
   })
-=======
-=======
->>>>>>> Stashed changes
-        }),
-      );
-    });
-  });
->>>>>>> Stashed changes
 
   // =========================================================================
   // Initialize Statistics
@@ -445,16 +419,8 @@ describe('useIndexedDB', () => {
     it('should respect the limit parameter', async () => {
       for (let i = 0; i < 20; i++) {
         await db.saveLeaderboardEntry(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           createTestLeaderboardEntry({ sessionId: `entry-${i}`, score: i * 10 })
         )
-=======
-=======
->>>>>>> Stashed changes
-          createTestLeaderboardEntry({ sessionId: `entry-${i}`, score: i * 10 }),
-        );
->>>>>>> Stashed changes
       }
 
       const leaderboard = await db.getLeaderboard(5)
@@ -464,16 +430,8 @@ describe('useIndexedDB', () => {
     it('should default limit to 10', async () => {
       for (let i = 0; i < 15; i++) {
         await db.saveLeaderboardEntry(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           createTestLeaderboardEntry({ sessionId: `entry-${i}`, score: i * 10 })
         )
-=======
-=======
->>>>>>> Stashed changes
-          createTestLeaderboardEntry({ sessionId: `entry-${i}`, score: i * 10 }),
-        );
->>>>>>> Stashed changes
       }
 
       const leaderboard = await db.getLeaderboard()
@@ -483,16 +441,8 @@ describe('useIndexedDB', () => {
     it('should return top scores when limited', async () => {
       for (let i = 1; i <= 5; i++) {
         await db.saveLeaderboardEntry(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           createTestLeaderboardEntry({ sessionId: `entry-${i}`, score: i * 10 })
         )
-=======
-=======
->>>>>>> Stashed changes
-          createTestLeaderboardEntry({ sessionId: `entry-${i}`, score: i * 10 }),
-        );
->>>>>>> Stashed changes
       }
 
       const leaderboard = await db.getLeaderboard(3)
@@ -530,26 +480,11 @@ describe('useIndexedDB', () => {
 
     it('should update entry with same sessionId', async () => {
       await db.saveLeaderboardEntry(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         createTestLeaderboardEntry({ sessionId: 'update-test', score: 50 })
       )
       await db.saveLeaderboardEntry(
         createTestLeaderboardEntry({ sessionId: 'update-test', score: 100 })
       )
-=======
-        createTestLeaderboardEntry({ sessionId: 'update-test', score: 50 }),
-=======
-        createTestLeaderboardEntry({ sessionId: 'update-test', score: 50 }),
-      );
-      await db.saveLeaderboardEntry(
-        createTestLeaderboardEntry({ sessionId: 'update-test', score: 100 }),
->>>>>>> Stashed changes
-      );
-      await db.saveLeaderboardEntry(
-        createTestLeaderboardEntry({ sessionId: 'update-test', score: 100 }),
-      );
->>>>>>> Stashed changes
 
       const leaderboard = await db.getLeaderboard()
       expect(leaderboard).toHaveLength(1)
@@ -714,16 +649,8 @@ describe('useIndexedDB', () => {
 
     it('should save batch history in a single transaction', async () => {
       const sessions = Array.from({ length: 50 }, (_, i) =>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         createTestSession({ id: `batch-${i}`, startTime: i * 1000 })
       )
-=======
-=======
->>>>>>> Stashed changes
-        createTestSession({ id: `batch-${i}`, startTime: i * 1000 }),
-      );
->>>>>>> Stashed changes
 
       await db.saveGameHistory(sessions)
       const retrieved = await db.getGameHistory(50)
@@ -765,16 +692,8 @@ describe('useIndexedDB', () => {
 
     it('should handle large datasets in game history', async () => {
       const sessions = Array.from({ length: 100 }, (_, i) =>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         createTestSession({ id: `large-${i}`, startTime: i * 1000 })
       )
-=======
-=======
->>>>>>> Stashed changes
-        createTestSession({ id: `large-${i}`, startTime: i * 1000 }),
-      );
->>>>>>> Stashed changes
 
       await db.saveGameHistory(sessions)
       const retrieved = await db.getGameHistory(50)

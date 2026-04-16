@@ -1,13 +1,7 @@
 <template>
-  <div
-    class="spinner"
-    :class="[`spinner--${size}`, { 'spinner--overlay': overlay }]"
-  >
+  <div class="spinner" :class="[`spinner--${size}`, { 'spinner--overlay': overlay }]">
     <div class="spinner__circle" />
-    <span
-      v-if="label"
-      class="spinner__label"
-    >{{ label }}</span>
+    <span v-if="label" class="spinner__label">{{ label }}</span>
   </div>
 </template>
 
@@ -22,16 +16,8 @@ withDefaults(
     size: 'md',
     label: '',
     overlay: false,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   }
 )
-=======
-=======
->>>>>>> Stashed changes
-  },
-);
->>>>>>> Stashed changes
 </script>
 
 <style scoped>

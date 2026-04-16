@@ -1,19 +1,12 @@
 <template>
   <Teleport to="body">
     <Transition name="overlay-fade">
-      <div
-        v-if="showDevOverlay"
-        class="storyboard-overlay"
-      >
+      <div v-if="showDevOverlay" class="storyboard-overlay">
         <div class="overlay-panel">
           <!-- Header -->
           <div class="overlay-header">
             <h3>📊 Storyboard Dev Tools</h3>
-            <button
-              class="close-btn"
-              aria-label="Close overlay"
-              @click="toggleDevOverlay"
-            >
+            <button class="close-btn" aria-label="Close overlay" @click="toggleDevOverlay">
               ✕
             </button>
           </div>
@@ -44,10 +37,7 @@
           <!-- Current State -->
           <div class="overlay-section">
             <h4>Current State</h4>
-            <div
-              v-if="flow.currentState"
-              class="current-state"
-            >
+            <div v-if="flow.currentState" class="current-state">
               <div class="state-badge">
                 {{ flow.currentState.name }}
               </div>
@@ -55,12 +45,7 @@
                 {{ flow.currentState.path }}
               </div>
             </div>
-            <div
-              v-else
-              class="no-state"
-            >
-              No state recorded yet
-            </div>
+            <div v-else class="no-state">No state recorded yet</div>
           </div>
 
           <!-- Flow Visualization -->
@@ -83,10 +68,7 @@
                 <div class="step-name">
                   {{ getStateName(stateId as WorkflowStateId) }}
                 </div>
-                <div
-                  v-if="hasVisitedState(stateId as WorkflowStateId)"
-                  class="step-count"
-                >
+                <div v-if="hasVisitedState(stateId as WorkflowStateId)" class="step-count">
                   {{ getStateVisitCount(stateId as WorkflowStateId) }}x
                 </div>
               </div>
@@ -97,12 +79,7 @@
           <div class="overlay-section">
             <div class="section-header">
               <h4>History (Last {{ Math.min(10, flow.history.length) }})</h4>
-              <button
-                class="action-btn"
-                @click="clearHistory"
-              >
-                Clear
-              </button>
+              <button class="action-btn" @click="clearHistory">Clear</button>
             </div>
             <div class="history-list">
               <div
@@ -114,12 +91,7 @@
                 <span class="history-name">{{ state.name }}</span>
                 <span class="history-time">{{ formatTime(state.timestamp) }}</span>
               </div>
-              <div
-                v-if="flow.history.length === 0"
-                class="no-history"
-              >
-                No history yet
-              </div>
+              <div v-if="flow.history.length === 0" class="no-history">No history yet</div>
             </div>
           </div>
 
@@ -127,24 +99,9 @@
           <div class="overlay-section">
             <h4>Actions</h4>
             <div class="actions-grid">
-              <button
-                class="action-btn"
-                @click="exportFlow"
-              >
-                📥 Export Flow
-              </button>
-              <button
-                class="action-btn"
-                @click="copyToClipboard"
-              >
-                📋 Copy Data
-              </button>
-              <button
-                class="action-btn danger"
-                @click="handleReset"
-              >
-                🔄 Reset Flow
-              </button>
+              <button class="action-btn" @click="exportFlow">📥 Export Flow</button>
+              <button class="action-btn" @click="copyToClipboard">📋 Copy Data</button>
+              <button class="action-btn danger" @click="handleReset">🔄 Reset Flow</button>
             </div>
           </div>
 
@@ -211,20 +168,10 @@ const formatTime = (timestamp: number): string => {
 // Get state name by ID
 const getStateName = (stateId: WorkflowStateId): string => {
   const state = Object.values(WORKFLOW_STATES).find(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     (s: any) => typeof s === 'object' && s?.id === stateId
   ) as any
   return state?.name || stateId
 }
-=======
-=======
->>>>>>> Stashed changes
-    (s: any) => typeof s === 'object' && s?.id === stateId,
-  ) as any;
-  return state?.name || stateId;
-};
->>>>>>> Stashed changes
 
 // Clear history
 const clearHistory = () => {

@@ -1,12 +1,5 @@
-<<<<<<< Updated upstream
 import { useRuntimeConfig } from '#app'
 import type { GameSession } from '@riddle-rush/types'
-=======
-import { useRuntimeConfig } from '#app';
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 const CACHE_VERSION_KEY = 'pwa-cache-version'
 const CACHE_VERSION_KEY_START_URL = 'start-url'
@@ -21,18 +14,10 @@ export default defineNuxtPlugin({
       const version = useRuntimeConfig().public.appVersion
       const currentVersion = getPWAVersion()
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       console.log(`[PWA Cache] Version Check`, { version, currentVersion })
-=======
-      console.log('[PWA Cache] Version Check', { version, currentVersion });
->>>>>>> Stashed changes
-=======
-      console.log('[PWA Cache] Version Check', { version, currentVersion });
->>>>>>> Stashed changes
 
       if (currentVersion && currentVersion !== version) {
-        console.log('[PWA Cache] Version changed, cleaning up old caches', {
+        console.log(`[PWA Cache] Version changed, cleaning up old caches`, {
           previous: currentVersion,
           current: version,
         })
@@ -47,18 +32,9 @@ export default defineNuxtPlugin({
       } else if (!currentVersion) {
         // First install, save current version
         savePWAVersion(version).catch((error) => {
-<<<<<<< Updated upstream
           console.error('[PWA Cache] Failed to save version to storage:', error)
         })
         console.log(`[PWA Cache] First install, initialized cache version`, { version })
-=======
-          console.error('[PWA Cache] Failed to save version to storage:', error);
-        });
-        console.log('[PWA Cache] First install, initialized cache version', { version });
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
       }
 
       // Update cache names in runtime caching config
@@ -99,18 +75,8 @@ async function cleanupOldCaches(): Promise<void> {
     const cacheNames = await caches.keys()
 
     // Pattern to match cache names (with or without version suffix)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     const cachePattern =
       /^(start-url|images|fonts|google-fonts-stylesheets|google-fonts-webfonts)(?:-v\d+\.\d+\.\d+)?$/i
-=======
-    const cachePattern
-      = /^(?:start-url|images|fonts|google-fonts-stylesheets|google-fonts-webfonts)(?:-v\d+\.\d+\.\d+)?$/i;
->>>>>>> Stashed changes
-=======
-    const cachePattern
-      = /^(?:start-url|images|fonts|google-fonts-stylesheets|google-fonts-webfonts)(?:-v\d+\.\d+\.\d+)?$/i;
->>>>>>> Stashed changes
 
     for (const cacheName of cacheNames) {
       // Skip the version key itself
@@ -123,25 +89,11 @@ async function cleanupOldCaches(): Promise<void> {
         continue
       }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       console.log(`[PWA Cache] Deleting old cache:`, cacheName)
       await caches.delete(cacheName)
     }
 
     console.log(`[PWA Cache] Cache cleanup completed`)
-=======
-=======
->>>>>>> Stashed changes
-      console.log('[PWA Cache] Deleting old cache:', cacheName);
-      await caches.delete(cacheName);
-    }
-
-    console.log('[PWA Cache] Cache cleanup completed');
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   } catch (error) {
     console.error('[PWA Cache] Failed to cleanup caches:', error)
     throw error

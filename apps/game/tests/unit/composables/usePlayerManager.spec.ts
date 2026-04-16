@@ -50,20 +50,10 @@ describe('usePlayerManager', () => {
     it('generates unique IDs for each player', () => {
       const players = manager.createPlayers(['Alice', 'Bob', 'Charlie'])
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       const ids = players.map((p) => p.id)
       const uniqueIds = new Set(ids)
       expect(uniqueIds.size).toBe(3)
     })
-=======
-=======
->>>>>>> Stashed changes
-      const ids = players.map(p => p.id);
-      const uniqueIds = new Set(ids);
-      expect(uniqueIds.size).toBe(3);
-    });
->>>>>>> Stashed changes
 
     it('uses default names when input is empty string', () => {
       const players = manager.createPlayers(['', ''])
@@ -359,16 +349,8 @@ describe('usePlayerManager', () => {
 
       const leaderboard = manager.buildLeaderboard(players, true)
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       leaderboard.forEach((p) => expect(p.isWinner).toBe(false))
     })
-=======
-=======
->>>>>>> Stashed changes
-      leaderboard.forEach(p => expect(p.isWinner).toBe(false));
-    });
->>>>>>> Stashed changes
 
     it('returns empty array for empty input', () => {
       const leaderboard = manager.buildLeaderboard([], false)

@@ -11,16 +11,7 @@
             class="logo-image"
             width="512"
             height="512"
-<<<<<<< Updated upstream
           />
-=======
-            decoding="async"
-            fetchpriority="high"
-          >
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         </div>
 
         <!-- Menu Buttons -->

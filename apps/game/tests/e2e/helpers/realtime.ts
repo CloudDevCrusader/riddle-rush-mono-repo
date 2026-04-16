@@ -51,7 +51,7 @@ function parseWebSocketPayload(payloadData: string): GameMessage | null {
 export async function waitForGameMessage(
   page: Page,
   messageType: string,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<GameMessage | null> {
   const cdpSession = await page.context().newCDPSession(page)
 
@@ -86,18 +86,9 @@ export async function waitForGameMessage(
  */
 export async function verifyMessageOrder(
   messages: GameMessage[],
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   expectedOrder: string[]
 ): Promise<{ valid: boolean; issues: string[] }> {
   const issues: string[] = []
-=======
-=======
->>>>>>> Stashed changes
-  expectedOrder: string[],
-): Promise<{ valid: boolean, issues: string[] }> {
-  const issues: string[] = [];
->>>>>>> Stashed changes
 
   if (messages.length === 0 && expectedOrder.length > 0) {
     return {
@@ -107,24 +98,10 @@ export async function verifyMessageOrder(
   }
 
   // Extract message types in order
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   const actualTypes = messages.map((m) => m.type)
 
   // Filter actual types to only include expected types (ignore extras)
   const relevantTypes = actualTypes.filter((t) => expectedOrder.includes(t))
-=======
-  const actualTypes = messages.map(m => m.type);
-
-  // Filter actual types to only include expected types (ignore extras)
-  const relevantTypes = actualTypes.filter(t => expectedOrder.includes(t));
->>>>>>> Stashed changes
-=======
-  const actualTypes = messages.map(m => m.type);
-
-  // Filter actual types to only include expected types (ignore extras)
-  const relevantTypes = actualTypes.filter(t => expectedOrder.includes(t));
->>>>>>> Stashed changes
 
   // Check if timestamps are monotonically increasing
   let lastTimestamp = 0
@@ -132,18 +109,9 @@ export async function verifyMessageOrder(
     const msg = messages[i]
     if (msg && msg.timestamp < lastTimestamp) {
       issues.push(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         `Message at index ${i} (type: ${msg.type}) has timestamp ${msg.timestamp} ` +
           `which is earlier than previous message timestamp ${lastTimestamp}`
       )
-=======
-=======
->>>>>>> Stashed changes
-        `Message at index ${i} (type: ${msg.type}) has timestamp ${msg.timestamp} `
-        + `which is earlier than previous message timestamp ${lastTimestamp}`,
-      );
->>>>>>> Stashed changes
     }
     if (msg) {
       lastTimestamp = msg.timestamp
@@ -163,18 +131,9 @@ export async function verifyMessageOrder(
       const laterIndex = expectedOrder.indexOf(type, expectedIndex)
       if (laterIndex !== -1) {
         issues.push(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           `Message type "${type}" arrived before expected. ` +
             `Expected "${expectedOrder[expectedIndex]}" first.`
         )
-=======
-=======
->>>>>>> Stashed changes
-          `Message type "${type}" arrived before expected. `
-          + `Expected "${expectedOrder[expectedIndex]}" first.`,
-        );
->>>>>>> Stashed changes
       }
     }
   }
@@ -261,15 +220,7 @@ export async function simulateNetworkJitter(
     minLatency?: number
     maxLatency?: number
     packetLoss?: number
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   } = {}
-=======
-  } = {},
->>>>>>> Stashed changes
-=======
-  } = {},
->>>>>>> Stashed changes
 ): Promise<void> {
   const { minLatency = 50, maxLatency = 200, packetLoss = 0 } = options
 
@@ -290,16 +241,8 @@ export async function simulateNetworkJitter(
   })
 
   console.log(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     `[simulateNetworkJitter] Enabled with latency: ${minLatency}-${maxLatency}ms, packet loss: ${packetLoss}%`
   )
-=======
-=======
->>>>>>> Stashed changes
-    `[simulateNetworkJitter] Enabled with latency: ${minLatency}-${maxLatency}ms, packet loss: ${packetLoss}%`,
-  );
->>>>>>> Stashed changes
 
   // For more precise jitter simulation, inject script to delay WebSocket messages
   await page.evaluate(
@@ -308,7 +251,7 @@ export async function simulateNetworkJitter(
 
       WebSocket.prototype.send = function (
         this: WebSocket,
-        data: string | ArrayBufferLike | Blob | ArrayBufferView,
+        data: string | ArrayBufferLike | Blob | ArrayBufferView
       ) {
         const delay = Math.random() * (maxLat - minLat) + minLat
         const shouldDrop = Math.random() * 100 < pLoss
@@ -327,16 +270,8 @@ export async function simulateNetworkJitter(
       const win = window as Window & { __originalWsSend?: typeof originalSend }
       win.__originalWsSend = originalSend
     },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     { minLat: minLatency, maxLat: maxLatency, pLoss: packetLoss }
   )
-=======
-=======
->>>>>>> Stashed changes
-    { minLat: minLatency, maxLat: maxLatency, pLoss: packetLoss },
-  );
->>>>>>> Stashed changes
 }
 
 /**
@@ -344,26 +279,13 @@ export async function simulateNetworkJitter(
  */
 export async function waitForMultiplayerSync(
   pages: Page[],
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<{
   synced: boolean
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   states: { page: number; state: unknown }[]
 }> {
   const startTime = Date.now()
   const states: { page: number; state: unknown }[] = []
-=======
-=======
->>>>>>> Stashed changes
-  states: { page: number, state: unknown }[]
-}> {
-  const startTime = Date.now();
-  const states: { page: number, state: unknown }[] = [];
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   while (Date.now() - startTime < timeout) {
     states.length = 0
@@ -377,20 +299,10 @@ export async function waitForMultiplayerSync(
             __GAME_STATE__?: unknown
             gameState?: unknown
             store?: { getState?: () => unknown }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           }
           return win.__GAME_STATE__ || win.gameState || win.store?.getState?.() || null
         })
         return { page: index, state }
-=======
-=======
->>>>>>> Stashed changes
-          };
-          return win.__GAME_STATE__ || win.gameState || win.store?.getState?.() || null;
-        });
-        return { page: index, state };
->>>>>>> Stashed changes
       } catch {
         return { page: index, state: null }
       }
@@ -400,27 +312,12 @@ export async function waitForMultiplayerSync(
     states.push(...collectedStates)
 
     // Check if all states are non-null and equivalent
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     const validStates = states.filter((s) => s.state !== null)
 
     if (validStates.length === pages.length && validStates.length > 0) {
       const firstValidState = validStates[0]
       const firstState = firstValidState ? JSON.stringify(firstValidState.state) : null
       const allSynced = validStates.every((s) => JSON.stringify(s.state) === firstState)
-=======
-=======
->>>>>>> Stashed changes
-    const validStates = states.filter(s => s.state !== null);
-
-    if (validStates.length === pages.length && validStates.length > 0) {
-      const firstValidState = validStates[0];
-      const firstState = firstValidState ? JSON.stringify(firstValidState.state) : null;
-      const allSynced = validStates.every(s => JSON.stringify(s.state) === firstState);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
       if (allSynced) {
         console.log('[waitForMultiplayerSync] All players synced')
@@ -428,15 +325,7 @@ export async function waitForMultiplayerSync(
       }
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     await new Promise((resolve) => setTimeout(resolve, SYNC_CHECK_INTERVAL))
-=======
-    await new Promise(resolve => setTimeout(resolve, SYNC_CHECK_INTERVAL));
->>>>>>> Stashed changes
-=======
-    await new Promise(resolve => setTimeout(resolve, SYNC_CHECK_INTERVAL));
->>>>>>> Stashed changes
   }
 
   console.warn('[waitForMultiplayerSync] Timeout - players not synced')
@@ -448,21 +337,9 @@ export async function waitForMultiplayerSync(
  */
 export async function verifyGameStateConsistency(pages: Page[]): Promise<{
   consistent: boolean
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   differences: { field: string; values: unknown[] }[]
 }> {
   const differences: { field: string; values: unknown[] }[] = []
-=======
-  differences: { field: string, values: unknown[] }[]
-}> {
-  const differences: { field: string, values: unknown[] }[] = [];
->>>>>>> Stashed changes
-=======
-  differences: { field: string, values: unknown[] }[]
-}> {
-  const differences: { field: string, values: unknown[] }[] = [];
->>>>>>> Stashed changes
 
   // Collect game states from all pages
   const states = await Promise.all(
@@ -473,31 +350,14 @@ export async function verifyGameStateConsistency(pages: Page[]): Promise<{
             __GAME_STATE__?: Record<string, unknown>
             gameState?: Record<string, unknown>
             store?: { getState?: () => Record<string, unknown> }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           }
           return win.__GAME_STATE__ || win.gameState || win.store?.getState?.() || {}
         })
-=======
-=======
->>>>>>> Stashed changes
-          };
-          return win.__GAME_STATE__ || win.gameState || win.store?.getState?.() || {};
-        });
->>>>>>> Stashed changes
       } catch {
         return {}
       }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     })
   )
-=======
-=======
->>>>>>> Stashed changes
-    }),
-  );
->>>>>>> Stashed changes
 
   if (states.length < 2) {
     return { consistent: true, differences: [] }
@@ -507,36 +367,17 @@ export async function verifyGameStateConsistency(pages: Page[]): Promise<{
   const allKeys = new Set<string>()
   for (const state of states) {
     if (state && typeof state === 'object') {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       Object.keys(state).forEach((key) => allKeys.add(key))
-=======
-      Object.keys(state).forEach(key => allKeys.add(key));
->>>>>>> Stashed changes
-=======
-      Object.keys(state).forEach(key => allKeys.add(key));
->>>>>>> Stashed changes
     }
   }
 
   // Compare each field across all states
   Array.from(allKeys).forEach((key) => {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     const values = states.map((state) =>
       state && typeof state === 'object' ? (state as Record<string, unknown>)[key] : undefined
     )
     const serializedValues = values.map((v) => JSON.stringify(v))
     const uniqueValues = new Set(serializedValues)
-=======
-=======
->>>>>>> Stashed changes
-    const values = states.map(state =>
-      state && typeof state === 'object' ? (state as Record<string, unknown>)[key] : undefined,
-    );
-    const serializedValues = values.map(v => JSON.stringify(v));
-    const uniqueValues = new Set(serializedValues);
->>>>>>> Stashed changes
 
     if (uniqueValues.size > 1) {
       differences.push({ field: key, values })
@@ -560,7 +401,7 @@ export async function verifyGameStateConsistency(pages: Page[]): Promise<{
  */
 export async function monitorGameEvents(
   page: Page,
-  callback: (event: GameMessage) => void,
+  callback: (event: GameMessage) => void
 ): Promise<() => void> {
   const cdpSession = await page.context().newCDPSession(page)
   let isMonitoring = true
@@ -595,7 +436,7 @@ export async function monitorGameEvents(
 export async function waitForGameEvent(
   page: Page,
   predicate: (event: GameMessage) => boolean,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<GameMessage | null> {
   const cdpSession = await page.context().newCDPSession(page)
 
@@ -637,7 +478,7 @@ export async function waitForGameEvent(
 export async function waitForWebSocketConnection(
   page: Page,
   urlPattern?: string | RegExp,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<boolean> {
   const cdpSession = await page.context().newCDPSession(page)
 
@@ -650,27 +491,12 @@ export async function waitForWebSocketConnection(
         resolve(false)
       }, timeout)
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       const handler = (params: { requestId: string; url: string }) => {
         const matches =
           !urlPattern ||
           (typeof urlPattern === 'string'
             ? params.url.includes(urlPattern)
             : urlPattern.test(params.url))
-=======
-=======
->>>>>>> Stashed changes
-      const handler = (params: { requestId: string, url: string }) => {
-        const matches
-          = !urlPattern
-            || (typeof urlPattern === 'string'
-              ? params.url.includes(urlPattern)
-              : urlPattern.test(params.url));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
         if (matches) {
           clearTimeout(timeoutId)
@@ -692,7 +518,7 @@ export async function waitForWebSocketConnection(
  */
 export async function waitForReconnection(
   page: Page,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<boolean> {
   const cdpSession = await page.context().newCDPSession(page)
   let disconnected = false

@@ -162,12 +162,12 @@ echo "NODE_ENV: $NODE_ENV"
 - `NUXT_PUBLIC_SITE_URL`: Full site URL
 
 ### Analytics & Monitoring
-- `NUXT_PUBLIC_GOOGLE_ANALYTICS_ID`: GA4 Measurement ID (legacy `GOOGLE_ANALYTICS_ID` still works)
-- `NUXT_PUBLIC_CLOUDWATCH_ENDPOINT`: CloudWatch endpoint (legacy `CLOUDWATCH_ENDPOINT` still works)
-- `NUXT_PUBLIC_CLOUDWATCH_API_KEY`: CloudWatch API key (legacy `CLOUDWATCH_API_KEY` still works)
-- `NUXT_PUBLIC_DEBUG_ERROR_SYNC`: Enable debug mode (legacy `DEBUG_ERROR_SYNC` still works)
-- `NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL`: GitLab Unleash endpoint (legacy `GITLAB_FEATURE_FLAGS_URL` still works)
-- `NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN`: GitLab Unleash token (legacy `GITLAB_FEATURE_FLAGS_TOKEN` still works)
+- `GOOGLE_ANALYTICS_ID`: GA4 Measurement ID
+- `CLOUDWATCH_ENDPOINT`: CloudWatch endpoint
+- `CLOUDWATCH_API_KEY`: CloudWatch API key
+- `DEBUG_ERROR_SYNC`: Enable debug mode
+- `GITLAB_FEATURE_FLAGS_URL`: GitLab Unleash endpoint
+- `GITLAB_FEATURE_FLAGS_TOKEN`: GitLab Unleash token
 
 ### Feature Flags
 - `ENABLE_DEBUG_PANEL`: Show debug panel

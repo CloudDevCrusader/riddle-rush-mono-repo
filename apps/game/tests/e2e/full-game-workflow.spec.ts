@@ -71,7 +71,7 @@ async function playCompleteRound(
   page: Page,
   roundNumber: number,
   scores: number[],
-  isLastRound = false,
+  isLastRound = false
 ) {
   console.log(`Playing Round ${roundNumber}...`)
 
@@ -166,20 +166,10 @@ test.describe('full game workflow @slow', () => {
 
     // Verify the scores match the sum of per-round points (order may vary on ties)
     const leaderboardScores = [
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       parseInt(score0 ?? '0'),
       parseInt(score1 ?? '0'),
       parseInt(score2 ?? '0'),
     ].sort((a, b) => b - a) // Sort descending
-=======
-=======
->>>>>>> Stashed changes
-      Number.parseInt(score0 ?? '0'),
-      Number.parseInt(score1 ?? '0'),
-      Number.parseInt(score2 ?? '0'),
-    ].sort((a, b) => b - a); // Sort descending
->>>>>>> Stashed changes
 
     const expectedScores = [...cumulativeScores].sort((a, b) => b - a)
     expect(leaderboardScores).toEqual(expectedScores)

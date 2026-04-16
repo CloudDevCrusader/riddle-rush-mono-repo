@@ -1,9 +1,6 @@
 <template>
   <GameBackground>
-    <div
-      class="language-page"
-      data-testid="language-page"
-    >
+    <div class="language-page" data-testid="language-page">
       <!-- Back button -->
       <button
         class="back-btn"
@@ -18,10 +15,7 @@
       <GameHeader color="gold">{{ t('language.title', 'LANGUAGE') }}</GameHeader>
 
       <!-- Language selection panel -->
-      <GamePanel
-        class="language-panel"
-        data-testid="language-card"
-      >
+      <GamePanel class="language-panel" data-testid="language-card">
         <div class="language-options">
           <!-- English option -->
           <button
@@ -30,10 +24,7 @@
             data-testid="language-option-english"
             @click="selectLanguage('en')"
           >
-            <div
-              class="flag-container"
-              data-testid="language-flag-en"
-            >
+            <div class="flag-container" data-testid="language-flag-en">
               <span class="flag-emoji">&#x1F1EC;&#x1F1E7;</span>
             </div>
             <span class="language-name">{{ t('language.english') }}</span>
@@ -43,10 +34,7 @@
               data-testid="language-checkmark-en"
             >
               <Transition name="checkmark">
-                <span
-                  v-if="selectedLocale === 'en'"
-                  class="checkmark"
-                >&#x2713;</span>
+                <span v-if="selectedLocale === 'en'" class="checkmark">&#x2713;</span>
               </Transition>
             </div>
           </button>
@@ -58,10 +46,7 @@
             data-testid="language-option-german"
             @click="selectLanguage('de')"
           >
-            <div
-              class="flag-container"
-              data-testid="language-flag-de"
-            >
+            <div class="flag-container" data-testid="language-flag-de">
               <span class="flag-emoji">&#x1F1E9;&#x1F1EA;</span>
             </div>
             <span class="language-name">{{ t('language.german') }}</span>
@@ -71,10 +56,7 @@
               data-testid="language-checkmark-de"
             >
               <Transition name="checkmark">
-                <span
-                  v-if="selectedLocale === 'de'"
-                  class="checkmark"
-                >&#x2713;</span>
+                <span v-if="selectedLocale === 'de'" class="checkmark">&#x2713;</span>
               </Transition>
             </div>
           </button>
@@ -111,16 +93,8 @@ watch(
       selectedLocale.value = newLocale
     }
   },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   { immediate: true }
 )
-=======
-=======
->>>>>>> Stashed changes
-  { immediate: true },
-);
->>>>>>> Stashed changes
 
 type LocaleCode = 'de' | 'en'
 

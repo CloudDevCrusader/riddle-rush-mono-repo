@@ -29,18 +29,8 @@ interface PiniaWindow {
   }
   __vue_app__?: unknown
   __VUE_APP__?: unknown
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   __NUXT__?: { isHydrating?: boolean; _hydrated?: boolean }
   $nuxt?: { isHydrating?: boolean; _hydrated?: boolean }
-=======
-  __NUXT__?: { isHydrating?: boolean, _hydrated?: boolean }
-  $nuxt?: { isHydrating?: boolean, _hydrated?: boolean }
->>>>>>> Stashed changes
-=======
-  __NUXT__?: { isHydrating?: boolean, _hydrated?: boolean }
-  $nuxt?: { isHydrating?: boolean, _hydrated?: boolean }
->>>>>>> Stashed changes
   __app__?: {
     config: {
       globalProperties: {
@@ -95,7 +85,7 @@ async function logGameDebugInfo(page: Page, context: string): Promise<void> {
 function getBackoffDelay(
   attempt: number,
   baseDelay: number = 100,
-  maxDelay: number = 2000,
+  maxDelay: number = 2000
 ): number {
   const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay)
   return delay + Math.random() * 50 // Add jitter
@@ -107,7 +97,7 @@ function getBackoffDelay(
 export async function waitForGameState(
   page: Page,
   targetState: string,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -123,31 +113,15 @@ export async function waitForGameState(
         return currentState === state
       },
       targetState,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       { timeout, polling: POLL_INTERVAL }
     )
-=======
-=======
->>>>>>> Stashed changes
-      { timeout, polling: POLL_INTERVAL },
-    );
->>>>>>> Stashed changes
 
     console.log(`[waitForGameState] Reached state: ${targetState} in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForGameState:timeout')
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for game state "${targetState}" after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for game state "${targetState}" after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -156,7 +130,7 @@ export async function waitForGameState(
  */
 export async function waitForRoundTransition(
   page: Page,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -179,16 +153,8 @@ export async function waitForRoundTransition(
         return currentRound > prevRound
       },
       initialRound,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       { timeout, polling: POLL_INTERVAL }
     )
-=======
-=======
->>>>>>> Stashed changes
-      { timeout, polling: POLL_INTERVAL },
-    );
->>>>>>> Stashed changes
 
     const newRound = await page.evaluate(() => {
       const w = window as unknown as PiniaWindow
@@ -196,29 +162,13 @@ export async function waitForRoundTransition(
     })
 
     console.log(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `[waitForRoundTransition] Transitioned to round ${newRound} in ${Date.now() - startTime}ms`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `[waitForRoundTransition] Transitioned to round ${newRound} in ${Date.now() - startTime}ms`,
-    );
->>>>>>> Stashed changes
   } catch (error) {
     await logGameDebugInfo(page, 'waitForRoundTransition:timeout')
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for round transition after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for round transition after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -228,7 +178,7 @@ export async function waitForRoundTransition(
 export async function waitForAnimationComplete(
   page: Page,
   selector: string,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -248,16 +198,8 @@ export async function waitForAnimationComplete(
         const animations = element.getAnimations()
         if (animations.length > 0) {
           return animations.every(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
             (anim) => anim.playState === 'finished' || anim.playState === 'idle'
           )
-=======
-=======
->>>>>>> Stashed changes
-            anim => anim.playState === 'finished' || anim.playState === 'idle',
-          );
->>>>>>> Stashed changes
         }
 
         // Check for transition by monitoring computed styles
@@ -279,31 +221,15 @@ export async function waitForAnimationComplete(
         return false
       },
       selector,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       { timeout, polling: POLL_INTERVAL }
     )
-=======
-=======
->>>>>>> Stashed changes
-      { timeout, polling: POLL_INTERVAL },
-    );
->>>>>>> Stashed changes
 
     console.log(`[waitForAnimationComplete] Animation complete in ${Date.now() - startTime}ms`)
   } catch (error) {
     console.log(`[waitForAnimationComplete] Timeout or error for selector: ${selector}`)
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for animation on "${selector}" after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for animation on "${selector}" after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -312,7 +238,7 @@ export async function waitForAnimationComplete(
  */
 export async function waitForNetworkIdle(
   page: Page,
-  options: { timeout?: number, idleTime?: number } = {},
+  options: { timeout?: number; idleTime?: number } = {}
 ): Promise<void> {
   const { timeout = DEFAULT_TIMEOUT, idleTime = DEFAULT_IDLE_TIME } = options
   const startTime = Date.now()
@@ -356,18 +282,9 @@ export async function waitForNetworkIdle(
       clearInterval(checkInterval)
       cleanup()
       rejectPromise(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         new Error(`Network idle timeout after ${timeout}ms. Pending requests: ${pendingRequests}`)
       )
       return
-=======
-=======
->>>>>>> Stashed changes
-        new Error(`Network idle timeout after ${timeout}ms. Pending requests: ${pendingRequests}`),
-      );
-      return;
->>>>>>> Stashed changes
     }
 
     if (pendingRequests === 0 && now - lastActivityTime >= idleTime) {
@@ -393,7 +310,7 @@ export async function waitForNetworkIdle(
 export async function waitForAssetLoad(
   page: Page,
   assetSrc: string,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -408,76 +325,38 @@ export async function waitForAssetLoad(
         // Check for images
         const images = Array.from(document.querySelectorAll('img'))
         const matchingImage = images.find(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           (img) => img.src.includes(src) || img.dataset.src?.includes(src)
         )
-=======
-=======
->>>>>>> Stashed changes
-          img => img.src.includes(src) || img.dataset.src?.includes(src),
-        );
->>>>>>> Stashed changes
         if (matchingImage) {
           return matchingImage.complete && matchingImage.naturalHeight > 0
         }
 
         // Check for audio/video
-<<<<<<< Updated upstream
         const media = Array.from(document.querySelectorAll('audio, video'))
         const matchingMedia = media.find((m) => (m as HTMLMediaElement).src.includes(src))
-=======
-        const media = Array.from(document.querySelectorAll('audio, video'));
-        const matchingMedia = media.find(m => (m as HTMLMediaElement).src.includes(src));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         if (matchingMedia) {
           return (matchingMedia as HTMLMediaElement).readyState >= 2 // HAVE_CURRENT_DATA
         }
 
         // Check for loaded scripts
-<<<<<<< Updated upstream
         const scripts = Array.from(document.querySelectorAll('script'))
         const matchingScript = scripts.find((s) => s.src.includes(src))
-=======
-        const scripts = Array.from(document.querySelectorAll('script'));
-        const matchingScript = scripts.find(s => s.src.includes(src));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         if (matchingScript) {
           return true // Scripts are loaded if they exist in DOM
         }
 
         // Check for stylesheets
-<<<<<<< Updated upstream
         const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
         const matchingLink = links.find((l) => (l as HTMLLinkElement).href.includes(src))
-=======
-        const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-        const matchingLink = links.find(l => (l as HTMLLinkElement).href.includes(src));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         if (matchingLink) {
           const sheet = (matchingLink as HTMLLinkElement).sheet
           return sheet !== null
         }
 
         // Check performance entries for any resource
-<<<<<<< Updated upstream
         const entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
         return entries.some((entry) => entry.name.includes(src) && entry.responseEnd > 0)
       }, assetSrc)
-=======
-        const entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
-        return entries.some(entry => entry.name.includes(src) && entry.responseEnd > 0);
-      }, assetSrc);
->>>>>>> Stashed changes
 
       if (loaded) {
         console.log(`[waitForAssetLoad] Asset loaded in ${Date.now() - startTime}ms`)
@@ -500,7 +379,7 @@ export async function waitForAssetLoad(
 export async function waitForPageReady(
   page: Page,
   selector: string,
-  options: { timeout?: number, checkAssets?: boolean } = {},
+  options: { timeout?: number; checkAssets?: boolean } = {}
 ): Promise<void> {
   const { timeout = DEFAULT_TIMEOUT, checkAssets = true } = options
   const startTime = Date.now()
@@ -538,16 +417,8 @@ export async function waitForPageReady(
         // Fallback: check if document is ready and no pending Vue transitions
         return document.readyState === 'complete'
       },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       { timeout: timeout - (Date.now() - startTime), polling: POLL_INTERVAL }
     )
-=======
-=======
->>>>>>> Stashed changes
-      { timeout: timeout - (Date.now() - startTime), polling: POLL_INTERVAL },
-    );
->>>>>>> Stashed changes
 
     // 3. Wait for network to settle
     const remainingTimeout = timeout - (Date.now() - startTime)
@@ -567,20 +438,10 @@ export async function waitForPageReady(
         await page
           .waitForFunction(
             () => {
-<<<<<<< Updated upstream
               const images = Array.from(document.querySelectorAll('img[src]:not([loading="lazy"])'))
               return images.every((img) => (img as HTMLImageElement).complete)
-=======
-              const images = Array.from(
-                document.querySelectorAll('img[src]:not([loading="lazy"])'),
-              );
-              return images.every(img => (img as HTMLImageElement).complete);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
             },
-            { timeout: Math.min(remainingTimeout2, 3000), polling: POLL_INTERVAL },
+            { timeout: Math.min(remainingTimeout2, 3000), polling: POLL_INTERVAL }
           )
           .catch(() => {
             console.log('[waitForPageReady] Asset load timeout, continuing...')
@@ -592,16 +453,8 @@ export async function waitForPageReady(
   } catch (error) {
     await logGameDebugInfo(page, 'waitForPageReady:timeout')
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for page ready with selector "${selector}" after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for page ready with selector "${selector}" after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -610,7 +463,7 @@ export async function waitForPageReady(
  */
 export async function waitForRoundComplete(
   page: Page,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -626,23 +479,10 @@ export async function waitForRoundComplete(
         if (!session) return false
 
         // Check if all players have submitted
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         const players = session.players ?? []
         const allSubmitted =
           players.length > 0 &&
           players.every((player: { hasSubmitted?: boolean }) => player.hasSubmitted)
-=======
-=======
->>>>>>> Stashed changes
-        const players = session.players ?? [];
-        const allSubmitted
-          = players.length > 0
-            && players.every((player: { hasSubmitted?: boolean }) => player.hasSubmitted);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
         if (allSubmitted) {
           return true
@@ -656,47 +496,23 @@ export async function waitForRoundComplete(
 
         // Check for results display
         const resultsElement = document.querySelector(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           '.round-results, [data-testid="round-results"]'
         )
-=======
-=======
->>>>>>> Stashed changes
-          '.round-results, [data-testid="round-results"]',
-        );
->>>>>>> Stashed changes
         if (resultsElement) {
           return true
         }
 
         return false
       },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       { timeout, polling: POLL_INTERVAL }
     )
-=======
-=======
->>>>>>> Stashed changes
-      { timeout, polling: POLL_INTERVAL },
-    );
->>>>>>> Stashed changes
 
     console.log(`[waitForRoundComplete] Round completed in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, 'waitForRoundComplete:timeout')
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for round completion after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for round completion after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -705,7 +521,7 @@ export async function waitForRoundComplete(
  */
 export async function waitForResultsRendered(
   page: Page,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -725,35 +541,16 @@ export async function waitForResultsRendered(
         ]
 
         const resultsElement = resultsSelectors
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           .map((sel) => document.querySelector(sel))
           .find((el) => el !== null)
-=======
-          .map(sel => document.querySelector(sel))
-          .find(el => el !== null);
->>>>>>> Stashed changes
-=======
-          .map(sel => document.querySelector(sel))
-          .find(el => el !== null);
->>>>>>> Stashed changes
 
         if (!resultsElement) return false
 
         // Check if scores are displayed
         const scoreElements = document.querySelectorAll(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           '[data-testid="player-score"], .player-score, .score'
         )
         if (scoreElements.length === 0) return false
-=======
-=======
->>>>>>> Stashed changes
-          '[data-testid="player-score"], .player-score, .score',
-        );
-        if (scoreElements.length === 0) return false;
->>>>>>> Stashed changes
 
         // Check Pinia state
         const w = window as unknown as PiniaWindow
@@ -765,16 +562,8 @@ export async function waitForResultsRendered(
         // Fallback: results element visible and has content
         return resultsElement.children.length > 0
       },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       { timeout, polling: POLL_INTERVAL }
     )
-=======
-=======
->>>>>>> Stashed changes
-      { timeout, polling: POLL_INTERVAL },
-    );
->>>>>>> Stashed changes
 
     // Wait for any result animations to complete
     const remainingTimeout = timeout - (Date.now() - startTime)
@@ -783,24 +572,12 @@ export async function waitForResultsRendered(
         await page.waitForFunction(
           () => {
             const animatingElements = document.querySelectorAll(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
               '.animating, [data-animating="true"]'
             )
             return animatingElements.length === 0
           },
           { timeout: Math.min(remainingTimeout, 2000), polling: 100 }
         )
-=======
-=======
->>>>>>> Stashed changes
-              '.animating, [data-animating="true"]',
-            );
-            return animatingElements.length === 0;
-          },
-          { timeout: Math.min(remainingTimeout, 2000), polling: 100 },
-        );
->>>>>>> Stashed changes
       } catch {
         console.log('[waitForResultsRendered] Animation wait timeout, continuing...')
       }
@@ -810,16 +587,8 @@ export async function waitForResultsRendered(
   } catch (error) {
     await logGameDebugInfo(page, 'waitForResultsRendered:timeout')
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for results to render after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for results to render after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -827,8 +596,8 @@ export async function waitForResultsRendered(
  * Debug helper - get current round state
  */
 export async function getRoundState(
-  page: Page,
-): Promise<{ round: number, state: string, players: number }> {
+  page: Page
+): Promise<{ round: number; state: string; players: number }> {
   const result = await page.evaluate(() => {
     const w = window as unknown as PiniaWindow
     const store = w.__pinia_stores__?.game
@@ -855,7 +624,7 @@ export async function getRoundState(
  */
 export async function waitForWebSocketConnection(
   page: Page,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -891,16 +660,8 @@ export async function waitForWebSocketConnection(
   } catch (error) {
     await logGameDebugInfo(page, 'waitForWebSocketConnection:timeout')
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for WebSocket connection after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for app shell after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -910,7 +671,7 @@ export async function waitForWebSocketConnection(
 export async function waitForGameEvent(
   page: Page,
   eventName: string,
-  timeout: number = DEFAULT_TIMEOUT,
+  timeout: number = DEFAULT_TIMEOUT
 ): Promise<void> {
   const startTime = Date.now()
 
@@ -922,18 +683,9 @@ export async function waitForGameEvent(
       __gameEventReceived__?: Record<string, boolean>
       $socket?: { on?: (event: string, cb: () => void) => void }
       __socket__?: { on?: (event: string, cb: () => void) => void }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     }
     w.__gameEventReceived__ = w.__gameEventReceived__ ?? {}
     w.__gameEventReceived__[event] = false
-=======
-=======
->>>>>>> Stashed changes
-    };
-    w.__gameEventReceived__ = w.__gameEventReceived__ ?? {};
-    w.__gameEventReceived__[event] = false;
->>>>>>> Stashed changes
 
     // Try to hook into socket events
     const socket = w.$socket || w.__socket__
@@ -953,31 +705,15 @@ export async function waitForGameEvent(
         return w.__gameEventReceived__?.[event] === true
       },
       eventName,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       { timeout, polling: POLL_INTERVAL }
     )
-=======
-=======
->>>>>>> Stashed changes
-      { timeout, polling: POLL_INTERVAL },
-    );
->>>>>>> Stashed changes
 
     console.log(`[waitForGameEvent] Event "${eventName}" received in ${Date.now() - startTime}ms`)
   } catch (error) {
     await logGameDebugInfo(page, `waitForGameEvent:${eventName}:timeout`)
     throw new Error(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       `Timeout waiting for game event "${eventName}" after ${timeout}ms. ${(error as Error).message}`
     )
-=======
-=======
->>>>>>> Stashed changes
-      `Timeout waiting for game event "${eventName}" after ${timeout}ms. ${(error as Error).message}`,
-    );
->>>>>>> Stashed changes
   }
 }
 
@@ -986,7 +722,7 @@ export async function waitForGameEvent(
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  options: { maxRetries?: number, baseDelay?: number, maxDelay?: number } = {},
+  options: { maxRetries?: number; baseDelay?: number; maxDelay?: number } = {}
 ): Promise<T> {
   const { maxRetries = 3, baseDelay = 100, maxDelay = 2000 } = options
 
@@ -1000,18 +736,9 @@ export async function withRetry<T>(
       console.log(`[withRetry] Attempt ${attempt + 1} failed: ${lastError.message}`)
 
       if (attempt < maxRetries) {
-<<<<<<< Updated upstream
         const delay = getBackoffDelay(attempt, baseDelay, maxDelay)
         console.log(`[withRetry] Retrying in ${Math.round(delay)}ms...`)
         await new Promise((resolve) => setTimeout(resolve, delay))
-=======
-        const delay = getBackoffDelay(attempt, baseDelay, maxDelay);
-        console.log(`[withRetry] Retrying in ${Math.round(delay)}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
       }
     }
   }

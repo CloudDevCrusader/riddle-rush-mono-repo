@@ -28,18 +28,9 @@ export function useMenu() {
   watch(
     () => route.path,
     () => {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       close()
     }
   )
-=======
-=======
->>>>>>> Stashed changes
-      close();
-    },
-  );
->>>>>>> Stashed changes
 
   return {
     isOpen: readonly(isOpen),

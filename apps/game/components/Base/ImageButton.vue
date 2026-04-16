@@ -5,51 +5,25 @@
     :disabled="disabled"
     @click="handleClick"
   >
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     <NuxtImg
-=======
-=======
-    <img
       :src="imageSrc"
       :alt="alt"
       class="btn-image"
       loading="lazy"
-    >
->>>>>>> Stashed changes
-    <img
->>>>>>> Stashed changes
-      :src="imageSrc"
-      :alt="alt"
-      class="btn-image"
-      loading="lazy"
-<<<<<<< Updated upstream
       format="webp"
       quality="85"
       preset="thumbnail"
     />
     <NuxtImg
-=======
-    >
-    <img
->>>>>>> Stashed changes
       v-if="hoverImageSrc"
       :src="hoverImageSrc"
       :alt="`${alt} hover`"
       class="btn-image-hover"
       loading="lazy"
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       format="webp"
       quality="85"
       preset="thumbnail"
     />
-=======
-    >
->>>>>>> Stashed changes
-=======
-    >
->>>>>>> Stashed changes
   </button>
 </template>
 
@@ -68,14 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   click: [event: MouseEvent]
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 }>()
-=======
-=======
->>>>>>> Stashed changes
-}>();
->>>>>>> Stashed changes
 
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled) {
