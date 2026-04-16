@@ -127,24 +127,21 @@ describe('Game Store', () => {
       expect(store.categoriesLoaded).toBe(true)
     })
 
-    it.skip('does not refetch if already loaded', async () => {
-      // TODO: Fix mock in CI environment (Node 20 vs 24 difference)
+    it('does not refetch if already loaded', async () => {
       const store = gameStore
       await store.fetchCategories()
       await store.fetchCategories()
       expect(fetchMock).toHaveBeenCalledTimes(1)
     })
 
-    it.skip('refetches when force=true', async () => {
-      // TODO: Fix mock in CI environment (Node 20 vs 24 difference)
+    it('refetches when force=true', async () => {
       const store = gameStore
       await store.fetchCategories()
       await store.fetchCategories(true)
       expect(fetchMock).toHaveBeenCalledTimes(2)
     })
 
-    it.skip('handles API error gracefully', async () => {
-      // TODO: Fix mock in CI environment (Node 20 vs 24 difference)
+    it('handles API error gracefully', async () => {
       fetchMock.mockRejectedValueOnce(new Error('Network error'))
       const store = gameStore
       await expect(store.fetchCategories()).rejects.toThrow('Network error')
@@ -159,8 +156,7 @@ describe('Game Store', () => {
   })
 
   describe('Category Lookup', () => {
-    it.skip('finds category by id', async () => {
-      // TODO: Fix category data mismatch in CI
+    it('finds category by id', async () => {
       const store = gameStore
       await store.fetchCategories()
       const target = mockCategories[3]!
@@ -173,8 +169,7 @@ describe('Game Store', () => {
       expect(store.getCategoryById(999999)).toBeNull()
     })
 
-    it.skip('returns null when categories empty', () => {
-      // TODO: Fix state pollution in CI
+    it('returns null when categories empty', () => {
       const store = gameStore
       expect(store.getCategoryById(1)).toBeNull()
     })
@@ -272,8 +267,7 @@ describe('Game Store', () => {
       expect(gameStore.hasActiveSession).toBe(false)
     })
 
-    it.skip('adds session to history', async () => {
-      // TODO: Fix history state pollution in CI
+    it('adds session to history', async () => {
       const store = gameStore
       await store.endGame()
       expect(store.history).toHaveLength(1)
@@ -301,8 +295,7 @@ describe('Game Store', () => {
       expect(gameStore.currentSession).toBeNull()
     })
 
-    it.skip('sets endTime on session', async () => {
-      // TODO: Fix timing race condition in CI
+    it('sets endTime on session', async () => {
       const store = gameStore
       const before = Date.now()
       await store.endGame()

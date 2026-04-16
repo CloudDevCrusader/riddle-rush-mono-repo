@@ -22,6 +22,9 @@ const isLocalhostBuild = [
 
 const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild'
 const resolvedBaseUrl = (() => {
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}/`
+  }
   const baseUrl = process.env.BASE_URL || process.env.NUXT_PUBLIC_BASE_URL || ''
   return baseUrl ? withTrailingSlash(baseUrl) : '/'
 })()
@@ -129,6 +132,11 @@ export default defineNuxtConfig({
   },
 
   app: {
+    baseURL: process.env.VERCEL
+      ? process.env.BASE_PATH || '/'
+      : resolvedBaseUrl === 'http://localhost:3000/'
+        ? '/'
+        : resolvedBaseUrl,
     head: {
       titleTemplate: '%s - Riddle Rush',
       meta: [
