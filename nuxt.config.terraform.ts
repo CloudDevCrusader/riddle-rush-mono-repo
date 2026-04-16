@@ -16,11 +16,11 @@ import { join } from 'node:path';
 import { execSync } from 'node:child_process';
 
 interface TerraformOutputs {
-  bucket_name?: string
-  cloudfront_distribution_id?: string
-  cloudfront_domain_name?: string
-  website_url?: string
-  aws_region?: string
+  bucket_name?: string;
+  cloudfront_distribution_id?: string;
+  cloudfront_domain_name?: string;
+  website_url?: string;
+  aws_region?: string;
 }
 
 /**
@@ -31,7 +31,7 @@ export function getTerraformOutputs(environment: string = 'prod'): TerraformOutp
   try {
     const outputFile = join(
       process.cwd(),
-      `infrastructure/environments/${environment}/terraform-outputs.json`,
+      `infrastructure/environments/${environment}/terraform-outputs.json`
     );
     const outputs = JSON.parse(readFileSync(outputFile, 'utf-8'));
 

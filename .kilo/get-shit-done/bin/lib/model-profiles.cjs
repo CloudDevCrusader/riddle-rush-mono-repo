@@ -64,10 +64,10 @@ const VALID_PROFILES = Object.keys(MODEL_PROFILES['gsd-planner']);
  * @returns {string} A formatted table string
  */
 function formatAgentToModelMapAsTable(agentToModelMap) {
-  const agentWidth = Math.max('Agent'.length, ...Object.keys(agentToModelMap).map(a => a.length));
+  const agentWidth = Math.max('Agent'.length, ...Object.keys(agentToModelMap).map((a) => a.length));
   const modelWidth = Math.max(
     'Model'.length,
-    ...Object.values(agentToModelMap).map(m => m.length),
+    ...Object.values(agentToModelMap).map((m) => m.length)
   );
   const sep = '─'.repeat(agentWidth + 2) + '┼' + '─'.repeat(modelWidth + 2);
   const header = ' ' + 'Agent'.padEnd(agentWidth) + ' │ ' + 'Model'.padEnd(modelWidth);

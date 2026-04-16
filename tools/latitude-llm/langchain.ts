@@ -19,6 +19,6 @@ async function generateSupportReply(input: string) {
       const agent = createAgent({ model: 'claude-sonnet-4-5' });
       const result = await agent.invoke({});
       return result;
-    },
+    }
   );
 }

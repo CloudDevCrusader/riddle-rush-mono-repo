@@ -1,6 +1,6 @@
 {
   "name": "websocket-message",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "WebSocket message handler",
   "main": "index.js",
   "dependencies": {

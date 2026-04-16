@@ -34,7 +34,7 @@ let input = '';
 // and reports "hook error". See #775, #1162.
 const stdinTimeout = setTimeout(() => process.exit(0), 10000);
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => (input += chunk));
+process.stdin.on('data', (chunk) => (input += chunk));
 process.stdin.on('end', () => {
   clearTimeout(stdinTimeout);
   try {
@@ -61,7 +61,7 @@ process.stdin.on('end', () => {
         if (config.hooks?.context_warnings === false) {
           process.exit(0);
         }
-      } catch (e) {
+      } catch {
         // Ignore config parse errors
       }
     }
@@ -99,7 +99,7 @@ process.stdin.on('end', () => {
       try {
         warnData = JSON.parse(fs.readFileSync(warnPath, 'utf8'));
         firstWarn = false;
-      } catch (e) {
+      } catch {
         // Corrupted file, reset
       }
     }
@@ -156,8 +156,7 @@ process.stdin.on('end', () => {
     };
 
     process.stdout.write(JSON.stringify(output));
-  } catch (e) {
+  } catch {
     // Silent fail -- never block tool execution
-    process.exit(0);
   }
 });

@@ -43,14 +43,14 @@ function assertAndroidDeviceConnected(): void {
   if (process.env.APPIUM_SKIP_DEVICE_CHECK === '1') {
     return;
   }
-  const root
-    = process.env.ANDROID_HOME?.trim()
-      || process.env.ANDROID_SDK_ROOT?.trim()
-      || resolveAndroidSdkRoot();
+  const root =
+    process.env.ANDROID_HOME?.trim() ||
+    process.env.ANDROID_SDK_ROOT?.trim() ||
+    resolveAndroidSdkRoot();
   if (!root) {
     throw new SevereServiceError(
-      'Android SDK not found. Set ANDROID_HOME or install the SDK (e.g. via Android Studio). '
-      + 'See https://developer.android.com/studio/command-line/variables',
+      'Android SDK not found. Set ANDROID_HOME or install the SDK (e.g. via Android Studio). ' +
+        'See https://developer.android.com/studio/command-line/variables'
     );
   }
   const adb = join(root, 'platform-tools', 'adb');
@@ -59,14 +59,14 @@ function assertAndroidDeviceConnected(): void {
     out = execFileSync(adb, ['devices'], { encoding: 'utf8' });
   } catch {
     throw new SevereServiceError(
-      `Failed to run "${adb} devices". Check that Android SDK platform-tools is installed.`,
+      `Failed to run "${adb} devices". Check that Android SDK platform-tools is installed.`
     );
   }
-  const hasDevice = out.split('\n').some(line => /\tdevice\s*$/.test(line));
+  const hasDevice = out.split('\n').some((line) => /\tdevice\s*$/.test(line));
   if (!hasDevice) {
     throw new SevereServiceError(
-      'No Android device or emulator in the "device" state. Start an emulator (Device Manager) '
-      + 'or connect a device with USB debugging, then check `adb devices`.',
+      'No Android device or emulator in the "device" state. Start an emulator (Device Manager) ' +
+        'or connect a device with USB debugging, then check `adb devices`.'
     );
   }
 }
@@ -78,7 +78,7 @@ const mobileRoot = join(__dirname, '../../..');
 /** Emulator / x86 AVDs need the universal flavor; `play` is ARM-only (real devices). */
 const defaultApk = join(
   mobileRoot,
-  'android/app/build/outputs/apk/universal/debug/app-universal-debug.apk',
+  'android/app/build/outputs/apk/universal/debug/app-universal-debug.apk'
 );
 
 function assertApkExists(apkPath: string): void {
@@ -86,10 +86,10 @@ function assertApkExists(apkPath: string): void {
     return;
   }
   throw new SevereServiceError(
-    `APK not found: ${apkPath}\n`
-    + 'Build a universal debug APK for the emulator (x86/x86_64), then retry:\n'
-    + '  pnpm android:build:universal\n'
-    + '  — or —\n' +
+    `APK not found: ${apkPath}\n` +
+      'Build a universal debug APK for the emulator (x86/x86_64), then retry:\n' +
+      '  pnpm android:build:universal\n' +
+      '  — or —\n' +
       '  ./scripts/mobile-build.sh android debug --universal'
   );
 }

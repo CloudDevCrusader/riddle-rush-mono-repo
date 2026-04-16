@@ -1,6 +1,6 @@
 {
   "name": "error-logs-handler",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "Lambda function for processing error logs and sending to CloudWatch",
   "main": "index.js",
   "scripts": {

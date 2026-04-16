@@ -9,10 +9,10 @@ export const internetSearch = tool(
     topic = 'general',
     includeRawContent = false,
   }: {
-    query: string
-    maxResults?: number
-    topic?: 'general' | 'news' | 'finance'
-    includeRawContent?: boolean
+    query: string;
+    maxResults?: number;
+    topic?: 'general' | 'news' | 'finance';
+    includeRawContent?: boolean;
   }) => {
     const tavilySearch = new TavilySearch({
       maxResults,
@@ -39,5 +39,5 @@ export const internetSearch = tool(
         .default(false)
         .describe('Whether to include raw content'),
     }),
-  },
+  }
 );

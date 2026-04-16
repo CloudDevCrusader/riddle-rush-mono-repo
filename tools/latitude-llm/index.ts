@@ -19,6 +19,6 @@ async function generateSupportReply(input: string) {
       const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
       const response = await client.messages.create({});
       return response;
-    },
+    }
   );
 }
