@@ -2,7 +2,7 @@
  * Google Analytics 4 Plugin
  *
  * Simple GA4 integration without external dependencies.
- * Only loads in production when GTAG_ID is configured.
+ * Only loads in production when `gtagId` is set (`NUXT_PUBLIC_GOOGLE_ANALYTICS_ID` / `GOOGLE_ANALYTICS_ID` / `GTAG_ID`).
  */
 
 export default defineNuxtPlugin({

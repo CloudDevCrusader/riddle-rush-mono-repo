@@ -43,9 +43,13 @@ export const useErrorSync = () => {
           public: {
             environment: process.env.NODE_ENV || 'development',
             appVersion: process.env.APP_VERSION || '1.0.0',
-            cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
-            cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
-            debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
+            cloudWatchEndpoint:
+              process.env.NUXT_PUBLIC_CLOUDWATCH_ENDPOINT || process.env.CLOUDWATCH_ENDPOINT || '',
+            cloudWatchApiKey:
+              process.env.NUXT_PUBLIC_CLOUDWATCH_API_KEY || process.env.CLOUDWATCH_API_KEY || '',
+            debugErrorSync:
+              process.env.NUXT_PUBLIC_DEBUG_ERROR_SYNC === 'true' ||
+              process.env.DEBUG_ERROR_SYNC === 'true',
           },
         };
 

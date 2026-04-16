@@ -1,6 +1,0 @@
-{
-  "setup_script": "pnpm install",
-  "dev_script": "pnpm run dev",
-  "verification_script": "pnpm run workspace:check",
-  "copy_files": [".env", "apps/game/.env"]
-}

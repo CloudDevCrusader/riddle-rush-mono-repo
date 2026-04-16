@@ -33,7 +33,11 @@ export function getStageConfig() {
         enableDebugPanel: !isProduction || process.env.ENABLE_DEBUG_PANEL === 'true',
         enablePwa: isProduction || process.env.ENABLE_PWA === 'true',
         // Analytics
-        googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID || '',
+        googleAnalyticsId:
+          process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID ||
+          process.env.GOOGLE_ANALYTICS_ID ||
+          process.env.GTAG_ID ||
+          '',
       },
     },
 

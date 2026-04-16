@@ -76,6 +76,15 @@ infrastructure/lambda/websocket/*/node_modules
 # YoYo AI version control directory
 .yoyo/
 
+# OpenCode MCP agent directory
+.opencode/
+
+# Zenflow task orchestration
+.zenflow/
+
+# Planning state and artifacts
+.planning/
+
 # Python / pyenv
 __pycache__/
 **/__pycache__/
