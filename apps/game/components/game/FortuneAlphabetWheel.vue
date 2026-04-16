@@ -66,6 +66,7 @@
 
     <div class="fortune-wheel-actions">
       <GameButton
+        v-if="fortuneWheelAllowRedraw"
         data-testid="fortune-wheel-spin-button"
         :disabled="spinButtonDisabled"
         @click="startSpin"
@@ -222,6 +223,19 @@ watch(
     if (!valid) {
       targetPrizeId.value = next[0]!.id;
     }
+  },
+  { immediate: true }
+);
+
+const hasAutoSpun = ref(false);
+watch(
+  [hasSegments, fortuneWheelAllowRedraw],
+  async ([ready, allowRedraw]) => {
+    if (!ready || hasAutoSpun.value || allowRedraw) return;
+    if (isSpinning.value || pendingSelection.value || pickedCategoryId.value != null) return;
+    hasAutoSpun.value = true;
+    await nextTick();
+    startSpin();
   },
   { immediate: true }
 );

@@ -2,7 +2,7 @@
 description: Create a new Claude Code slash command with full feature support
 category: claude-setup
 allowed-tools: Write, Read, Bash(mkdir:*)
-argument-hint: "[command-name] [description]"
+argument-hint: '[command-name] [description]'
 ---
 
 Create a new Claude Code slash command based on the user's requirements: $ARGUMENTS
@@ -10,12 +10,14 @@ Create a new Claude Code slash command based on the user's requirements: $ARGUME
 For complete slash command documentation, see: https://docs.claude.com/en/docs/claude-code/slash-commands
 
 First, ask the user to specify the command type:
+
 - **project** - Add to current project's `.claude/commands/` directory (shared with team)
 - **personal** - Add to user's `~/.claude/commands/` directory (personal use only)
 
 If the user doesn't specify, ask which type to create.
 
 Then gather the following information from the user:
+
 - Command name
 - Description
 - Command content/template
@@ -25,6 +27,7 @@ Then gather the following information from the user:
 ## Command Template Structure
 
 ### YAML Frontmatter
+
 Commands use standardized frontmatter that follows Claude Code's official schema:
 
 ```yaml
@@ -33,19 +36,21 @@ Commands use standardized frontmatter that follows Claude Code's official schema
 description: Brief description of what the command does
 
 # Security control (highly recommended):
-allowed-tools: Read, Write, Bash(git:*)  # Specify allowed tools
+allowed-tools: Read, Write, Bash(git:*) # Specify allowed tools
 
 # Optional fields:
-argument-hint: "<feature-name>"  # Help text for expected arguments
-model: sonnet  # opus, sonnet, haiku, or specific model
-category: workflow  # workflow, ai-assistant, or validation
+argument-hint: '<feature-name>' # Help text for expected arguments
+model: sonnet # opus, sonnet, haiku, or specific model
+category: workflow # workflow, ai-assistant, or validation
 ---
 ```
 
 ### Security with allowed-tools
+
 The `allowed-tools` field provides granular security control:
+
 - Basic: `allowed-tools: Read, Write, Edit`
-- Restricted bash: `allowed-tools: Bash(git:*), Read`  # Only git commands
+- Restricted bash: `allowed-tools: Bash(git:*), Read` # Only git commands
 - Multiple restrictions: `allowed-tools: Read, Write, Bash(npm:*, git:*)`
 
 ## Features to Support
@@ -53,19 +58,22 @@ The `allowed-tools` field provides granular security control:
 When creating the command, support these Claude Code features if requested:
 
 **Arguments:** If the user wants dynamic input, use `$ARGUMENTS` placeholder
+
 - Example: `/deploy $ARGUMENTS` where user types `/deploy production`
 
 **Bash Execution:** If the user wants command output, use exclamation mark (!) prefix
+
 - Example: `!pwd > /dev/null 2>&1` or `!ls -la > /dev/null 2>&1` to include command output
 - **Performance tip**: Combine related commands with `&&` for faster execution
 - Example: `!pwd > /dev/null 2>&1 && ls -la 2>/dev/null | head -5 > /dev/null`
 
 **File References:** If the user wants file contents, use `@` prefix
+
 - Example: `@package.json` to include package.json contents
 
 **Namespacing:** If the command name contains `:`, create subdirectories
-- Example: `/api:create` → `.claude/commands/api/create.md`
 
+- Example: `/api:create` → `.claude/commands/api/create.md`
 
 ## Implementation Steps
 
@@ -94,7 +102,8 @@ Key principle: Write instructions TO the AI agent, not as the AI agent. Use impe
 ### Example Command Templates
 
 **Simple Command:**
-```markdown
+
+````markdown
 ---
 description: Create a React component
 allowed-tools: Write
@@ -110,9 +119,10 @@ export const $ARGUMENTS: React.FC = () => {
   return <div>$ARGUMENTS Component</div>;
 };
 \```
-```
+````
 
 **Command with Bash and File Analysis:**
+
 ```markdown
 ---
 description: Analyze dependencies

@@ -6,6 +6,7 @@
         :key="toast.id"
         class="toast"
         :class="[`toast-${toast.type}`]"
+        :data-testid="toast.type === 'pwa-update' ? 'toast-pwa-update' : undefined"
         @click="removeToast(toast.id)"
       >
         <div class="toast-icon">
@@ -14,6 +15,14 @@
         <div class="toast-message">
           {{ toast.message }}
         </div>
+        <button
+          v-if="toast.type === 'pwa-update'"
+          class="toast-reload"
+          :aria-label="t('pwa.reload_button')"
+          @click.stop="handleReload"
+        >
+          {{ t('pwa.reload_button') }}
+        </button>
         <button
           class="toast-close"
           :aria-label="t('common.close')"
@@ -31,6 +40,7 @@ import type { ToastType } from '../composables/useToast';
 
 const { t } = useI18n();
 const { toasts, remove } = useToast();
+const pwaUpdate = usePWAUpdate();
 
 const getIcon = (type: ToastType) => {
   switch (type) {
@@ -40,13 +50,24 @@ const getIcon = (type: ToastType) => {
       return '✗';
     case 'warning':
       return '⚠';
+    case 'pwa-update':
+      return '↻';
     case 'info':
     default:
       return 'ℹ';
   }
 };
 
+const handleReload = async () => {
+  await pwaUpdate.reload();
+};
+
 const removeToast = (id: string) => {
+  const toast = toasts.value.find((t) => t.id === id);
+  if (toast?.type === 'pwa-update') {
+    void pwaUpdate.dismiss();
+    return;
+  }
   remove(id);
 };
 </script>
@@ -165,6 +186,40 @@ const removeToast = (id: string) => {
 .toast-info .toast-icon {
   background: rgba(255, 107, 53, 0.1);
   color: var(--color-primary, #ff6b35);
+}
+
+/* PWA Update Toast */
+.toast-pwa-update {
+  border-left-color: var(--color-accent-blue, #3498db);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.toast-pwa-update .toast-icon {
+  background: rgba(52, 152, 219, 0.1);
+  color: var(--color-accent-blue, #3498db);
+}
+
+.toast-reload {
+  background: var(--color-primary, #ff6b35);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border: 2px solid var(--color-accent-blue, #3498db);
+  margin-left: var(--spacing-sm);
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-size: 14px;
+}
+
+.toast-reload:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.toast-reload:active {
+  transform: translateY(1px);
 }
 
 /* Animations */

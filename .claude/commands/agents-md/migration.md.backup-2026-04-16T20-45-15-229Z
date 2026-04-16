@@ -9,6 +9,7 @@ allowed-tools: Bash(mv:*), Bash(ln:*), Bash(ls:*), Bash(test:*), Bash(grep:*), B
 This command helps you adopt the AGENTS.md standard by converting your existing CLAUDE.md file and creating symlinks for compatibility with various AI assistants.
 
 ## Current Project State
+
 !`ls -la CLAUDE.md AGENTS.md AGENT.md GEMINI.md .cursorrules .clinerules .windsurfrules .replit.md .github/copilot-instructions.md 2>/dev/null | grep -E "(CLAUDE|AGENT|AGENTS|GEMINI|cursor|cline|windsurf|replit|copilot)" || echo "Checking for AI configuration files..."`
 
 ## Task
@@ -16,7 +17,9 @@ This command helps you adopt the AGENTS.md standard by converting your existing 
 Convert this project to use the AGENTS.md standard following these steps:
 
 ### 1. Pre-flight Checks
+
 Check for existing AI configuration files:
+
 - CLAUDE.md (Claude Code)
 - .clinerules (Cline)
 - .cursorrules (Cursor)
@@ -28,9 +31,11 @@ Check for existing AI configuration files:
 - AGENT.md (legacy, to be symlinked)
 
 ### 2. Analyze Existing Files
+
 Check all AI config files and their content to determine migration strategy:
 
 **Priority order for analysis:**
+
 1. CLAUDE.md (Claude Code)
 2. .clinerules (Cline)
 3. .cursorrules (Cursor)
@@ -40,6 +45,7 @@ Check all AI config files and their content to determine migration strategy:
 7. GEMINI.md (Gemini CLI)
 
 **Content Analysis:**
+
 - Compare file sizes and content
 - Identify identical files (can be safely symlinked)
 - Detect different content (needs merging or user decision)
@@ -47,12 +53,14 @@ Check all AI config files and their content to determine migration strategy:
 ### 3. Perform Smart Migration
 
 **Scenario A: Single file found**
+
 ```bash
 # Simple case - move to AGENTS.md
 mv CLAUDE.md AGENTS.md  # or whichever file exists
 ```
 
 **Scenario B: Multiple identical files**
+
 ```bash
 # Keep the priority file, symlink others
 mv CLAUDE.md AGENTS.md
@@ -60,6 +68,7 @@ ln -sf AGENTS.md .cursorrules  # if .cursorrules was identical
 ```
 
 **Scenario C: Multiple files with different content**
+
 1. **Automatic merging** (when possible):
    - Different sections can be combined
    - No conflicting information
@@ -76,24 +85,27 @@ ln -sf AGENTS.md .cursorrules  # if .cursorrules was identical
 ### 4. Handle Conflicts Intelligently
 
 **When conflicts detected:**
+
 1. **Display differences:**
+
    ```
    ⚠️  Multiple AI config files with different content found:
-   
+
    📄 CLAUDE.md (1,234 bytes)
    - Build commands: npm run build
    - Testing: vitest
-   
-   📄 .cursorrules (856 bytes)  
+
+   📄 .cursorrules (856 bytes)
    - Code style: Prettier + ESLint
    - TypeScript: strict mode
-   
+
    📄 .github/copilot-instructions.md (567 bytes)
    - Security guidelines
    - No secrets in code
    ```
 
 2. **Provide merge options:**
+
    ```
    Choose migration approach:
    1. 🔄 Auto-merge (recommended) - Combine all unique content
@@ -109,7 +121,9 @@ ln -sf AGENTS.md .cursorrules  # if .cursorrules was identical
    - **Manual**: Step-by-step merge assistance
 
 ### 5. Create AGENTS.md and Symlinks
+
 After handling content merging, create the final structure:
+
 ```bash
 # Claude Code
 ln -s AGENTS.md CLAUDE.md
@@ -142,6 +156,7 @@ ln -s ../AGENTS.md .idx/airules.md
 ```
 
 ### 6. Verify Results
+
 - Use `ls -la` to show all created symlinks
 - Display which AI assistants are now configured
 - Show any backup files created (.bak extensions)
@@ -149,14 +164,18 @@ ln -s ../AGENTS.md .idx/airules.md
 - Verify content completeness (all important sections included)
 
 ### 7. Git Guidance
+
 If in a git repository:
+
 - Show git status (including new AGENTS.md and any .bak files)
 - Suggest adding AGENTS.md and symlinks to git
 - Recommend reviewing .bak files before deleting them
 - Remind to update .gitignore if needed (some teams ignore certain config files)
 
 ### 8. Post-Migration Cleanup
+
 After successful migration and git commit:
+
 1. **Review backup files** (.bak extensions) to ensure nothing important was missed
 2. **Delete backup files** once satisfied with AGENTS.md content
 3. **Test with different AI assistants** to ensure all symlinks work correctly
@@ -165,6 +184,7 @@ After successful migration and git commit:
 ## Why AGENTS.md?
 
 AGENTS.md is becoming the standard for AI assistant configuration because:
+
 - Single source of truth for all AI tools
 - No more duplicating content across multiple files
 - Consistent experience across Claude Code, Cursor, Windsurf, and other tools

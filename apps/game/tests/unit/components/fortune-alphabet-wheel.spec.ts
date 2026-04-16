@@ -107,15 +107,19 @@ describe('FortuneAlphabetWheel', () => {
     randomSpy.mockRestore();
   });
 
-  it('auto-emits selection-ready when confirm step is disabled', async () => {
+  it('auto-starts spin and emits selection-ready when confirm step is disabled', async () => {
     vi.useFakeTimers();
     mockFortuneWheelAllowRedraw.value = false;
     const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0);
     const wrapper = createWrapper({ categories, letters: ['q'] });
 
     expect(wrapper.find('[data-testid="fortune-wheel-confirm-button"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="fortune-wheel-spin-button"]').exists()).toBe(false);
 
-    await wrapper.find('[data-testid="fortune-wheel-spin-button"]').trigger('click');
+    // Auto-spin watcher defers startSpin via nextTick — flush microtasks.
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
     await wrapper.findComponent({ name: 'FortuneWheel' }).vm.$emit('rotateStart', () => {});
     await wrapper.findComponent({ name: 'FortuneWheel' }).vm.$emit('rotateEnd', { id: 1 });
 

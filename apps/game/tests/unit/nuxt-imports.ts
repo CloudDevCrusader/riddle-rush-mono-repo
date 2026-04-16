@@ -68,3 +68,19 @@ export const useI18n = () => {
       typeof fallback === 'string' ? fallback : key,
   };
 };
+
+export const useToast = () => {
+  const globalFn = getGlobal<AnyFn | undefined>('useToast', undefined);
+  if (typeof globalFn === 'function') return globalFn();
+
+  return {
+    show: () => '',
+    remove: () => {},
+    clear: () => {},
+    toasts: { value: [] },
+    success: () => '',
+    error: () => '',
+    info: () => '',
+    warning: () => '',
+  };
+};

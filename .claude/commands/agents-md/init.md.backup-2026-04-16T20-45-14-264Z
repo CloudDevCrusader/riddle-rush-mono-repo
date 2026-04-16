@@ -9,22 +9,27 @@ allowed-tools: Write, Bash(ln:*), Bash(mkdir:*), Bash(test:*), Bash(echo:*), Rea
 Create a comprehensive AGENTS.md file following the universal standard, with symlinks for all AI assistants.
 
 ## Current Status
+
 !`test -f AGENTS.md && echo "⚠️  AGENTS.md already exists" || echo "✅ Ready to create AGENTS.md"`
 
 ## Task
 
 Please analyze this codebase and create an AGENTS.md file containing:
+
 1. Build/lint/test commands - especially for running a single test
 2. Code style guidelines including imports, formatting, types, naming conventions, error handling, etc.
 
 Usage notes:
+
 - The file you create will be given to agentic coding agents (such as yourself) that operate in this repository
 - If there's already an AGENTS.md, improve it
 - If there are Cursor rules (in .cursor/rules/ or .cursorrules) or Copilot rules (in .github/copilot-instructions.md), make sure to include them
 - Start the file with: "# AGENTS.md\nThis file provides guidance to AI coding assistants working in this repository."
 
 ### 1. Gather Repository Information
+
 Use Task tool with description "Gather repository information" to run these Glob patterns in parallel:
+
 - `package*.json` - Node.js project files
 - `*.md` - Documentation files
 - `.github/workflows/*.yml` - GitHub Actions workflows
@@ -47,6 +52,7 @@ Use Task tool with description "Gather repository information" to run these Glob
 - `Dockerfile`, `docker-compose*.yml` - Docker configuration
 
 Also examine:
+
 - README.md for project overview and command documentation
 - package.json scripts to document all available commands
 - GitHub workflows to identify CI/CD commands
@@ -55,23 +61,27 @@ Also examine:
 - `.claude/agents/` directory to discover available subagents
 
 **Script Consistency Check**: When documenting npm scripts from package.json, verify they match references in:
+
 - GitHub Actions workflows (npm run, npm test, etc.)
 - README.md installation and usage sections
 - Docker configuration files
 - Any setup or deployment scripts
 
 ### 2. Check for Existing Configs
+
 - If AGENTS.md exists, improve it based on analysis
-- If .cursorrules or .cursor/rules/* exist, incorporate them
+- If .cursorrules or .cursor/rules/\* exist, incorporate them
 - If .github/copilot-instructions.md exists, include its content
 - If other AI configs exist (.clinerules, .windsurfrules), merge them
 - If `.claude/agents/` directory exists, document available subagents with their descriptions and usage examples
 
 ### 3. Create AGENTS.md
+
 Based on your analysis, create AGENTS.md with this structure:
 
 ```markdown
 # AGENTS.md
+
 This file provides guidance to AI coding assistants working in this repository.
 
 **Note:** [Document if CLAUDE.md or other AI config files are symlinks to AGENTS.md]
@@ -86,12 +96,14 @@ This file provides guidance to AI coding assistants working in this repository.
 
 **CRITICAL**: Document the EXACT script names from package.json, not generic placeholders.
 For example:
+
 - Build: `npm run build` (if package.json has "build": "webpack")
 - Test: `npm test` (if package.json has "test": "jest")
 - Type check: `npm run typecheck` (if package.json has "typecheck": "tsc --noEmit")
 - Lint: `npm run lint` (if package.json has "lint": "eslint .")
 
 If the project uses different names, document those:
+
 - Type check: `npm run tsc` (if that's what's in package.json)
 - Lint: `npm run eslint` (if that's what's in package.json)
 - Format: `npm run prettier` (if that's what's in package.json)
@@ -99,8 +111,10 @@ If the project uses different names, document those:
 [Include ALL commands from package.json scripts, even if they have non-standard names]
 
 ### Script Command Consistency
+
 **Important**: When modifying npm scripts in package.json, ensure all references are updated:
-- GitHub Actions workflows (.github/workflows/*.yml)
+
+- GitHub Actions workflows (.github/workflows/\*.yml)
 - README.md documentation
 - Contributing guides
 - Dockerfile/docker-compose.yml
@@ -108,6 +122,7 @@ If the project uses different names, document those:
 - Setup/installation scripts
 
 Common places that reference npm scripts:
+
 - Build commands → Check: workflows, README, Dockerfile
 - Test commands → Check: workflows, contributing docs
 - Lint commands → Check: pre-commit hooks, workflows
@@ -118,17 +133,19 @@ Common places that reference npm scripts:
 ## Code Style
 
 [Formatting rules, naming conventions, and best practices:]
+
 - Language/framework specifics
 - Import conventions
 - Formatting rules
 - Naming conventions
 - Type usage patterns
 - Error handling patterns
-[Be specific based on actual code analysis]
+  [Be specific based on actual code analysis]
 
 ## Testing
 
 [Testing frameworks, conventions, and execution guidelines:]
+
 - Framework: [Jest/Vitest/Pytest/etc]
 - Test file patterns: [*.test.ts, *.spec.js, etc]
 - Testing conventions
@@ -136,9 +153,11 @@ Common places that reference npm scripts:
 - How to run specific test suites
 
 ### Testing Philosophy
+
 **When tests fail, fix the code, not the test.**
 
 Key principles:
+
 - **Tests should be meaningful** - Avoid tests that always pass regardless of behavior
 - **Test actual functionality** - Call the functions being tested, don't just check side effects
 - **Failing tests are valuable** - They reveal bugs or missing features
@@ -149,6 +168,7 @@ Key principles:
 ## Security
 
 [Security considerations and data protection guidelines:]
+
 - Authentication/authorization patterns
 - Data validation requirements
 - Secret management
@@ -157,14 +177,16 @@ Key principles:
 ## Directory Structure & File Organization
 
 ### Reports Directory
-ALL project reports and documentation should be saved to the `reports/` directory:
 
+ALL project reports and documentation should be saved to the `reports/` directory:
 ```
+
 your-project/
-├── reports/              # All project reports and documentation
-│   └── *.md             # Various report types
-├── temp/                # Temporary files and debugging
+├── reports/ # All project reports and documentation
+│ └── \*.md # Various report types
+├── temp/ # Temporary files and debugging
 └── [other directories]
+
 ```
 
 ### Report Generation Guidelines
@@ -209,23 +231,27 @@ All temporary files, debugging scripts, and test artifacts should be organized i
 
 ### Example `.gitignore` patterns
 ```
+
 # Temporary files and debugging
+
 /temp/
-temp/
-**/temp/
-debug-*.js
-test-*.py
-analyze-*.sh
-*-debug.*
-*.debug
+temp/ \*_/temp/
+debug-_.js
+test-_.py
+analyze-_.sh
+_-debug._
+\*.debug
 
 # Claude settings
+
 .claude/settings.local.json
 
 # Don't ignore reports directory
+
 !reports/
-!reports/**
-```
+!reports/\*\*
+
+````
 
 ### Claude Code Settings (.claude Directory)
 
@@ -264,7 +290,7 @@ The `.claude` directory contains Claude Code configuration files with specific v
 
 #### Why Agent Delegation Matters:
 - Specialists have deeper, more focused knowledge
-- They're aware of edge cases and subtle bugs  
+- They're aware of edge cases and subtle bugs
 - They follow established patterns and best practices
 - They can provide more comprehensive solutions
 
@@ -282,7 +308,7 @@ command -v claudekit >/dev/null 2>&1 && claudekit list agents || echo "claudekit
 
 # If claudekit is installed, you can explore available agents:
 claudekit list agents
-```
+````
 
 #### Critical: Always Use Parallel Tool Calls
 
@@ -291,6 +317,7 @@ claudekit list agents
 **IMPORTANT: Send all tool calls in a single message to execute them in parallel.**
 
 **These cases MUST use parallel tool calls:**
+
 - Searching for different patterns (imports, usage, definitions)
 - Multiple grep searches with different regex patterns
 - Reading multiple files or searching different directories
@@ -303,6 +330,7 @@ claudekit list agents
 You genuinely REQUIRE the output of one tool to determine the usage of the next tool.
 
 **Planning Approach:**
+
 1. Before making tool calls, think: "What information do I need to fully answer this question?"
 2. Send all tool calls in a single message to execute them in parallel
 3. Execute all those searches together rather than waiting for each result
@@ -311,7 +339,8 @@ You genuinely REQUIRE the output of one tool to determine the usage of the next 
 **Performance Impact:** Parallel tool execution is 3-5x faster than sequential calls, significantly improving user experience.
 
 **Remember:** This is not just an optimization—it's the expected behavior. Both delegation and parallel execution are requirements, not suggestions.
-```
+
+````
 
 Think about what you'd tell a new team member on their first day. Include these key sections:
 
@@ -330,7 +359,7 @@ Additional sections based on project needs:
 - Deployment procedures
 - Contributing guidelines
 
-**Important:** 
+**Important:**
 - Include content from any existing .cursorrules or copilot-instructions.md files
 - Focus on practical information that helps AI assistants write better code
 - Be specific and concrete based on actual code analysis
@@ -386,9 +415,10 @@ These reports serve as:
 
 All reports are tracked in git to maintain historical records.
 EOF
-```
+````
 
 ### 5. Create Symlinks
+
 After creating AGENTS.md and directory structure, create symlinks for all AI assistants and document this in AGENTS.md:
 
 ```bash
@@ -420,7 +450,9 @@ ln -sf ../AGENTS.md .idx/airules.md
 ```
 
 ### 6. Show Results
+
 Display:
+
 - Created/updated AGENTS.md
 - Created reports directory structure
 - List of symlinks created
@@ -428,7 +460,7 @@ Display:
 - Suggest reviewing and customizing if needed
 
 **Important:** Make sure to add a note at the top of AGENTS.md documenting which files are symlinks to AGENTS.md. For example:
+
 ```markdown
 **Note:** CLAUDE.md, .clinerules, .cursorrules, and other AI config files are symlinks to AGENTS.md in this project.
 ```
-

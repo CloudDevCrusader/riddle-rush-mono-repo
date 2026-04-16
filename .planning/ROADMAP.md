@@ -33,7 +33,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 18: Fortune Wheel Default, Warning Fixes, E2E Rework & Post-Zustand Refactoring** - Enable fortune wheel default, fix warnings/duplicated imports, rework E2E tests, refactor post-migration changes (completed 2026-03-23)
 - [x] **Phase 19: Move from Pinia to Zustand** - Complete Pinia-to-Zustand state management migration (completed 2026-03-22)
 - [x] **Phase 20: Revert Zustand to Pinia** - Revert Zustand migration back to Pinia while preserving architectural improvements
-- [x] **Phase 21: Refactor and Fix E2E and Unit Tests** - Complete Phase 12 uncompleted unit tests, refactor remaining E2E specs, fix multi-round scoring workflow, achieve 100% E2E test pass rate (completed 2026-03-24)
+- [x] **Phase 21: Refactor and Fix E2E and Unit Tests** - Complete Phase 12 unimplemented unit test plans, refactor remaining E2E specs, fix multi-round scoring workflow, achieve 100% E2E test pass rate (completed 2026-03-24)
+- [x] **Phase 22: Add fortune wheel for alphabet selection using vue-fortunewheel** - Replace round-start flip-through with interactive wheel (completed 2026-04-10)
+- [x] **Phase 23: Improve performance and accessibility. Find out why there are images on prod that can not be loaded** - Performance optimization, font self-hosting, Lighthouse tooling (completed 2026-04-11)
+- [x] **Phase 24: PWA Update Notification with Reload Button** - Surface user-visible toast for SW updates with reload button (completed 2026-04-16)
 
 ## Phase Details
 
@@ -87,7 +90,7 @@ Plans:
 2. GameBackground applies blue radial gradient with spotlight effect
 3. Components scale responsively from 320px to 1024px width
 4. Components can be composed (panel inside background) without style conflicts
-   **Plans**: 2 plans
+   **Plans:** 2 plans
 
 Plans:
 
@@ -106,7 +109,7 @@ Plans:
 3. Button press shows active state (inset appearance)
 4. GameDisplay renders yellow/gold text with glow effect for scores and letters
 5. Display text remains readable against busy backgrounds (4.5:1 contrast minimum)
-   **Plans**: 2 plans
+   **Plans:** 2 plans
 
 Plans:
 
@@ -125,7 +128,7 @@ Plans:
 3. Modal backdrop prevents interaction with underlying content
 4. GameScrollList displays player/leaderboard cards with consistent styling
 5. ScrollList handles 1-6 players without layout breaking
-   **Plans**: 3 plans
+   **Plans:** 3 plans
 
 Plans:
 
@@ -146,7 +149,7 @@ Plans:
 4. No coins or profile avatar visible on main menu
 5. Buttons respond to touch/click with visual feedback
 6. Navigation from splash to menu works smoothly (300-400ms transition)
-   **Plans**: 2 plans
+   **Plans:** 2 plans
 
 Plans:
 
@@ -165,7 +168,7 @@ Plans:
 3. Input fields appear/disappear when player count changes
 4. START GAME button is styled and positioned as in mockup
 5. No coins visible on players page
-   **Plans**: 2 plans
+   **Plans:** 2 plans
 
 Plans:
 
@@ -185,7 +188,7 @@ Plans:
 4. Text input styled to fit theme (required for multiplayer)
 5. Back button positioned top-left
 6. NEXT button matches mockup green glossy styling
-   **Plans**: 2 plans
+   **Plans:** 2 plans
 
 Plans:
 
@@ -208,7 +211,7 @@ Plans:
 7. Numbered badges appear for positions 4-6
 8. Player names and scores align consistently
 9. No coins visible on either page
-   **Plans**: 2 plans
+   **Plans:** 2 plans
 
 Plans:
 
@@ -230,7 +233,7 @@ Plans:
 6. English/German rows show flag icons with checkmark for selected language
 7. Language selection updates when row clicked
 8. OK button returns to previous screen
-   **Plans**: 2 plans
+   **Plans:** 2 plans
 
 Plans:
 
@@ -252,7 +255,7 @@ Plans:
 6. Resume button (green), Restart button (blue), Home button (orange) display stacked
 7. Clicking outside modal does not dismiss it
 8. Modal backdrop dims background content
-   **Plans**: 3 plans
+   **Plans:** 3 plans
 
 Plans:
 
@@ -301,16 +304,16 @@ Plans:
 
 Plans:
 
-- [ ] 12-01-PLAN.md — E2E test fixes with data-testid attributes
-- [ ] 12-02-PLAN.md — Unit tests for useAnswerCheck, useGameActions, useGameState
-- [ ] 12-03-PLAN.md — Unit tests for useStatistics, useAudio, useIndexedDB
-- [ ] 12-04-PLAN.md — Extract S3, CloudFront, DynamoDB Terraform modules
-- [ ] 12-05-PLAN.md — Extract Lambda, API Gateway, WebSocket, CloudWatch modules
-- [ ] 12-06-PLAN.md — Extract category and session management composables
-- [ ] 12-07-PLAN.md — Extract player and scoring management composables
-- [ ] 12-08-PLAN.md — Extract attempt, statistics, persistence composables
-- [ ] 12-09-PLAN.md — Visual audit of all game pages
-- [ ] 12-10-PLAN.md — Deployment script enhancements
+- [x] 12-01-PLAN.md — E2E test fixes with data-testid attributes
+- [x] 12-02-PLAN.md — Unit tests for useAnswerCheck, useGameActions, useGameState
+- [x] 12-03-PLAN.md — Unit tests for useStatistics, useAudio, useIndexedDB
+- [x] 12-04-PLAN.md — Extract S3, CloudFront, DynamoDB Terraform modules
+- [x] 12-05-PLAN.md — Extract Lambda, API Gateway, WebSocket, CloudWatch modules
+- [x] 12-06-PLAN.md — Extract category and session management composables
+- [x] 12-07-PLAN.md — Extract player and scoring management composables
+- [x] 12-08-PLAN.md — Extract attempt, statistics, persistence composables
+- [x] 12-09-PLAN.md — Visual audit of all game pages
+- [x] 12-10-PLAN.md — Deployment script enhancements
 
 **Details**:
 
@@ -383,7 +386,6 @@ Plans:
 - [x] 15-04-PLAN.md -- Fortune Wheel redesign (game palette + CSS pointer + 300px fluid), index.vue CSS gaps + page animations
 
 **Details**:
-
 - **Wave 1 (Parallel):** Plans 01, 02, 03 -- CSS foundation, Figma prep, bug fixes (independent)
 - **Wave 2 (Sequential):** Plan 04 -- CSS gap fixes + animations (depends on Plan 01 for .page-shell class)
 
@@ -410,7 +412,6 @@ Plans:
 - [x] 17-03-PLAN.md — Update CLAUDE.md and README.md to match current codebase, archive stale docs
 
 **Details**:
-
 - **Wave 1 (Parallel):** Plans 01, 02 — File cleanup and Knip setup (independent)
 - **Wave 2 (Sequential):** Plan 03 — Documentation updates (depends on 01, 02 for accurate post-cleanup state)
 
@@ -439,7 +440,6 @@ Plans:
 - [x] 18-05-PLAN.md — Single-source game flow refactor, multi-round workflow fixes, and code-review cleanup bundle
 
 **Details**:
-
 - **Wave 1 (Parallel):** Plans 01, 02 — Barrel cleanup and E2E helper creation (independent)
 - **Wave 2 (Parallel):** Plans 03, 04 — E2E completion + feature-flag contract finalization (03 depends on 02, 04 depends on 01)
 - **Wave 3 (Sequential):** Plan 05 — Unified game-flow + multi-round fixes (depends on 03 and 04)
@@ -457,8 +457,7 @@ Plans:
 - [x] 19-02-PLAN.md — Big-bang consumer cutover to focused hooks, remove Pinia entirely, delete old stores
 - [x] 19-03-PLAN.md — Rewrite unit tests for Zustand, create migration test, clean up E2E helpers
 
-**Details:**
-
+**Details**:
 - **Wave 1:** Plan 01 — Create new store files, hooks, and migration utility (foundation)
 - **Wave 2:** Plan 02 — Swap all consumers, remove Pinia package and config, delete old files
 - **Wave 3:** Plan 03 — Rewrite tests for Zustand isolation, add migration test, update E2E helpers
@@ -493,6 +492,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 21. Refactor and Fix E2E & Unit Tests | 10/11          | In Progress |            |
 | 22. Fortune Wheel Alphabet Selection  | 3/3            | Complete    | 2026-04-10 |
 | 23. Performance & Accessibility       | 4/4            | Complete    | 2026-04-11 |
+| 24. PWA Update Notification          | 0/3            | Pending     |            |
 
 ### Phase 20: Revert Zustand to Pinia
 
@@ -516,7 +516,6 @@ Plans:
 - [x] 20-03-PLAN.md — Run comprehensive E2E tests and verify reactivity issues resolved
 
 **Details**:
-
 - **Wave 1:** Plan 01 — Convert main store to Pinia with preserved architecture
 - **Wave 2:** Plan 02 — Update all components and tests for Pinia compatibility
 - **Wave 3:** Plan 03 — Verify E2E tests pass and reactivity issues are resolved
@@ -556,7 +555,6 @@ Plans:
 - [ ] 21-09-PLAN.md — Verify 100% E2E test pass rate across full suite
 
 **Details**:
-
 **Wave 1 (Foundation - Parallel):** Plans 01, 01A, 01B, 02, 03
 **Wave 2 (Integration & Expansion - Parallel):** Plans 04, 05, 06
 **Wave 3 (Fix & Documentation - Parallel):** Plans 07, 08
@@ -622,3 +620,24 @@ Plans:
 - [x] 23-02-PLAN.md — Consolidate asset path handling and fix static image rendering contracts
 - [x] 23-03-PLAN.md — Remove dead assets, normalize filenames, and run WebP optimization pipeline
 - [x] 23-04-PLAN.md — Self-host fonts, lazy-load non-critical overlays, and capture final performance results
+
+### Phase 24: PWA Update Notification with Reload Button
+
+**Goal:** Surface a user-visible toast when a new service-worker version is detected, offering an explicit "Reload" call-to-action to activate the update — while keeping the existing `registerType: 'autoUpdate'` PWA configuration so background service-worker installs continue working seamlessly.
+**Requirements**: PWA-01, PWA-02, PWA-03
+**Depends on:** Phase 23
+**Plans:** 3/3 plans complete
+
+**Success Criteria** (what must be TRUE):
+
+1. When `@vite-pwa/nuxt` reports a waiting service worker (via `useRegisterSW` `onNeedRefresh` / `onOfflineReady`), the app surfaces a toast using the existing Toast component with a clearly labelled "Reload" action.
+2. Tapping "Reload" triggers the SW `skipWaiting()` + controller-change flow and reloads the page so the new version activates immediately.
+3. PWA config remains `registerType: 'autoUpdate'` — backgrounded updates still install without the toast blocking core gameplay.
+4. The toast is dismissible without reloading: a user mid-round can finish the round and either reload later (next navigation re-prompts if still pending) or wait for autoUpdate to apply on next cold start.
+5. Unit tests cover the update-detection composable (registration callbacks, dismiss/reload state). E2E coverage exercises the toast render and reload flow at minimum on `android-pixel5`.
+
+Plans:
+
+- [x] 24-01-PLAN.md — Create usePWAUpdate composable and extend Toast with pwa-update type
+- [x] 24-02-PLAN.md — Unit tests for usePWAUpdate composable (TDD)
+- [x] 24-03-PLAN.md — E2E tests for PWA update notification flow

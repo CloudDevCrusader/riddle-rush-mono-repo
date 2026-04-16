@@ -321,5 +321,9 @@
     "score_text": "I scored {score} points in Riddle Rush! \uD83C\uDFAF",
     "score_title": "My Riddle Rush Score",
     "success": "Score shared successfully!"
+  },
+  "pwa": {
+    "update_available": "A new version is available. Reload to update.",
+    "reload_button": "Reload"
   }
 }

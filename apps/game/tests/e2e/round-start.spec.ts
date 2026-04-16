@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import { setupMultiplayerGame } from './helpers/game-flow';
+import { completeFortuneWheel, setupMultiplayerGame } from './helpers/game-flow';
 
 test.setTimeout(120000);
 
@@ -48,36 +48,6 @@ async function setAllowRedraw(page: Page, value: boolean) {
       settings.fortuneWheelAllowRedraw = v;
     }
   }, value);
-}
-
-/**
- * Spin the wheel and navigate to /game using auto-advance mode.
- * Sets allowRedraw=false so the game starts automatically after the spin,
- * avoiding the unreliable confirm button interaction with the canvas component.
- */
-async function spinToGame(page: Page) {
-  await setAllowRedraw(page, false);
-
-  const spinButton = page.locator('[data-testid="fortune-wheel-spin-button"]');
-  await expect(spinButton).toBeVisible({ timeout: 10000 });
-  await expect
-    .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
-    .toBe(false);
-
-  // Retry click if canvas absorbs the pointer event (common on larger viewports)
-  const selectedLetter = page.locator('[data-testid="fortune-wheel-selected-letter"]');
-  await expect
-    .poll(
-      async () => {
-        await spinButton.click({ force: true }).catch(() => {});
-        const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? '';
-        return /^[A-Z]$/.test(letterText);
-      },
-      { timeout: 30000, intervals: [500, 1000, 2000, 3000, 5000] }
-    )
-    .toBe(true);
-
-  await expect(page).toHaveURL(/\/game/, { timeout: 45000 });
 }
 
 // ---------------------------------------------------------------------------
@@ -197,24 +167,13 @@ test.describe('fortune wheel auto-advance mode (allowRedraw=false)', () => {
     await setAllowRedraw(page, false);
   });
 
-  test('confirm button is hidden when redraw is disabled', async ({ page }) => {
-    await expect(page.locator('[data-testid="fortune-wheel-spin-button"]')).toBeVisible({
-      timeout: 8000,
-    });
+  test('spin and confirm buttons are both hidden when redraw is disabled', async ({ page }) => {
+    await expect(page.locator('[data-testid="fortune-wheel-spin-button"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="fortune-wheel-confirm-button"]')).toHaveCount(0);
   });
 
-  test('spin auto-navigates to game without confirm', async ({ page }) => {
-    const spinButton = page.locator('[data-testid="fortune-wheel-spin-button"]');
-
-    await expect(spinButton).toBeVisible({ timeout: 8000 });
-    await expect
-      .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
-      .toBe(false);
-
-    await spinButton.click();
-
-    // Should auto-advance to /game after spin completes (no confirm needed)
+  test('wheel auto-spins and navigates to game without any user interaction', async ({ page }) => {
+    // No clicks — the wheel should auto-start and auto-advance once allowRedraw=false.
     await expect(page).toHaveURL(/\/game/, { timeout: 45000 });
   });
 });
@@ -230,7 +189,7 @@ test.describe('Round Counter Logic', () => {
 
   test('should display round 1 on game screen after first wheel completion', async ({ page }) => {
     await startGameFromPlayers(page);
-    await spinToGame(page);
+    await completeFortuneWheel(page);
     await expect(page).toHaveURL(/\/game\//, { timeout: 35000 });
     await expect(page.locator('[data-testid="game-round-indicator"]')).toContainText('1');
   });
@@ -242,7 +201,7 @@ test.describe('Round Counter Logic', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page).toHaveURL(/\/round-start/);
-    await spinToGame(page);
+    await completeFortuneWheel(page);
     await expect(page).toHaveURL(/\/game\//, { timeout: 35000 });
     await expect(page.locator('[data-testid="game-round-indicator"]')).toContainText('1');
   });
@@ -252,7 +211,7 @@ test.describe('Round Counter Logic', () => {
   }) => {
     await startGameFromPlayers(page);
 
-    await spinToGame(page);
+    await completeFortuneWheel(page);
     await expect(page).toHaveURL(/\/game\//, { timeout: 35000 });
 
     const gameUrl = page.url();

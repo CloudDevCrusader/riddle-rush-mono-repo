@@ -1,5 +1,36 @@
 // Basic test setup for Vue/Nuxt applications
 import { beforeEach, afterEach, vi } from 'vitest';
+import { ref } from 'vue';
+
+// Toast mock
+const mockToast = {
+  show: vi.fn(() => 'toast-1'),
+  remove: vi.fn(),
+  clear: vi.fn(),
+  toasts: { value: [] },
+  success: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+  warning: vi.fn(),
+};
+
+const mockUseToast = vi.fn(() => mockToast);
+
+// PWA mock
+const mockPWA = {
+  isInstalled: false,
+  isPWAInstalled: { value: false },
+  showInstallPrompt: { value: false },
+  cancelInstall: vi.fn(),
+  install: vi.fn(),
+  swActivated: { value: false },
+  registrationError: { value: null },
+  offlineReady: { value: false },
+  needRefresh: ref(false),
+  updateServiceWorker: vi.fn(),
+  cancelPrompt: vi.fn(),
+  getSWRegistration: vi.fn(),
+};
 
 // Nuxt composable mocks
 const mockUseRuntimeConfig = vi.fn(() => ({
@@ -28,6 +59,7 @@ const mockUseNuxtApp = vi.fn(() => ({
   $i18n: {
     t: (key: string) => key,
   },
+  $pwa: mockPWA,
 }));
 
 const mockUseI18n = vi.fn(() => ({
@@ -62,17 +94,28 @@ Object.assign(globalThis, {
   useRouter: mockUseRouter,
   useNuxtApp: mockUseNuxtApp,
   useI18n: mockUseI18n,
+  useToast: mockUseToast,
   localStorage: localStorageMock,
 });
 
 beforeEach(() => {
   vi.clearAllMocks();
   localStorageMock.clear();
+  // Reset mock state
+  mockPWA.needRefresh.value = false;
+  mockPWA.updateServiceWorker.mockClear();
+  mockPWA.cancelPrompt.mockClear();
+  mockToast.show.mockClear();
+  mockToast.show.mockReturnValue('toast-1');
+  mockToast.remove.mockClear();
 });
 
 afterEach(() => {
   vi.clearAllTimers();
   vi.clearAllMocks();
 });
+
+// Export for test access
+export { mockPWA, mockToast };
 
 export default { createTestContext: () => ({}) };

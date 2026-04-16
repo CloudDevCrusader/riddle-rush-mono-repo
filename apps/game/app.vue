@@ -23,6 +23,9 @@ const installPrompt = useInstallPrompt();
 const settings = useSettings();
 const { setLocale, t } = useI18n();
 
+// Initialize PWA update detection (watchEffect + toast when SW needs refresh)
+const pwaUpdate = usePWAUpdate();
+
 useDocumentLang();
 
 const jsonLdPayload = computed(() =>
@@ -116,6 +119,18 @@ onMounted(async () => {
 
   // Debug mode shortcut: Ctrl+Shift+D
   window.addEventListener('keydown', handleKeydown);
+
+  // Playwright: expose hook to simulate update toast without a real SW bump
+  if (playwrightE2EWindow()) {
+    (
+      window as Window & {
+        __pwaUpdateE2E?: { trigger: () => void; dismiss: () => Promise<void> };
+      }
+    ).__pwaUpdateE2E = {
+      trigger: () => pwaUpdate.updateDetected({ force: true }),
+      dismiss: () => pwaUpdate.dismiss(),
+    };
+  }
 });
 
 onUnmounted(() => {

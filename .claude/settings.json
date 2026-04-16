@@ -201,7 +201,8 @@
           }
         ]
       }
-    ]
+    ],
+    "SubagentStop": []
   },
   "statusLine": {
     "type": "command",

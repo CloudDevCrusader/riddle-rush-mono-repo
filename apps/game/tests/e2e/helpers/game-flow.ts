@@ -385,9 +385,8 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
     return;
   }
 
-  // Use auto-advance mode: disable respin so the game starts automatically
-  // after the wheel spin (720ms timer), avoiding the unreliable confirm button
-  // interaction where the canvas absorbs pointer events.
+  // Single-spin mode: toggling allowRedraw=false causes the wheel to auto-spin
+  // and auto-advance to /game on its own — no user interaction needed.
   await page.evaluate(() => {
     const settings = (window as PiniaWindow).__pinia_stores__?.settings;
     if (settings) {
@@ -395,29 +394,6 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
     }
   });
 
-  const spinButton = page.locator('[data-testid="fortune-wheel-spin-button"]');
-  const selectedLetter = page.locator('[data-testid="fortune-wheel-selected-letter"]');
-
-  await expect(spinButton).toBeVisible({ timeout: 15000 });
-  await expect
-    .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
-    .toBe(false);
-
-  // Retry click with force:true — the canvas element can absorb pointer events
-  // on some viewports. Poll until a letter is selected to confirm the spin fired.
-  await expect
-    .poll(
-      async () => {
-        if (/\/game/.test(page.url())) return true;
-        await spinButton.click({ force: true }).catch(() => {});
-        const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? '';
-        return /^[A-Z]$/.test(letterText);
-      },
-      { timeout: 30000, intervals: [500, 1000, 2000, 3000, 5000] }
-    )
-    .toBe(true);
-
-  // With allowRedraw=false, auto-advance navigates to /game after ~720ms
   await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true);
 }
 
