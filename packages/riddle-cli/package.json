@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/cli",
-  "version": "1.2.0",
+  "version": "1.5.2",
   "description": "Riddle Rush CLI - Agent workflow and project management",
   "keywords": [
     "oclif",
@@ -22,7 +22,7 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@oclif/core": "^4.13.10",
+    "@oclif/core": "4.10.5",
     "@oclif/plugin-help": "^6.2.44"
   },
   "devDependencies": {

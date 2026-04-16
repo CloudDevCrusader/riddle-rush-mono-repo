@@ -277,8 +277,8 @@ importers:
         specifier: ^1.59.1
         version: 1.59.1
       prettier:
-        specifier: ^3.8.2
-        version: 3.8.2
+        specifier: ^3.8.3
+        version: 3.8.3
       rollup-plugin-visualizer:
         specifier: ^7.0.1
         version: 7.0.1(rollup@4.60.1)
@@ -426,8 +426,8 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0(jiti@2.6.1)
       prettier:
-        specifier: ^3.8.2
-        version: 3.8.2
+        specifier: ^3.8.3
+        version: 3.8.3
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -435,7 +435,7 @@ importers:
   packages/riddle-cli:
     dependencies:
       '@oclif/core':
-        specifier: ^4.10.3
+        specifier: 4.10.5
         version: 4.10.5
       '@oclif/plugin-help':
         specifier: ^6.2.44
@@ -490,8 +490,8 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0(jiti@2.6.1)
       prettier:
-        specifier: ^3.8.2
-        version: 3.8.2
+        specifier: ^3.8.3
+        version: 3.8.3
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -515,8 +515,8 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0(jiti@2.6.1)
       prettier:
-        specifier: ^3.8.2
-        version: 3.8.2
+        specifier: ^3.8.3
+        version: 3.8.3
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -14666,11 +14666,6 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.8.2:
-    resolution: {integrity: sha512-8c3mgTe0ASwWAJK+78dpviD+A8EqhndQPUBpNUIPt6+xWlIigCwfN01lWr9MAede4uqXGTEKeQWTvzb3vjia0Q==}
-    engines: {node: '>=14'}
-    hasBin: true
-
   prettier@3.8.3:
     resolution: {integrity: sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw==}
     engines: {node: '>=14'}
@@ -22065,7 +22060,7 @@ snapshots:
       magic-string: 0.30.21
       nitropack: 2.13.2(@vercel/functions@3.3.4(@aws-sdk/credential-provider-web-identity@3.972.9))(aws4fetch@1.0.20)(better-sqlite3@11.10.0)(encoding@0.1.13)(xml2js@0.6.2)
       oxc-parser: 0.121.0
-      prettier: 3.8.2
+      prettier: 3.8.3
       sirv: 3.0.2
       unplugin: 3.0.0
       unstorage: 1.17.5(@vercel/functions@3.3.4(@aws-sdk/credential-provider-web-identity@3.972.9))(aws4fetch@1.0.20)(db0@0.3.4(better-sqlite3@11.10.0))(ioredis@5.10.1)
@@ -36317,8 +36312,6 @@ snapshots:
   prelude-ls@1.2.1: {}
 
   prettier@2.8.8: {}
-
-  prettier@3.8.2: {}
 
   prettier@3.8.3: {}
 
