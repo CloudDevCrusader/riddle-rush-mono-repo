@@ -1,0 +1,487 @@
+# ==============================================================================
+# Release — builds mobile artifacts and attaches them as SEPARATE assets
+# to a GitHub Release when a semver tag is pushed.
+#
+# Trigger: push tag matching v[0-9]+.[0-9]+.[0-9]+   (e.g. `git tag v1.6.0 && git push origin v1.6.0`)
+#
+# Produces (each as its own download link on the Release page):
+#   • riddle-rush-<version>-play.apk       — ARM, debug-signed (sideloadable)
+#   • riddle-rush-<version>-universal.apk  — all ABIs, debug-signed (emulators)
+#   • riddle-rush-<version>.aab            — Play Store bundle, release-signed
+#                                            (built only if vars.ENABLE_ANDROID_RELEASE_AAB='true')
+#   • riddle-rush-<version>.ipa            — iOS release IPA
+#                                            (built only if vars.ENABLE_IOS_RELEASE='true')
+#
+# The existing `capacitor-mobile-artifacts.yml` continues to produce a workflow
+# artifact for every tag (wildcard). This workflow is strictly additive and only
+# runs on semver tags so the Releases page stays clean.
+#
+# Security note: user-controlled strings (tag name, dispatch input) are passed
+# to shell via env:, never inline-interpolated with ${{ ... }}. The `meta` job
+# also regex-validates the tag shape before anything else runs.
+# ==============================================================================
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing semver tag to build (e.g. v1.6.0). Leave empty to use github.ref_name.'
+        required: false
+        type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write # required to create the Release and upload assets
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '10.33.0'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Resolve + validate the tag/version used by every subsequent job.
+  # Rejects anything that isn't strictly v<major>.<minor>.<patch>.
+  # ---------------------------------------------------------------------------
+  meta:
+    name: Resolve release metadata
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
+    env:
+      DISPATCH_TAG: ${{ github.event.inputs.tag }}
+      REF_NAME: ${{ github.ref_name }}
+    steps:
+      - id: v
+        run: |
+          set -euo pipefail
+          raw="${DISPATCH_TAG:-$REF_NAME}"
+          if ! printf '%s' "$raw" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Refusing to release — tag '$raw' is not strict semver (v<major>.<minor>.<patch>)."
+            exit 1
+          fi
+          version="${raw#v}"
+          {
+            echo "tag=$raw"
+            echo "version=$version"
+          } >> "$GITHUB_OUTPUT"
+          echo "Building release for tag=$raw (version=$version)"
+
+  # ---------------------------------------------------------------------------
+  # Android — debug APKs for both product flavours (play, universal).
+  # Debug-signed so no keystore secrets required — these are for sideloading.
+  # ---------------------------------------------------------------------------
+  android-apks:
+    name: Android debug APKs (play + universal)
+    needs: meta
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: node:22-bookworm
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor: [play, universal]
+    env:
+      RELEASE_TAG: ${{ needs.meta.outputs.tag }}
+      RELEASE_VERSION: ${{ needs.meta.outputs.version }}
+      FLAVOR: ${{ matrix.flavor }}
+    steps:
+      - name: Install Git
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates
+          rm -rf /var/lib/apt/lists/*
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.meta.outputs.tag }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: >-
+            platform-tools
+            platforms;android-36
+            build-tools;35.0.0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build debug APK
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+          ANDROID_FLAVOR: ${{ matrix.flavor }}
+          NODE_OPTIONS: --max-old-space-size=8192
+          CI: 'true'
+        run: bash scripts/mobile-build.sh android debug
+
+      - name: Rename APK with version + flavor
+        run: |
+          set -euo pipefail
+          src="apps/mobile/android/app/build/outputs/apk/${FLAVOR}/debug/app-${FLAVOR}-debug.apk"
+          dst="riddle-rush-${RELEASE_VERSION}-${FLAVOR}.apk"
+          cp "$src" "$dst"
+          ls -lh "$dst"
+
+      - name: Upload APK as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: riddle-rush-${{ needs.meta.outputs.version }}-${{ matrix.flavor }}-apk
+          path: riddle-rush-${{ needs.meta.outputs.version }}-${{ matrix.flavor }}.apk
+          if-no-files-found: error
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # Android — signed release AAB (for Play Store). Opt-in.
+  # Required secrets: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+  # ANDROID_KEYSTORE_ALIAS, ANDROID_KEYSTORE_ALIAS_PASSWORD.
+  # ---------------------------------------------------------------------------
+  android-aab:
+    name: Android release AAB (signed)
+    needs: meta
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: ${{ vars.ENABLE_ANDROID_RELEASE_AAB == 'true' }}
+    container:
+      image: node:22-bookworm
+    env:
+      RELEASE_VERSION: ${{ needs.meta.outputs.version }}
+    steps:
+      - name: Install Git
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates
+          rm -rf /var/lib/apt/lists/*
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.meta.outputs.tag }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: >-
+            platform-tools
+            platforms;android-36
+            build-tools;35.0.0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Decode keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is empty. Unset vars.ENABLE_ANDROID_RELEASE_AAB or provide the keystore."
+            exit 1
+          fi
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/release.keystore"
+          echo "ANDROID_KEYSTORE_PATH=$GITHUB_WORKSPACE/release.keystore" >> "$GITHUB_ENV"
+
+      - name: Build release AAB
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+          ANDROID_FLAVOR: play
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+          ANDROID_KEYSTORE_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_ALIAS_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=8192
+          CI: 'true'
+        run: bash scripts/mobile-build.sh android release --aab
+
+      - name: Rename AAB with version
+        run: |
+          set -euo pipefail
+          src="apps/mobile/android/app/build/outputs/bundle/playRelease/app-play-release.aab"
+          dst="riddle-rush-${RELEASE_VERSION}.aab"
+          cp "$src" "$dst"
+          ls -lh "$dst"
+
+      - name: Upload AAB as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: riddle-rush-${{ needs.meta.outputs.version }}-aab
+          path: riddle-rush-${{ needs.meta.outputs.version }}.aab
+          if-no-files-found: error
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # iOS — signed release IPA. Opt-in via vars.ENABLE_IOS_RELEASE=true.
+  # Required secrets: APPLE_TEAM_ID, APPLE_CERTIFICATE_P12_BASE64,
+  # APPLE_CERTIFICATE_PASSWORD, APPLE_PROVISIONING_PROFILE_BASE64,
+  # APPLE_EXPORT_OPTIONS_PLIST_BASE64.
+  # Kept as a stub so the workflow ships without forcing Apple signing setup.
+  # ---------------------------------------------------------------------------
+  ios-ipa:
+    name: iOS release IPA
+    needs: meta
+    runs-on: macos-latest
+    timeout-minutes: 60
+    if: ${{ vars.ENABLE_IOS_RELEASE == 'true' }}
+    env:
+      RELEASE_VERSION: ${{ needs.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.meta.outputs.tag }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Import signing certificate
+        env:
+          P12_BASE64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: runner-${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          CERT_PATH="$RUNNER_TEMP/cert.p12"
+          KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+          printf '%s' "$P12_BASE64" | base64 -D -o "$CERT_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security list-keychain -d user -s "$KEYCHAIN" login.keychain
+
+      - name: Install provisioning profile
+        env:
+          PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          printf '%s' "$PROFILE_BASE64" | base64 -D -o "$HOME/Library/MobileDevice/Provisioning Profiles/release.mobileprovision"
+
+      - name: Generate + sync web assets
+        env:
+          CI: 'true'
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: |
+          set -euo pipefail
+          pnpm --filter @riddle-rush/game generate
+          cd apps/mobile && npx cap sync ios
+
+      - name: Archive + export IPA
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          EXPORT_PLIST_BASE64: ${{ secrets.APPLE_EXPORT_OPTIONS_PLIST_BASE64 }}
+        run: |
+          set -euo pipefail
+          cd apps/mobile/ios/App
+          ARCHIVE_PATH="$RUNNER_TEMP/App.xcarchive"
+          EXPORT_DIR="$RUNNER_TEMP/export"
+          EXPORT_PLIST="$RUNNER_TEMP/ExportOptions.plist"
+          printf '%s' "$EXPORT_PLIST_BASE64" | base64 -D -o "$EXPORT_PLIST"
+
+          xcodebuild -project App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            archive
+
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportOptionsPlist "$EXPORT_PLIST" \
+            -exportPath "$EXPORT_DIR" \
+            -allowProvisioningUpdates
+
+          src=$(find "$EXPORT_DIR" -name '*.ipa' | head -1)
+          dst="$GITHUB_WORKSPACE/riddle-rush-${RELEASE_VERSION}.ipa"
+          cp "$src" "$dst"
+          ls -lh "$dst"
+
+      - name: Upload IPA as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: riddle-rush-${{ needs.meta.outputs.version }}-ipa
+          path: riddle-rush-${{ needs.meta.outputs.version }}.ipa
+          if-no-files-found: error
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # CLI — standalone tarballs with bundled Node runtime for every target.
+  # Produces one .tar.gz per platform, each uploaded separately to the Release.
+  #
+  # Cross-packaging: oclif downloads prebuilt Node binaries for each target,
+  # so we can build all tarballs on a single Linux runner. No emulation.
+  # ---------------------------------------------------------------------------
+  cli-tarballs:
+    name: CLI tarballs (linux / darwin / win32)
+    needs: meta
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RELEASE_VERSION: ${{ needs.meta.outputs.version }}
+      OCLIF_TARGETS: 'linux-x64,linux-arm64,darwin-x64,darwin-arm64,win32-x64'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.meta.outputs.tag }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build CLI
+        run: pnpm --filter @riddle-rush/cli build
+
+      - name: Pack tarballs (all targets)
+        working-directory: packages/riddle-cli
+        run: |
+          set -euo pipefail
+          # oclif reads package.json + dist/ and cross-packs Node runtimes per target.
+          pnpm exec oclif pack tarballs --targets "$OCLIF_TARGETS" --no-xz
+
+      - name: Rename tarballs to release-friendly names
+        working-directory: packages/riddle-cli
+        run: |
+          set -euo pipefail
+          mkdir -p release-out
+          shopt -s nullglob
+          # Default oclif naming: riddle-v<ver>-<sha>-<target>.tar.gz (e.g. riddle-v1.6.0-abc1234-linux-x64.tar.gz)
+          # Detect each supported target suffix explicitly for portability.
+          for target in linux-x64 linux-arm64 darwin-x64 darwin-arm64 win32-x64; do
+            src=$(ls dist/riddle-v*-"${target}".tar.gz 2>/dev/null | head -1 || true)
+            if [ -z "${src:-}" ]; then
+              echo "::warning::No tarball produced for $target"
+              continue
+            fi
+            dst="release-out/riddle-rush-cli-${RELEASE_VERSION}-${target}.tar.gz"
+            cp "$src" "$dst"
+            echo "  renamed $src -> $dst"
+          done
+          ls -lh release-out
+
+      - name: Upload CLI tarballs as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: riddle-rush-cli-${{ needs.meta.outputs.version }}-tarballs
+          path: packages/riddle-cli/release-out/*.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # Create / update the GitHub Release and attach every artifact as a separate,
+  # directly-downloadable asset.
+  #
+  # `softprops/action-gh-release@v2` with multiple `files:` patterns gives each
+  # file its own download URL — nothing is zipped.
+  # ---------------------------------------------------------------------------
+  publish:
+    name: Publish GitHub Release
+    needs: [meta, android-apks, android-aab, ios-ipa, cli-tarballs]
+    # Succeed as long as mandatory jobs (android-apks, cli-tarballs) succeeded.
+    # Opt-in jobs (android-aab, ios-ipa) may be skipped/failed without blocking release.
+    if: |
+      always() &&
+      needs.meta.result == 'success' &&
+      needs.android-apks.result == 'success' &&
+      needs.cli-tarballs.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ needs.meta.outputs.tag }}
+      RELEASE_VERSION: ${{ needs.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.meta.outputs.tag }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: List downloaded assets
+        run: |
+          set -euo pipefail
+          echo "Release assets for ${RELEASE_TAG}:"
+          find release-assets -type f -print
+
+      - name: Create / update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.meta.outputs.tag }}
+          name: Riddle Rush ${{ needs.meta.outputs.version }}
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+          files: |
+            release-assets/riddle-rush-${{ needs.meta.outputs.version }}-play.apk
+            release-assets/riddle-rush-${{ needs.meta.outputs.version }}-universal.apk
+            release-assets/riddle-rush-${{ needs.meta.outputs.version }}.aab
+            release-assets/riddle-rush-${{ needs.meta.outputs.version }}.ipa
+            release-assets/riddle-rush-cli-${{ needs.meta.outputs.version }}-linux-x64.tar.gz
+            release-assets/riddle-rush-cli-${{ needs.meta.outputs.version }}-linux-arm64.tar.gz
+            release-assets/riddle-rush-cli-${{ needs.meta.outputs.version }}-darwin-x64.tar.gz
+            release-assets/riddle-rush-cli-${{ needs.meta.outputs.version }}-darwin-arm64.tar.gz
+            release-assets/riddle-rush-cli-${{ needs.meta.outputs.version }}-win32-x64.tar.gz
+
+      - name: Summary
+        run: |
+          set -euo pipefail
+          {
+            echo "### Release ${RELEASE_TAG}"
+            echo ""
+            echo "**Assets attached (each is a separate download link):**"
+            echo ""
+            find release-assets -type f -printf '- `%f`\n' | sort
+            echo ""
+            echo "[View on GitHub](https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_TAG})"
+          } >> "$GITHUB_STEP_SUMMARY"

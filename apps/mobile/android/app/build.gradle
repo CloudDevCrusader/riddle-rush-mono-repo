@@ -59,7 +59,7 @@ android {
             // Capacitor + WebView rely on reflection; R8/ProGuard need curated rules before enabling.
             minifyEnabled false
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {

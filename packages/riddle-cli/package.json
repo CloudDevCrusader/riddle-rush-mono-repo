@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/cli",
-  "version": "1.5.2",
+  "version": "1.5.4",
   "description": "Riddle Rush CLI - Agent workflow and project management",
   "keywords": [
     "oclif",

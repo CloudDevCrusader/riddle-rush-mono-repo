@@ -6,12 +6,18 @@
 
 Built as a **pnpm + Turborepo** monorepo: Nuxt 4 PWA, shared packages, tooling, and AWS-ready infrastructure.
 
+[![Version](https://img.shields.io/github/package-json/v/CloudDevCrusader/riddle-rush-mono-repo?label=version&color=00DC82)](package.json)
+[![Release](https://img.shields.io/github/v/release/CloudDevCrusader/riddle-rush-mono-repo?include_prereleases&sort=semver&label=release)](https://github.com/CloudDevCrusader/riddle-rush-mono-repo/releases/latest)
+[![Deploy Production](https://img.shields.io/github/actions/workflow/status/CloudDevCrusader/riddle-rush-mono-repo/deploy-prod.yml?branch=main&label=deploy%20prod)](https://github.com/CloudDevCrusader/riddle-rush-mono-repo/actions/workflows/deploy-prod.yml)
+[![Android APK](https://img.shields.io/github/actions/workflow/status/CloudDevCrusader/riddle-rush-mono-repo/capacitor-mobile-artifacts.yml?label=android%20apk)](https://github.com/CloudDevCrusader/riddle-rush-mono-repo/actions/workflows/capacitor-mobile-artifacts.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Nuxt](https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxt.js&logoColor=white)](https://nuxt.com/)
 [![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![Node](https://img.shields.io/badge/Node-%3E%3D20-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-10.x-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![License](https://img.shields.io/badge/License-MIT-5c6bc0.svg)](LICENSE)
 
-[Quick start](#quick-start) · [Design](#design-figma) · [Gallery](#ui-gallery) · [Commands](#command-cheat-sheet) · [Structure](#repository-layout) · [Docs](#documentation)
+[Quick start](#quick-start) · [CLI](#cli) · [Design](#design-figma) · [Gallery](#ui-gallery) · [Commands](#command-cheat-sheet) · [Structure](#repository-layout) · [Docs](#documentation)
 
 <img src="docs/gfx/splash/LOGO.png" alt="Riddle Rush logo" width="200" />
 
@@ -121,6 +127,37 @@ Open **[http://localhost:3000](http://localhost:3000)** for the game app.
 | Build game                        | `pnpm run build`           |
 | Static generate                   | `pnpm run generate`        |
 | Dead code                         | `pnpm run knip`            |
+| Agent dashboard                   | `riddle stats`             |
+| Validate before commit            | `riddle agent:validate`    |
+| Auto-fix everything               | `riddle agent:fix`         |
+
+---
+
+## CLI
+
+The repo ships a small oclif CLI at [`packages/riddle-cli`](packages/riddle-cli/) published as **`@riddle-rush/cli`**. It wraps the monorepo's quality gates, inspects installed AI agents / MCP servers, and reports Git state.
+
+```bash
+# build once from the repo root
+pnpm --filter @riddle-rush/cli build
+
+# run without global install
+./packages/riddle-cli/bin/run.js --help
+
+# or link globally for a bare `riddle` binary
+cd packages/riddle-cli && pnpm link --global
+```
+
+| Command                   | Purpose                                                                  |
+| ------------------------- | ------------------------------------------------------------------------ |
+| `riddle stats`            | Dashboard of installed AI agents, their configs, API keys, and Git state |
+| `riddle agent:validate`   | Pre-commit gate — Syncpack + TypeScript + ESLint                         |
+| `riddle agent:fix`        | Auto-fix — Syncpack + ESLint + Prettier                                  |
+| `riddle agent:status`     | Git status + unpushed commits + recommended next steps                   |
+| `riddle agent:mcp-config` | Validate `.mcp.json` / `fastmcp.json` / Claude Desktop configs           |
+| `riddle agent:mcp-health` | Smoke-test common MCP servers via `npx`                                  |
+
+Full docs: [packages/riddle-cli/README.md](packages/riddle-cli/README.md).
 
 ---
 
@@ -239,6 +276,47 @@ pnpm run deploy:prod  # Production
 Infrastructure changes use the `infra:*` scripts in root `package.json` (Terraform per environment).
 
 **Live:** production is served from **[riddlerush.de](https://riddlerush.de)** (see [AGENTS.md](AGENTS.md) for branch ↔ environment mapping).
+
+### Downloads (release assets)
+
+Each **semver tag** (`vX.Y.Z`) triggers [`.github/workflows/release.yml`](.github/workflows/release.yml), which builds mobile apps + CLI binaries and attaches them as **separate assets** to a [GitHub Release](https://github.com/CloudDevCrusader/riddle-rush-mono-repo/releases/latest). Every file has its own direct-download URL — nothing is bundled or zipped.
+
+**Mobile**
+
+| Asset                                 | Build                                                                  | Use for                               |
+| ------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------- |
+| `riddle-rush-<version>-play.apk`      | `assemblePlayDebug` — ARM-only, debug-signed                           | Sideloading onto real Android devices |
+| `riddle-rush-<version>-universal.apk` | `assembleUniversalDebug` — all ABIs (incl. x86)                        | Android emulators, low-volume testing |
+| `riddle-rush-<version>.aab`           | `bundlePlayRelease` — signed (opt-in via `ENABLE_ANDROID_RELEASE_AAB`) | Play Store upload                     |
+| `riddle-rush-<version>.ipa`           | iOS release archive (opt-in via `ENABLE_IOS_RELEASE`)                  | TestFlight / Ad-Hoc install           |
+
+**CLI** — standalone tarballs with bundled Node runtime (run without installing Node):
+
+| Asset                                           | Platform            |
+| ----------------------------------------------- | ------------------- |
+| `riddle-rush-cli-<version>-linux-x64.tar.gz`    | Linux x86-64        |
+| `riddle-rush-cli-<version>-linux-arm64.tar.gz`  | Linux ARM64         |
+| `riddle-rush-cli-<version>-darwin-x64.tar.gz`   | macOS Intel         |
+| `riddle-rush-cli-<version>-darwin-arm64.tar.gz` | macOS Apple Silicon |
+| `riddle-rush-cli-<version>-win32-x64.tar.gz`    | Windows x86-64      |
+
+Extract and run:
+
+```bash
+# Linux / macOS
+tar xzf riddle-rush-cli-<version>-<target>.tar.gz
+./riddle/bin/riddle --help
+
+# Windows (PowerShell)
+tar -xzf riddle-rush-cli-<version>-win32-x64.tar.gz
+riddle\bin\riddle.cmd --help
+```
+
+Cut a release with:
+
+```bash
+git tag v1.6.0 && git push origin v1.6.0
+```
 
 ---
 

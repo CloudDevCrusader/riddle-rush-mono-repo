@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/tolgee",
-  "version": "1.5.2",
+  "version": "1.5.4",
   "private": true,
   "description": "Translation management UI (Tolgee) for Riddle Rush i18n",
   "scripts": {

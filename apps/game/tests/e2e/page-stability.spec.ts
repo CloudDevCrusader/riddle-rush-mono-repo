@@ -70,7 +70,9 @@ class ReloadTracker {
     }
     console.log(`[ReloadTracker] ${label}: ${this.events.length} reload(s) detected!`);
     for (const event of this.events) {
-      console.log(`  └─ phase="${event.phase}" url="${event.url}" at ${new Date(event.timestamp).toISOString()}`);
+      console.log(
+        `  └─ phase="${event.phase}" url="${event.url}" at ${new Date(event.timestamp).toISOString()}`
+      );
     }
   }
 
@@ -97,7 +99,7 @@ async function injectReloadSentinel(page: Page): Promise<void> {
 
 async function isSentinelAlive(page: Page): Promise<boolean> {
   return page.evaluate(
-    () => typeof (window as SentinelWindow).__E2E_RELOAD_SENTINEL__ === 'number',
+    () => typeof (window as SentinelWindow).__E2E_RELOAD_SENTINEL__ === 'number'
   );
 }
 
@@ -252,9 +254,14 @@ test.describe('Page Stability — No Unexpected Reloads', () => {
     await page.waitForTimeout(500);
 
     const resumeBtn = page.locator(
-      '[data-testid="pause-resume-button"], [data-testid="pause-modal-close"]',
+      '[data-testid="pause-resume-button"], [data-testid="pause-modal-close"]'
     );
-    if (await resumeBtn.first().isVisible().catch(() => false)) {
+    if (
+      await resumeBtn
+        .first()
+        .isVisible()
+        .catch(() => false)
+    ) {
       await resumeBtn.first().click();
       await page.waitForTimeout(500);
     }
