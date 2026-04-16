@@ -206,6 +206,9 @@ importers:
       vue:
         specifier: ^3.5.31
         version: 3.5.32(typescript@5.9.3)
+      vue-fortune-wheel:
+        specifier: ^2.1.0
+        version: 2.1.0(vue@3.5.32(typescript@5.9.3))
       vue-i18n:
         specifier: ^11.3.2
         version: 11.3.2(vue@3.5.32(typescript@5.9.3))
@@ -248,7 +251,7 @@ importers:
         version: 25.6.0
       '@unocss/nuxt':
         specifier: ^66.6.8
-        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2(esbuild@0.27.7))
+        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2)
       '@vheemstra/vite-plugin-imagemin':
         specifier: ^2.2.1
         version: 2.2.1(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
@@ -261,6 +264,9 @@ importers:
       '@vitest/ui':
         specifier: ^4.1.2
         version: 4.1.4(vitest@4.1.4)
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.6
       '@vueuse/motion':
         specifier: ^3.0.3
         version: 3.0.3(magicast@0.5.2)(vue@3.5.32(typescript@5.9.3))
@@ -299,7 +305,7 @@ importers:
         version: 5.9.3
       unocss:
         specifier: ^66.6.8
-        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7)))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+        version: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       unplugin-auto-import:
         specifier: ^21.0.0
         version: 21.0.0(@nuxt/kit@4.4.2(magicast@0.5.2))(@vueuse/core@14.2.1(vue@3.5.32(typescript@5.9.3)))
@@ -417,11 +423,11 @@ importers:
   packages/riddle-cli:
     dependencies:
       '@oclif/core':
-        specifier: ^4.10.3
+        specifier: ^4.10.5
         version: 4.10.5
       '@oclif/plugin-help':
-        specifier: ^6.2.40
-        version: 6.2.43
+        specifier: ^6.2.44
+        version: 6.2.44
     devDependencies:
       '@eslint/json':
         specifier: ^1.2.0
@@ -3552,8 +3558,8 @@ packages:
     resolution: {integrity: sha512-qcdCF7NrdWPfme6Kr34wwljRCXbCVpL1WVxiNy0Ep6vbWKjxAjFQwuhqkoyL0yjI+KdwtLcOCGn5z2yzdijc8w==}
     engines: {node: '>=18.0.0'}
 
-  '@oclif/plugin-help@6.2.43':
-    resolution: {integrity: sha512-aef92VxQECLFDjI4CpgCL+jDuAsc3jzq5gBTLwNzj60mmrh8eDd7B0ABIgWXphb6gdARSRil+/FPtcdiSSupRA==}
+  '@oclif/plugin-help@6.2.44':
+    resolution: {integrity: sha512-x03Se2LtlOOlGfTuuubt5C4Z8NHeR4zKXtVnfycuLU+2VOMu2WpsGy9nbs3nYuInuvsIY1BizjVaTjUz060Sig==}
     engines: {node: '>=18.0.0'}
 
   '@oclif/plugin-not-found@3.2.74':
@@ -14978,6 +14984,11 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
 
+  vue-fortune-wheel@2.1.0:
+    resolution: {integrity: sha512-W7Z+C9EpDHiPC8f+AXD9ithQN6hQs0rudw47HSSKIFahGArV4zb6nY90DwBYciyWLc/xTmA7+67n/0zBNwr+Vg==}
+    peerDependencies:
+      vue: ^3.2.0
+
   vue-i18n@11.3.2:
     resolution: {integrity: sha512-gmFrvM+iuf2AH4ygligw/pC7PRJ63AdRNE68E0GPlQ83Mzfyck6g6cRQC3KzkYXr+ZidR91wq+5YBmAMpkgE1A==}
     engines: {node: '>= 16'}
@@ -19762,12 +19773,12 @@ snapshots:
       semver: 7.7.4
       string-width: 4.2.3
       supports-color: 8.1.1
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.16
       widest-line: 3.1.0
       wordwrap: 1.0.0
       wrap-ansi: 7.0.0
 
-  '@oclif/plugin-help@6.2.43':
+  '@oclif/plugin-help@6.2.44':
     dependencies:
       '@oclif/core': 4.10.5
 
@@ -19791,8 +19802,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@one-ini/wasm@0.1.1':
-    optional: true
+  '@one-ini/wasm@0.1.1': {}
 
   '@openai/codex@0.118.0':
     optionalDependencies:
@@ -23091,7 +23101,7 @@ snapshots:
       gzip-size: 6.0.0
       sirv: 3.0.2
 
-  '@unocss/nuxt@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2(esbuild@0.27.7))':
+  '@unocss/nuxt@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(magicast@0.5.2)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(webpack@5.105.2)':
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@unocss/config': 66.6.8
@@ -23105,8 +23115,8 @@ snapshots:
       '@unocss/preset-wind4': 66.6.8
       '@unocss/reset': 66.6.8
       '@unocss/vite': 66.6.8(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      '@unocss/webpack': 66.6.8(webpack@5.105.2(esbuild@0.27.7))
-      unocss: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7)))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      '@unocss/webpack': 66.6.8(webpack@5.105.2)
+      unocss: 66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -23211,7 +23221,7 @@ snapshots:
       unplugin-utils: 0.3.1
       vite: 7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
 
-  '@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7))':
+  '@unocss/webpack@66.6.8(webpack@5.105.2)':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.6.8
@@ -23222,7 +23232,7 @@ snapshots:
       tinyglobby: 0.2.16
       unplugin: 3.0.0
       unplugin-utils: 0.3.1
-      webpack: 5.105.2(esbuild@0.27.7)
+      webpack: 5.105.2
       webpack-sources: 3.3.4
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
@@ -23722,7 +23732,6 @@ snapshots:
     dependencies:
       js-beautify: 1.15.4
       vue-component-type-helpers: 2.2.12
-    optional: true
 
   '@vueuse/core@13.9.0(vue@3.5.32(typescript@5.9.3))':
     dependencies:
@@ -23915,8 +23924,7 @@ snapshots:
 
   abbrev@1.1.1: {}
 
-  abbrev@2.0.0:
-    optional: true
+  abbrev@2.0.0: {}
 
   abbrev@3.0.1: {}
 
@@ -24083,7 +24091,7 @@ snapshots:
       graceful-fs: 4.2.11
       is-stream: 2.0.1
       lazystream: 1.0.1
-      lodash: 4.17.23
+      lodash: 4.18.1
       normalize-path: 3.0.0
       readable-stream: 4.7.0
 
@@ -24940,8 +24948,7 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
-  commander@10.0.1:
-    optional: true
+  commander@10.0.1: {}
 
   commander@11.1.0: {}
 
@@ -25555,7 +25562,6 @@ snapshots:
       commander: 10.0.1
       minimatch: 9.0.9
       semver: 7.7.4
-    optional: true
 
   ee-first@1.1.1: {}
 
@@ -28118,10 +28124,8 @@ snapshots:
       glob: 10.5.0
       js-cookie: 3.0.5
       nopt: 7.2.1
-    optional: true
 
-  js-cookie@3.0.5:
-    optional: true
+  js-cookie@3.0.5: {}
 
   js-tiktoken@1.0.21:
     dependencies:
@@ -29497,7 +29501,6 @@ snapshots:
   nopt@7.2.1:
     dependencies:
       abbrev: 2.0.0
-    optional: true
 
   nopt@8.1.0:
     dependencies:
@@ -29771,7 +29774,7 @@ snapshots:
       '@inquirer/input': 2.3.0
       '@inquirer/select': 2.5.0
       '@oclif/core': 4.10.5
-      '@oclif/plugin-help': 6.2.43
+      '@oclif/plugin-help': 6.2.44
       '@oclif/plugin-not-found': 3.2.74(@types/node@25.6.0)
       '@oclif/plugin-warn-if-update-available': 3.1.55
       ansis: 3.17.0
@@ -32397,15 +32400,13 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terser-webpack-plugin@5.4.0(esbuild@0.27.7)(webpack@5.105.2(esbuild@0.27.7)):
+  terser-webpack-plugin@5.4.0(webpack@5.105.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.3
       terser: 5.46.1
-      webpack: 5.105.2(esbuild@0.27.7)
-    optionalDependencies:
-      esbuild: 0.27.7
+      webpack: 5.105.2
 
   terser@5.46.1:
     dependencies:
@@ -32866,7 +32867,7 @@ snapshots:
       tiny-emitter: 2.1.0
       uuid: 9.0.1
 
-  unocss@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2(esbuild@0.27.7)))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
+  unocss@66.6.8(@emnapi/core@1.8.1)(@emnapi/runtime@1.9.1)(@unocss/webpack@66.6.8(webpack@5.105.2))(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       '@unocss/cli': 66.6.8
       '@unocss/core': 66.6.8
@@ -32886,7 +32887,7 @@ snapshots:
       '@unocss/transformer-variant-group': 66.6.8
       '@unocss/vite': 66.6.8(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.97.3)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
-      '@unocss/webpack': 66.6.8(webpack@5.105.2(esbuild@0.27.7))
+      '@unocss/webpack': 66.6.8(webpack@5.105.2)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -33373,8 +33374,7 @@ snapshots:
     dependencies:
       ufo: 1.6.3
 
-  vue-component-type-helpers@2.2.12:
-    optional: true
+  vue-component-type-helpers@2.2.12: {}
 
   vue-devtools-stub@0.1.0: {}
 
@@ -33389,6 +33389,11 @@ snapshots:
       semver: 7.7.4
     transitivePeerDependencies:
       - supports-color
+
+  vue-fortune-wheel@2.1.0(vue@3.5.32(typescript@5.9.3)):
+    dependencies:
+      lodash: 4.18.1
+      vue: 3.5.32(typescript@5.9.3)
 
   vue-i18n@11.3.2(vue@3.5.32(typescript@5.9.3)):
     dependencies:
@@ -33469,7 +33474,7 @@ snapshots:
 
   webpack-virtual-modules@0.6.2: {}
 
-  webpack@5.105.2(esbuild@0.27.7):
+  webpack@5.105.2:
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.8
@@ -33493,7 +33498,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 4.3.3
       tapable: 2.3.2
-      terser-webpack-plugin: 5.4.0(esbuild@0.27.7)(webpack@5.105.2(esbuild@0.27.7))
+      terser-webpack-plugin: 5.4.0(webpack@5.105.2)
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     transitivePeerDependencies:

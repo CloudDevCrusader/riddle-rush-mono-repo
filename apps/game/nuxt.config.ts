@@ -26,6 +26,27 @@ const resolvedBaseUrl = (() => {
   return baseUrl ? withTrailingSlash(baseUrl) : '/'
 })()
 
+/** Prefer `NUXT_PUBLIC_*` (Nuxt convention); legacy unprefixed names still accepted. */
+const nuxtPublic = {
+  gitlabFeatureFlagsUrl:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL || process.env.GITLAB_FEATURE_FLAGS_URL || '',
+  gitlabFeatureFlagsToken:
+    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN ||
+    process.env.GITLAB_FEATURE_FLAGS_TOKEN ||
+    '',
+  gtagId:
+    process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID ||
+    process.env.GOOGLE_ANALYTICS_ID ||
+    process.env.GTAG_ID ||
+    '',
+  cloudWatchEndpoint:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_ENDPOINT || process.env.CLOUDWATCH_ENDPOINT || '',
+  cloudWatchApiKey:
+    process.env.NUXT_PUBLIC_CLOUDWATCH_API_KEY || process.env.CLOUDWATCH_API_KEY || '',
+  debugErrorSync:
+    process.env.NUXT_PUBLIC_DEBUG_ERROR_SYNC === 'true' || process.env.DEBUG_ERROR_SYNC === 'true',
+}
+
 // Helper function to filter out problematic i18n plugins
 function filterProblematicPlugins(app: NuxtAppSchema) {
   if (app.plugins && Array.isArray(app.plugins)) {
@@ -141,13 +162,13 @@ export default defineNuxtConfig({
       environment: process.env.NODE_ENV || 'development',
       appVersion: process.env.npm_package_version || '1.0.0',
       // CloudWatch configuration - env vars override Terraform
-      cloudWatchEndpoint: process.env.CLOUDWATCH_ENDPOINT || '',
-      cloudWatchApiKey: process.env.CLOUDWATCH_API_KEY || '',
-      debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
-      // Feature flags - env vars override Terraform
-      gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
-      gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
-      gtagId: process.env.GTAG_ID || '',
+      cloudWatchEndpoint: nuxtPublic.cloudWatchEndpoint,
+      cloudWatchApiKey: nuxtPublic.cloudWatchApiKey,
+      debugErrorSync: nuxtPublic.debugErrorSync,
+      gitlabFeatureFlagsUrl: nuxtPublic.gitlabFeatureFlagsUrl,
+      gitlabFeatureFlagsToken: nuxtPublic.gitlabFeatureFlagsToken,
+      /** GA4 — prefer `NUXT_PUBLIC_GOOGLE_ANALYTICS_ID`; `GOOGLE_ANALYTICS_ID` / `GTAG_ID` still work. */
+      gtagId: nuxtPublic.gtagId,
       // Feature-flag contract: runtime config can only force-disable answer input.
       // Precedence in useFeatureFlags.ts is: runtime force-disable -> GitLab -> local settings -> default.
       featureAnswerInput: process.env.NUXT_PUBLIC_FEATURE_ANSWER_INPUT !== 'false',

@@ -5,7 +5,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
   const logger = useLogger()
 
-  // GitLab Feature Flags uses the Unleash protocol
+  // GitLab / Unleash — set `NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL` and `NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN`.
   // URL format: https://gitlab.com/api/v4/feature_flags/unleash/:project_id
   const gitlabConfig = {
     url: config.public.gitlabFeatureFlagsUrl || '',

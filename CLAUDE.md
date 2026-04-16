@@ -535,12 +535,12 @@ Create `.env` at project root and `apps/game/.env`:
 NODE_ENV=development
 APP_VERSION=1.0.0
 BASE_URL=/
-GOOGLE_ANALYTICS_ID=    # Optional
+NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=    # Optional (legacy `GOOGLE_ANALYTICS_ID` / `GTAG_ID` still work)
 ```
 
 ### CI/CD Variables
 
-- `GOOGLE_ANALYTICS_ID`, `BASE_URL` — App config
+- `NUXT_PUBLIC_GOOGLE_ANALYTICS_ID`, `BASE_URL` — App config (legacy GA env names still work)
 - `SONAR_TOKEN`, `SONAR_PROJECT_KEY`, `SONAR_ORGANIZATION` — SonarCloud
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BUCKET`, `AWS_CLOUDFRONT_ID`, `AWS_REGION` — AWS deployment
 
