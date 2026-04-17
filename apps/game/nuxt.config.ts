@@ -178,7 +178,7 @@ export default defineNuxtConfig({
       debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
       /** Dev-only: full URL for debug-button-align ingest; when empty, no requests are sent */
       debugButtonAlignIngestUrl: process.env.NUXT_PUBLIC_DEBUG_BUTTON_ALIGN_INGEST_URL || '',
-      gtagId: process.env.GTAG_ID || '',
+      gtagId: nuxtPublic.gtagId,
       // Feature-flag contract: runtime config can only force-disable answer input.
       // Precedence in useFeatureFlags.ts is: runtime force-disable -> Edge Config -> local settings -> default.
       featureAnswerInput: process.env.NUXT_PUBLIC_FEATURE_ANSWER_INPUT !== 'false',
@@ -404,7 +404,8 @@ export default defineNuxtConfig({
       compositionOnly: false,
       runtimeOnly: false,
       fullInstall: true,
-      dropMessageCompiler: false,
+      // Messages are static JSON in translations/i18n.config.ts — omit runtime compiler (~14 KiB).
+      dropMessageCompiler: true,
     },
   },
 

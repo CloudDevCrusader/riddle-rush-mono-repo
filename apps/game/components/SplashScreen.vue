@@ -70,10 +70,22 @@ const emit = defineEmits<{
   complete: [];
 }>();
 
+function getSplashTiming() {
+  if (typeof window === 'undefined') {
+    return { duration: 1200, holdAtFull: 150, fadeOutMs: 280, intervalMs: 20 };
+  }
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    ?.saveData;
+  if (reducedMotion || saveData) {
+    return { duration: 400, holdAtFull: 40, fadeOutMs: 120, intervalMs: 25 };
+  }
+  return { duration: 1200, holdAtFull: 150, fadeOutMs: 280, intervalMs: 20 };
+}
+
 const simulateLoading = () => {
-  const duration = 2500; // 2.5 seconds
-  const intervalTime = 20; // Update every 20ms
-  const steps = duration / intervalTime;
+  const { duration, holdAtFull, fadeOutMs, intervalMs } = getSplashTiming();
+  const steps = Math.max(1, Math.ceil(duration / intervalMs));
   const increment = 100 / steps;
 
   const interval = setInterval(() => {
@@ -85,10 +97,10 @@ const simulateLoading = () => {
         visible.value = false;
         setTimeout(() => {
           emit('complete');
-        }, 500); // Wait for fade out animation
-      }, 300); // Show 100% briefly
+        }, fadeOutMs);
+      }, holdAtFull);
     }
-  }, intervalTime);
+  }, intervalMs);
 };
 
 onMounted(() => {
