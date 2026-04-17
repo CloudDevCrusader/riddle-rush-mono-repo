@@ -1,5 +1,4 @@
 import { useRuntimeConfig } from '#app';
-import type { GameSession } from '@riddle-rush/types';
 
 const CACHE_VERSION_KEY = 'pwa-cache-version';
 const CACHE_VERSION_KEY_START_URL = 'start-url';
@@ -41,6 +40,26 @@ export default defineNuxtPlugin({
       updateCacheNames(version).catch((error) => {
         console.error('[PWA Cache] Failed to update cache names:', error);
       });
+
+      // When a new service worker takes control (after a deploy with skipWaiting+clientsClaim),
+      // reload once so the tab picks up fresh HTML + hashed /_nuxt assets. A module-local flag
+      // resets on every full navigation, so it does NOT stop reload loops — use sessionStorage.
+      if ('serviceWorker' in navigator) {
+        const reloadOnceKey = 'pwa-sw-reloaded-for-controller';
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (sessionStorage.getItem(reloadOnceKey)) {
+            console.warn(
+              '[PWA Cache] Skipping reload after controllerchange — already reloaded this session (breaks SW loops)'
+            );
+            return;
+          }
+          sessionStorage.setItem(reloadOnceKey, '1');
+          console.log(
+            '[PWA Cache] New service worker activated — reloading to pick up fresh assets'
+          );
+          window.location.reload();
+        });
+      }
     }
   },
 });
