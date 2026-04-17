@@ -177,10 +177,13 @@ if [[ -z "${NODE_ENV-}" ]]; then
 	export NODE_ENV=production
 fi
 
-# For development environment, enable DEBUG_BUILD for unminified code
-if [[ "${ENVIRONMENT}" == "development" ]]; then
+# Default dev S3/CloudFront deploy uses the same minified client bundle as production.
+# Unminified builds exceed ~5MB for the entry chunk and fail to boot on many mobile browsers (blank #__nuxt).
+# Opt in explicitly when you need readable assets on the dev CDN:
+#   AWS_DEV_UNMINIFIED=true ./scripts/aws-deploy.sh development
+if [[ "${ENVIRONMENT}" == "development" ]] && [[ "${AWS_DEV_UNMINIFIED:-}" == "true" ]]; then
 	export DEBUG_BUILD=true
-	echo -e "  ${BLUE}Building with DEBUG_BUILD=true (unminified, with sourcemaps)${NC}"
+	echo -e "  ${YELLOW}Building with DEBUG_BUILD=true (unminified — large bundle; not recommended for dev.riddlerush.de)${NC}"
 fi
 
 echo -e "  ${BLUE}Building with NODE_ENV=${NODE_ENV}${NC}"
