@@ -632,6 +632,13 @@ export default defineNuxtConfig({
           // hashed name after a deploy) is served as index.html by the SPA fallback, the
           // SHA-384 mismatches, and the browser hard-blocks the script — crashing the app.
           sri: false,
+          // Default `hashScripts: true` injects sha256-* into script-src for prerendered HTML.
+          // With hashes present, browsers ignore 'unsafe-inline' (CSP3), but Nuxt still emits
+          // additional inline scripts (color mode, payload) that are not in that hash set —
+          // the app fails to boot (blank page on static hosts).
+          ssg: {
+            hashScripts: false,
+          },
           headers: {
             crossOriginEmbedderPolicy:
               process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
@@ -644,7 +651,9 @@ export default defineNuxtConfig({
               'object-src': ["'none'"],
               'script-src-attr': ["'none'"],
               'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
+              // blob: — Vite HMR, `nuxt preview`, and some embedded tooling load scripts via blob URLs.
+              // Keep this even when NODE_ENV is production (e.g. Vercel preview) so CSP matches runtime needs.
+              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'", 'blob:'],
               'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
             },
           },
