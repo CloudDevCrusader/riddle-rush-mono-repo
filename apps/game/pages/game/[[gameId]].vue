@@ -97,21 +97,35 @@
         </div>
         <!-- verbal-mode-hint removed — instructions now live on the results page -->
         <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
-          <input
-            v-if="isAnswerInputEnabled"
-            v-model="playerAnswer"
-            type="text"
-            class="answer-input"
-            data-testid="game-answer-input"
-            :placeholder="t('game.your_answer', 'Your answer…')"
-            autocomplete="off"
-            autocapitalize="words"
-            maxlength="50"
-            inputmode="search"
-            enterkeyhint="done"
-            @input="sanitizeInput"
-            @keyup.enter="submitAnswer"
-          />
+          <div class="answer-input-wrapper">
+            <input
+              v-model="playerAnswer"
+              type="text"
+              class="answer-input"
+              data-testid="game-answer-input"
+              :placeholder="t('game.your_answer', 'Your answer…')"
+              autocomplete="off"
+              autocapitalize="words"
+              maxlength="50"
+              inputmode="search"
+              enterkeyhint="done"
+              @input="sanitizeInput"
+              @keyup.enter="submitAnswer"
+            />
+            <button
+              v-if="isSpeechSupported"
+              type="button"
+              class="mic-btn"
+              :class="{ 'mic-btn--listening': isListening }"
+              :aria-label="isListening ? t('game.mic_stop') : t('game.mic_start')"
+              :title="isListening ? t('game.mic_stop') : t('game.mic_start')"
+              :aria-pressed="isListening ? 'true' : 'false'"
+              data-testid="game-mic-button"
+              @click="toggleDictation"
+            >
+              <span class="mic-icon" aria-hidden="true">{{ isListening ? '⏹' : '🎤' }}</span>
+            </button>
+          </div>
           <button
             type="submit"
             class="submit-answer-btn"
@@ -184,7 +198,7 @@
 <script setup lang="ts">
 definePageMeta({ pageTransition: { name: 'slide-left' } });
 
-const { toast, t, goHome: navigateToHome } = usePageSetup();
+const { toast, t, locale, goHome: navigateToHome } = usePageSetup();
 const { getAssetPath } = useAssets();
 const { goToResults, goToPlayers, goToRoundStart } = useNavigation();
 const {
@@ -204,6 +218,76 @@ const logger = useLogger();
 const gameActions = useGameActions();
 const audio = useAudio();
 const route = useRoute();
+
+const SPEECH_LOCALE_MAP: Record<string, string> = { de: 'de-DE', en: 'en-US' };
+const speechLang = computed(() => SPEECH_LOCALE_MAP[locale.value] ?? 'en-US');
+
+const {
+  isSupported: isSpeechSupported,
+  isListening,
+  result: speechResult,
+  start: startDictation,
+  stop: stopDictation,
+} = useSpeechRecognition({
+  lang: speechLang,
+  continuous: false,
+  interimResults: false,
+});
+
+watch(speechResult, (transcript) => {
+  if (!isAnswerInputEnabled.value || !transcript) return;
+  playerAnswer.value = transcript;
+  sanitizeInput();
+});
+
+/** Skip stop SFX when listening ends due to user stop or locale change (not recognizer `onend`). */
+const suppressDictationStopSfx = ref(false);
+const isStartingDictation = ref(false);
+
+watch(isListening, (listening, wasListening) => {
+  if (listening) {
+    isStartingDictation.value = false;
+    return;
+  }
+  if (wasListening && !listening) {
+    if (suppressDictationStopSfx.value) {
+      suppressDictationStopSfx.value = false;
+      return;
+    }
+    void audio.playClick();
+  }
+});
+
+watch(locale, () => {
+  if (!isSpeechSupported.value || !isListening.value) return;
+  suppressDictationStopSfx.value = true;
+  stopDictation();
+});
+
+const toggleDictation = () => {
+  if (isListening.value) {
+    suppressDictationStopSfx.value = true;
+    stopDictation();
+    return;
+  }
+  if (isStartingDictation.value) return;
+  isStartingDictation.value = true;
+  playerAnswer.value = '';
+  try {
+    startDictation();
+  } catch {
+    isStartingDictation.value = false;
+    return;
+  }
+  void audio.playClick();
+  void nextTick(() => {
+    if (!isListening.value) {
+      window.setTimeout(() => {
+        if (!isListening.value) isStartingDictation.value = false;
+      }, 1500);
+    }
+  });
+};
 
 // Handle game ID from route parameter
 const gameId = computed(() => route.params.gameId as string | undefined);
@@ -780,6 +864,66 @@ useLocalizedPageSeo({
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+.answer-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.answer-input-wrapper .answer-input {
+  padding-right: calc(var(--spacing-lg) + 3rem);
+}
+
+.mic-btn {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-sm);
+  transform: translateY(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  background: var(--color-white);
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+}
+
+.mic-btn:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.mic-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 170, 0, 0.35);
+}
+
+.mic-btn--listening {
+  background: #e53935;
+  border-color: #e53935;
+  color: var(--color-white);
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(229, 57, 53, 0);
+  }
 }
 
 .answer-input {
