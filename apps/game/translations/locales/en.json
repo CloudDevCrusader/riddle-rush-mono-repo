@@ -4,6 +4,13 @@
     "subtitle": "The ultimate guessing game for friends & family",
     "title": "Riddle Rush"
   },
+  "errors": {
+    "unexpected": "Something went wrong.",
+    "back_home": "Back to home",
+    "try_again": "Try again",
+    "dev_details": "Technical details (dev only)",
+    "dev_console_hint": "Full stack traces are also in the browser console."
+  },
   "categories": {
     "animal": "Animal",
     "city": "City",
