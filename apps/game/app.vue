@@ -22,6 +22,8 @@ const gameSession = useGameSession();
 const installPrompt = useInstallPrompt();
 const settings = useSettings();
 const { setLocale, t } = useI18n();
+const { $pwa } = useNuxtApp();
+const runtimeConfig = useRuntimeConfig();
 
 // Initialize PWA update detection (watchEffect + toast when SW needs refresh)
 const pwaUpdate = usePWAUpdate();
@@ -49,6 +51,43 @@ useHead(() => ({
       type: 'application/ld+json',
       innerHTML: jsonLdPayload.value,
     },
+  ],
+}));
+
+const seoOgImage = computed(() => {
+  const path = 'pwa-512x512.png';
+  const base = runtimeConfig.public.baseUrl as string;
+  if (typeof base === 'string' && base.startsWith('http')) {
+    try {
+      return new URL(path, base.endsWith('/') ? base : `${base}/`).href;
+    } catch {
+      /* ignore */
+    }
+  }
+  const websiteUrl = runtimeConfig.public.websiteUrl as string | undefined;
+  if (websiteUrl?.startsWith('http')) {
+    try {
+      return new URL(path, websiteUrl.endsWith('/') ? websiteUrl : `${websiteUrl}/`).href;
+    } catch {
+      /* ignore */
+    }
+  }
+  return `/${path}`;
+});
+
+useHead(() => ({
+  meta: [
+    { name: 'description', content: t('seo.json_ld_description') },
+    { name: 'keywords', content: t('seo.keywords') },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: t('seo.site_name') },
+    { property: 'og:title', content: t('seo.site_name') },
+    { property: 'og:description', content: t('seo.json_ld_description') },
+    { property: 'og:image', content: seoOgImage.value },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: t('seo.site_name') },
+    { name: 'twitter:description', content: t('seo.json_ld_description') },
+    { name: 'twitter:image', content: seoOgImage.value },
   ],
 }));
 
@@ -120,19 +159,29 @@ onMounted(async () => {
   // Debug mode shortcut: Ctrl+Shift+D
   window.addEventListener('keydown', handleKeydown);
 
-  // Playwright: expose hook to simulate update toast without a real SW bump
+  // Playwright: expose hook to simulate update toast without a real SW bump.
+  // sessionStorage flag ensures needRefresh survives full page reloads (simulating
+  // a real service worker that would keep needRefresh=true until the user reloads).
   if (playwrightE2EWindow()) {
+    const PENDING_KEY = 'pwa-e2e-update-pending';
+
     (
       window as Window & {
         __pwaUpdateE2E?: { trigger: () => void; dismiss: () => Promise<void> };
       }
     ).__pwaUpdateE2E = {
-      trigger: () => pwaUpdate.updateDetected({ force: true }),
-      dismiss: () => pwaUpdate.dismiss(),
+      trigger: () => {
+        sessionStorage.setItem(PENDING_KEY, 'true');
+        sessionStorage.removeItem('pwa-update-dismissed');
+        pwaUpdate.updateDetected({ force: true });
+      },
+      dismiss: () => {
+        sessionStorage.removeItem(PENDING_KEY);
+        return pwaUpdate.dismiss();
+      },
     };
   }
 });
-
 onUnmounted(() => {
   window.removeEventListener('online', handleOnline);
   window.removeEventListener('offline', handleOffline);

@@ -56,6 +56,18 @@ describe('usePWAUpdate', () => {
       expect(mockToast.show).not.toHaveBeenCalled();
       expect(pwaUpdate.showUpdateToast.value).toBe(false);
     });
+
+    it('should show toast when Playwright E2E pending flag is set even if needRefresh is false', async () => {
+      mockPWA.needRefresh.value = false;
+      sessionStorage.setItem('pwa-e2e-update-pending', 'true');
+
+      const { usePWAUpdate } = await import('../../composables/usePWAUpdate');
+      const pwaUpdate = usePWAUpdate();
+      pwaUpdate.updateDetected();
+
+      expect(mockToast.show).toHaveBeenCalledWith('pwa.update_available', 'pwa-update', 0);
+      expect(pwaUpdate.showUpdateToast.value).toBe(true);
+    });
   });
 
   describe('reload', () => {
