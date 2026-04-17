@@ -94,6 +94,72 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check required secrets
+        id: check-secrets
+        run: |
+          echo "::group::🔑 Checking required secrets and variables"
+
+          # Check AWS secrets
+          if [[ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]]; then
+            echo "::error::❌ AWS_ACCESS_KEY_ID secret is missing!"
+            echo "🔧 Please add this secret to the repository settings or production environment."
+            echo "::warning::❌ AWS_ACCESS_KEY_ID secret is missing - deployment will fail!"
+          fi
+
+          if [[ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]]; then
+            echo "::error::❌ AWS_SECRET_ACCESS_KEY secret is missing!"
+            echo "🔧 Please add this secret to the repository settings or production environment."
+            echo "::warning::❌ AWS_SECRET_ACCESS_KEY secret is missing - deployment will fail!"
+          fi
+
+          # Check Terraform outputs
+          if [[ ! -f "infrastructure/environments/production/terraform-outputs.json" ]]; then
+            echo "::warning::⚠️  terraform-outputs.json not found in infrastructure/environments/production/"
+            echo "   This script expects the infrastructure to be deployed first."
+            echo "   Run: terraform plan && terraform apply"
+          else
+            # Check for required values in terraform-outputs.json
+            S3_BUCKET=$(jq -r '.s3_bucket_name.value // empty' infrastructure/environments/production/terraform-outputs.json 2>/dev/null || echo "")
+            CLOUDFRONT_ID=$(jq -r '.cloudfront_distribution_id.value // empty' infrastructure/environments/production/terraform-outputs.json 2>/dev/null || echo "")
+            
+            if [[ -z "$S3_BUCKET" ]]; then
+              echo "::warning::⚠️  S3 bucket name not found in terraform-outputs.json"
+              echo "   This should be managed by Terraform infrastructure."
+            fi
+            
+            if [[ -z "$CLOUDFRONT_ID" ]]; then
+              echo "::warning::⚠️  CloudFront distribution ID not found in terraform-outputs.json"
+              echo "   Cache invalidation will be skipped if not available."
+              echo "   This is normal if using direct S3 website hosting."
+            fi
+          fi
+
+          # Check environment variables
+          if [[ -z "${AWS_REGION:-}" ]]; then
+            export AWS_REGION="eu-central-1"
+            echo "ℹ️  Using default AWS region: $AWS_REGION"
+          fi
+
+          echo "::endgroup::"
+
+          # Create summary
+          echo "### 🔑 Secret Check Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]] || [[ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]]; then
+            echo "**❌ AWS Secrets Missing**" >> "$GITHUB_STEP_SUMMARY"
+            echo "Please configure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY secrets" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "**✅ AWS Credentials Present**" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [[ -f "infrastructure/environments/production/terraform-outputs.json" ]]; then
+            echo "**✅ Infrastructure Config Found**" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "**⚠️ Infrastructure Config Missing**" >> "$GITHUB_STEP_SUMMARY"
+            echo "Run terraform plan && terraform apply first" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Deploy production to AWS
         env:
           NODE_ENV: production

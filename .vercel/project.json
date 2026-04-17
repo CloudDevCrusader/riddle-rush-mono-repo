@@ -5,9 +5,12 @@
   "settings": {
     "createdAt": 1768624802230,
     "framework": "nuxtjs",
-    "devCommand": "pnpm run dev",
-    "installCommand": "pnpm install",
-    "buildCommand": "pnpm run generate",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": true,
     "nodeVersion": "24.x"
   }
 }

@@ -1,53 +1,54 @@
-import type { UnleashClient } from 'unleash-proxy-client';
 import { useSettingsStore } from '~/stores/settingsStore';
 
-/**
- * Module-level reactive bridge between the Unleash EventEmitter and Vue's
- * reactivity system. Lives for the full module/app lifetime — intentional for
- * a SPA where the Unleash client is initialized once at startup.
- *
- * Increments on every Unleash `update`/`ready` event. Computed properties
- * that read this ref will re-evaluate when flags change.
- */
-const flagVersion = ref(0);
-let attachedClient: UnleashClient | null = null;
+const POLL_INTERVAL_MS = 30_000;
+const CACHE_KEY = 'riddle-rush:feature-flags';
 
-// Stable reference so the same function can be passed to both on() and off()
+const DEFAULT_FLAGS: Record<string, boolean> = {
+  'fortune-wheel': true,
+  'answer-input': false,
+};
+
+const flagVersion = ref(0);
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+let remoteFlags: Record<string, boolean> | null = null;
+
 const bump = () => {
   flagVersion.value++;
 };
 
-/**
- * Attach Unleash event listeners that bridge into Vue reactivity.
- * Idempotent per client instance — safe to call multiple times.
- * Cleans up listeners from previous client on replacement (HMR).
- * Should be called from the plugin before `client.start()` to avoid
- * missing the initial `ready` event.
- */
-export function attachUnleashListener(client: UnleashClient) {
-  if (attachedClient === client) return;
+function loadCachedFlags(): Record<string, boolean> | null {
+  if (!import.meta.client) return null;
 
-  // Clean up listeners from the previous client instance
-  if (attachedClient) {
-    attachedClient.off('update', bump);
-    attachedClient.off('ready', bump);
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw) as { flags: Record<string, boolean>; ts: number };
+    const age = Date.now() - parsed.ts;
+
+    if (age > 7 * 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+
+    return { ...DEFAULT_FLAGS, ...parsed.flags };
+  } catch {
+    return null;
   }
-
-  attachedClient = client;
-  client.on('update', bump);
-  client.on('ready', bump);
 }
 
-/**
- * Composable for accessing GitLab Feature Flags
- * GitLab Feature Flags uses the Unleash protocol
- */
+function saveCachedFlags(flags: Record<string, boolean>) {
+  if (!import.meta.client) return;
+
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ flags, ts: Date.now() }));
+  } catch {
+    // localStorage full or unavailable — silently ignore
+  }
+}
+
 export function useFeatureFlags() {
-  const { $featureFlags } = useNuxtApp();
-  const gitlabClient = $featureFlags as UnleashClient | null;
-
   const config = useRuntimeConfig();
-
   const logger = useLogger();
 
   type ManagedFlag = 'fortune-wheel' | 'answer-input';
@@ -60,15 +61,6 @@ export function useFeatureFlags() {
     runtimeForceDisabled?: boolean;
   }
 
-  /**
-   * Single feature-flag resolution contract used by all managed flags.
-   *
-   * Precedence (highest to lowest):
-   * 1) Runtime force-disable (only for answer-input, via featureAnswerInput=false)
-   * 2) GitLab/Unleash (authoritative when client is configured)
-   * 3) Local persisted settings store (fallback when GitLab is unavailable)
-   * 4) Static default (safety fallback for unexpected states/errors)
-   */
   const resolveManagedFlag = ({
     flagName,
     settingsKey,
@@ -80,8 +72,8 @@ export function useFeatureFlags() {
     }
 
     try {
-      if (gitlabClient) {
-        return gitlabClient.isEnabled(flagName);
+      if (remoteFlags && flagName in remoteFlags) {
+        return remoteFlags[flagName]!;
       }
 
       const localValue = useSettingsStore()[settingsKey];
@@ -92,19 +84,6 @@ export function useFeatureFlags() {
     }
   };
 
-  // Lazy fallback: attach listener if the plugin didn't already
-  if (gitlabClient) {
-    attachUnleashListener(gitlabClient);
-  }
-
-  /**
-   * Check if a feature flag is enabled.
-   *
-   * NOTE: This is a plain function, not a reactive computed. Calling it
-   * inside a Vue `computed()` will NOT automatically re-evaluate when
-   * Unleash updates. For reactive flag values, use the named computeds
-   * (isFortuneWheelEnabled, isAnswerInputEnabled).
-   */
   const isEnabled = (flagName: string, defaultValue = false): boolean => {
     if (flagName === 'fortune-wheel') {
       return resolveManagedFlag({
@@ -119,15 +98,13 @@ export function useFeatureFlags() {
         flagName,
         settingsKey: 'answerInputEnabled',
         defaultValue,
-        // Runtime config override is intentionally supported only for answer input,
-        // so E2E/dev can hard-disable this UI path regardless of remote/local flags.
         runtimeForceDisabled: config.public.featureAnswerInput === false,
       });
     }
 
     try {
-      if (gitlabClient) {
-        return gitlabClient.isEnabled(flagName);
+      if (remoteFlags && flagName in remoteFlags) {
+        return remoteFlags[flagName]!;
       }
     } catch (error) {
       logger.warn(`Failed to check feature flag ${flagName}:`, error);
@@ -136,35 +113,17 @@ export function useFeatureFlags() {
     return defaultValue;
   };
 
-  /**
-   * Get variant for a feature flag
-   */
-  const getVariant = (flagName: string) => {
-    if (!gitlabClient) {
-      return { name: 'disabled', enabled: false };
-    }
-
-    try {
-      return gitlabClient.getVariant(flagName);
-    } catch (error) {
-      logger.warn(`Failed to get variant for ${flagName}:`, error);
-      return { name: 'disabled', enabled: false };
-    }
+  const getVariant = (_flagName: string) => {
+    return { name: 'disabled', enabled: false };
   };
 
-  /**
-   * Check if fortune wheel feature is enabled
-   */
   const isFortuneWheelEnabled = computed(() => {
-    void flagVersion.value; // reactive dependency: re-run when flags update
+    void flagVersion.value;
     return isEnabled('fortune-wheel', true);
   });
 
-  /**
-   * Check if answer input feature is enabled
-   */
   const isAnswerInputEnabled = computed(() => {
-    void flagVersion.value; // reactive dependency: re-run when flags update
+    void flagVersion.value;
     return isEnabled('answer-input', false);
   });
 
@@ -174,4 +133,69 @@ export function useFeatureFlags() {
     isAnswerInputEnabled,
     isFortuneWheelEnabled,
   };
+}
+
+async function fetchFlags(baseUrl: string) {
+  try {
+    const url = `${baseUrl}api/flags`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    return (data?.flags as Record<string, boolean>) || null;
+  } catch {
+    return null;
+  }
+}
+
+export function useFeatureFlagsInit() {
+  const config = useRuntimeConfig();
+  const logger = useLogger();
+  const { baseUrl } = config.public;
+
+  if (import.meta.client) {
+    onMounted(async () => {
+      const cached = loadCachedFlags();
+      if (cached) {
+        remoteFlags = cached;
+        bump();
+        logger.debug('[Feature Flags] Restored from cache:', cached);
+      }
+
+      const fresh = await fetchFlags(baseUrl);
+      if (fresh) {
+        remoteFlags = fresh;
+        saveCachedFlags(fresh);
+        bump();
+        logger.debug('[Feature Flags] Fetched from Edge Config:', fresh);
+      } else if (!cached) {
+        logger.info('[Feature Flags] /api/flags unreachable — using defaults and local settings');
+      }
+
+      pollTimer = setInterval(async () => {
+        const updated = await fetchFlags(baseUrl);
+        if (updated) {
+          const prev = remoteFlags;
+          remoteFlags = updated;
+          saveCachedFlags(updated);
+          bump();
+          const changed = Object.entries(updated).filter(([k, v]) => prev?.[k] !== v);
+          if (changed.length > 0) {
+            logger.debug('[Feature Flags] Updated from Edge Config:', Object.fromEntries(changed));
+          }
+        }
+      }, POLL_INTERVAL_MS);
+    });
+
+    onScopeDispose(() => {
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+    });
+
+    if (import.meta.dev) {
+      logger.debug('[Feature Flags] Polling /api/flags every 30s');
+    }
+  }
 }

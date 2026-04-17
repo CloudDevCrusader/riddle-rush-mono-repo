@@ -31,12 +31,6 @@ const resolvedBaseUrl = (() => {
 
 /** Prefer `NUXT_PUBLIC_*` (Nuxt convention); legacy unprefixed names still accepted. */
 const nuxtPublic = {
-  gitlabFeatureFlagsUrl:
-    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_URL || process.env.GITLAB_FEATURE_FLAGS_URL || '',
-  gitlabFeatureFlagsToken:
-    process.env.NUXT_PUBLIC_GITLAB_FEATURE_FLAGS_TOKEN ||
-    process.env.GITLAB_FEATURE_FLAGS_TOKEN ||
-    '',
   gtagId:
     process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID ||
     process.env.GOOGLE_ANALYTICS_ID ||
@@ -184,12 +178,9 @@ export default defineNuxtConfig({
       debugErrorSync: process.env.DEBUG_ERROR_SYNC === 'true',
       /** Dev-only: full URL for debug-button-align ingest; when empty, no requests are sent */
       debugButtonAlignIngestUrl: process.env.NUXT_PUBLIC_DEBUG_BUTTON_ALIGN_INGEST_URL || '',
-      // Feature flags - env vars override Terraform
-      gitlabFeatureFlagsUrl: process.env.GITLAB_FEATURE_FLAGS_URL || '',
-      gitlabFeatureFlagsToken: process.env.GITLAB_FEATURE_FLAGS_TOKEN || '',
       gtagId: process.env.GTAG_ID || '',
       // Feature-flag contract: runtime config can only force-disable answer input.
-      // Precedence in useFeatureFlags.ts is: runtime force-disable -> GitLab -> local settings -> default.
+      // Precedence in useFeatureFlags.ts is: runtime force-disable -> Edge Config -> local settings -> default.
       featureAnswerInput: process.env.NUXT_PUBLIC_FEATURE_ANSWER_INPUT !== 'false',
       // Game configuration - env vars override shared constants
       minPlayers: Number(process.env.NUXT_PUBLIC_MIN_PLAYERS) || MIN_PLAYERS,

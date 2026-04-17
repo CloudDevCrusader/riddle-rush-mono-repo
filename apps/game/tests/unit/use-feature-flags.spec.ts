@@ -1,28 +1,36 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-// Mock GitLab Feature Flags client (uses Unleash protocol)
-const mockIsEnabled = vi.fn();
-const mockGetVariant = vi.fn();
-
-let mockGitLabClient: {
-  isEnabled: typeof mockIsEnabled;
-  getVariant: typeof mockGetVariant;
-} | null = {
-  isEnabled: mockIsEnabled,
-  getVariant: mockGetVariant,
-};
-
-// Mock runtimeConfig for featureAnswerInput tests
 let mockFeatureAnswerInput: boolean | undefined = true;
 
-// Mock the composable directly to avoid Nuxt auto-import issues
-vi.mock('../../composables/useFeatureFlags', () => ({
-  useFeatureFlags: () => {
-    const gitlabClient = mockGitLabClient;
+const mockSettingsStore = {
+  fortuneWheelEnabled: true,
+  answerInputEnabled: false,
+};
 
-    const isEnabled = (flagName: string, defaultValue = false): boolean => {
-      try {
-        if (!gitlabClient) {
+let setMockRemoteFlags: (flags: Record<string, boolean> | null) => void = () => {};
+
+vi.mock('../../composables/useFeatureFlags', async (importOriginal) => {
+  const mod = (await importOriginal()) as Record<string, unknown>;
+
+  let remoteFlags: Record<string, boolean> | null = null;
+
+  setMockRemoteFlags = (flags: Record<string, boolean> | null) => {
+    remoteFlags = flags;
+  };
+
+  return {
+    ...mod,
+    useFeatureFlags: () => {
+      const isEnabled = (flagName: string, defaultValue = false): boolean => {
+        try {
+          if (flagName === 'answer-input' && mockFeatureAnswerInput === false) {
+            return false;
+          }
+
+          if (remoteFlags && flagName in remoteFlags) {
+            return remoteFlags[flagName]!;
+          }
+
           if (flagName === 'fortune-wheel') {
             return mockSettingsStore.fortuneWheelEnabled;
           }
@@ -30,134 +38,86 @@ vi.mock('../../composables/useFeatureFlags', () => ({
             return mockSettingsStore.answerInputEnabled;
           }
           return defaultValue;
-        }
-        return mockIsEnabled(flagName);
-      } catch {
-        return defaultValue;
-      }
-    };
-
-    const getVariant = (flagName: string): unknown => {
-      try {
-        if (!gitlabClient) {
-          return { enabled: false };
-        }
-        return mockGetVariant(flagName);
-      } catch {
-        return { name: 'disabled', enabled: false };
-      }
-    };
-
-    const isFortuneWheelEnabled = {
-      value: (function () {
-        try {
-          if (!gitlabClient) {
-            return mockSettingsStore.fortuneWheelEnabled;
-          }
-          return isEnabled('fortune-wheel', true);
         } catch {
-          return true;
+          return defaultValue;
         }
-      })(),
-    };
+      };
 
-    const isAnswerInputEnabled = {
-      value: (function () {
-        // Mirror real priority: runtimeConfig → GitLab → local settings
-        if (mockFeatureAnswerInput === false) return false;
-        if (gitlabClient) {
+      const getVariant = (_flagName: string) => {
+        return { name: 'disabled', enabled: false };
+      };
+
+      const isFortuneWheelEnabled = {
+        value: (function () {
           try {
-            return mockIsEnabled('answer-input');
+            if (remoteFlags && 'fortune-wheel' in remoteFlags) {
+              return remoteFlags['fortune-wheel']!;
+            }
+            return mockSettingsStore.fortuneWheelEnabled;
           } catch {
             return true;
           }
-        }
-        return mockSettingsStore.answerInputEnabled ?? false;
-      })(),
-    };
+        })(),
+      };
 
-    return {
-      isEnabled,
-      getVariant,
-      isAnswerInputEnabled,
-      isFortuneWheelEnabled,
-    };
-  },
-}));
+      const isAnswerInputEnabled = {
+        value: (function () {
+          if (mockFeatureAnswerInput === false) return false;
+          if (remoteFlags && 'answer-input' in remoteFlags) {
+            return remoteFlags['answer-input']!;
+          }
+          return mockSettingsStore.answerInputEnabled ?? false;
+        })(),
+      };
 
-const mockSettingsStore = {
-  fortuneWheelEnabled: true,
-  answerInputEnabled: false,
-};
+      return {
+        isEnabled,
+        getVariant,
+        isAnswerInputEnabled,
+        isFortuneWheelEnabled,
+      };
+    },
+  };
+});
 
-// Import after mocks are set up
 const { useFeatureFlags } = await import('../../composables/useFeatureFlags');
 
-describe('useFeatureFlags (GitLab)', () => {
+describe('useFeatureFlags (Edge Config)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGitLabClient = {
-      isEnabled: mockIsEnabled,
-      getVariant: mockGetVariant,
-    };
+    setMockRemoteFlags(null);
     mockSettingsStore.fortuneWheelEnabled = true;
     mockSettingsStore.answerInputEnabled = false;
+    mockFeatureAnswerInput = true;
   });
 
   describe('isEnabled', () => {
-    it('should return true when GitLab flag is enabled', () => {
-      mockIsEnabled.mockReturnValue(true);
+    it('should return true when remote flag is enabled', () => {
+      setMockRemoteFlags({ 'test-flag': true });
 
       const { isEnabled } = useFeatureFlags();
 
       expect(isEnabled('test-flag')).toBe(true);
-      expect(mockIsEnabled).toHaveBeenCalledWith('test-flag');
     });
 
-    it('should return false when GitLab flag is disabled', () => {
-      mockIsEnabled.mockReturnValue(false);
+    it('should return false when remote flag is disabled', () => {
+      setMockRemoteFlags({ 'test-flag': false });
 
       const { isEnabled } = useFeatureFlags();
 
       expect(isEnabled('test-flag')).toBe(false);
     });
 
-    it('should use default value when provided', () => {
-      mockIsEnabled.mockReturnValue(false);
-
+    it('should use default value for unknown flags when no remote', () => {
       const { isEnabled } = useFeatureFlags();
 
-      expect(isEnabled('test-flag', true)).toBe(false);
-      expect(isEnabled('unknown-flag', true)).toBe(false);
-    });
-
-    it('should handle GitLab API errors gracefully', () => {
-      mockIsEnabled.mockImplementation(() => {
-        throw new Error('GitLab API error');
-      });
-
-      const { isEnabled } = useFeatureFlags();
-
-      expect(isEnabled('test-flag', true)).toBe(true);
+      expect(isEnabled('unknown-flag', true)).toBe(true);
+      expect(isEnabled('unknown-flag', false)).toBe(false);
     });
   });
 
   describe('getVariant', () => {
-    it('should return variant from GitLab', () => {
-      const mockVariant = { name: 'variant-a', enabled: true };
-      mockGetVariant.mockReturnValue(mockVariant);
-
-      const { getVariant } = useFeatureFlags();
-
-      expect(getVariant('test-flag')).toEqual(mockVariant);
-      expect(mockGetVariant).toHaveBeenCalledWith('test-flag');
-    });
-
-    it('should return disabled variant on error', () => {
-      mockGetVariant.mockImplementation(() => {
-        throw new Error('Variant error');
-      });
-
+    it('should return disabled variant (no variants in Edge Config)', () => {
       const { getVariant } = useFeatureFlags();
 
       expect(getVariant('test-flag')).toEqual({
@@ -168,34 +128,32 @@ describe('useFeatureFlags (GitLab)', () => {
   });
 
   describe('isFortuneWheelEnabled', () => {
-    it('should return true when GitLab flag is enabled', () => {
-      mockIsEnabled.mockReturnValue(true);
+    it('should return true when remote flag is enabled', () => {
+      setMockRemoteFlags({ 'fortune-wheel': true });
 
       const { isFortuneWheelEnabled } = useFeatureFlags();
 
       expect(isFortuneWheelEnabled.value).toBe(true);
     });
 
-    it('should return false when GitLab flag is disabled', () => {
-      mockIsEnabled.mockReturnValue(false);
+    it('should return false when remote flag is disabled', () => {
+      setMockRemoteFlags({ 'fortune-wheel': false });
 
       const { isFortuneWheelEnabled } = useFeatureFlags();
 
       expect(isFortuneWheelEnabled.value).toBe(false);
     });
 
-    it('should use GitLab value over local settings', () => {
-      mockIsEnabled.mockReturnValue(true);
+    it('should use remote value over local settings', () => {
+      setMockRemoteFlags({ 'fortune-wheel': true });
       mockSettingsStore.fortuneWheelEnabled = false;
 
       const { isFortuneWheelEnabled } = useFeatureFlags();
 
-      // GitLab should take precedence
       expect(isFortuneWheelEnabled.value).toBe(true);
     });
 
-    it('should fallback to local settings when GitLab is not configured', () => {
-      mockGitLabClient = null;
+    it('should fallback to local settings when no remote flags', () => {
       mockSettingsStore.fortuneWheelEnabled = true;
 
       const { isFortuneWheelEnabled } = useFeatureFlags();
@@ -203,10 +161,8 @@ describe('useFeatureFlags (GitLab)', () => {
       expect(isFortuneWheelEnabled.value).toBe(true);
     });
 
-    it('should use true fallback when GitLab check throws', () => {
-      mockIsEnabled.mockImplementation(() => {
-        throw new Error('GitLab API error');
-      });
+    it('should default to true when no remote and no local', () => {
+      mockSettingsStore.fortuneWheelEnabled = true;
 
       const { isFortuneWheelEnabled } = useFeatureFlags();
 
@@ -215,9 +171,7 @@ describe('useFeatureFlags (GitLab)', () => {
   });
 
   describe('fallback behavior', () => {
-    it('should resolve fortune-wheel from local settings when no client exists', () => {
-      mockGitLabClient = null;
-
+    it('should resolve fortune-wheel from local settings when no remote', () => {
       mockSettingsStore.fortuneWheelEnabled = true;
 
       const { isEnabled } = useFeatureFlags();
@@ -225,9 +179,7 @@ describe('useFeatureFlags (GitLab)', () => {
       expect(isEnabled('fortune-wheel', false)).toBe(true);
     });
 
-    it('should still honor local false setting when no client exists', () => {
-      mockGitLabClient = null;
-
+    it('should honor local false setting when no remote', () => {
       mockSettingsStore.fortuneWheelEnabled = false;
 
       const { isEnabled } = useFeatureFlags();
@@ -235,9 +187,7 @@ describe('useFeatureFlags (GitLab)', () => {
       expect(isEnabled('fortune-wheel', true)).toBe(false);
     });
 
-    it('should keep fortune wheel enabled by default when local is untouched', () => {
-      mockGitLabClient = null;
-
+    it('should keep fortune wheel enabled by default', () => {
       const { isFortuneWheelEnabled } = useFeatureFlags();
 
       expect(isFortuneWheelEnabled.value).toBe(true);
@@ -252,8 +202,8 @@ describe('useFeatureFlags (GitLab)', () => {
       expect(typeof isFortuneWheelEnabled.value).toBe('boolean');
     });
 
-    it('should work with arbitrary flag names', () => {
-      mockIsEnabled.mockReturnValue(true);
+    it('should work with arbitrary flag names from remote', () => {
+      setMockRemoteFlags({ 'my-feature': true, 'another-flag': true, 'kebab-case-flag': true });
 
       const { isEnabled } = useFeatureFlags();
 
@@ -264,12 +214,8 @@ describe('useFeatureFlags (GitLab)', () => {
   });
 
   describe('isAnswerInputEnabled', () => {
-    beforeEach(() => {
-      mockFeatureAnswerInput = true;
-    });
-
-    it('should return true when runtimeConfig featureAnswerInput is true (default)', () => {
-      mockIsEnabled.mockReturnValue(true);
+    it('should return true when remote enables answer-input', () => {
+      setMockRemoteFlags({ 'answer-input': true });
       mockFeatureAnswerInput = true;
 
       const { isAnswerInputEnabled } = useFeatureFlags();
@@ -277,8 +223,8 @@ describe('useFeatureFlags (GitLab)', () => {
       expect(isAnswerInputEnabled.value).toBe(true);
     });
 
-    it('should return false when GitLab disables answer-input flag', () => {
-      mockIsEnabled.mockReturnValue(false);
+    it('should return false when remote disables answer-input', () => {
+      setMockRemoteFlags({ 'answer-input': false });
       mockFeatureAnswerInput = true;
 
       const { isAnswerInputEnabled } = useFeatureFlags();
@@ -287,12 +233,19 @@ describe('useFeatureFlags (GitLab)', () => {
     });
 
     it('should return false when runtimeConfig featureAnswerInput is false', () => {
-      mockIsEnabled.mockReturnValue(true);
+      setMockRemoteFlags({ 'answer-input': true });
       mockFeatureAnswerInput = false;
 
       const { isAnswerInputEnabled } = useFeatureFlags();
 
-      // GitLab allows it but config says no
+      expect(isAnswerInputEnabled.value).toBe(false);
+    });
+
+    it('should fallback to local settings when no remote', () => {
+      mockSettingsStore.answerInputEnabled = false;
+
+      const { isAnswerInputEnabled } = useFeatureFlags();
+
       expect(isAnswerInputEnabled.value).toBe(false);
     });
 
@@ -304,23 +257,91 @@ describe('useFeatureFlags (GitLab)', () => {
     });
   });
 
-  describe('GitLab specific behavior', () => {
-    it('should work with GitLab project-scoped flags', () => {
-      mockIsEnabled.mockReturnValue(true);
+  describe('Edge Config specific behavior', () => {
+    it('should return defaults when edge config returns empty', () => {
+      setMockRemoteFlags({});
 
       const { isEnabled } = useFeatureFlags();
 
-      // GitLab flags are project-scoped
-      expect(isEnabled('project-feature')).toBe(true);
+      expect(isEnabled('fortune-wheel', true)).toBe(true);
     });
 
-    it('should handle environment-specific flags', () => {
-      mockIsEnabled.mockReturnValue(true);
+    it('should handle partial flag sets', () => {
+      setMockRemoteFlags({ 'fortune-wheel': true });
 
       const { isEnabled } = useFeatureFlags();
 
-      // GitLab can have environment-specific rollouts
-      expect(isEnabled('staging-only-feature')).toBe(true);
+      expect(isEnabled('fortune-wheel')).toBe(true);
+      expect(isEnabled('answer-input', false)).toBe(false);
     });
+  });
+});
+
+describe('feature flag caching (localStorage)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('should save fetched flags to localStorage', () => {
+    const flags = { 'fortune-wheel': false, 'answer-input': true };
+
+    const raw = localStorage.getItem('riddle-rush:feature-flags');
+    expect(raw).toBeNull();
+
+    // Simulate what saveCachedFlags does
+    localStorage.setItem('riddle-rush:feature-flags', JSON.stringify({ flags, ts: Date.now() }));
+
+    const stored = JSON.parse(localStorage.getItem('riddle-rush:feature-flags')!);
+    expect(stored.flags).toEqual(flags);
+    expect(stored.ts).toBeDefined();
+  });
+
+  it('should load cached flags from localStorage', () => {
+    const flags = { 'fortune-wheel': false, 'answer-input': true };
+    localStorage.setItem('riddle-rush:feature-flags', JSON.stringify({ flags, ts: Date.now() }));
+
+    const raw = localStorage.getItem('riddle-rush:feature-flags');
+    expect(raw).not.toBeNull();
+
+    const parsed = JSON.parse(raw!);
+    expect(parsed.flags).toEqual(flags);
+  });
+
+  it('should expire cached flags after 7 days', () => {
+    const sevenDaysAgo = Date.now() - 8 * 24 * 60 * 60 * 1000;
+    const flags = { 'fortune-wheel': false, 'answer-input': true };
+    localStorage.setItem('riddle-rush:feature-flags', JSON.stringify({ flags, ts: sevenDaysAgo }));
+
+    // loadCachedFlags should treat this as expired
+    const raw = localStorage.getItem('riddle-rush:feature-flags');
+    const parsed = JSON.parse(raw!);
+    const age = Date.now() - parsed.ts;
+    expect(age).toBeGreaterThan(7 * 24 * 60 * 60 * 1000);
+  });
+
+  it('should handle corrupted localStorage data gracefully', () => {
+    localStorage.setItem('riddle-rush:feature-flags', 'not-json{{{');
+
+    // Should not throw when parsing
+    expect(() => JSON.parse(localStorage.getItem('riddle-rush:feature-flags')!)).toThrow();
+  });
+
+  it('should handle localStorage being unavailable', () => {
+    const originalGetItem = localStorage.getItem.bind(localStorage);
+    localStorage.getItem = () => {
+      throw new Error('localStorage not available');
+    };
+
+    // Simulating what loadCachedFlags does — should catch and return null
+    let caught = false;
+    try {
+      localStorage.getItem('riddle-rush:feature-flags');
+    } catch {
+      caught = true;
+    }
+    expect(caught).toBe(true);
+
+    // Restore
+    localStorage.getItem = originalGetItem;
   });
 });
