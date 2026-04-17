@@ -145,7 +145,9 @@
     "wait_for_players": "Please wait for all players to submit",
     "welcome": "Welcome! Guess a word from the category.",
     "your_answer": "Your answer...",
-    "your_attempts": "Your attempts"
+    "your_attempts": "Your attempts",
+    "mic_start": "Speak your answer",
+    "mic_stop": "Stop listening"
   },
   "history": {
     "attempts": "attempts",
