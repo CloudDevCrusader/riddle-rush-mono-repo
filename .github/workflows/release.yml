@@ -76,12 +76,92 @@ jobs:
           echo "Building release for tag=$raw (version=$version)"
 
   # ---------------------------------------------------------------------------
+  # Smoketests — fast repo-level config validation. Gates every downstream job
+  # so we don't burn runner minutes building artifacts when the repo config is
+  # broken (e.g. malformed dependabot.yml, missing locale keys).
+  # ---------------------------------------------------------------------------
+  smoketests:
+    name: Smoketests (config validation)
+    needs: meta
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.meta.outputs.tag }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Dependabot config
+        run: pnpm run validate:dependabot
+
+      - name: Validate locale files
+        run: pnpm run validate:locales
+
+  # ---------------------------------------------------------------------------
+  # E2E — Playwright against a production build of the game. Gates `publish`
+  # so a release tag never ships artifacts when core user flows regress.
+  # ---------------------------------------------------------------------------
+  e2e:
+    name: E2E tests (Playwright)
+    needs: [meta, smoketests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+      NODE_OPTIONS: --max-old-space-size=8192
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.meta.outputs.tag }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build game (production output)
+        run: pnpm --filter @riddle-rush/game build
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @riddle-rush/game exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: pnpm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ needs.meta.outputs.version }}
+          path: apps/game/playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
   # Android — debug APKs for both product flavours (play, universal).
   # Debug-signed so no keystore secrets required — these are for sideloading.
   # ---------------------------------------------------------------------------
   android-apks:
     name: Android debug APKs (play + universal)
-    needs: meta
+    needs: [meta, smoketests]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     container:
@@ -160,7 +240,7 @@ jobs:
   # ---------------------------------------------------------------------------
   android-aab:
     name: Android release AAB (signed)
-    needs: meta
+    needs: [meta, smoketests]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     if: ${{ vars.ENABLE_ANDROID_RELEASE_AAB == 'true' }}
@@ -251,7 +331,7 @@ jobs:
   # ---------------------------------------------------------------------------
   ios-ipa:
     name: iOS release IPA
-    needs: meta
+    needs: [meta, smoketests]
     runs-on: macos-latest
     timeout-minutes: 60
     if: ${{ vars.ENABLE_IOS_RELEASE == 'true' }}
@@ -356,7 +436,7 @@ jobs:
   # ---------------------------------------------------------------------------
   cli-tarballs:
     name: CLI tarballs (linux / darwin / win32)
-    needs: meta
+    needs: [meta, smoketests]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -426,12 +506,14 @@ jobs:
   # ---------------------------------------------------------------------------
   publish:
     name: Publish GitHub Release
-    needs: [meta, android-apks, android-aab, ios-ipa, cli-tarballs]
-    # Succeed as long as mandatory jobs (android-apks, cli-tarballs) succeeded.
+    needs: [meta, smoketests, e2e, android-apks, android-aab, ios-ipa, cli-tarballs]
+    # Succeed as long as mandatory jobs (smoketests, e2e, android-apks, cli-tarballs) succeeded.
     # Opt-in jobs (android-aab, ios-ipa) may be skipped/failed without blocking release.
     if: |
       always() &&
       needs.meta.result == 'success' &&
+      needs.smoketests.result == 'success' &&
+      needs.e2e.result == 'success' &&
       needs.android-apks.result == 'success' &&
       needs.cli-tarballs.result == 'success'
     runs-on: ubuntu-latest

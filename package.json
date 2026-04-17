@@ -119,6 +119,7 @@
     "version:bump": "node scripts/sync-version.mjs --bump",
     "version:set": "node scripts/sync-version.mjs --set",
     "validate:locales": "node scripts/validate-locales.mjs",
+    "validate:dependabot": "node --test scripts/validate-dependabot.mjs",
     "figma:sync-tokens": "node scripts/sync-figma-tokens.mjs",
     "i18n:start": "pnpm --filter @riddle-rush/tolgee start",
     "i18n:stop": "pnpm --filter @riddle-rush/tolgee stop",

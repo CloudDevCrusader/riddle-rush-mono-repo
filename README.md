@@ -36,11 +36,11 @@ UI and visual design are maintained in **Figma**. Use the file for layouts, comp
 
 **Repo asset layout**
 
-| Location                                               | Purpose                                                                             |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| [`docs/gfx/`](docs/gfx/)                               | Screen mockups and exported reference art (by flow: Main Menu, players, scoring, …) |
-| [`apps/game/public/assets/`](apps/game/public/assets/) | Static assets served by the PWA (mirrors many `docs/gfx` exports at runtime)        |
-| [`apps/game/assets/figma/`](apps/game/assets/figma/)   | Additional Figma export slices used in the Nuxt app                                 |
+| Location                                               | Purpose                                                                                          |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| [`docs/gfx/`](docs/gfx/)                               | Screen mockups and exported reference art — **[folder ↔ Figma ↔ app map →](docs/gfx/README.md)** |
+| [`apps/game/public/assets/`](apps/game/public/assets/) | Static assets served by the PWA (mirrors many `docs/gfx` exports at runtime)                     |
+| [`apps/game/assets/figma/`](apps/game/assets/figma/)   | Additional Figma export slices used in the Nuxt app                                              |
 
 When design and code diverge, **Figma is the source of truth** for visuals; update exports and `public/assets` as needed.
 
