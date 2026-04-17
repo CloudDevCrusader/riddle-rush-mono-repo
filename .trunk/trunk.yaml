@@ -113,7 +113,7 @@ lint:
   enabled:
     - bandit@1.9.4
     - shfmt@3.6.0
-    - ruff@0.15.10
+    - ruff@0.15.11
     - ruff@0.15.6
     - taplo@0.10.0
     - ruff@0.15.6
@@ -125,7 +125,7 @@ lint:
     - markdownlint@0.48.0
     - oxipng@10.1.0
     - prettier@3.8.3
-    - renovate@43.123.6
+    - renovate@43.128.0
     - shellcheck@0.11.0
     - stylelint@17.8.0
     - svgo@4.0.1
@@ -152,14 +152,14 @@ actions:
     - trunk-upgrade-available
 tools:
   enabled:
-    - awscli@1.44.79
-    - gh@2.27.0
+    - awscli@1.44.80
+    - gh@2.90.0
     - uv@0.11.7
-    - tsc@6.0.2
+    - tsc@6.0.3
     - markdown-link-check@3.14.2
-    - terraform-docs@0.21.0
+    - terraform-docs@0.22.0
     - trunk-toolbox@0.5.4
-    - pnpm@10.32.1
+    - pnpm@10.33.0
     - ts-node@10.9.2
     - terraform@1.1.4
   runtimes:
