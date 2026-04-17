@@ -117,6 +117,7 @@ test.describe('PWA Update — simulated deployment flow', () => {
 
     await page.goto('/players', { timeout: 30000 });
     await page.waitForLoadState('domcontentloaded');
+    await waitForE2EHook(page);
 
     await expect(page.getByTestId('toast-pwa-update')).toBeVisible({ timeout: 10000 });
   });
