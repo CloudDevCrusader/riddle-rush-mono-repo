@@ -62,13 +62,32 @@ export default defineNuxtPlugin((nuxtApp: any) => {
       });
     });
 
-    // Vue error handler
-    nuxtApp.vueApp.config.errorHandler = (error: unknown, instance: any, info: string) => {
-      syncErrorLog('error', 'Vue component error', error, {
+    // Vue error handler — log loudly in dev (syncErrorLog no-ops unless DEBUG_ERROR_SYNC)
+    const vueErrorHandler = nuxtApp.vueApp.config.errorHandler;
+    nuxtApp.vueApp.config.errorHandler = (error: unknown, instance: unknown, info: string) => {
+      if (import.meta.dev) {
+        const tag =
+          instance && typeof instance === 'object' && '$options' in instance
+            ? (instance as { $options?: { name?: string } }).$options?.name || 'Anonymous'
+            : 'unknown';
+        console.error(`[Vue error] ${info} (component: ${tag})`, error);
+        if (error instanceof Error && error.stack) {
+          console.error(error.stack);
+        }
+      }
+
+      void syncErrorLog('error', 'Vue component error', error, {
         type: 'vue_error',
-        component: instance?.$options?.name || 'unknown',
+        component:
+          instance && typeof instance === 'object' && '$options' in instance
+            ? (instance as { $options?: { name?: string } }).$options?.name || 'unknown'
+            : 'unknown',
         info,
       });
+
+      if (typeof vueErrorHandler === 'function') {
+        vueErrorHandler(error, instance, info);
+      }
     };
   }
 

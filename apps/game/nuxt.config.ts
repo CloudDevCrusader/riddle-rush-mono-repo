@@ -29,6 +29,22 @@ const resolvedBaseUrl = (() => {
   return baseUrl ? withTrailingSlash(baseUrl) : '/';
 })();
 
+/**
+ * Nuxt router + Vite client chunk path. In `nuxt dev`, default `/` so deploy-style `BASE_URL`
+ * in `.env` does not point script tags at a missing sub-path (blank page). Use `NUXT_DEV_APP_BASE`
+ * to test path-prefix locally (e.g. `/riddle-rush-nuxt-pwa/`).
+ */
+const nuxtAppBaseURL = (() => {
+  if (process.env.VERCEL) {
+    return process.env.BASE_PATH || '/';
+  }
+  if (isDev) {
+    const devOverride = process.env.NUXT_DEV_APP_BASE;
+    return devOverride != null && devOverride !== '' ? withTrailingSlash(devOverride) : '/';
+  }
+  return resolvedBaseUrl === 'http://localhost:3000/' ? '/' : resolvedBaseUrl;
+})();
+
 /** Prefer `NUXT_PUBLIC_*` (Nuxt convention); legacy unprefixed names still accepted. */
 const nuxtPublic = {
   gtagId:
@@ -260,6 +276,12 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    // Keep the red Vite error overlay on (default); set false only if it obscures the UI.
+    server: {
+      hmr: {
+        overlay: process.env.VITE_HMR_OVERLAY !== 'false',
+      },
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -605,6 +627,11 @@ export default defineNuxtConfig({
     ? {
         security: {
           nonce: false, // Disable nonces for Playwright compatibility
+          // Vite emits content-hashed filenames (`/_nuxt/<hash>.js`) which already guarantee
+          // integrity. With SRI on, any missing asset (stale SW precache pointing at an old
+          // hashed name after a deploy) is served as index.html by the SPA fallback, the
+          // SHA-384 mismatches, and the browser hard-blocks the script — crashing the app.
+          sri: false,
           headers: {
             crossOriginEmbedderPolicy:
               process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
