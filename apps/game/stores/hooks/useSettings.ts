@@ -19,6 +19,7 @@ export function useSettings() {
     fortuneWheelEnabled: computed(() => store.fortuneWheelEnabled),
     fortuneWheelAllowRedraw: computed(() => store.fortuneWheelAllowRedraw ?? true),
     answerInputEnabled: computed(() => store.answerInputEnabled),
+    skipRoundsEnabled: computed(() => store.skipRoundsEnabled),
 
     // Getters
     isDebugMode: computed(() => store.isDebugMode),

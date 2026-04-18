@@ -97,7 +97,7 @@ export AWS_REGION="${AWS_REGION}"
 echo -e "${BLUE}Development deploy build:${NC}"
 echo -e "  ${GREEN}✓ NODE_ENV=production${NC} (minified client bundle suitable for dev.riddlerush.de)"
 echo -e "  ${GREEN}✓ Target:${NC} AWS development bucket / CloudFront (not local Nuxt dev server)"
-if [[ "${AWS_DEV_UNMINIFIED:-}" == "true" ]]; then
+if [[ ${AWS_DEV_UNMINIFIED-} == "true" ]]; then
 	echo -e "  ${YELLOW}✓ AWS_DEV_UNMINIFIED=true${NC} — aws-deploy will set DEBUG_BUILD (large assets; debugging only)"
 else
 	echo -e "  ${BLUE}ℹ${NC}  Unminified CDN build: ${YELLOW}AWS_DEV_UNMINIFIED=true${NC} (optional; can white-screen mobile)"

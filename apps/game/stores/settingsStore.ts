@@ -15,6 +15,8 @@ export interface GameSettings {
   /** When true, user can spin again and must tap OK. When false, advances to game automatically after spin. */
   fortuneWheelAllowRedraw: boolean;
   answerInputEnabled: boolean;
+  /** When true (default), one scoring round then straight to leaderboard — no next-round modal. */
+  skipRoundsEnabled: boolean;
   inputFieldEnabled: boolean;
 }
 
