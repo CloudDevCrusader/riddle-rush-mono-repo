@@ -1,7 +1,7 @@
 {
   "name": "@riddle-rush/tolgee",
   "description": "Translation management UI (Tolgee) for Riddle Rush i18n",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "devDependencies": {
     "@tolgee/cli": "^2.16.1"
   },
