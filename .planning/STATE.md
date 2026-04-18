@@ -189,6 +189,7 @@ Recent decisions affecting current work:
 
 _File moves and parallel plan: `.planning/todos/TODOS-PARALLEL-EXECUTION-PLAN.md`_
 
+- Add feature flag (default **on**) to skip rounds and show only a single “award points” button—see `.planning/todos/pending/2026-04-18-add-feature-flag-to-skip-rounds-with-single-award-button.md`.
 - Replace all texts with translation keys.
 - Investigate multiplayer round flow skipping last player in round 1 (seen with 2-3 players).
 - Review game store size (~352 lines) for further simplification and bug risk.

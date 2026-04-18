@@ -116,6 +116,23 @@ onBeforeMount(() => {
 
 const showSplash = ref(!isE2E);
 
+// #region agent log
+watch(showSplash, (v) => {
+  fetch('http://127.0.0.1:7575/ingest/422f9074-ce7d-4e2e-922f-3c062bff8a71', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4f7476' },
+    body: JSON.stringify({
+      sessionId: '4f7476',
+      location: 'app.vue:showSplash',
+      message: 'showSplash changed',
+      hypothesisId: 'H2',
+      data: { showSplash: v },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+});
+// #endregion
+
 const onSplashComplete = () => {
   showSplash.value = false;
 };
