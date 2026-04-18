@@ -577,8 +577,12 @@ export default defineNuxtConfig({
       categories: ['games', 'entertainment'],
     },
     workbox: {
-      navigateFallback: '/',
-      navigateFallbackAllowlist: [/^\/(?!api\/)/],
+      // navigateFallback removed: vite-plugin-pwa's generated `createHandlerBoundToURL('/')`
+      // threw `non-precached-url` during SW install on the AWS dev build, breaking the tab.
+      // The runtimeCaching NetworkFirst rule for /^\/$/ below already handles the start URL.
+      // Denylist prevents the SW from ever returning an HTML shell for JS/CSS requests,
+      // which is the latent trap that makes a stale SW fatal when chunk hashes rotate.
+      navigateFallbackDenylist: [/^\/_nuxt\//, /\.(?:js|mjs|css|map)$/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2,json}'],
       maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MiB
       // Performance: Optimize cache strategies

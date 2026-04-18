@@ -1,17 +1,17 @@
 {
   "name": "@riddle-rush/tolgee",
-  "version": "1.5.7",
-  "private": true,
   "description": "Translation management UI (Tolgee) for Riddle Rush i18n",
-  "scripts": {
-    "start": "docker compose up -d && echo '\\n🌐 Tolgee is running at http://localhost:8085\\n   Login: admin / admin\\n'",
-    "stop": "docker compose down",
-    "logs": "docker compose logs -f",
-    "push": "tolgee push --force-mode OVERRIDE",
-    "pull": "tolgee pull",
-    "sync": "tolgee push --force-mode OVERRIDE && tolgee pull"
-  },
+  "version": "1.5.7",
   "devDependencies": {
     "@tolgee/cli": "^2.16.1"
+  },
+  "private": true,
+  "scripts": {
+    "logs": "docker compose logs -f",
+    "pull": "tolgee pull",
+    "push": "tolgee push --force-mode OVERRIDE",
+    "start": "docker compose up -d && echo '\\n🌐 Tolgee is running at http://localhost:8085\\n   Login: admin / admin\\n'",
+    "stop": "docker compose down",
+    "sync": "tolgee push --force-mode OVERRIDE && tolgee pull"
   }
 }
