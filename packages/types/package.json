@@ -1,6 +1,9 @@
 {
   "name": "@riddle-rush/types",
   "version": "1.5.7",
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
     "@types/node": "^25.6.0",
@@ -25,8 +28,5 @@
     "typecheck": "tsc --noEmit"
   },
   "type": "module",
-  "types": "./src/index.ts",
-  "dependencies": {
-    "zod": "^4.3.6"
-  }
+  "types": "./src/index.ts"
 }
