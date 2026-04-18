@@ -267,6 +267,58 @@ export function useAudio() {
     }, 230);
   };
 
+  /** Staggered chirps + landing thump — timed to category / letter entrance motion. */
+  const playRoundReveal = () => {
+    const ctx = initAudioContext();
+    if (!ctx) return;
+
+    playTone(392.0, 0.07, 'triangle', 0.13);
+    setTimeout(() => playTone(523.25, 0.09, 'triangle', 0.15), 95);
+    setTimeout(() => playTone(659.25, 0.09, 'triangle', 0.16), 185);
+    setTimeout(() => {
+      playTone(123.47, 0.11, 'sine', 0.11);
+      playTone(1046.5, 0.14, 'sine', 0.13);
+    }, 305);
+  };
+
+  /** Soft rising interval when the answer card slides in. */
+  const playAnswerPanelIn = () => {
+    const ctx = initAudioContext();
+    if (!ctx) return;
+
+    playTone(440.0, 0.11, 'sine', 0.13);
+    setTimeout(() => playTone(554.37, 0.13, 'sine', 0.14), 105);
+  };
+
+  /** Short sparkle when the “all submitted” banner appears. */
+  const playAllSubmittedBanner = () => {
+    const ctx = initAudioContext();
+    if (!ctx) return;
+
+    const notes = [523.25, 659.25, 783.99, 987.77];
+    notes.forEach((freq, i) => {
+      setTimeout(() => playTone(freq, 0.09, 'triangle', 0.15), i * 68);
+    });
+  };
+
+  /** Bright upward arpeggio when the Next CTA becomes available. */
+  const playNextAppears = () => {
+    const ctx = initAudioContext();
+    if (!ctx) return;
+
+    setTimeout(() => playTone(587.33, 0.09, 'triangle', 0.13), 0);
+    setTimeout(() => playTone(739.99, 0.11, 'triangle', 0.14), 88);
+    setTimeout(() => playTone(880.0, 0.13, 'triangle', 0.15), 176);
+  };
+
+  /** Tiny tick when the round number in the header updates. */
+  const playRoundTick = () => {
+    const ctx = initAudioContext();
+    if (!ctx) return;
+
+    playTone(830.61, 0.04, 'triangle', 0.1);
+  };
+
   const getSettings = async (): Promise<CategorySettings> => {
     const { getSettings } = useIndexedDB();
     const settings = await getSettings();
@@ -289,5 +341,10 @@ export function useAudio() {
     playButtonHover: () => playSoundIfEnabled(playButtonHover),
     playScoreIncrease: () => playSoundIfEnabled(playScoreIncrease),
     playTada: () => playSoundIfEnabled(playTada),
+    playRoundReveal: () => playSoundIfEnabled(playRoundReveal),
+    playAnswerPanelIn: () => playSoundIfEnabled(playAnswerPanelIn),
+    playAllSubmittedBanner: () => playSoundIfEnabled(playAllSubmittedBanner),
+    playNextAppears: () => playSoundIfEnabled(playNextAppears),
+    playRoundTick: () => playSoundIfEnabled(playRoundTick),
   };
 }

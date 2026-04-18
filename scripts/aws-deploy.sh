@@ -67,27 +67,27 @@ esac
 # Priority: terraform-outputs.json > .env.terraform > terraform output > existing env var
 INFRA_DIR="${PROJECT_ROOT}/infrastructure/environments/${ENVIRONMENT}"
 ENV_CLOUDFRONT_ID=""
-if [[ -d "${INFRA_DIR}" ]]; then
+if [[ -d ${INFRA_DIR} ]]; then
 	# Try to load from terraform-outputs.json first (most reliable)
 	if [[ -f "${INFRA_DIR}/terraform-outputs.json" ]] && command -v jq &>/dev/null; then
 		ENV_CLOUDFRONT_ID=$(jq -r '.cloudfront_distribution_id.value // empty' "${INFRA_DIR}/terraform-outputs.json" 2>/dev/null || echo "")
 	fi
-	
+
 	# Fallback to .env.terraform file if JSON didn't work
-	if [[ -z "${ENV_CLOUDFRONT_ID}" ]] && [[ -f "${INFRA_DIR}/.env.terraform" ]]; then
+	if [[ -z ${ENV_CLOUDFRONT_ID} ]] && [[ -f "${INFRA_DIR}/.env.terraform" ]]; then
 		# Source the file temporarily to get the value
 		ENV_CLOUDFRONT_ID=$(grep "^AWS_CLOUDFRONT_ID=" "${INFRA_DIR}/.env.terraform" 2>/dev/null | cut -d'=' -f2 | tr -d '"' || echo "")
 	fi
-	
+
 	# Final fallback: query Terraform directly
-	if [[ -z "${ENV_CLOUDFRONT_ID}" ]] && command -v terraform &>/dev/null && [[ -d "${INFRA_DIR}/.terraform" ]]; then
+	if [[ -z ${ENV_CLOUDFRONT_ID} ]] && command -v terraform &>/dev/null && [[ -d "${INFRA_DIR}/.terraform" ]]; then
 		cd "${INFRA_DIR}"
 		ENV_CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
 		cd - >/dev/null
 	fi
-	
+
 	# Use environment-specific CloudFront ID if found, otherwise keep existing value
-	if [[ -n "${ENV_CLOUDFRONT_ID}" ]]; then
+	if [[ -n ${ENV_CLOUDFRONT_ID} ]]; then
 		export AWS_CLOUDFRONT_ID="${ENV_CLOUDFRONT_ID}"
 		echo -e "${BLUE}📋 Loaded CloudFront ID for ${ENVIRONMENT}: ${ENV_CLOUDFRONT_ID}${NC}"
 	fi
@@ -112,13 +112,13 @@ echo -e "\n${BLUE}Deployment Configuration:${NC}"
 echo -e "  ${BLUE}Environment:${NC} ${ENVIRONMENT}"
 echo -e "  ${BLUE}S3 Bucket:${NC} ${S3_BUCKET}"
 echo -e "  ${BLUE}Region:${NC} ${AWS_REGION}"
-if [[ -n "${CLOUDFRONT_ID}" ]]; then
+if [[ -n ${CLOUDFRONT_ID} ]]; then
 	echo -e "  ${BLUE}CloudFront ID:${NC} ${CLOUDFRONT_ID}"
 fi
 echo ""
 
 # Check AWS CLI (only if not called from deploy scripts)
-if [[ -z "${SKIP_AWS_CHECKS-}" ]]; then
+if [[ -z ${SKIP_AWS_CHECKS-} ]]; then
 	if ! command -v aws &>/dev/null; then
 		echo -e "${RED}❌ AWS CLI is not installed. Please install it first.${NC}"
 		echo "Visit: https://aws.amazon.com/cli/"
@@ -142,7 +142,7 @@ else
 fi
 
 # Pre-deployment checks (skip if already done by calling script)
-if [[ -z "${SKIP_PRE_DEPLOYMENT_CHECKS-}" ]]; then
+if [[ -z ${SKIP_PRE_DEPLOYMENT_CHECKS-} ]]; then
 	echo -e "\n🔍 Running pre-deployment checks..."
 
 	echo -e "\n📦 Installing dependencies..."
@@ -173,14 +173,17 @@ fi
 # Always build before deployment to ensure fresh build
 echo -e "\n🏗️  Building application..."
 # Use NODE_ENV if set, otherwise default to production
-if [[ -z "${NODE_ENV-}" ]]; then
+if [[ -z ${NODE_ENV-} ]]; then
 	export NODE_ENV=production
 fi
 
-# For development environment, enable DEBUG_BUILD for unminified code
-if [[ "${ENVIRONMENT}" == "development" ]]; then
+# Default dev S3/CloudFront deploy uses the same minified client bundle as production.
+# Unminified builds exceed ~5MB for the entry chunk and fail to boot on many mobile browsers (blank #__nuxt).
+# Opt in explicitly when you need readable assets on the dev CDN:
+#   AWS_DEV_UNMINIFIED=true ./scripts/aws-deploy.sh development
+if [[ ${ENVIRONMENT} == "development" ]] && [[ ${AWS_DEV_UNMINIFIED-} == "true" ]]; then
 	export DEBUG_BUILD=true
-	echo -e "  ${BLUE}Building with DEBUG_BUILD=true (unminified, with sourcemaps)${NC}"
+	echo -e "  ${YELLOW}Building with DEBUG_BUILD=true (unminified — large bundle; not recommended for dev.riddlerush.de)${NC}"
 fi
 
 echo -e "  ${BLUE}Building with NODE_ENV=${NODE_ENV}${NC}"
@@ -193,11 +196,11 @@ export NITRO_PRESET=static
 
 (cd apps/game && BASE_URL=/ pnpm run generate)
 
-if [[ -z "${CI-}" ]]; then
+if [[ -z ${CI-} ]]; then
 	echo -e "${GREEN}✓ Build completed${NC}"
 fi
 
-if [[ ! -d "${BUILD_DIR}" ]]; then
+if [[ ! -d ${BUILD_DIR} ]]; then
 	echo -e "${RED}❌ Build directory not found: ${BUILD_DIR}${NC}"
 	exit 1
 fi
@@ -213,7 +216,7 @@ if ! aws s3 ls "s3://${S3_BUCKET}" >/dev/null 2>&1; then
 	echo -e "${YELLOW}   Note: This should be managed by Terraform. Consider running terraform apply.${NC}"
 
 	# Create bucket
-	if [[ "${AWS_REGION}" = "us-east-1" ]]; then
+	if [[ ${AWS_REGION} == "us-east-1" ]]; then
 		aws s3 mb "s3://${S3_BUCKET}"
 	else
 		aws s3 mb "s3://${S3_BUCKET}" --region "${AWS_REGION}"
@@ -256,7 +259,7 @@ fi
 
 # Create pre-deployment backup
 BACKUP_PREFIX=""
-if [[ "${DRY_RUN}" != "true" ]]; then
+if [[ ${DRY_RUN} != "true" ]]; then
 	BACKUP_PREFIX=$(create_deployment_backup "${S3_BUCKET}" || echo "")
 fi
 
@@ -264,7 +267,7 @@ fi
 echo -e "\n☁️  Uploading to S3..."
 TOTAL_SIZE=$(du -sh "${BUILD_DIR}" | cut -f1)
 
-if [[ "${DRY_RUN}" = "true" ]]; then
+if [[ ${DRY_RUN} == "true" ]]; then
 	echo -e "${YELLOW}🔍 DRY RUN: Skipping actual S3 upload${NC}"
 	echo -e "  Would upload ${FILE_COUNT} files to s3://${S3_BUCKET}"
 	echo -e "  Total size: ${TOTAL_SIZE}"
@@ -273,7 +276,7 @@ else
 	# Avoid deleting old hashed assets by default to prevent SRI mismatches
 	# when clients still reference previous builds.
 	ASSET_DELETE_ARGS=()
-	if [[ "${DELETE_OLD_ASSETS}" = "true" ]]; then
+	if [[ ${DELETE_OLD_ASSETS} == "true" ]]; then
 		ASSET_DELETE_ARGS=(--delete)
 	fi
 	echo -e "  Uploading static assets (CSS, JS, images)..."
@@ -319,7 +322,7 @@ fi
 echo -e "  Total size: ${TOTAL_SIZE}"
 
 # Invalidate CloudFront cache if distribution ID is provided
-if [[ -n "${CLOUDFRONT_ID}" ]]; then
+if [[ -n ${CLOUDFRONT_ID} ]]; then
 	# Wait a moment to ensure CloudFront distribution is ready after Terraform deployment
 	echo -e "\n⏳ Waiting for CloudFront distribution to be ready before invalidation..."
 	sleep 5
@@ -328,7 +331,7 @@ if [[ -n "${CLOUDFRONT_ID}" ]]; then
 	status=$(aws cloudfront get-distribution --id "${CLOUDFRONT_ID}" \
 		--query 'Distribution.Status' --output text 2>/dev/null || echo "")
 
-	if [[ "${status}" != "Deployed" ]] && [[ -n "${status}" ]]; then
+	if [[ ${status} != "Deployed" ]] && [[ -n ${status} ]]; then
 		echo -e "${YELLOW}⚠️  CloudFront status: ${status} (not yet Deployed)${NC}"
 		echo -e "${YELLOW}   Waiting additional 10 seconds...${NC}"
 		sleep 10
@@ -341,7 +344,7 @@ if [[ -n "${CLOUDFRONT_ID}" ]]; then
 		--query 'Invalidation.Id' \
 		--output text 2>/dev/null || echo "")
 
-	if [[ -n "${INVALIDATION_ID}" ]]; then
+	if [[ -n ${INVALIDATION_ID} ]]; then
 		echo -e "${GREEN}✓ CloudFront cache invalidated (Invalidation ID: ${INVALIDATION_ID})${NC}"
 		echo -e "  Note: Invalidation may take 5-15 minutes to complete"
 	else
@@ -356,7 +359,7 @@ else
 fi
 
 # Verify deployment
-if [[ "${DRY_RUN}" != "true" ]]; then
+if [[ ${DRY_RUN} != "true" ]]; then
 	DEPLOYMENT_URL=""
 	case "${ENVIRONMENT}" in
 	production) DEPLOYMENT_URL="https://riddlerush.de" ;;
@@ -364,9 +367,9 @@ if [[ "${DRY_RUN}" != "true" ]]; then
 	staging) DEPLOYMENT_URL="https://staging.riddlerush.de" ;;
 	esac
 
-	if [[ -n "${DEPLOYMENT_URL}" ]]; then
+	if [[ -n ${DEPLOYMENT_URL} ]]; then
 		if ! verify_deployment "${DEPLOYMENT_URL}" 3; then
-			if [[ -n "${BACKUP_PREFIX}" ]]; then
+			if [[ -n ${BACKUP_PREFIX} ]]; then
 				rollback_deployment "${S3_BUCKET}" "${BACKUP_PREFIX}" "${CLOUDFRONT_ID}"
 				exit 1
 			else
@@ -384,7 +387,7 @@ echo -e "\n${GREEN}━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}🎉 Deployment complete!${NC}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-if [[ -n "${CLOUDFRONT_ID}" ]]; then
+if [[ -n ${CLOUDFRONT_ID} ]]; then
 	CF_DOMAIN=$(aws cloudfront get-distribution --id "${CLOUDFRONT_ID}" --query 'Distribution.DomainName' --output text)
 	echo -e "\n${BLUE}CloudFront URL:${NC}"
 	echo -e "  ${GREEN}https://${CF_DOMAIN}${NC}"
@@ -394,9 +397,9 @@ else
 fi
 
 # Show additional recommendations (only for production)
-if [[ "${ENVIRONMENT}" = "production" ]]; then
+if [[ ${ENVIRONMENT} == "production" ]]; then
 	echo -e "\n${YELLOW}📋 Production Checklist:${NC}"
-	if [[ -z "${CLOUDFRONT_ID}" ]]; then
+	if [[ -z ${CLOUDFRONT_ID} ]]; then
 		echo -e "  ${YELLOW}□${NC} Set up CloudFront distribution for HTTPS and better performance"
 	fi
 	echo -e "  ${YELLOW}□${NC} Configure custom domain with Route 53"
@@ -422,7 +425,7 @@ EOF
 
 # Clean up .output directory to prevent syncpack issues
 # The build output can contain package.json files that interfere with syncpack checks
-if [[ -d "${BUILD_DIR%/public}" ]]; then
+if [[ -d ${BUILD_DIR%/public} ]]; then
 	echo -e "\n${BLUE}🧹 Cleaning up build output: ${BUILD_DIR%/public}${NC}"
 	rm -rf "${BUILD_DIR%/public}"
 	echo -e "${GREEN}✓ Build output cleaned up${NC}"

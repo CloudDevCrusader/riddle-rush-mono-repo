@@ -23,7 +23,9 @@
 
       <!-- Round Indicator -->
       <div class="round-indicator" data-testid="game-round-indicator">
-        <span class="round-text">{{ t('game.round') }} {{ formattedRound }}</span>
+        <span :key="formattedRound" class="round-text"
+          >{{ t('game.round') }} {{ formattedRound }}</span
+        >
       </div>
 
       <!-- Pause Button -->
@@ -31,7 +33,7 @@
         class="pause-btn tap-highlight no-select"
         :aria-label="t('game.pause')"
         data-testid="game-pause-button"
-        @click="showPauseModal = true"
+        @click="openPauseModal"
       >
         <svg
           width="32"
@@ -79,7 +81,10 @@
 
           <!-- Large Letter Display -->
           <div class="letter-display" data-testid="game-letter-info">
-            <span class="letter-value">
+            <span
+              class="letter-value"
+              :data-letter="currentLetter ? currentLetter.toUpperCase() : 'A'"
+            >
               {{ currentLetter ? currentLetter.toUpperCase() : 'A' }}
             </span>
           </div>
@@ -87,63 +92,85 @@
       </Transition>
 
       <!-- Player Turn Section (for multiplayer) -->
-      <div
-        v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
-        class="answer-input-section"
-      >
-        <div class="player-turn-indicator" data-testid="game-player-turn">
-          <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
-          <span class="turn-name" data-testid="game-player-name">{{ currentPlayerTurn.name }}</span>
+      <Transition name="answer-panel" appear>
+        <div
+          v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
+          :key="`${currentPlayerTurn.id}-${roundRevealKey}`"
+          class="answer-input-section"
+        >
+          <div class="player-turn-indicator" data-testid="game-player-turn">
+            <span class="turn-label">{{ t('game.current_turn', 'Current Turn') }}:</span>
+            <span class="turn-name" data-testid="game-player-name">{{
+              currentPlayerTurn.name
+            }}</span>
+          </div>
+          <!-- verbal-mode-hint removed — instructions now live on the results page -->
+          <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
+            <div class="answer-input-wrapper">
+              <input
+                v-model="playerAnswer"
+                type="text"
+                class="answer-input"
+                data-testid="game-answer-input"
+                :placeholder="t('game.your_answer', 'Your answer…')"
+                autocomplete="off"
+                autocapitalize="words"
+                maxlength="50"
+                inputmode="search"
+                enterkeyhint="done"
+                @input="sanitizeInput"
+                @keyup.enter="submitAnswer"
+              />
+              <button
+                v-if="isSpeechSupported"
+                type="button"
+                class="mic-btn"
+                :class="{ 'mic-btn--listening': isListening }"
+                :aria-label="isListening ? t('game.mic_stop') : t('game.mic_start')"
+                :title="isListening ? t('game.mic_stop') : t('game.mic_start')"
+                :aria-pressed="isListening ? 'true' : 'false'"
+                data-testid="game-mic-button"
+                @click="toggleDictation"
+              >
+                <span class="mic-icon" aria-hidden="true">{{ isListening ? '⏹' : '🎤' }}</span>
+              </button>
+            </div>
+            <button
+              type="submit"
+              class="submit-answer-btn"
+              data-testid="game-submit-button"
+              :disabled="isSubmitting"
+            >
+              {{ isAnswerInputEnabled ? t('game.submit', 'Submit') : t('common.confirm') }}
+            </button>
+          </form>
+          <div v-else class="verbal-turn-actions">
+            <button
+              type="button"
+              class="verbal-turn-done-btn"
+              data-testid="game-verbal-turn-done"
+              :disabled="isSubmitting"
+              @click="submitAnswer"
+            >
+              {{ t('game.verbal_turn_done') }}
+            </button>
+          </div>
         </div>
-        <!-- verbal-mode-hint removed — instructions now live on the results page -->
-        <form v-if="isAnswerInputEnabled" class="answer-form" @submit.prevent="submitAnswer">
-          <input
-            v-if="isAnswerInputEnabled"
-            v-model="playerAnswer"
-            type="text"
-            class="answer-input"
-            data-testid="game-answer-input"
-            :placeholder="t('game.your_answer', 'Your answer…')"
-            autocomplete="off"
-            autocapitalize="words"
-            maxlength="50"
-            inputmode="search"
-            enterkeyhint="done"
-            @input="sanitizeInput"
-            @keyup.enter="submitAnswer"
-          />
-          <button
-            type="submit"
-            class="submit-answer-btn"
-            data-testid="game-submit-button"
-            :disabled="isSubmitting"
-          >
-            {{ isAnswerInputEnabled ? t('game.submit', 'Submit') : t('common.confirm') }}
-          </button>
-        </form>
-        <div v-else class="verbal-turn-actions">
-          <button
-            type="button"
-            class="verbal-turn-done-btn"
-            data-testid="game-verbal-turn-done"
-            :disabled="isSubmitting"
-            @click="submitAnswer"
-          >
-            {{ t('game.verbal_turn_done') }}
-          </button>
-        </div>
-      </div>
+      </Transition>
 
       <!-- All Players Submitted Message -->
-      <div
-        v-if="flowState === 'round-complete' || flowState === 'decision' || allPlayersSubmitted"
-        class="all-submitted-message"
-        data-testid="game-all-submitted"
-      >
-        <p>
-          {{ isAnswerInputEnabled ? t('game.all_submitted') : t('game.all_submitted_verbal') }}
-        </p>
-      </div>
+      <Transition name="banner-pop" appear>
+        <div
+          v-if="flowState === 'round-complete' || flowState === 'decision' || allPlayersSubmitted"
+          :key="`submitted-${roundRevealKey}`"
+          class="all-submitted-message"
+          data-testid="game-all-submitted"
+        >
+          <p>
+            {{ isAnswerInputEnabled ? t('game.all_submitted') : t('game.all_submitted_verbal') }}
+          </p>
+        </div>
+      </Transition>
     </div>
 
     <!-- Pause Modal (Lazy Loaded) -->
@@ -163,20 +190,22 @@
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-      <button
-        v-if="flowState === 'round-complete' || flowState === 'decision' || players.length === 0"
-        data-testid="next-button"
-        class="next-btn btn-primary tap-highlight no-select"
-        @click="handleNext"
-      >
-        <img
-          :src="getAssetPath('assets/alphabets/next.png')"
-          :alt="t('common.next')"
-          class="next-icon"
-          loading="lazy"
-        />
-        <span class="next-text">{{ t('common.next') }}</span>
-      </button>
+      <Transition name="next-pop" appear>
+        <button
+          v-if="canShowNext"
+          data-testid="next-button"
+          class="next-btn btn-primary tap-highlight no-select"
+          @click="handleNext"
+        >
+          <img
+            :src="getAssetPath('assets/alphabets/next.png')"
+            :alt="t('common.next')"
+            class="next-icon"
+            loading="lazy"
+          />
+          <span class="next-text">{{ t('common.next') }}</span>
+        </button>
+      </Transition>
     </div>
   </div>
 </template>
@@ -184,7 +213,7 @@
 <script setup lang="ts">
 definePageMeta({ pageTransition: { name: 'slide-left' } });
 
-const { toast, t, goHome: navigateToHome } = usePageSetup();
+const { toast, t, locale, goHome: navigateToHome } = usePageSetup();
 const { getAssetPath } = useAssets();
 const { goToResults, goToPlayers, goToRoundStart } = useNavigation();
 const {
@@ -204,6 +233,76 @@ const logger = useLogger();
 const gameActions = useGameActions();
 const audio = useAudio();
 const route = useRoute();
+
+const SPEECH_LOCALE_MAP: Record<string, string> = { de: 'de-DE', en: 'en-US' };
+const speechLang = computed(() => SPEECH_LOCALE_MAP[locale.value] ?? 'en-US');
+
+const {
+  isSupported: isSpeechSupported,
+  isListening,
+  result: speechResult,
+  start: startDictation,
+  stop: stopDictation,
+} = useSpeechRecognition({
+  lang: speechLang,
+  continuous: false,
+  interimResults: false,
+});
+
+watch(speechResult, (transcript) => {
+  if (!isAnswerInputEnabled.value || !transcript) return;
+  playerAnswer.value = transcript;
+  sanitizeInput();
+});
+
+/** Skip stop SFX when listening ends due to user stop or locale change (not recognizer `onend`). */
+const suppressDictationStopSfx = ref(false);
+const isStartingDictation = ref(false);
+
+watch(isListening, (listening, wasListening) => {
+  if (listening) {
+    isStartingDictation.value = false;
+    return;
+  }
+  if (wasListening && !listening) {
+    if (suppressDictationStopSfx.value) {
+      suppressDictationStopSfx.value = false;
+      return;
+    }
+    void audio.playClick();
+  }
+});
+
+watch(locale, () => {
+  if (!isSpeechSupported.value || !isListening.value) return;
+  suppressDictationStopSfx.value = true;
+  stopDictation();
+});
+
+const toggleDictation = () => {
+  if (isListening.value) {
+    suppressDictationStopSfx.value = true;
+    stopDictation();
+    return;
+  }
+  if (isStartingDictation.value) return;
+  isStartingDictation.value = true;
+  playerAnswer.value = '';
+  try {
+    startDictation();
+  } catch {
+    isStartingDictation.value = false;
+    return;
+  }
+  void audio.playClick();
+  void nextTick(() => {
+    if (!isListening.value) {
+      window.setTimeout(() => {
+        if (!isListening.value) isStartingDictation.value = false;
+      }, 1500);
+    }
+  });
+};
 
 // Handle game ID from route parameter
 const gameId = computed(() => route.params.gameId as string | undefined);
@@ -236,6 +335,55 @@ const roundRevealKey = computed(
     `${currentCategory.value?.id ?? '0'}-${(currentLetter.value ?? '').toString().toUpperCase()}`
 );
 
+const gameViewReady = ref(false);
+
+const canShowNext = computed(
+  () =>
+    flowState.value === 'round-complete' ||
+    flowState.value === 'decision' ||
+    players.value.length === 0
+);
+
+const answerPanelVisible = computed(
+  () => players.value.length > 0 && !!currentPlayerTurn.value && !allPlayersSubmitted.value
+);
+
+const allSubmittedVisible = computed(
+  () =>
+    flowState.value === 'round-complete' ||
+    flowState.value === 'decision' ||
+    allPlayersSubmitted.value
+);
+
+watch(
+  [gameViewReady, roundRevealKey],
+  () => {
+    if (!gameViewReady.value || !currentCategory.value) return;
+    void audio.playRoundReveal();
+  },
+  { flush: 'post' }
+);
+
+watch(formattedRound, (r, prev) => {
+  if (!gameViewReady.value || prev === undefined) return;
+  if (r !== prev) void audio.playRoundTick();
+});
+
+watch(answerPanelVisible, (show, prev) => {
+  if (!gameViewReady.value) return;
+  if (show && prev === false) void audio.playAnswerPanelIn();
+});
+
+watch(allSubmittedVisible, (show, prev) => {
+  if (!gameViewReady.value) return;
+  if (show && prev === false) void audio.playAllSubmittedBanner();
+});
+
+watch(canShowNext, (show, prev) => {
+  if (!gameViewReady.value) return;
+  if (show === true && prev === false) void audio.playNextAppears();
+});
+
 const currentCategoryEmoji = computed(() =>
   currentCategory.value ? gameStore.categoryEmoji(currentCategory.value.name) : ''
 );
@@ -245,11 +393,17 @@ const goHome = () => {
 };
 
 const handleBack = () => {
+  void audio.playClick();
   if (hasActiveSession.value) {
     showQuitModal.value = true;
   } else {
     goHome();
   }
+};
+
+const openPauseModal = () => {
+  void audio.playClick();
+  showPauseModal.value = true;
 };
 
 const handleQuitConfirmed = () => {
@@ -403,6 +557,7 @@ onMounted(async () => {
     return;
   }
 
+  gameViewReady.value = true;
   // Add ESC key listener for pause
   window.addEventListener('keydown', handleEscapeKey);
 });
@@ -476,6 +631,7 @@ useLocalizedPageSeo({
 .round-text {
   position: relative;
   z-index: 2;
+  display: inline-block;
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 4vw, 2.5rem);
   font-weight: var(--font-weight-black);
@@ -487,6 +643,18 @@ useLocalizedPageSeo({
     0 2px 4px rgba(0, 0, 0, 0.4),
     0 0 10px rgba(255, 215, 0, 0.3);
   letter-spacing: 3px;
+  animation: round-badge-pop 0.45s cubic-bezier(0.34, 1.45, 0.64, 1) both;
+}
+
+@keyframes round-badge-pop {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.88);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .pause-btn {
@@ -561,9 +729,7 @@ useLocalizedPageSeo({
 }
 
 .round-reveal-enter-active {
-  transition:
-    opacity 0.48s ease,
-    transform 0.52s cubic-bezier(0.34, 1.45, 0.64, 1);
+  transition: opacity 0.4s ease;
 }
 
 .round-reveal-leave-active {
@@ -574,12 +740,170 @@ useLocalizedPageSeo({
 
 .round-reveal-enter-from {
   opacity: 0;
-  transform: translateY(-18px) scale(0.93);
 }
 
 .round-reveal-leave-to {
   opacity: 0;
-  transform: translateY(10px) scale(0.96);
+  transform: translateY(10px) scale(0.98);
+}
+
+.round-reveal-stack .category-panel {
+  animation:
+    category-pop-in 0.52s cubic-bezier(0.34, 1.45, 0.64, 1) both,
+    category-glow-pulse 2.5s ease-in-out 0.55s infinite;
+}
+
+.round-reveal-stack .category-name__emoji {
+  animation: emoji-wiggle 0.62s cubic-bezier(0.34, 1.45, 0.64, 1) 0.1s both;
+}
+
+.round-reveal-stack .letter-display {
+  animation: letter-float-idle 2.75s ease-in-out 0.72s infinite;
+}
+
+.round-reveal-stack .letter-display .letter-value {
+  animation: letter-pop-in 0.55s cubic-bezier(0.34, 1.45, 0.64, 1) 0.14s both;
+}
+
+@keyframes category-pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.93);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes category-glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 8px 0 rgba(0, 0, 0, 0.15),
+      var(--shadow-lg);
+  }
+  50% {
+    box-shadow:
+      0 8px 0 rgba(0, 0, 0, 0.15),
+      var(--shadow-lg),
+      0 0 26px rgba(232, 149, 32, 0.38);
+  }
+}
+
+@keyframes emoji-wiggle {
+  0% {
+    transform: rotate(-10deg) scale(0.88);
+  }
+  55% {
+    transform: rotate(5deg) scale(1.06);
+  }
+  100% {
+    transform: rotate(0) scale(1);
+  }
+}
+
+@keyframes letter-pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.8);
+  }
+  70% {
+    transform: translateY(-10px) scale(1.07);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes letter-float-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.answer-panel-enter-active {
+  transition:
+    opacity 0.42s cubic-bezier(0.34, 1.45, 0.64, 1),
+    transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.answer-panel-leave-active {
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+
+.answer-panel-enter-from {
+  opacity: 0;
+  transform: translateY(22px) scale(0.95);
+}
+
+.answer-panel-leave-to {
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+}
+
+.answer-panel-enter-active .submit-answer-btn {
+  animation: submit-glimmer 0.55s ease-out 0.14s both;
+}
+
+@keyframes submit-glimmer {
+  0% {
+    filter: brightness(1);
+  }
+  45% {
+    filter: brightness(1.15);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.banner-pop-enter-active {
+  transition:
+    opacity 0.4s cubic-bezier(0.34, 1.45, 0.64, 1),
+    transform 0.4s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.banner-pop-enter-from {
+  opacity: 0;
+  transform: scale(0.9) translateY(16px);
+}
+
+.banner-pop-leave-active {
+  transition: opacity 0.26s ease;
+}
+
+.banner-pop-leave-to {
+  opacity: 0;
+}
+
+.next-pop-enter-active {
+  transition:
+    opacity 0.4s cubic-bezier(0.34, 1.45, 0.64, 1),
+    transform 0.4s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.next-pop-enter-from {
+  opacity: 0;
+  transform: translateY(32px) scale(0.88);
+}
+
+.next-pop-leave-active {
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease;
+}
+
+.next-pop-leave-to {
+  opacity: 0;
+  transform: translateY(18px) scale(0.94);
 }
 
 /* Category Panel - Two-part design matching mockup */
@@ -782,6 +1106,61 @@ useLocalizedPageSeo({
   gap: var(--spacing-md);
 }
 
+.answer-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.answer-input-wrapper .answer-input {
+  padding-right: calc(var(--spacing-lg) + 3rem);
+}
+
+.mic-btn {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-sm);
+  transform: translateY(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  background: var(--color-white);
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+}
+
+.mic-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 170, 0, 0.35);
+}
+
+.mic-btn--listening {
+  background: #e53935;
+  border-color: #e53935;
+  color: var(--color-white);
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(229, 57, 53, 0);
+  }
+}
+
 .answer-input {
   width: 100%;
   padding: var(--spacing-lg);
@@ -862,10 +1241,6 @@ useLocalizedPageSeo({
   font-size: 1rem;
   font-weight: bold;
   transition: background-color 0.2s;
-}
-
-.verbal-turn-done-btn:hover {
-  background-color: #f57c00;
 }
 
 .verbal-turn-done-btn:disabled {
@@ -1116,6 +1491,18 @@ useLocalizedPageSeo({
 
   .next-text {
     font-size: clamp(1rem, 2.5vw, 1.3rem);
+  }
+}
+
+/* Hover feedback only where hover is meaningful (mouse / fine pointer), not primary touch. */
+@media (hover: hover) and (pointer: fine) {
+  .mic-btn:hover:not(.mic-btn--listening) {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  .verbal-turn-done-btn:hover {
+    background-color: #f57c00;
   }
 }
 </style>

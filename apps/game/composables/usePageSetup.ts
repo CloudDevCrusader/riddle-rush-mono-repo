@@ -4,7 +4,7 @@
  */
 export function usePageSetup() {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { baseUrl, getAssetPath } = useAssets();
   const toast = useToast();
 
@@ -23,6 +23,7 @@ export function usePageSetup() {
   return {
     router,
     t,
+    locale,
     baseUrl,
     getAssetPath,
     toast,

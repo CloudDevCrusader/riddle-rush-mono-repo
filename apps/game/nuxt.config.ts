@@ -29,6 +29,22 @@ const resolvedBaseUrl = (() => {
   return baseUrl ? withTrailingSlash(baseUrl) : '/';
 })();
 
+/**
+ * Nuxt router + Vite client chunk path. In `nuxt dev`, default `/` so deploy-style `BASE_URL`
+ * in `.env` does not point script tags at a missing sub-path (blank page). Use `NUXT_DEV_APP_BASE`
+ * to test path-prefix locally (e.g. `/riddle-rush-nuxt-pwa/`).
+ */
+const nuxtAppBaseURL = (() => {
+  if (process.env.VERCEL) {
+    return process.env.BASE_PATH || '/';
+  }
+  if (isDev) {
+    const devOverride = process.env.NUXT_DEV_APP_BASE;
+    return devOverride != null && devOverride !== '' ? withTrailingSlash(devOverride) : '/';
+  }
+  return resolvedBaseUrl === 'http://localhost:3000/' ? '/' : resolvedBaseUrl;
+})();
+
 /** Prefer `NUXT_PUBLIC_*` (Nuxt convention); legacy unprefixed names still accepted. */
 const nuxtPublic = {
   gtagId:
@@ -260,6 +276,12 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    // Keep the red Vite error overlay on (default); set false only if it obscures the UI.
+    server: {
+      hmr: {
+        overlay: process.env.VITE_HMR_OVERLAY !== 'false',
+      },
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -555,8 +577,12 @@ export default defineNuxtConfig({
       categories: ['games', 'entertainment'],
     },
     workbox: {
-      navigateFallback: '/',
-      navigateFallbackAllowlist: [/^\/(?!api\/)/],
+      // navigateFallback removed: vite-plugin-pwa's generated `createHandlerBoundToURL('/')`
+      // threw `non-precached-url` during SW install on the AWS dev build, breaking the tab.
+      // The runtimeCaching NetworkFirst rule for /^\/$/ below already handles the start URL.
+      // Denylist prevents the SW from ever returning an HTML shell for JS/CSS requests,
+      // which is the latent trap that makes a stale SW fatal when chunk hashes rotate.
+      navigateFallbackDenylist: [/^\/_nuxt\//, /\.(?:js|mjs|css|map)$/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2,json}'],
       maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MiB
       // Performance: Optimize cache strategies
@@ -605,6 +631,18 @@ export default defineNuxtConfig({
     ? {
         security: {
           nonce: false, // Disable nonces for Playwright compatibility
+          // Vite emits content-hashed filenames (`/_nuxt/<hash>.js`) which already guarantee
+          // integrity. With SRI on, any missing asset (stale SW precache pointing at an old
+          // hashed name after a deploy) is served as index.html by the SPA fallback, the
+          // SHA-384 mismatches, and the browser hard-blocks the script — crashing the app.
+          sri: false,
+          // Default `hashScripts: true` injects sha256-* into script-src for prerendered HTML.
+          // With hashes present, browsers ignore 'unsafe-inline' (CSP3), but Nuxt still emits
+          // additional inline scripts (color mode, payload) that are not in that hash set —
+          // the app fails to boot (blank page on static hosts).
+          ssg: {
+            hashScripts: false,
+          },
           headers: {
             crossOriginEmbedderPolicy:
               process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
@@ -617,7 +655,9 @@ export default defineNuxtConfig({
               'object-src': ["'none'"],
               'script-src-attr': ["'none'"],
               'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
+              // blob: — Vite HMR, `nuxt preview`, and some embedded tooling load scripts via blob URLs.
+              // Keep this even when NODE_ENV is production (e.g. Vercel preview) so CSP matches runtime needs.
+              'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'", 'blob:'],
               'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
             },
           },

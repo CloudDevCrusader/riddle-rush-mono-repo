@@ -3,7 +3,7 @@
     <GameBackground>
       <!-- Main Container: mobile-first spacing → roomier on sm+ -->
       <div
-        class="relative z-1 box-border flex min-h-dvh min-h-screen w-full max-w-full flex-col items-center justify-center gap-lg px-md py-xl sm:gap-xl sm:px-lg sm:py-2xl md:gap-2xl md:px-xl md:py-3xl lg:gap-3xl"
+        class="relative z-[1] box-border flex min-h-dvh min-h-screen w-full max-w-full flex-col items-center justify-center gap-lg px-md py-xl sm:gap-xl sm:px-lg sm:py-2xl md:gap-2xl md:px-xl md:py-3xl lg:gap-3xl"
       >
         <!-- Logo -->
         <div class="flex items-center justify-center">
@@ -21,12 +21,9 @@
         <!-- Menu Buttons -->
         <div
           v-show="!showMenu"
-          class="menu-shelf flex flex-col items-stretch gap-sm sm:gap-md md:gap-md"
+          class="menu-shelf menu-shelf--primary flex flex-col items-stretch gap-sm sm:gap-md md:gap-md"
         >
           <GameButton
-            v-motion
-            :initial="{ opacity: 0, y: 30 }"
-            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 0 } }"
             variant="primary"
             size="lg"
             full-width
@@ -36,9 +33,6 @@
             {{ t('menu.play', 'PLAY') }}
           </GameButton>
           <GameButton
-            v-motion
-            :initial="{ opacity: 0, y: 30 }"
-            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 80 } }"
             variant="secondary"
             size="lg"
             full-width
@@ -48,9 +42,6 @@
             {{ t('menu.menu', 'MENU') }}
           </GameButton>
           <GameButton
-            v-motion
-            :initial="{ opacity: 0, y: 30 }"
-            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 160 } }"
             variant="warning"
             size="lg"
             full-width
@@ -60,9 +51,6 @@
             {{ t('menu.options', 'OPTIONS') }}
           </GameButton>
           <GameButton
-            v-motion
-            :initial="{ opacity: 0, y: 30 }"
-            :enter="{ opacity: 1, y: 0, transition: { duration: 300, delay: 240 } }"
             variant="danger"
             size="lg"
             full-width
@@ -175,6 +163,47 @@ useLocalizedPageSeo({
 @media (max-width: 320px) {
   .menu-shelf {
     max-width: 100%;
+  }
+}
+
+/* Entrance: CSS only so buttons are never stuck at opacity 0 if motion directives fail on SFCs */
+.menu-shelf--primary :deep(.game-button.game-button--lg) {
+  animation: main-menu-btn-in 0.4s cubic-bezier(0.34, 1.45, 0.64, 1) both;
+}
+
+.menu-shelf--primary :deep(.game-button.game-button--lg:nth-child(1)) {
+  animation-delay: 0ms;
+}
+
+.menu-shelf--primary :deep(.game-button.game-button--lg:nth-child(2)) {
+  animation-delay: 70ms;
+}
+
+.menu-shelf--primary :deep(.game-button.game-button--lg:nth-child(3)) {
+  animation-delay: 140ms;
+}
+
+.menu-shelf--primary :deep(.game-button.game-button--lg:nth-child(4)) {
+  animation-delay: 210ms;
+}
+
+@keyframes main-menu-btn-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.125rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-shelf--primary :deep(.game-button.game-button--lg) {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 

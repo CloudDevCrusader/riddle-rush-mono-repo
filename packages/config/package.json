@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/config",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "dependencies": {
     "vite": "^7.3.2"
   },
@@ -8,7 +8,7 @@
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/eslint-config": "^1.15.2",
     "@types/node": "^25.6.0",
-    "eslint": "^10.2.0",
+    "eslint": "^10.2.1",
     "prettier": "^3.8.3",
     "typescript": "^5.9.3"
   },

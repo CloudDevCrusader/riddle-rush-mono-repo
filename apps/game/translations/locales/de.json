@@ -4,6 +4,13 @@
     "subtitle": "Das ultimative Ratespiel für Freunde & Familie",
     "title": "Riddle Rush"
   },
+  "errors": {
+    "unexpected": "Etwas ist schiefgelaufen.",
+    "back_home": "Zurück zur Startseite",
+    "try_again": "Erneut versuchen",
+    "dev_details": "Technische Details (nur Entwicklung)",
+    "dev_console_hint": "Vollständige Stack-Traces findest du auch in der Browser-Konsole."
+  },
   "categories": {
     "animal": "Tier",
     "city": "Stadt",
@@ -145,7 +152,9 @@
     "wait_for_players": "Bitte warte, bis alle Spieler geantwortet haben",
     "welcome": "Willkommen! Rate ein Wort aus der Kategorie.",
     "your_answer": "Deine Antwort...",
-    "your_attempts": "Deine Versuche"
+    "your_attempts": "Deine Versuche",
+    "mic_start": "Antwort einsprechen",
+    "mic_stop": "Aufnahme beenden"
   },
   "history": {
     "attempts": "Versuche",

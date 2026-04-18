@@ -56,8 +56,47 @@
 definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } });
 
 const { t, router } = usePageSetup();
+const route = useRoute();
+const loadingStore = useLoadingStore();
 const settings = useSettings();
 const { isFortuneWheelEnabled } = useFeatureFlags();
+
+// #region agent log
+const dbgSettingsSnapshot = (reason: string, hypothesisId: string) => {
+  if (typeof document === 'undefined') return;
+  const main = document.querySelector('.main-content');
+  const app = document.querySelector('#app');
+  const lay = document.querySelector('.layout-main-col');
+  const firstLay = lay?.firstElementChild;
+  fetch('http://127.0.0.1:7575/ingest/422f9074-ce7d-4e2e-922f-3c062bff8a71', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4f7476' },
+    body: JSON.stringify({
+      sessionId: '4f7476',
+      location: 'settings.vue:snapshot',
+      message: reason,
+      hypothesisId,
+      data: {
+        route: route.fullPath,
+        visibility: document.visibilityState,
+        isLoading: loadingStore.isLoading,
+        loadingCount: loadingStore.loadingCount,
+        mainOpacity: main ? getComputedStyle(main).opacity : null,
+        appOpacity: app ? getComputedStyle(app).opacity : null,
+        firstLayOpacity: firstLay ? getComputedStyle(firstLay).opacity : null,
+        firstLayClass: firstLay?.className ?? null,
+        splashInDom: Boolean(document.querySelector('[data-testid="splash-screen"]')),
+        globalLoadingInDom: Boolean(document.querySelector('.global-loading-overlay')),
+        settingsPageInDom: Boolean(document.querySelector('.settings-page')),
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+};
+// #endregion
+
+let dbgVisibilityHandler: (() => void) | null = null;
+let dbgIntervalId: number | null = null;
 
 const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value);
 
@@ -113,11 +152,27 @@ onMounted(() => {
 
   // Add escape key listener
   window.addEventListener('keydown', handleEscape);
+
+  // #region agent log
+  dbgSettingsSnapshot('settings mounted', 'H3');
+  dbgVisibilityHandler = () =>
+    dbgSettingsSnapshot(`visibility ${document.visibilityState}`, 'H4');
+  document.addEventListener('visibilitychange', dbgVisibilityHandler);
+  dbgIntervalId = window.setInterval(() => dbgSettingsSnapshot('interval tick', 'H3'), 8000);
+  // #endregion
 });
 
 // Cleanup on unmount
 onUnmounted(() => {
   window.removeEventListener('keydown', handleEscape);
+  // #region agent log
+  if (dbgVisibilityHandler) {
+    document.removeEventListener('visibilitychange', dbgVisibilityHandler);
+  }
+  if (dbgIntervalId) {
+    clearInterval(dbgIntervalId);
+  }
+  // #endregion
 });
 
 useLocalizedPageSeo({

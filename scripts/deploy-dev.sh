@@ -62,8 +62,9 @@ check_aws_credentials
 echo -e "\n📋 Loading AWS configuration..."
 load_aws_config "${ENVIRONMENT}"
 
-# Set development environment variables
-export NODE_ENV=development
+# Minified production-mode Nuxt/Vite output for the static host (same order of magnitude as prod).
+# NODE_ENV=development previously produced multi-megabyte entry scripts that often never finished parsing on mobile.
+export NODE_ENV=production
 
 # Display configuration
 display_deployment_config "${ENVIRONMENT}" "${NODE_ENV}"
@@ -85,8 +86,7 @@ echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━�
 # Ensure aws-deploy.sh is executable
 chmod +x "${SCRIPT_DIR}/aws-deploy.sh"
 
-# Set development environment variables
-export NODE_ENV=development
+export NODE_ENV=production
 export BASE_URL=/
 
 # Ensure Terraform outputs are exported for aws-deploy.sh
@@ -94,11 +94,14 @@ export AWS_S3_BUCKET="${AWS_S3_BUCKET}"
 export AWS_CLOUDFRONT_ID="${AWS_CLOUDFRONT_ID}"
 export AWS_REGION="${AWS_REGION}"
 
-echo -e "${BLUE}Development features enabled:${NC}"
-echo -e "  ${GREEN}✓ NODE_ENV=development${NC} (enables dev plugins, sourcemaps, keeps console logs)"
-echo -e "  ${GREEN}✓ Dev plugins:${NC} inspect, vue-devtools, visualizer"
-echo -e "  ${GREEN}✓ Sourcemaps:${NC} enabled for debugging"
-echo -e "  ${GREEN}✓ Console logs:${NC} preserved (not removed)"
+echo -e "${BLUE}Development deploy build:${NC}"
+echo -e "  ${GREEN}✓ NODE_ENV=production${NC} (minified client bundle suitable for dev.riddlerush.de)"
+echo -e "  ${GREEN}✓ Target:${NC} AWS development bucket / CloudFront (not local Nuxt dev server)"
+if [[ ${AWS_DEV_UNMINIFIED-} == "true" ]]; then
+	echo -e "  ${YELLOW}✓ AWS_DEV_UNMINIFIED=true${NC} — aws-deploy will set DEBUG_BUILD (large assets; debugging only)"
+else
+	echo -e "  ${BLUE}ℹ${NC}  Unminified CDN build: ${YELLOW}AWS_DEV_UNMINIFIED=true${NC} (optional; can white-screen mobile)"
+fi
 echo -e "\n${BLUE}Using infrastructure:${NC}"
 echo -e "  ${GREEN}✓ S3 Bucket:${NC} ${AWS_S3_BUCKET}"
 echo -e "  ${GREEN}✓ Region:${NC} ${AWS_REGION}"

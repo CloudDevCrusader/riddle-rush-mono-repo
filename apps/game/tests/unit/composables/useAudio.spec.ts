@@ -495,6 +495,18 @@ describe('useAudio', () => {
       expect(typeof audio.playButtonHover).toBe('function');
       expect(typeof audio.playScoreIncrease).toBe('function');
       expect(typeof audio.playTada).toBe('function');
+      expect(typeof audio.playRoundReveal).toBe('function');
+      expect(typeof audio.playAnswerPanelIn).toBe('function');
+      expect(typeof audio.playAllSubmittedBanner).toBe('function');
+      expect(typeof audio.playNextAppears).toBe('function');
+      expect(typeof audio.playRoundTick).toBe('function');
+    });
+
+    it('playRoundReveal should schedule layered tones', async () => {
+      const audio = useAudio();
+      await audio.playRoundReveal();
+      vi.advanceTimersByTime(400);
+      expect(mockAudioContext.createOscillator).toHaveBeenCalled();
     });
   });
 

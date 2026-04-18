@@ -1,11 +1,14 @@
 {
   "name": "@riddle-rush/types",
-  "version": "1.5.7",
+  "version": "1.5.8",
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
     "@types/node": "^25.6.0",
     "@vue/compiler-sfc": "^3.5.31",
-    "eslint": "^10.2.0",
+    "eslint": "^10.2.1",
     "prettier": "^3.8.3",
     "typescript": "^5.9.3"
   },
@@ -25,8 +28,5 @@
     "typecheck": "tsc --noEmit"
   },
   "type": "module",
-  "types": "./src/index.ts",
-  "dependencies": {
-    "zod": "^4.3.6"
-  }
+  "types": "./src/index.ts"
 }

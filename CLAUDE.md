@@ -116,7 +116,7 @@ riddle-rush-mono-repo/
 
 - **Nuxt 4** (not Nuxt 3) — client-side SPA with `ssr: false`
 - **Turborepo** — task orchestration with smart caching
-- **pnpm 10.30.3** — package manager (enforced via `packageManager` field)
+- **pnpm 10.33.0** — package manager (pinned only at the repo root `packageManager` field; never redeclare in workspace packages)
 - **Node ≥ 20** — runtime requirement
 - **ESLint 9** — flat config with `@nuxt/eslint-config/flat`
 - **Syncpack** — dependency version consistency across workspace
@@ -561,7 +561,7 @@ NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=    # Optional (legacy `GOOGLE_ANALYTICS_ID` / `
 - **No Server**: Static site only — no server API routes in production
 - **Client-only**: Code using `window`, `localStorage`, IndexedDB must be wrapped in `onMounted` or client-only components
 - **Base URL**: Always use `useRuntimeConfig().public.baseUrl` — never hardcode URLs
-- **Package Manager**: Must use `pnpm` (not npm/yarn). Version: `pnpm@10.30.3`
+- **Package Manager**: Must use `pnpm` (not npm/yarn). Version: `pnpm@10.33.0` — pinned only at the repo root; do not reintroduce nested `packageManager` fields (causes Vercel `pnpm install` mismatch)
 - **Nuxt Version**: Nuxt 4 (not Nuxt 3)
 - **Node Version**: Node ≥ 20
 - **Workspace packages**: Import shared code via `@riddle-rush/types`, `@riddle-rush/shared`, `@riddle-rush/config`
