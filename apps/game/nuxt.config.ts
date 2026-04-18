@@ -577,11 +577,14 @@ export default defineNuxtConfig({
       categories: ['games', 'entertainment'],
     },
     workbox: {
-      // navigateFallback removed: vite-plugin-pwa's generated `createHandlerBoundToURL('/')`
-      // threw `non-precached-url` during SW install on the AWS dev build, breaking the tab.
-      // The runtimeCaching NetworkFirst rule for /^\/$/ below already handles the start URL.
-      // Denylist prevents the SW from ever returning an HTML shell for JS/CSS requests,
-      // which is the latent trap that makes a stale SW fatal when chunk hashes rotate.
+      // Explicitly disable navigateFallback so the SW never generates a NavigationRoute
+      // with createHandlerBoundToURL('/'). Without this, vite-plugin-pwa defaults to '/'
+      // which can serve stale index.html for navigation requests and crash the app when
+      // chunk hashes rotate between deploys on static hosts (S3/CloudFront).
+      // The runtimeCaching NetworkFirst rule for /^\/$/ below handles the start URL instead.
+      navigateFallback: null,
+      // Safety denylist: even if navigateFallback is re-enabled, never serve the HTML shell
+      // for JS/CSS requests — that causes SRI mismatches and blank pages.
       navigateFallbackDenylist: [/^\/_nuxt\//, /\.(?:js|mjs|css|map)$/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2,json}'],
       maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MiB
