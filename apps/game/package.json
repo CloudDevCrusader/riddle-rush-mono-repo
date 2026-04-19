@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/game",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "dependencies": {
     "@capacitor/core": "^8.3.0",
     "@capacitor/haptics": "^8.0.2",

@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/types",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
     "@types/node": "^25.6.0",

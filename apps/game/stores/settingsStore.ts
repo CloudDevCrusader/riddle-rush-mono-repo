@@ -18,7 +18,11 @@ export interface GameSettings {
   /** When true (default), one scoring round then straight to leaderboard — no next-round modal. */
   skipRoundsEnabled: boolean;
   inputFieldEnabled: boolean;
+  /** Bumped when a default changes so stale persisted state gets migrated on next hydration. */
+  settingsVersion: number;
 }
+
+const CURRENT_SETTINGS_VERSION = 2;
 
 const DEFAULT_SETTINGS: GameSettings = {
   maxPlayersPerGame: 4,
@@ -36,6 +40,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   answerInputEnabled: false,
   skipRoundsEnabled: true,
   inputFieldEnabled: true,
+  settingsVersion: CURRENT_SETTINGS_VERSION,
 };
 
 export const useSettingsStore = defineStore('settings', {
@@ -109,6 +114,12 @@ export const useSettingsStore = defineStore('settings', {
     },
     getState(): GameSettings {
       return this.$state;
+    },
+    migrateSettings() {
+      if ((this.settingsVersion ?? 0) < 2) {
+        this.fortuneWheelAllowRedraw = false;
+      }
+      this.settingsVersion = CURRENT_SETTINGS_VERSION;
     },
   },
   persist: true,

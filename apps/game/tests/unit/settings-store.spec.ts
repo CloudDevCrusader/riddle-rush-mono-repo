@@ -261,4 +261,26 @@ describe('Settings Store', () => {
       expect(localStorageMock.setItem).toHaveBeenCalled();
     });
   });
+
+  describe('migrateSettings', () => {
+    it('forces fortuneWheelAllowRedraw to false when upgrading from pre-v2 state', () => {
+      settingsStore.updateSetting('fortuneWheelAllowRedraw', true);
+      settingsStore.updateSetting('settingsVersion', 0);
+
+      settingsStore.migrateSettings();
+
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(false);
+      expect(settingsStore.settingsVersion).toBe(2);
+    });
+
+    it('leaves explicitly toggled value alone on already-migrated state', () => {
+      settingsStore.updateSetting('settingsVersion', 2);
+      settingsStore.updateSetting('fortuneWheelAllowRedraw', true);
+
+      settingsStore.migrateSettings();
+
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(true);
+      expect(settingsStore.settingsVersion).toBe(2);
+    });
+  });
 });
