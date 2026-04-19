@@ -111,6 +111,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxt/image',
+    '@nuxtjs/sitemap',
     '@nuxt/hints',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
@@ -132,6 +133,10 @@ export default defineNuxtConfig({
     dirs: ['stores', 'stores/hooks', 'composables'],
   },
   devtools: {
+    vueDevtools: true,
+    vscode: {
+      enabled: true,
+    },
     enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
     timeline: {
       enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
@@ -140,7 +145,6 @@ export default defineNuxtConfig({
   hints: {
     devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
   },
-
   app: {
     baseURL: process.env.VERCEL
       ? process.env.BASE_PATH || '/'
@@ -229,13 +233,22 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
-  compatibilityDate: '2024-11-01',
+  compatibilityDate: '2026-01-01',
+
+  // @nuxtjs/sitemap requires a site URL to emit absolute <loc> entries.
+  site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://riddlerush.de',
+  },
 
   // Nitro configuration for SSR deployment
   nitro: {
     preset: process.env.NITRO_PRESET || (process.env.VERCEL ? 'vercel-static' : 'node-server'),
     serveStatic: true,
     compressPublicAssets: true,
+    prerender: {
+      crawlLinks: true,
+      routes: ['/sitemap.xml', '/robots.txt'],
+    },
     routeRules: {
       '/': {
         headers: {
@@ -250,6 +263,11 @@ export default defineNuxtConfig({
       '/_nuxt/**': {
         headers: {
           'cache-control': 'public, max-age=31536000, immutable',
+        },
+      },
+      '/data/**': {
+        headers: {
+          'cache-control': 'public, max-age=86400, stale-while-revalidate=604800',
         },
       },
       '/assets/**': {

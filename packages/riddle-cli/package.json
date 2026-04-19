@@ -1,7 +1,7 @@
 {
   "name": "@riddle-rush/cli",
   "description": "Riddle Rush CLI - Agent workflow and project management",
-  "version": "1.5.8",
+  "version": "1.6.0",
   "author": "Riddle Rush Team",
   "bin": {
     "riddle": "./bin/run.js"
