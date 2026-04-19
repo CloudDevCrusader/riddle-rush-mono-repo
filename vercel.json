@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "buildCommand": "cd ../.. && pnpm --filter @riddle-rush/game generate",
-  "outputDirectory": ".vercel/output/static/",
-  "ignoreCommand": "cd ../.. && npx turbo-ignore @riddle-rush/game",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @riddle-rush/game generate",
+  "outputDirectory": "apps/game/.vercel/output/static/",
+  "ignoreCommand": "npx turbo-ignore @riddle-rush/game",
   "rewrites": [
     {
       "source": "/((?!_nuxt|assets|data|api|sw\\.js|workbox-.*\\.js|manifest\\.webmanifest|manifest\\.json|favicon\\.ico|robots\\.txt|sitemap\\.xml|pwa-.*\\.png|apple-touch-icon.*\\.png).*)",
