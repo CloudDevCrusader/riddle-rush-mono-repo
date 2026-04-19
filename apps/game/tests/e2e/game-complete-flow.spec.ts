@@ -20,9 +20,16 @@ async function restartGameFromScoringPause(page: Page) {
   await expect(pauseBtn).toBeVisible({ timeout: 5000 });
   await pauseBtn.click();
 
-  const restartBtn = page.getByRole('button', { name: /restart|neu starten/i });
-  await expect(restartBtn.first()).toBeVisible({ timeout: 5000 });
-  await restartBtn.first().click();
+  const restartByTestId = page.locator('[data-testid="pause-restart-button"]');
+  const restartByRole = page.getByRole('button', {
+    name: /restart|neustart|neu starten/i,
+  });
+  if (await restartByTestId.isVisible().catch(() => false)) {
+    await restartByTestId.click();
+  } else {
+    await expect(restartByRole.first()).toBeVisible({ timeout: 8000 });
+    await restartByRole.first().click();
+  }
 
   await expect(page).toHaveURL(/\/players/, { timeout: 8000 });
   await page.waitForTimeout(300);

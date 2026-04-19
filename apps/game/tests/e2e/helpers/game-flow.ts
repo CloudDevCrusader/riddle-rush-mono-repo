@@ -110,19 +110,26 @@ export async function waitForSplashComplete(page: Page): Promise<void> {
  * Hide Nuxt devtools overlay so it cannot intercept clicks during E2E.
  */
 export async function hideDevtools(page: Page): Promise<void> {
-  await page.addStyleTag({
-    content:
-      '#nuxt-devtools-container, nuxt-devtools-frame, #nuxt-devtools-container *, .nuxt-devtools-panel, .nuxt-devtools-toggle, [data-v-inspector], [data-inspector], [data-inspector] { display: none !important; pointer-events: none !important; opacity: 0 !important; visibility: hidden !important; z-index: -1 !important; position: static !important; }',
-  });
+  try {
+    await page.addStyleTag({
+      content:
+        '#nuxt-devtools-container, nuxt-devtools-frame, #nuxt-devtools-container *, .nuxt-devtools-panel, .nuxt-devtools-toggle, [data-v-inspector], [data-inspector], [data-inspector] { display: none !important; pointer-events: none !important; opacity: 0 !important; visibility: hidden !important; z-index: -1 !important; position: static !important; }',
+    });
+  } catch {
+    // Navigation / HMR can destroy the execution context mid-call.
+  }
 
-  // Also try to force devtools to be disabled
-  await page.evaluate(() => {
-    const win = window as NuxtWindow;
-    win.__NUXT_DEVTOOLS__ = null;
-    win.__NUXT__ = win.__NUXT__ ?? {};
-    win.__NUXT__.config = win.__NUXT__.config ?? {};
-    win.__NUXT__.config.devtools = false;
-  });
+  try {
+    await page.evaluate(() => {
+      const win = window as NuxtWindow;
+      win.__NUXT_DEVTOOLS__ = null;
+      win.__NUXT__ = win.__NUXT__ ?? {};
+      win.__NUXT__.config = win.__NUXT__.config ?? {};
+      win.__NUXT__.config.devtools = false;
+    });
+  } catch {
+    // Same as addStyleTag — safe to skip when the page is tearing down.
+  }
 }
 
 /**
@@ -525,7 +532,8 @@ export async function setupMultiplayerGame(
     sessionStorage.clear();
   });
 
-  await page.reload({ waitUntil: 'networkidle' });
+  // Avoid networkidle: dev/HMR and mobile emulation often keep connections open indefinitely.
+  await page.reload({ waitUntil: 'load', timeout: 60000 });
 
   // Use UI flow for deterministic behavior across browser projects.
   await hideDevtools(page);
@@ -655,7 +663,7 @@ export async function setupMultiplayerGame(
 
           return JSON.stringify(snapshot);
         },
-        { timeout: 30000 }
+        { timeout: 45000, intervals: [200, 400, 800, 1200, 2000] }
       )
       .toBe('ok');
   } else {
