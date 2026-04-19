@@ -1,6 +1,6 @@
 {
   "name": "langchain",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "LangChain tools for Riddle Rush, but can be used for other projects as well.",
   "license": "ISC",
   "author": "Markus Wagner",
