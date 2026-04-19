@@ -114,7 +114,7 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
-    ...(process.env.VERCEL ? ['@vercel/analytics'] : []),
+    ...(process.env.VERCEL ? ['@vercel/analytics', '@vercel/speed-insights'] : []),
   ],
   // Client-only SPA (IndexedDB and PWA require client-side rendering)
 
