@@ -70,7 +70,7 @@ const handleClick = (event: MouseEvent) => {
   gap: var(--spacing-sm);
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-full);
   border: 3px solid rgba(255, 255, 255, 0.35);
   cursor: pointer;
   touch-action: manipulation;

@@ -1,6 +1,10 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import { completeFortuneWheel, setupMultiplayerGame } from './helpers/game-flow';
+import {
+  applyE2EGameSettings,
+  completeFortuneWheel,
+  setupMultiplayerGame,
+} from './helpers/game-flow';
 
 test.setTimeout(120000);
 
@@ -37,17 +41,13 @@ async function startGameFromPlayers(page: Page) {
     .locator('.global-loading-overlay')
     .waitFor({ state: 'hidden', timeout: 15000 })
     .catch(() => {});
-  await page.waitForLoadState('networkidle');
+  // Dev/HMR often prevents networkidle from settling on mobile projects.
+  await page.waitForLoadState('load');
 }
 
 /** Set the fortuneWheelAllowRedraw setting via the Pinia settings store. */
 async function setAllowRedraw(page: Page, value: boolean) {
-  await page.evaluate((v) => {
-    const settings = (window as PiniaWindow).__pinia_stores__?.settings;
-    if (settings) {
-      settings.fortuneWheelAllowRedraw = v;
-    }
-  }, value);
+  await applyE2EGameSettings(page, { fortuneWheelAllowRedraw: value });
 }
 
 // ---------------------------------------------------------------------------
@@ -60,12 +60,8 @@ test.describe('round-start page', () => {
     await startGameFromPlayers(page);
   });
 
-  test('back button returns to players to fix names', async ({ page }) => {
-    await expect(page.locator('[data-testid="round-start-back-button"]')).toBeVisible({
-      timeout: 8000,
-    });
-    await page.locator('[data-testid="round-start-back-button"]').click();
-    await expect(page).toHaveURL(/\/players/, { timeout: 10000 });
+  test('round-start has no back control (use system or pause flow elsewhere)', async ({ page }) => {
+    await expect(page.locator('[data-testid="round-start-back-button"]')).toHaveCount(0);
   });
 
   test('shows wheel UI with correct initial state', async ({ page }) => {
@@ -114,26 +110,27 @@ test.describe('fortune wheel respin mode (allowRedraw=true)', () => {
 
     await expect(spinButton).toBeVisible({ timeout: 8000 });
 
-    // First spin — retry click if canvas absorbs the pointer event
+    // Categories must load before the wheel accepts spins (spin stays disabled otherwise).
     await expect
-      .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 10000 })
+      .poll(async () => spinButton.isDisabled().catch(() => true), { timeout: 15000 })
       .toBe(false);
 
+    // Hub shows "?" until a validated selection lands; OK is disabled while spinning or
+    // when there is no pendingSelection — poll on OK + letter, retrying spin if the canvas
+    // swallowed the first tap (common on mobile emulation).
     await expect
       .poll(
         async () => {
+          if (!(await confirmButton.isDisabled().catch(() => true))) {
+            const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? '';
+            return /^[A-Z]$/.test(letterText);
+          }
           await spinButton.click({ force: true }).catch(() => {});
-          const letterText = (await selectedLetter.textContent().catch(() => ''))?.trim() ?? '';
-          return /^[A-Z]$/.test(letterText);
+          return false;
         },
-        { timeout: 30000, intervals: [500, 1000, 2000, 3000, 5000] }
+        { timeout: 45000, intervals: [400, 800, 1500, 2500, 4000] }
       )
       .toBe(true);
-
-    // Wait for confirm button to become enabled
-    await expect
-      .poll(async () => confirmButton.isDisabled().catch(() => true), { timeout: 15000 })
-      .toBe(false);
 
     // Verify we can respin: spin button should be enabled again
     await expect

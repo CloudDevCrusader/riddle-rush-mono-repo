@@ -1,0 +1,11 @@
+# Speed up Vercel source uploads — build runs install + generate on the server
+.turbo
+**/.nuxt
+**/.output
+**/test-results
+**/playwright-report
+**/.lighthouse
+**/.lighthouse-ci
+**/.vite
+**/coverage
+**/dist

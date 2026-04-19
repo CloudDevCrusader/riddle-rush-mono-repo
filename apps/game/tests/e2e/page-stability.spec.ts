@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 import { generatePlayerName } from './helpers/faker';
 import {
   assignScores,
+  confirmScoresAndFinishToLeaderboard,
   confirmScoresAndWaitForModal,
-  finishGame,
   goToNextRound,
   navigateToResults,
   setupMultiplayerGame,
@@ -196,11 +196,8 @@ test.describe('Page Stability — No Unexpected Reloads', () => {
     await expectNoReload(page, tracker, 'round 2 scoring');
 
     tracker.setPhase('round-2-confirm');
-    await confirmScoresAndWaitForModal(page);
+    await confirmScoresAndFinishToLeaderboard(page);
     await expectNoReload(page, tracker, 'round 2 confirm');
-
-    // Finish → leaderboard (legitimate navigation)
-    await finishGame(page);
     await injectReloadSentinel(page);
     tracker.reset();
 

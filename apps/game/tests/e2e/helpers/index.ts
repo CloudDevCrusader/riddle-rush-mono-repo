@@ -43,21 +43,6 @@ export {
   simulateTouchGesture,
 } from './mobile';
 
-// WebSocket and realtime testing
-export {
-  waitForGameMessage,
-  verifyMessageOrder,
-  captureWebSocketTraffic,
-  simulateNetworkJitter,
-  waitForMultiplayerSync,
-  verifyGameStateConsistency,
-  monitorGameEvents,
-  waitForReconnection,
-  sendGameMessage,
-  disconnectWebSocket,
-  getWebSocketState,
-} from './realtime';
-
 // Diagnostics and debugging
 export {
   captureGameState,
@@ -75,9 +60,12 @@ export { generatePlayerName, generateAnswer } from './faker';
 // Game flow helpers (shared across E2E specs)
 export {
   hideDevtools,
+  applyE2EGameSettings,
   submitPlayerAnswers,
   navigateToResults,
   assignScores,
+  confirmScoresAndFinishToLeaderboard,
+  confirmScoresAndPlayNextRound,
   confirmScoresAndWaitForModal,
   goToNextRound,
   finishGame,
@@ -87,5 +75,5 @@ export {
 } from './game-flow';
 
 // Types
-export type { GameMessage } from './realtime';
 export type { GameStateSnapshot, NetworkEntry, BrowserMetrics } from './diagnostics';
+export type { E2EGameSettingsPatch, MultiplayerGameOptions } from './game-flow';

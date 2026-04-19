@@ -1,4 +1,5 @@
 {
+  "$schema": "https://app.kilo.ai/config.json",
   "permission": {
     "read": {
       "/Users/markuswagner/projects/riddle-rush-mono-repo/.kilo/get-shit-done/*": "allow"

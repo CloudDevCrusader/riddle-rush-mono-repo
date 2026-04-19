@@ -81,6 +81,12 @@
       "args_after": ["/Users/markuswagner/projects/riddle-rush-mono-repo"],
       "tools": ["*"],
       "description": "Safe filesystem operations within project directory"
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp",
+      "tools": ["*"],
+      "description": "Figma remote MCP — run: claude mcp add --transport http figma https://mcp.figma.com/mcp (or: claude plugin install figma@claude-plugins-official)"
     }
   }
 }

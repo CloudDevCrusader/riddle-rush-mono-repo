@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <div class="fortune-wheel-actions">
+    <GameButtonGroup layout="row" justify="center" relaxed wrap class="fortune-wheel-actions">
       <GameButton
         v-if="fortuneWheelAllowRedraw"
         data-testid="fortune-wheel-spin-button"
@@ -82,7 +82,7 @@
       >
         {{ t('common.ok', 'OK') }}
       </GameButton>
-    </div>
+    </GameButtonGroup>
   </div>
 </template>
 
@@ -288,13 +288,10 @@ const wheelCategoryEmoji = computed(() => {
   return resolveCategoryEmoji(cat?.name);
 });
 
-/** Large letter in wheel hub (game screen–style); not the legacy “Letter:” row. */
+/** Large letter in wheel hub — only the final outcome after the wheel stops (not the pre-picked target while spinning). */
 const hubLetterDisplay = computed(() => {
   const settled = pendingSelection.value?.letter;
   if (settled) return settled.toUpperCase();
-  if (isSpinning.value && pendingSegment.value?.letter) {
-    return pendingSegment.value.letter.toUpperCase();
-  }
   return '?';
 });
 
@@ -626,13 +623,6 @@ onBeforeUnmount(() => {
   max-width: 100%;
   line-height: 1.25;
   transition: opacity 0.2s cubic-bezier(0.25, 0.8, 0.35, 1);
-}
-
-.fortune-wheel-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  justify-content: center;
 }
 
 /* Reinforce pill shape (some global resets flatten game buttons on this screen). */

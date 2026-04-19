@@ -13,9 +13,8 @@ test.describe('Scoring Workflow: Score Entry UI', () => {
     await expect(decrementBtns).toHaveCount(2);
     await expect(incrementBtns).toHaveCount(2);
 
-    // Check that confirm scores button exists
-    const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-    await expect(confirmBtn).toBeVisible();
+    await expect(page.locator('[data-testid="save-and-next-round"]')).toBeVisible();
+    await expect(page.locator('[data-testid="save-and-leaderboard"]')).toBeVisible();
 
     const firstIncrement = incrementBtns.first();
     const firstDecrement = decrementBtns.first();

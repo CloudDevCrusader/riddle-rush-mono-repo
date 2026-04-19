@@ -97,7 +97,9 @@
       "mcp__playwright__browser_take_screenshot",
       "mcp__web-reader__webReader",
       "mcp__web-search-prime__web_search_prime",
-      "mcp__playwright__browser_evaluate"
+      "mcp__playwright__browser_evaluate",
+      "mcp__plugin_vercel_vercel__list_deployments",
+      "mcp__plugin_vercel_vercel__get_deployment_build_logs"
     ]
   },
   "enableAllProjectMcpServers": true,

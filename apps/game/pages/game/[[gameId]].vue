@@ -4,82 +4,41 @@
     <div class="game-bg" />
 
     <!-- Top Bar -->
-    <header class="game-header">
-      <!-- Back Button -->
-      <button
-        data-testid="back-button"
-        class="game-back-btn game-back-btn--red tap-highlight no-select"
-        @click="handleBack"
-      >
-        <img
-          :src="getAssetPath('assets/alphabets/back.png')"
-          :alt="t('common.back')"
-          class="back-icon"
-          loading="eager"
-          width="32"
-          height="32"
-        />
-      </button>
-
-      <!-- Round Indicator -->
+    <GameSessionTopBar
+      back-test-id="back-button"
+      pause-test-id="game-pause-button"
+      @back="handleBack"
+      @pause="openPauseModal"
+    >
       <div class="round-indicator" data-testid="game-round-indicator">
         <span :key="formattedRound" class="round-text"
           >{{ t('game.round') }} {{ formattedRound }}</span
         >
       </div>
-
-      <!-- Pause Button -->
-      <button
-        class="pause-btn tap-highlight no-select"
-        :aria-label="t('game.pause')"
-        data-testid="game-pause-button"
-        @click="openPauseModal"
-      >
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <rect x="6" y="4" width="4" height="16" />
-          <rect x="14" y="4" width="4" height="16" />
-        </svg>
-      </button>
-    </header>
+    </GameSessionTopBar>
 
     <!-- Main Game Area -->
     <div class="game-container">
       <Transition name="round-reveal" appear>
         <div v-if="currentCategory" :key="roundRevealKey" class="round-reveal-stack">
-          <!-- Category Panel -->
           <div class="category-panel" data-testid="game-category-info">
-            <img
-              :src="getAssetPath('assets/alphabets/category.png')"
-              :alt="t('common.category')"
-              class="category-label-image"
-              loading="lazy"
-              width="200"
-              height="50"
-            />
-            <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
-            <div class="category-name">
-              <span
-                class="category-name__emoji"
-                data-testid="game-category-emoji"
-                aria-hidden="true"
-                >{{ currentCategoryEmoji }}</span
-              >
-              <span class="category-name__text">{{
-                t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
-              }}</span>
+            <div class="category-panel__orange">
+              <div class="category-label">{{ t('common.category').toUpperCase() }}</div>
+            </div>
+            <div class="category-panel__cream">
+              <div class="category-name">
+                <span
+                  class="category-name__emoji"
+                  data-testid="game-category-emoji"
+                  aria-hidden="true"
+                  >{{ currentCategoryEmoji }}</span
+                >
+                <span class="category-name__text">{{
+                  t(`categories.${currentCategory.searchWord}`, currentCategory.name).toUpperCase()
+                }}</span>
+              </div>
             </div>
           </div>
-
-          <!-- Large Letter Display -->
           <div class="letter-display" data-testid="game-letter-info">
             <span
               class="letter-value"
@@ -94,7 +53,9 @@
       <!-- Player Turn Section (for multiplayer) -->
       <Transition name="answer-panel" appear>
         <div
-          v-if="players.length > 0 && currentPlayerTurn && !allPlayersSubmitted"
+          v-if="
+            !skipRoundsEnabled && players.length > 0 && currentPlayerTurn && !allPlayersSubmitted
+          "
           :key="`${currentPlayerTurn.id}-${roundRevealKey}`"
           class="answer-input-section"
         >
@@ -199,11 +160,11 @@
         >
           <img
             :src="getAssetPath('assets/alphabets/next.png')"
-            :alt="t('common.next')"
+            :alt="nextButtonLabel"
             class="next-icon"
             loading="lazy"
           />
-          <span class="next-text">{{ t('common.next') }}</span>
+          <span class="next-text">{{ nextButtonLabel }}</span>
         </button>
       </Transition>
     </div>
@@ -229,6 +190,7 @@ const {
   hasActiveSession,
 } = useGameState();
 const { isAnswerInputEnabled } = useFeatureFlags();
+const { skipRoundsEnabled } = useSettings();
 const logger = useLogger();
 const gameActions = useGameActions();
 const audio = useAudio();
@@ -341,11 +303,25 @@ const canShowNext = computed(
   () =>
     flowState.value === 'round-complete' ||
     flowState.value === 'decision' ||
-    players.value.length === 0
+    players.value.length === 0 ||
+    (skipRoundsEnabled.value &&
+      players.value.length > 0 &&
+      flowState.value === 'in-round' &&
+      !allPlayersSubmitted.value)
+);
+
+const nextButtonLabel = computed(() =>
+  skipRoundsEnabled.value && players.value.length > 0
+    ? t('game.set_points', 'Set points')
+    : t('common.next')
 );
 
 const answerPanelVisible = computed(
-  () => players.value.length > 0 && !!currentPlayerTurn.value && !allPlayersSubmitted.value
+  () =>
+    !skipRoundsEnabled.value &&
+    players.value.length > 0 &&
+    !!currentPlayerTurn.value &&
+    !allPlayersSubmitted.value
 );
 
 const allSubmittedVisible = computed(
@@ -463,22 +439,37 @@ const submitAnswer = async () => {
 const handleNext = async () => {
   // In round-based flow, NEXT goes to results/scoring screen
   // Use unified flow state to determine readiness
-  const flow = flowState.value;
   const hasMultiplayerPlayers = players.value.length > 0;
+
+  if (
+    skipRoundsEnabled.value &&
+    hasMultiplayerPlayers &&
+    !allPlayersSubmitted.value &&
+    flowState.value === 'in-round'
+  ) {
+    let guard = 0;
+    while (!allPlayersSubmitted.value && currentPlayerTurn.value && guard < 24) {
+      await gameStore.submitPlayerAnswer(currentPlayerTurn.value.id, '');
+      guard += 1;
+    }
+  }
 
   if (
     hasMultiplayerPlayers &&
     !allPlayersSubmitted.value &&
-    flow !== 'round-complete' &&
-    flow !== 'decision'
+    flowState.value !== 'round-complete' &&
+    flowState.value !== 'decision'
   ) {
     void audio.playClick();
-    toast.warning(t('game.wait_for_players', 'Please wait for all players to submit'));
+    // Dedicated rounds: players must confirm/submit each turn. Skip-rounds: rare stuck state (auto-advance failed).
+    toast.warning(
+      skipRoundsEnabled.value ? t('game.wait_for_round_ready') : t('game.wait_for_players')
+    );
     return;
   }
 
   // Ensure proper flow transition before navigation
-  if (flow === 'in-round' && allPlayersSubmitted.value) {
+  if (flowState.value === 'in-round' && allPlayersSubmitted.value) {
     // Transition to round-complete state to trigger results flow
     gameStore.transitionToRoundComplete();
   }
@@ -603,24 +594,7 @@ useLocalizedPageSeo({
   z-index: 0;
 }
 
-/* Header */
-.game-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-lg) var(--spacing-md);
-  z-index: var(--z-base);
-}
-
-.back-icon {
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
 .round-indicator {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -657,53 +631,6 @@ useLocalizedPageSeo({
   }
 }
 
-.pause-btn {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #44c8ff 0%, #0a6bc2 100%);
-  border: 4px solid #ffaa00;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    transform var(--transition-base),
-    opacity var(--transition-base),
-    background-color var(--transition-base),
-    border-color var(--transition-base),
-    box-shadow var(--transition-base);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-lg);
-  color: var(--color-white);
-  position: relative;
-  overflow: hidden;
-}
-
-.pause-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.pause-btn:active {
-  transform: translateY(2px);
-  box-shadow:
-    0 4px 0 rgba(0, 0, 0, 0.2),
-    var(--shadow-md);
-}
-
-.pause-btn svg {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  z-index: 1;
-}
-
 /* Game Container */
 .game-container {
   flex: 1;
@@ -722,6 +649,7 @@ useLocalizedPageSeo({
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   flex: 1;
   min-height: 0;
@@ -753,16 +681,31 @@ useLocalizedPageSeo({
     category-glow-pulse 2.5s ease-in-out 0.55s infinite;
 }
 
+/* Category name row: centered in cream band, continuous gentle motion */
+.round-reveal-stack .category-name {
+  animation: category-name-float 2.4s ease-in-out 0.4s infinite;
+}
+
 .round-reveal-stack .category-name__emoji {
   animation: emoji-wiggle 0.62s cubic-bezier(0.34, 1.45, 0.64, 1) 0.1s both;
 }
 
 .round-reveal-stack .letter-display {
-  animation: letter-float-idle 2.75s ease-in-out 0.72s infinite;
+  animation: letter-float-below 2.1s ease-in-out 0.55s infinite;
 }
 
 .round-reveal-stack .letter-display .letter-value {
   animation: letter-pop-in 0.55s cubic-bezier(0.34, 1.45, 0.64, 1) 0.14s both;
+}
+
+@keyframes category-name-float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02);
+  }
 }
 
 @keyframes category-pop-in {
@@ -817,13 +760,13 @@ useLocalizedPageSeo({
   }
 }
 
-@keyframes letter-float-idle {
+@keyframes letter-float-below {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-6px);
+    transform: translateY(-18px);
   }
 }
 
@@ -906,55 +849,44 @@ useLocalizedPageSeo({
   transform: translateY(18px) scale(0.94);
 }
 
-/* Category Panel - Two-part design matching mockup */
+/* Category card: orange band (static label) + cream band (animating category) — letter sits below */
 .category-panel {
   width: 100%;
-  max-width: 600px;
-  padding: var(--spacing-md) var(--spacing-lg);
+  max-width: min(560px, calc(100% - var(--spacing-md) * 2));
+  margin-inline: auto;
+  padding: 0;
   border: 5px solid #e89520;
   border-radius: var(--radius-xl);
   box-shadow:
     0 8px 0 rgba(0, 0, 0, 0.15),
     var(--shadow-lg);
   position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-/* Orange header section */
-.category-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 45%;
+.category-panel__orange {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  padding: var(--spacing-md) var(--spacing-lg);
   background: linear-gradient(180deg, #ffb347 0%, #e89520 100%);
-  pointer-events: none;
-  z-index: 0;
 }
 
-/* Cream/beige body section */
-.category-panel::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 55%;
+.category-panel__cream {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  min-height: 5.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg) var(--spacing-xl);
   background: linear-gradient(180deg, #fff5e0 0%, #ffe6b8 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.category-label-image {
-  display: none; /* Hide the image, using CSS text instead */
 }
 
 .category-label {
-  position: relative;
-  z-index: 2;
   font-family: var(--font-display);
   font-size: clamp(1.4rem, 3.5vw, 2rem);
   font-weight: var(--font-weight-black);
@@ -966,22 +898,19 @@ useLocalizedPageSeo({
     1px 1px 0 #8b4513,
     0 2px 4px rgba(0, 0, 0, 0.3);
   text-align: center;
-  padding: var(--spacing-md) var(--spacing-xl);
   letter-spacing: 2px;
-  opacity: 1;
+  margin: 0;
 }
 
 .category-name {
-  position: relative;
-  z-index: 2;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-lg) var(--spacing-xl);
   text-align: center;
+  margin: 0;
 }
 
 .category-name__emoji {
@@ -1006,15 +935,17 @@ useLocalizedPageSeo({
   letter-spacing: 3px;
 }
 
-/* Letter Display - Light blue with dark blue outline and 3D shadow */
+/* Letter — below the category card, stronger idle motion via letter-float-below */
 .letter-display {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
   width: 100%;
-  max-width: 500px;
+  max-width: min(560px, calc(100% - var(--spacing-md) * 2));
   position: relative;
+  z-index: 2;
+  padding: 0 var(--spacing-sm);
+  margin: 0;
 }
 
 /* Cyan glow underneath the letter */
@@ -1033,7 +964,7 @@ useLocalizedPageSeo({
 
 .letter-value {
   font-family: var(--font-display);
-  font-size: clamp(10rem, 30vw, 20rem);
+  font-size: clamp(12rem, 38vw, 26rem);
   font-weight: var(--font-weight-black);
   /* Light blue fill color matching mockup */
   color: #7ec8e3;
@@ -1271,7 +1202,9 @@ useLocalizedPageSeo({
 /* Bottom Navigation */
 .bottom-nav {
   position: relative;
-  padding: var(--spacing-xl) var(--spacing-md);
+  padding: var(--spacing-xl) var(--spacing-md)
+    calc(var(--spacing-xl) + var(--spacing-md) + env(safe-area-inset-bottom, 0px));
+  margin-bottom: var(--spacing-lg);
   display: flex;
   justify-content: center;
   z-index: var(--z-base);
@@ -1346,22 +1279,6 @@ useLocalizedPageSeo({
 
 /* Responsive */
 @media (max-width: 768px) {
-  .game-header {
-    padding: var(--spacing-md);
-  }
-
-  .game-back-btn,
-  .pause-btn {
-    width: clamp(50px, 12vw, 64px);
-    height: clamp(50px, 12vw, 64px);
-    border: 3px solid #ffaa00;
-  }
-
-  .back-icon {
-    width: clamp(24px, 6vw, 32px);
-    height: clamp(24px, 6vw, 32px);
-  }
-
   .round-text {
     font-size: clamp(1.3rem, 3vw, 1.8rem);
   }
@@ -1370,13 +1287,20 @@ useLocalizedPageSeo({
     max-width: calc(100% - var(--spacing-md) * 2);
   }
 
-  .category-label {
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
+  .category-panel__orange {
     padding: var(--spacing-sm) var(--spacing-lg);
   }
 
-  .category-name {
+  .category-panel__cream {
     padding: var(--spacing-md) var(--spacing-lg);
+    min-height: 5rem;
+  }
+
+  .category-label {
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+  }
+
+  .category-name {
     gap: var(--spacing-xs);
   }
 
@@ -1388,13 +1312,9 @@ useLocalizedPageSeo({
     font-size: clamp(1.8rem, 5vw, 2.5rem);
   }
 
-  .letter-display {
-    max-width: calc(100% - var(--spacing-md) * 2);
-  }
-
   .letter-value {
-    font-size: clamp(8rem, 22vw, 16rem);
-    -webkit-text-stroke: clamp(3px, 0.8vw, 6px) #2b5b84;
+    font-size: clamp(9.5rem, 30vw, 20rem);
+    -webkit-text-stroke: clamp(3px, 0.85vw, 7px) #2b5b84;
   }
 
   .answer-input-section {
@@ -1407,7 +1327,9 @@ useLocalizedPageSeo({
   }
 
   .bottom-nav {
-    padding: var(--spacing-lg) var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-md)
+      calc(var(--spacing-lg) + var(--spacing-sm) + env(safe-area-inset-bottom, 0px));
+    margin-bottom: var(--spacing-md);
   }
 
   .next-btn {
@@ -1421,17 +1343,6 @@ useLocalizedPageSeo({
 }
 
 @media (max-width: 480px) {
-  .game-header {
-    padding: var(--spacing-sm);
-  }
-
-  .game-back-btn,
-  .pause-btn {
-    width: clamp(44px, 11vw, 56px);
-    height: clamp(44px, 11vw, 56px);
-    border: 2px solid #ffaa00;
-  }
-
   .round-text {
     font-size: clamp(1.1rem, 2.8vw, 1.4rem);
   }
@@ -1441,13 +1352,20 @@ useLocalizedPageSeo({
     border-width: 4px;
   }
 
-  .category-label {
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
+  .category-panel__orange {
     padding: var(--spacing-xs) var(--spacing-md);
   }
 
-  .category-name {
+  .category-panel__cream {
     padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 4.5rem;
+  }
+
+  .category-label {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+  }
+
+  .category-name {
     gap: var(--spacing-xs);
   }
 
@@ -1460,8 +1378,8 @@ useLocalizedPageSeo({
   }
 
   .letter-value {
-    font-size: clamp(6rem, 18vw, 12rem);
-    -webkit-text-stroke: clamp(2px, 0.6vw, 4px) #2b5b84;
+    font-size: clamp(7.5rem, 24vw, 14rem);
+    -webkit-text-stroke: clamp(2px, 0.65vw, 5px) #2b5b84;
   }
 
   .answer-input-section {
@@ -1480,7 +1398,9 @@ useLocalizedPageSeo({
   }
 
   .bottom-nav {
-    padding: var(--spacing-md) var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-sm)
+      calc(var(--spacing-md) + var(--spacing-xs) + env(safe-area-inset-bottom, 0px));
+    margin-bottom: var(--spacing-md);
   }
 
   .next-btn {
@@ -1491,6 +1411,17 @@ useLocalizedPageSeo({
 
   .next-text {
     font-size: clamp(1rem, 2.5vw, 1.3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .round-reveal-stack .category-name,
+  .round-reveal-stack .letter-display {
+    animation: none;
+  }
+
+  .round-reveal-stack .category-panel {
+    animation: category-pop-in 0.52s cubic-bezier(0.34, 1.45, 0.64, 1) both;
   }
 }
 

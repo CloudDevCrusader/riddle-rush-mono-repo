@@ -3,9 +3,9 @@ import { test, expect } from '@playwright/test';
 import { generatePlayerNames, setFakerSeed } from './helpers/faker';
 import {
   assignScores,
-  confirmScoresAndWaitForModal,
-  finishGame,
-  goToNextRound,
+  completeFortuneWheel,
+  confirmScoresAndFinishToLeaderboard,
+  confirmScoresAndPlayNextRound,
   navigateToResults,
   setupMultiplayerGame,
   submitPlayerAnswers,
@@ -86,12 +86,15 @@ async function playCompleteRound(
   // Assign scores
   console.log(`Round ${roundNumber} scores:`, scores);
   await assignScores(page, scores);
-  await confirmScoresAndWaitForModal(page);
 
   if (isLastRound) {
-    await finishGame(page);
+    await confirmScoresAndFinishToLeaderboard(page);
   } else {
-    await goToNextRound(page);
+    await confirmScoresAndPlayNextRound(page);
+    if (page.url().includes('/round-start')) {
+      await completeFortuneWheel(page);
+    }
+    await expect(page).toHaveURL(/\/game/, { timeout: 35000 });
   }
 }
 
@@ -238,12 +241,15 @@ test.describe('full game workflow @slow', () => {
       // Navigate to results and continue (except last round tested)
       await navigateToResults(page);
       await assignScores(page, [1, 1, 1]); // Equal scores
-      await confirmScoresAndWaitForModal(page);
 
       if (round < 2) {
-        await goToNextRound(page);
+        await confirmScoresAndPlayNextRound(page);
+        if (page.url().includes('/round-start')) {
+          await completeFortuneWheel(page);
+        }
+        await expect(page).toHaveURL(/\/game/, { timeout: 35000 });
       } else {
-        await finishGame(page);
+        await confirmScoresAndFinishToLeaderboard(page);
       }
     }
 
@@ -316,8 +322,7 @@ test.describe('full game workflow @slow', () => {
     // Note: Score values are displayed in GameDisplay components without specific testids
     await page.waitForTimeout(500); // Let UI stabilize
 
-    await confirmScoresAndWaitForModal(page);
-    await finishGame(page);
+    await confirmScoresAndFinishToLeaderboard(page);
 
     console.log('✅ Rapid scoring test completed!');
   });

@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/game",
-  "version": "1.5.8",
+  "version": "1.6.0",
   "dependencies": {
     "@capacitor/core": "^8.3.0",
     "@capacitor/haptics": "^8.0.2",
@@ -8,11 +8,13 @@
     "@fontsource-variable/nunito": "^5.2.7",
     "@nuxt/hints": "^1.0.2",
     "@nuxtjs/i18n": "^10.2.4",
+    "@nuxtjs/sitemap": "^8.0.13",
     "@pinia/nuxt": "^0.11.3",
     "@riddle-rush/config": "workspace:*",
     "@riddle-rush/shared": "workspace:*",
     "@riddle-rush/types": "workspace:*",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "@vite-pwa/nuxt": "^1.1.1",
     "@vueuse/nuxt": "^14.2.1",
     "focus-trap": "^8.0.1",
@@ -27,6 +29,7 @@
     "vue-router": "^5.0.4"
   },
   "devDependencies": {
+    "@browserbasehq/sdk": "^2.10.0",
     "@faker-js/faker": "^10.4.0",
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/image": "^2.0.0",
@@ -64,6 +67,9 @@
     "vue-tsc": "^3.2.6"
   },
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "assets:optimize": "node scripts/optimize-assets.mjs",
     "assets:verify": "node -e \"const fs=require('fs');const path='public/assets';const walk=(d)=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(d+'/'+e.name):[d+'/'+e.name]);const png=walk(path).filter(f=>f.endsWith('.png'));const missing=png.filter(f=>!fs.existsSync(f.replace(/.png$/,'.webp')));if(missing.length){console.error('Missing .webp for:\\n'+missing.join('\\n'));process.exit(1)}\"",
@@ -88,9 +94,6 @@
     "preview": "npx nuxt preview",
     "preview:https": "npx nuxt preview --https",
     "test": "vitest run",
-    "test:bdd": "bddgen && playwright test",
-    "test:bdd:generate": "bddgen",
-    "test:bdd:headed": "bddgen && playwright test --headed",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:simple": "playwright test --config=playwright.simple.config.ts",

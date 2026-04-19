@@ -1,6 +1,6 @@
 {
   "name": "websocket-disconnect",
-  "version": "1.5.8",
+  "version": "1.6.0",
   "description": "WebSocket disconnect handler",
   "main": "index.js",
   "dependencies": {

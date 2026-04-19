@@ -1,5 +1,11 @@
 import { expect, type Page } from '@playwright/test';
 
+/**
+ * Gameplay E2E helpers mirror app defaults in `settingsStore` (e.g. skip rounds on for verbal flow).
+ * `setupMultiplayerGame` defaults to `dedicatedPlayerRounds: true` so `submitPlayerAnswers` flows
+ * match “Dedicated player rounds” in Options without per-spec boilerplate.
+ */
+
 // ---------------------------------------------------------------------------
 // Browser-context window type extensions (used inside page.evaluate callbacks)
 // ---------------------------------------------------------------------------
@@ -51,8 +57,39 @@ interface E2EPiniaGameStore {
 interface PiniaWindow extends Window {
   __pinia_stores__?: {
     game?: E2EPiniaGameStore;
-    settings?: { fortuneWheelAllowRedraw: boolean };
+    settings?: {
+      fortuneWheelAllowRedraw: boolean;
+      skipRoundsEnabled: boolean;
+      answerInputEnabled?: boolean;
+    };
   };
+}
+
+/** Patch persisted settings in the browser (matches Options / defaults in the app). */
+export type E2EGameSettingsPatch = Partial<{
+  skipRoundsEnabled: boolean;
+  fortuneWheelAllowRedraw: boolean;
+  answerInputEnabled: boolean;
+}>;
+
+/**
+ * Apply settings once Pinia is available. Use for E2E to mirror real feature flags.
+ */
+export async function applyE2EGameSettings(page: Page, patch: E2EGameSettingsPatch): Promise<void> {
+  await expect
+    .poll(
+      async () =>
+        page.evaluate((p) => {
+          const settings = (window as PiniaWindow).__pinia_stores__?.settings;
+          if (!settings) {
+            return false;
+          }
+          Object.assign(settings, p);
+          return true;
+        }, patch),
+      { timeout: 15000 }
+    )
+    .toBe(true);
 }
 
 // ---------------------------------------------------------------------------
@@ -73,19 +110,26 @@ export async function waitForSplashComplete(page: Page): Promise<void> {
  * Hide Nuxt devtools overlay so it cannot intercept clicks during E2E.
  */
 export async function hideDevtools(page: Page): Promise<void> {
-  await page.addStyleTag({
-    content:
-      '#nuxt-devtools-container, nuxt-devtools-frame, #nuxt-devtools-container *, .nuxt-devtools-panel, .nuxt-devtools-toggle, [data-v-inspector], [data-inspector], [data-inspector] { display: none !important; pointer-events: none !important; opacity: 0 !important; visibility: hidden !important; z-index: -1 !important; position: static !important; }',
-  });
+  try {
+    await page.addStyleTag({
+      content:
+        '#nuxt-devtools-container, nuxt-devtools-frame, #nuxt-devtools-container *, .nuxt-devtools-panel, .nuxt-devtools-toggle, [data-v-inspector], [data-inspector], [data-inspector] { display: none !important; pointer-events: none !important; opacity: 0 !important; visibility: hidden !important; z-index: -1 !important; position: static !important; }',
+    });
+  } catch {
+    // Navigation / HMR can destroy the execution context mid-call.
+  }
 
-  // Also try to force devtools to be disabled
-  await page.evaluate(() => {
-    const win = window as NuxtWindow;
-    win.__NUXT_DEVTOOLS__ = null;
-    win.__NUXT__ = win.__NUXT__ ?? {};
-    win.__NUXT__.config = win.__NUXT__.config ?? {};
-    win.__NUXT__.config.devtools = false;
-  });
+  try {
+    await page.evaluate(() => {
+      const win = window as NuxtWindow;
+      win.__NUXT_DEVTOOLS__ = null;
+      win.__NUXT__ = win.__NUXT__ ?? {};
+      win.__NUXT__.config = win.__NUXT__.config ?? {};
+      win.__NUXT__.config.devtools = false;
+    });
+  } catch {
+    // Same as addStyleTag — safe to skip when the page is tearing down.
+  }
 }
 
 /**
@@ -96,6 +140,15 @@ async function preparePageForE2E(page: Page): Promise<void> {
   await page.addInitScript(() => {
     (window as Window & { playwrightTest?: boolean }).playwrightTest = true;
   });
+}
+
+export interface MultiplayerGameOptions {
+  /**
+   * When true (default), sets `skipRoundsEnabled: false` so each player submits in turn
+   * (same as turning on “Dedicated player rounds” in Options).
+   * When false, keeps the app default (`skipRoundsEnabled: true`, verbal Set points flow).
+   */
+  dedicatedPlayerRounds?: boolean;
 }
 
 /**
@@ -322,45 +375,63 @@ export async function assignScores(page: Page, scores: number[]): Promise<void> 
   }
 }
 
-/**
- * Confirm scores and wait until decision actions become available.
- */
-export async function confirmScoresAndWaitForModal(page: Page): Promise<void> {
-  const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-  await expect(confirmBtn).toBeVisible({ timeout: 8000 });
-  await expect
-    .poll(async () => confirmBtn.isDisabled().catch(() => true), { timeout: 8000 })
-    .toBe(false);
+async function clickSaveActionButton(page: Page, testId: string): Promise<void> {
+  const btn = page.locator(`[data-testid="${testId}"]`);
+  await expect(btn).toBeVisible({ timeout: 8000 });
+  await expect.poll(async () => btn.isDisabled().catch(() => true), { timeout: 8000 }).toBe(false);
 
   for (let attempt = 0; attempt < 4; attempt++) {
     try {
-      await confirmBtn.evaluate((element) => {
+      await btn.evaluate((element) => {
         (element as HTMLButtonElement).click();
       });
       break;
     } catch {
       if (attempt === 3) {
-        throw new Error('Failed to click confirm scores button');
+        throw new Error(`Failed to click ${testId}`);
       }
       await page.waitForTimeout(300);
     }
   }
-
-  const nextRoundBtn = page.locator('[data-testid="next-round-button"]');
-  const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]');
-
-  await expect(nextRoundBtn.or(leaderboardBtn).first()).toBeVisible({ timeout: 15000 });
 }
 
 /**
- * Continue to the next round from the post-round decision modal.
+ * Save round scores and continue to the fortune wheel / next round.
+ */
+export async function confirmScoresAndPlayNextRound(page: Page): Promise<void> {
+  await clickSaveActionButton(page, 'save-and-next-round');
+  await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 20000 }).toBe(true);
+}
+
+/**
+ * Save round scores and open the final leaderboard page.
+ */
+export async function confirmScoresAndFinishToLeaderboard(page: Page): Promise<void> {
+  await clickSaveActionButton(page, 'save-and-leaderboard');
+  await expect(page).toHaveURL(/\/leaderboard/, { timeout: 15000 });
+}
+
+/**
+ * @deprecated Use {@link confirmScoresAndPlayNextRound} or {@link confirmScoresAndFinishToLeaderboard}.
+ * Saves scores and prepares the next round (replaces the old post-round modal “next” path).
+ */
+export async function confirmScoresAndWaitForModal(page: Page): Promise<void> {
+  await confirmScoresAndPlayNextRound(page);
+}
+
+/**
+ * Continue after scoring: if still on results, save & next round; otherwise complete the wheel → game.
  */
 export async function goToNextRound(page: Page): Promise<void> {
-  const nextRoundBtn = page.locator('[data-testid="next-round-button"]');
-  await expect(nextRoundBtn).toBeVisible({ timeout: 8000 });
-  await nextRoundBtn.click();
+  if (page.url().includes('/results')) {
+    await confirmScoresAndPlayNextRound(page);
+  } else {
+    const legacyNext = page.locator('[data-testid="next-round-button"]');
+    if (await legacyNext.isVisible().catch(() => false)) {
+      await legacyNext.click();
+    }
+  }
 
-  // Round start may appear first (fortune wheel path) before game route.
   await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 45000 }).toBe(true);
 
   if (page.url().includes('/round-start')) {
@@ -371,9 +442,14 @@ export async function goToNextRound(page: Page): Promise<void> {
 }
 
 /**
- * Finish the game from the post-round decision modal.
+ * Finish the game to the leaderboard page (from scoring or legacy modal).
  */
 export async function finishGame(page: Page): Promise<void> {
+  if (page.url().includes('/results')) {
+    await confirmScoresAndFinishToLeaderboard(page);
+    return;
+  }
+
   const leaderboardBtn = page.locator('[data-testid="leaderboard-button"]');
   await expect(leaderboardBtn).toBeVisible({ timeout: 8000 });
   await leaderboardBtn.click();
@@ -385,14 +461,8 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
     return;
   }
 
-  // Single-spin mode: toggling allowRedraw=false causes the wheel to auto-spin
-  // and auto-advance to /game on its own — no user interaction needed.
-  await page.evaluate(() => {
-    const settings = (window as PiniaWindow).__pinia_stores__?.settings;
-    if (settings) {
-      settings.fortuneWheelAllowRedraw = false;
-    }
-  });
+  // Single-spin mode: allowRedraw=false causes the wheel to auto-spin and auto-advance to /game.
+  await applyE2EGameSettings(page, { fortuneWheelAllowRedraw: false });
 
   await expect.poll(() => /\/game/.test(page.url()), { timeout: 45000 }).toBe(true);
 }
@@ -403,7 +473,8 @@ export async function completeFortuneWheel(page: Page): Promise<void> {
 export async function setupMultiplayerGame(
   page: Page,
   playerNames: string[],
-  completeRoundStart = true
+  completeRoundStart = true,
+  options?: MultiplayerGameOptions
 ): Promise<void> {
   await preparePageForE2E(page);
 
@@ -461,11 +532,21 @@ export async function setupMultiplayerGame(
     sessionStorage.clear();
   });
 
-  await page.reload({ waitUntil: 'networkidle' });
+  // Avoid networkidle: dev/HMR and mobile emulation often keep connections open indefinitely.
+  await page.reload({ waitUntil: 'load', timeout: 60000 });
 
   // Use UI flow for deterministic behavior across browser projects.
   await hideDevtools(page);
   await waitForSplashComplete(page);
+
+  const dedicatedPlayerRounds = options?.dedicatedPlayerRounds !== false;
+  await applyE2EGameSettings(page, { skipRoundsEnabled: !dedicatedPlayerRounds });
+
+  // Default app setting is auto-advance (no redraw). Specs that stop on round-start need
+  // manual spin/OK so the wheel page stays stable before assertions.
+  if (!completeRoundStart) {
+    await applyE2EGameSettings(page, { fortuneWheelAllowRedraw: true });
+  }
 
   const menuPlayBtn = page.locator('[data-testid="main-menu-play"]');
   if (await menuPlayBtn.isVisible().catch(() => false)) {
@@ -548,49 +629,53 @@ export async function setupMultiplayerGame(
     return;
   }
 
-  await expect
-    .poll(
-      async () => {
-        const visible = await page
-          .locator('[data-testid="game-player-name"]')
-          .isVisible()
-          .catch(() => false);
-        if (visible) {
-          return 'ok';
-        }
+  if (dedicatedPlayerRounds) {
+    await expect
+      .poll(
+        async () => {
+          const visible = await page
+            .locator('[data-testid="game-player-name"]')
+            .isVisible()
+            .catch(() => false);
+          if (visible) {
+            return 'ok';
+          }
 
-        const snapshot = await page.evaluate(() => {
-          const store = (window as PiniaWindow).__pinia_stores__?.game;
-          const session = store?.currentSession;
+          const snapshot = await page.evaluate(() => {
+            const store = (window as PiniaWindow).__pinia_stores__?.game;
+            const session = store?.currentSession;
 
-          return {
-            href: window.location.pathname,
-            sessionId: session?.id ?? null,
-            playerCount: session?.players?.length ?? 0,
-            currentPlayerIndex: session?.currentPlayerIndex ?? null,
-            allSubmitted:
-              (session?.players?.length ?? 0) > 0
-                ? (session?.players?.every((player) => Boolean(player.hasSubmitted)) ?? false)
-                : false,
-            currentPlayerTurnName: store?.currentPlayerTurn?.name ?? null,
-            pendingCount: store?.pendingPlayerNames?.length ?? 0,
-            letter: session?.letter ?? null,
-            category: session?.category?.searchWord ?? null,
-          };
-        });
+            return {
+              href: window.location.pathname,
+              sessionId: session?.id ?? null,
+              playerCount: session?.players?.length ?? 0,
+              currentPlayerIndex: session?.currentPlayerIndex ?? null,
+              allSubmitted:
+                (session?.players?.length ?? 0) > 0
+                  ? (session?.players?.every((player) => Boolean(player.hasSubmitted)) ?? false)
+                  : false,
+              currentPlayerTurnName: store?.currentPlayerTurn?.name ?? null,
+              pendingCount: store?.pendingPlayerNames?.length ?? 0,
+              letter: session?.letter ?? null,
+              category: session?.category?.searchWord ?? null,
+            };
+          });
 
-        return JSON.stringify(snapshot);
-      },
-      { timeout: 30000 }
-    )
-    .toBe('ok');
+          return JSON.stringify(snapshot);
+        },
+        { timeout: 45000, intervals: [200, 400, 800, 1200, 2000] }
+      )
+      .toBe('ok');
+  } else {
+    await expect(page.locator('[data-testid="game-letter-info"]')).toBeVisible({ timeout: 15000 });
+  }
 }
 
 /**
- * Start a game with the default players setup.
+ * Start a game with two default players (`setupMultiplayerGame` dedicated rounds on).
  */
 export async function startGameWithDefaults(page: Page): Promise<void> {
-  await setupMultiplayerGame(page, ['Player 1', 'Player 2']);
+  await setupMultiplayerGame(page, ['Player 1', 'Player 2'], true, { dedicatedPlayerRounds: true });
 }
 
 /**
@@ -605,7 +690,7 @@ export async function startGameAndGoToResults(page: Page, playerCount = 2): Prom
     await startGameWithDefaults(page);
   } else {
     const players = Array.from({ length: normalizedPlayerCount }, (_, i) => `Player ${i + 1}`);
-    await setupMultiplayerGame(page, players);
+    await setupMultiplayerGame(page, players, true, { dedicatedPlayerRounds: true });
   }
 
   await submitPlayerAnswers(page, normalizedPlayerCount);

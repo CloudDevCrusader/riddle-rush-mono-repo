@@ -10,30 +10,10 @@
       height="1080"
     />
 
-    <header class="round-start-header">
-      <button
-        type="button"
-        class="game-back-btn game-back-btn--red tap-highlight no-select"
-        data-testid="round-start-back-button"
-        :disabled="startingGame"
-        :aria-label="t('common.back')"
-        @click="handleRoundStartBack"
-      >
-        <img
-          :src="getAssetPath('assets/alphabets/back.png')"
-          :alt="t('common.back')"
-          class="round-start-back-icon"
-          loading="eager"
-          width="32"
-          height="32"
-        />
-      </button>
-    </header>
-
     <div class="container">
       <div v-if="isFortuneWheelEnabled && !startingGame" class="round-start-wheel-block">
         <GameHeader color="gold" class="round-start-headline" data-testid="round-start-headline">
-          {{ t('game.round_start_title') }}
+          {{ t('game.round_start_title') }} · {{ t('game.round') }} {{ formattedRound }}
         </GameHeader>
         <div
           v-if="showRoundStartCategoryLine"
@@ -103,21 +83,22 @@ import {
 
 const { toast, t } = usePageSetup();
 const { getAssetPath } = useAssets();
-const { goToGame, goToPlayers } = useNavigation();
+const { goToGame } = useNavigation();
 const { startConfiguredRound } = useGameActions();
-const { gameStore } = useGameState();
+const { gameStore, currentRound } = useGameState();
 const { isFortuneWheelEnabled } = useFeatureFlags();
+
+/** Same display as the in-game round badge (e.g. 01, 02). */
+const formattedRound = computed(() => {
+  const round = currentRound.value || 1;
+  return round.toString().padStart(2, '0');
+});
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const startingGame = ref(false);
 
 const allCategories = ref<Category[]>([]);
 const fortuneCategoryDisplay = ref<FortuneWheelCategoryDisplay | null>(null);
-
-function handleRoundStartBack() {
-  if (startingGame.value) return;
-  void goToPlayers();
-}
 
 function onFortuneCategoryDisplay(payload: FortuneWheelCategoryDisplay) {
   fortuneCategoryDisplay.value = payload;
@@ -256,7 +237,7 @@ onMounted(async () => {
 });
 
 useLocalizedPageSeo({
-  title: () => t('game.round_start_title'),
+  title: () => `${t('game.round_start_title')} · ${t('game.round')} ${formattedRound.value}`,
   description: () => t('game.round_start_description'),
 });
 </script>
@@ -277,21 +258,6 @@ useLocalizedPageSeo({
   overflow: hidden;
   overscroll-behavior: none;
   background: #1a1a2e;
-}
-
-.round-start-header {
-  position: relative;
-  z-index: 3;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  padding: max(var(--spacing-md), env(safe-area-inset-top)) var(--spacing-md) var(--spacing-sm);
-}
-
-.round-start-back-icon {
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .container {
@@ -320,6 +286,12 @@ useLocalizedPageSeo({
   width: 100%;
   max-width: min(420px, 100%);
   margin-bottom: clamp(var(--spacing-md), 2vh, var(--spacing-xl));
+}
+
+.round-start-headline :deep(.game-header__title) {
+  text-align: center;
+  line-height: 1.12;
+  hyphens: auto;
 }
 
 .round-start-category-selection {

@@ -1,53 +1,86 @@
 <template>
   <GameBackground>
-    <div class="settings-page">
-      <!-- Header -->
-      <GameHeader color="gold">
-        <template #left>
-          <button class="game-back-btn tap-highlight no-select" @click="goBack">
-            <span class="back-btn__arrow">&#8592;</span>
-          </button>
-        </template>
-        {{ t('menu.options') }}
-      </GameHeader>
+    <div class="settings-page-wrap">
+      <GameSessionTopBar back-test-id="settings-toolbar-back" :show-pause="false" @back="goBack">
+        <span class="settings-page__toolbar-title">{{ t('menu.options') }}</span>
+      </GameSessionTopBar>
 
-      <!-- Settings Panel -->
-      <GamePanel class="settings-panel">
-        <!-- Sound slider -->
-        <div class="slider-row">
-          <GameSlider v-model="soundVolume" icon="🔊" muted-icon="🔇" @change="handleSoundChange" />
-          <span class="slider-label">{{ t('settings.sound') }}</span>
-        </div>
+      <div class="settings-page">
+        <!-- Settings Panel -->
+        <GamePanel class="settings-panel">
+          <!-- Sound slider -->
+          <div class="slider-row">
+            <span class="slider-label">{{ t('settings.sound') }}</span>
+            <GameSlider
+              v-model="soundVolume"
+              icon="🔊"
+              muted-icon="🔇"
+              @change="handleSoundChange"
+            />
+          </div>
 
-        <!-- Music slider -->
-        <div class="slider-row">
-          <GameSlider v-model="musicVolume" icon="🎵" muted-icon="🔇" @change="handleMusicChange" />
-          <span class="slider-label">{{ t('settings.music') }}</span>
-        </div>
-
-        <div v-if="isFortuneWheelEnabled" class="fortune-wheel-setting">
-          <button
-            type="button"
-            class="fortune-wheel-toggle tap-highlight"
-            :aria-pressed="fortuneWheelAllowRedraw"
-            :aria-label="t('settings.fortune_wheel_redraw')"
-            @click="settings.toggleFortuneWheelAllowRedraw()"
+          <GameButton
+            variant="secondary"
+            size="md"
+            full-width
+            class="settings-language-btn"
+            data-testid="settings-language-button"
+            @click="goToLanguage"
           >
-            <span class="fortune-wheel-toggle__track" :class="{ 'is-on': fortuneWheelAllowRedraw }">
-              <span class="fortune-wheel-toggle__thumb" />
-            </span>
-            <span class="fortune-wheel-toggle__label">{{
-              t('settings.fortune_wheel_redraw')
-            }}</span>
-          </button>
-          <p class="fortune-wheel-setting__hint">{{ t('settings.fortune_wheel_redraw_hint') }}</p>
-        </div>
-      </GamePanel>
+            🌐 {{ t('menu.language') }}
+          </GameButton>
 
-      <!-- OK Button -->
-      <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk">{{
-        t('common.ok')
-      }}</GameButton>
+          <div v-if="isFortuneWheelEnabled" class="fortune-wheel-setting">
+            <button
+              type="button"
+              class="fortune-wheel-toggle tap-highlight"
+              :aria-pressed="fortuneWheelAllowRedraw"
+              :aria-label="t('settings.fortune_wheel_redraw')"
+              @click="settings.toggleFortuneWheelAllowRedraw()"
+            >
+              <span
+                class="fortune-wheel-toggle__track"
+                :class="{ 'is-on': fortuneWheelAllowRedraw }"
+              >
+                <span class="fortune-wheel-toggle__thumb" />
+              </span>
+              <span class="fortune-wheel-toggle__label">{{
+                t('settings.fortune_wheel_redraw')
+              }}</span>
+            </button>
+            <p class="fortune-wheel-setting__hint">{{ t('settings.fortune_wheel_redraw_hint') }}</p>
+          </div>
+
+          <div class="fortune-wheel-setting">
+            <button
+              type="button"
+              class="fortune-wheel-toggle tap-highlight"
+              :aria-pressed="dedicatedPlayerRoundsOn"
+              data-testid="settings-dedicated-player-rounds"
+              :aria-label="t('settings.dedicated_player_rounds')"
+              @click="settings.toggleDedicatedPlayerRounds()"
+            >
+              <span
+                class="fortune-wheel-toggle__track"
+                :class="{ 'is-on': dedicatedPlayerRoundsOn }"
+              >
+                <span class="fortune-wheel-toggle__thumb" />
+              </span>
+              <span class="fortune-wheel-toggle__label">{{
+                t('settings.dedicated_player_rounds')
+              }}</span>
+            </button>
+            <p class="fortune-wheel-setting__hint">
+              {{ t('settings.dedicated_player_rounds_hint') }}
+            </p>
+          </div>
+        </GamePanel>
+
+        <!-- OK Button -->
+        <GameButton variant="primary" size="lg" class="ok-btn" @click="handleOk">{{
+          t('common.ok')
+        }}</GameButton>
+      </div>
     </div>
   </GameBackground>
 </template>
@@ -56,6 +89,7 @@
 definePageMeta({ pageTransition: { name: 'slide-right', mode: 'out-in' } });
 
 const { t, router } = usePageSetup();
+const { goToLanguage } = useNavigation();
 const route = useRoute();
 const loadingStore = useLoadingStore();
 const settings = useSettings();
@@ -99,10 +133,11 @@ let dbgVisibilityHandler: (() => void) | null = null;
 let dbgIntervalId: number | null = null;
 
 const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value);
+/** UI on = each player submits in turn (`skipRoundsEnabled` false). */
+const dedicatedPlayerRoundsOn = computed(() => !settings.skipRoundsEnabled.value);
 
 // Local refs for slider values
 const soundVolume = ref(settings.soundVolume.value);
-const musicVolume = ref(settings.musicVolume.value);
 
 // Preview sound throttling
 let lastSoundPreviewTime = 0;
@@ -122,12 +157,6 @@ const handleSoundChange = (value: number) => {
   }
 };
 
-// Handle music volume change
-const handleMusicChange = (value: number) => {
-  settings.updateSetting('musicVolume', value);
-  settings.updateSetting('musicEnabled', value > 0);
-};
-
 // Navigate back
 const goBack = () => {
   router.back();
@@ -138,25 +167,13 @@ const handleOk = () => {
   router.back();
 };
 
-// Handle escape key
-const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
-    goBack();
-  }
-};
-
 // Load settings on mount
 onMounted(() => {
   soundVolume.value = settings.soundVolume.value;
-  musicVolume.value = settings.musicVolume.value;
-
-  // Add escape key listener
-  window.addEventListener('keydown', handleEscape);
 
   // #region agent log
   dbgSettingsSnapshot('settings mounted', 'H3');
-  dbgVisibilityHandler = () =>
-    dbgSettingsSnapshot(`visibility ${document.visibilityState}`, 'H4');
+  dbgVisibilityHandler = () => dbgSettingsSnapshot(`visibility ${document.visibilityState}`, 'H4');
   document.addEventListener('visibilitychange', dbgVisibilityHandler);
   dbgIntervalId = window.setInterval(() => dbgSettingsSnapshot('interval tick', 'H3'), 8000);
   // #endregion
@@ -164,7 +181,6 @@ onMounted(() => {
 
 // Cleanup on unmount
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleEscape);
   // #region agent log
   if (dbgVisibilityHandler) {
     document.removeEventListener('visibilitychange', dbgVisibilityHandler);
@@ -184,22 +200,43 @@ useLocalizedPageSeo({
 <style scoped lang="scss">
 @use 'assets/scss/design-system' as *;
 
+.settings-page-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+.settings-page__toolbar-title {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 3vw, 1.45rem);
+  font-weight: var(--font-weight-black);
+  color: #ffd700;
+  -webkit-text-stroke: clamp(1px, 0.25vw, 2px) #8b4513;
+  paint-order: stroke fill;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 0 10px rgba(255, 215, 0, 0.25);
+  letter-spacing: 0.04em;
+  max-width: min(100%, 12rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .settings-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   max-width: 600px;
+  flex: 1 1 auto;
   padding: var(--spacing-md);
   gap: var(--spacing-lg);
-}
-
-.back-btn__arrow {
-  font-size: clamp(20px, 4vw, 28px);
-  font-weight: var(--font-weight-bold);
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  line-height: 1;
+  box-sizing: border-box;
 }
 
 .settings-panel {
@@ -208,6 +245,10 @@ useLocalizedPageSeo({
   gap: var(--spacing-xl);
   padding: var(--spacing-xl);
   width: 100%;
+}
+
+.settings-language-btn {
+  margin-top: var(--spacing-xs);
 }
 
 .slider-row {

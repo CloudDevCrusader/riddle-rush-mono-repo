@@ -146,11 +146,18 @@ export function usePlayerManager() {
     const sorted = orderBy(players, ['totalScore'], ['desc']);
     const topScore = sorted[0]?.totalScore ?? 0;
 
-    return sorted.map((player, index) => ({
-      ...player,
-      rank: index + 1,
-      isWinner: isGameCompleted && index === 0 && topScore > 0,
-    }));
+    // Competition ranking: tied scores share the same place; next place skips (1,2,2,4,…)
+    let displayedRank = 1;
+    return sorted.map((player, index) => {
+      if (index > 0 && player.totalScore < sorted[index - 1]!.totalScore) {
+        displayedRank = index + 1;
+      }
+      return {
+        ...player,
+        rank: displayedRank,
+        isWinner: isGameCompleted && displayedRank === 1 && topScore > 0,
+      };
+    });
   }
 
   /**
