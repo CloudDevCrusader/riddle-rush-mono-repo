@@ -256,3 +256,4 @@ stagewise.json
 .zencoder/
 .aider.tags.cache.v4/
 .env*.local
+.vercel
