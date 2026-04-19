@@ -87,16 +87,16 @@ export default defineNuxtPlugin((nuxtApp) => {
     const sp = root.querySelector<HTMLElement>('.scoring-page');
     const spl = root.querySelector<HTMLElement>('.scoring-page__list');
     const scol = root.querySelector<HTMLElement>('.scoring-page__column');
-    const confirmEl = root.querySelector<HTMLElement>('[data-testid="confirm-scores"]');
-    if (sp && spl && confirmEl) {
+    const saveNextEl = root.querySelector<HTMLElement>('[data-testid="save-and-next-round"]');
+    if (sp && spl && saveNextEl) {
       scoringCompare.hypothesisId = 'H2-H3';
       scoringCompare.viewportW = typeof window !== 'undefined' ? window.innerWidth : null;
       scoringCompare.scoringPageW = Math.round(sp.getBoundingClientRect().width);
       scoringCompare.scoringColumnW = scol ? Math.round(scol.getBoundingClientRect().width) : null;
       scoringCompare.scoringListW = Math.round(spl.getBoundingClientRect().width);
-      scoringCompare.confirmBtnW = Math.round(confirmEl.getBoundingClientRect().width);
-      scoringCompare.listMinusConfirm = Math.round(
-        spl.getBoundingClientRect().width - confirmEl.getBoundingClientRect().width
+      scoringCompare.saveNextBtnW = Math.round(saveNextEl.getBoundingClientRect().width);
+      scoringCompare.listMinusSaveNext = Math.round(
+        spl.getBoundingClientRect().width - saveNextEl.getBoundingClientRect().width
       );
     }
 

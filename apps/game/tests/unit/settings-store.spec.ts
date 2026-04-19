@@ -60,9 +60,14 @@ describe('Settings Store', () => {
       expect(store.fortuneWheelEnabled).toBe(true);
     });
 
-    it('allows fortune wheel redraw (confirm step) by default', () => {
+    it('disables fortune wheel redraw (auto-advance after spin) by default', () => {
       const store = settingsStore;
-      expect(store.fortuneWheelAllowRedraw).toBe(true);
+      expect(store.fortuneWheelAllowRedraw).toBe(false);
+    });
+
+    it('has skip rounds enabled by default (verbal Set points flow)', () => {
+      const store = settingsStore;
+      expect(store.skipRoundsEnabled).toBe(true);
     });
   });
 
@@ -118,11 +123,11 @@ describe('Settings Store', () => {
     });
 
     it('toggleFortuneWheelAllowRedraw flips redraw flag', () => {
-      expect(settingsStore.fortuneWheelAllowRedraw).toBe(true);
-      settingsStore.toggleFortuneWheelAllowRedraw();
       expect(settingsStore.fortuneWheelAllowRedraw).toBe(false);
       settingsStore.toggleFortuneWheelAllowRedraw();
       expect(settingsStore.fortuneWheelAllowRedraw).toBe(true);
+      settingsStore.toggleFortuneWheelAllowRedraw();
+      expect(settingsStore.fortuneWheelAllowRedraw).toBe(false);
     });
   });
 
@@ -191,6 +196,14 @@ describe('Settings Store', () => {
       settingsStore.toggleInputField();
       expect(settingsStore.inputFieldEnabled).toBe(true);
     });
+
+    it('toggleDedicatedPlayerRounds flips skipRoundsEnabled', () => {
+      expect(settingsStore.skipRoundsEnabled).toBe(true);
+      settingsStore.toggleDedicatedPlayerRounds();
+      expect(settingsStore.skipRoundsEnabled).toBe(false);
+      settingsStore.toggleDedicatedPlayerRounds();
+      expect(settingsStore.skipRoundsEnabled).toBe(true);
+    });
   });
 
   describe('Language Actions', () => {
@@ -214,6 +227,7 @@ describe('Settings Store', () => {
       expect(state).toHaveProperty('soundEnabled', true);
       expect(state).toHaveProperty('language', 'de');
       expect(state).toHaveProperty('fortuneWheelEnabled', true);
+      expect(state).toHaveProperty('skipRoundsEnabled', true);
     });
 
     it('getState reflects mutations', () => {

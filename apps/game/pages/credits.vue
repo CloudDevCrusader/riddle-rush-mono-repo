@@ -11,7 +11,7 @@
             data-testid="credits-back-button"
             @click="goBack"
           >
-            {{ t('common.back') }}
+            {{ '←' }}
           </GameButton>
         </template>
         {{ t('credits.title', 'Credits') }}
@@ -24,7 +24,7 @@
             {{ t('credits.game_design') }}
           </h2>
           <div class="credit-box">
-            <span class="credit-name" data-testid="credits-name-0">Tobi</span>
+            <span class="credit-name" data-testid="credits-name-0">Tobias Wirl</span>
             <span class="credit-divider" />
             <span class="credit-name" data-testid="credits-name-1">Sophia</span>
           </div>
@@ -36,7 +36,7 @@
             {{ t('credits.programming') }}
           </h2>
           <div class="credit-box">
-            <span class="credit-name" data-testid="credits-name-2">Markus</span>
+            <span class="credit-name" data-testid="credits-name-2">Markus Wagner</span>
           </div>
         </div>
 

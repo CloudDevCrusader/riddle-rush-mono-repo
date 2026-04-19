@@ -114,7 +114,7 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
-    ...(process.env.VERCEL ? ['@vercel/analytics'] : []),
+    ...(process.env.VERCEL ? ['@vercel/analytics', '@vercel/speed-insights'] : []),
   ],
   // Client-only SPA (IndexedDB and PWA require client-side rendering)
 
@@ -426,8 +426,9 @@ export default defineNuxtConfig({
       compositionOnly: false,
       runtimeOnly: false,
       fullInstall: true,
-      // Messages are static JSON in translations/i18n.config.ts — omit runtime compiler (~14 KiB).
-      dropMessageCompiler: true,
+      // Keep runtime message compiler: locale JSON is imported as-is in translations/i18n.config.ts
+      // (not pre-compiled via @intlify/unplugin-vue-i18n), so `{name}`/`{0}` interpolation needs it.
+      dropMessageCompiler: false,
     },
   },
 

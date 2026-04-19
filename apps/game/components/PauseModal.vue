@@ -9,7 +9,7 @@
     <div class="pause-content">
       <p class="pause-message">{{ t('pause.message') }}</p>
 
-      <div class="pause-actions">
+      <GameButtonGroup layout="stack" relaxed class="pause-actions">
         <GameButton variant="primary" size="lg" full-width @click="handleResume">
           <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M8 5v14l11-7z" />
@@ -32,7 +32,7 @@
           </svg>
           {{ t('pause.home') }}
         </GameButton>
-      </div>
+      </GameButtonGroup>
     </div>
   </GameModal>
 </template>
@@ -97,12 +97,6 @@ const handleHome = async () => {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.pause-actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
 .button-icon {
   width: 24px;
   height: 24px;
@@ -118,10 +112,6 @@ const handleHome = async () => {
   .pause-message {
     font-size: var(--font-size-sm);
     margin-bottom: var(--spacing-lg);
-  }
-
-  .pause-actions {
-    gap: var(--spacing-sm);
   }
 
   .button-icon {

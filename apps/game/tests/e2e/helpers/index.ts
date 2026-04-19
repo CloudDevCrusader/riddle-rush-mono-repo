@@ -75,9 +75,12 @@ export { generatePlayerName, generateAnswer } from './faker';
 // Game flow helpers (shared across E2E specs)
 export {
   hideDevtools,
+  applyE2EGameSettings,
   submitPlayerAnswers,
   navigateToResults,
   assignScores,
+  confirmScoresAndFinishToLeaderboard,
+  confirmScoresAndPlayNextRound,
   confirmScoresAndWaitForModal,
   goToNextRound,
   finishGame,
@@ -89,3 +92,4 @@ export {
 // Types
 export type { GameMessage } from './realtime';
 export type { GameStateSnapshot, NetworkEntry, BrowserMetrics } from './diagnostics';
+export type { E2EGameSettingsPatch, MultiplayerGameOptions } from './game-flow';

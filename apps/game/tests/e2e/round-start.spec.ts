@@ -1,6 +1,10 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import { completeFortuneWheel, setupMultiplayerGame } from './helpers/game-flow';
+import {
+  applyE2EGameSettings,
+  completeFortuneWheel,
+  setupMultiplayerGame,
+} from './helpers/game-flow';
 
 test.setTimeout(120000);
 
@@ -42,12 +46,7 @@ async function startGameFromPlayers(page: Page) {
 
 /** Set the fortuneWheelAllowRedraw setting via the Pinia settings store. */
 async function setAllowRedraw(page: Page, value: boolean) {
-  await page.evaluate((v) => {
-    const settings = (window as PiniaWindow).__pinia_stores__?.settings;
-    if (settings) {
-      settings.fortuneWheelAllowRedraw = v;
-    }
-  }, value);
+  await applyE2EGameSettings(page, { fortuneWheelAllowRedraw: value });
 }
 
 // ---------------------------------------------------------------------------
@@ -60,12 +59,8 @@ test.describe('round-start page', () => {
     await startGameFromPlayers(page);
   });
 
-  test('back button returns to players to fix names', async ({ page }) => {
-    await expect(page.locator('[data-testid="round-start-back-button"]')).toBeVisible({
-      timeout: 8000,
-    });
-    await page.locator('[data-testid="round-start-back-button"]').click();
-    await expect(page).toHaveURL(/\/players/, { timeout: 10000 });
+  test('round-start has no back control (use system or pause flow elsewhere)', async ({ page }) => {
+    await expect(page.locator('[data-testid="round-start-back-button"]')).toHaveCount(0);
   });
 
   test('shows wheel UI with correct initial state', async ({ page }) => {

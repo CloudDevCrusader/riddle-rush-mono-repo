@@ -38,6 +38,7 @@ export function useGameSession() {
     completeGame: store.completeGame,
     abandonGame: store.abandonGame,
     clearSession: store.clearSession,
+    clearSessionForNewGame: store.clearSessionForNewGame,
     loadFromDB: store.loadFromDB,
     saveSessionToDB: store.saveSessionToDB,
     saveHistoryToDB: store.saveHistoryToDB,

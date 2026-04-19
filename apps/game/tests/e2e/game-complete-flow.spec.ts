@@ -3,8 +3,7 @@ import { test, expect } from '@playwright/test';
 import { generatePlayerName } from './helpers/faker';
 import {
   assignScores,
-  confirmScoresAndWaitForModal,
-  finishGame,
+  confirmScoresAndFinishToLeaderboard,
   goToNextRound,
   hideDevtools,
   navigateToResults,
@@ -14,12 +13,16 @@ import {
 } from './helpers/game-flow';
 
 /**
- * Helper: Click "New Game" in decision modal and wait for players page
+ * Helper: Open pause from scoring and choose Restart (returns to players).
  */
-async function startNewGameFromModal(page: Page) {
-  const newGameBtn = page.locator('[data-testid="new-game-button"]');
-  await expect(newGameBtn).toBeVisible({ timeout: 5000 });
-  await newGameBtn.click();
+async function restartGameFromScoringPause(page: Page) {
+  const pauseBtn = page.locator('[data-testid="results-pause-button"]');
+  await expect(pauseBtn).toBeVisible({ timeout: 5000 });
+  await pauseBtn.click();
+
+  const restartBtn = page.getByRole('button', { name: /restart|neu starten/i });
+  await expect(restartBtn.first()).toBeVisible({ timeout: 5000 });
+  await restartBtn.first().click();
 
   await expect(page).toHaveURL(/\/players/, { timeout: 8000 });
   await page.waitForTimeout(300);
@@ -78,9 +81,7 @@ test.describe('Complete Game Flow', () => {
       const scoresContainer = page.locator('[data-testid="results-scores-container"]');
       await expect(scoresContainer).toBeVisible();
 
-      // Confirm scores and finish game
-      await confirmScoresAndWaitForModal(page);
-      await finishGame(page);
+      await confirmScoresAndFinishToLeaderboard(page);
 
       // Verify leaderboard page
       const leaderboardContainer = page.locator('[data-testid="leaderboard-container"]');
@@ -91,8 +92,7 @@ test.describe('Complete Game Flow', () => {
       await startGameWithDefaults(page);
       await submitPlayerAnswers(page, 2);
       await navigateToResults(page);
-      await confirmScoresAndWaitForModal(page);
-      await finishGame(page);
+      await confirmScoresAndFinishToLeaderboard(page);
 
       // Click finish on leaderboard page
       const finishBtn = page.locator('[data-testid="leaderboard-finish-button"]');
@@ -162,8 +162,6 @@ test.describe('Complete Game Flow', () => {
       // (SCORE_INCREMENT = 1, so clicks = score)
       await assignScores(page, [3, 2, 1]);
 
-      // Confirm and go to next round
-      await confirmScoresAndWaitForModal(page);
       await goToNextRound(page);
 
       // Verify Round 2 started
@@ -221,7 +219,6 @@ test.describe('Complete Game Flow', () => {
 
       // Assign minimal scores and continue to next round
       await assignScores(page, [1, 1, 1]);
-      await confirmScoresAndWaitForModal(page);
       await goToNextRound(page);
 
       // Round 2: Verify player turns still use original names
@@ -258,7 +255,6 @@ test.describe('Complete Game Flow', () => {
 
       // Player 1: 3 points, Player 2: 1 point (SCORE_INCREMENT = 1)
       await assignScores(page, [3, 1]);
-      await confirmScoresAndWaitForModal(page);
       await goToNextRound(page);
 
       // ===== ROUND 2 =====
@@ -267,10 +263,7 @@ test.describe('Complete Game Flow', () => {
 
       // Player 1: 1 point, Player 2: 2 points
       await assignScores(page, [1, 2]);
-      await confirmScoresAndWaitForModal(page);
-
-      // Finish game after round 2
-      await finishGame(page);
+      await confirmScoresAndFinishToLeaderboard(page);
 
       // Verify leaderboard shows accumulated scores
       // Player 1 total: 3 + 1 = 4, Player 2 total: 1 + 2 = 3
@@ -296,7 +289,6 @@ test.describe('Complete Game Flow', () => {
 
       // Player 1: 5 points, Player 2: 3 points
       await assignScores(page, [5, 3]);
-      await confirmScoresAndWaitForModal(page);
       await goToNextRound(page);
 
       // ===== ROUND 2 =====
@@ -305,8 +297,7 @@ test.describe('Complete Game Flow', () => {
 
       // Player 1: 2 more, Player 2: 4 more
       await assignScores(page, [2, 4]);
-      await confirmScoresAndWaitForModal(page);
-      await finishGame(page);
+      await confirmScoresAndFinishToLeaderboard(page);
 
       // Cumulative: Player 1 = 7, Player 2 = 7 (tied)
       const score0 = page.locator('[data-testid="leaderboard-player-score-0"]');
@@ -317,7 +308,7 @@ test.describe('Complete Game Flow', () => {
   });
 
   test.describe('Reset Flow', () => {
-    test('should reset the game when choosing New Game', async ({ page }) => {
+    test('should reset the game when choosing Restart from pause on scoring', async ({ page }) => {
       const player1 = 'Player 1';
       const player2 = generatePlayerName();
 
@@ -327,9 +318,8 @@ test.describe('Complete Game Flow', () => {
       await navigateToResults(page);
 
       await assignScores(page, [1, 1]);
-      await confirmScoresAndWaitForModal(page);
 
-      await startNewGameFromModal(page);
+      await restartGameFromScoringPause(page);
 
       const input0 = page.locator('[data-testid="players-name-input-0"]');
       const input1 = page.locator('[data-testid="players-name-input-1"]');

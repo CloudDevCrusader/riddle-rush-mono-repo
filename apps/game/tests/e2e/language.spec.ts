@@ -197,12 +197,11 @@ test.describe('Language Switching Behavior', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
     await hideDevtools(page);
 
-    await page.locator('[data-testid="main-menu-menu"]').click();
+    await page.locator('[data-testid="main-menu-options"]').click();
 
-    const languageItem = page.locator('[data-testid="main-menu-language"]');
-    const settingsItem = page.locator('[data-testid="main-menu-settings"]');
+    await expect(page.locator('.settings-page')).toBeVisible({ timeout: 8000 });
+    const languageItem = page.locator('[data-testid="settings-language-button"]');
     await expect(languageItem).toBeVisible();
-    await expect(settingsItem).toBeVisible();
 
     await languageItem.click();
     await page.waitForLoadState('networkidle');
@@ -223,10 +222,10 @@ test.describe('Language Switching Behavior', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
     await hideDevtools(page);
 
-    await page.locator('[data-testid="main-menu-menu"]').click();
-    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText(/sprache/i);
-    await expect(page.locator('[data-testid="main-menu-settings"]')).toContainText(
-      /einstellungen/i
+    await page.locator('[data-testid="main-menu-options"]').click();
+    await expect(page.locator('.settings-page')).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('[data-testid="settings-language-button"]')).toContainText(
+      /sprache/i
     );
   });
 
@@ -237,8 +236,9 @@ test.describe('Language Switching Behavior', () => {
     await page.goto('/?lang=de', { waitUntil: 'networkidle' });
     await hideDevtools(page);
 
-    await page.locator('[data-testid="main-menu-menu"]').click();
-    const germanMenuItem = page.locator('[data-testid="main-menu-language"]');
+    await page.locator('[data-testid="main-menu-options"]').click();
+    await expect(page.locator('.settings-page')).toBeVisible({ timeout: 8000 });
+    const germanMenuItem = page.locator('[data-testid="settings-language-button"]');
     await expect(germanMenuItem).toContainText(/sprache/i);
 
     await germanMenuItem.click();
@@ -263,7 +263,10 @@ test.describe('Language Switching Behavior', () => {
     await page.goto('/?lang=en', { waitUntil: 'networkidle' });
     await hideDevtools(page);
 
-    await page.locator('[data-testid="main-menu-menu"]').click();
-    await expect(page.locator('[data-testid="main-menu-language"]')).toContainText(/language/i);
+    await page.locator('[data-testid="main-menu-options"]').click();
+    await expect(page.locator('.settings-page')).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('[data-testid="settings-language-button"]')).toContainText(
+      /language/i
+    );
   });
 });

@@ -285,7 +285,7 @@ syncPlayerList(playerCount.value);
   align-items: center;
   justify-content: center;
   gap: var(--spacing-lg);
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
   width: 100%;
   min-width: 0;
   border-radius: mockup-clamp(26px);
@@ -412,7 +412,7 @@ syncPlayerList(playerCount.value);
 .player-row__label {
   font-family: var(--font-display);
   font-size: var(--font-size-xl);
-  color: #d5edff;
+  color: gray;
   text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
 }
 
@@ -512,7 +512,7 @@ syncPlayerList(playerCount.value);
 
   .stepper__pill {
     gap: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
   }
 
   .player-row__label {

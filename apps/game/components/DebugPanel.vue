@@ -61,6 +61,10 @@
             <span>Max Players:</span>
             <span>{{ settings.maxPlayersPerGame.value }}</span>
           </div>
+          <div class="stat-row">
+            <span>Skip rounds (verbal flow):</span>
+            <span>{{ settings.skipRoundsEnabled.value ? 'Yes' : 'No' }}</span>
+          </div>
         </section>
 
         <section class="debug-section">
@@ -172,6 +176,7 @@ const exportDebugInfo = () => {
       fortuneWheelEnabled: settings.fortuneWheelEnabled.value,
       fortuneWheelAllowRedraw: settings.fortuneWheelAllowRedraw.value,
       answerInputEnabled: settings.answerInputEnabled.value,
+      skipRoundsEnabled: settings.skipRoundsEnabled.value,
     },
     stats: stats.value,
     pwa: {

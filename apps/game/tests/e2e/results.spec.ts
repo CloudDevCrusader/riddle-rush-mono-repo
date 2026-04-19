@@ -32,9 +32,8 @@ test.describe('results scoring page', () => {
     const playerList = page.locator('[data-testid="results-scores-container"]');
     await expect(playerList).toBeVisible();
 
-    // Check for confirm button
-    const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-    await expect(confirmBtn).toBeVisible();
+    await expect(page.locator('[data-testid="save-and-next-round"]')).toBeVisible();
+    await expect(page.locator('[data-testid="save-and-leaderboard"]')).toBeVisible();
   });
 
   test('should display player entries with score controls', async ({ page }) => {
@@ -113,60 +112,16 @@ test.describe('results scoring page', () => {
     await expect(decrementBtn).toBeEnabled();
   });
 
-  test('should show leaderboard overlay after confirming scores', async ({ page }) => {
-    // Confirm scores
-    const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-    await confirmBtn.click();
-
-    // Leaderboard should appear
-    const leaderboardOverlay = page.locator('[data-testid="player-leaderboard"]');
-    await expect(leaderboardOverlay).toBeVisible({ timeout: 5000 });
+  test('should navigate to round-start when choosing save & next round', async ({ page }) => {
+    await page.locator('[data-testid="save-and-next-round"]').click();
+    await expect.poll(() => /\/(round-start|game)/.test(page.url()), { timeout: 15000 }).toBe(true);
   });
 
-  test('should show decision modal after leaderboard auto-dismisses', async ({ page }) => {
-    // Confirm scores
-    const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-    await confirmBtn.click();
-
-    // Wait for auto-dismiss (2000ms) + buffer
-    await page.waitForTimeout(2500);
-
-    // Decision modal should appear
-    const nextRoundBtn = page.locator('[data-testid="next-round-button"]');
-    const finishGameBtn = page.locator('[data-testid="leaderboard-button"]');
-
-    await expect(nextRoundBtn).toBeVisible();
-    await expect(finishGameBtn).toBeVisible();
-  });
-
-  test('should navigate to round-start when clicking Next Round', async ({ page }) => {
-    // Confirm scores
-    const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-    await confirmBtn.click();
-
-    // Wait for decision modal
-    await page.waitForTimeout(2500);
-
-    // Click Next Round
-    const nextRoundBtn = page.locator('[data-testid="next-round-button"]');
-    await nextRoundBtn.click();
-
-    await expect(page).toHaveURL(/\/round-start/, { timeout: 5000 });
-  });
-
-  test('should navigate to leaderboard when clicking Finish Game', async ({ page }) => {
-    // Confirm scores
-    const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-    await confirmBtn.click();
-
-    // Wait for decision modal
-    await page.waitForTimeout(2500);
-
-    // Click Finish Game
-    const finishGameBtn = page.locator('[data-testid="leaderboard-button"]');
-    await finishGameBtn.click();
-
-    await expect(page).toHaveURL(/\/leaderboard/, { timeout: 5000 });
+  test('should navigate to leaderboard when choosing save & go to leaderboard', async ({
+    page,
+  }) => {
+    await page.locator('[data-testid="save-and-leaderboard"]').click();
+    await expect(page).toHaveURL(/\/leaderboard/, { timeout: 10000 });
   });
 
   test('should be responsive on mobile', async ({ page }) => {
@@ -174,11 +129,9 @@ test.describe('results scoring page', () => {
 
     const header = page.locator('[data-testid="results-header"]');
     const playerList = page.locator('[data-testid="results-scores-container"]');
-    const confirmBtn = page.locator('[data-testid="confirm-scores"]');
-
     await expect(header).toBeVisible();
     await expect(playerList).toBeVisible();
-    await expect(confirmBtn).toBeVisible();
+    await expect(page.locator('[data-testid="save-and-next-round"]')).toBeVisible();
   });
 });
 
