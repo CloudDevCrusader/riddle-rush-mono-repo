@@ -1,16 +1,1 @@
-{
-  "projectId": "prj_X2pRHTzsoZe2ANPrnBuetBaFFggU",
-  "orgId": "team_eQj5qdeVCVpD1xLz3Urrs5Dq",
-  "projectName": "riddle-rush-mono-repo",
-  "settings": {
-    "createdAt": 1768624802230,
-    "framework": "nuxtjs",
-    "devCommand": null,
-    "installCommand": null,
-    "buildCommand": null,
-    "outputDirectory": null,
-    "rootDirectory": null,
-    "directoryListing": true,
-    "nodeVersion": "24.x"
-  }
-}
+{"projectId":"prj_X2pRHTzsoZe2ANPrnBuetBaFFggU","orgId":"team_eQj5qdeVCVpD1xLz3Urrs5Dq","projectName":"riddle-rush-mono-repo"}

@@ -1,0 +1,249 @@
+name: 'Infrastructure (Terraform)'
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/infrastructure.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        type: choice
+        required: true
+        options:
+          - development
+          - staging
+          - production
+          - translation
+      action:
+        description: 'Terraform action'
+        type: choice
+        required: true
+        default: plan
+        options:
+          - plan
+          - apply
+          - destroy-plan
+
+concurrency:
+  group: terraform-${{ github.event.inputs.environment || github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+env:
+  TF_VERSION: '1.9.8'
+  TF_IN_AUTOMATION: 'true'
+  TF_INPUT: 'false'
+  AWS_REGION: 'eu-central-1'
+
+jobs:
+  detect:
+    name: Detect changed environments
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    outputs:
+      environments: ${{ steps.envs.outputs.envs }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Filter changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            development:
+              - 'infrastructure/environments/development/**'
+              - 'infrastructure/modules/**'
+            staging:
+              - 'infrastructure/environments/staging/**'
+              - 'infrastructure/modules/**'
+            production:
+              - 'infrastructure/environments/production/**'
+              - 'infrastructure/modules/**'
+            translation:
+              - 'infrastructure/environments/translation/**'
+              - 'infrastructure/modules/**'
+
+      - name: Build env matrix
+        id: envs
+        env:
+          DEV: ${{ steps.filter.outputs.development }}
+          STG: ${{ steps.filter.outputs.staging }}
+          PRD: ${{ steps.filter.outputs.production }}
+          TRN: ${{ steps.filter.outputs.translation }}
+        run: |
+          set -eu
+          envs='[]'
+          [ "$DEV" = "true" ] && envs=$(echo "$envs" | jq -c '. + ["development"]')
+          [ "$STG" = "true" ] && envs=$(echo "$envs" | jq -c '. + ["staging"]')
+          [ "$PRD" = "true" ] && envs=$(echo "$envs" | jq -c '. + ["production"]')
+          [ "$TRN" = "true" ] && envs=$(echo "$envs" | jq -c '. + ["translation"]')
+          echo "envs=$envs" >> "$GITHUB_OUTPUT"
+
+  fmt-validate:
+    name: fmt + validate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: terraform fmt check
+        run: terraform fmt -check -recursive infrastructure
+
+      - name: terraform validate per environment
+        run: |
+          set -eu
+          for env_dir in infrastructure/environments/*/; do
+            [ -f "${env_dir}main.tf" ] || continue
+            echo "::group::validate ${env_dir}"
+            pushd "$env_dir" >/dev/null
+            terraform init -backend=false -upgrade=false
+            terraform validate
+            popd >/dev/null
+            echo "::endgroup::"
+          done
+
+  plan-pr:
+    name: plan (${{ matrix.environment }})
+    runs-on: ubuntu-latest
+    needs: [detect, fmt-validate]
+    if: github.event_name == 'pull_request' && needs.detect.outputs.environments != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: ${{ fromJson(needs.detect.outputs.environments) }}
+    environment:
+      name: ${{ matrix.environment }}-plan
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: true
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform init
+        working-directory: infrastructure/environments/${{ matrix.environment }}
+        run: terraform init -lockfile=readonly
+
+      - name: Terraform plan
+        id: plan
+        working-directory: infrastructure/environments/${{ matrix.environment }}
+        run: terraform plan -no-color -out=tfplan.bin -detailed-exitcode
+        continue-on-error: true
+
+      - name: Upload plan artifact
+        if: steps.plan.outputs.exitcode != '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ matrix.environment }}-${{ github.run_id }}
+          path: infrastructure/environments/${{ matrix.environment }}/tfplan.bin
+          retention-days: 7
+
+      - name: Comment plan on PR
+        uses: actions/github-script@v7
+        env:
+          TF_STDOUT: ${{ steps.plan.outputs.stdout }}
+          TF_ENV: ${{ matrix.environment }}
+          TF_EXIT: ${{ steps.plan.outputs.exitcode }}
+        with:
+          script: |
+            const { TF_STDOUT, TF_ENV, TF_EXIT } = process.env;
+            const verdict = TF_EXIT === '0'
+              ? 'No changes'
+              : TF_EXIT === '2'
+                ? 'Changes planned'
+                : 'Plan failed';
+            const raw = (TF_STDOUT || '').slice(0, 60000);
+            const body = [
+              `### Terraform Plan — \`${TF_ENV}\` — ${verdict}`,
+              '',
+              '<details><summary>Plan output</summary>',
+              '',
+              '```terraform',
+              raw,
+              '```',
+              '',
+              '</details>',
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail job if plan errored
+        if: steps.plan.outputs.exitcode == '1'
+        run: exit 1
+
+  dispatch:
+    name: ${{ github.event.inputs.action }} (${{ github.event.inputs.environment }})
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    env:
+      TF_ENV: ${{ github.event.inputs.environment }}
+      TF_ACTION: ${{ github.event.inputs.action }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform init
+        working-directory: infrastructure/environments/${{ github.event.inputs.environment }}
+        run: terraform init -lockfile=readonly
+
+      - name: Terraform plan
+        if: env.TF_ACTION == 'plan'
+        working-directory: infrastructure/environments/${{ github.event.inputs.environment }}
+        run: terraform plan
+
+      - name: Terraform apply
+        if: env.TF_ACTION == 'apply'
+        working-directory: infrastructure/environments/${{ github.event.inputs.environment }}
+        run: terraform apply -auto-approve
+
+      - name: Terraform destroy plan
+        if: env.TF_ACTION == 'destroy-plan'
+        working-directory: infrastructure/environments/${{ github.event.inputs.environment }}
+        run: terraform plan -destroy
+
+      - name: Summary
+        run: |
+          {
+            echo "## Terraform ${TF_ACTION} — ${TF_ENV}"
+            echo ""
+            echo "- Run: ${{ github.run_number }}"
+            echo "- Actor: ${{ github.actor }}"
+          } >> "$GITHUB_STEP_SUMMARY"
