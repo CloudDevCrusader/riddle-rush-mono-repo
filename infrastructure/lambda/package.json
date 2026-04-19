@@ -1,6 +1,6 @@
 {
   "name": "cache-control-lambda",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Lambda@Edge function for enhanced caching control",
   "main": "cache-control.js",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@riddle-rush/config",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "dependencies": {
     "vite": "^7.3.2"
   },

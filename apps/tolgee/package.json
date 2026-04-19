@@ -1,7 +1,7 @@
 {
   "name": "@riddle-rush/tolgee",
   "description": "Translation management UI (Tolgee) for Riddle Rush i18n",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "scripts": {
     "logs": "docker compose logs -f",
     "pull": "tolgee pull",
