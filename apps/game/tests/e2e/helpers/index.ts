@@ -43,21 +43,6 @@ export {
   simulateTouchGesture,
 } from './mobile';
 
-// WebSocket and realtime testing
-export {
-  waitForGameMessage,
-  verifyMessageOrder,
-  captureWebSocketTraffic,
-  simulateNetworkJitter,
-  waitForMultiplayerSync,
-  verifyGameStateConsistency,
-  monitorGameEvents,
-  waitForReconnection,
-  sendGameMessage,
-  disconnectWebSocket,
-  getWebSocketState,
-} from './realtime';
-
 // Diagnostics and debugging
 export {
   captureGameState,
@@ -90,6 +75,5 @@ export {
 } from './game-flow';
 
 // Types
-export type { GameMessage } from './realtime';
 export type { GameStateSnapshot, NetworkEntry, BrowserMetrics } from './diagnostics';
 export type { E2EGameSettingsPatch, MultiplayerGameOptions } from './game-flow';

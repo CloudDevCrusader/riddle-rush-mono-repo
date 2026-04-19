@@ -171,8 +171,6 @@ pnpm run test:e2e               # Headless
 pnpm run test:e2e:headed        # Show browser
 pnpm run test:e2e:ui            # Interactive UI
 pnpm run test:e2e:simple        # Simplified config
-pnpm run test:bdd               # BDD tests (generate + run)
-pnpm run test:bdd:headed        # BDD with visible browser
 ```
 
 ### Code Quality (REQUIRED before commit)
@@ -477,7 +475,6 @@ Root-only tasks (prefixed `//`): `workspace:check`, `workspace:fix`, `syncpack:c
 - Located in `apps/game/tests/e2e/`
 - Projects: Desktop Chrome, Firefox, Mobile Chrome (Pixel 5)
 - Supports local builds and deployed sites via `BASE_URL` env var
-- BDD testing available via `test:bdd` scripts
 - Uses `data-testid` attributes for language-agnostic testing
 - Screenshots/traces captured on failure
 
