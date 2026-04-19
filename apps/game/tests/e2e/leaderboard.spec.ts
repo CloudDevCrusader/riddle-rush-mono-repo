@@ -3,8 +3,7 @@ import {
   startGameWithDefaults,
   submitPlayerAnswers,
   navigateToResults,
-  confirmScoresAndWaitForModal,
-  finishGame,
+  confirmScoresAndFinishToLeaderboard,
 } from './helpers/game-flow';
 
 test.describe('leaderboard page leaderboard', () => {
@@ -12,8 +11,7 @@ test.describe('leaderboard page leaderboard', () => {
     await startGameWithDefaults(page);
     await submitPlayerAnswers(page, 2, ['TestAnswer1', 'TestAnswer2']);
     await navigateToResults(page);
-    await confirmScoresAndWaitForModal(page);
-    await finishGame(page);
+    await confirmScoresAndFinishToLeaderboard(page);
   });
 
   test('should display leaderboard container', async ({ page }) => {
@@ -47,9 +45,18 @@ test.describe('leaderboard page leaderboard', () => {
   });
 
   test('should display finish button (game is completed)', async ({ page }) => {
-    // Game was completed via "Finish Game" — so only finish button should show
     const finishBtn = page.locator('[data-testid="leaderboard-finish-button"]');
     await expect(finishBtn).toBeVisible();
+  });
+
+  test('should display restart button when game is completed', async ({ page }) => {
+    const restartBtn = page.locator('[data-testid="leaderboard-restart-button"]');
+    await expect(restartBtn).toBeVisible();
+  });
+
+  test('should navigate to players when clicking restart', async ({ page }) => {
+    await page.locator('[data-testid="leaderboard-restart-button"]').click();
+    await expect(page).toHaveURL(/\/players/, { timeout: 15000 });
   });
 
   test('should not display next round button when game is completed', async ({ page }) => {

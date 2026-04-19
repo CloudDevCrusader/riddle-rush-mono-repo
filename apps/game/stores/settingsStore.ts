@@ -32,8 +32,9 @@ const DEFAULT_SETTINGS: GameSettings = {
   offlineMode: false,
   language: 'de',
   fortuneWheelEnabled: true,
-  fortuneWheelAllowRedraw: true,
+  fortuneWheelAllowRedraw: false,
   answerInputEnabled: false,
+  skipRoundsEnabled: true,
   inputFieldEnabled: true,
 };
 
@@ -86,6 +87,10 @@ export const useSettingsStore = defineStore('settings', {
     },
     toggleAnswerInput() {
       this.answerInputEnabled = !this.answerInputEnabled;
+    },
+    /** Same as toggling `skipRoundsEnabled` — off means each player takes a turn before scoring. */
+    toggleDedicatedPlayerRounds() {
+      this.skipRoundsEnabled = !this.skipRoundsEnabled;
     },
     toggleInputField() {
       this.inputFieldEnabled = !this.inputFieldEnabled;

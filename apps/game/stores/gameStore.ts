@@ -4,6 +4,7 @@ import { useCategoryManager } from '../composables/useCategoryManager';
 import { useSessionManager } from '../composables/useSessionManager';
 import { usePlayerManager } from '../composables/usePlayerManager';
 import { usePersistence } from '../composables/usePersistence';
+import { useIndexedDB } from '../composables/useIndexedDB';
 import { useGameLifecycle } from '../composables/useGameLifecycle';
 import { ALPHABET, DEFAULT_DISPLAYED_CATEGORIES } from '@riddle-rush/shared/constants';
 import type {
@@ -359,6 +360,20 @@ export const useGameStore = defineStore('game', {
     clearSession() {
       this.currentSession = null;
       this.postRoundDecisionPending = false;
+    },
+    /**
+     * Drop the in-memory session and clear the IndexedDB “current” slot so a new game
+     * can start without duplicating completed sessions in history (e.g. leaderboard restart).
+     */
+    async clearSessionForNewGame() {
+      this.transitionToSetup();
+      try {
+        const { clearGameSession } = useIndexedDB();
+        await clearGameSession();
+      } catch (error) {
+        const logger = useLogger();
+        logger.error('Error clearing game session from IndexedDB:', error);
+      }
     },
     async setupPlayers(
       playerNames: string[],

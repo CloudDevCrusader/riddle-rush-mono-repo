@@ -17,7 +17,7 @@ export function useSettings() {
     offlineMode: computed(() => store.offlineMode),
     language: computed(() => store.language),
     fortuneWheelEnabled: computed(() => store.fortuneWheelEnabled),
-    fortuneWheelAllowRedraw: computed(() => store.fortuneWheelAllowRedraw ?? true),
+    fortuneWheelAllowRedraw: computed(() => store.fortuneWheelAllowRedraw ?? false),
     answerInputEnabled: computed(() => store.answerInputEnabled),
     skipRoundsEnabled: computed(() => store.skipRoundsEnabled),
 
@@ -36,6 +36,7 @@ export function useSettings() {
     toggleFortuneWheel: store.toggleFortuneWheel,
     toggleFortuneWheelAllowRedraw: store.toggleFortuneWheelAllowRedraw,
     toggleAnswerInput: store.toggleAnswerInput,
+    toggleDedicatedPlayerRounds: store.toggleDedicatedPlayerRounds,
     setOfflineMode: store.setOfflineMode,
     resetToDefaults: store.resetToDefaults,
     setLanguage: store.setLanguage,

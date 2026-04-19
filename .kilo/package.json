@@ -1,3 +1,6 @@
 {
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "@kilocode/plugin": "7.2.14"
+  }
 }

@@ -5,9 +5,8 @@ import {
   submitPlayerAnswers,
   navigateToResults,
   assignScores,
-  confirmScoresAndWaitForModal,
+  confirmScoresAndFinishToLeaderboard,
   goToNextRound,
-  finishGame,
 } from './helpers/game-flow';
 
 // ---------------------------------------------------------------------------
@@ -171,11 +170,7 @@ test.describe('@mobile Mobile Game Flow', () => {
     // 6. Assign scores
     await assignScores(page, [1, 2]);
 
-    // 7. Confirm scores and wait for decision modal
-    await confirmScoresAndWaitForModal(page);
-
-    // 8. Finish game
-    await finishGame(page);
+    await confirmScoresAndFinishToLeaderboard(page);
 
     await expect(page).toHaveURL(/\/leaderboard/);
   });
@@ -186,9 +181,6 @@ test.describe('@mobile Mobile Game Flow', () => {
     await submitPlayerAnswers(page, 2, ['Apple', 'Banana']);
     await navigateToResults(page);
     await assignScores(page, [1, 2]);
-    await confirmScoresAndWaitForModal(page);
-
-    // Go to next round
     await goToNextRound(page);
 
     // Verify URL is back on game page
@@ -206,10 +198,7 @@ test.describe('@mobile Mobile Game Flow', () => {
     await submitPlayerAnswers(page, 2, ['Car', 'Dog']);
     await navigateToResults(page);
     await assignScores(page, [2, 1]);
-    await confirmScoresAndWaitForModal(page);
-
-    // Finish game
-    await finishGame(page);
+    await confirmScoresAndFinishToLeaderboard(page);
 
     await expect(page).toHaveURL(/\/leaderboard/);
   });
@@ -294,10 +283,7 @@ test.describe('@tablet Tablet Game Flow', () => {
     expect(resultsLayout.viewport).toBe('tablet');
 
     await assignScores(page, [1, 2]);
-    await confirmScoresAndWaitForModal(page);
-
-    // Finish game
-    await finishGame(page);
+    await confirmScoresAndFinishToLeaderboard(page);
 
     await expect(page).toHaveURL(/\/leaderboard/);
   });

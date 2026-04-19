@@ -148,9 +148,6 @@ pnpm run test:e2e:docker        # Run E2E tests in Docker
 pnpm run test:e2e               # Headless
 pnpm run test:e2e:headed        # Show browser
 pnpm run test:e2e:simple        # Simplified config
-pnpm run test:bdd               # BDD tests (generate + run)
-pnpm run test:bdd:headed        # BDD with visible browser
-pnpm run test:bdd:generate      # Generate BDD tests
 ```
 
 ### Code Quality

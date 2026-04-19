@@ -9,14 +9,14 @@
     <div class="quit-content">
       <p class="quit-message">{{ t('game.quitConfirmation') }}</p>
 
-      <div class="quit-actions">
+      <GameButtonGroup layout="row" justify="center" relaxed class="quit-actions">
         <GameButton variant="danger" @click="handleNo">
           {{ t('common.no') }}
         </GameButton>
         <GameButton variant="primary" @click="handleYes">
           {{ t('common.yes') }}
         </GameButton>
-      </div>
+      </GameButtonGroup>
     </div>
   </GameModal>
 </template>
@@ -64,15 +64,12 @@ const handleYes = async () => {
 .quit-message {
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  color: var(--color-text-dark);
+  color: #fff;
   margin: 0 0 var(--spacing-xl);
   line-height: 1.4;
-}
-
-.quit-actions {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45),
+    0 0 1px rgba(0, 0, 0, 0.6);
 }
 
 // Ensure buttons have equal width
@@ -84,10 +81,6 @@ const handleYes = async () => {
 @media (max-width: 480px) {
   .quit-message {
     font-size: var(--font-size-md);
-  }
-
-  .quit-actions {
-    gap: var(--spacing-sm);
   }
 
   .quit-actions :deep(.game-button) {

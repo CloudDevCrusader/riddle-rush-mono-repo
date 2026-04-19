@@ -9,6 +9,16 @@
       "args": ["-y", "chrome-devtools-mcp@latest"],
       "description": "Chrome DevTools integration for web debugging"
     },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp",
+      "description": "Figma remote MCP (OAuth) — design context, Code Connect, canvas tools"
+    },
+    "figma-desktop": {
+      "type": "http",
+      "url": "http://127.0.0.1:3845/mcp",
+      "description": "Figma Desktop local MCP — requires Figma app with MCP enabled on port 3845"
+    },
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem"],

@@ -69,8 +69,8 @@
             </div>
           </div>
 
-          <!-- Music Control -->
-          <div class="control-item">
+          <!-- Music control hidden until background music returns -->
+          <div v-if="showMusicVolumeControl" class="control-item">
             <div class="control-icon-wrapper">
               <img
                 :src="getAssetPath('assets/settings/music.png')"
@@ -101,6 +101,22 @@
             </div>
           </div>
 
+          <div class="control-item control-item--language-link">
+            <div class="control-icon-wrapper" aria-hidden="true">
+              <span class="control-icon-emoji">🌐</span>
+            </div>
+            <div class="control-content">
+              <button
+                type="button"
+                class="language-link-btn tap-highlight no-select"
+                data-testid="settings-modal-language-button"
+                @click="openLanguageSelection"
+              >
+                {{ t('menu.language') }}
+              </button>
+            </div>
+          </div>
+
           <!-- Fortune wheel: confirm vs auto-start (below sound / music) -->
           <div v-if="isFortuneWheelEnabled" class="control-item control-item--fortune-redraw">
             <div class="control-icon-wrapper" aria-hidden="true">
@@ -123,6 +139,31 @@
                 </span>
               </button>
               <p class="fortune-redraw-hint">{{ t('settings.fortune_wheel_redraw_hint') }}</p>
+            </div>
+          </div>
+
+          <div class="control-item control-item--fortune-redraw">
+            <div class="control-icon-wrapper" aria-hidden="true">
+              <span class="control-icon-emoji">{{ playersOptionEmoji }}</span>
+            </div>
+            <div class="control-content">
+              <div class="control-label">{{ t('settings.dedicated_player_rounds') }}</div>
+              <button
+                type="button"
+                class="fortune-redraw-toggle tap-highlight no-select"
+                data-testid="settings-modal-dedicated-player-rounds"
+                :aria-pressed="dedicatedPlayerRoundsOn"
+                :aria-label="t('settings.dedicated_player_rounds')"
+                @click="settings.toggleDedicatedPlayerRounds()"
+              >
+                <span
+                  class="fortune-redraw-toggle__track"
+                  :class="{ 'is-on': dedicatedPlayerRoundsOn }"
+                >
+                  <span class="fortune-redraw-toggle__thumb" />
+                </span>
+              </button>
+              <p class="fortune-redraw-hint">{{ t('settings.dedicated_player_rounds_hint') }}</p>
             </div>
           </div>
         </div>
@@ -157,11 +198,19 @@ const { getAssetPath } = useAssets();
 const settings = useSettings();
 const { isFortuneWheelEnabled } = useFeatureFlags();
 const router = useRouter();
+const { goToLanguage } = useNavigation();
 const { t } = useI18n();
 
+/** Hide music slider until in-game music is shipped again */
+const showMusicVolumeControl = false;
+
 const fortuneWheelAllowRedraw = computed(() => settings.fortuneWheelAllowRedraw.value);
+/** UI on = each player submits in turn (`skipRoundsEnabled` false). */
+const dedicatedPlayerRoundsOn = computed(() => !settings.skipRoundsEnabled.value);
 /** Slot machine — avoids mojibake in some editor encodings */
 const wheelOptionEmoji = '\u{1F3B0}';
+/** Busts in silhouette — players / turns */
+const playersOptionEmoji = '\u{1F465}';
 
 const soundVolume = ref(settings.soundVolume.value);
 const musicVolume = ref(settings.musicVolume.value);
@@ -192,6 +241,11 @@ const updateSoundVolume = () => {
 const updateMusicVolume = () => {
   settings.updateSetting('musicVolume', musicVolume.value);
   settings.updateSetting('musicEnabled', musicVolume.value > 0);
+};
+
+const openLanguageSelection = () => {
+  emit('update:modelValue', false);
+  goToLanguage();
 };
 
 // Handle escape key
@@ -319,6 +373,24 @@ onUnmounted(() => {
 
 .control-item:last-child {
   margin-bottom: 0;
+}
+
+.control-item--language-link {
+  align-items: center;
+}
+
+.language-link-btn {
+  align-self: flex-start;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 3px solid #ffd700;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(0, 0, 0, 0.12) 100%);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
 }
 
 .control-icon-emoji {

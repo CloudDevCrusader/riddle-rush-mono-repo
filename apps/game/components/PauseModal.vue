@@ -9,7 +9,7 @@
     <div class="pause-content">
       <p class="pause-message">{{ t('pause.message') }}</p>
 
-      <div class="pause-actions">
+      <GameButtonGroup layout="stack" relaxed class="pause-actions">
         <GameButton variant="primary" size="lg" full-width @click="handleResume">
           <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M8 5v14l11-7z" />
@@ -17,7 +17,13 @@
           {{ t('pause.resume') }}
         </GameButton>
 
-        <GameButton variant="secondary" size="lg" full-width @click="handleRestart">
+        <GameButton
+          variant="secondary"
+          size="lg"
+          full-width
+          data-testid="pause-restart-button"
+          @click="handleRestart"
+        >
           <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path
               d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
@@ -32,7 +38,7 @@
           </svg>
           {{ t('pause.home') }}
         </GameButton>
-      </div>
+      </GameButtonGroup>
     </div>
   </GameModal>
 </template>
@@ -97,12 +103,6 @@ const handleHome = async () => {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.pause-actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
 .button-icon {
   width: 24px;
   height: 24px;
@@ -118,10 +118,6 @@ const handleHome = async () => {
   .pause-message {
     font-size: var(--font-size-sm);
     margin-bottom: var(--spacing-lg);
-  }
-
-  .pause-actions {
-    gap: var(--spacing-sm);
   }
 
   .button-icon {

@@ -1,17 +1,6 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import { startGameWithDefaults } from './helpers/game-flow';
-
-interface SettingsPiniaStore {
-  answerInputEnabled?: boolean;
-  fortuneWheelAllowRedraw?: boolean;
-}
-
-interface PiniaStoresWindow extends Window {
-  __pinia_stores__?: {
-    settings?: SettingsPiniaStore;
-  };
-}
+import { applyE2EGameSettings, startGameWithDefaults } from './helpers/game-flow';
 
 interface FakeSpeechRecognition {
   emit: (transcript: string) => void;
@@ -87,12 +76,7 @@ async function stubSpeechRecognition(page: Page): Promise<void> {
 }
 
 async function enableAnswerInputFlag(page: Page): Promise<void> {
-  await page.evaluate(() => {
-    const settings = (window as PiniaStoresWindow).__pinia_stores__?.settings;
-    if (settings) {
-      settings.answerInputEnabled = true;
-    }
-  });
+  await applyE2EGameSettings(page, { answerInputEnabled: true });
 }
 
 test.describe('Answer input — microphone button', () => {

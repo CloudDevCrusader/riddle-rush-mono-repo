@@ -285,7 +285,7 @@ describe('usePlayerManager', () => {
       expect(leaderboard[2]!.name).toBe('Alice');
     });
 
-    it('assigns rank as 1-based index', () => {
+    it('assigns distinct ranks 1..n when scores are all different', () => {
       const players = [
         createPlayer({ id: 'a', totalScore: 20 }),
         createPlayer({ id: 'b', totalScore: 10 }),
@@ -297,6 +297,32 @@ describe('usePlayerManager', () => {
       expect(leaderboard[0]!.rank).toBe(1);
       expect(leaderboard[1]!.rank).toBe(2);
       expect(leaderboard[2]!.rank).toBe(3);
+    });
+
+    it('uses competition ranking: ties share rank and next place skips', () => {
+      const players = [
+        createPlayer({ id: 'a', totalScore: 30 }),
+        createPlayer({ id: 'b', totalScore: 30 }),
+        createPlayer({ id: 'c', totalScore: 10 }),
+      ];
+
+      const leaderboard = manager.buildLeaderboard(players, false);
+
+      expect(leaderboard.map((p) => p.rank)).toEqual([1, 1, 3]);
+    });
+
+    it('marks all tied first-place players as winner when game completed', () => {
+      const players = [
+        createPlayer({ id: 'a', totalScore: 10 }),
+        createPlayer({ id: 'b', totalScore: 10 }),
+        createPlayer({ id: 'c', totalScore: 5 }),
+      ];
+
+      const leaderboard = manager.buildLeaderboard(players, true);
+
+      expect(leaderboard[0]!.isWinner).toBe(true);
+      expect(leaderboard[1]!.isWinner).toBe(true);
+      expect(leaderboard[2]!.isWinner).toBe(false);
     });
 
     it('marks isWinner true for rank 1 when isGameCompleted and score > 0', () => {

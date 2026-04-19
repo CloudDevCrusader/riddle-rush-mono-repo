@@ -21,6 +21,19 @@ const isLocalhostBuild = [
   .some((value) => value?.includes('localhost') || value?.includes('127.0.0.1'));
 
 const shouldMinify = isDev || isLocalhostBuild || isDebugBuild ? false : 'esbuild';
+
+const isDevtoolsEnabled =
+  process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false';
+
+// Sitemap base URL: prefer explicit override; on Vercel previews use the deployment URL
+// so preview sitemaps don't advertise production paths.
+const resolvedSiteUrl = (() => {
+  if (process.env.NUXT_PUBLIC_SITE_URL) return process.env.NUXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_ENV === 'production') return 'https://riddlerush.de';
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return 'https://riddlerush.de';
+})();
+
 const resolvedBaseUrl = (() => {
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}/`;
@@ -111,6 +124,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxt/image',
+    '@nuxtjs/sitemap',
     '@nuxt/hints',
     // Disable nuxt-security for E2E tests - it causes 500 errors on static assets
     ...(process.env.DISABLE_SECURITY !== 'true' ? ['nuxt-security'] : []),
@@ -132,15 +146,18 @@ export default defineNuxtConfig({
     dirs: ['stores', 'stores/hooks', 'composables'],
   },
   devtools: {
-    enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+    enabled: isDevtoolsEnabled,
+    vueDevtools: isDevtoolsEnabled,
+    vscode: {
+      enabled: isDevtoolsEnabled,
+    },
     timeline: {
-      enabled: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+      enabled: isDevtoolsEnabled,
     },
   },
   hints: {
-    devtools: process.env.STAGE === 'development' && process.env.NUXT_DEVTOOLS !== 'false',
+    devtools: isDevtoolsEnabled,
   },
-
   app: {
     baseURL: process.env.VERCEL
       ? process.env.BASE_PATH || '/'
@@ -229,13 +246,24 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
-  compatibilityDate: '2024-11-01',
+  compatibilityDate: '2026-01-01',
+
+  // @nuxtjs/sitemap requires a site URL to emit absolute <loc> entries.
+  // Resolution order is centralized in `resolvedSiteUrl` to avoid preview
+  // deployments leaking the production hostname into <loc> entries.
+  site: {
+    url: resolvedSiteUrl,
+  },
 
   // Nitro configuration for SSR deployment
   nitro: {
     preset: process.env.NITRO_PRESET || (process.env.VERCEL ? 'vercel-static' : 'node-server'),
     serveStatic: true,
     compressPublicAssets: true,
+    prerender: {
+      crawlLinks: true,
+      routes: ['/sitemap.xml', '/robots.txt'],
+    },
     routeRules: {
       '/': {
         headers: {
@@ -250,6 +278,11 @@ export default defineNuxtConfig({
       '/_nuxt/**': {
         headers: {
           'cache-control': 'public, max-age=31536000, immutable',
+        },
+      },
+      '/data/**': {
+        headers: {
+          'cache-control': 'public, max-age=86400, stale-while-revalidate=604800',
         },
       },
       '/assets/**': {
@@ -426,8 +459,9 @@ export default defineNuxtConfig({
       compositionOnly: false,
       runtimeOnly: false,
       fullInstall: true,
-      // Messages are static JSON in translations/i18n.config.ts — omit runtime compiler (~14 KiB).
-      dropMessageCompiler: true,
+      // Keep runtime message compiler: locale JSON is imported as-is in translations/i18n.config.ts
+      // (not pre-compiled via @intlify/unplugin-vue-i18n), so `{name}`/`{0}` interpolation needs it.
+      dropMessageCompiler: false,
     },
   },
 
