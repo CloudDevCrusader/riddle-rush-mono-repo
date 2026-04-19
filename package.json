@@ -1,7 +1,7 @@
 {
   "name": "riddle-rush-monorepo",
   "description": "Riddle Rush - Monorepo for game, documentation, and infrastructure",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "bin": {
     "riddlerush": "./bin/run.js"
   },
