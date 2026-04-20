@@ -2,7 +2,7 @@
   "name": "@riddle-rush/game",
   "version": "1.6.3",
   "dependencies": {
-    "@capacitor/core": "^8.3.0",
+    "@capacitor/core": "^8.3.1",
     "@capacitor/haptics": "^8.0.2",
     "@fontsource-variable/baloo-2": "^5.2.7",
     "@fontsource-variable/nunito": "^5.2.7",
