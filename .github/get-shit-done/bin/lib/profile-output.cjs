@@ -629,7 +629,7 @@ function generateSkillsSection(cwd) {
   for (const skill of discovered) {
     // Sanitize table cell content (escape pipes)
     const desc = skill.description.replace(/\|/g, '\\|').replace(/\n/g, ' ').trim();
-    const safeName = skill.name.replace(/\|/g, '\\|');
+    const safeName = skill.name.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
     lines.push(`| ${safeName} | ${desc} | \`${skill.path}/SKILL.md\` |`);
   }
 
