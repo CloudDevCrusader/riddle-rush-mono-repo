@@ -6,13 +6,13 @@
     "riddlerush": "./bin/run.js"
   },
   "dependencies": {
-    "@e2b/code-interpreter": "^2.4.0",
-    "@langchain/openai": "^1.4.4",
-    "@voltagent/core": "^2.7.3",
+    "@e2b/code-interpreter": "^2.4.2",
+    "@langchain/openai": "^1.4.5",
+    "@voltagent/core": "^2.7.4",
     "@voltagent/mcp-server": "^2.0.2",
-    "ai": "^6.0.168",
+    "ai": "^6.0.184",
     "langchain": "^1.3.3",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.126",
