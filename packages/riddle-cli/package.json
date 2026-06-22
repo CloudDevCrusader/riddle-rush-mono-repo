@@ -7,8 +7,8 @@
     "riddle": "./bin/run.js"
   },
   "dependencies": {
-    "@oclif/core": "^4.10.6",
-    "@oclif/plugin-help": "^6.2.45"
+    "@oclif/core": "^4.11.10",
+    "@oclif/plugin-help": "^6.2.52"
   },
   "devDependencies": {
     "@eslint/json": "^1.2.0",
