@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@oclif/core": "^4.10.6",
-    "@oclif/plugin-help": "^6.2.45"
+    "@oclif/plugin-help": "^6.2.55"
   },
   "devDependencies": {
     "@eslint/json": "^1.2.0",
